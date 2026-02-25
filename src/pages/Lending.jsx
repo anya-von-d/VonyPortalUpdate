@@ -336,7 +336,7 @@ export default function Lending() {
   const details = calculateLoanDetails();
 
   const tabs = [
-    { id: 'lending', label: 'Lending', icon: ArrowUpRight, count: null },
+    { id: 'lending', label: 'All', icon: ArrowUpRight, count: null },
     { id: 'create', label: 'Create Offer', icon: PlusCircle, count: null },
     { id: 'active', label: 'Active Loans', icon: TrendingUp, count: activeLoans.length },
     { id: 'offers', label: 'Pending Offers', icon: Send, count: pendingOffers.length },
