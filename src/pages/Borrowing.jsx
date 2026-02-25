@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,7 +17,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import {
   ArrowDownRight, Clock, Calendar, DollarSign, Inbox, TrendingDown,
-  CheckCircle, AlertCircle, CreditCard
+  CheckCircle, AlertCircle, CreditCard, Settings, BarChart3, FileText
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
@@ -41,6 +42,7 @@ export default function Borrowing() {
   const [activeSection, setActiveSection] = useState('overview');
   const [showSignModal, setShowSignModal] = useState(false);
   const [selectedOffer, setSelectedOffer] = useState(null);
+  const [manageLoanSelected, setManageLoanSelected] = useState(null);
 
   useEffect(() => {
     loadData();
@@ -205,7 +207,7 @@ export default function Borrowing() {
 
   const tabs = [
     { id: 'overview', label: 'All', icon: ArrowDownRight, count: null },
-    { id: 'active', label: 'Active Loans', icon: TrendingDown, count: activeLoans.length },
+    { id: 'active', label: 'Manage Loans', icon: Settings, count: activeLoans.length },
     { id: 'offers', label: 'Loan Offers', icon: Inbox, count: pendingOffers.length },
     { id: 'history', label: 'History', icon: Clock, count: completedLoans.length },
   ];
@@ -501,46 +503,304 @@ export default function Borrowing() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
               >
-                <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                        <ArrowDownRight className="w-4 h-4 text-blue-600" />
-                      </div>
-                      Active Loans
-                    </CardTitle>
-                    <p className="text-sm text-slate-500">Loans you're currently repaying</p>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    {isLoading ? (
-                      <div className="text-center py-8">
-                        <div className="w-8 h-8 border-2 border-green-600 border-t-transparent rounded-full animate-spin mx-auto" />
-                      </div>
-                    ) : activeLoans.length === 0 ? (
-                      <div className="text-center py-8 text-slate-500">
+                {isLoading ? (
+                  <div className="text-center py-8">
+                    <div className="w-8 h-8 border-2 border-green-600 border-t-transparent rounded-full animate-spin mx-auto" />
+                  </div>
+                ) : activeLoans.length === 0 ? (
+                  <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60">
+                    <CardContent className="py-12">
+                      <div className="text-center text-slate-500">
                         <CheckCircle className="w-12 h-12 mx-auto mb-3 text-green-500" />
                         <p>No active loans</p>
                         <p className="text-sm">You're all caught up!</p>
                       </div>
-                    ) : (
-                      activeLoans.map((loan, index) => (
-                        <motion.div
-                          key={loan.id}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: index * 0.1 }}
+                    </CardContent>
+                  </Card>
+                ) : (
+                  <div className="space-y-4">
+                    {/* Loan Selector Dropdown */}
+                    <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="flex items-center gap-2 text-base">
+                          <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                            <Settings className="w-4 h-4 text-green-600" />
+                          </div>
+                          Manage Loans
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <Select
+                          value={manageLoanSelected?.id || ''}
+                          onValueChange={(value) => {
+                            const loan = activeLoans.find(l => l.id === value);
+                            setManageLoanSelected(loan || null);
+                          }}
                         >
-                          <LoanCard
-                            loan={loan}
-                            type="borrowed"
-                            onMakePayment={() => handleMakePayment(loan)}
-                            onDetails={() => handleViewDetails(loan)}
-                          />
-                        </motion.div>
-                      ))
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select a loan to manage...">
+                              {manageLoanSelected && (() => {
+                                const lender = publicProfiles.find(p => p.user_id === manageLoanSelected.lender_id);
+                                return (
+                                  <div className="flex items-center gap-2">
+                                    <div className="w-6 h-6 rounded-full bg-[#35B276]/20 flex items-center justify-center">
+                                      <span className="text-xs font-medium text-[#35B276]">
+                                        {lender?.full_name?.charAt(0) || '?'}
+                                      </span>
+                                    </div>
+                                    <span>@{lender?.username || 'user'}</span>
+                                    <span className="text-slate-400">•</span>
+                                    <span className="text-[#35B276] font-medium">${manageLoanSelected.amount?.toLocaleString()}</span>
+                                    {manageLoanSelected.purpose && (
+                                      <>
+                                        <span className="text-slate-400">•</span>
+                                        <span className="text-slate-500 truncate">{manageLoanSelected.purpose}</span>
+                                      </>
+                                    )}
+                                  </div>
+                                );
+                              })()}
+                            </SelectValue>
+                          </SelectTrigger>
+                          <SelectContent>
+                            {activeLoans.map((loan) => {
+                              const lender = publicProfiles.find(p => p.user_id === loan.lender_id);
+                              return (
+                                <SelectItem key={loan.id} value={loan.id}>
+                                  <div className="flex items-center gap-2">
+                                    <div className="w-6 h-6 rounded-full bg-[#35B276]/20 flex items-center justify-center">
+                                      <span className="text-xs font-medium text-[#35B276]">
+                                        {lender?.full_name?.charAt(0) || '?'}
+                                      </span>
+                                    </div>
+                                    <span>@{lender?.username || 'user'}</span>
+                                    <span className="text-slate-400">•</span>
+                                    <span className="text-[#35B276] font-medium">${loan.amount?.toLocaleString()}</span>
+                                    {loan.purpose && (
+                                      <>
+                                        <span className="text-slate-400">•</span>
+                                        <span className="text-slate-500">{loan.purpose}</span>
+                                      </>
+                                    )}
+                                  </div>
+                                </SelectItem>
+                              );
+                            })}
+                          </SelectContent>
+                        </Select>
+                      </CardContent>
+                    </Card>
+
+                    {/* Loan Details - Below Dropdown */}
+                    {!manageLoanSelected ? (
+                      <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60">
+                        <CardContent className="flex items-center justify-center py-16">
+                          <div className="text-center text-slate-400">
+                            <BarChart3 className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                            <p>Select a loan above to view payment history</p>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ) : (
+                      <>
+                        {/* Payment History Bar Chart */}
+                        <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60">
+                          <CardHeader className="pb-2">
+                            <CardTitle className="flex items-center gap-2 text-base">
+                              <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                                <BarChart3 className="w-4 h-4 text-blue-600" />
+                              </div>
+                              Payment History
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            {(() => {
+                              const loan = manageLoanSelected;
+                              const loanTotalOwed = loan.total_amount || loan.amount || 0;
+                              const amountPaid = loan.amount_paid || 0;
+                              const frequency = loan.payment_frequency || 'monthly';
+                              const period = loan.repayment_period || 6;
+
+                              // Generate payment periods for the chart
+                              const generatePeriodLabels = () => {
+                                const labels = [];
+                                const startDate = new Date(loan.created_at || new Date());
+
+                                let numPeriods = period;
+                                if (frequency === 'daily') numPeriods = Math.min(period, 14);
+                                else if (frequency === 'weekly') numPeriods = Math.min(Math.ceil(period / 7), 12);
+                                else if (frequency === 'biweekly') numPeriods = Math.min(Math.ceil(period / 14), 12);
+                                else numPeriods = Math.min(period, 12);
+
+                                for (let i = 0; i < numPeriods; i++) {
+                                  const date = new Date(startDate);
+                                  if (frequency === 'daily') {
+                                    date.setDate(date.getDate() + i);
+                                    labels.push(format(date, 'MMM d'));
+                                  } else if (frequency === 'weekly') {
+                                    date.setDate(date.getDate() + (i * 7));
+                                    const endDate = new Date(date);
+                                    endDate.setDate(endDate.getDate() + 6);
+                                    labels.push(`${format(date, 'M/d')}-${format(endDate, 'M/d')}`);
+                                  } else if (frequency === 'biweekly') {
+                                    date.setDate(date.getDate() + (i * 14));
+                                    const endDate = new Date(date);
+                                    endDate.setDate(endDate.getDate() + 13);
+                                    labels.push(`${format(date, 'M/d')}-${format(endDate, 'M/d')}`);
+                                  } else {
+                                    date.setMonth(date.getMonth() + i);
+                                    labels.push(format(date, 'MMM'));
+                                  }
+                                }
+                                return labels;
+                              };
+
+                              const labels = generatePeriodLabels();
+                              const paymentAmount = loan.payment_amount || (loanTotalOwed / labels.length);
+
+                              // Simulate which payments have been made (based on amount_paid)
+                              const paidPeriods = Math.floor(amountPaid / paymentAmount);
+
+                              return (
+                                <div className="space-y-4">
+                                  <div className="flex">
+                                    {/* Y-axis labels */}
+                                    <div className="flex flex-col justify-between h-32 pr-2 text-[9px] text-slate-400 text-right w-12">
+                                      <span>${paymentAmount.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
+                                      <span>${(paymentAmount / 2).toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
+                                      <span>$0</span>
+                                    </div>
+
+                                    {/* Chart area */}
+                                    <div className="flex-1 relative">
+                                      {/* Dashed line at expected payment amount - positioned at top of bar area */}
+                                      <div
+                                        className="absolute left-0 right-0 border-t-2 border-dashed border-amber-500 z-10 flex items-center"
+                                        style={{ top: '0px' }}
+                                      >
+                                        <span className="absolute -right-1 -top-3 text-[9px] text-amber-600 font-medium bg-white px-1 rounded whitespace-nowrap">
+                                          Expected: ${paymentAmount.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                                        </span>
+                                      </div>
+
+                                      {/* Bars */}
+                                      <div className="flex items-end gap-1 h-32">
+                                        {labels.map((label, index) => {
+                                          const isPaid = index < paidPeriods;
+                                          const isPartial = index === paidPeriods && (amountPaid % paymentAmount) > 0;
+                                          const partialPercent = isPartial ? ((amountPaid % paymentAmount) / paymentAmount) * 100 : 0;
+
+                                          return (
+                                            <div key={index} className="flex-1 flex flex-col items-center gap-1 h-full">
+                                              <div className="w-full flex-1 bg-slate-100 rounded-t relative flex items-end">
+                                                <div
+                                                  className={`w-full rounded-t transition-all duration-300 ${
+                                                    isPaid ? 'bg-[#35B276]' : isPartial ? 'bg-[#35B276]/50' : 'bg-slate-200'
+                                                  }`}
+                                                  style={{ height: isPaid ? '100%' : isPartial ? `${partialPercent}%` : '10%' }}
+                                                />
+                                              </div>
+                                            </div>
+                                          );
+                                        })}
+                                      </div>
+
+                                      {/* X-axis labels */}
+                                      <div className="flex gap-1 mt-1">
+                                        {labels.map((label, index) => (
+                                          <div key={index} className="flex-1 text-center">
+                                            <span className="text-[10px] text-slate-500 leading-tight">
+                                              {label}
+                                            </span>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="flex items-center justify-center gap-4 text-xs">
+                                    <div className="flex items-center gap-1">
+                                      <div className="w-3 h-3 bg-[#35B276] rounded" />
+                                      <span className="text-slate-600">Paid</span>
+                                    </div>
+                                    <div className="flex items-center gap-1">
+                                      <div className="w-3 h-3 bg-slate-200 rounded" />
+                                      <span className="text-slate-600">Upcoming</span>
+                                    </div>
+                                    <div className="flex items-center gap-1">
+                                      <div className="w-6 h-0 border-t-2 border-dashed border-amber-500" />
+                                      <span className="text-slate-600">Expected Payment</span>
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            })()}
+                          </CardContent>
+                        </Card>
+
+                        {/* Loan Info Cards */}
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                          <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60">
+                            <CardContent className="p-3">
+                              <p className="text-xs text-slate-500 mb-1">Total Loan Amount</p>
+                              <p className="text-lg font-bold text-slate-800">
+                                ${(manageLoanSelected.total_amount || manageLoanSelected.amount || 0).toLocaleString()}
+                              </p>
+                            </CardContent>
+                          </Card>
+                          <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60">
+                            <CardContent className="p-3">
+                              <p className="text-xs text-slate-500 mb-1">Amount Paid</p>
+                              <p className="text-lg font-bold text-[#35B276]">
+                                ${(manageLoanSelected.amount_paid || 0).toLocaleString()}
+                              </p>
+                            </CardContent>
+                          </Card>
+                          <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60">
+                            <CardContent className="p-3">
+                              <p className="text-xs text-slate-500 mb-1">Next Payment Date</p>
+                              <p className="text-lg font-bold text-slate-800">
+                                {manageLoanSelected.next_payment_date
+                                  ? format(new Date(manageLoanSelected.next_payment_date), 'MMM d')
+                                  : 'N/A'}
+                              </p>
+                            </CardContent>
+                          </Card>
+                          <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60">
+                            <CardContent className="p-3">
+                              <p className="text-xs text-slate-500 mb-1">Percentage Paid</p>
+                              <p className="text-lg font-bold text-[#35B276]">
+                                {(() => {
+                                  const total = manageLoanSelected.total_amount || manageLoanSelected.amount || 0;
+                                  const paid = manageLoanSelected.amount_paid || 0;
+                                  return total > 0 ? Math.round((paid / total) * 100) : 0;
+                                })()}%
+                              </p>
+                            </CardContent>
+                          </Card>
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="flex flex-wrap gap-3">
+                          <Button
+                            onClick={() => handleMakePayment(manageLoanSelected)}
+                            className="flex-1 min-w-[140px] bg-[#35B276] hover:bg-[#2d9a65]"
+                          >
+                            <DollarSign className="w-4 h-4 mr-2" />
+                            Make Payment
+                          </Button>
+                          <Button
+                            onClick={() => handleViewDetails(manageLoanSelected)}
+                            variant="outline"
+                            className="flex-1 min-w-[140px]"
+                          >
+                            <FileText className="w-4 h-4 mr-2" />
+                            View Full Details
+                          </Button>
+                        </div>
+                      </>
                     )}
-                  </CardContent>
-                </Card>
+                  </div>
+                )}
               </motion.div>
             )}
 
