@@ -27,7 +27,8 @@ import { createPageUrl } from "@/utils";
 import {
   PlusCircle, DollarSign, Calendar, Percent, FileText, User as UserIcon,
   AlertCircle, Zap, ClipboardList, ArrowUpRight, Send, Clock, Users,
-  TrendingUp, ChevronDown, ChevronUp, Sparkles, Settings, BarChart3
+  TrendingUp, ChevronDown, ChevronUp, Sparkles, Settings, BarChart3,
+  Pencil, X, Save, History
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { addMonths, format } from "date-fns";
@@ -53,6 +54,8 @@ export default function Lending() {
   const [activeSection, setActiveSection] = useState('lending'); // 'lending', 'create', 'active', 'offers', 'history'
   const [showCreateForm, setShowCreateForm] = useState(true);
   const [manageLoanSelected, setManageLoanSelected] = useState(null);
+  const [showEditLoanModal, setShowEditLoanModal] = useState(false);
+  const [editLoanData, setEditLoanData] = useState(null);
 
   const [formData, setFormData] = useState({
     borrower_username: '',
@@ -316,6 +319,129 @@ export default function Lending() {
       loadData();
     } catch (error) {
       console.error("Error deleting loan offer:", error);
+    }
+  };
+
+  const handleEditLoan = (loan) => {
+    setEditLoanData({
+      id: loan.id,
+      amount: loan.amount || 0,
+      interest_rate: loan.interest_rate || 0,
+      repayment_period: loan.repayment_period || 0,
+      payment_frequency: loan.payment_frequency || 'monthly',
+      due_date: loan.due_date || '',
+      payment_amount: loan.payment_amount || 0,
+      purpose: loan.purpose || '',
+      notes: ''
+    });
+    setShowEditLoanModal(true);
+  };
+
+  const handleSaveEditLoan = async () => {
+    if (!editLoanData || !manageLoanSelected) return;
+
+    try {
+      // Calculate new total amount based on changes
+      const amount = parseFloat(editLoanData.amount) || 0;
+      const interestRate = parseFloat(editLoanData.interest_rate) || 0;
+      const period = parseInt(editLoanData.repayment_period) || 0;
+      const periodInMonths = period;
+      const totalAmount = amount * (1 + (interestRate / 100) * (periodInMonths / 12));
+
+      // Calculate new payment amount
+      let paymentAmount = editLoanData.payment_amount;
+      if (editLoanData.payment_frequency !== 'none' && period > 0) {
+        switch (editLoanData.payment_frequency) {
+          case 'daily':
+            paymentAmount = totalAmount / (periodInMonths * 30);
+            break;
+          case 'weekly':
+            paymentAmount = totalAmount / (periodInMonths * (52 / 12));
+            break;
+          case 'biweekly':
+            paymentAmount = totalAmount / (periodInMonths * (26 / 12));
+            break;
+          default:
+            paymentAmount = totalAmount / periodInMonths;
+        }
+      }
+
+      // Build change log
+      const changes = [];
+      if (editLoanData.amount !== manageLoanSelected.amount) {
+        changes.push(`Amount: $${manageLoanSelected.amount} → $${editLoanData.amount}`);
+      }
+      if (editLoanData.interest_rate !== manageLoanSelected.interest_rate) {
+        changes.push(`Interest Rate: ${manageLoanSelected.interest_rate}% → ${editLoanData.interest_rate}%`);
+      }
+      if (editLoanData.repayment_period !== manageLoanSelected.repayment_period) {
+        changes.push(`Repayment Period: ${manageLoanSelected.repayment_period} → ${editLoanData.repayment_period} months`);
+      }
+      if (editLoanData.payment_frequency !== manageLoanSelected.payment_frequency) {
+        changes.push(`Payment Frequency: ${manageLoanSelected.payment_frequency} → ${editLoanData.payment_frequency}`);
+      }
+      if (editLoanData.due_date !== manageLoanSelected.due_date) {
+        changes.push(`Due Date: ${manageLoanSelected.due_date || 'None'} → ${editLoanData.due_date || 'None'}`);
+      }
+
+      const changeLog = changes.length > 0 ? changes.join('; ') : 'No changes';
+
+      // Update loan
+      await Loan.update(editLoanData.id, {
+        amount: parseFloat(editLoanData.amount),
+        interest_rate: parseFloat(editLoanData.interest_rate),
+        repayment_period: parseInt(editLoanData.repayment_period),
+        payment_frequency: editLoanData.payment_frequency,
+        due_date: editLoanData.due_date,
+        total_amount: totalAmount,
+        payment_amount: paymentAmount,
+        purpose: editLoanData.purpose,
+        contract_modified: true,
+        contract_modified_date: new Date().toISOString(),
+        contract_modification_notes: editLoanData.notes || changeLog,
+        status: 'pending_borrower_approval' // Mark as needing borrower approval for changes
+      });
+
+      // Update loan agreement
+      const agreements = await LoanAgreement.list();
+      const agreement = agreements.find(a => a.loan_id === editLoanData.id);
+      if (agreement) {
+        await LoanAgreement.update(agreement.id, {
+          amount: parseFloat(editLoanData.amount),
+          interest_rate: parseFloat(editLoanData.interest_rate),
+          repayment_period: parseInt(editLoanData.repayment_period),
+          payment_frequency: editLoanData.payment_frequency,
+          due_date: editLoanData.due_date,
+          total_amount: totalAmount,
+          payment_amount: paymentAmount,
+          modification_history: JSON.stringify([
+            ...(agreement.modification_history ? JSON.parse(agreement.modification_history) : []),
+            {
+              date: new Date().toISOString(),
+              modified_by: currentUser.full_name,
+              changes: changeLog,
+              notes: editLoanData.notes
+            }
+          ]),
+          is_fully_signed: false, // Requires borrower re-signature
+          borrower_name: null,
+          borrower_signed_date: null
+        });
+      }
+
+      setShowEditLoanModal(false);
+      setEditLoanData(null);
+      await loadData();
+
+      // Update selected loan with new data
+      const updatedLoans = await Loan.list('-created_at');
+      const updatedLoan = updatedLoans.find(l => l.id === editLoanData.id);
+      if (updatedLoan) {
+        setManageLoanSelected(updatedLoan);
+      }
+    } catch (error) {
+      console.error("Error updating loan:", error);
+      alert(`Error updating loan: ${error.message || "Please try again."}`);
     }
   };
 
@@ -1030,30 +1156,52 @@ export default function Lending() {
                                 // Simulate which payments have been made (based on amount_paid)
                                 const paidPeriods = Math.floor(amountPaid / paymentAmount);
 
+                                // Calculate the expected payment line position (as percentage of chart height)
+                                // This represents where the expected payment amount should be on the y-axis
+                                const maxBarValue = paymentAmount; // Each bar represents one payment period
+                                const expectedLinePercent = 100; // 100% because payment amount equals full bar height
+
                                 return (
                                   <div className="space-y-4">
-                                    <div className="flex items-end gap-1 h-40 px-2">
-                                      {labels.map((label, index) => {
-                                        const isPaid = index < paidPeriods;
-                                        const isPartial = index === paidPeriods && (amountPaid % paymentAmount) > 0;
-                                        const partialPercent = isPartial ? ((amountPaid % paymentAmount) / paymentAmount) * 100 : 0;
+                                    <div className="relative">
+                                      {/* Y-axis label for expected payment */}
+                                      <div className="absolute -left-2 top-0 h-32 flex flex-col justify-between text-[9px] text-slate-400">
+                                        <span>${paymentAmount.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
+                                        <span>$0</span>
+                                      </div>
 
-                                        return (
-                                          <div key={index} className="flex-1 flex flex-col items-center gap-1">
-                                            <div className="w-full h-32 bg-slate-100 rounded-t relative flex items-end">
-                                              <div
-                                                className={`w-full rounded-t transition-all duration-300 ${
-                                                  isPaid ? 'bg-[#35B276]' : isPartial ? 'bg-[#35B276]/50' : 'bg-slate-200'
-                                                }`}
-                                                style={{ height: isPaid ? '100%' : isPartial ? `${partialPercent}%` : '10%' }}
-                                              />
+                                      <div className="flex items-end gap-1 h-40 px-8 relative">
+                                        {/* Dashed line at expected payment amount */}
+                                        <div
+                                          className="absolute left-8 right-0 border-t-2 border-dashed border-amber-500 z-10"
+                                          style={{ bottom: '32px' }} // Position at top of bar area (h-32 = 128px from bottom label)
+                                        />
+                                        <div className="absolute right-0 -top-1 text-[9px] text-amber-600 font-medium bg-white px-1 rounded">
+                                          Expected: ${paymentAmount.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                                        </div>
+
+                                        {labels.map((label, index) => {
+                                          const isPaid = index < paidPeriods;
+                                          const isPartial = index === paidPeriods && (amountPaid % paymentAmount) > 0;
+                                          const partialPercent = isPartial ? ((amountPaid % paymentAmount) / paymentAmount) * 100 : 0;
+
+                                          return (
+                                            <div key={index} className="flex-1 flex flex-col items-center gap-1">
+                                              <div className="w-full h-32 bg-slate-100 rounded-t relative flex items-end">
+                                                <div
+                                                  className={`w-full rounded-t transition-all duration-300 ${
+                                                    isPaid ? 'bg-[#35B276]' : isPartial ? 'bg-[#35B276]/50' : 'bg-slate-200'
+                                                  }`}
+                                                  style={{ height: isPaid ? '100%' : isPartial ? `${partialPercent}%` : '10%' }}
+                                                />
+                                              </div>
+                                              <span className="text-[10px] text-slate-500 text-center leading-tight">
+                                                {label}
+                                              </span>
                                             </div>
-                                            <span className="text-[10px] text-slate-500 text-center leading-tight">
-                                              {label}
-                                            </span>
-                                          </div>
-                                        );
-                                      })}
+                                          );
+                                        })}
+                                      </div>
                                     </div>
                                     <div className="flex items-center justify-center gap-4 text-xs">
                                       <div className="flex items-center gap-1">
@@ -1063,6 +1211,10 @@ export default function Lending() {
                                       <div className="flex items-center gap-1">
                                         <div className="w-3 h-3 bg-slate-200 rounded" />
                                         <span className="text-slate-600">Upcoming</span>
+                                      </div>
+                                      <div className="flex items-center gap-1">
+                                        <div className="w-6 h-0 border-t-2 border-dashed border-amber-500" />
+                                        <span className="text-slate-600">Expected Payment</span>
                                       </div>
                                     </div>
                                   </div>
@@ -1075,7 +1227,7 @@ export default function Lending() {
                           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                             <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60">
                               <CardContent className="p-3">
-                                <p className="text-xs text-slate-500 mb-1">Total Amount</p>
+                                <p className="text-xs text-slate-500 mb-1">Total Loan Amount</p>
                                 <p className="text-lg font-bold text-slate-800">
                                   ${(manageLoanSelected.total_amount || manageLoanSelected.amount || 0).toLocaleString()}
                                 </p>
@@ -1091,65 +1243,49 @@ export default function Lending() {
                             </Card>
                             <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60">
                               <CardContent className="p-3">
-                                <p className="text-xs text-slate-500 mb-1">Remaining</p>
+                                <p className="text-xs text-slate-500 mb-1">Next Payment Date</p>
                                 <p className="text-lg font-bold text-slate-800">
-                                  ${((manageLoanSelected.total_amount || manageLoanSelected.amount || 0) - (manageLoanSelected.amount_paid || 0)).toLocaleString()}
+                                  {manageLoanSelected.next_payment_date
+                                    ? format(new Date(manageLoanSelected.next_payment_date), 'MMM d')
+                                    : 'N/A'}
                                 </p>
                               </CardContent>
                             </Card>
                             <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60">
                               <CardContent className="p-3">
-                                <p className="text-xs text-slate-500 mb-1">Interest Rate</p>
-                                <p className="text-lg font-bold text-slate-800">
-                                  {manageLoanSelected.interest_rate || 0}%
-                                </p>
-                              </CardContent>
-                            </Card>
-                          </div>
-
-                          {/* Additional Info */}
-                          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                            <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60">
-                              <CardContent className="p-3">
-                                <p className="text-xs text-slate-500 mb-1">Payment Frequency</p>
-                                <p className="text-sm font-semibold text-slate-800 capitalize">
-                                  {manageLoanSelected.payment_frequency || 'Monthly'}
-                                </p>
-                              </CardContent>
-                            </Card>
-                            <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60">
-                              <CardContent className="p-3">
-                                <p className="text-xs text-slate-500 mb-1">Payment Amount</p>
-                                <p className="text-sm font-semibold text-slate-800">
-                                  ${(manageLoanSelected.payment_amount || 0).toLocaleString()}
-                                </p>
-                              </CardContent>
-                            </Card>
-                            <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60">
-                              <CardContent className="p-3">
-                                <p className="text-xs text-slate-500 mb-1">Due Date</p>
-                                <p className="text-sm font-semibold text-slate-800">
-                                  {manageLoanSelected.due_date
-                                    ? format(new Date(manageLoanSelected.due_date), 'MMM d, yyyy')
-                                    : 'Flexible'}
+                                <p className="text-xs text-slate-500 mb-1">Percentage Paid</p>
+                                <p className="text-lg font-bold text-[#35B276]">
+                                  {(() => {
+                                    const total = manageLoanSelected.total_amount || manageLoanSelected.amount || 0;
+                                    const paid = manageLoanSelected.amount_paid || 0;
+                                    return total > 0 ? Math.round((paid / total) * 100) : 0;
+                                  })()}%
                                 </p>
                               </CardContent>
                             </Card>
                           </div>
 
                           {/* Action Buttons */}
-                          <div className="flex gap-3">
+                          <div className="flex flex-wrap gap-3">
                             <Button
                               onClick={() => handleMakePayment(manageLoanSelected)}
-                              className="flex-1 bg-[#35B276] hover:bg-[#2d9a65]"
+                              className="flex-1 min-w-[140px] bg-[#35B276] hover:bg-[#2d9a65]"
                             >
                               <DollarSign className="w-4 h-4 mr-2" />
                               Record Payment
                             </Button>
                             <Button
+                              onClick={() => handleEditLoan(manageLoanSelected)}
+                              variant="outline"
+                              className="flex-1 min-w-[140px] border-amber-500 text-amber-600 hover:bg-amber-50"
+                            >
+                              <Pencil className="w-4 h-4 mr-2" />
+                              Edit Loan
+                            </Button>
+                            <Button
                               onClick={() => handleViewDetails(manageLoanSelected)}
                               variant="outline"
-                              className="flex-1"
+                              className="flex-1 min-w-[140px]"
                             >
                               <FileText className="w-4 h-4 mr-2" />
                               View Full Details
@@ -1286,6 +1422,192 @@ export default function Lending() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Edit Loan Modal */}
+      {showEditLoanModal && editLoanData && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="bg-white rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto"
+          >
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center">
+                    <Pencil className="w-5 h-5 text-amber-600" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold text-slate-800">Edit Loan Contract</h2>
+                    <p className="text-sm text-slate-500">Changes will be sent to borrower for approval</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    setShowEditLoanModal(false);
+                    setEditLoanData(null);
+                  }}
+                  className="text-slate-400 hover:text-slate-600"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              {/* Warning Banner */}
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-6">
+                <div className="flex items-start gap-2">
+                  <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                  <div className="text-sm text-amber-800">
+                    <p className="font-medium">Contract Modification Notice</p>
+                    <p className="text-amber-700">All changes will be recorded in the loan history and the borrower will need to approve the new terms.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                {/* Loan Amount */}
+                <div className="space-y-2">
+                  <Label htmlFor="edit-amount" className="flex items-center gap-2">
+                    <DollarSign className="w-4 h-4 text-amber-600" />
+                    Loan Amount
+                  </Label>
+                  <Input
+                    id="edit-amount"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={editLoanData.amount}
+                    onChange={(e) => setEditLoanData(prev => ({ ...prev, amount: e.target.value }))}
+                  />
+                </div>
+
+                {/* Interest Rate */}
+                <div className="space-y-2">
+                  <Label htmlFor="edit-interest" className="flex items-center gap-2">
+                    <Percent className="w-4 h-4 text-amber-600" />
+                    Interest Rate (% per year)
+                  </Label>
+                  <Input
+                    id="edit-interest"
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    max="100"
+                    value={editLoanData.interest_rate}
+                    onChange={(e) => setEditLoanData(prev => ({ ...prev, interest_rate: e.target.value }))}
+                  />
+                </div>
+
+                {/* Repayment Period */}
+                <div className="space-y-2">
+                  <Label htmlFor="edit-period" className="flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-amber-600" />
+                    Repayment Period (months)
+                  </Label>
+                  <Input
+                    id="edit-period"
+                    type="number"
+                    min="1"
+                    value={editLoanData.repayment_period}
+                    onChange={(e) => setEditLoanData(prev => ({ ...prev, repayment_period: e.target.value }))}
+                  />
+                </div>
+
+                {/* Payment Frequency */}
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-amber-600" />
+                    Payment Frequency
+                  </Label>
+                  <Select
+                    value={editLoanData.payment_frequency}
+                    onValueChange={(value) => setEditLoanData(prev => ({ ...prev, payment_frequency: value }))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select frequency" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">None</SelectItem>
+                      <SelectItem value="daily">Daily</SelectItem>
+                      <SelectItem value="weekly">Weekly</SelectItem>
+                      <SelectItem value="biweekly">Bi-weekly</SelectItem>
+                      <SelectItem value="monthly">Monthly</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Due Date */}
+                <div className="space-y-2">
+                  <Label htmlFor="edit-due-date" className="flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-amber-600" />
+                    Due Date
+                  </Label>
+                  <Input
+                    id="edit-due-date"
+                    type="date"
+                    value={editLoanData.due_date || ''}
+                    onChange={(e) => setEditLoanData(prev => ({ ...prev, due_date: e.target.value }))}
+                  />
+                </div>
+
+                {/* Purpose */}
+                <div className="space-y-2">
+                  <Label htmlFor="edit-purpose" className="flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-amber-600" />
+                    Purpose
+                  </Label>
+                  <Input
+                    id="edit-purpose"
+                    type="text"
+                    value={editLoanData.purpose}
+                    onChange={(e) => setEditLoanData(prev => ({ ...prev, purpose: e.target.value }))}
+                    maxLength={100}
+                  />
+                </div>
+
+                {/* Notes for Borrower */}
+                <div className="space-y-2">
+                  <Label htmlFor="edit-notes" className="flex items-center gap-2">
+                    <History className="w-4 h-4 text-amber-600" />
+                    Notes for Borrower (optional)
+                  </Label>
+                  <textarea
+                    id="edit-notes"
+                    className="w-full px-3 py-2 border border-slate-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                    rows={3}
+                    placeholder="Explain why you're making these changes..."
+                    value={editLoanData.notes}
+                    onChange={(e) => setEditLoanData(prev => ({ ...prev, notes: e.target.value }))}
+                    maxLength={500}
+                  />
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-3 mt-6 pt-4 border-t border-slate-200">
+                <Button
+                  onClick={() => {
+                    setShowEditLoanModal(false);
+                    setEditLoanData(null);
+                  }}
+                  variant="outline"
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleSaveEditLoan}
+                  className="flex-1 bg-amber-500 hover:bg-amber-600 text-white"
+                >
+                  <Save className="w-4 h-4 mr-2" />
+                  Save & Send to Borrower
+                </Button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </>
   );
 }
