@@ -620,51 +620,6 @@ export default function Lending() {
                       </CardContent>
                     </Card>
                 </div>
-
-                {/* Recent Lending Activity */}
-                {(activeLoans.length > 0 || pendingOffers.length > 0) && (
-                  <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60">
-                    <CardHeader className="pb-2">
-                      <CardTitle className="flex items-center gap-2 text-base">
-                        <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
-                          <Sparkles className="w-4 h-4 text-purple-600" />
-                        </div>
-                        Recent Lending Activity
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-2">
-                        {[...activeLoans, ...pendingOffers]
-                          .sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0))
-                          .slice(0, 5)
-                          .map(loan => {
-                            const borrower = publicProfiles.find(p => p.user_id === loan.borrower_id);
-                            return (
-                              <div key={loan.id} className="flex items-center justify-between py-2 border-b border-slate-100 last:border-0">
-                                <div className="flex items-center gap-3">
-                                  <div className={`w-2 h-2 rounded-full ${
-                                    loan.status === 'active' ? 'bg-green-500' :
-                                    loan.status === 'pending' ? 'bg-yellow-500' : 'bg-slate-300'
-                                  }`} />
-                                  <div>
-                                    <p className="text-sm text-slate-800">
-                                      ${loan.amount?.toLocaleString()} to @{borrower?.username || 'user'}
-                                    </p>
-                                    <p className="text-xs text-slate-500">{loan.purpose || 'No description'}</p>
-                                  </div>
-                                </div>
-                                <Badge variant={loan.status === 'active' ? 'default' : 'secondary'} className={
-                                  loan.status === 'active' ? 'bg-green-100 text-green-700' : ''
-                                }>
-                                  {loan.status}
-                                </Badge>
-                              </div>
-                            );
-                          })}
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
               </motion.div>
             )}
 
@@ -937,9 +892,9 @@ export default function Lending() {
                     </CardContent>
                   </Card>
                 ) : (
-                  <div className="flex flex-col md:flex-row gap-4">
-                    {/* Loans List - Left Side */}
-                    <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60 md:w-1/3">
+                  <div className="space-y-4">
+                    {/* Loan Selector Dropdown */}
+                    <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60">
                       <CardHeader className="pb-2">
                         <CardTitle className="flex items-center gap-2 text-base">
                           <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
@@ -947,69 +902,81 @@ export default function Lending() {
                           </div>
                           Manage Loans
                         </CardTitle>
-                        <p className="text-xs text-slate-500">Select a loan to view details</p>
                       </CardHeader>
-                      <CardContent className="space-y-2 max-h-[500px] overflow-y-auto">
-                        {activeLoans.map((loan) => {
-                          const borrower = publicProfiles.find(p => p.user_id === loan.borrower_id);
-                          const isSelected = manageLoanSelected?.id === loan.id;
-                          return (
-                            <div
-                              key={loan.id}
-                              onClick={() => setManageLoanSelected(loan)}
-                              className={`p-3 rounded-lg cursor-pointer transition-all ${
-                                isSelected
-                                  ? 'bg-[#35B276] text-white'
-                                  : 'bg-slate-50 hover:bg-slate-100'
-                              }`}
-                            >
-                              <div className="flex items-center gap-2">
-                                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                                  isSelected ? 'bg-white/20' : 'bg-[#35B276]/20'
-                                }`}>
-                                  <span className={`text-sm font-medium ${
-                                    isSelected ? 'text-white' : 'text-[#35B276]'
-                                  }`}>
-                                    {borrower?.full_name?.charAt(0) || '?'}
-                                  </span>
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <p className={`font-medium text-sm truncate ${
-                                    isSelected ? 'text-white' : 'text-slate-800'
-                                  }`}>
-                                    @{borrower?.username || 'user'}
-                                  </p>
-                                  <p className={`text-xs truncate ${
-                                    isSelected ? 'text-white/80' : 'text-slate-500'
-                                  }`}>
-                                    {loan.purpose || 'No description'}
-                                  </p>
-                                </div>
-                                <p className={`font-semibold text-sm ${
-                                  isSelected ? 'text-white' : 'text-[#35B276]'
-                                }`}>
-                                  ${loan.amount?.toLocaleString()}
-                                </p>
-                              </div>
-                            </div>
-                          );
-                        })}
+                      <CardContent>
+                        <Select
+                          value={manageLoanSelected?.id || ''}
+                          onValueChange={(value) => {
+                            const loan = activeLoans.find(l => l.id === value);
+                            setManageLoanSelected(loan || null);
+                          }}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select a loan to manage...">
+                              {manageLoanSelected && (() => {
+                                const borrower = publicProfiles.find(p => p.user_id === manageLoanSelected.borrower_id);
+                                return (
+                                  <div className="flex items-center gap-2">
+                                    <div className="w-6 h-6 rounded-full bg-[#35B276]/20 flex items-center justify-center">
+                                      <span className="text-xs font-medium text-[#35B276]">
+                                        {borrower?.full_name?.charAt(0) || '?'}
+                                      </span>
+                                    </div>
+                                    <span>@{borrower?.username || 'user'}</span>
+                                    <span className="text-slate-400">•</span>
+                                    <span className="text-[#35B276] font-medium">${manageLoanSelected.amount?.toLocaleString()}</span>
+                                    {manageLoanSelected.purpose && (
+                                      <>
+                                        <span className="text-slate-400">•</span>
+                                        <span className="text-slate-500 truncate">{manageLoanSelected.purpose}</span>
+                                      </>
+                                    )}
+                                  </div>
+                                );
+                              })()}
+                            </SelectValue>
+                          </SelectTrigger>
+                          <SelectContent>
+                            {activeLoans.map((loan) => {
+                              const borrower = publicProfiles.find(p => p.user_id === loan.borrower_id);
+                              return (
+                                <SelectItem key={loan.id} value={loan.id}>
+                                  <div className="flex items-center gap-2">
+                                    <div className="w-6 h-6 rounded-full bg-[#35B276]/20 flex items-center justify-center">
+                                      <span className="text-xs font-medium text-[#35B276]">
+                                        {borrower?.full_name?.charAt(0) || '?'}
+                                      </span>
+                                    </div>
+                                    <span>@{borrower?.username || 'user'}</span>
+                                    <span className="text-slate-400">•</span>
+                                    <span className="text-[#35B276] font-medium">${loan.amount?.toLocaleString()}</span>
+                                    {loan.purpose && (
+                                      <>
+                                        <span className="text-slate-400">•</span>
+                                        <span className="text-slate-500">{loan.purpose}</span>
+                                      </>
+                                    )}
+                                  </div>
+                                </SelectItem>
+                              );
+                            })}
+                          </SelectContent>
+                        </Select>
                       </CardContent>
                     </Card>
 
-                    {/* Loan Details - Right Side */}
-                    <div className="flex-1 space-y-4">
-                      {!manageLoanSelected ? (
-                        <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60 h-full">
-                          <CardContent className="flex items-center justify-center h-full min-h-[400px]">
-                            <div className="text-center text-slate-400">
-                              <BarChart3 className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                              <p>Select a loan to view payment history</p>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      ) : (
-                        <>
+                    {/* Loan Details - Below Dropdown */}
+                    {!manageLoanSelected ? (
+                      <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60">
+                        <CardContent className="flex items-center justify-center py-16">
+                          <div className="text-center text-slate-400">
+                            <BarChart3 className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                            <p>Select a loan above to view payment history</p>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ) : (
+                      <>
                           {/* Payment History Bar Chart */}
                           <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60">
                             <CardHeader className="pb-2">
@@ -1196,7 +1163,6 @@ export default function Lending() {
                           </div>
                         </>
                       )}
-                    </div>
                   </div>
                 )}
               </motion.div>
