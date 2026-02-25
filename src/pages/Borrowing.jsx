@@ -228,69 +228,6 @@ export default function Borrowing() {
             </p>
           </motion.div>
 
-          {/* Stats Cards */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
-            <Card className="text-white" style={{backgroundColor: '#35B276'}}>
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between mb-1">
-                  <p className="text-xs md:text-sm opacity-90">Total Borrowed</p>
-                  <ArrowDownRight className="w-4 h-4 opacity-75" />
-                </div>
-                <p className="text-xl md:text-2xl font-bold">${totalBorrowed.toLocaleString()}</p>
-                <p className="text-xs opacity-75">{activeLoans.length} active loans</p>
-              </CardContent>
-            </Card>
-
-            <Card className="text-white" style={{backgroundColor: '#35B276'}}>
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between mb-1">
-                  <p className="text-xs md:text-sm opacity-90">Remaining</p>
-                  <TrendingDown className="w-4 h-4 opacity-75" />
-                </div>
-                <p className="text-xl md:text-2xl font-bold">${remainingBalance.toLocaleString()}</p>
-                <p className="text-xs opacity-75">${totalPaid.toLocaleString()} paid</p>
-              </CardContent>
-            </Card>
-
-            <Card className="text-white" style={{backgroundColor: '#35B276'}}>
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between mb-1">
-                  <p className="text-xs md:text-sm opacity-90">Next Payment</p>
-                  <Calendar className="w-4 h-4 opacity-75" />
-                </div>
-                <p className="text-xl md:text-2xl font-bold">
-                  {nextPaymentLoan ? `$${nextPaymentAmount.toLocaleString()}` : '-'}
-                </p>
-                <p className="text-xs opacity-75">
-                  {nextPaymentLoan
-                    ? `to @${nextPaymentLenderUsername}`
-                    : 'No payments due'}
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="text-white" style={{backgroundColor: '#35B276'}}>
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between mb-1">
-                  <p className="text-xs md:text-sm opacity-90">Due In</p>
-                  <Clock className="w-4 h-4 opacity-75" />
-                </div>
-                <p className="text-xl md:text-2xl font-bold">
-                  {nextPaymentLoan
-                    ? (nextPaymentDays < 0
-                        ? 'Overdue'
-                        : `${nextPaymentDays} day${nextPaymentDays !== 1 ? 's' : ''}`)
-                    : '-'}
-                </p>
-                <p className="text-xs opacity-75">
-                  {nextPaymentLoan
-                    ? format(new Date(nextPaymentLoan.next_payment_date), 'MMM d, yyyy')
-                    : 'No due date'}
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-
           {/* Tab Navigation */}
           <div className="flex gap-2 overflow-x-auto pb-2">
             {tabs.map(tab => (
@@ -326,6 +263,69 @@ export default function Borrowing() {
                 exit={{ opacity: 0, y: -20 }}
                 className="space-y-6"
               >
+                {/* Stats Cards */}
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+                  <Card className="text-white" style={{backgroundColor: '#35B276'}}>
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between mb-1">
+                        <p className="text-xs md:text-sm opacity-90">Total Borrowed</p>
+                        <ArrowDownRight className="w-4 h-4 opacity-75" />
+                      </div>
+                      <p className="text-xl md:text-2xl font-bold">${totalBorrowed.toLocaleString()}</p>
+                      <p className="text-xs opacity-75">{activeLoans.length} active loans</p>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="text-white" style={{backgroundColor: '#35B276'}}>
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between mb-1">
+                        <p className="text-xs md:text-sm opacity-90">Remaining</p>
+                        <TrendingDown className="w-4 h-4 opacity-75" />
+                      </div>
+                      <p className="text-xl md:text-2xl font-bold">${remainingBalance.toLocaleString()}</p>
+                      <p className="text-xs opacity-75">${totalPaid.toLocaleString()} paid</p>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="text-white" style={{backgroundColor: '#35B276'}}>
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between mb-1">
+                        <p className="text-xs md:text-sm opacity-90">Next Payment</p>
+                        <Calendar className="w-4 h-4 opacity-75" />
+                      </div>
+                      <p className="text-xl md:text-2xl font-bold">
+                        {nextPaymentLoan ? `$${nextPaymentAmount.toLocaleString()}` : '-'}
+                      </p>
+                      <p className="text-xs opacity-75">
+                        {nextPaymentLoan
+                          ? `to @${nextPaymentLenderUsername}`
+                          : 'No payments due'}
+                      </p>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="text-white" style={{backgroundColor: '#35B276'}}>
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between mb-1">
+                        <p className="text-xs md:text-sm opacity-90">Due In</p>
+                        <Clock className="w-4 h-4 opacity-75" />
+                      </div>
+                      <p className="text-xl md:text-2xl font-bold">
+                        {nextPaymentLoan
+                          ? (nextPaymentDays < 0
+                              ? 'Overdue'
+                              : `${nextPaymentDays} day${nextPaymentDays !== 1 ? 's' : ''}`)
+                          : '-'}
+                      </p>
+                      <p className="text-xs opacity-75">
+                        {nextPaymentLoan
+                          ? format(new Date(nextPaymentLoan.next_payment_date), 'MMM d, yyyy')
+                          : 'No due date'}
+                      </p>
+                    </CardContent>
+                  </Card>
+                </div>
+
                 {/* Progress Card */}
                 <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60">
                   <CardHeader>

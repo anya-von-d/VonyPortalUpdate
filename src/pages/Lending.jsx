@@ -373,57 +373,6 @@ export default function Lending() {
             </p>
           </motion.div>
 
-          {/* Stats Cards */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
-            <Card className="text-white" style={{backgroundColor: '#35B276'}}>
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between mb-1">
-                  <p className="text-xs md:text-sm opacity-90">Total Lent</p>
-                  <ArrowUpRight className="w-4 h-4 opacity-75" />
-                </div>
-                <p className="text-xl md:text-2xl font-bold">${totalLent.toLocaleString()}</p>
-                <p className="text-xs opacity-75">{activeLoans.length} active loans</p>
-              </CardContent>
-            </Card>
-
-            <Card className="text-white" style={{backgroundColor: '#35B276'}}>
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between mb-1">
-                  <p className="text-xs md:text-sm opacity-90">Expected Back</p>
-                  <TrendingUp className="w-4 h-4 opacity-75" />
-                </div>
-                <p className="text-xl md:text-2xl font-bold">${totalExpectedBack.toLocaleString()}</p>
-                <p className="text-xs opacity-75">Including interest</p>
-              </CardContent>
-            </Card>
-
-            <Card className="text-white" style={{backgroundColor: '#35B276'}}>
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between mb-1">
-                  <p className="text-xs md:text-sm opacity-90">Pending Offers</p>
-                  <Send className="w-4 h-4 opacity-75" />
-                </div>
-                <p className="text-xl md:text-2xl font-bold">{pendingOffers.length}</p>
-                <p className="text-xs opacity-75">Awaiting response</p>
-              </CardContent>
-            </Card>
-
-            <Card className="text-white" style={{backgroundColor: '#35B276'}}>
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between mb-1">
-                  <p className="text-xs md:text-sm opacity-90">Next Payment</p>
-                  <Calendar className="w-4 h-4 opacity-75" />
-                </div>
-                <p className="text-xl md:text-2xl font-bold">
-                  {nextPaymentLoan ? format(new Date(nextPaymentLoan.next_payment_date), 'MMM d') : '-'}
-                </p>
-                <p className="text-xs opacity-75">
-                  {nextPaymentLoan ? `$${nextPaymentLoan.payment_amount?.toLocaleString() || 0}` : 'No payments due'}
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-
           {/* Tab Navigation */}
           <div className="flex gap-2 overflow-x-auto pb-2">
             {tabs.map(tab => (
@@ -459,6 +408,57 @@ export default function Lending() {
                 exit={{ opacity: 0, y: -20 }}
                 className="space-y-6"
               >
+                {/* Stats Cards */}
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+                  <Card className="text-white" style={{backgroundColor: '#35B276'}}>
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between mb-1">
+                        <p className="text-xs md:text-sm opacity-90">Total Lent</p>
+                        <ArrowUpRight className="w-4 h-4 opacity-75" />
+                      </div>
+                      <p className="text-xl md:text-2xl font-bold">${totalLent.toLocaleString()}</p>
+                      <p className="text-xs opacity-75">{activeLoans.length} active loans</p>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="text-white" style={{backgroundColor: '#35B276'}}>
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between mb-1">
+                        <p className="text-xs md:text-sm opacity-90">Expected Back</p>
+                        <TrendingUp className="w-4 h-4 opacity-75" />
+                      </div>
+                      <p className="text-xl md:text-2xl font-bold">${totalExpectedBack.toLocaleString()}</p>
+                      <p className="text-xs opacity-75">Including interest</p>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="text-white" style={{backgroundColor: '#35B276'}}>
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between mb-1">
+                        <p className="text-xs md:text-sm opacity-90">Pending Offers</p>
+                        <Send className="w-4 h-4 opacity-75" />
+                      </div>
+                      <p className="text-xl md:text-2xl font-bold">{pendingOffers.length}</p>
+                      <p className="text-xs opacity-75">Awaiting response</p>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="text-white" style={{backgroundColor: '#35B276'}}>
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between mb-1">
+                        <p className="text-xs md:text-sm opacity-90">Next Payment</p>
+                        <Calendar className="w-4 h-4 opacity-75" />
+                      </div>
+                      <p className="text-xl md:text-2xl font-bold">
+                        {nextPaymentLoan ? format(new Date(nextPaymentLoan.next_payment_date), 'MMM d') : '-'}
+                      </p>
+                      <p className="text-xs opacity-75">
+                        {nextPaymentLoan ? `$${nextPaymentLoan.payment_amount?.toLocaleString() || 0}` : 'No payments due'}
+                      </p>
+                    </CardContent>
+                  </Card>
+                </div>
+
                 {/* Overview Cards */}
                 <div className="grid md:grid-cols-2 gap-4">
                   {/* Who You've Lent To */}
