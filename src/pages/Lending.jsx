@@ -374,7 +374,7 @@ export default function Lending() {
           </motion.div>
 
           {/* Tab Navigation */}
-          <div className="flex gap-2 overflow-x-auto pb-2">
+          <div className="flex gap-2 overflow-x-auto pb-2 justify-center">
             {tabs.map(tab => (
               <Button
                 key={tab.id}
@@ -408,55 +408,110 @@ export default function Lending() {
                 exit={{ opacity: 0, y: -20 }}
                 className="space-y-6"
               >
-                {/* Stats Cards */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
-                  <Card className="text-white" style={{backgroundColor: '#35B276'}}>
-                    <CardContent className="p-4">
-                      <div className="flex items-center justify-between mb-1">
-                        <p className="text-xs md:text-sm opacity-90">Total Lent</p>
-                        <ArrowUpRight className="w-4 h-4 opacity-75" />
+                {/* Pie Chart + Stats Cards Row */}
+                <div className="flex flex-col md:flex-row gap-4 md:gap-6">
+                  {/* Pie Chart - Left Side */}
+                  <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60 md:w-1/3">
+                    <CardContent className="p-4 flex flex-col items-center justify-center h-full">
+                      <p className="text-sm font-medium text-slate-600 mb-3">Repayment Progress</p>
+                      {(() => {
+                        const totalOwed = activeLoans.reduce((sum, loan) => sum + (loan.total_amount || loan.amount || 0), 0);
+                        const totalPaid = activeLoans.reduce((sum, loan) => sum + (loan.amount_paid || 0), 0);
+                        const percentPaid = totalOwed > 0 ? Math.round((totalPaid / totalOwed) * 100) : 0;
+                        const circumference = 2 * Math.PI * 45;
+                        const strokeDashoffset = circumference - (percentPaid / 100) * circumference;
+
+                        return (
+                          <div className="relative w-36 h-36">
+                            <svg className="w-full h-full transform -rotate-90">
+                              {/* Background circle */}
+                              <circle
+                                cx="72"
+                                cy="72"
+                                r="45"
+                                fill="none"
+                                stroke="#e2e8f0"
+                                strokeWidth="12"
+                              />
+                              {/* Progress circle */}
+                              <circle
+                                cx="72"
+                                cy="72"
+                                r="45"
+                                fill="none"
+                                stroke="#35B276"
+                                strokeWidth="12"
+                                strokeLinecap="round"
+                                strokeDasharray={circumference}
+                                strokeDashoffset={strokeDashoffset}
+                                className="transition-all duration-500"
+                              />
+                            </svg>
+                            <div className="absolute inset-0 flex flex-col items-center justify-center">
+                              <span className="text-2xl font-bold text-slate-800">{percentPaid}%</span>
+                              <span className="text-xs text-slate-500">Repaid</span>
+                            </div>
+                          </div>
+                        );
+                      })()}
+                      <div className="mt-3 text-center">
+                        <p className="text-xs text-slate-500">
+                          ${activeLoans.reduce((sum, loan) => sum + (loan.amount_paid || 0), 0).toLocaleString()} of ${activeLoans.reduce((sum, loan) => sum + (loan.total_amount || loan.amount || 0), 0).toLocaleString()}
+                        </p>
                       </div>
-                      <p className="text-xl md:text-2xl font-bold">${totalLent.toLocaleString()}</p>
-                      <p className="text-xs opacity-75">{activeLoans.length} active loans</p>
                     </CardContent>
                   </Card>
 
-                  <Card className="text-white" style={{backgroundColor: '#35B276'}}>
-                    <CardContent className="p-4">
-                      <div className="flex items-center justify-between mb-1">
-                        <p className="text-xs md:text-sm opacity-90">Expected Back</p>
-                        <TrendingUp className="w-4 h-4 opacity-75" />
-                      </div>
-                      <p className="text-xl md:text-2xl font-bold">${totalExpectedBack.toLocaleString()}</p>
-                      <p className="text-xs opacity-75">Including interest</p>
-                    </CardContent>
-                  </Card>
+                  {/* Stats Cards - Right Side (2x2 Grid) */}
+                  <div className="flex-1 grid grid-cols-2 gap-3 md:gap-4">
+                    <Card className="text-white" style={{backgroundColor: '#35B276'}}>
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between mb-1">
+                          <p className="text-xs md:text-sm opacity-90">Total Lent</p>
+                          <ArrowUpRight className="w-4 h-4 opacity-75" />
+                        </div>
+                        <p className="text-xl md:text-2xl font-bold">${totalLent.toLocaleString()}</p>
+                        <p className="text-xs opacity-75">{activeLoans.length} active loans</p>
+                      </CardContent>
+                    </Card>
 
-                  <Card className="text-white" style={{backgroundColor: '#35B276'}}>
-                    <CardContent className="p-4">
-                      <div className="flex items-center justify-between mb-1">
-                        <p className="text-xs md:text-sm opacity-90">Pending Offers</p>
-                        <Send className="w-4 h-4 opacity-75" />
-                      </div>
-                      <p className="text-xl md:text-2xl font-bold">{pendingOffers.length}</p>
-                      <p className="text-xs opacity-75">Awaiting response</p>
-                    </CardContent>
-                  </Card>
+                    <Card className="text-white" style={{backgroundColor: '#35B276'}}>
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between mb-1">
+                          <p className="text-xs md:text-sm opacity-90">Expected Back</p>
+                          <TrendingUp className="w-4 h-4 opacity-75" />
+                        </div>
+                        <p className="text-xl md:text-2xl font-bold">${totalExpectedBack.toLocaleString()}</p>
+                        <p className="text-xs opacity-75">Including interest</p>
+                      </CardContent>
+                    </Card>
 
-                  <Card className="text-white" style={{backgroundColor: '#35B276'}}>
-                    <CardContent className="p-4">
-                      <div className="flex items-center justify-between mb-1">
-                        <p className="text-xs md:text-sm opacity-90">Next Payment</p>
-                        <Calendar className="w-4 h-4 opacity-75" />
-                      </div>
-                      <p className="text-xl md:text-2xl font-bold">
-                        {nextPaymentLoan ? format(new Date(nextPaymentLoan.next_payment_date), 'MMM d') : '-'}
-                      </p>
-                      <p className="text-xs opacity-75">
-                        {nextPaymentLoan ? `$${nextPaymentLoan.payment_amount?.toLocaleString() || 0}` : 'No payments due'}
-                      </p>
-                    </CardContent>
-                  </Card>
+                    <Card className="text-white" style={{backgroundColor: '#35B276'}}>
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between mb-1">
+                          <p className="text-xs md:text-sm opacity-90">Pending Offers</p>
+                          <Send className="w-4 h-4 opacity-75" />
+                        </div>
+                        <p className="text-xl md:text-2xl font-bold">{pendingOffers.length}</p>
+                        <p className="text-xs opacity-75">Awaiting response</p>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="text-white" style={{backgroundColor: '#35B276'}}>
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between mb-1">
+                          <p className="text-xs md:text-sm opacity-90">Next Payment</p>
+                          <Calendar className="w-4 h-4 opacity-75" />
+                        </div>
+                        <p className="text-xl md:text-2xl font-bold">
+                          {nextPaymentLoan ? format(new Date(nextPaymentLoan.next_payment_date), 'MMM d') : '-'}
+                        </p>
+                        <p className="text-xs opacity-75">
+                          {nextPaymentLoan ? `$${nextPaymentLoan.payment_amount?.toLocaleString() || 0}` : 'No payments due'}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </div>
                 </div>
 
                 {/* Overview Cards */}
@@ -552,91 +607,113 @@ export default function Lending() {
                   </Card>
                 </div>
 
-                {/* Quick Actions */}
-                <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60">
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-base">Quick Actions</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                      <Button
-                        onClick={() => setActiveSection('create')}
-                        className="h-auto py-4 flex flex-col items-center gap-2 bg-[#35B276] hover:bg-[#2d9a65]"
-                      >
-                        <PlusCircle className="w-5 h-5" />
-                        <span className="text-sm">Create Offer</span>
-                      </Button>
-                      <Button
-                        onClick={() => setActiveSection('active')}
-                        variant="outline"
-                        className="h-auto py-4 flex flex-col items-center gap-2"
-                      >
-                        <TrendingUp className="w-5 h-5" />
-                        <span className="text-sm">Active ({activeLoans.length})</span>
-                      </Button>
-                      <Button
-                        onClick={() => setActiveSection('offers')}
-                        variant="outline"
-                        className="h-auto py-4 flex flex-col items-center gap-2"
-                      >
-                        <Send className="w-5 h-5" />
-                        <span className="text-sm">Pending ({pendingOffers.length})</span>
-                      </Button>
-                      <Button
-                        onClick={() => setActiveSection('history')}
-                        variant="outline"
-                        className="h-auto py-4 flex flex-col items-center gap-2"
-                      >
-                        <Clock className="w-5 h-5" />
-                        <span className="text-sm">History</span>
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Recent Activity */}
+                {/* Recent Activity + Individual Loan Progress */}
                 {(activeLoans.length > 0 || pendingOffers.length > 0) && (
-                  <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60">
-                    <CardHeader className="pb-2">
-                      <CardTitle className="flex items-center gap-2 text-base">
-                        <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
-                          <Sparkles className="w-4 h-4 text-purple-600" />
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {/* Recent Lending Activity - Left */}
+                    <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="flex items-center gap-2 text-base">
+                          <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
+                            <Sparkles className="w-4 h-4 text-purple-600" />
+                          </div>
+                          Recent Lending Activity
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-2">
+                          {[...activeLoans, ...pendingOffers]
+                            .sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0))
+                            .slice(0, 5)
+                            .map(loan => {
+                              const borrower = publicProfiles.find(p => p.user_id === loan.borrower_id);
+                              return (
+                                <div key={loan.id} className="flex items-center justify-between py-2 border-b border-slate-100 last:border-0">
+                                  <div className="flex items-center gap-3">
+                                    <div className={`w-2 h-2 rounded-full ${
+                                      loan.status === 'active' ? 'bg-green-500' :
+                                      loan.status === 'pending' ? 'bg-yellow-500' : 'bg-slate-300'
+                                    }`} />
+                                    <div>
+                                      <p className="text-sm text-slate-800">
+                                        ${loan.amount?.toLocaleString()} to @{borrower?.username || 'user'}
+                                      </p>
+                                      <p className="text-xs text-slate-500">{loan.purpose || 'No description'}</p>
+                                    </div>
+                                  </div>
+                                  <Badge variant={loan.status === 'active' ? 'default' : 'secondary'} className={
+                                    loan.status === 'active' ? 'bg-green-100 text-green-700' : ''
+                                  }>
+                                    {loan.status}
+                                  </Badge>
+                                </div>
+                              );
+                            })}
                         </div>
-                        Recent Lending Activity
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-2">
-                        {[...activeLoans, ...pendingOffers]
-                          .sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0))
-                          .slice(0, 5)
-                          .map(loan => {
-                            const borrower = publicProfiles.find(p => p.user_id === loan.borrower_id);
-                            return (
-                              <div key={loan.id} className="flex items-center justify-between py-2 border-b border-slate-100 last:border-0">
-                                <div className="flex items-center gap-3">
-                                  <div className={`w-2 h-2 rounded-full ${
-                                    loan.status === 'active' ? 'bg-green-500' :
-                                    loan.status === 'pending' ? 'bg-yellow-500' : 'bg-slate-300'
-                                  }`} />
-                                  <div>
-                                    <p className="text-sm text-slate-800">
-                                      ${loan.amount?.toLocaleString()} to @{borrower?.username || 'user'}
-                                    </p>
-                                    <p className="text-xs text-slate-500">{loan.purpose || 'No description'}</p>
+                      </CardContent>
+                    </Card>
+
+                    {/* Individual Loan Progress - Right */}
+                    <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="flex items-center gap-2 text-base">
+                          <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                            <TrendingUp className="w-4 h-4 text-green-600" />
+                          </div>
+                          Individual Loan Progress
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        {activeLoans.length === 0 ? (
+                          <p className="text-slate-500 text-sm">No active loans to track</p>
+                        ) : (
+                          <div className="space-y-4">
+                            {activeLoans.slice(0, 5).map(loan => {
+                              const borrower = publicProfiles.find(p => p.user_id === loan.borrower_id);
+                              const totalOwed = loan.total_amount || loan.amount || 0;
+                              const amountPaid = loan.amount_paid || 0;
+                              const percentPaid = totalOwed > 0 ? Math.round((amountPaid / totalOwed) * 100) : 0;
+
+                              return (
+                                <div key={loan.id} className="space-y-1">
+                                  <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
+                                      <div className="w-6 h-6 rounded-full bg-[#35B276]/20 flex items-center justify-center">
+                                        <span className="text-xs font-medium text-[#35B276]">
+                                          {borrower?.full_name?.charAt(0) || '?'}
+                                        </span>
+                                      </div>
+                                      <span className="text-sm font-medium text-slate-700">@{borrower?.username || 'user'}</span>
+                                    </div>
+                                    <span className="text-xs text-slate-500">{percentPaid}%</span>
+                                  </div>
+                                  <div className="relative h-3 bg-slate-200 rounded-full overflow-hidden">
+                                    <div
+                                      className="absolute top-0 left-0 h-full bg-[#35B276] rounded-full transition-all duration-500"
+                                      style={{ width: `${percentPaid}%` }}
+                                    />
+                                  </div>
+                                  <div className="flex justify-between text-xs text-slate-500">
+                                    <span>${amountPaid.toLocaleString()} paid</span>
+                                    <span>${totalOwed.toLocaleString()} total</span>
                                   </div>
                                 </div>
-                                <Badge variant={loan.status === 'active' ? 'default' : 'secondary'} className={
-                                  loan.status === 'active' ? 'bg-green-100 text-green-700' : ''
-                                }>
-                                  {loan.status}
-                                </Badge>
-                              </div>
-                            );
-                          })}
-                      </div>
-                    </CardContent>
-                  </Card>
+                              );
+                            })}
+                            {activeLoans.length > 5 && (
+                              <Button
+                                variant="ghost"
+                                className="w-full text-[#35B276]"
+                                onClick={() => setActiveSection('active')}
+                              >
+                                View all {activeLoans.length} loans
+                              </Button>
+                            )}
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </div>
                 )}
               </motion.div>
             )}

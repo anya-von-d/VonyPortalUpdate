@@ -229,7 +229,7 @@ export default function Borrowing() {
           </motion.div>
 
           {/* Tab Navigation */}
-          <div className="flex gap-2 overflow-x-auto pb-2">
+          <div className="flex gap-2 overflow-x-auto pb-2 justify-center">
             {tabs.map(tab => (
               <Button
                 key={tab.id}
