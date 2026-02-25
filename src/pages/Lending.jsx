@@ -27,7 +27,7 @@ import { createPageUrl } from "@/utils";
 import {
   PlusCircle, DollarSign, Calendar, Percent, FileText, User as UserIcon,
   AlertCircle, Zap, ClipboardList, ArrowUpRight, Send, Clock, Users,
-  TrendingUp, ChevronDown, ChevronUp
+  TrendingUp, ChevronDown, ChevronUp, Sparkles
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { addMonths, format } from "date-fns";
@@ -50,7 +50,7 @@ export default function Lending() {
   const [selectedLoanDetails, setSelectedLoanDetails] = useState(null);
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [loanToCancel, setLoanToCancel] = useState(null);
-  const [activeSection, setActiveSection] = useState('create'); // 'create', 'active', 'offers', 'history'
+  const [activeSection, setActiveSection] = useState('lending'); // 'lending', 'create', 'active', 'offers', 'history'
   const [showCreateForm, setShowCreateForm] = useState(true);
 
   const [formData, setFormData] = useState({
@@ -336,6 +336,7 @@ export default function Lending() {
   const details = calculateLoanDetails();
 
   const tabs = [
+    { id: 'lending', label: 'Lending', icon: ArrowUpRight, count: null },
     { id: 'create', label: 'Create Offer', icon: PlusCircle, count: null },
     { id: 'active', label: 'Active Loans', icon: TrendingUp, count: activeLoans.length },
     { id: 'offers', label: 'Pending Offers', icon: Send, count: pendingOffers.length },
@@ -450,6 +451,196 @@ export default function Lending() {
 
           {/* Content Sections */}
           <AnimatePresence mode="wait">
+            {activeSection === 'lending' && (
+              <motion.div
+                key="lending"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="space-y-6"
+              >
+                {/* Overview Cards */}
+                <div className="grid md:grid-cols-2 gap-4">
+                  {/* Who You've Lent To */}
+                  <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="flex items-center gap-2 text-base">
+                        <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                          <Users className="w-4 h-4 text-green-600" />
+                        </div>
+                        People You've Lent To
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      {activeLoans.length === 0 ? (
+                        <p className="text-slate-500 text-sm">No active borrowers yet</p>
+                      ) : (
+                        <div className="space-y-3">
+                          {activeLoans.slice(0, 3).map(loan => {
+                            const borrower = publicProfiles.find(p => p.user_id === loan.borrower_id);
+                            return (
+                              <div key={loan.id} className="flex items-center justify-between p-2 bg-slate-50 rounded-lg">
+                                <div className="flex items-center gap-2">
+                                  <div className="w-8 h-8 rounded-full bg-[#35B276]/20 flex items-center justify-center">
+                                    <span className="text-sm font-medium text-[#35B276]">
+                                      {borrower?.full_name?.charAt(0) || '?'}
+                                    </span>
+                                  </div>
+                                  <div>
+                                    <p className="font-medium text-sm text-slate-800">@{borrower?.username || 'user'}</p>
+                                    {loan.purpose && <p className="text-xs text-slate-500">{loan.purpose}</p>}
+                                  </div>
+                                </div>
+                                <p className="font-semibold text-[#35B276]">${loan.amount?.toLocaleString()}</p>
+                              </div>
+                            );
+                          })}
+                          {activeLoans.length > 3 && (
+                            <Button
+                              variant="ghost"
+                              className="w-full text-[#35B276]"
+                              onClick={() => setActiveSection('active')}
+                            >
+                              View all {activeLoans.length} loans
+                            </Button>
+                          )}
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+
+                  {/* Upcoming Payments */}
+                  <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="flex items-center gap-2 text-base">
+                        <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                          <Calendar className="w-4 h-4 text-blue-600" />
+                        </div>
+                        Upcoming Payments
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      {activeLoans.filter(l => l.next_payment_date).length === 0 ? (
+                        <p className="text-slate-500 text-sm">No upcoming payments</p>
+                      ) : (
+                        <div className="space-y-3">
+                          {activeLoans
+                            .filter(l => l.next_payment_date)
+                            .sort((a, b) => new Date(a.next_payment_date) - new Date(b.next_payment_date))
+                            .slice(0, 3)
+                            .map(loan => {
+                              const borrower = publicProfiles.find(p => p.user_id === loan.borrower_id);
+                              return (
+                                <div key={loan.id} className="flex items-center justify-between p-2 bg-slate-50 rounded-lg">
+                                  <div>
+                                    <p className="font-medium text-sm text-slate-800">
+                                      ${loan.payment_amount?.toLocaleString() || 0} from @{borrower?.username || 'user'}
+                                    </p>
+                                    <p className="text-xs text-slate-500">
+                                      Due {format(new Date(loan.next_payment_date), 'MMM d, yyyy')}
+                                    </p>
+                                  </div>
+                                  <Badge variant="outline" className="text-xs">
+                                    {Math.ceil((new Date(loan.next_payment_date) - new Date()) / (1000 * 60 * 60 * 24))} days
+                                  </Badge>
+                                </div>
+                              );
+                            })}
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Quick Actions */}
+                <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-base">Quick Actions</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                      <Button
+                        onClick={() => setActiveSection('create')}
+                        className="h-auto py-4 flex flex-col items-center gap-2 bg-[#35B276] hover:bg-[#2d9a65]"
+                      >
+                        <PlusCircle className="w-5 h-5" />
+                        <span className="text-sm">Create Offer</span>
+                      </Button>
+                      <Button
+                        onClick={() => setActiveSection('active')}
+                        variant="outline"
+                        className="h-auto py-4 flex flex-col items-center gap-2"
+                      >
+                        <TrendingUp className="w-5 h-5" />
+                        <span className="text-sm">Active ({activeLoans.length})</span>
+                      </Button>
+                      <Button
+                        onClick={() => setActiveSection('offers')}
+                        variant="outline"
+                        className="h-auto py-4 flex flex-col items-center gap-2"
+                      >
+                        <Send className="w-5 h-5" />
+                        <span className="text-sm">Pending ({pendingOffers.length})</span>
+                      </Button>
+                      <Button
+                        onClick={() => setActiveSection('history')}
+                        variant="outline"
+                        className="h-auto py-4 flex flex-col items-center gap-2"
+                      >
+                        <Clock className="w-5 h-5" />
+                        <span className="text-sm">History</span>
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Recent Activity */}
+                {(activeLoans.length > 0 || pendingOffers.length > 0) && (
+                  <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="flex items-center gap-2 text-base">
+                        <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
+                          <Sparkles className="w-4 h-4 text-purple-600" />
+                        </div>
+                        Recent Lending Activity
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-2">
+                        {[...activeLoans, ...pendingOffers]
+                          .sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0))
+                          .slice(0, 5)
+                          .map(loan => {
+                            const borrower = publicProfiles.find(p => p.user_id === loan.borrower_id);
+                            return (
+                              <div key={loan.id} className="flex items-center justify-between py-2 border-b border-slate-100 last:border-0">
+                                <div className="flex items-center gap-3">
+                                  <div className={`w-2 h-2 rounded-full ${
+                                    loan.status === 'active' ? 'bg-green-500' :
+                                    loan.status === 'pending' ? 'bg-yellow-500' : 'bg-slate-300'
+                                  }`} />
+                                  <div>
+                                    <p className="text-sm text-slate-800">
+                                      ${loan.amount?.toLocaleString()} to @{borrower?.username || 'user'}
+                                    </p>
+                                    <p className="text-xs text-slate-500">{loan.purpose || 'No description'}</p>
+                                  </div>
+                                </div>
+                                <Badge variant={loan.status === 'active' ? 'default' : 'secondary'} className={
+                                  loan.status === 'active' ? 'bg-green-100 text-green-700' : ''
+                                }>
+                                  {loan.status}
+                                </Badge>
+                              </div>
+                            );
+                          })}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+              </motion.div>
+            )}
+
             {activeSection === 'create' && (
               <motion.div
                 key="create"

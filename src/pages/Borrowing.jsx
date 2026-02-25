@@ -204,7 +204,7 @@ export default function Borrowing() {
   const overallProgress = totalOwed > 0 ? (totalPaid / totalOwed) * 100 : 0;
 
   const tabs = [
-    { id: 'overview', label: 'Overview', icon: DollarSign, count: null },
+    { id: 'overview', label: 'Borrowing', icon: ArrowDownRight, count: null },
     { id: 'active', label: 'Active Loans', icon: TrendingDown, count: activeLoans.length },
     { id: 'offers', label: 'Loan Offers', icon: Inbox, count: pendingOffers.length },
     { id: 'history', label: 'History', icon: Clock, count: completedLoans.length },
