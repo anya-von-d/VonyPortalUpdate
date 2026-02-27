@@ -27,7 +27,7 @@ import { createPageUrl } from "@/utils";
 import {
   DollarSign, Calendar, Percent, FileText, User as UserIcon,
   AlertCircle, Zap, ClipboardList, Send, Clock,
-  TrendingUp, Pencil, X, Save, History
+  TrendingUp, Pencil, X, Save, History, PlusCircle, Settings, BarChart3
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { addMonths, format } from "date-fns";
