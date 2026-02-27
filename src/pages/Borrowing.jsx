@@ -595,9 +595,9 @@ export default function Borrowing() {
                     {!manageLoanSelected ? (
                       <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60">
                         <CardContent className="flex items-center justify-center py-16">
-                          <div className="text-center text-slate-400">
-                            <BarChart3 className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                            <p>Select a loan above to view payment history</p>
+                          <div className="text-center text-[#35B276]/60">
+                            <BarChart3 className="w-12 h-12 mx-auto mb-3" />
+                            <p className="text-slate-400">Select a loan above to view payment history</p>
                           </div>
                         </CardContent>
                       </Card>
@@ -607,8 +607,8 @@ export default function Borrowing() {
                         <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60">
                           <CardHeader className="pb-2">
                             <CardTitle className="flex items-center gap-2 text-base">
-                              <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                                <BarChart3 className="w-4 h-4 text-blue-600" />
+                              <div className="w-8 h-8 rounded-full bg-[#35B276]/20 flex items-center justify-center">
+                                <BarChart3 className="w-4 h-4 text-[#35B276]" />
                               </div>
                               Payment History
                             </CardTitle>
@@ -675,10 +675,10 @@ export default function Borrowing() {
                                     <div className="flex-1 relative">
                                       {/* Dashed line at expected payment amount - positioned at top of bar area */}
                                       <div
-                                        className="absolute left-0 right-0 border-t-2 border-dashed border-amber-500 z-10 flex items-center"
+                                        className="absolute left-0 right-0 border-t-2 border-dashed border-[#35B276] z-10 flex items-center"
                                         style={{ top: '0px' }}
                                       >
-                                        <span className="absolute -right-1 -top-3 text-[9px] text-amber-600 font-medium bg-white px-1 rounded whitespace-nowrap">
+                                        <span className="absolute -right-1 -top-3 text-[9px] text-[#35B276] font-medium bg-white px-1 rounded whitespace-nowrap">
                                           Expected: ${paymentAmount.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                                         </span>
                                       </div>
@@ -727,7 +727,7 @@ export default function Borrowing() {
                                       <span className="text-slate-600">Upcoming</span>
                                     </div>
                                     <div className="flex items-center gap-1">
-                                      <div className="w-6 h-0 border-t-2 border-dashed border-amber-500" />
+                                      <div className="w-6 h-0 border-t-2 border-dashed border-[#35B276]" />
                                       <span className="text-slate-600">Expected Payment</span>
                                     </div>
                                   </div>
