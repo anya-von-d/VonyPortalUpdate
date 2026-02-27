@@ -261,7 +261,69 @@ export default function Home() {
 
             <div className="bg-[#DBFFEB] rounded-2xl p-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <StatsCard title="Total Lent" value={formatMoney(totalLent)} color="green" change={`${myLoans.filter(l => l && l.lender_id === user.id && l.status === 'active').length} active loans`} index={0} />
+                {/* Pie Chart Card */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, ease: "easeOut" }}
+                >
+                  <Card className="bg-white backdrop-blur-sm h-full cursor-default border-0">
+                    <CardContent className="p-5 flex flex-col items-center justify-center h-full">
+                      <p className="text-sm font-medium text-slate-600 mb-3">Lending Overview</p>
+                      {(() => {
+                        const lentLoans = myLoans.filter(l => l && l.lender_id === user.id && l.status === 'active');
+                        const totalLentAmount = lentLoans.reduce((sum, loan) => sum + (loan.total_amount || loan.amount || 0), 0);
+                        const totalRepaid = lentLoans.reduce((sum, loan) => sum + (loan.amount_paid || 0), 0);
+                        const percentRepaid = totalLentAmount > 0 ? Math.round((totalRepaid / totalLentAmount) * 100) : 0;
+                        const circumference = 2 * Math.PI * 40;
+                        const strokeDashoffset = circumference - (percentRepaid / 100) * circumference;
+
+                        return (
+                          <>
+                            <div className="relative w-24 h-24">
+                              <svg className="w-full h-full transform -rotate-90">
+                                {/* Background circle */}
+                                <circle
+                                  cx="48"
+                                  cy="48"
+                                  r="40"
+                                  fill="none"
+                                  stroke="#e2e8f0"
+                                  strokeWidth="8"
+                                />
+                                {/* Progress circle */}
+                                <circle
+                                  cx="48"
+                                  cy="48"
+                                  r="40"
+                                  fill="none"
+                                  stroke="#00A86B"
+                                  strokeWidth="8"
+                                  strokeLinecap="round"
+                                  strokeDasharray={circumference}
+                                  strokeDashoffset={strokeDashoffset}
+                                  className="transition-all duration-500"
+                                />
+                              </svg>
+                              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                <span className="text-lg font-bold text-slate-800">{percentRepaid}%</span>
+                                <span className="text-[10px] text-slate-500">Repaid</span>
+                              </div>
+                            </div>
+                            <div className="mt-3 text-center">
+                              <p className="text-xs text-slate-500">
+                                {formatMoney(totalRepaid)} of {formatMoney(totalLentAmount)}
+                              </p>
+                              <p className="text-xs text-slate-400 mt-1">
+                                {lentLoans.length} active loan{lentLoans.length !== 1 ? 's' : ''}
+                              </p>
+                            </div>
+                          </>
+                        );
+                      })()}
+                    </CardContent>
+                  </Card>
+                </motion.div>
                 <StatsCard title="Next Payment" value={nextPayment ? formatMoney(nextPaymentAmount) : '-'} color="blue" change={nextPayment ? `to @${safeAllProfiles.find(p => p.user_id === nextPayment.lender_id)?.username || 'user'}` : 'N/A'} index={1} />
                 <StatsCard title="Next Payment Due" value={paymentStatus} color="orange" change={nextPayment ? format(nextPayment.date, 'MMM d, yyyy') : 'N/A'} index={2} />
               </div>
