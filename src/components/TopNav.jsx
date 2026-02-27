@@ -23,14 +23,6 @@ const mainNavItems = [
     title: "Borrowing",
     url: createPageUrl("Borrowing"),
   },
-  {
-    title: "Learn",
-    url: createPageUrl("Learn"),
-  },
-  {
-    title: "Shop",
-    url: createPageUrl("Shop"),
-  },
 ];
 
 const moreMenuItems = [
@@ -41,6 +33,14 @@ const moreMenuItems = [
   {
     title: "Activity",
     url: createPageUrl("RecentActivity"),
+  },
+  {
+    title: "Learn (Coming Soon)",
+    url: createPageUrl("Learn"),
+  },
+  {
+    title: "Shop (Coming Soon)",
+    url: createPageUrl("Shop"),
   },
   {
     title: "Profile",

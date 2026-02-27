@@ -21,20 +21,20 @@ const navigationItems = [
     url: createPageUrl("Borrowing"),
   },
   {
-    title: "Learn",
-    url: createPageUrl("Learn"),
-  },
-  {
-    title: "Shop",
-    url: createPageUrl("Shop"),
-  },
-  {
     title: "Agreements",
     url: createPageUrl("LoanAgreements"),
   },
   {
     title: "Activity",
     url: createPageUrl("RecentActivity"),
+  },
+  {
+    title: "Learn (Coming Soon)",
+    url: createPageUrl("Learn"),
+  },
+  {
+    title: "Shop (Coming Soon)",
+    url: createPageUrl("Shop"),
   },
   {
     title: "Profile",
