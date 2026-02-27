@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Plus, CreditCard, Zap, Send } from "lucide-react";
+import { Plus, CreditCard, Send } from "lucide-react";
 import { motion } from "framer-motion";
 
 const actions = [
@@ -44,10 +44,9 @@ export default function QuickActions() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: 0.2 }}
     >
-      <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60">
+      <Card className="bg-[#DBFFEB] backdrop-blur-sm border-0">
         <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-slate-800">
-            <Zap className="w-5 h-5 text-green-600" />
+          <CardTitle className="text-slate-800">
             Quick Actions
           </CardTitle>
         </CardHeader>
