@@ -200,11 +200,11 @@ export default function TopNav({ location }) {
               </Link>
             ))}
 
-            {/* More Dropdown */}
+            {/* Agreements Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="font-sans text-sm font-medium text-[#4A6B55] hover:text-[#0A1A10] transition-colors duration-200">
-                  More
+                  Agreements
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48 bg-white border border-gray-100 shadow-lg">
