@@ -2,15 +2,15 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Menu, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
-const mainNavItems = [
+const leftNavItems = [
   {
     title: "Home",
     url: createPageUrl("Home"),
@@ -19,6 +19,9 @@ const mainNavItems = [
     title: "Lending",
     url: createPageUrl("Lending"),
   },
+];
+
+const rightNavItems = [
   {
     title: "Borrowing",
     url: createPageUrl("Borrowing"),
@@ -48,87 +51,174 @@ const moreMenuItems = [
   },
 ];
 
-const allNavItems = [...mainNavItems, ...moreMenuItems];
+const allNavItems = [...leftNavItems, ...rightNavItems, ...moreMenuItems];
 
-export default function TopNav({ location, colors, user, isLoading, theme }) {
+export default function TopNav({ location }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  const handleMobileNavClick = (url) => {
+    setMobileMenuOpen(false);
+    // Small delay before scrolling to allow menu to close
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 150);
+  };
+
   return (
-    <div className="bg-white shadow-sm px-8 py-4">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
-        {/* Logo on the left - italic serif style like RebrandMainWebsite */}
-        <Link to={createPageUrl("Home")} className="font-serif italic text-2xl text-[#0A1A10] tracking-wide">
-          Vony
-        </Link>
+    <>
+      {/* Fixed Navigation Bar */}
+      <nav className="fixed top-0 left-0 right-0 z-50 h-14 bg-white shadow-sm shadow-black/5">
+        <div className="h-full px-6 md:px-10 flex items-center justify-between">
 
-        {/* Mobile Hamburger Menu */}
-        <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-          <SheetTrigger asChild className="lg:hidden">
-            <button className="p-2">
-              <Menu className="w-6 h-6 text-[#0A1A10]" />
-            </button>
-          </SheetTrigger>
-          <SheetContent side="left" className="w-64 bg-white">
-            <nav className="flex flex-col gap-2 mt-8">
-              {allNavItems.map((item) => (
-                <Link
-                  key={item.title}
-                  to={item.url}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`px-4 py-3 rounded-lg transition-all text-sm font-medium ${
-                    location.pathname === item.url
-                      ? "text-[#00A86B] bg-[#E8FCF0]"
-                      : "text-[#4A6B55] hover:text-[#00A86B] hover:bg-[#E8FCF0]"
-                  }`}
+          {/* Mobile: Hamburger Menu (Left) */}
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden p-2 -ml-2 text-[#0A1A10]"
+            aria-label="Toggle menu"
+          >
+            <AnimatePresence mode="wait">
+              {mobileMenuOpen ? (
+                <motion.div
+                  key="close"
+                  initial={{ rotate: -90, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: 90, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
                 >
-                  {item.title}
-                </Link>
-              ))}
-            </nav>
-          </SheetContent>
-        </Sheet>
+                  <X className="w-[22px] h-[22px]" />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="menu"
+                  initial={{ rotate: 90, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: -90, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Menu className="w-[22px] h-[22px]" />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </button>
 
-        {/* Centered navigation - text only, no icons */}
-        <nav className="hidden lg:flex items-center gap-8">
-          {mainNavItems.map((item) => (
-            <Link
-              key={item.title}
-              to={item.url}
-              className={`text-sm font-medium transition-colors duration-200 ${
-                location.pathname === item.url
-                  ? "text-[#00A86B]"
-                  : "text-[#4A6B55] hover:text-[#00A86B]"
-              }`}
+          {/* Desktop: Left Nav Links */}
+          <div className="hidden md:flex items-center gap-10">
+            {leftNavItems.map((item) => (
+              <Link
+                key={item.title}
+                to={item.url}
+                className={`font-sans text-sm font-medium transition-colors duration-200 ${
+                  location.pathname === item.url
+                    ? "text-[#0A1A10]"
+                    : "text-[#4A6B55] hover:text-[#0A1A10]"
+                }`}
+              >
+                {item.title}
+              </Link>
+            ))}
+          </div>
+
+          {/* Center: Logo - Absolutely centered */}
+          <Link
+            to={createPageUrl("Home")}
+            className="absolute left-1/2 -translate-x-1/2 font-serif italic text-3xl text-[#0A1A10] tracking-wide"
+          >
+            Vony
+          </Link>
+
+          {/* Desktop: Right Nav Links + More */}
+          <div className="hidden md:flex items-center gap-10">
+            {rightNavItems.map((item) => (
+              <Link
+                key={item.title}
+                to={item.url}
+                className={`font-sans text-sm font-medium transition-colors duration-200 ${
+                  location.pathname === item.url
+                    ? "text-[#0A1A10]"
+                    : "text-[#4A6B55] hover:text-[#0A1A10]"
+                }`}
+              >
+                {item.title}
+              </Link>
+            ))}
+
+            {/* More Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="font-sans text-sm font-medium text-[#4A6B55] hover:text-[#0A1A10] transition-colors duration-200">
+                  More
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48 bg-white border border-gray-100 shadow-lg">
+                {moreMenuItems.map((item) => (
+                  <DropdownMenuItem key={item.title} asChild>
+                    <Link
+                      to={item.url}
+                      className={`cursor-pointer ${
+                        location.pathname === item.url
+                          ? "text-[#0A1A10]"
+                          : "text-[#4A6B55] hover:text-[#0A1A10]"
+                      }`}
+                    >
+                      {item.title}
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+
+          {/* Mobile: Empty spacer for balance */}
+          <div className="md:hidden w-10"></div>
+        </div>
+      </nav>
+
+      {/* Mobile Menu Overlay */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="md:hidden fixed inset-0 z-40 bg-black/20"
+              onClick={() => setMobileMenuOpen(false)}
+            />
+
+            {/* Full Screen Menu */}
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.2 }}
+              className="md:hidden fixed top-14 left-0 right-0 bottom-0 z-40 bg-white overflow-y-auto"
             >
-              {item.title}
-            </Link>
-          ))}
-
-          {/* More dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button className="text-sm font-medium text-[#4A6B55] hover:text-[#00A86B] transition-colors duration-200">
-                More
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48 bg-white border border-[#7AD4A0]/30">
-              {moreMenuItems.map((item) => (
-                <DropdownMenuItem key={item.title} asChild>
+              <nav className="px-6 py-6 space-y-1">
+                {allNavItems.map((item) => (
                   <Link
+                    key={item.title}
                     to={item.url}
-                    className="cursor-pointer text-[#4A6B55] hover:text-[#00A86B]"
+                    onClick={() => handleMobileNavClick(item.url)}
+                    className={`block px-4 py-3 rounded-lg font-sans text-base font-medium transition-colors duration-200 ${
+                      location.pathname === item.url
+                        ? "text-[#0A1A10] bg-[#E8FCF0]"
+                        : "text-[#4A6B55] hover:text-[#0A1A10] hover:bg-gray-50"
+                    }`}
                   >
                     {item.title}
                   </Link>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </nav>
+                ))}
+              </nav>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
-        {/* Empty space on the right for balance */}
-        <div className="w-10 h-10 hidden lg:block"></div>
-      </div>
-    </div>
+      {/* Spacer to prevent content from going under fixed nav */}
+      <div className="h-14"></div>
+    </>
   );
 }
