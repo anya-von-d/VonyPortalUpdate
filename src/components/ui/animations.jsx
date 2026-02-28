@@ -285,7 +285,7 @@ export function AnimatedButton({
   const variants = {
     primary: "bg-[#35B276] hover:bg-[#2d9a65] text-white shadow-lg shadow-green-600/20",
     secondary: "bg-slate-100 hover:bg-slate-200 text-slate-800",
-    outline: "border-2 border-slate-200 hover:border-[#35B276] hover:text-[#35B276] bg-white",
+    outline: "border-2 border-slate-200 hover:border-[#35B276] hover:text-[#35B276] bg-[#EEFFF5]",
     danger: "bg-red-500 hover:bg-red-600 text-white shadow-lg shadow-red-500/20",
   };
 

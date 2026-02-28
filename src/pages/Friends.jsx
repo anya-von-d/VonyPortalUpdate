@@ -263,7 +263,7 @@ export default function Friends() {
               className={`whitespace-nowrap ${
                 activeTab === tab.id
                   ? 'bg-[#00A86B] hover:bg-[#0D9B76] text-white'
-                  : 'bg-white border-0 text-slate-600 hover:bg-slate-50'
+                  : 'bg-[#EEFFF5] border-0 text-slate-600 hover:bg-slate-50'
               }`}
             >
               <span className="hidden sm:inline">{tab.label}</span>
@@ -294,7 +294,7 @@ export default function Friends() {
                         className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                           editMode
                             ? 'bg-[#00A86B] text-white'
-                            : 'bg-white text-slate-600 hover:bg-slate-50'
+                            : 'bg-[#EEFFF5] text-slate-600 hover:bg-slate-50'
                         }`}
                       >
                         {editMode ? 'Done' : 'Edit'}
@@ -421,7 +421,7 @@ export default function Friends() {
                       placeholder="Search by username..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-10 bg-white"
+                      className="pl-10 bg-[#EEFFF5]"
                     />
                     {searchQuery && (
                       <button

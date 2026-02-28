@@ -360,7 +360,7 @@ export default function PendingPaymentConfirmations({ userId, onUpdate }) {
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: 'auto' }}
                       exit={{ opacity: 0, height: 0 }}
-                      className="bg-white rounded-lg border border-amber-200 p-4"
+                      className="bg-[#EEFFF5] rounded-lg border border-amber-200 p-4"
                     >
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div className="flex items-start gap-3">
@@ -453,7 +453,7 @@ export default function PendingPaymentConfirmations({ userId, onUpdate }) {
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: 'auto' }}
                       exit={{ opacity: 0, height: 0 }}
-                      className="bg-white rounded-lg border border-blue-200 p-4"
+                      className="bg-[#EEFFF5] rounded-lg border border-blue-200 p-4"
                     >
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div className="flex items-start gap-3">

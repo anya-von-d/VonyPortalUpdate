@@ -397,7 +397,7 @@ export default function Requests() {
               className={`whitespace-nowrap ${
                 activeTab === tab.id
                   ? 'bg-[#00A86B] hover:bg-[#0D9B76] text-white'
-                  : 'bg-white border-0 text-slate-600 hover:bg-slate-50'
+                  : 'bg-[#EEFFF5] border-0 text-slate-600 hover:bg-slate-50'
               }`}
             >
               <span className="hidden sm:inline">{tab.label}</span>
@@ -892,7 +892,7 @@ export default function Requests() {
                         </div>
 
                         {loan.contract_modification_notes && (
-                          <div className="bg-white/50 rounded-lg p-3">
+                          <div className="bg-[#EEFFF5]/50 rounded-lg p-3">
                             <p className="text-xs font-medium text-slate-600 mb-1">Changes:</p>
                             <p className="text-sm text-slate-800">{loan.contract_modification_notes}</p>
                           </div>

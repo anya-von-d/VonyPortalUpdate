@@ -330,7 +330,7 @@ export default function RecentActivityPage() {
                   className={`flex-1 min-w-[100px] ${
                     filterType === 'loan'
                       ? 'bg-[#00A86B] hover:bg-[#0D9B76] text-white'
-                      : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                      : 'bg-[#EEFFF5] border-slate-200 text-slate-600 hover:bg-slate-50'
                   }`}
                 >
                   <FileText className="w-4 h-4 mr-2" />
@@ -345,7 +345,7 @@ export default function RecentActivityPage() {
                   className={`flex-1 min-w-[100px] ${
                     filterType === 'payment'
                       ? 'bg-[#00A86B] hover:bg-[#0D9B76] text-white'
-                      : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                      : 'bg-[#EEFFF5] border-slate-200 text-slate-600 hover:bg-slate-50'
                   }`}
                 >
                   <DollarSign className="w-4 h-4 mr-2" />
@@ -361,7 +361,7 @@ export default function RecentActivityPage() {
                   className={`flex-1 min-w-[100px] ${
                     filterType === 'all'
                       ? 'bg-[#00A86B] hover:bg-[#0D9B76] text-white'
-                      : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                      : 'bg-[#EEFFF5] border-slate-200 text-slate-600 hover:bg-slate-50'
                   }`}
                 >
                   <Eye className="w-4 h-4 mr-2" />
@@ -390,7 +390,7 @@ export default function RecentActivityPage() {
                 {filterType === 'loan' && (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="outline" size="sm" className="bg-white border-slate-200 text-slate-600 hover:bg-slate-50 gap-2">
+                      <Button variant="outline" size="sm" className="bg-[#EEFFF5] border-slate-200 text-slate-600 hover:bg-slate-50 gap-2">
                         <span>{getLoanFilterLabel()}</span>
                         <ChevronDown className="w-3.5 h-3.5" />
                       </Button>
@@ -425,7 +425,7 @@ export default function RecentActivityPage() {
                 {filterType === 'payment' && (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="outline" size="sm" className="bg-white border-slate-200 text-slate-600 hover:bg-slate-50 gap-2">
+                      <Button variant="outline" size="sm" className="bg-[#EEFFF5] border-slate-200 text-slate-600 hover:bg-slate-50 gap-2">
                         <span>{getPaymentFilterLabel()}</span>
                         <ChevronDown className="w-3.5 h-3.5" />
                       </Button>

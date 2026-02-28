@@ -160,7 +160,7 @@ export default function Shop() {
             className={`whitespace-nowrap ${
               activeTab === 'cards'
                 ? 'bg-[#00A86B] hover:bg-[#0D9B76] text-white'
-                : 'bg-white border-0 text-slate-600 hover:bg-slate-50'
+                : 'bg-[#EEFFF5] border-0 text-slate-600 hover:bg-slate-50'
             }`}
           >
             Credit Cards
@@ -171,7 +171,7 @@ export default function Shop() {
             className={`whitespace-nowrap ${
               activeTab === 'loans'
                 ? 'bg-[#00A86B] hover:bg-[#0D9B76] text-white'
-                : 'bg-white border-0 text-slate-600 hover:bg-slate-50'
+                : 'bg-[#EEFFF5] border-0 text-slate-600 hover:bg-slate-50'
             }`}
           >
             Loans

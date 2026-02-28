@@ -630,7 +630,7 @@ export default function RecordPaymentModal({ loan, onClose, onPaymentComplete, i
 
               {currentHandle ? (
                 <div className="space-y-2">
-                  <div className="flex items-center gap-2 bg-white rounded-md p-2 border border-slate-200">
+                  <div className="flex items-center gap-2 bg-[#EEFFF5] rounded-md p-2 border border-slate-200">
                     <span className="text-sm text-slate-600 flex-1 font-mono">
                       {currentHandle}
                     </span>

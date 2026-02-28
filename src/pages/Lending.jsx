@@ -1153,7 +1153,7 @@ export default function Lending() {
                 className={`whitespace-nowrap ${
                   activeSection === tab.id
                     ? 'bg-[#00A86B] hover:bg-[#0D9B76] text-white'
-                    : 'bg-white border-0 text-slate-600 hover:bg-slate-50'
+                    : 'bg-[#EEFFF5] border-0 text-slate-600 hover:bg-slate-50'
                 }`}
               >
                 <span className="hidden sm:inline">{tab.label}</span>

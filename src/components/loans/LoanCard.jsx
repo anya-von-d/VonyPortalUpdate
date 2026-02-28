@@ -59,7 +59,7 @@ export default function LoanCard({ loan, type, onMakePayment, onDetails }) {
   const isOverdue = daysUntil !== null && daysUntil < 0;
 
   return (
-    <Card className="bg-white border-slate-200/60 hover:shadow-md transition-all duration-200">
+    <Card className="bg-[#EEFFF5] border-slate-200/60 hover:shadow-md transition-all duration-200">
       <CardContent className="p-6">
         <div className="flex flex-col gap-4">
           {/* Header with user info and amount */}

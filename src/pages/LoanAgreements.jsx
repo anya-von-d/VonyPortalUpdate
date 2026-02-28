@@ -728,7 +728,7 @@ export default function LoanAgreements() {
                     className={`flex-1 min-w-[100px] ${
                       roleFilter === 'lender'
                         ? 'bg-[#00A86B] hover:bg-[#0D9B76] text-white'
-                        : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                        : 'bg-[#EEFFF5] border-slate-200 text-slate-600 hover:bg-slate-50'
                     }`}
                   >
                     <ArrowUpRight className="w-4 h-4 mr-2" />
@@ -740,7 +740,7 @@ export default function LoanAgreements() {
                     className={`flex-1 min-w-[100px] ${
                       roleFilter === 'borrower'
                         ? 'bg-[#00A86B] hover:bg-[#0D9B76] text-white'
-                        : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                        : 'bg-[#EEFFF5] border-slate-200 text-slate-600 hover:bg-slate-50'
                     }`}
                   >
                     <ArrowDownRight className="w-4 h-4 mr-2" />
@@ -752,7 +752,7 @@ export default function LoanAgreements() {
                     className={`flex-1 min-w-[100px] ${
                       roleFilter === 'both'
                         ? 'bg-[#00A86B] hover:bg-[#0D9B76] text-white'
-                        : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                        : 'bg-[#EEFFF5] border-slate-200 text-slate-600 hover:bg-slate-50'
                     }`}
                   >
                     <Users className="w-4 h-4 mr-2" />
@@ -778,7 +778,7 @@ export default function LoanAgreements() {
                   </p>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="outline" size="sm" className="bg-white border-slate-200 text-slate-600 hover:bg-slate-50 gap-2">
+                      <Button variant="outline" size="sm" className="bg-[#EEFFF5] border-slate-200 text-slate-600 hover:bg-slate-50 gap-2">
                         <span className="capitalize">{statusFilter === 'all' ? 'All Status' : statusFilter}</span>
                         <ChevronDown className="w-3.5 h-3.5" />
                       </Button>
