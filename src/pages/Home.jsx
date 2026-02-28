@@ -267,30 +267,32 @@ export default function Home() {
                   transition={{ duration: 0.4, ease: "easeOut" }}
                   className="relative"
                 >
-                  {/* Title with left arrow */}
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => setOverviewType(overviewType === 'lending' ? 'borrowing' : 'lending')}
-                        className="w-7 h-7 rounded-full bg-white/50 hover:bg-white/80 flex items-center justify-center transition-colors duration-200"
-                      >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00A86B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <polyline points="15 18 9 12 15 6"></polyline>
-                        </svg>
-                      </button>
-                      <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
-                        {overviewType === 'lending' ? 'Lending Overview' : 'Borrowing Overview'}
-                      </p>
-                    </div>
-                    <button
-                      onClick={() => setOverviewType(overviewType === 'lending' ? 'borrowing' : 'lending')}
-                      className="w-7 h-7 rounded-full bg-white/50 hover:bg-white/80 flex items-center justify-center transition-colors duration-200"
-                    >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00A86B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="9 18 15 12 9 6"></polyline>
-                      </svg>
-                    </button>
-                  </div>
+                  {/* Left Arrow */}
+                  <button
+                    onClick={() => setOverviewType(overviewType === 'lending' ? 'borrowing' : 'lending')}
+                    className="absolute left-[-12px] top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors duration-200"
+                    style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00A86B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                  </button>
+
+                  {/* Right Arrow */}
+                  <button
+                    onClick={() => setOverviewType(overviewType === 'lending' ? 'borrowing' : 'lending')}
+                    className="absolute right-[-12px] top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors duration-200"
+                    style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00A86B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                  </button>
+
+                  {/* Title */}
+                  <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                    {overviewType === 'lending' ? 'Lending Overview' : 'Borrowing Overview'}
+                  </p>
 
                   <div className="bg-white rounded-xl p-4 flex flex-col items-center justify-center">
                     <motion.div
