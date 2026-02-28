@@ -437,9 +437,17 @@ export default function Home() {
                               {nextLenderPayment ? (
                                 <>
                                   <p className="text-lg font-bold text-slate-800">
-                                    {format(nextLenderPayment.date, 'EEE')}, {format(nextLenderPayment.date, 'MMM d')} ({getDaysUntilPayment()})
+                                    {format(nextLenderPayment.date, 'EEE')}, {format(nextLenderPayment.date, 'MMM d')}
                                   </p>
-                                  <p className="text-xs text-slate-500 mt-1">from @{nextLenderPayment.username}</p>
+                                  <div className="mt-2 px-3 py-1 bg-white rounded-full">
+                                    <p className="text-sm font-semibold text-[#00A86B]">
+                                      {(() => {
+                                        const days = Math.ceil((nextLenderPayment.date - new Date()) / (1000 * 60 * 60 * 24));
+                                        return days > 0 ? `${days} day${days !== 1 ? 's' : ''} away` : days === 0 ? 'Due today' : `${Math.abs(days)} day${Math.abs(days) !== 1 ? 's' : ''} overdue`;
+                                      })()}
+                                    </p>
+                                  </div>
+                                  <p className="text-xs text-slate-500 mt-2">from @{nextLenderPayment.username}</p>
                                 </>
                               ) : (
                                 <p className="text-lg font-bold text-slate-800">-</p>
@@ -494,9 +502,17 @@ export default function Home() {
                               {nextBorrowerPayment ? (
                                 <>
                                   <p className="text-lg font-bold text-slate-800">
-                                    {format(nextBorrowerPayment.date, 'EEE')}, {format(nextBorrowerPayment.date, 'MMM d')} ({getDaysUntilPayment()})
+                                    {format(nextBorrowerPayment.date, 'EEE')}, {format(nextBorrowerPayment.date, 'MMM d')}
                                   </p>
-                                  <p className="text-xs text-slate-500 mt-1">to @{nextBorrowerPayment.username}</p>
+                                  <div className="mt-2 px-3 py-1 bg-white rounded-full">
+                                    <p className="text-sm font-semibold text-[#00A86B]">
+                                      {(() => {
+                                        const days = Math.ceil((nextBorrowerPayment.date - new Date()) / (1000 * 60 * 60 * 24));
+                                        return days > 0 ? `${days} day${days !== 1 ? 's' : ''} away` : days === 0 ? 'Due today' : `${Math.abs(days)} day${Math.abs(days) !== 1 ? 's' : ''} overdue`;
+                                      })()}
+                                    </p>
+                                  </div>
+                                  <p className="text-xs text-slate-500 mt-2">to @{nextBorrowerPayment.username}</p>
                                 </>
                               ) : (
                                 <p className="text-lg font-bold text-slate-800">-</p>
