@@ -1562,7 +1562,7 @@ export default function Lending() {
                         {/* Borrower Selection */}
                         <div className="space-y-2">
                           <Label htmlFor="borrower_username">
-                            Select one of your friends
+                            Select the borrower
                           </Label>
                           {isLoadingUsers ? (
                             <div className="h-10 bg-slate-100 rounded-md animate-pulse" />
@@ -1707,7 +1707,6 @@ export default function Lending() {
                                     onChange={(e) => handleInputChange('repeating_time', e.target.value)}
                                     className="w-auto h-8 px-3 bg-white"
                                   />
-                                  <span>for</span>
                                   <Select
                                     value={formData.repeating_timezone}
                                     onValueChange={(value) => handleInputChange('repeating_timezone', value)}
@@ -1767,11 +1766,11 @@ export default function Lending() {
 
                         {/* Scheduled loan fields - Sentence format */}
                         {loanType === 'scheduled' && (
-                          <div className="p-4 bg-[#DBFFEB] rounded-xl space-y-3">
-                            {/* Line 1: The lender agrees to lend the borrower $X before DATE at an interest rate of X% */}
+                          <div className="p-4 bg-[#DBFFEB] rounded-xl">
                             <div className="flex flex-wrap items-center gap-2 text-sm text-slate-700">
+                              {/* Sentence: The lender agrees to lend [borrower] [amount] before [date] at an interest rate of [%]%. */}
                               <span>The lender agrees to lend</span>
-                              <span className="font-semibold text-slate-800">
+                              <span className="text-[#00A86B]">
                                 {formData.borrower_username ? (
                                   <>@{formData.borrower_username}</>
                                 ) : (
@@ -1807,11 +1806,9 @@ export default function Lending() {
                                 onChange={(e) => handleInputChange('interest_rate', e.target.value)}
                                 className="w-16 h-8 px-3 bg-white"
                               />
-                              <span>%</span>
-                            </div>
+                              <span>%.</span>
 
-                            {/* Line 2: The loan will be repaid over X weeks/months in weekly/monthly payments of $X */}
-                            <div className="flex flex-wrap items-center gap-2 text-sm text-slate-700">
+                              {/* Sentence: The loan will be repaid over [#] [weeks/months] in [weekly/monthly] payments of $X. */}
                               <span>The loan will be repaid over</span>
                               <Input
                                 type="number"
@@ -1848,14 +1845,23 @@ export default function Lending() {
                               </Select>
                               <span>payments of</span>
                               <span className="font-bold text-[#00A86B]">
-                                ${details.monthlyPayment.toFixed(2)}
+                                ${details.monthlyPayment.toFixed(2)}.
                               </span>
-                            </div>
 
-                            {/* Line 3: Payments will be due weekly/monthly on DAY at TIME for TIMEZONE */}
-                            <div className="flex flex-wrap items-center gap-2 text-sm text-slate-700">
+                              {/* Sentence: Payments will be due [weekly/monthly] on [day] at [time] [timezone]. */}
                               <span>Payments will be due</span>
-                              <span className="font-medium">{formData.payment_frequency}</span>
+                              <Select
+                                value={formData.payment_frequency}
+                                onValueChange={(value) => handleInputChange('payment_frequency', value)}
+                              >
+                                <SelectTrigger className="w-auto h-8 px-3 bg-white">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="weekly">weekly</SelectItem>
+                                  <SelectItem value="monthly">monthly</SelectItem>
+                                </SelectContent>
+                              </Select>
                               <span>on</span>
                               {formData.payment_frequency === 'weekly' ? (
                                 <Select
@@ -1899,7 +1905,6 @@ export default function Lending() {
                                 onChange={(e) => handleInputChange('loan_time', e.target.value)}
                                 className="w-auto h-8 px-3 bg-white"
                               />
-                              <span>for</span>
                               <Select
                                 value={formData.loan_timezone}
                                 onValueChange={(value) => handleInputChange('loan_timezone', value)}
@@ -1916,47 +1921,45 @@ export default function Lending() {
                                   <SelectItem value="AKST">AKST</SelectItem>
                                 </SelectContent>
                               </Select>
-                            </div>
 
-                            {/* Line 4: with the first of the X payments due on DATE and the last payment due on DATE */}
-                            {(() => {
-                              const numPayments = formData.payment_frequency === 'weekly'
-                                ? Math.ceil(parseInt(formData.repayment_period || 0) * (formData.repayment_unit === 'months' ? 4 : 1))
-                                : parseInt(formData.repayment_period || 0);
+                              {/* Sentence: The first of the [#] payments is due on [date] and the last payment is due on [date]. */}
+                              {(() => {
+                                const numPayments = formData.payment_frequency === 'weekly'
+                                  ? Math.ceil(parseInt(formData.repayment_period || 0) * (formData.repayment_unit === 'months' ? 4 : 1))
+                                  : parseInt(formData.repayment_period || 0);
 
-                              const firstPaymentDate = formData.first_payment_date ? new Date(formData.first_payment_date) : null;
-                              let lastPaymentDate = null;
+                                const firstPaymentDate = formData.first_payment_date ? new Date(formData.first_payment_date) : null;
+                                let lastPaymentDate = null;
 
-                              if (firstPaymentDate && numPayments > 0) {
-                                if (formData.payment_frequency === 'weekly') {
-                                  lastPaymentDate = addWeeks(firstPaymentDate, numPayments - 1);
-                                } else {
-                                  lastPaymentDate = addMonths(firstPaymentDate, numPayments - 1);
+                                if (firstPaymentDate && numPayments > 0) {
+                                  if (formData.payment_frequency === 'weekly') {
+                                    lastPaymentDate = addWeeks(firstPaymentDate, numPayments - 1);
+                                  } else {
+                                    lastPaymentDate = addMonths(firstPaymentDate, numPayments - 1);
+                                  }
                                 }
-                              }
 
-                              return (
-                                <div className="flex flex-wrap items-center gap-2 text-sm text-slate-700">
-                                  <span>with the first of the</span>
-                                  <span className="font-bold text-[#00A86B]">{numPayments || '—'}</span>
-                                  <span>payments due on</span>
-                                  <Input
-                                    type="date"
-                                    value={formData.first_payment_date}
-                                    onChange={(e) => handleInputChange('first_payment_date', e.target.value)}
-                                    min={format(new Date(), 'yyyy-MM-dd')}
-                                    className="w-auto h-8 px-3 bg-white"
-                                  />
-                                  <span>and the last payment due on</span>
-                                  <span className="font-bold text-[#00A86B]">
-                                    {lastPaymentDate ? format(lastPaymentDate, 'MMM d, yyyy') : '—'}
-                                  </span>
-                                </div>
-                              );
-                            })()}
+                                return (
+                                  <>
+                                    <span>with the first of the</span>
+                                    <span className="font-bold text-[#00A86B]">{numPayments || '—'}</span>
+                                    <span>payments due on</span>
+                                    <Input
+                                      type="date"
+                                      value={formData.first_payment_date}
+                                      onChange={(e) => handleInputChange('first_payment_date', e.target.value)}
+                                      min={format(new Date(), 'yyyy-MM-dd')}
+                                      className="w-auto h-8 px-3 bg-white"
+                                    />
+                                    <span>and the last payment due on</span>
+                                    <span className="font-bold text-[#00A86B]">
+                                      {lastPaymentDate ? format(lastPaymentDate, 'MMM d, yyyy') : '—'}.
+                                    </span>
+                                  </>
+                                );
+                              })()}
 
-                            {/* Line 5: This loan is for */}
-                            <div className="flex flex-wrap items-center gap-2 text-sm text-slate-700">
+                              {/* Sentence: This loan is for [purpose]. */}
                               <span>This loan is for</span>
                               <Input
                                 type="text"
@@ -2046,7 +2049,7 @@ export default function Lending() {
                         {formData.amount && details.monthlyPayment > 0 ? `$${details.monthlyPayment.toFixed(2)}` : '$—'}
                       </p>
                       <p className="text-xs text-slate-500 text-center">
-                        every {formData.payment_frequency || '—'} after interest
+                        {formData.payment_frequency || '—'} after interest
                       </p>
                     </div>
                   )}
