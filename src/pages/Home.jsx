@@ -267,12 +267,9 @@ export default function Home() {
                   transition={{ duration: 0.4, ease: "easeOut" }}
                   className="relative"
                 >
-                  {/* Title */}
+                  {/* Title with left arrow */}
                   <div className="flex items-center justify-between mb-4">
-                    <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
-                      {overviewType === 'lending' ? 'Lending Overview' : 'Borrowing Overview'}
-                    </p>
-                    <div className="flex gap-1">
+                    <div className="flex items-center gap-2">
                       <button
                         onClick={() => setOverviewType(overviewType === 'lending' ? 'borrowing' : 'lending')}
                         className="w-7 h-7 rounded-full bg-white/50 hover:bg-white/80 flex items-center justify-center transition-colors duration-200"
@@ -281,15 +278,18 @@ export default function Home() {
                           <polyline points="15 18 9 12 15 6"></polyline>
                         </svg>
                       </button>
-                      <button
-                        onClick={() => setOverviewType(overviewType === 'lending' ? 'borrowing' : 'lending')}
-                        className="w-7 h-7 rounded-full bg-white/50 hover:bg-white/80 flex items-center justify-center transition-colors duration-200"
-                      >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00A86B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <polyline points="9 18 15 12 9 6"></polyline>
-                        </svg>
-                      </button>
+                      <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                        {overviewType === 'lending' ? 'Lending Overview' : 'Borrowing Overview'}
+                      </p>
                     </div>
+                    <button
+                      onClick={() => setOverviewType(overviewType === 'lending' ? 'borrowing' : 'lending')}
+                      className="w-7 h-7 rounded-full bg-white/50 hover:bg-white/80 flex items-center justify-center transition-colors duration-200"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00A86B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                      </svg>
+                    </button>
                   </div>
 
                   <div className="bg-white rounded-xl p-4 flex flex-col items-center justify-center">
@@ -592,7 +592,7 @@ export default function Home() {
                 <Card className="bg-[#DBFFEB] border-0 rounded-2xl overflow-hidden h-full">
                   <CardContent className="p-5 h-full flex flex-col">
                     <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
-                      Monthly Overview
+                      {format(calendarMonth, 'MMMM')} Overview
                     </p>
 
                     <div className="flex-1 space-y-3 overflow-y-auto max-h-[320px] pr-1" style={{
