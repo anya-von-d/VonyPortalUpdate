@@ -418,19 +418,22 @@ export default function Home() {
 
                     return (
                       <>
-                        <StatsCard
-                          title="Next Payment"
-                          value={nextLenderPayment ? formatMoney(nextLenderPayment.payment_amount || 0) : '-'}
-                          color="blue"
-                          change={nextLenderPayment ? `from @${nextLenderPayment.username}` : 'N/A'}
-                          index={1}
-                          bgColor="#83F384"
-                        />
+                        <div className="mt-[28px]">
+                          <StatsCard
+                            title="Next Payment"
+                            value={nextLenderPayment ? formatMoney(nextLenderPayment.payment_amount || 0) : '-'}
+                            color="blue"
+                            change={nextLenderPayment ? `from @${nextLenderPayment.username}` : 'N/A'}
+                            index={1}
+                            bgColor="#83F384"
+                          />
+                        </div>
                         <motion.div
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ duration: 0.4, delay: 0.2, ease: "easeOut" }}
                           whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                          className="mt-[28px]"
                         >
                           <Card className="backdrop-blur-sm hover:shadow-xl transition-all duration-300 h-full cursor-default border-0" style={{ backgroundColor: '#83F384' }}>
                             <CardContent className="p-5 flex flex-col items-center justify-center h-full text-center">
@@ -472,19 +475,22 @@ export default function Home() {
 
                     return (
                       <>
-                        <StatsCard
-                          title="Next Payment"
-                          value={nextBorrowerPayment ? formatMoney(nextBorrowerPayment.payment_amount || 0) : '-'}
-                          color="blue"
-                          change={nextBorrowerPayment ? `to @${nextBorrowerPayment.username}` : 'N/A'}
-                          index={1}
-                          bgColor="#6EE8B5"
-                        />
+                        <div className="mt-[28px]">
+                          <StatsCard
+                            title="Next Payment"
+                            value={nextBorrowerPayment ? formatMoney(nextBorrowerPayment.payment_amount || 0) : '-'}
+                            color="blue"
+                            change={nextBorrowerPayment ? `to @${nextBorrowerPayment.username}` : 'N/A'}
+                            index={1}
+                            bgColor="#6EE8B5"
+                          />
+                        </div>
                         <motion.div
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ duration: 0.4, delay: 0.2, ease: "easeOut" }}
                           whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                          className="mt-[28px]"
                         >
                           <Card className="backdrop-blur-sm hover:shadow-xl transition-all duration-300 h-full cursor-default border-0" style={{ backgroundColor: '#6EE8B5' }}>
                             <CardContent className="p-5 flex flex-col items-center justify-center h-full text-center">
