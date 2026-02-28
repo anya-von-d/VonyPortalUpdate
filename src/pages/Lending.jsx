@@ -2357,117 +2357,67 @@ export default function Lending() {
                             </div>
                           </div>
 
-                          {/* Interest + Loan Amounts Row */}
+                          {/* Interest + Document Center Row */}
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {/* Interest Box - Left */}
+                            {/* Interest Box + Loan Amounts - Left */}
+                            <div className="space-y-4">
+                              <div className="bg-[#DBFFEB] rounded-2xl p-5">
+                                <p className="text-[10px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                                  Interest
+                                </p>
+                                <div className="grid grid-cols-2 gap-3">
+                                  <div className="bg-[#D0ED6F] rounded-xl p-4">
+                                    <p className="text-[10px] text-slate-600 uppercase tracking-wide font-medium mb-1" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>Interest Accrued</p>
+                                    <p className="text-xl font-bold text-slate-800">
+                                      ${(() => {
+                                        const principal = manageLoanSelected.amount || 0;
+                                        const total = manageLoanSelected.total_amount || principal;
+                                        return (total - principal).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                                      })()}
+                                    </p>
+                                  </div>
+                                  <div className="bg-[#83F384] rounded-xl p-4">
+                                    <p className="text-[10px] text-slate-600 uppercase tracking-wide font-medium mb-1" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>Predicted Interest</p>
+                                    <p className="text-xl font-bold text-slate-800">
+                                      ${(() => {
+                                        const principal = manageLoanSelected.amount || 0;
+                                        const rate = (manageLoanSelected.interest_rate || 0) / 100;
+                                        const period = manageLoanSelected.repayment_period || 12;
+                                        const unit = manageLoanSelected.repayment_unit || 'months';
+                                        const years = unit === 'months' ? period / 12 : period / 52;
+                                        return (principal * rate * years).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                                      })()}
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                              {/* Total Remaining + Amount Paid */}
+                              <div className="grid grid-cols-2 gap-4">
+                                <div className="bg-[#D0ED6F] rounded-2xl p-5">
+                                  <p className="text-[10px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-2" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                                    Total Remaining
+                                  </p>
+                                  <p className="text-2xl font-bold text-slate-800">
+                                    ${(() => {
+                                      const total = manageLoanSelected.total_amount || manageLoanSelected.amount || 0;
+                                      const paid = manageLoanSelected.amount_paid || 0;
+                                      return (total - paid).toLocaleString();
+                                    })()}
+                                  </p>
+                                </div>
+                                <div className="bg-[#83F384] rounded-2xl p-5">
+                                  <p className="text-[10px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-2" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                                    Amount Paid
+                                  </p>
+                                  <p className="text-2xl font-bold text-[#00A86B]">
+                                    ${(manageLoanSelected.amount_paid || 0).toLocaleString()}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Document Center Box - Right */}
                             <div className="bg-[#DBFFEB] rounded-2xl p-5">
-                              <p className="text-[10px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
-                                Interest
-                              </p>
-                              <div className="grid grid-cols-2 gap-3">
-                                <div className="bg-[#D0ED6F] rounded-xl p-4">
-                                  <p className="text-[10px] text-slate-600 uppercase tracking-wide font-medium mb-1" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>Interest Accrued</p>
-                                  <p className="text-xl font-bold text-slate-800">
-                                    ${(() => {
-                                      const principal = manageLoanSelected.amount || 0;
-                                      const total = manageLoanSelected.total_amount || principal;
-                                      return (total - principal).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                                    })()}
-                                  </p>
-                                </div>
-                                <div className="bg-[#83F384] rounded-xl p-4">
-                                  <p className="text-[10px] text-slate-600 uppercase tracking-wide font-medium mb-1" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>Predicted Interest</p>
-                                  <p className="text-xl font-bold text-slate-800">
-                                    ${(() => {
-                                      const principal = manageLoanSelected.amount || 0;
-                                      const rate = (manageLoanSelected.interest_rate || 0) / 100;
-                                      const period = manageLoanSelected.repayment_period || 12;
-                                      const unit = manageLoanSelected.repayment_unit || 'months';
-                                      const years = unit === 'months' ? period / 12 : period / 52;
-                                      return (principal * rate * years).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                                    })()}
-                                  </p>
-                                </div>
-                              </div>
-                            </div>
-
-                            {/* Loan Amounts - Right */}
-                            <div className="grid grid-cols-2 gap-4">
-                              <div className="bg-[#D0ED6F] rounded-2xl p-5">
-                                <p className="text-[10px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-2" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
-                                  Total Remaining
-                                </p>
-                                <p className="text-2xl font-bold text-slate-800">
-                                  ${(() => {
-                                    const total = manageLoanSelected.total_amount || manageLoanSelected.amount || 0;
-                                    const paid = manageLoanSelected.amount_paid || 0;
-                                    return (total - paid).toLocaleString();
-                                  })()}
-                                </p>
-                              </div>
-                              <div className="bg-[#83F384] rounded-2xl p-5">
-                                <p className="text-[10px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-2" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
-                                  Amount Paid
-                                </p>
-                                <p className="text-2xl font-bold text-[#00A86B]">
-                                  ${(manageLoanSelected.amount_paid || 0).toLocaleString()}
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Actions Box */}
-                          <div className="bg-[#DBFFEB] rounded-2xl p-5">
-                            <p className="text-[10px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
-                              Actions
-                            </p>
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                              <button
-                                onClick={() => handleMakePayment(manageLoanSelected)}
-                                className="bg-[#D0ED6F] rounded-xl p-4 text-left hover:opacity-90 transition-opacity cursor-pointer group"
-                              >
-                                <div className="w-10 h-10 rounded-full bg-[#DBFFEB] flex items-center justify-center mb-3">
-                                  <DollarSign className="w-5 h-5 text-slate-700" />
-                                </div>
-                                <p className="font-semibold text-slate-800 text-sm group-hover:text-[#00A86B] transition-colors">
-                                  Record Payment
-                                </p>
-                                <p className="text-xs text-slate-600 mt-1">Log a received payment</p>
-                              </button>
-                              <button
-                                onClick={() => handleEditLoan(manageLoanSelected)}
-                                className="bg-[#83F384] rounded-xl p-4 text-left hover:opacity-90 transition-opacity cursor-pointer group"
-                              >
-                                <div className="w-10 h-10 rounded-full bg-[#DBFFEB] flex items-center justify-center mb-3">
-                                  <Pencil className="w-5 h-5 text-slate-700" />
-                                </div>
-                                <p className="font-semibold text-slate-800 text-sm group-hover:text-[#00A86B] transition-colors">
-                                  Edit Loan
-                                </p>
-                                <p className="text-xs text-slate-600 mt-1">Modify loan details</p>
-                              </button>
-                              <button
-                                onClick={() => {
-                                  if (window.confirm('Are you sure you want to cancel this loan? This action cannot be undone.')) {
-                                    // Handle cancel loan
-                                  }
-                                }}
-                                className="bg-[#6EE8B5] rounded-xl p-4 text-left hover:opacity-90 transition-opacity cursor-pointer group"
-                              >
-                                <div className="w-10 h-10 rounded-full bg-[#DBFFEB] flex items-center justify-center mb-3">
-                                  <X className="w-5 h-5 text-slate-700" />
-                                </div>
-                                <p className="font-semibold text-slate-800 text-sm group-hover:text-[#00A86B] transition-colors">
-                                  Cancel Loan
-                                </p>
-                                <p className="text-xs text-slate-600 mt-1">End this loan early</p>
-                              </button>
-                            </div>
-                          </div>
-
-                          {/* Document Center Box */}
-                          <Card className="bg-[#DBFFEB] border-0">
-                            <CardContent className="p-5">
                               <p className="text-[10px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                                 Document Center
                               </p>
@@ -2483,7 +2433,7 @@ export default function Lending() {
                                 }
 
                                 return (
-                                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                  <div className="grid grid-cols-1 gap-3">
                                     {/* Loan Summary */}
                                     <button
                                       onClick={() => openDocPopup('summary', agreement)}
@@ -2562,8 +2512,57 @@ export default function Lending() {
                                   </div>
                                 );
                               })()}
-                            </CardContent>
-                          </Card>
+                            </div>
+                          </div>
+
+                          {/* Actions Box */}
+                          <div className="bg-[#DBFFEB] rounded-2xl p-5">
+                            <p className="text-[10px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                              Actions
+                            </p>
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                              <button
+                                onClick={() => handleMakePayment(manageLoanSelected)}
+                                className="bg-[#D0ED6F] rounded-xl p-4 text-left hover:opacity-90 transition-opacity cursor-pointer group"
+                              >
+                                <div className="w-10 h-10 rounded-full bg-[#DBFFEB] flex items-center justify-center mb-3">
+                                  <DollarSign className="w-5 h-5 text-slate-700" />
+                                </div>
+                                <p className="font-semibold text-slate-800 text-sm group-hover:text-[#00A86B] transition-colors">
+                                  Record Payment
+                                </p>
+                                <p className="text-xs text-slate-600 mt-1">Log a received payment</p>
+                              </button>
+                              <button
+                                onClick={() => handleEditLoan(manageLoanSelected)}
+                                className="bg-[#83F384] rounded-xl p-4 text-left hover:opacity-90 transition-opacity cursor-pointer group"
+                              >
+                                <div className="w-10 h-10 rounded-full bg-[#DBFFEB] flex items-center justify-center mb-3">
+                                  <Pencil className="w-5 h-5 text-slate-700" />
+                                </div>
+                                <p className="font-semibold text-slate-800 text-sm group-hover:text-[#00A86B] transition-colors">
+                                  Edit Loan
+                                </p>
+                                <p className="text-xs text-slate-600 mt-1">Modify loan details</p>
+                              </button>
+                              <button
+                                onClick={() => {
+                                  if (window.confirm('Are you sure you want to cancel this loan? This action cannot be undone.')) {
+                                    // Handle cancel loan
+                                  }
+                                }}
+                                className="bg-[#6EE8B5] rounded-xl p-4 text-left hover:opacity-90 transition-opacity cursor-pointer group"
+                              >
+                                <div className="w-10 h-10 rounded-full bg-[#DBFFEB] flex items-center justify-center mb-3">
+                                  <X className="w-5 h-5 text-slate-700" />
+                                </div>
+                                <p className="font-semibold text-slate-800 text-sm group-hover:text-[#00A86B] transition-colors">
+                                  Cancel Loan
+                                </p>
+                                <p className="text-xs text-slate-600 mt-1">End this loan early</p>
+                              </button>
+                            </div>
+                          </div>
                         </>
                       )}
                   </div>

@@ -355,7 +355,7 @@ export default function Requests() {
     { id: 'all', label: 'All', count: totalRequests },
     { id: 'friends', label: 'Friend Requests', count: friendRequestsReceived.length },
     { id: 'offers', label: 'Loan Offers', count: totalLoanOffers },
-    { id: 'payments', label: 'Payments', count: paymentsToConfirm.length + paymentsAwaitingConfirmation.length },
+    { id: 'payments', label: 'Confirm Payment', count: paymentsToConfirm.length + paymentsAwaitingConfirmation.length },
     { id: 'terms', label: 'Term Changes', count: termChangeRequests.length },
     { id: 'extensions', label: 'Extensions', count: extensionRequests.length },
   ];
@@ -388,30 +388,43 @@ export default function Requests() {
           </h1>
         </motion.div>
 
-        {/* Tabs */}
-        <div className="flex gap-2 overflow-x-auto pb-2">
-          {tabs.map(tab => (
-            <Button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              variant={activeTab === tab.id ? 'default' : 'outline'}
-              className={`whitespace-nowrap ${
-                activeTab === tab.id
-                  ? 'bg-[#00A86B] hover:bg-[#0D9B76] text-white'
-                  : 'border-slate-300 text-slate-600 hover:bg-slate-50'
-              }`}
-            >
-              {tab.label}
-              {tab.count > 0 && (
-                <span className={`ml-2 px-1.5 py-0.5 rounded-full text-xs ${
-                  activeTab === tab.id ? 'bg-white/20' : 'bg-slate-200'
-                }`}>
-                  {tab.count}
-                </span>
-              )}
-            </Button>
-          ))}
-        </div>
+        {/* Filter Box */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+        >
+          <Card className="bg-[#DBFFEB] border-0 rounded-2xl">
+            <CardContent className="p-5">
+              <p className="text-[10px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                Filter by:
+              </p>
+              <div className="flex flex-wrap gap-3">
+                {tabs.map(tab => (
+                  <Button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    variant={activeTab === tab.id ? 'default' : 'outline'}
+                    className={`flex-1 min-w-[100px] ${
+                      activeTab === tab.id
+                        ? 'bg-[#00A86B] hover:bg-[#0D9B76] text-white'
+                        : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                    }`}
+                  >
+                    {tab.label}
+                    {tab.count > 0 && (
+                      <span className={`ml-2 px-1.5 py-0.5 rounded-full text-xs ${
+                        activeTab === tab.id ? 'bg-white/20' : 'bg-slate-200'
+                      }`}>
+                        {tab.count}
+                      </span>
+                    )}
+                  </Button>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
 
         {/* Warning Dialogs */}
         <AnimatePresence>

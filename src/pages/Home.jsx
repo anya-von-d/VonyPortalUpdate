@@ -432,25 +432,27 @@ export default function Home() {
                           className="mt-[28px]"
                         >
                           <Card className="backdrop-blur-sm hover:shadow-xl transition-all duration-300 h-full cursor-default border-0" style={{ backgroundColor: '#83F384' }}>
-                            <CardContent className="p-5 flex flex-col items-center justify-center h-full text-center">
-                              <p className="text-sm font-medium text-slate-600 mb-2">Next Payment Date</p>
+                            <CardContent className="p-5 flex flex-col h-full">
+                              <p className="text-sm font-medium text-slate-600 mb-2 text-left">Next Payment Date</p>
                               {nextLenderPayment ? (
                                 <>
-                                  <p className="text-lg font-bold text-slate-800">
-                                    {format(nextLenderPayment.date, 'EEE')}, {format(nextLenderPayment.date, 'MMM d')}
-                                  </p>
-                                  <div className="mt-2 px-3 py-1 bg-white rounded-full">
-                                    <p className="text-sm font-semibold text-[#00A86B]">
-                                      {(() => {
-                                        const days = Math.ceil((nextLenderPayment.date - new Date()) / (1000 * 60 * 60 * 24));
-                                        return days > 0 ? `${days} day${days !== 1 ? 's' : ''} away` : days === 0 ? 'Due today' : `${Math.abs(days)} day${Math.abs(days) !== 1 ? 's' : ''} overdue`;
-                                      })()}
+                                  <div className="flex-1 flex flex-col items-center justify-center">
+                                    <p className="text-lg font-bold text-slate-800">
+                                      {format(nextLenderPayment.date, 'EEE')}, {format(nextLenderPayment.date, 'MMM d')}
                                     </p>
+                                    <div className="mt-2 px-3 py-1 bg-white rounded-full">
+                                      <p className="text-sm font-semibold text-[#00A86B]">
+                                        {(() => {
+                                          const days = Math.ceil((nextLenderPayment.date - new Date()) / (1000 * 60 * 60 * 24));
+                                          return days > 0 ? `${days} day${days !== 1 ? 's' : ''} away` : days === 0 ? 'Due today' : `${Math.abs(days)} day${Math.abs(days) !== 1 ? 's' : ''} overdue`;
+                                        })()}
+                                      </p>
+                                    </div>
                                   </div>
-                                  <p className="text-xs text-slate-500 mt-2">from @{nextLenderPayment.username}</p>
+                                  <p className="text-xs text-slate-500 mt-2 text-right">from @{nextLenderPayment.username}</p>
                                 </>
                               ) : (
-                                <p className="text-lg font-bold text-slate-800">-</p>
+                                <p className="text-lg font-bold text-slate-800 text-center flex-1 flex items-center justify-center">-</p>
                               )}
                             </CardContent>
                           </Card>
@@ -497,25 +499,27 @@ export default function Home() {
                           className="mt-[28px]"
                         >
                           <Card className="backdrop-blur-sm hover:shadow-xl transition-all duration-300 h-full cursor-default border-0" style={{ backgroundColor: '#6EE8B5' }}>
-                            <CardContent className="p-5 flex flex-col items-center justify-center h-full text-center">
-                              <p className="text-sm font-medium text-slate-600 mb-2">Next Payment Date</p>
+                            <CardContent className="p-5 flex flex-col h-full">
+                              <p className="text-sm font-medium text-slate-600 mb-2 text-left">Next Payment Date</p>
                               {nextBorrowerPayment ? (
                                 <>
-                                  <p className="text-lg font-bold text-slate-800">
-                                    {format(nextBorrowerPayment.date, 'EEE')}, {format(nextBorrowerPayment.date, 'MMM d')}
-                                  </p>
-                                  <div className="mt-2 px-3 py-1 bg-white rounded-full">
-                                    <p className="text-sm font-semibold text-[#00A86B]">
-                                      {(() => {
-                                        const days = Math.ceil((nextBorrowerPayment.date - new Date()) / (1000 * 60 * 60 * 24));
-                                        return days > 0 ? `${days} day${days !== 1 ? 's' : ''} away` : days === 0 ? 'Due today' : `${Math.abs(days)} day${Math.abs(days) !== 1 ? 's' : ''} overdue`;
-                                      })()}
+                                  <div className="flex-1 flex flex-col items-center justify-center">
+                                    <p className="text-lg font-bold text-slate-800">
+                                      {format(nextBorrowerPayment.date, 'EEE')}, {format(nextBorrowerPayment.date, 'MMM d')}
                                     </p>
+                                    <div className="mt-2 px-3 py-1 bg-white rounded-full">
+                                      <p className="text-sm font-semibold text-[#00A86B]">
+                                        {(() => {
+                                          const days = Math.ceil((nextBorrowerPayment.date - new Date()) / (1000 * 60 * 60 * 24));
+                                          return days > 0 ? `${days} day${days !== 1 ? 's' : ''} away` : days === 0 ? 'Due today' : `${Math.abs(days)} day${Math.abs(days) !== 1 ? 's' : ''} overdue`;
+                                        })()}
+                                      </p>
+                                    </div>
                                   </div>
-                                  <p className="text-xs text-slate-500 mt-2">to @{nextBorrowerPayment.username}</p>
+                                  <p className="text-xs text-slate-500 mt-2 text-right">to @{nextBorrowerPayment.username}</p>
                                 </>
                               ) : (
-                                <p className="text-lg font-bold text-slate-800">-</p>
+                                <p className="text-lg font-bold text-slate-800 text-center flex-1 flex items-center justify-center">-</p>
                               )}
                             </CardContent>
                           </Card>

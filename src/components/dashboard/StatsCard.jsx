@@ -54,10 +54,10 @@ export default function StatsCard({ title, value, icon: Icon, color, change, isL
         className="backdrop-blur-sm hover:shadow-xl transition-all duration-300 group h-full cursor-default border-0"
         style={{ backgroundColor: bgColor || 'white' }}
       >
-        <CardContent className="p-5 flex flex-col items-center justify-center h-full text-center">
-          <p className="text-sm font-medium text-slate-600 mb-2">{title}</p>
+        <CardContent className="p-5 flex flex-col h-full">
+          <p className="text-sm font-medium text-slate-600 mb-2 text-left">{title}</p>
           <motion.p
-            className="text-lg font-bold text-slate-800"
+            className="text-lg font-bold text-slate-800 text-center flex-1 flex items-center justify-center"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 + index * 0.1 }}
@@ -66,7 +66,7 @@ export default function StatsCard({ title, value, icon: Icon, color, change, isL
           </motion.p>
           {change && (
             <motion.p
-              className="text-xs text-slate-500 mt-1"
+              className="text-xs text-slate-500 mt-1 text-right"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3 + index * 0.1 }}

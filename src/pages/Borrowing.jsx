@@ -972,9 +972,8 @@ export default function Borrowing() {
                           </div>
                         </div>
 
-                        {/* Interest + Loan Amounts Row */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          {/* Interest Box - Left */}
+                        {/* Interest + Loan Amounts */}
+                        <div className="space-y-4">
                           <div className="bg-[#DBFFEB] rounded-2xl p-5">
                             <p className="text-[10px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                               Interest
@@ -1005,8 +1004,7 @@ export default function Borrowing() {
                               </div>
                             </div>
                           </div>
-
-                          {/* Loan Amounts - Right */}
+                          {/* Total Remaining + Amount Paid */}
                           <div className="grid grid-cols-2 gap-4">
                             <div className="bg-[#D0ED6F] rounded-2xl p-5">
                               <p className="text-[10px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-2" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>

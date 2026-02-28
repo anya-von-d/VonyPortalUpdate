@@ -779,7 +779,6 @@ export default function LoanAgreements() {
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="outline" size="sm" className="bg-white border-slate-200 text-slate-600 hover:bg-slate-50 gap-2">
-                        <Filter className="w-3.5 h-3.5" />
                         <span className="capitalize">{statusFilter === 'all' ? 'All Status' : statusFilter}</span>
                         <ChevronDown className="w-3.5 h-3.5" />
                       </Button>
