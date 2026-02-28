@@ -1020,7 +1020,6 @@ export default function Lending() {
     { id: 'lending', label: 'All' },
     { id: 'create', label: 'Create Offer' },
     { id: 'active', label: 'Manage Loans' },
-    { id: 'history', label: 'History' },
   ];
 
   return (
@@ -2105,49 +2104,6 @@ export default function Lending() {
               </motion.div>
             )}
 
-            {activeSection === 'history' && (
-              <motion.div
-                key="history"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-              >
-                <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">
-                        <Clock className="w-4 h-4 text-slate-600" />
-                      </div>
-                      Loan History
-                    </CardTitle>
-                    <p className="text-sm text-slate-500">Completed and cancelled loans</p>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    {completedLoans.length === 0 ? (
-                      <div className="text-center py-8 text-slate-500">
-                        <Clock className="w-12 h-12 mx-auto mb-3 opacity-30" />
-                        <p>No loan history yet</p>
-                      </div>
-                    ) : (
-                      completedLoans.map((loan, index) => (
-                        <motion.div
-                          key={loan.id}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: index * 0.1 }}
-                        >
-                          <LoanCard
-                            loan={loan}
-                            type="lent"
-                            onDetails={() => handleViewDetails(loan)}
-                          />
-                        </motion.div>
-                      ))
-                    )}
-                  </CardContent>
-                </Card>
-              </motion.div>
-            )}
           </AnimatePresence>
         </div>
       </div>

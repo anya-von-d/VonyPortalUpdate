@@ -208,8 +208,6 @@ export default function Borrowing() {
   const tabs = [
     { id: 'overview', label: 'All' },
     { id: 'active', label: 'Manage Loans' },
-    { id: 'offers', label: 'Loan Offers' },
-    { id: 'history', label: 'History' },
   ];
 
   return (
@@ -843,85 +841,6 @@ export default function Borrowing() {
               </motion.div>
             )}
 
-            {activeSection === 'offers' && (
-              <motion.div
-                key="offers"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-              >
-                <Card className="bg-white border-[#7AD4A0]/30">
-                  <CardHeader>
-                    <CardTitle className="text-[#0A1A10]">
-                      Loan Offers Received
-                    </CardTitle>
-                    <p className="text-sm text-[#4A6B55]">Loan offers from friends waiting for your response</p>
-                  </CardHeader>
-                  <CardContent>
-                    {pendingOffers.length === 0 ? (
-                      <div className="text-center py-8 text-[#4A6B55]">
-                        <p className="text-4xl mb-3">📨</p>
-                        <p>No pending offers</p>
-                      </div>
-                    ) : (
-                      <MyLoanOffers
-                        offers={pendingOffers}
-                        users={publicProfiles}
-                        currentUser={user}
-                        onSign={(loanId) => {
-                          const offer = pendingOffers.find(o => o.id === loanId);
-                          if (offer) openSignModal(offer);
-                        }}
-                        onDecline={handleDeclineOffer}
-                        hideHeader={true}
-                        showAcceptButton={true}
-                      />
-                    )}
-                  </CardContent>
-                </Card>
-              </motion.div>
-            )}
-
-            {activeSection === 'history' && (
-              <motion.div
-                key="history"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-              >
-                <Card className="bg-white border-[#7AD4A0]/30">
-                  <CardHeader>
-                    <CardTitle className="text-[#0A1A10]">
-                      Loan History
-                    </CardTitle>
-                    <p className="text-sm text-[#4A6B55]">Completed and cancelled loans</p>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    {completedLoans.length === 0 ? (
-                      <div className="text-center py-8 text-[#4A6B55]">
-                        <p className="text-4xl mb-3">📋</p>
-                        <p>No loan history yet</p>
-                      </div>
-                    ) : (
-                      completedLoans.map((loan, index) => (
-                        <motion.div
-                          key={loan.id}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: index * 0.1 }}
-                        >
-                          <LoanCard
-                            loan={loan}
-                            type="borrowed"
-                            onDetails={() => handleViewDetails(loan)}
-                          />
-                        </motion.div>
-                      ))
-                    )}
-                  </CardContent>
-                </Card>
-              </motion.div>
-            )}
           </AnimatePresence>
         </div>
       </div>
