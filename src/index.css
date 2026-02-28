@@ -4,6 +4,22 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Hide number input spinners */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Clean date input styling */
+input[type="date"] {
+  -webkit-appearance: none;
+  position: relative;
+}
+
 /* Vony Design System - Matching RebrandMainWebsite */
 :root {
   /* Primary Color Palette */

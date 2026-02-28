@@ -1544,14 +1544,7 @@ export default function Lending() {
                 {/* Form */}
                 <div className="lg:col-span-2">
                   <div className="bg-white rounded-2xl p-5 border-0">
-                    <div className="flex items-center gap-2 mb-5">
-                      <div className="w-8 h-8 rounded-full bg-[#83F384] flex items-center justify-center">
-                        {loanType === 'flexible' ? (
-                          <Zap className="w-4 h-4 text-[#0A1A10]" />
-                        ) : (
-                          <PlusCircle className="w-4 h-4 text-[#0A1A10]" />
-                        )}
-                      </div>
+                    <div className="mb-5">
                       <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                         {loanType === 'flexible' ? 'Create Quick Payment Request' : 'Create Loan Offer'}
                       </p>
@@ -1662,7 +1655,7 @@ export default function Lending() {
                                       <SelectItem value="monthly">monthly</SelectItem>
                                     </SelectContent>
                                   </Select>
-                                  <span>on</span>
+                                  <span>{formData.repeating_frequency === 'monthly' ? 'on the' : 'on'}</span>
                                   {formData.repeating_frequency === 'weekly' ? (
                                     <Select
                                       value={formData.repeating_day_of_week}
@@ -1765,16 +1758,11 @@ export default function Lending() {
                         {/* Scheduled loan fields - Sentence format */}
                         {loanType === 'scheduled' && (
                           <div className="p-4 bg-[#DBFFEB] rounded-xl">
-                            <div className="flex flex-wrap items-center gap-2 text-sm text-slate-700">
-                              {/* Sentence: The lender agrees to lend [borrower] [amount] before [date] at an interest rate of [%]%. */}
-                              <span>The lender agrees to lend</span>
-                              <span className="text-[#00A86B]">
-                                {formData.borrower_username ? (
-                                  <>@{formData.borrower_username}</>
-                                ) : (
-                                  'the borrower'
-                                )}
-                              </span>
+                            <p className="text-sm text-slate-700 leading-relaxed [&_input]:inline-flex [&_input]:align-baseline [&_input[type=number]]:appearance-none [&_input[type=number]]:[-moz-appearance:textfield] [&_input[type=number]::-webkit-outer-spin-button]:appearance-none [&_input[type=number]::-webkit-inner-spin-button]:appearance-none">
+                              The lender agrees to lend{' '}
+                              <span className="text-[#00A86B] font-medium">
+                                {formData.borrower_username ? `@${formData.borrower_username}` : 'the borrower'}
+                              </span>{' '}
                               <Input
                                 type="number"
                                 step="0.01"
@@ -1783,17 +1771,18 @@ export default function Lending() {
                                 placeholder="$0.00"
                                 value={formData.amount}
                                 onChange={(e) => handleInputChange('amount', e.target.value)}
-                                className="w-24 h-8 px-3 bg-white"
-                              />
-                              <span>before</span>
+                                className="w-24 h-8 px-3 bg-white inline-flex"
+                                style={{ MozAppearance: 'textfield' }}
+                              />{' '}
+                              before{' '}
                               <Input
                                 type="date"
                                 value={formData.lender_send_funds_date}
                                 onChange={(e) => handleInputChange('lender_send_funds_date', e.target.value)}
                                 min={format(new Date(), 'yyyy-MM-dd')}
-                                className="w-auto h-8 px-3 bg-white"
-                              />
-                              <span>at an interest rate of</span>
+                                className="w-auto h-8 px-3 bg-white inline-flex"
+                              />{' '}
+                              at an interest rate of{' '}
                               <Input
                                 type="number"
                                 step="0.1"
@@ -1802,71 +1791,56 @@ export default function Lending() {
                                 placeholder="%"
                                 value={formData.interest_rate}
                                 onChange={(e) => handleInputChange('interest_rate', e.target.value)}
-                                className="w-16 h-8 px-3 bg-white"
+                                className="w-16 h-8 px-3 bg-white inline-flex"
+                                style={{ MozAppearance: 'textfield' }}
                               />
-                              <span>%.</span>
-
-                              {/* Sentence: The loan will be repaid over [#] [weeks/months] in [weekly/monthly] payments of $X. */}
-                              <span>The loan will be repaid over</span>
+                              %. The loan will be repaid over{' '}
                               <Input
                                 type="number"
                                 min="1"
                                 placeholder="#"
                                 value={formData.repayment_period}
                                 onChange={(e) => handleInputChange('repayment_period', e.target.value)}
-                                className="w-16 h-8 px-3 bg-white"
-                              />
+                                className="w-16 h-8 px-3 bg-white inline-flex"
+                                style={{ MozAppearance: 'textfield' }}
+                              />{' '}
                               <Select
                                 value={formData.repayment_unit}
                                 onValueChange={(value) => handleInputChange('repayment_unit', value)}
                               >
-                                <SelectTrigger className="w-auto h-8 px-3 bg-white">
+                                <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex">
                                   <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
                                   <SelectItem value="weeks">weeks</SelectItem>
                                   <SelectItem value="months">months</SelectItem>
                                 </SelectContent>
-                              </Select>
-                              <span>in</span>
+                              </Select>{' '}
+                              in{' '}
                               <Select
                                 value={formData.payment_frequency}
                                 onValueChange={(value) => handleInputChange('payment_frequency', value)}
                               >
-                                <SelectTrigger className="w-auto h-8 px-3 bg-white">
+                                <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex">
                                   <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
                                   <SelectItem value="weekly">weekly</SelectItem>
                                   <SelectItem value="monthly">monthly</SelectItem>
                                 </SelectContent>
-                              </Select>
-                              <span>payments of</span>
+                              </Select>{' '}
+                              payments of{' '}
                               <span className="font-bold text-[#00A86B]">
-                                ${details.monthlyPayment.toFixed(2)}.
+                                ${details.monthlyPayment.toFixed(2)}
                               </span>
-
-                              {/* Sentence: Payments will be due [weekly/monthly] on [day] at [time] [timezone]. */}
-                              <span>Payments will be due</span>
-                              <Select
-                                value={formData.payment_frequency}
-                                onValueChange={(value) => handleInputChange('payment_frequency', value)}
-                              >
-                                <SelectTrigger className="w-auto h-8 px-3 bg-white">
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="weekly">weekly</SelectItem>
-                                  <SelectItem value="monthly">monthly</SelectItem>
-                                </SelectContent>
-                              </Select>
-                              <span>on</span>
+                              . Payments will be due{' '}
+                              {formData.payment_frequency === 'monthly' ? 'monthly on the ' : 'weekly on '}
                               {formData.payment_frequency === 'weekly' ? (
                                 <Select
                                   value={formData.loan_day_of_week}
                                   onValueChange={(value) => handleInputChange('loan_day_of_week', value)}
                                 >
-                                  <SelectTrigger className="w-auto h-8 px-3 bg-white">
+                                  <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex">
                                     <SelectValue />
                                   </SelectTrigger>
                                   <SelectContent>
@@ -1884,7 +1858,7 @@ export default function Lending() {
                                   value={formData.loan_day_of_month}
                                   onValueChange={(value) => handleInputChange('loan_day_of_month', value)}
                                 >
-                                  <SelectTrigger className="w-auto h-8 px-3 bg-white">
+                                  <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex">
                                     <SelectValue />
                                   </SelectTrigger>
                                   <SelectContent>
@@ -1895,19 +1869,19 @@ export default function Lending() {
                                     ))}
                                   </SelectContent>
                                 </Select>
-                              )}
-                              <span>at</span>
+                              )}{' '}
+                              at{' '}
                               <Input
                                 type="time"
                                 value={formData.loan_time}
                                 onChange={(e) => handleInputChange('loan_time', e.target.value)}
-                                className="w-auto h-8 px-3 bg-white"
-                              />
+                                className="w-auto h-8 px-3 bg-white inline-flex"
+                              />{' '}
                               <Select
                                 value={formData.loan_timezone}
                                 onValueChange={(value) => handleInputChange('loan_timezone', value)}
                               >
-                                <SelectTrigger className="w-auto h-8 px-3 bg-white">
+                                <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex">
                                   <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -1919,8 +1893,6 @@ export default function Lending() {
                                   <SelectItem value="AKST">AKST</SelectItem>
                                 </SelectContent>
                               </Select>
-
-                              {/* Sentence: The first of the [#] payments is due on [date] and the last payment is due on [date]. */}
                               {(() => {
                                 const numPayments = formData.payment_frequency === 'weekly'
                                   ? Math.ceil(parseInt(formData.repayment_period || 0) * (formData.repayment_unit === 'months' ? 4 : 1))
@@ -1939,35 +1911,35 @@ export default function Lending() {
 
                                 return (
                                   <>
-                                    <span>with the first of the</span>
-                                    <span className="font-bold text-[#00A86B]">{numPayments || '—'}</span>
-                                    <span>payments due on</span>
+                                    , with the first of the{' '}
+                                    <span className="font-bold text-[#00A86B]">{numPayments || '—'}</span>{' '}
+                                    payments due on{' '}
                                     <Input
                                       type="date"
                                       value={formData.first_payment_date}
                                       onChange={(e) => handleInputChange('first_payment_date', e.target.value)}
                                       min={format(new Date(), 'yyyy-MM-dd')}
-                                      className="w-auto h-8 px-3 bg-white"
-                                    />
-                                    <span>and the last payment due on</span>
+                                      className="w-auto h-8 px-3 bg-white inline-flex"
+                                    />{' '}
+                                    and the last payment due on{' '}
                                     <span className="font-bold text-[#00A86B]">
-                                      {lastPaymentDate ? format(lastPaymentDate, 'MMM d, yyyy') : '—'}.
+                                      {lastPaymentDate ? format(lastPaymentDate, 'MMM d, yyyy') : '—'}
                                     </span>
+                                    .
                                   </>
                                 );
                               })()}
-
-                              {/* Sentence: This loan is for [purpose]. */}
-                              <span>This loan is for</span>
+                              {' '}This loan is for{' '}
                               <Input
                                 type="text"
                                 placeholder="e.g., concert tickets, rent, tuition..."
                                 value={formData.purpose}
                                 onChange={(e) => handleInputChange('purpose', e.target.value)}
-                                className="flex-1 h-8 px-3 bg-white min-w-[200px]"
+                                className="flex-1 h-8 px-3 bg-white min-w-[200px] inline-flex"
                                 maxLength={100}
                               />
-                            </div>
+                              .
+                            </p>
                           </div>
                         )}
 
@@ -1995,7 +1967,7 @@ export default function Lending() {
                 {/* Summary Sidebar */}
                 <div className="space-y-4">
                   {/* Loan Type Toggle - Always First */}
-                  <div className="bg-white rounded-2xl p-4 border-0">
+                  <div className="bg-[#D0ED6F] rounded-2xl p-4 border-0">
                     <div className="flex items-center justify-center gap-3">
                       <span className={`text-xs font-medium ${loanType === 'scheduled' ? 'text-[#00A86B]' : 'text-slate-400'}`}>
                         Loan
@@ -2030,7 +2002,7 @@ export default function Lending() {
 
                   {/* Borrower Payment Box - Only for Loan type, always visible */}
                   {loanType === 'scheduled' && (
-                    <div className="bg-[#DBFFEB] rounded-2xl p-4">
+                    <div className="bg-[#83F384] rounded-2xl p-4">
                       <p className="text-xs text-slate-500 text-center">
                         {formData.borrower_username ? (
                           <>
@@ -2053,7 +2025,7 @@ export default function Lending() {
                   )}
 
                   {/* Loan Summary - Always Last */}
-                  <div className="bg-[#DBFFEB] rounded-2xl p-5 sticky top-6">
+                  <div className="bg-[#6EE8B5] rounded-2xl p-5 sticky top-6">
                     <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                       Loan Summary
                     </p>
