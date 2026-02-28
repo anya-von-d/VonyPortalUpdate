@@ -12,7 +12,7 @@ import {
 
 const leftNavItems = [
   {
-    title: "Home",
+    title: "Dashboard",
     url: createPageUrl("Home"),
   },
   {
@@ -34,7 +34,7 @@ const moreMenuItems = [
     url: createPageUrl("Requests"),
   },
   {
-    title: "Agreements",
+    title: "Document Center",
     url: createPageUrl("LoanAgreements"),
   },
   {

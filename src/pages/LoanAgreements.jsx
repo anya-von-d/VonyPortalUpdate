@@ -3,8 +3,14 @@ import { LoanAgreement, User, PublicProfile, Loan, Payment } from "@/entities/al
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { FileText, CheckCircle, Users, Download, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { FileText, CheckCircle, Users, Download, ArrowUpRight, ArrowDownRight, ChevronDown, Filter } from "lucide-react";
 import { motion } from "framer-motion";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { format } from "date-fns";
 import { jsPDF } from "jspdf";
 import LoanActivity from "../components/loans/LoanActivity";
@@ -18,7 +24,8 @@ export default function LoanAgreements() {
   const [payments, setPayments] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedAgreement, setSelectedAgreement] = useState(null);
-  const [activeTab, setActiveTab] = useState('borrowing');
+  const [roleFilter, setRoleFilter] = useState('both'); // 'lender', 'borrower', 'both'
+  const [statusFilter, setStatusFilter] = useState('all'); // 'active', 'completed', 'cancelled', 'all'
 
   useEffect(() => {
     loadData();
@@ -540,115 +547,207 @@ export default function LoanAgreements() {
       )}
 
       <div className="min-h-screen p-4 md:p-6 overflow-x-hidden" style={{background: `linear-gradient(to bottom right, rgb(var(--theme-bg-from)), rgb(var(--theme-bg-to)))`}}>
-        <div className="max-w-4xl mx-auto space-y-7 overflow-hidden">
+        <div className="max-w-4xl mx-auto space-y-6 overflow-hidden">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="py-5">
-            <h1 className="text-4xl md:text-5xl font-bold text-slate-800 mb-4 tracking-tight text-center">My Loan Agreements</h1>
+            <h1 className="text-4xl md:text-5xl font-bold text-slate-800 mb-4 tracking-tight text-center">Document Center</h1>
             <p className="text-lg text-slate-600 text-center">View all your signed loan agreements</p>
-
-            {/* Toggle Buttons */}
-            <div className="flex justify-center gap-3 mt-6">
-              <Button
-                onClick={() => setActiveTab('borrowing')}
-                variant={activeTab === 'borrowing' ? 'default' : 'outline'}
-                className={`flex items-center gap-2 ${
-                  activeTab === 'borrowing'
-                    ? 'bg-[#35B276] hover:bg-[#2d9a65] text-white'
-                    : 'border-slate-300 text-slate-600 hover:bg-slate-50'
-                }`}
-              >
-                <ArrowDownRight className="w-4 h-4" />
-                Borrowing ({borrowingAgreements.length})
-              </Button>
-              <Button
-                onClick={() => setActiveTab('lending')}
-                variant={activeTab === 'lending' ? 'default' : 'outline'}
-                className={`flex items-center gap-2 ${
-                  activeTab === 'lending'
-                    ? 'bg-[#35B276] hover:bg-[#2d9a65] text-white'
-                    : 'border-slate-300 text-slate-600 hover:bg-slate-50'
-                }`}
-              >
-                <ArrowUpRight className="w-4 h-4" />
-                Lending ({lendingAgreements.length})
-              </Button>
-            </div>
           </motion.div>
 
-          {agreements.length === 0 ? (
-            <Card style={{backgroundColor: `rgb(var(--theme-card-bg))`}} className="backdrop-blur-sm border-slate-200/60">
-              <CardContent className="p-12 text-center">
-                <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4" style={{backgroundColor: `rgb(var(--theme-primary-light))`}}>
-                  <FileText className="w-10 h-10" style={{color: `rgb(var(--theme-primary))`}} />
+          {/* Role Filter Box */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+          >
+            <Card className="bg-[#DBFFEB] border-0 rounded-2xl">
+              <CardContent className="p-5">
+                <p className="text-[10px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                  You are the:
+                </p>
+                <div className="flex flex-wrap gap-3">
+                  <Button
+                    onClick={() => setRoleFilter('lender')}
+                    variant={roleFilter === 'lender' ? 'default' : 'outline'}
+                    className={`flex-1 min-w-[100px] ${
+                      roleFilter === 'lender'
+                        ? 'bg-[#00A86B] hover:bg-[#0D9B76] text-white'
+                        : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                    }`}
+                  >
+                    <ArrowUpRight className="w-4 h-4 mr-2" />
+                    Lender
+                  </Button>
+                  <Button
+                    onClick={() => setRoleFilter('borrower')}
+                    variant={roleFilter === 'borrower' ? 'default' : 'outline'}
+                    className={`flex-1 min-w-[100px] ${
+                      roleFilter === 'borrower'
+                        ? 'bg-[#00A86B] hover:bg-[#0D9B76] text-white'
+                        : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                    }`}
+                  >
+                    <ArrowDownRight className="w-4 h-4 mr-2" />
+                    Borrower
+                  </Button>
+                  <Button
+                    onClick={() => setRoleFilter('both')}
+                    variant={roleFilter === 'both' ? 'default' : 'outline'}
+                    className={`flex-1 min-w-[100px] ${
+                      roleFilter === 'both'
+                        ? 'bg-[#00A86B] hover:bg-[#0D9B76] text-white'
+                        : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                    }`}
+                  >
+                    <Users className="w-4 h-4 mr-2" />
+                    View Both
+                  </Button>
                 </div>
-                <h3 className="text-xl font-semibold text-slate-800 mb-2">No Agreements Yet</h3>
-                <p className="text-slate-600">Your signed loan agreements will appear here once you create or accept a loan offer.</p>
               </CardContent>
             </Card>
-          ) : (
-            <>
-              {activeTab === 'borrowing' ? (
-                <motion.div
-                  key="borrowing"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <Card style={{backgroundColor: `rgb(var(--theme-card-bg))`, borderColor: `rgb(var(--theme-border))`}} className="backdrop-blur-sm">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="flex items-center gap-2 text-slate-800">
-                        <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                          <ArrowDownRight className="w-4 h-4 text-blue-600" />
+          </motion.div>
+
+          {/* Agreements List with Status Filter */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            <Card className="bg-[#DBFFEB] border-0 rounded-2xl">
+              <CardContent className="p-5">
+                {/* Header with Status Filter */}
+                <div className="flex items-center justify-between mb-4">
+                  <p className="text-[10px] text-slate-600 uppercase tracking-[0.12em] font-medium" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                    Loan Agreements
+                  </p>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" size="sm" className="bg-white border-slate-200 text-slate-600 hover:bg-slate-50 gap-2">
+                        <Filter className="w-3.5 h-3.5" />
+                        <span className="capitalize">{statusFilter === 'all' ? 'All Status' : statusFilter}</span>
+                        <ChevronDown className="w-3.5 h-3.5" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-40 bg-white">
+                      <DropdownMenuItem onClick={() => setStatusFilter('all')} className={statusFilter === 'all' ? 'bg-slate-100' : ''}>
+                        View All
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setStatusFilter('active')} className={statusFilter === 'active' ? 'bg-slate-100' : ''}>
+                        Active
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setStatusFilter('completed')} className={statusFilter === 'completed' ? 'bg-slate-100' : ''}>
+                        Completed
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setStatusFilter('cancelled')} className={statusFilter === 'cancelled' ? 'bg-slate-100' : ''}>
+                        Cancelled
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+
+                {/* Filtered Agreements List */}
+                {(() => {
+                  // Filter by role
+                  let filteredAgreements = agreements;
+                  if (roleFilter === 'lender') {
+                    filteredAgreements = lendingAgreements;
+                  } else if (roleFilter === 'borrower') {
+                    filteredAgreements = borrowingAgreements;
+                  }
+
+                  // Filter by status
+                  if (statusFilter !== 'all') {
+                    filteredAgreements = filteredAgreements.filter(agreement => {
+                      const loanStatus = getLoanStatus(agreement.loan_id);
+                      return loanStatus === statusFilter;
+                    });
+                  }
+
+                  if (filteredAgreements.length === 0) {
+                    return (
+                      <div className="bg-white rounded-xl p-8 text-center">
+                        <div className="w-16 h-16 rounded-full bg-[#DBFFEB] flex items-center justify-center mx-auto mb-4">
+                          <FileText className="w-8 h-8 text-[#00A86B]" />
                         </div>
-                        Borrowing
-                      </CardTitle>
-                      <p className="text-sm text-slate-500 mt-1">Loan agreements where you are the borrower</p>
-                    </CardHeader>
-                    <CardContent className="p-6 pt-3">
-                      {borrowingAgreements.length === 0 ? (
-                        <p className="text-slate-500 text-center py-4">No borrowing agreements</p>
-                      ) : (
-                        <div className="space-y-4">
-                          {borrowingAgreements.map(agreement => (
-                            <AgreementPreview key={agreement.id} agreement={agreement} onClick={() => setSelectedAgreement(agreement)} type="Borrowing" />
-                          ))}
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="lending"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <Card style={{backgroundColor: `rgb(var(--theme-card-bg))`, borderColor: `rgb(var(--theme-border))`}} className="backdrop-blur-sm">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="flex items-center gap-2 text-slate-800">
-                        <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
-                          <ArrowUpRight className="w-4 h-4 text-green-600" />
-                        </div>
-                        Lending
-                      </CardTitle>
-                      <p className="text-sm text-slate-500 mt-1">Loan agreements where you are the lender</p>
-                    </CardHeader>
-                    <CardContent className="p-6 pt-3">
-                      {lendingAgreements.length === 0 ? (
-                        <p className="text-slate-500 text-center py-4">No lending agreements</p>
-                      ) : (
-                        <div className="space-y-4">
-                          {lendingAgreements.map(agreement => (
-                            <AgreementPreview key={agreement.id} agreement={agreement} onClick={() => setSelectedAgreement(agreement)} type="Lending" />
-                          ))}
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              )}
-            </>
-          )}
+                        <h3 className="text-lg font-semibold text-slate-800 mb-2">No Agreements Found</h3>
+                        <p className="text-sm text-slate-500">
+                          {agreements.length === 0
+                            ? "Your signed loan agreements will appear here once you create or accept a loan offer."
+                            : "No agreements match the current filters. Try adjusting your filter settings."}
+                        </p>
+                      </div>
+                    );
+                  }
+
+                  const colors = ['#D0ED6F', '#83F384', '#6EE8B5'];
+
+                  return (
+                    <div className="space-y-3">
+                      {filteredAgreements.map((agreement, index) => {
+                        const isLender = agreement.lender_id === user?.id;
+                        const otherPartyId = isLender ? agreement.borrower_id : agreement.lender_id;
+                        const otherParty = getUserById(otherPartyId);
+                        const loanStatus = getLoanStatus(agreement.loan_id);
+
+                        return (
+                          <motion.div
+                            key={agreement.id}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: index * 0.05 }}
+                            className="p-4 rounded-xl"
+                            style={{ backgroundColor: colors[index % 3] }}
+                          >
+                            <div className="flex flex-col md:flex-row md:items-center gap-4">
+                              <div className="flex items-center gap-3 flex-1 min-w-0">
+                                <img
+                                  src={otherParty.profile_picture_url || `https://ui-avatars.com/api/?name=${encodeURIComponent((otherParty.full_name || 'User').charAt(0))}&background=22c55e&color=fff&size=128`}
+                                  alt={otherParty.full_name}
+                                  className="w-10 h-10 rounded-full object-cover border-2 border-white flex-shrink-0"
+                                />
+                                <div className="min-w-0 flex-1">
+                                  <p className="font-semibold text-slate-800 truncate">{otherParty.full_name}</p>
+                                  <p className="text-xs text-slate-600 truncate">
+                                    {isLender ? 'Borrower' : 'Lender'}: @{otherParty.username} • {format(new Date(agreement.created_at), 'MMM d, yyyy')}
+                                  </p>
+                                </div>
+                              </div>
+
+                              <div className="flex items-center gap-3 justify-between md:justify-end">
+                                <div className="text-right">
+                                  <p className="text-xs text-slate-600">Total Due</p>
+                                  <p className="font-bold text-lg text-slate-800">{formatMoney(agreement.total_amount)}</p>
+                                </div>
+                                <Badge className={`${getStatusColor(loanStatus)} text-xs capitalize flex-shrink-0`}>
+                                  {loanStatus}
+                                </Badge>
+                                <div className="flex gap-2">
+                                  <Button
+                                    onClick={() => downloadPDF(agreement)}
+                                    variant="outline"
+                                    size="sm"
+                                    className="bg-[#DBFFEB] border-0 hover:bg-white/50"
+                                  >
+                                    <Download className="w-4 h-4" />
+                                  </Button>
+                                  <Button
+                                    onClick={() => setSelectedAgreement(agreement)}
+                                    size="sm"
+                                    className="bg-slate-800 hover:bg-slate-900 text-white"
+                                  >
+                                    Details
+                                  </Button>
+                                </div>
+                              </div>
+                            </div>
+                          </motion.div>
+                        );
+                      })}
+                    </div>
+                  );
+                })()}
+              </CardContent>
+            </Card>
+          </motion.div>
         </div>
       </div>
     </>

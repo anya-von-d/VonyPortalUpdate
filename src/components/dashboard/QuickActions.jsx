@@ -23,7 +23,7 @@ const actions = [
     url: "MyLoans"
   },
   {
-    title: "My Agreements",
+    title: "Document Center",
     description: "View loan agreements",
     icon: FileText,
     url: "LoanAgreements"
