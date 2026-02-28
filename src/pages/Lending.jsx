@@ -1618,8 +1618,8 @@ export default function Lending() {
                 {/* Form */}
                 <div className="lg:col-span-2">
                   <div className="bg-[#DBFFEB] rounded-2xl p-5 border-0">
-                    <div className="bg-[#36CE8E] rounded-xl p-4 mb-5">
-                      <p className="text-[11px] text-white uppercase tracking-[0.12em] font-medium" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                    <div className="mb-5">
+                      <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                         {loanType === 'flexible' ? 'Create Quick Payment Request' : 'Create Loan Offer'}
                       </p>
                     </div>
@@ -2096,30 +2096,30 @@ export default function Lending() {
                   )}
 
                   {/* Loan Summary - Always Last */}
-                  <div className="bg-[#DBFFEB] rounded-2xl p-5 sticky top-6">
-                    <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                  <div className="bg-[#36CE8E] rounded-2xl p-5 sticky top-6">
+                    <p className="text-[11px] text-white uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                       Loan Summary
                     </p>
                     <div className="space-y-3">
-                      <div className="pb-2 border-b border-[#83F384] flex items-baseline gap-1">
-                        <span className="text-slate-600 text-sm flex-shrink-0">For:</span>
-                        <p className="font-medium text-slate-800 truncate">{formData.purpose || 'Reason'}</p>
+                      <div className="pb-2 border-b border-white/30 flex items-baseline gap-1">
+                        <span className="text-white/70 text-sm flex-shrink-0">For:</span>
+                        <p className="font-medium text-white truncate">{formData.purpose || 'Reason'}</p>
                       </div>
                       {/* For repeating payments, show per payment amount and number of payments */}
                       {loanType === 'flexible' && formData.is_repeating && formData.repeating_num_payments ? (
                         <>
                           <div className="flex justify-between">
-                            <span className="text-slate-600">Per Payment:</span>
-                            <span className="font-bold text-slate-800">${parseFloat(formData.amount || 0).toLocaleString()}</span>
+                            <span className="text-white/70">Per Payment:</span>
+                            <span className="font-bold text-white">${parseFloat(formData.amount || 0).toLocaleString()}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-slate-600"># of Payments:</span>
-                            <span className="font-bold text-slate-800">{formData.repeating_num_payments}</span>
+                            <span className="text-white/70"># of Payments:</span>
+                            <span className="font-bold text-white">{formData.repeating_num_payments}</span>
                           </div>
-                          <div className="border-t border-[#83F384] pt-2">
+                          <div className="border-t border-white/30 pt-2">
                             <div className="flex justify-between text-lg">
-                              <span className="text-slate-600">Total:</span>
-                              <span className="font-bold text-slate-800">
+                              <span className="text-white/70">Total:</span>
+                              <span className="font-bold text-white">
                                 ${(parseFloat(formData.amount || 0) * parseInt(formData.repeating_num_payments || 0)).toFixed(2)}
                               </span>
                             </div>
@@ -2128,19 +2128,19 @@ export default function Lending() {
                       ) : (
                         <>
                           <div className="flex justify-between">
-                            <span className="text-slate-600">Amount:</span>
-                            <span className="font-bold text-slate-800">${parseFloat(formData.amount || 0).toLocaleString()}</span>
+                            <span className="text-white/70">Amount:</span>
+                            <span className="font-bold text-white">${parseFloat(formData.amount || 0).toLocaleString()}</span>
                           </div>
                           {loanType === 'scheduled' && (
                             <div className="flex justify-between">
-                              <span className="text-slate-600">Interest:</span>
-                              <span className="font-bold text-slate-800">${details.totalInterest.toFixed(2)}</span>
+                              <span className="text-white/70">Interest:</span>
+                              <span className="font-bold text-white">${details.totalInterest.toFixed(2)}</span>
                             </div>
                           )}
-                          <div className="border-t border-[#83F384] pt-2">
+                          <div className="border-t border-white/30 pt-2">
                             <div className="flex justify-between text-lg">
-                              <span className="text-slate-600">Total:</span>
-                              <span className="font-bold text-slate-800">
+                              <span className="text-white/70">Total:</span>
+                              <span className="font-bold text-white">
                                 ${loanType === 'flexible'
                                   ? parseFloat(formData.amount || 0).toFixed(2)
                                   : details.totalAmount.toFixed(2)}
