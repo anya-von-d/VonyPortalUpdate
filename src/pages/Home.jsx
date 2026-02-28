@@ -4,7 +4,7 @@ import { useAuth } from "@/lib/AuthContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { format } from "date-fns";
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths, getDay } from "date-fns";
 import { formatMoney } from "@/components/utils/formatMoney";
 
 import StatsCard from "../components/dashboard/StatsCard";
@@ -51,6 +51,7 @@ export default function Home() {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false);
   const [overviewType, setOverviewType] = useState('lending'); // 'lending' or 'borrowing'
+  const [calendarMonth, setCalendarMonth] = useState(new Date());
 
   // Use profile from context
   const user = userProfile ? { ...userProfile, id: authUser?.id, email: authUser?.email } : null;
@@ -406,6 +407,331 @@ export default function Home() {
               <div className="lg:col-span-2">
                 <RecentActivity loans={myLoans} payments={payments} user={user} allUsers={safeAllProfiles} /* Pass profiles */ />
               </div>
+            </div>
+
+            {/* Calendar and Monthly Overview Section */}
+            <div className="grid lg:grid-cols-2 gap-6">
+              {/* Calendar */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.2 }}
+              >
+                <Card className="bg-[#DBFFEB] border-0 rounded-2xl overflow-hidden">
+                  <CardContent className="p-5">
+                    {/* Calendar Header with Navigation */}
+                    <div className="flex items-center justify-between mb-4">
+                      <button
+                        onClick={() => setCalendarMonth(subMonths(calendarMonth, 1))}
+                        className="w-9 h-9 rounded-full bg-white/50 hover:bg-white/80 flex items-center justify-center transition-colors duration-200"
+                      >
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00A86B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="15 18 9 12 15 6"></polyline>
+                        </svg>
+                      </button>
+                      <h3 className="text-lg font-bold text-slate-800">
+                        {format(calendarMonth, 'MMMM yyyy')}
+                      </h3>
+                      <button
+                        onClick={() => setCalendarMonth(addMonths(calendarMonth, 1))}
+                        className="w-9 h-9 rounded-full bg-white/50 hover:bg-white/80 flex items-center justify-center transition-colors duration-200"
+                      >
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00A86B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                      </button>
+                    </div>
+
+                    {/* Day Labels */}
+                    <div className="grid grid-cols-7 gap-1 mb-2">
+                      {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                        <div key={day} className="text-center text-xs font-medium text-slate-500 py-1">
+                          {day}
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Calendar Grid */}
+                    {(() => {
+                      const monthStart = startOfMonth(calendarMonth);
+                      const monthEnd = endOfMonth(calendarMonth);
+                      const daysInMonth = eachDayOfInterval({ start: monthStart, end: monthEnd });
+                      const startDayOfWeek = getDay(monthStart);
+
+                      // Get all payment events for this month
+                      const getPaymentEvents = () => {
+                        const events = [];
+                        const activeLoans = myLoans.filter(l => l && l.status === 'active');
+
+                        activeLoans.forEach(loan => {
+                          if (!loan.next_payment_date) return;
+
+                          const paymentDate = new Date(loan.next_payment_date);
+                          const isLender = loan.lender_id === user.id;
+                          const otherUserId = isLender ? loan.borrower_id : loan.lender_id;
+                          const otherUser = safeAllProfiles.find(p => p.user_id === otherUserId);
+
+                          // Check if this payment falls in the current calendar month
+                          if (isSameMonth(paymentDate, calendarMonth)) {
+                            events.push({
+                              date: paymentDate,
+                              type: isLender ? 'receive' : 'send',
+                              amount: loan.payment_amount || 0,
+                              username: otherUser?.username || 'user'
+                            });
+                          }
+
+                          // Also check for recurring payments within the month
+                          const frequency = loan.payment_frequency;
+                          if (frequency && frequency !== 'none') {
+                            let currentDate = new Date(loan.next_payment_date);
+                            const maxIterations = 10;
+                            let iterations = 0;
+
+                            while (iterations < maxIterations) {
+                              // Move to next payment date based on frequency
+                              if (frequency === 'weekly') {
+                                currentDate = new Date(currentDate.setDate(currentDate.getDate() + 7));
+                              } else if (frequency === 'biweekly') {
+                                currentDate = new Date(currentDate.setDate(currentDate.getDate() + 14));
+                              } else if (frequency === 'monthly') {
+                                currentDate = addMonths(currentDate, 1);
+                              } else if (frequency === 'daily') {
+                                currentDate = new Date(currentDate.setDate(currentDate.getDate() + 1));
+                              } else {
+                                break;
+                              }
+
+                              // Stop if we've gone past the calendar month
+                              if (currentDate > monthEnd) break;
+
+                              // Add if this payment is in the calendar month
+                              if (isSameMonth(currentDate, calendarMonth)) {
+                                events.push({
+                                  date: new Date(currentDate),
+                                  type: isLender ? 'receive' : 'send',
+                                  amount: loan.payment_amount || 0,
+                                  username: otherUser?.username || 'user'
+                                });
+                              }
+
+                              iterations++;
+                            }
+                          }
+                        });
+
+                        return events;
+                      };
+
+                      const paymentEvents = getPaymentEvents();
+
+                      // Create empty cells for days before the first day of the month
+                      const emptyCells = Array(startDayOfWeek).fill(null);
+
+                      return (
+                        <div className="grid grid-cols-7 gap-1">
+                          {emptyCells.map((_, index) => (
+                            <div key={`empty-${index}`} className="h-10" />
+                          ))}
+                          {daysInMonth.map(day => {
+                            const dayEvents = paymentEvents.filter(e => isSameDay(e.date, day));
+                            const hasSend = dayEvents.some(e => e.type === 'send');
+                            const hasReceive = dayEvents.some(e => e.type === 'receive');
+                            const isToday = isSameDay(day, new Date());
+
+                            return (
+                              <div
+                                key={day.toISOString()}
+                                className={`h-10 flex flex-col items-center justify-center rounded-lg relative ${
+                                  isToday ? 'bg-white ring-2 ring-[#00A86B]' : ''
+                                }`}
+                              >
+                                <span className={`text-sm ${isToday ? 'font-bold text-[#00A86B]' : 'text-slate-700'}`}>
+                                  {format(day, 'd')}
+                                </span>
+                                {/* Payment Indicators */}
+                                <div className="flex gap-0.5 absolute bottom-1">
+                                  {hasSend && (
+                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="#EF4444" stroke="none">
+                                      <path d="M12 4 L4 14 L12 11 L20 14 Z" />
+                                    </svg>
+                                  )}
+                                  {hasReceive && (
+                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="#00A86B" stroke="none">
+                                      <path d="M12 20 L4 10 L12 13 L20 10 Z" />
+                                    </svg>
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      );
+                    })()}
+
+                    {/* Legend */}
+                    <div className="flex items-center justify-center gap-4 mt-4 pt-3 border-t border-white/50">
+                      <div className="flex items-center gap-1.5">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="#EF4444" stroke="none">
+                          <path d="M12 4 L4 14 L12 11 L20 14 Z" />
+                        </svg>
+                        <span className="text-xs text-slate-600">Send</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="#00A86B" stroke="none">
+                          <path d="M12 20 L4 10 L12 13 L20 10 Z" />
+                        </svg>
+                        <span className="text-xs text-slate-600">Receive</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+
+              {/* Monthly Overview */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.3 }}
+              >
+                <Card className="bg-[#DBFFEB] border-0 rounded-2xl overflow-hidden h-full">
+                  <CardContent className="p-5 h-full flex flex-col">
+                    <p className="text-[10px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                      Monthly Overview
+                    </p>
+
+                    <div className="flex-1 space-y-3 overflow-y-auto max-h-[320px] pr-1" style={{
+                      maskImage: 'linear-gradient(to bottom, black 85%, transparent 100%)',
+                      WebkitMaskImage: 'linear-gradient(to bottom, black 85%, transparent 100%)'
+                    }}>
+                      {(() => {
+                        const monthStart = startOfMonth(calendarMonth);
+                        const monthEnd = endOfMonth(calendarMonth);
+                        const events = [];
+                        const activeLoans = myLoans.filter(l => l && l.status === 'active');
+
+                        activeLoans.forEach(loan => {
+                          if (!loan.next_payment_date) return;
+
+                          const paymentDate = new Date(loan.next_payment_date);
+                          const isLender = loan.lender_id === user.id;
+                          const otherUserId = isLender ? loan.borrower_id : loan.lender_id;
+                          const otherUser = safeAllProfiles.find(p => p.user_id === otherUserId);
+
+                          // Helper to add event if in month
+                          const addEventIfInMonth = (date) => {
+                            if (isSameMonth(date, calendarMonth)) {
+                              events.push({
+                                date: new Date(date),
+                                type: isLender ? 'receive' : 'send',
+                                amount: loan.payment_amount || 0,
+                                username: otherUser?.username || 'user'
+                              });
+                            }
+                          };
+
+                          addEventIfInMonth(paymentDate);
+
+                          // Add recurring payments
+                          const frequency = loan.payment_frequency;
+                          if (frequency && frequency !== 'none') {
+                            let currentDate = new Date(loan.next_payment_date);
+                            const maxIterations = 10;
+                            let iterations = 0;
+
+                            while (iterations < maxIterations) {
+                              if (frequency === 'weekly') {
+                                currentDate = new Date(currentDate.setDate(currentDate.getDate() + 7));
+                              } else if (frequency === 'biweekly') {
+                                currentDate = new Date(currentDate.setDate(currentDate.getDate() + 14));
+                              } else if (frequency === 'monthly') {
+                                currentDate = addMonths(currentDate, 1);
+                              } else if (frequency === 'daily') {
+                                currentDate = new Date(currentDate.setDate(currentDate.getDate() + 1));
+                              } else {
+                                break;
+                              }
+
+                              if (currentDate > monthEnd) break;
+                              addEventIfInMonth(currentDate);
+                              iterations++;
+                            }
+                          }
+                        });
+
+                        // Sort by date
+                        events.sort((a, b) => a.date - b.date);
+
+                        if (events.length === 0) {
+                          return (
+                            <div className="flex flex-col items-center justify-center py-8 text-slate-500">
+                              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="opacity-40 mb-2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                              </svg>
+                              <p className="text-sm">No payments scheduled this month</p>
+                            </div>
+                          );
+                        }
+
+                        const colors = ['#D0ED6F', '#83F384', '#6EE8B5'];
+
+                        return events.map((event, index) => (
+                          <div
+                            key={index}
+                            className="flex items-center gap-3 p-3 rounded-xl"
+                            style={{ backgroundColor: colors[index % 3] }}
+                          >
+                            {/* Date Box */}
+                            <div className="bg-[#DBFFEB] rounded-lg px-3 py-2 flex-shrink-0 text-center min-w-[50px]">
+                              <p className="text-xs text-slate-500 uppercase" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                                {format(event.date, 'MMM')}
+                              </p>
+                              <p className="text-lg font-bold text-slate-800">
+                                {format(event.date, 'd')}
+                              </p>
+                            </div>
+
+                            {/* Event Details */}
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-slate-800">
+                                <span className={event.type === 'send' ? 'text-red-600' : 'text-[#00A86B]'}>
+                                  {event.type === 'send' ? 'Send' : 'Receive'}
+                                </span>
+                                {' '}
+                                <span className="font-bold">${event.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                                {' '}
+                                <span className="text-slate-600">
+                                  {event.type === 'send' ? 'to' : 'from'}
+                                </span>
+                                {' '}
+                                <span className="font-medium">@{event.username}</span>
+                              </p>
+                            </div>
+
+                            {/* Arrow indicator */}
+                            <div className="flex-shrink-0">
+                              {event.type === 'send' ? (
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#EF4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                                  <polyline points="19 12 12 19 5 12"></polyline>
+                                </svg>
+                              ) : (
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00A86B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                  <line x1="12" y1="19" x2="12" y2="5"></line>
+                                  <polyline points="5 12 12 5 19 12"></polyline>
+                                </svg>
+                              )}
+                            </div>
+                          </div>
+                        ));
+                      })()}
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
             </div>
           </div>
 

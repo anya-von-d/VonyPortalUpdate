@@ -1078,6 +1078,145 @@ export default function Lending() {
                       </Card>
                     ) : (
                       <>
+                          {/* Payment Amount & Interest Accrued Row */}
+                          <div className="grid grid-cols-2 gap-4">
+                            {/* Payment Amount Box */}
+                            <Card className="bg-[#DBFFEB] border-0">
+                              <CardContent className="p-5">
+                                <div className="flex items-center gap-3 mb-3">
+                                  <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
+                                    <DollarSign className="w-5 h-5 text-[#00A86B]" />
+                                  </div>
+                                  <div>
+                                    <p className="text-xs text-slate-600 uppercase tracking-wide font-medium" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>Payment Amount</p>
+                                  </div>
+                                </div>
+                                <p className="text-3xl font-bold text-slate-800">
+                                  ${(manageLoanSelected.payment_amount || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                </p>
+                                <p className="text-sm text-slate-500 mt-1 capitalize">
+                                  {manageLoanSelected.payment_frequency || 'One-time'} payment
+                                </p>
+                              </CardContent>
+                            </Card>
+
+                            {/* Interest Accrued Box */}
+                            <Card className="bg-[#DBFFEB] border-0">
+                              <CardContent className="p-5">
+                                <div className="flex items-center gap-3 mb-3">
+                                  <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
+                                    <TrendingUp className="w-5 h-5 text-[#00A86B]" />
+                                  </div>
+                                  <div>
+                                    <p className="text-xs text-slate-600 uppercase tracking-wide font-medium" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>Interest Accrued</p>
+                                  </div>
+                                </div>
+                                <p className="text-3xl font-bold text-slate-800">
+                                  ${(() => {
+                                    const principal = manageLoanSelected.amount || 0;
+                                    const total = manageLoanSelected.total_amount || principal;
+                                    return (total - principal).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                                  })()}
+                                </p>
+                                <p className="text-sm text-slate-500 mt-1">
+                                  {manageLoanSelected.interest_rate || 0}% annual rate
+                                </p>
+                              </CardContent>
+                            </Card>
+                          </div>
+
+                          {/* Payment Updates Box (Recent Activity for this loan) */}
+                          <Card className="bg-[#DBFFEB] border-0">
+                            <CardContent className="p-5">
+                              <p className="text-[10px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                                Payment Updates
+                              </p>
+                              <div className="space-y-3 max-h-[280px] overflow-y-auto pr-2" style={{
+                                maskImage: 'linear-gradient(to bottom, black 85%, transparent 100%)',
+                                WebkitMaskImage: 'linear-gradient(to bottom, black 85%, transparent 100%)'
+                              }}>
+                                {(() => {
+                                  // Generate payment history events
+                                  const loan = manageLoanSelected;
+                                  const borrower = publicProfiles.find(p => p.user_id === loan.borrower_id);
+                                  const events = [];
+
+                                  // Add loan created event
+                                  events.push({
+                                    type: 'created',
+                                    date: loan.created_at,
+                                    description: `Loan created for $${loan.amount?.toLocaleString()}`,
+                                    icon: 'FileText'
+                                  });
+
+                                  // Simulate payment events based on amount_paid
+                                  const amountPaid = loan.amount_paid || 0;
+                                  const paymentAmount = loan.payment_amount || 0;
+                                  if (amountPaid > 0 && paymentAmount > 0) {
+                                    const numPayments = Math.floor(amountPaid / paymentAmount);
+                                    const startDate = new Date(loan.created_at);
+
+                                    for (let i = 0; i < numPayments && i < 10; i++) {
+                                      const paymentDate = new Date(startDate);
+                                      if (loan.payment_frequency === 'weekly') {
+                                        paymentDate.setDate(paymentDate.getDate() + ((i + 1) * 7));
+                                      } else if (loan.payment_frequency === 'biweekly') {
+                                        paymentDate.setDate(paymentDate.getDate() + ((i + 1) * 14));
+                                      } else {
+                                        paymentDate.setMonth(paymentDate.getMonth() + (i + 1));
+                                      }
+
+                                      events.push({
+                                        type: 'payment',
+                                        date: paymentDate.toISOString(),
+                                        description: `Payment received: $${paymentAmount.toLocaleString()}`,
+                                        icon: 'DollarSign'
+                                      });
+                                    }
+                                  }
+
+                                  // Sort by date descending
+                                  events.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                                  const colors = ['#D0ED6F', '#83F384', '#6EE8B5'];
+
+                                  if (events.length === 0) {
+                                    return (
+                                      <p className="text-sm text-slate-500 text-center py-4">No payment updates yet</p>
+                                    );
+                                  }
+
+                                  return events.map((event, index) => (
+                                    <div
+                                      key={index}
+                                      className="flex items-center gap-3 p-3 rounded-xl"
+                                      style={{ backgroundColor: colors[index % 3] }}
+                                    >
+                                      <div className="w-8 h-8 rounded-full bg-[#DBFFEB] flex items-center justify-center flex-shrink-0">
+                                        {event.type === 'payment' ? (
+                                          <DollarSign className="w-4 h-4 text-slate-800" />
+                                        ) : (
+                                          <FileText className="w-4 h-4 text-slate-800" />
+                                        )}
+                                      </div>
+                                      <div className="flex-1 min-w-0">
+                                        <p className="text-sm font-medium text-slate-800 truncate">
+                                          {event.description}
+                                        </p>
+                                        <p className="text-xs text-slate-600">
+                                          @{borrower?.username || 'user'}
+                                        </p>
+                                      </div>
+                                      <span className="text-xs text-slate-600 flex-shrink-0">
+                                        {format(new Date(event.date), 'MMM d')}
+                                      </span>
+                                    </div>
+                                  ));
+                                })()}
+                              </div>
+                            </CardContent>
+                          </Card>
+
                           {/* Payment History Bar Chart */}
                           <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60">
                             <CardHeader className="pb-2">
