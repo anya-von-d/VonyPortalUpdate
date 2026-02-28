@@ -80,8 +80,10 @@ export default function Lending() {
     repeating_frequency: 'weekly',
     repeating_day_of_week: 'monday',
     repeating_day_of_month: '1',
+    repeating_time: '12:00',
+    repeating_timezone: 'EST',
     repeating_start_date: '',
-    repeating_end_date: '',
+    repeating_num_payments: '',
     first_payment_date: '',
     lender_send_funds_date: ''
   });
@@ -1574,39 +1576,42 @@ export default function Lending() {
                         </div>
 
                         {/* Amount and Purpose */}
-                        <div className="grid sm:grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label htmlFor="amount" className="flex items-center gap-2">
-                              <DollarSign className="w-4 h-4 text-[#00A86B]" />
-                              Loan Amount
-                            </Label>
-                            <Input
-                              id="amount"
-                              type="number"
-                              step="0.01"
-                              min="0"
-                              max="5000"
-                              placeholder="Enter amount"
-                              value={formData.amount}
-                              onChange={(e) => handleInputChange('amount', e.target.value)}
-                              required
-                            />
+                        {/* Show amount and purpose fields only if NOT repeating (for flexible) or always for scheduled */}
+                        {(loanType === 'scheduled' || (loanType === 'flexible' && !formData.is_repeating)) && (
+                          <div className="grid sm:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <Label htmlFor="amount" className="flex items-center gap-2">
+                                <DollarSign className="w-4 h-4 text-[#00A86B]" />
+                                Loan Amount
+                              </Label>
+                              <Input
+                                id="amount"
+                                type="number"
+                                step="0.01"
+                                min="0"
+                                max="5000"
+                                placeholder="Enter amount"
+                                value={formData.amount}
+                                onChange={(e) => handleInputChange('amount', e.target.value)}
+                                required
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="purpose" className="flex items-center gap-2">
+                                <FileText className="w-4 h-4 text-[#00A86B]" />
+                                What's this for?
+                              </Label>
+                              <Input
+                                id="purpose"
+                                type="text"
+                                placeholder="e.g., Concert tickets..."
+                                value={formData.purpose}
+                                onChange={(e) => handleInputChange('purpose', e.target.value)}
+                                maxLength={100}
+                              />
+                            </div>
                           </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="purpose" className="flex items-center gap-2">
-                              <FileText className="w-4 h-4 text-[#00A86B]" />
-                              What's this for?
-                            </Label>
-                            <Input
-                              id="purpose"
-                              type="text"
-                              placeholder="e.g., Concert tickets..."
-                              value={formData.purpose}
-                              onChange={(e) => handleInputChange('purpose', e.target.value)}
-                              maxLength={100}
-                            />
-                          </div>
-                        </div>
+                        )}
 
                         {/* Repeating Request Toggle - Only for Quick Payment Request */}
                         {loanType === 'flexible' && (
@@ -1634,8 +1639,19 @@ export default function Lending() {
                             {/* Repeating Options */}
                             {formData.is_repeating && (
                               <div className="p-4 bg-[#DBFFEB] rounded-xl space-y-3">
+                                {/* Line 1: Payments of $X will be due weekly/monthly on day at time for timezone */}
                                 <div className="flex flex-wrap items-center gap-2 text-sm text-slate-700">
-                                  <span>Payments will be due</span>
+                                  <span>Payments of</span>
+                                  <Input
+                                    type="number"
+                                    step="0.01"
+                                    min="0"
+                                    placeholder="$0.00"
+                                    value={formData.amount}
+                                    onChange={(e) => handleInputChange('amount', e.target.value)}
+                                    className="w-24 h-8 px-3 bg-white"
+                                  />
+                                  <span>will be due</span>
                                   <Select
                                     value={formData.repeating_frequency}
                                     onValueChange={(value) => handleInputChange('repeating_frequency', value)}
@@ -1684,7 +1700,33 @@ export default function Lending() {
                                       </SelectContent>
                                     </Select>
                                   )}
+                                  <span>at</span>
+                                  <Input
+                                    type="time"
+                                    value={formData.repeating_time}
+                                    onChange={(e) => handleInputChange('repeating_time', e.target.value)}
+                                    className="w-auto h-8 px-3 bg-white"
+                                  />
+                                  <span>for</span>
+                                  <Select
+                                    value={formData.repeating_timezone}
+                                    onValueChange={(value) => handleInputChange('repeating_timezone', value)}
+                                  >
+                                    <SelectTrigger className="w-auto h-8 px-3 bg-white">
+                                      <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value="EST">EST</SelectItem>
+                                      <SelectItem value="CST">CST</SelectItem>
+                                      <SelectItem value="MST">MST</SelectItem>
+                                      <SelectItem value="PST">PST</SelectItem>
+                                      <SelectItem value="HST">HST</SelectItem>
+                                      <SelectItem value="AKST">AKST</SelectItem>
+                                    </SelectContent>
+                                  </Select>
                                 </div>
+
+                                {/* Line 2: Starting on date and ending after X payments */}
                                 <div className="flex flex-wrap items-center gap-2 text-sm text-slate-700">
                                   <span>Starting on</span>
                                   <Input
@@ -1694,13 +1736,28 @@ export default function Lending() {
                                     min={format(new Date(), 'yyyy-MM-dd')}
                                     className="w-auto h-8 px-3 bg-white"
                                   />
-                                  <span>and ending on</span>
+                                  <span>and ending after</span>
                                   <Input
-                                    type="date"
-                                    value={formData.repeating_end_date}
-                                    onChange={(e) => handleInputChange('repeating_end_date', e.target.value)}
-                                    min={formData.repeating_start_date || format(new Date(), 'yyyy-MM-dd')}
-                                    className="w-auto h-8 px-3 bg-white"
+                                    type="number"
+                                    min="1"
+                                    placeholder="#"
+                                    value={formData.repeating_num_payments}
+                                    onChange={(e) => handleInputChange('repeating_num_payments', e.target.value)}
+                                    className="w-16 h-8 px-3 bg-white"
+                                  />
+                                  <span>payments</span>
+                                </div>
+
+                                {/* Line 3: These payments will be for */}
+                                <div className="flex flex-wrap items-center gap-2 text-sm text-slate-700">
+                                  <span>These payments will be for</span>
+                                  <Input
+                                    type="text"
+                                    placeholder="e.g., Netflix subscription, rent split..."
+                                    value={formData.purpose}
+                                    onChange={(e) => handleInputChange('purpose', e.target.value)}
+                                    className="flex-1 h-8 px-3 bg-white min-w-[200px]"
+                                    maxLength={100}
                                   />
                                 </div>
                               </div>
@@ -1841,6 +1898,19 @@ export default function Lending() {
 
                 {/* Summary Sidebar */}
                 <div className="space-y-4">
+                  {/* Borrower Payment Box - Only for Loan type */}
+                  {loanType === 'scheduled' && formData.amount && (
+                    <div className="bg-[#DBFFEB] rounded-2xl p-4">
+                      <p className="text-xs text-slate-500 text-center">Borrower will pay</p>
+                      <p className="text-2xl font-bold text-slate-800 text-center my-1">
+                        ${details.monthlyPayment.toFixed(2)}
+                      </p>
+                      <p className="text-xs text-slate-500 text-center">
+                        every {formData.payment_frequency || 'month'} before interest
+                      </p>
+                    </div>
+                  )}
+
                   <div className="bg-[#DBFFEB] rounded-2xl p-5 sticky top-6">
                     <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                       Loan Summary
@@ -1852,26 +1922,50 @@ export default function Lending() {
                           <p className="font-medium text-slate-800">{formData.purpose}</p>
                         </div>
                       )}
-                      <div className="flex justify-between">
-                        <span className="text-slate-600">Amount:</span>
-                        <span className="font-bold text-slate-800">${parseFloat(formData.amount || 0).toLocaleString()}</span>
-                      </div>
-                      {loanType === 'scheduled' && (
-                        <div className="flex justify-between">
-                          <span className="text-slate-600">Interest:</span>
-                          <span className="font-bold text-slate-800">${details.totalInterest.toFixed(2)}</span>
-                        </div>
+                      {/* For repeating payments, show per payment amount and number of payments */}
+                      {loanType === 'flexible' && formData.is_repeating && formData.repeating_num_payments ? (
+                        <>
+                          <div className="flex justify-between">
+                            <span className="text-slate-600">Per Payment:</span>
+                            <span className="font-bold text-slate-800">${parseFloat(formData.amount || 0).toLocaleString()}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-slate-600"># of Payments:</span>
+                            <span className="font-bold text-slate-800">{formData.repeating_num_payments}</span>
+                          </div>
+                          <div className="border-t border-[#83F384] pt-2">
+                            <div className="flex justify-between text-lg">
+                              <span className="text-slate-600">Total:</span>
+                              <span className="font-bold text-slate-800">
+                                ${(parseFloat(formData.amount || 0) * parseInt(formData.repeating_num_payments || 0)).toFixed(2)}
+                              </span>
+                            </div>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="flex justify-between">
+                            <span className="text-slate-600">Amount:</span>
+                            <span className="font-bold text-slate-800">${parseFloat(formData.amount || 0).toLocaleString()}</span>
+                          </div>
+                          {loanType === 'scheduled' && (
+                            <div className="flex justify-between">
+                              <span className="text-slate-600">Interest:</span>
+                              <span className="font-bold text-slate-800">${details.totalInterest.toFixed(2)}</span>
+                            </div>
+                          )}
+                          <div className="border-t border-[#83F384] pt-2">
+                            <div className="flex justify-between text-lg">
+                              <span className="text-slate-600">Total:</span>
+                              <span className="font-bold text-slate-800">
+                                ${loanType === 'flexible'
+                                  ? parseFloat(formData.amount || 0).toFixed(2)
+                                  : details.totalAmount.toFixed(2)}
+                              </span>
+                            </div>
+                          </div>
+                        </>
                       )}
-                      <div className="border-t border-[#83F384] pt-2">
-                        <div className="flex justify-between text-lg">
-                          <span className="text-slate-600">Total:</span>
-                          <span className="font-bold text-slate-800">
-                            ${loanType === 'flexible'
-                              ? parseFloat(formData.amount || 0).toFixed(2)
-                              : details.totalAmount.toFixed(2)}
-                          </span>
-                        </div>
-                      </div>
                     </div>
                   </div>
 
