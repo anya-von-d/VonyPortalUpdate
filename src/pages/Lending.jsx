@@ -1629,10 +1629,9 @@ export default function Lending() {
 
                             {/* Repeating Options */}
                             {formData.is_repeating && (
-                              <div className="p-4 bg-[#DBFFEB] rounded-xl space-y-3">
-                                {/* Line 1: Payments of $X will be due weekly/monthly on day at time for timezone */}
-                                <div className="flex flex-wrap items-center gap-2 text-sm text-slate-700">
-                                  <span>Payments of</span>
+                              <div className="p-4 bg-[#DBFFEB] rounded-xl">
+                                <p className="text-sm text-slate-700 leading-[2.4] [&_input]:inline-flex [&_input]:align-baseline [&_input]:my-[2px] [&_input[type=number]]:appearance-none [&_input[type=number]]:[-moz-appearance:textfield] [&_input[type=number]::-webkit-outer-spin-button]:appearance-none [&_input[type=number]::-webkit-inner-spin-button]:appearance-none [&_.inline-flex]:my-[2px]">
+                                  Payments of{' '}
                                   <Input
                                     type="number"
                                     step="0.01"
@@ -1640,28 +1639,29 @@ export default function Lending() {
                                     placeholder="$0.00"
                                     value={formData.amount}
                                     onChange={(e) => handleInputChange('amount', e.target.value)}
-                                    className="w-24 h-8 px-3 bg-white"
-                                  />
-                                  <span>will be due</span>
+                                    className="w-24 h-8 px-3 bg-white inline-flex"
+                                    style={{ MozAppearance: 'textfield' }}
+                                  />{' '}
+                                  will be due{' '}
                                   <Select
                                     value={formData.repeating_frequency}
                                     onValueChange={(value) => handleInputChange('repeating_frequency', value)}
                                   >
-                                    <SelectTrigger className="w-auto h-8 px-3 bg-white">
+                                    <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex">
                                       <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
                                       <SelectItem value="weekly">weekly</SelectItem>
                                       <SelectItem value="monthly">monthly</SelectItem>
                                     </SelectContent>
-                                  </Select>
-                                  <span>{formData.repeating_frequency === 'monthly' ? 'on the' : 'on'}</span>
+                                  </Select>{' '}
+                                  {formData.repeating_frequency === 'monthly' ? 'on the ' : 'on '}
                                   {formData.repeating_frequency === 'weekly' ? (
                                     <Select
                                       value={formData.repeating_day_of_week}
                                       onValueChange={(value) => handleInputChange('repeating_day_of_week', value)}
                                     >
-                                      <SelectTrigger className="w-auto h-8 px-3 bg-white">
+                                      <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex">
                                         <SelectValue />
                                       </SelectTrigger>
                                       <SelectContent>
@@ -1679,7 +1679,7 @@ export default function Lending() {
                                       value={formData.repeating_day_of_month}
                                       onValueChange={(value) => handleInputChange('repeating_day_of_month', value)}
                                     >
-                                      <SelectTrigger className="w-auto h-8 px-3 bg-white">
+                                      <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex">
                                         <SelectValue />
                                       </SelectTrigger>
                                       <SelectContent>
@@ -1690,19 +1690,19 @@ export default function Lending() {
                                         ))}
                                       </SelectContent>
                                     </Select>
-                                  )}
-                                  <span>at</span>
+                                  )}{' '}
+                                  at{' '}
                                   <Input
                                     type="time"
                                     value={formData.repeating_time}
                                     onChange={(e) => handleInputChange('repeating_time', e.target.value)}
-                                    className="w-auto h-8 px-3 bg-white"
-                                  />
+                                    className="w-auto h-8 px-3 bg-white inline-flex"
+                                  />{' '}
                                   <Select
                                     value={formData.repeating_timezone}
                                     onValueChange={(value) => handleInputChange('repeating_timezone', value)}
                                   >
-                                    <SelectTrigger className="w-auto h-8 px-3 bg-white">
+                                    <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex">
                                       <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -1714,42 +1714,34 @@ export default function Lending() {
                                       <SelectItem value="AKST">AKST</SelectItem>
                                     </SelectContent>
                                   </Select>
-                                </div>
-
-                                {/* Line 2: Starting on date and ending after X payments */}
-                                <div className="flex flex-wrap items-center gap-2 text-sm text-slate-700">
-                                  <span>Starting on</span>
+                                  , starting on{' '}
                                   <Input
                                     type="date"
                                     value={formData.repeating_start_date}
                                     onChange={(e) => handleInputChange('repeating_start_date', e.target.value)}
                                     min={format(new Date(), 'yyyy-MM-dd')}
-                                    className="w-auto h-8 px-3 bg-white"
-                                  />
-                                  <span>and ending after</span>
+                                    className="w-auto h-8 px-3 bg-white inline-flex"
+                                  />{' '}
+                                  and ending after{' '}
                                   <Input
                                     type="number"
                                     min="1"
                                     placeholder="#"
                                     value={formData.repeating_num_payments}
                                     onChange={(e) => handleInputChange('repeating_num_payments', e.target.value)}
-                                    className="w-16 h-8 px-3 bg-white"
-                                  />
-                                  <span>payments</span>
-                                </div>
-
-                                {/* Line 3: These payments will be for */}
-                                <div className="flex flex-wrap items-center gap-2 text-sm text-slate-700">
-                                  <span>These payments will be for</span>
+                                    className="w-16 h-8 px-3 bg-white inline-flex"
+                                    style={{ MozAppearance: 'textfield' }}
+                                  />{' '}
+                                  payments. These payments will be for{' '}
                                   <Input
                                     type="text"
                                     placeholder="e.g., Netflix subscription, rent split..."
                                     value={formData.purpose}
                                     onChange={(e) => handleInputChange('purpose', e.target.value)}
-                                    className="flex-1 h-8 px-3 bg-white min-w-[200px]"
+                                    className="flex-1 h-8 px-3 bg-white min-w-[200px] inline-flex"
                                     maxLength={100}
-                                  />
-                                </div>
+                                  />.
+                                </p>
                               </div>
                             )}
                           </div>
@@ -1758,7 +1750,7 @@ export default function Lending() {
                         {/* Scheduled loan fields - Sentence format */}
                         {loanType === 'scheduled' && (
                           <div className="p-4 bg-[#DBFFEB] rounded-xl">
-                            <p className="text-sm text-slate-700 leading-relaxed [&_input]:inline-flex [&_input]:align-baseline [&_input[type=number]]:appearance-none [&_input[type=number]]:[-moz-appearance:textfield] [&_input[type=number]::-webkit-outer-spin-button]:appearance-none [&_input[type=number]::-webkit-inner-spin-button]:appearance-none">
+                            <p className="text-sm text-slate-700 leading-[2.4] [&_input]:inline-flex [&_input]:align-baseline [&_input]:my-[2px] [&_input[type=number]]:appearance-none [&_input[type=number]]:[-moz-appearance:textfield] [&_input[type=number]::-webkit-outer-spin-button]:appearance-none [&_input[type=number]::-webkit-inner-spin-button]:appearance-none [&_.inline-flex]:my-[2px]">
                               The lender agrees to lend{' '}
                               <span className="text-[#00A86B] font-medium">
                                 {formData.borrower_username ? `@${formData.borrower_username}` : 'the borrower'}
@@ -1834,7 +1826,7 @@ export default function Lending() {
                                 ${details.monthlyPayment.toFixed(2)}
                               </span>
                               . Payments will be due{' '}
-                              {formData.payment_frequency === 'monthly' ? 'monthly on the ' : 'weekly on '}
+                              {formData.payment_frequency === 'monthly' ? 'on the ' : 'on '}
                               {formData.payment_frequency === 'weekly' ? (
                                 <Select
                                   value={formData.loan_day_of_week}
@@ -1943,13 +1935,21 @@ export default function Lending() {
                           </div>
                         )}
 
-                        <Button
-                          type="submit"
-                          disabled={isSubmitting || !formData.borrower_username || !formData.amount}
-                          className="w-full bg-[#00A86B] hover:bg-[#0D9B76] text-white py-3 text-lg font-semibold"
-                        >
-                          {isSubmitting ? "Sending..." : (loanType === 'flexible' ? "Send Quick Payment Request" : "Send Loan Offer")}
-                        </Button>
+                        <Card className="border-0 rounded-2xl overflow-hidden mt-4" style={{ backgroundColor: '#83F384' }}>
+                          <CardContent className="p-4">
+                            <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-3" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                              {loanType === 'flexible' ? 'Send Payment Request' : 'Send Loan Offer'}
+                            </p>
+                            <Button
+                              type="submit"
+                              disabled={isSubmitting || !formData.borrower_username || !formData.amount}
+                              className="w-full bg-[#0A1A10] hover:bg-[#1a2a20] text-white py-3 text-base font-semibold rounded-xl"
+                            >
+                              <Send className="w-4 h-4 mr-2" />
+                              {isSubmitting ? "Sending..." : (loanType === 'flexible' ? "Send Quick Payment Request" : "Send Loan Offer")}
+                            </Button>
+                          </CardContent>
+                        </Card>
                       </form>
                   </div>
 
@@ -1967,7 +1967,7 @@ export default function Lending() {
                 {/* Summary Sidebar */}
                 <div className="space-y-4">
                   {/* Loan Type Toggle - Always First */}
-                  <div className="bg-[#D0ED6F] rounded-2xl p-4 border-0">
+                  <div className="bg-white rounded-2xl p-4 border-0">
                     <div className="flex items-center justify-center gap-3">
                       <span className={`text-xs font-medium ${loanType === 'scheduled' ? 'text-[#00A86B]' : 'text-slate-400'}`}>
                         Loan
@@ -2002,30 +2002,36 @@ export default function Lending() {
 
                   {/* Borrower Payment Box - Only for Loan type, always visible */}
                   {loanType === 'scheduled' && (
-                    <div className="bg-[#83F384] rounded-2xl p-4">
-                      <p className="text-xs text-slate-500 text-center">
-                        {formData.borrower_username ? (
-                          <>
-                            {(() => {
-                              const selectedUser = users.find(u => u.username === formData.borrower_username);
-                              return selectedUser?.full_name || `@${formData.borrower_username}`;
-                            })()} will pay
-                          </>
-                        ) : (
-                          'Borrower will pay'
-                        )}
-                      </p>
-                      <p className="text-2xl font-bold text-slate-800 text-center my-1">
-                        {formData.amount && details.monthlyPayment > 0 ? `$${details.monthlyPayment.toFixed(2)}` : '$—'}
-                      </p>
-                      <p className="text-xs text-slate-500 text-center">
-                        {formData.payment_frequency || '—'} after interest
-                      </p>
-                    </div>
+                    <Card className="backdrop-blur-sm hover:shadow-xl transition-all duration-300 h-full cursor-default border-0 rounded-xl" style={{ backgroundColor: '#83F384' }}>
+                      <CardContent className="p-5 flex flex-col h-full">
+                        <p className="text-sm font-medium text-slate-600 mb-2 text-left">
+                          {formData.borrower_username ? (
+                            <>
+                              {(() => {
+                                const selectedUser = users.find(u => u.username === formData.borrower_username);
+                                return selectedUser?.full_name || `@${formData.borrower_username}`;
+                              })()} will pay
+                            </>
+                          ) : (
+                            'Borrower will pay'
+                          )}
+                        </p>
+                        <div className="flex-1 flex flex-col items-center justify-center">
+                          <p className="text-lg font-bold text-slate-800">
+                            {formData.amount && details.monthlyPayment > 0 ? `$${details.monthlyPayment.toFixed(2)}` : '$—'}
+                          </p>
+                          <div className="mt-2 px-3 py-1 bg-white rounded-full">
+                            <p className="text-sm font-semibold text-[#00A86B]">
+                              {formData.payment_frequency || '—'} after interest
+                            </p>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
                   )}
 
                   {/* Loan Summary - Always Last */}
-                  <div className="bg-[#6EE8B5] rounded-2xl p-5 sticky top-6">
+                  <div className="bg-[#DBFFEB] rounded-2xl p-5 sticky top-6">
                     <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                       Loan Summary
                     </p>
@@ -2567,19 +2573,23 @@ export default function Lending() {
       )}
 
       <AlertDialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Cancel Loan</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to cancel this loan? This action cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Keep Loan</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmCancelLoan} className="bg-red-600 hover:bg-red-700">
-              Cancel Loan
+        <AlertDialogContent className="rounded-2xl border-0 p-0 overflow-hidden" style={{ backgroundColor: '#DBEEE3' }}>
+          <div className="p-6 pb-4">
+            <AlertDialogHeader>
+              <AlertDialogTitle className="text-xl font-bold text-slate-800" style={{ fontFamily: "'Libre Baskerville', Georgia, serif" }}>Cancel Loan</AlertDialogTitle>
+              <AlertDialogDescription className="text-sm text-slate-600 mt-1">
+                Are you sure you want to cancel this loan? This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+          </div>
+          <div className="px-6 pb-6 flex flex-col sm:flex-row gap-3">
+            <AlertDialogCancel className="flex-1 rounded-xl border-0 font-semibold text-[#0A1A10] text-[14px] h-12 hover:opacity-90 transition-all" style={{ backgroundColor: '#83F384' }}>
+              Keep Loan
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={confirmCancelLoan} className="flex-1 rounded-xl border-0 font-semibold text-[#0A1A10] text-[14px] h-12 hover:opacity-90 transition-all" style={{ backgroundColor: '#D0ED6F' }}>
+              Request Loan Cancellation
             </AlertDialogAction>
-          </AlertDialogFooter>
+          </div>
         </AlertDialogContent>
       </AlertDialog>
 
