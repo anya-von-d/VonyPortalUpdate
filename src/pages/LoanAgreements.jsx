@@ -857,21 +857,20 @@ export default function LoanAgreements() {
 
                               {/* Right: Three Buttons */}
                               <div className="flex gap-2 flex-shrink-0">
-                                <div className="flex items-center gap-1">
-                                  <Button
-                                    onClick={() => openPopup('promissory', agreement)}
-                                    size="sm"
-                                    variant="outline"
-                                    className="bg-white/80 border-0 hover:bg-white text-slate-700 text-xs"
-                                  >
-                                    Promissory Note
-                                  </Button>
+                                <Button
+                                  onClick={() => openPopup('promissory', agreement)}
+                                  size="sm"
+                                  variant="outline"
+                                  className="bg-white/80 border-0 hover:bg-white text-slate-700 text-xs flex items-center gap-1"
+                                >
+                                  Promissory Note
                                   <div
                                     className="relative"
-                                    onMouseEnter={() => setActiveInfoTooltip(`promissory-${agreement.id}`)}
+                                    onMouseEnter={(e) => { e.stopPropagation(); setActiveInfoTooltip(`promissory-${agreement.id}`); }}
                                     onMouseLeave={() => setActiveInfoTooltip(null)}
+                                    onClick={(e) => e.stopPropagation()}
                                   >
-                                    <div className="w-4 h-4 rounded-full bg-white flex items-center justify-center cursor-help shadow-sm">
+                                    <div className="w-4 h-4 rounded-full bg-[#6EE8B5] flex items-center justify-center cursor-help">
                                       <span className="text-[10px] font-bold text-slate-800">i</span>
                                     </div>
                                     {activeInfoTooltip === `promissory-${agreement.id}` && (
@@ -880,22 +879,21 @@ export default function LoanAgreements() {
                                       </div>
                                     )}
                                   </div>
-                                </div>
-                                <div className="flex items-center gap-1">
-                                  <Button
-                                    onClick={() => openPopup('amortization', agreement)}
-                                    size="sm"
-                                    variant="outline"
-                                    className="bg-white/80 border-0 hover:bg-white text-slate-700 text-xs"
-                                  >
-                                    Amortization
-                                  </Button>
+                                </Button>
+                                <Button
+                                  onClick={() => openPopup('amortization', agreement)}
+                                  size="sm"
+                                  variant="outline"
+                                  className="bg-white/80 border-0 hover:bg-white text-slate-700 text-xs flex items-center gap-1"
+                                >
+                                  Amortization
                                   <div
                                     className="relative"
-                                    onMouseEnter={() => setActiveInfoTooltip(`amortization-${agreement.id}`)}
+                                    onMouseEnter={(e) => { e.stopPropagation(); setActiveInfoTooltip(`amortization-${agreement.id}`); }}
                                     onMouseLeave={() => setActiveInfoTooltip(null)}
+                                    onClick={(e) => e.stopPropagation()}
                                   >
-                                    <div className="w-4 h-4 rounded-full bg-white flex items-center justify-center cursor-help shadow-sm">
+                                    <div className="w-4 h-4 rounded-full bg-[#6EE8B5] flex items-center justify-center cursor-help">
                                       <span className="text-[10px] font-bold text-slate-800">i</span>
                                     </div>
                                     {activeInfoTooltip === `amortization-${agreement.id}` && (
@@ -904,7 +902,7 @@ export default function LoanAgreements() {
                                       </div>
                                     )}
                                   </div>
-                                </div>
+                                </Button>
                                 <Button
                                   onClick={() => openPopup('summary', agreement)}
                                   size="sm"
@@ -934,21 +932,20 @@ export default function LoanAgreements() {
                                 </div>
                               </div>
                               <div className="flex gap-2">
-                                <div className="flex items-center gap-1 flex-1">
-                                  <Button
-                                    onClick={() => openPopup('promissory', agreement)}
-                                    size="sm"
-                                    variant="outline"
-                                    className="flex-1 bg-white/80 border-0 hover:bg-white text-slate-700 text-xs"
-                                  >
-                                    Note
-                                  </Button>
+                                <Button
+                                  onClick={() => openPopup('promissory', agreement)}
+                                  size="sm"
+                                  variant="outline"
+                                  className="flex-1 bg-white/80 border-0 hover:bg-white text-slate-700 text-xs flex items-center justify-center gap-1"
+                                >
+                                  Note
                                   <div
                                     className="relative"
-                                    onMouseEnter={() => setActiveInfoTooltip(`promissory-mobile-${agreement.id}`)}
+                                    onMouseEnter={(e) => { e.stopPropagation(); setActiveInfoTooltip(`promissory-mobile-${agreement.id}`); }}
                                     onMouseLeave={() => setActiveInfoTooltip(null)}
+                                    onClick={(e) => e.stopPropagation()}
                                   >
-                                    <div className="w-4 h-4 rounded-full bg-white flex items-center justify-center cursor-help shadow-sm">
+                                    <div className="w-4 h-4 rounded-full bg-[#6EE8B5] flex items-center justify-center cursor-help">
                                       <span className="text-[10px] font-bold text-slate-800">i</span>
                                     </div>
                                     {activeInfoTooltip === `promissory-mobile-${agreement.id}` && (
@@ -957,22 +954,21 @@ export default function LoanAgreements() {
                                       </div>
                                     )}
                                   </div>
-                                </div>
-                                <div className="flex items-center gap-1 flex-1">
-                                  <Button
-                                    onClick={() => openPopup('amortization', agreement)}
-                                    size="sm"
-                                    variant="outline"
-                                    className="flex-1 bg-white/80 border-0 hover:bg-white text-slate-700 text-xs"
-                                  >
-                                    Schedule
-                                  </Button>
+                                </Button>
+                                <Button
+                                  onClick={() => openPopup('amortization', agreement)}
+                                  size="sm"
+                                  variant="outline"
+                                  className="flex-1 bg-white/80 border-0 hover:bg-white text-slate-700 text-xs flex items-center justify-center gap-1"
+                                >
+                                  Schedule
                                   <div
                                     className="relative"
-                                    onMouseEnter={() => setActiveInfoTooltip(`amortization-mobile-${agreement.id}`)}
+                                    onMouseEnter={(e) => { e.stopPropagation(); setActiveInfoTooltip(`amortization-mobile-${agreement.id}`); }}
                                     onMouseLeave={() => setActiveInfoTooltip(null)}
+                                    onClick={(e) => e.stopPropagation()}
                                   >
-                                    <div className="w-4 h-4 rounded-full bg-white flex items-center justify-center cursor-help shadow-sm">
+                                    <div className="w-4 h-4 rounded-full bg-[#6EE8B5] flex items-center justify-center cursor-help">
                                       <span className="text-[10px] font-bold text-slate-800">i</span>
                                     </div>
                                     {activeInfoTooltip === `amortization-mobile-${agreement.id}` && (
@@ -981,7 +977,7 @@ export default function LoanAgreements() {
                                       </div>
                                     )}
                                   </div>
-                                </div>
+                                </Button>
                                 <Button
                                   onClick={() => openPopup('summary', agreement)}
                                   size="sm"

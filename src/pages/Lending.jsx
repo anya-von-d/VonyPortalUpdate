@@ -2054,7 +2054,7 @@ export default function Lending() {
                                           onMouseLeave={() => setActiveInfoTooltip(null)}
                                           onClick={(e) => e.stopPropagation()}
                                         >
-                                          <div className="w-4 h-4 rounded-full bg-white flex items-center justify-center cursor-help shadow-sm">
+                                          <div className="w-4 h-4 rounded-full bg-[#6EE8B5] flex items-center justify-center cursor-help shadow-sm">
                                             <span className="text-[10px] font-bold text-slate-800">i</span>
                                           </div>
                                           {activeInfoTooltip === 'promissory' && (
@@ -2085,7 +2085,7 @@ export default function Lending() {
                                           onMouseLeave={() => setActiveInfoTooltip(null)}
                                           onClick={(e) => e.stopPropagation()}
                                         >
-                                          <div className="w-4 h-4 rounded-full bg-white flex items-center justify-center cursor-help shadow-sm">
+                                          <div className="w-4 h-4 rounded-full bg-[#6EE8B5] flex items-center justify-center cursor-help shadow-sm">
                                             <span className="text-[10px] font-bold text-slate-800">i</span>
                                           </div>
                                           {activeInfoTooltip === 'amortization' && (
