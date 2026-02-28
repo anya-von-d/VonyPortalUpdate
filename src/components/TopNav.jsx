@@ -44,7 +44,7 @@ const moreMenuItems = [
     url: createPageUrl("Learn"),
   },
   {
-    title: "Shop (Coming Soon)",
+    title: "Financial Products (Coming Soon)",
     url: createPageUrl("Shop"),
   },
   {
