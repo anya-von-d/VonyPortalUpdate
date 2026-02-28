@@ -78,7 +78,8 @@ export default function Lending() {
     repeating_day_of_month: '1',
     repeating_start_date: '',
     repeating_end_date: '',
-    first_payment_date: ''
+    first_payment_date: '',
+    lender_send_funds_date: ''
   });
 
   useEffect(() => {
@@ -1566,15 +1567,28 @@ export default function Lending() {
                               <div className="space-y-2">
                                 <Label className="flex items-center gap-2">
                                   <Calendar className="w-4 h-4 text-[#00A86B]" />
-                                  First Payment Date
+                                  Lender Agrees to Send Funds Before
                                 </Label>
                                 <Input
                                   type="date"
-                                  value={formData.first_payment_date}
-                                  onChange={(e) => handleInputChange('first_payment_date', e.target.value)}
+                                  value={formData.lender_send_funds_date}
+                                  onChange={(e) => handleInputChange('lender_send_funds_date', e.target.value)}
                                   min={format(new Date(), 'yyyy-MM-dd')}
                                 />
                               </div>
+                            </div>
+
+                            <div className="space-y-2">
+                              <Label className="flex items-center gap-2">
+                                <Calendar className="w-4 h-4 text-[#00A86B]" />
+                                First Payment Date
+                              </Label>
+                              <Input
+                                type="date"
+                                value={formData.first_payment_date}
+                                onChange={(e) => handleInputChange('first_payment_date', e.target.value)}
+                                min={format(new Date(), 'yyyy-MM-dd')}
+                              />
                             </div>
                           </>
                         )}
@@ -1639,28 +1653,28 @@ export default function Lending() {
                   {/* Loan Type Toggle */}
                   <div className="bg-white rounded-2xl p-4 border-0">
                     <div className="flex items-center justify-center gap-3">
-                      <span className={`text-xs font-medium text-center ${loanType === 'flexible' ? 'text-[#00A86B]' : 'text-slate-400'}`}>
-                        Quick Payment Request
+                      <span className={`text-xs font-medium ${loanType === 'scheduled' ? 'text-[#00A86B]' : 'text-slate-400'}`}>
+                        Loan
                       </span>
                       <button
                         type="button"
                         onClick={() => setLoanType(loanType === 'flexible' ? 'scheduled' : 'flexible')}
                         className={`relative w-14 h-7 rounded-full transition-all flex-shrink-0 ${
-                          loanType === 'scheduled' ? 'bg-[#00A86B]' : 'bg-slate-300'
+                          loanType === 'flexible' ? 'bg-[#00A86B]' : 'bg-slate-300'
                         }`}
                       >
                         <div className={`absolute top-1 left-1 w-5 h-5 rounded-full bg-white shadow transition-all ${
-                          loanType === 'scheduled' ? 'translate-x-7' : 'translate-x-0'
+                          loanType === 'flexible' ? 'translate-x-7' : 'translate-x-0'
                         }`}>
-                          {loanType === 'flexible' ? (
-                            <Zap className="w-3 h-3 text-slate-500 m-1" />
+                          {loanType === 'scheduled' ? (
+                            <ClipboardList className="w-3 h-3 text-slate-500 m-1" />
                           ) : (
-                            <ClipboardList className="w-3 h-3 text-[#00A86B] m-1" />
+                            <Zap className="w-3 h-3 text-[#00A86B] m-1" />
                           )}
                         </div>
                       </button>
-                      <span className={`text-xs font-medium ${loanType === 'scheduled' ? 'text-[#00A86B]' : 'text-slate-400'}`}>
-                        Loan
+                      <span className={`text-xs font-medium text-center ${loanType === 'flexible' ? 'text-[#00A86B]' : 'text-slate-400'}`}>
+                        Quick Payment Request
                       </span>
                     </div>
                     <p className="text-xs text-slate-500 text-center mt-3">
