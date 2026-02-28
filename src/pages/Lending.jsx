@@ -495,6 +495,8 @@ export default function Lending() {
     let remainingBalance = totalAmount;
     let currentDate = new Date(agreement.created_at);
     let paymentNumber = 1;
+    let principalToDate = 0;
+    let interestToDate = 0;
 
     while (remainingBalance > 0.01 && paymentNumber <= 120) {
       if (frequency === 'weekly') {
@@ -507,18 +509,25 @@ export default function Lending() {
         currentDate = addMonths(currentDate, 1);
       }
 
+      const startingBalance = remainingBalance;
       const payment = Math.min(paymentAmount, remainingBalance);
       const interestPortion = (remainingBalance * (interestRate / 100)) / 12;
-      const principalPortion = payment - interestPortion;
+      const principalPortion = payment - interestPortion > 0 ? payment - interestPortion : payment;
       remainingBalance = Math.max(0, remainingBalance - payment);
+
+      principalToDate += principalPortion;
+      interestToDate += interestPortion > 0 ? interestPortion : 0;
 
       schedule.push({
         number: paymentNumber,
         date: new Date(currentDate),
+        startingBalance: startingBalance,
         payment: payment,
-        principal: principalPortion > 0 ? principalPortion : payment,
+        principal: principalPortion,
         interest: interestPortion > 0 ? interestPortion : 0,
-        balance: remainingBalance
+        principalToDate: principalToDate,
+        interestToDate: interestToDate,
+        endingBalance: remainingBalance
       });
 
       paymentNumber++;
@@ -648,81 +657,84 @@ export default function Lending() {
 
   // Download Amortization Schedule PDF
   const downloadAmortizationSchedule = (agreement) => {
-    const doc = new jsPDF();
+    const doc = new jsPDF('landscape');
     const lenderInfo = getUserById(agreement.lender_id);
     const borrowerInfo = getUserById(agreement.borrower_id);
     const schedule = generateAmortizationSchedule(agreement);
 
     doc.setFontSize(20);
     doc.setFont(undefined, 'bold');
-    doc.text('AMORTIZATION SCHEDULE', 105, 20, { align: 'center' });
+    doc.text('AMORTIZATION SCHEDULE', 148.5, 15, { align: 'center' });
 
     doc.setFontSize(10);
     doc.setFont(undefined, 'normal');
-    doc.text(`Loan Agreement: ${agreement.id}`, 20, 35);
-    doc.text(`Lender: ${lenderInfo.full_name} (@${lenderInfo.username})`, 20, 42);
-    doc.text(`Borrower: ${borrowerInfo.full_name} (@${borrowerInfo.username})`, 20, 49);
+    doc.text(`Loan Agreement: ${agreement.id}`, 20, 28);
+    doc.text(`Lender: ${lenderInfo.full_name} (@${lenderInfo.username})`, 20, 35);
+    doc.text(`Borrower: ${borrowerInfo.full_name} (@${borrowerInfo.username})`, 20, 42);
 
     doc.setFillColor(240, 240, 240);
-    doc.rect(20, 55, 170, 30, 'F');
+    doc.rect(20, 48, 257, 20, 'F');
     doc.setFontSize(10);
-    doc.text(`Principal: ${formatMoney(agreement.amount)}`, 25, 65);
-    doc.text(`Interest Rate: ${agreement.interest_rate}%`, 85, 65);
-    doc.text(`Total Amount: ${formatMoney(agreement.total_amount)}`, 140, 65);
-    doc.text(`Payment: ${formatMoney(agreement.payment_amount)} ${agreement.payment_frequency}`, 25, 77);
-    doc.text(`Term: ${agreement.repayment_period} ${agreement.repayment_unit || 'months'}`, 85, 77);
-    doc.text(`Total Payments: ${schedule.length}`, 140, 77);
+    doc.text(`Principal: ${formatMoney(agreement.amount)}`, 25, 58);
+    doc.text(`Interest Rate: ${agreement.interest_rate}%`, 95, 58);
+    doc.text(`Total Amount: ${formatMoney(agreement.total_amount)}`, 155, 58);
+    doc.text(`Payment: ${formatMoney(agreement.payment_amount)} ${agreement.payment_frequency}`, 215, 58);
 
-    let yPos = 95;
+    let yPos = 78;
     doc.setFont(undefined, 'bold');
-    doc.setFontSize(9);
-    doc.text('#', 22, yPos);
-    doc.text('Date', 35, yPos);
-    doc.text('Payment', 70, yPos);
-    doc.text('Principal', 100, yPos);
-    doc.text('Interest', 130, yPos);
-    doc.text('Balance', 160, yPos);
+    doc.setFontSize(8);
+    doc.text('Payment', 22, yPos);
+    doc.text('Payment Date', 42, yPos);
+    doc.text('Starting Bal.', 80, yPos);
+    doc.text('Principal Pmt', 110, yPos);
+    doc.text('Interest Pmt', 142, yPos);
+    doc.text('Principal TD', 172, yPos);
+    doc.text('Interest TD', 202, yPos);
+    doc.text('Ending Bal.', 232, yPos);
 
-    doc.line(20, yPos + 2, 190, yPos + 2);
-    yPos += 8;
+    doc.line(20, yPos + 2, 277, yPos + 2);
+    yPos += 7;
 
     doc.setFont(undefined, 'normal');
     schedule.forEach((row, index) => {
-      if (yPos > 270) {
-        doc.addPage();
+      if (yPos > 190) {
+        doc.addPage('landscape');
         yPos = 20;
         doc.setFont(undefined, 'bold');
-        doc.text('#', 22, yPos);
-        doc.text('Date', 35, yPos);
-        doc.text('Payment', 70, yPos);
-        doc.text('Principal', 100, yPos);
-        doc.text('Interest', 130, yPos);
-        doc.text('Balance', 160, yPos);
-        doc.line(20, yPos + 2, 190, yPos + 2);
-        yPos += 8;
+        doc.setFontSize(8);
+        doc.text('Payment', 22, yPos);
+        doc.text('Payment Date', 42, yPos);
+        doc.text('Starting Bal.', 80, yPos);
+        doc.text('Principal Pmt', 110, yPos);
+        doc.text('Interest Pmt', 142, yPos);
+        doc.text('Principal TD', 172, yPos);
+        doc.text('Interest TD', 202, yPos);
+        doc.text('Ending Bal.', 232, yPos);
+        doc.line(20, yPos + 2, 277, yPos + 2);
+        yPos += 7;
         doc.setFont(undefined, 'normal');
       }
 
       doc.text(String(row.number), 22, yPos);
-      doc.text(format(row.date, 'MMM d, yyyy'), 35, yPos);
-      doc.text(formatMoney(row.payment), 70, yPos);
-      doc.text(formatMoney(row.principal), 100, yPos);
-      doc.text(formatMoney(row.interest), 130, yPos);
-      doc.text(formatMoney(row.balance), 160, yPos);
-      yPos += 6;
+      doc.text(format(row.date, 'MMM d, yyyy'), 42, yPos);
+      doc.text(formatMoney(row.startingBalance), 80, yPos);
+      doc.text(formatMoney(row.principal), 110, yPos);
+      doc.text(formatMoney(row.interest), 142, yPos);
+      doc.text(formatMoney(row.principalToDate), 172, yPos);
+      doc.text(formatMoney(row.interestToDate), 202, yPos);
+      doc.text(formatMoney(row.endingBalance), 232, yPos);
+      yPos += 5;
     });
 
     yPos += 5;
-    doc.line(20, yPos, 190, yPos);
-    yPos += 8;
+    doc.line(20, yPos, 277, yPos);
+    yPos += 7;
     doc.setFont(undefined, 'bold');
-    const totalPayments = schedule.reduce((sum, r) => sum + r.payment, 0);
     const totalPrincipal = schedule.reduce((sum, r) => sum + r.principal, 0);
     const totalInterest = schedule.reduce((sum, r) => sum + r.interest, 0);
     doc.text('TOTAL', 22, yPos);
-    doc.text(formatMoney(totalPayments), 70, yPos);
-    doc.text(formatMoney(totalPrincipal), 100, yPos);
-    doc.text(formatMoney(totalInterest), 130, yPos);
+    doc.text(formatMoney(totalPrincipal), 110, yPos);
+    doc.text(formatMoney(totalInterest), 142, yPos);
 
     doc.save(`amortization-schedule-${agreement.id}.pdf`);
   };
@@ -830,14 +842,18 @@ export default function Lending() {
           </div>
         </div>
 
-        <div className="max-h-[300px] overflow-y-auto rounded-xl border border-slate-200">
-          <table className="w-full text-sm">
+        <div className="max-h-[300px] overflow-x-auto overflow-y-auto rounded-xl border border-slate-200">
+          <table className="w-full text-xs min-w-[700px]">
             <thead className="bg-slate-50 sticky top-0">
               <tr>
-                <th className="px-3 py-2 text-left font-medium text-slate-600">#</th>
-                <th className="px-3 py-2 text-left font-medium text-slate-600">Date</th>
-                <th className="px-3 py-2 text-right font-medium text-slate-600">Payment</th>
-                <th className="px-3 py-2 text-right font-medium text-slate-600">Balance</th>
+                <th className="px-2 py-2 text-left font-medium text-slate-600">Payment</th>
+                <th className="px-2 py-2 text-left font-medium text-slate-600">Payment Date</th>
+                <th className="px-2 py-2 text-right font-medium text-slate-600">Starting Balance</th>
+                <th className="px-2 py-2 text-right font-medium text-slate-600">Principal Payment</th>
+                <th className="px-2 py-2 text-right font-medium text-slate-600">Interest Payment</th>
+                <th className="px-2 py-2 text-right font-medium text-slate-600">Principal to Date</th>
+                <th className="px-2 py-2 text-right font-medium text-slate-600">Interest to Date</th>
+                <th className="px-2 py-2 text-right font-medium text-slate-600">Ending Balance</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -846,13 +862,17 @@ export default function Lending() {
                   key={row.number}
                   className={index < paidPayments ? 'bg-green-50' : ''}
                 >
-                  <td className="px-3 py-2 text-slate-600">
-                    {index < paidPayments && <CheckCircle className="w-4 h-4 text-green-500 inline mr-1" />}
+                  <td className="px-2 py-2 text-slate-600">
+                    {index < paidPayments && <CheckCircle className="w-3 h-3 text-green-500 inline mr-1" />}
                     {row.number}
                   </td>
-                  <td className="px-3 py-2 text-slate-800">{format(row.date, 'MMM d, yyyy')}</td>
-                  <td className="px-3 py-2 text-right font-medium text-slate-800">{formatMoney(row.payment)}</td>
-                  <td className="px-3 py-2 text-right text-slate-600">{formatMoney(row.balance)}</td>
+                  <td className="px-2 py-2 text-slate-800">{format(row.date, 'MMM d, yyyy')}</td>
+                  <td className="px-2 py-2 text-right text-slate-600">{formatMoney(row.startingBalance)}</td>
+                  <td className="px-2 py-2 text-right font-medium text-slate-800">{formatMoney(row.principal)}</td>
+                  <td className="px-2 py-2 text-right text-slate-600">{formatMoney(row.interest)}</td>
+                  <td className="px-2 py-2 text-right text-slate-600">{formatMoney(row.principalToDate)}</td>
+                  <td className="px-2 py-2 text-right text-slate-600">{formatMoney(row.interestToDate)}</td>
+                  <td className="px-2 py-2 text-right font-medium text-slate-800">{formatMoney(row.endingBalance)}</td>
                 </tr>
               ))}
             </tbody>
