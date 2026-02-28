@@ -2225,358 +2225,244 @@ export default function Lending() {
                         <CardContent className="flex items-center justify-center py-16">
                           <div className="text-center text-slate-400">
                             <BarChart3 className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                            <p>Select a loan above to view payment history</p>
+                            <p>Select a loan above to view details</p>
                           </div>
                         </CardContent>
                       </Card>
                     ) : (
                       <>
-                          {/* Payment Amount & Interest Accrued Row */}
-                          <div className="grid grid-cols-2 gap-4">
-                            {/* Payment Amount Box */}
-                            <Card className="bg-[#DBFFEB] border-0">
-                              <CardContent className="p-5">
-                                <div className="flex items-center gap-3 mb-3">
-                                  <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
-                                    <DollarSign className="w-5 h-5 text-[#00A86B]" />
+                          {/* Loan Information Box */}
+                          <div className="bg-[#DBFFEB] rounded-2xl p-5">
+                            <p className="text-[10px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                              Loan Information
+                            </p>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                              <div className="bg-[#D0ED6F] rounded-xl p-4">
+                                <p className="text-[10px] text-slate-600 uppercase tracking-wide font-medium mb-1" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>Amount</p>
+                                <p className="text-xl font-bold text-slate-800">
+                                  ${(manageLoanSelected.amount || 0).toLocaleString()}
+                                </p>
+                              </div>
+                              <div className="bg-[#83F384] rounded-xl p-4">
+                                <p className="text-[10px] text-slate-600 uppercase tracking-wide font-medium mb-1" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>Interest</p>
+                                <p className="text-xl font-bold text-slate-800">
+                                  {manageLoanSelected.interest_rate || 0}%
+                                </p>
+                              </div>
+                              <div className="bg-[#6EE8B5] rounded-xl p-4">
+                                <p className="text-[10px] text-slate-600 uppercase tracking-wide font-medium mb-1" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>Term</p>
+                                <p className="text-xl font-bold text-slate-800">
+                                  {manageLoanSelected.repayment_period || 0} {manageLoanSelected.repayment_unit || 'months'}
+                                </p>
+                              </div>
+                              <div className="bg-[#C2FFDC] rounded-xl p-4">
+                                <p className="text-[10px] text-slate-600 uppercase tracking-wide font-medium mb-1" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>Payment</p>
+                                <p className="text-xl font-bold text-slate-800">
+                                  ${(manageLoanSelected.payment_amount || 0).toLocaleString()}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Progress Pie Chart + Next Payment + Payment Amount */}
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            {/* Pie Chart - Left */}
+                            <div className="bg-[#DBFFEB] rounded-2xl p-5">
+                              <p className="text-[10px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                                Payment Progress
+                              </p>
+                              <div className="flex flex-col items-center">
+                                {(() => {
+                                  const totalOwed = manageLoanSelected.total_amount || manageLoanSelected.amount || 0;
+                                  const amountPaid = manageLoanSelected.amount_paid || 0;
+                                  const remaining = totalOwed - amountPaid;
+                                  const percentPaid = totalOwed > 0 ? Math.round((amountPaid / totalOwed) * 100) : 0;
+                                  const circumference = 2 * Math.PI * 45;
+                                  const strokeDashoffset = circumference - (percentPaid / 100) * circumference;
+
+                                  return (
+                                    <>
+                                      <div className="relative w-32 h-32">
+                                        <svg className="w-full h-full transform -rotate-90">
+                                          <circle cx="64" cy="64" r="45" fill="none" stroke="#e2e8f0" strokeWidth="12" />
+                                          <circle
+                                            cx="64"
+                                            cy="64"
+                                            r="45"
+                                            fill="none"
+                                            stroke="#00A86B"
+                                            strokeWidth="12"
+                                            strokeLinecap="round"
+                                            strokeDasharray={circumference}
+                                            strokeDashoffset={strokeDashoffset}
+                                            className="transition-all duration-500"
+                                          />
+                                        </svg>
+                                        <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                          <span className="text-2xl font-bold text-slate-800">{percentPaid}%</span>
+                                          <span className="text-xs text-slate-500">Paid</span>
+                                        </div>
+                                      </div>
+                                      <div className="mt-3 text-center space-y-1">
+                                        <p className="text-xs text-slate-600">
+                                          <span className="text-[#00A86B] font-semibold">${amountPaid.toLocaleString()}</span> paid
+                                        </p>
+                                        <p className="text-xs text-slate-600">
+                                          <span className="text-slate-800 font-semibold">${remaining.toLocaleString()}</span> remaining
+                                        </p>
+                                      </div>
+                                    </>
+                                  );
+                                })()}
+                              </div>
+                            </div>
+
+                            {/* Next Payment Date - Middle */}
+                            <div className="bg-[#83F384] rounded-2xl p-5 flex flex-col">
+                              <p className="text-[10px] text-slate-700 uppercase tracking-[0.12em] font-medium mb-2" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                                Next Payment Date
+                              </p>
+                              <div className="flex-1 flex flex-col items-center justify-center">
+                                <p className="text-2xl font-bold text-slate-800">
+                                  {manageLoanSelected.next_payment_date
+                                    ? format(new Date(manageLoanSelected.next_payment_date), 'MMM d, yyyy')
+                                    : 'N/A'}
+                                </p>
+                                {manageLoanSelected.next_payment_date && (
+                                  <div className="mt-2 px-3 py-1 bg-white rounded-full">
+                                    <p className="text-sm font-semibold text-[#00A86B]">
+                                      {(() => {
+                                        const days = Math.ceil((new Date(manageLoanSelected.next_payment_date) - new Date()) / (1000 * 60 * 60 * 24));
+                                        return days > 0 ? `${days} day${days !== 1 ? 's' : ''} away` : days === 0 ? 'Due today' : `${Math.abs(days)} day${Math.abs(days) !== 1 ? 's' : ''} overdue`;
+                                      })()}
+                                    </p>
                                   </div>
-                                  <div>
-                                    <p className="text-xs text-slate-600 uppercase tracking-wide font-medium" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>Payment Amount</p>
-                                  </div>
-                                </div>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Payment Amount - Right */}
+                            <div className="bg-[#6EE8B5] rounded-2xl p-5 flex flex-col">
+                              <p className="text-[10px] text-slate-700 uppercase tracking-[0.12em] font-medium mb-2" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                                Payment Amount
+                              </p>
+                              <div className="flex-1 flex flex-col items-center justify-center">
                                 <p className="text-3xl font-bold text-slate-800">
                                   ${(manageLoanSelected.payment_amount || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                 </p>
-                                <p className="text-sm text-slate-500 mt-1 capitalize">
+                                <p className="text-sm text-slate-600 mt-1 capitalize">
                                   {manageLoanSelected.payment_frequency || 'One-time'} payment
                                 </p>
-                              </CardContent>
-                            </Card>
-
-                            {/* Interest Accrued Box */}
-                            <Card className="bg-[#DBFFEB] border-0">
-                              <CardContent className="p-5">
-                                <div className="flex items-center gap-3 mb-3">
-                                  <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
-                                    <TrendingUp className="w-5 h-5 text-[#00A86B]" />
-                                  </div>
-                                  <div>
-                                    <p className="text-xs text-slate-600 uppercase tracking-wide font-medium" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>Interest Accrued</p>
-                                  </div>
-                                </div>
-                                <p className="text-3xl font-bold text-slate-800">
-                                  ${(() => {
-                                    const principal = manageLoanSelected.amount || 0;
-                                    const total = manageLoanSelected.total_amount || principal;
-                                    return (total - principal).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                                  })()}
-                                </p>
-                                <p className="text-sm text-slate-500 mt-1">
-                                  {manageLoanSelected.interest_rate || 0}% annual rate
-                                </p>
-                              </CardContent>
-                            </Card>
+                              </div>
+                            </div>
                           </div>
 
-                          {/* Payment Updates Box (Recent Activity for this loan) */}
-                          <Card className="bg-[#DBFFEB] border-0">
-                            <CardContent className="p-5">
+                          {/* Interest + Loan Amounts Row */}
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {/* Interest Box - Left */}
+                            <div className="bg-[#DBFFEB] rounded-2xl p-5">
                               <p className="text-[10px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
-                                Payment Updates
+                                Interest
                               </p>
-                              <div className="space-y-3 max-h-[280px] overflow-y-auto pr-2" style={{
-                                maskImage: 'linear-gradient(to bottom, black 85%, transparent 100%)',
-                                WebkitMaskImage: 'linear-gradient(to bottom, black 85%, transparent 100%)'
-                              }}>
-                                {(() => {
-                                  // Generate payment history events
-                                  const loan = manageLoanSelected;
-                                  const borrower = publicProfiles.find(p => p.user_id === loan.borrower_id);
-                                  const events = [];
-
-                                  // Add loan created event
-                                  events.push({
-                                    type: 'created',
-                                    date: loan.created_at,
-                                    description: `Loan created for $${loan.amount?.toLocaleString()}`,
-                                    icon: 'FileText'
-                                  });
-
-                                  // Simulate payment events based on amount_paid
-                                  const amountPaid = loan.amount_paid || 0;
-                                  const paymentAmount = loan.payment_amount || 0;
-                                  if (amountPaid > 0 && paymentAmount > 0) {
-                                    const numPayments = Math.floor(amountPaid / paymentAmount);
-                                    const startDate = new Date(loan.created_at);
-
-                                    for (let i = 0; i < numPayments && i < 10; i++) {
-                                      const paymentDate = new Date(startDate);
-                                      if (loan.payment_frequency === 'weekly') {
-                                        paymentDate.setDate(paymentDate.getDate() + ((i + 1) * 7));
-                                      } else if (loan.payment_frequency === 'biweekly') {
-                                        paymentDate.setDate(paymentDate.getDate() + ((i + 1) * 14));
-                                      } else {
-                                        paymentDate.setMonth(paymentDate.getMonth() + (i + 1));
-                                      }
-
-                                      events.push({
-                                        type: 'payment',
-                                        date: paymentDate.toISOString(),
-                                        description: `Payment received: $${paymentAmount.toLocaleString()}`,
-                                        icon: 'DollarSign'
-                                      });
-                                    }
-                                  }
-
-                                  // Sort by date descending
-                                  events.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-                                  const colors = ['#D0ED6F', '#83F384', '#6EE8B5'];
-
-                                  if (events.length === 0) {
-                                    return (
-                                      <p className="text-sm text-slate-500 text-center py-4">No payment updates yet</p>
-                                    );
-                                  }
-
-                                  return events.map((event, index) => (
-                                    <div
-                                      key={index}
-                                      className="flex items-center gap-3 p-3 rounded-xl"
-                                      style={{ backgroundColor: colors[index % 3] }}
-                                    >
-                                      <div className="w-8 h-8 rounded-full bg-[#DBFFEB] flex items-center justify-center flex-shrink-0">
-                                        {event.type === 'payment' ? (
-                                          <DollarSign className="w-4 h-4 text-slate-800" />
-                                        ) : (
-                                          <FileText className="w-4 h-4 text-slate-800" />
-                                        )}
-                                      </div>
-                                      <div className="flex-1 min-w-0">
-                                        <p className="text-sm font-medium text-slate-800 truncate">
-                                          {event.description}
-                                        </p>
-                                        <p className="text-xs text-slate-600">
-                                          @{borrower?.username || 'user'}
-                                        </p>
-                                      </div>
-                                      <span className="text-xs text-slate-600 flex-shrink-0">
-                                        {format(new Date(event.date), 'MMM d')}
-                                      </span>
-                                    </div>
-                                  ));
-                                })()}
-                              </div>
-                            </CardContent>
-                          </Card>
-
-                          {/* Payment History Bar Chart */}
-                          <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60">
-                            <CardHeader className="pb-2">
-                              <CardTitle className="flex items-center gap-2 text-base">
-                                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                                  <BarChart3 className="w-4 h-4 text-blue-600" />
+                              <div className="grid grid-cols-2 gap-3">
+                                <div className="bg-[#D0ED6F] rounded-xl p-4">
+                                  <p className="text-[10px] text-slate-600 uppercase tracking-wide font-medium mb-1" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>Interest Accrued</p>
+                                  <p className="text-xl font-bold text-slate-800">
+                                    ${(() => {
+                                      const principal = manageLoanSelected.amount || 0;
+                                      const total = manageLoanSelected.total_amount || principal;
+                                      return (total - principal).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                                    })()}
+                                  </p>
                                 </div>
-                                Payment History
-                              </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                              {(() => {
-                                const loan = manageLoanSelected;
-                                const totalOwed = loan.total_amount || loan.amount || 0;
-                                const amountPaid = loan.amount_paid || 0;
-                                const frequency = loan.payment_frequency || 'monthly';
-                                const period = loan.repayment_period || 6;
-                                const unit = loan.repayment_unit || 'months';
+                                <div className="bg-[#83F384] rounded-xl p-4">
+                                  <p className="text-[10px] text-slate-600 uppercase tracking-wide font-medium mb-1" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>Predicted Interest</p>
+                                  <p className="text-xl font-bold text-slate-800">
+                                    ${(() => {
+                                      const principal = manageLoanSelected.amount || 0;
+                                      const rate = (manageLoanSelected.interest_rate || 0) / 100;
+                                      const period = manageLoanSelected.repayment_period || 12;
+                                      const unit = manageLoanSelected.repayment_unit || 'months';
+                                      const years = unit === 'months' ? period / 12 : period / 52;
+                                      return (principal * rate * years).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                                    })()}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
 
-                                // Generate payment periods for the chart
-                                const generatePeriodLabels = () => {
-                                  const labels = [];
-                                  const startDate = new Date(loan.created_at || new Date());
-
-                                  let numPeriods = period;
-                                  if (frequency === 'daily') numPeriods = Math.min(period, 14);
-                                  else if (frequency === 'weekly') numPeriods = Math.min(Math.ceil(period / 7), 12);
-                                  else if (frequency === 'biweekly') numPeriods = Math.min(Math.ceil(period / 14), 12);
-                                  else numPeriods = Math.min(period, 12);
-
-                                  for (let i = 0; i < numPeriods; i++) {
-                                    const date = new Date(startDate);
-                                    if (frequency === 'daily') {
-                                      date.setDate(date.getDate() + i);
-                                      labels.push(format(date, 'MMM d'));
-                                    } else if (frequency === 'weekly') {
-                                      date.setDate(date.getDate() + (i * 7));
-                                      const endDate = new Date(date);
-                                      endDate.setDate(endDate.getDate() + 6);
-                                      labels.push(`${format(date, 'M/d')}-${format(endDate, 'M/d')}`);
-                                    } else if (frequency === 'biweekly') {
-                                      date.setDate(date.getDate() + (i * 14));
-                                      const endDate = new Date(date);
-                                      endDate.setDate(endDate.getDate() + 13);
-                                      labels.push(`${format(date, 'M/d')}-${format(endDate, 'M/d')}`);
-                                    } else {
-                                      date.setMonth(date.getMonth() + i);
-                                      labels.push(format(date, 'MMM'));
-                                    }
-                                  }
-                                  return labels;
-                                };
-
-                                const labels = generatePeriodLabels();
-                                const paymentAmount = loan.payment_amount || (totalOwed / labels.length);
-
-                                // Simulate which payments have been made (based on amount_paid)
-                                const paidPeriods = Math.floor(amountPaid / paymentAmount);
-
-                                // Calculate the expected payment line position (as percentage of chart height)
-                                // This represents where the expected payment amount should be on the y-axis
-                                const maxBarValue = paymentAmount; // Each bar represents one payment period
-                                const expectedLinePercent = 100; // 100% because payment amount equals full bar height
-
-                                return (
-                                  <div className="space-y-4">
-                                    <div className="flex">
-                                      {/* Y-axis labels */}
-                                      <div className="flex flex-col justify-between h-32 pr-2 text-[9px] text-slate-400 text-right w-12">
-                                        <span>${paymentAmount.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
-                                        <span>${(paymentAmount / 2).toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
-                                        <span>$0</span>
-                                      </div>
-
-                                      {/* Chart area */}
-                                      <div className="flex-1 relative">
-                                        {/* Dashed line at expected payment amount - positioned at top of bar area */}
-                                        <div
-                                          className="absolute left-0 right-0 border-t-2 border-dashed border-amber-500 z-10 flex items-center"
-                                          style={{ top: '0px' }}
-                                        >
-                                          <span className="absolute -right-1 -top-3 text-[9px] text-amber-600 font-medium bg-white px-1 rounded whitespace-nowrap">
-                                            Expected: ${paymentAmount.toLocaleString(undefined, { maximumFractionDigits: 0 })}
-                                          </span>
-                                        </div>
-
-                                        {/* Bars */}
-                                        <div className="flex items-end gap-1 h-32">
-                                          {labels.map((label, index) => {
-                                            const isPaid = index < paidPeriods;
-                                            const isPartial = index === paidPeriods && (amountPaid % paymentAmount) > 0;
-                                            const partialPercent = isPartial ? ((amountPaid % paymentAmount) / paymentAmount) * 100 : 0;
-
-                                            return (
-                                              <div key={index} className="flex-1 flex flex-col items-center gap-1 h-full">
-                                                <div className="w-full flex-1 bg-slate-100 rounded-t relative flex items-end">
-                                                  <div
-                                                    className={`w-full rounded-t transition-all duration-300 ${
-                                                      isPaid ? 'bg-[#00A86B]' : isPartial ? 'bg-[#00A86B]/50' : 'bg-slate-200'
-                                                    }`}
-                                                    style={{ height: isPaid ? '100%' : isPartial ? `${partialPercent}%` : '10%' }}
-                                                  />
-                                                </div>
-                                              </div>
-                                            );
-                                          })}
-                                        </div>
-
-                                        {/* X-axis labels */}
-                                        <div className="flex gap-1 mt-1">
-                                          {labels.map((label, index) => (
-                                            <div key={index} className="flex-1 text-center">
-                                              <span className="text-[10px] text-slate-500 leading-tight">
-                                                {label}
-                                              </span>
-                                            </div>
-                                          ))}
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <div className="flex items-center justify-center gap-4 text-xs">
-                                      <div className="flex items-center gap-1">
-                                        <div className="w-3 h-3 bg-[#00A86B] rounded" />
-                                        <span className="text-slate-600">Paid</span>
-                                      </div>
-                                      <div className="flex items-center gap-1">
-                                        <div className="w-3 h-3 bg-slate-200 rounded" />
-                                        <span className="text-slate-600">Upcoming</span>
-                                      </div>
-                                      <div className="flex items-center gap-1">
-                                        <div className="w-6 h-0 border-t-2 border-dashed border-amber-500" />
-                                        <span className="text-slate-600">Expected Payment</span>
-                                      </div>
-                                    </div>
-                                  </div>
-                                );
-                              })()}
-                            </CardContent>
-                          </Card>
-
-                          {/* Loan Info Cards */}
-                          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                            <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60">
-                              <CardContent className="p-3">
-                                <p className="text-xs text-slate-500 mb-1">Total Loan Amount</p>
-                                <p className="text-lg font-bold text-slate-800">
-                                  ${(manageLoanSelected.total_amount || manageLoanSelected.amount || 0).toLocaleString()}
+                            {/* Loan Amounts - Right */}
+                            <div className="grid grid-cols-2 gap-4">
+                              <div className="bg-[#D0ED6F] rounded-2xl p-5">
+                                <p className="text-[10px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-2" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                                  Total Remaining
                                 </p>
-                              </CardContent>
-                            </Card>
-                            <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60">
-                              <CardContent className="p-3">
-                                <p className="text-xs text-slate-500 mb-1">Amount Paid</p>
-                                <p className="text-lg font-bold text-[#00A86B]">
-                                  ${(manageLoanSelected.amount_paid || 0).toLocaleString()}
-                                </p>
-                              </CardContent>
-                            </Card>
-                            <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60">
-                              <CardContent className="p-3">
-                                <p className="text-xs text-slate-500 mb-1">Next Payment Date</p>
-                                <p className="text-lg font-bold text-slate-800">
-                                  {manageLoanSelected.next_payment_date
-                                    ? format(new Date(manageLoanSelected.next_payment_date), 'MMM d')
-                                    : 'N/A'}
-                                </p>
-                              </CardContent>
-                            </Card>
-                            <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60">
-                              <CardContent className="p-3">
-                                <p className="text-xs text-slate-500 mb-1">Percentage Paid</p>
-                                <p className="text-lg font-bold text-[#00A86B]">
-                                  {(() => {
+                                <p className="text-2xl font-bold text-slate-800">
+                                  ${(() => {
                                     const total = manageLoanSelected.total_amount || manageLoanSelected.amount || 0;
                                     const paid = manageLoanSelected.amount_paid || 0;
-                                    return total > 0 ? Math.round((paid / total) * 100) : 0;
-                                  })()}%
+                                    return (total - paid).toLocaleString();
+                                  })()}
                                 </p>
-                              </CardContent>
-                            </Card>
+                              </div>
+                              <div className="bg-[#83F384] rounded-2xl p-5">
+                                <p className="text-[10px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-2" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                                  Amount Paid
+                                </p>
+                                <p className="text-2xl font-bold text-[#00A86B]">
+                                  ${(manageLoanSelected.amount_paid || 0).toLocaleString()}
+                                </p>
+                              </div>
+                            </div>
                           </div>
 
-                          {/* Action Buttons */}
-                          <div className="flex flex-wrap gap-3">
-                            <Button
-                              onClick={() => handleMakePayment(manageLoanSelected)}
-                              className="flex-1 min-w-[140px] bg-[#00A86B] hover:bg-[#0D9B76]"
-                            >
-                              <DollarSign className="w-4 h-4 mr-2" />
-                              Record Payment
-                            </Button>
-                            <Button
-                              onClick={() => handleEditLoan(manageLoanSelected)}
-                              variant="outline"
-                              className="flex-1 min-w-[140px] border-amber-500 text-amber-600 hover:bg-amber-50"
-                            >
-                              <Pencil className="w-4 h-4 mr-2" />
-                              Edit Loan
-                            </Button>
-                            <Button
-                              onClick={() => handleViewDetails(manageLoanSelected)}
-                              variant="outline"
-                              className="flex-1 min-w-[140px]"
-                            >
-                              <FileText className="w-4 h-4 mr-2" />
-                              View Full Details
-                            </Button>
+                          {/* Actions Box */}
+                          <div className="bg-[#DBFFEB] rounded-2xl p-5">
+                            <p className="text-[10px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                              Actions
+                            </p>
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                              <button
+                                onClick={() => handleMakePayment(manageLoanSelected)}
+                                className="bg-[#D0ED6F] rounded-xl p-4 text-left hover:opacity-90 transition-opacity cursor-pointer group"
+                              >
+                                <div className="w-10 h-10 rounded-full bg-[#DBFFEB] flex items-center justify-center mb-3">
+                                  <DollarSign className="w-5 h-5 text-slate-700" />
+                                </div>
+                                <p className="font-semibold text-slate-800 text-sm group-hover:text-[#00A86B] transition-colors">
+                                  Record Payment
+                                </p>
+                                <p className="text-xs text-slate-600 mt-1">Log a received payment</p>
+                              </button>
+                              <button
+                                onClick={() => handleEditLoan(manageLoanSelected)}
+                                className="bg-[#83F384] rounded-xl p-4 text-left hover:opacity-90 transition-opacity cursor-pointer group"
+                              >
+                                <div className="w-10 h-10 rounded-full bg-[#DBFFEB] flex items-center justify-center mb-3">
+                                  <Pencil className="w-5 h-5 text-slate-700" />
+                                </div>
+                                <p className="font-semibold text-slate-800 text-sm group-hover:text-[#00A86B] transition-colors">
+                                  Edit Loan
+                                </p>
+                                <p className="text-xs text-slate-600 mt-1">Modify loan details</p>
+                              </button>
+                              <button
+                                onClick={() => {
+                                  if (window.confirm('Are you sure you want to cancel this loan? This action cannot be undone.')) {
+                                    // Handle cancel loan
+                                  }
+                                }}
+                                className="bg-[#6EE8B5] rounded-xl p-4 text-left hover:opacity-90 transition-opacity cursor-pointer group"
+                              >
+                                <div className="w-10 h-10 rounded-full bg-[#DBFFEB] flex items-center justify-center mb-3">
+                                  <X className="w-5 h-5 text-slate-700" />
+                                </div>
+                                <p className="font-semibold text-slate-800 text-sm group-hover:text-[#00A86B] transition-colors">
+                                  Cancel Loan
+                                </p>
+                                <p className="text-xs text-slate-600 mt-1">End this loan early</p>
+                              </button>
+                            </div>
                           </div>
 
                           {/* Document Center Box */}
