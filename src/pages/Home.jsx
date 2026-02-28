@@ -258,37 +258,36 @@ export default function Home() {
               <PendingLoanOffers offers={pendingOffers} />
             )}
 
-            <div className="bg-[#DBFFEB] rounded-2xl p-5">
+            <div className="bg-[#DBFFEB] rounded-2xl p-5 relative">
+              {/* Left Arrow - on outer box */}
+              <button
+                onClick={() => setOverviewType(overviewType === 'lending' ? 'borrowing' : 'lending')}
+                className="absolute left-[-12px] top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors duration-200"
+                style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00A86B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+              </button>
+
+              {/* Right Arrow - on outer box */}
+              <button
+                onClick={() => setOverviewType(overviewType === 'lending' ? 'borrowing' : 'lending')}
+                className="absolute right-[-12px] top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors duration-200"
+                style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00A86B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {/* Pie Chart Card with Carousel */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, ease: "easeOut" }}
-                  className="relative"
                 >
-                  {/* Left Arrow */}
-                  <button
-                    onClick={() => setOverviewType(overviewType === 'lending' ? 'borrowing' : 'lending')}
-                    className="absolute left-[-12px] top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors duration-200"
-                    style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}
-                  >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00A86B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="15 18 9 12 15 6"></polyline>
-                    </svg>
-                  </button>
-
-                  {/* Right Arrow */}
-                  <button
-                    onClick={() => setOverviewType(overviewType === 'lending' ? 'borrowing' : 'lending')}
-                    className="absolute right-[-12px] top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors duration-200"
-                    style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}
-                  >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00A86B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="9 18 15 12 9 6"></polyline>
-                    </svg>
-                  </button>
-
                   {/* Title */}
                   <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                     {overviewType === 'lending' ? 'Lending Overview' : 'Borrowing Overview'}
@@ -395,8 +394,90 @@ export default function Home() {
                     </motion.div>
                   </div>
                 </motion.div>
-                <StatsCard title="Next Payment" value={nextPayment ? formatMoney(nextPaymentAmount) : '-'} color="blue" change={nextPayment ? `to @${safeAllProfiles.find(p => p.user_id === nextPayment.lender_id)?.username || 'user'}` : 'N/A'} index={1} bgColor={overviewType === 'lending' ? '#83F384' : '#6EE8B5'} />
-                <StatsCard title="Next Payment Due" value={paymentStatus} color="orange" change={nextPayment ? format(nextPayment.date, 'MMM d, yyyy') : 'N/A'} index={2} bgColor={overviewType === 'lending' ? '#83F384' : '#6EE8B5'} />
+                {/* Dynamic Stats Cards based on overviewType */}
+                {(() => {
+                  if (overviewType === 'lending') {
+                    // For lenders: show next payment they will RECEIVE
+                    const nextLenderPayment = myLoans
+                      .filter(loan => loan && loan.lender_id === user.id && loan.status === 'active' && loan.next_payment_date)
+                      .map(loan => {
+                        const otherUser = safeAllProfiles.find(p => p.user_id === loan.borrower_id);
+                        return { ...loan, date: new Date(loan.next_payment_date), username: otherUser?.username || 'user' };
+                      })
+                      .sort((a, b) => a.date - b.date)[0];
+
+                    const getDaysUntilPayment = () => {
+                      if (!nextLenderPayment) return 'None';
+                      const today = new Date();
+                      const paymentDate = new Date(nextLenderPayment.date);
+                      const diffTime = paymentDate - today;
+                      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                      if (diffDays < 0) return 'Overdue';
+                      return `${diffDays} day${diffDays !== 1 ? 's' : ''}`;
+                    };
+
+                    return (
+                      <>
+                        <StatsCard
+                          title="Next Payment"
+                          value={nextLenderPayment ? formatMoney(nextLenderPayment.payment_amount || 0) : '-'}
+                          color="blue"
+                          change={nextLenderPayment ? `from @${nextLenderPayment.username}` : 'N/A'}
+                          index={1}
+                          bgColor="#83F384"
+                        />
+                        <StatsCard
+                          title="Next Payment Date"
+                          value={nextLenderPayment ? format(nextLenderPayment.date, 'MMM d, yyyy') : '-'}
+                          color="orange"
+                          change={nextLenderPayment ? `from @${nextLenderPayment.username} • ${getDaysUntilPayment()}` : 'N/A'}
+                          index={2}
+                          bgColor="#83F384"
+                        />
+                      </>
+                    );
+                  } else {
+                    // For borrowers: show next payment they need to SEND
+                    const nextBorrowerPayment = myLoans
+                      .filter(loan => loan && loan.borrower_id === user.id && loan.status === 'active' && loan.next_payment_date)
+                      .map(loan => {
+                        const otherUser = safeAllProfiles.find(p => p.user_id === loan.lender_id);
+                        return { ...loan, date: new Date(loan.next_payment_date), username: otherUser?.username || 'user' };
+                      })
+                      .sort((a, b) => a.date - b.date)[0];
+
+                    const getDaysUntilPayment = () => {
+                      if (!nextBorrowerPayment) return 'None';
+                      const today = new Date();
+                      const paymentDate = new Date(nextBorrowerPayment.date);
+                      const diffTime = paymentDate - today;
+                      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                      if (diffDays < 0) return 'Overdue';
+                      return `${diffDays} day${diffDays !== 1 ? 's' : ''}`;
+                    };
+
+                    return (
+                      <>
+                        <StatsCard
+                          title="Next Payment"
+                          value={nextBorrowerPayment ? formatMoney(nextBorrowerPayment.payment_amount || 0) : '-'}
+                          color="blue"
+                          change={nextBorrowerPayment ? `to @${nextBorrowerPayment.username}` : 'N/A'}
+                          index={1}
+                          bgColor="#6EE8B5"
+                        />
+                        <StatsCard
+                          title="Next Payment Date"
+                          value={nextBorrowerPayment ? format(nextBorrowerPayment.date, 'MMM d, yyyy') : '-'}
+                          color="orange"
+                          change={nextBorrowerPayment ? `to @${nextBorrowerPayment.username} • ${getDaysUntilPayment()}` : 'N/A'}
+                          index={2}
+                          bgColor="#6EE8B5"
+                        />
+                      </>
+                    );
+                  }
+                })()}
               </div>
             </div>
 
