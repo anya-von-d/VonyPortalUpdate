@@ -83,10 +83,11 @@ export default function RecentActivity({ loans, payments, isLoading, user, allUs
     .slice(0, 10);
 
   const getActivityInfo = (activity) => {
-    if (!activity) return { title: "Activity", description: "" };
+    if (!activity) return { title: "Activity", date: "", icon: Activity };
 
     let title = "Activity";
-    let description = "";
+    let date = "";
+    let icon = Activity;
 
     if (activity.type === 'loan') {
       const isLender = activity.lender_id === user.id;
@@ -97,24 +98,30 @@ export default function RecentActivity({ loans, payments, isLoading, user, allUs
 
       if (activity.status === 'pending' || !activity.status) {
         title = isLender ? `Sent ${amount} loan offer to ${username}` : `Received ${amount} loan offer from ${username}`;
+        icon = isLender ? Send : ArrowDownRight;
       } else if (activity.status === 'active') {
         title = isLender ? `${username} accepted your ${amount} loan` : `You accepted ${amount} loan from ${username}`;
+        icon = Check;
       } else if (activity.status === 'declined') {
         title = isLender ? `${username} declined your ${amount} loan` : `You declined ${amount} loan from ${username}`;
+        icon = X;
       } else if (activity.status === 'cancelled') {
         title = isLender ? `You cancelled ${amount} loan offer to ${username}` : `${username} cancelled their ${amount} loan offer`;
+        icon = Ban;
       } else if (activity.status === 'completed') {
         title = isLender ? `${username} fully repaid your ${amount} loan` : `You fully repaid ${amount} loan to ${username}`;
+        icon = Check;
       } else {
         title = isLender ? `${amount} loan to ${username}` : `${amount} loan from ${username}`;
+        icon = Activity;
       }
 
-      description = activity.date ? format(parseLocalDate(activity.date), 'MMM d, yyyy') : 'N/A';
+      date = activity.date ? format(parseLocalDate(activity.date), 'MMM d, yyyy') : 'N/A';
     }
 
     if (activity.type === 'payment') {
       const associatedLoan = safeLoans.find(l => l && l.id === activity.loan_id);
-      if (!associatedLoan) return { title: "Payment", description: "" };
+      if (!associatedLoan) return { title: "Payment", date: "", icon: Activity };
 
       const isBorrower = associatedLoan.borrower_id === user.id;
       const otherPartyId = isBorrower ? associatedLoan.lender_id : associatedLoan.borrower_id;
@@ -123,10 +130,11 @@ export default function RecentActivity({ loans, payments, isLoading, user, allUs
       const username = `@${otherParty?.username || 'user'}`;
 
       title = isBorrower ? `Made ${amount} payment to ${username}` : `Received ${amount} payment from ${username}`;
-      description = activity.date ? format(parseLocalDate(activity.date), 'MMM d, yyyy') : 'N/A';
+      date = activity.date ? format(parseLocalDate(activity.date), 'MMM d, yyyy') : 'N/A';
+      icon = isBorrower ? ArrowUpRight : ArrowDownRight;
     }
 
-    return { title, description };
+    return { title, date, icon };
   };
 
   return (
@@ -174,7 +182,7 @@ export default function RecentActivity({ loans, payments, isLoading, user, allUs
               </motion.div>
             ) : (
               recentActivity.map((activity, index) => {
-                const { title, description } = getActivityInfo(activity);
+                const { title, date, icon: Icon } = getActivityInfo(activity);
                 const bgColor = cardBgColors[index % 3];
                 const hoverColor = hoverAccentColors[index % 4];
                 const isHovered = hoveredIndex === index;
@@ -187,18 +195,28 @@ export default function RecentActivity({ loans, payments, isLoading, user, allUs
                     transition={{ duration: 0.3, delay: 0.1 + index * 0.05 }}
                     onMouseEnter={() => setHoveredIndex(index)}
                     onMouseLeave={() => setHoveredIndex(null)}
-                    className="rounded-xl p-4 md:p-5 cursor-pointer transition-all duration-200"
+                    className="rounded-xl p-4 md:p-5 cursor-pointer transition-all duration-200 flex items-start gap-4"
                     style={{ backgroundColor: bgColor }}
                   >
-                    <p
-                      className="font-sans text-[15px] font-semibold transition-colors duration-200"
-                      style={{ color: isHovered ? hoverColor : '#0A1A10' }}
-                    >
-                      {title}
-                    </p>
-                    <p className="font-sans text-sm text-[#4A6B55] leading-relaxed mt-1">
-                      {description}
-                    </p>
+                    {/* Circular Icon */}
+                    <div className="w-10 h-10 rounded-full bg-[#DBFFEB] flex items-center justify-center flex-shrink-0">
+                      <Icon className="w-5 h-5 text-[#0A1A10]" />
+                    </div>
+
+                    {/* Content */}
+                    <div className="flex-1 min-w-0">
+                      <p
+                        className="font-sans text-[15px] font-semibold transition-colors duration-200"
+                        style={{ color: isHovered ? hoverColor : '#0A1A10' }}
+                      >
+                        {title}
+                      </p>
+                      <div className="flex justify-end mt-2">
+                        <p className="font-sans text-xs text-[#4A6B55]">
+                          {date}
+                        </p>
+                      </div>
+                    </div>
                   </motion.div>
                 );
               })
