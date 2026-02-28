@@ -3,7 +3,7 @@ import { LoanAgreement, User, PublicProfile, Loan, Payment } from "@/entities/al
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { FileText, CheckCircle, Users, Download, ArrowUpRight, ArrowDownRight, ChevronDown, Filter, X, Calendar, DollarSign, Percent, Clock } from "lucide-react";
+import { FileText, CheckCircle, Users, Download, ArrowUpRight, ArrowDownRight, ChevronDown, Filter, X, Calendar, DollarSign, Percent, Clock, Info } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   DropdownMenu,
@@ -28,6 +28,7 @@ export default function LoanAgreements() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [activePopup, setActivePopup] = useState(null); // 'promissory', 'amortization', 'summary'
   const [popupAgreement, setPopupAgreement] = useState(null);
+  const [activeInfoTooltip, setActiveInfoTooltip] = useState(null); // 'promissory' or 'amortization'
 
   useEffect(() => {
     loadData();
@@ -856,22 +857,54 @@ export default function LoanAgreements() {
 
                               {/* Right: Three Buttons */}
                               <div className="flex gap-2 flex-shrink-0">
-                                <Button
-                                  onClick={() => openPopup('promissory', agreement)}
-                                  size="sm"
-                                  variant="outline"
-                                  className="bg-white/80 border-0 hover:bg-white text-slate-700 text-xs"
-                                >
-                                  Promissory Note
-                                </Button>
-                                <Button
-                                  onClick={() => openPopup('amortization', agreement)}
-                                  size="sm"
-                                  variant="outline"
-                                  className="bg-white/80 border-0 hover:bg-white text-slate-700 text-xs"
-                                >
-                                  Amortization
-                                </Button>
+                                <div className="flex items-center gap-1">
+                                  <Button
+                                    onClick={() => openPopup('promissory', agreement)}
+                                    size="sm"
+                                    variant="outline"
+                                    className="bg-white/80 border-0 hover:bg-white text-slate-700 text-xs"
+                                  >
+                                    Promissory Note
+                                  </Button>
+                                  <div
+                                    className="relative"
+                                    onMouseEnter={() => setActiveInfoTooltip(`promissory-${agreement.id}`)}
+                                    onMouseLeave={() => setActiveInfoTooltip(null)}
+                                  >
+                                    <div className="w-4 h-4 rounded-full bg-white flex items-center justify-center cursor-help shadow-sm">
+                                      <span className="text-[10px] font-bold text-slate-800">i</span>
+                                    </div>
+                                    {activeInfoTooltip === `promissory-${agreement.id}` && (
+                                      <div className="absolute right-0 top-6 z-50 w-56 bg-slate-800 text-white text-xs rounded-lg p-3 shadow-lg">
+                                        A promissory note is a legal document where the borrower promises to repay the loan amount plus any interest by a specific date.
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <Button
+                                    onClick={() => openPopup('amortization', agreement)}
+                                    size="sm"
+                                    variant="outline"
+                                    className="bg-white/80 border-0 hover:bg-white text-slate-700 text-xs"
+                                  >
+                                    Amortization
+                                  </Button>
+                                  <div
+                                    className="relative"
+                                    onMouseEnter={() => setActiveInfoTooltip(`amortization-${agreement.id}`)}
+                                    onMouseLeave={() => setActiveInfoTooltip(null)}
+                                  >
+                                    <div className="w-4 h-4 rounded-full bg-white flex items-center justify-center cursor-help shadow-sm">
+                                      <span className="text-[10px] font-bold text-slate-800">i</span>
+                                    </div>
+                                    {activeInfoTooltip === `amortization-${agreement.id}` && (
+                                      <div className="absolute right-0 top-6 z-50 w-56 bg-slate-800 text-white text-xs rounded-lg p-3 shadow-lg">
+                                        An amortization schedule shows the breakdown of each payment over the life of the loan, including how much goes toward principal vs. interest.
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
                                 <Button
                                   onClick={() => openPopup('summary', agreement)}
                                   size="sm"
@@ -901,22 +934,54 @@ export default function LoanAgreements() {
                                 </div>
                               </div>
                               <div className="flex gap-2">
-                                <Button
-                                  onClick={() => openPopup('promissory', agreement)}
-                                  size="sm"
-                                  variant="outline"
-                                  className="flex-1 bg-white/80 border-0 hover:bg-white text-slate-700 text-xs"
-                                >
-                                  Note
-                                </Button>
-                                <Button
-                                  onClick={() => openPopup('amortization', agreement)}
-                                  size="sm"
-                                  variant="outline"
-                                  className="flex-1 bg-white/80 border-0 hover:bg-white text-slate-700 text-xs"
-                                >
-                                  Schedule
-                                </Button>
+                                <div className="flex items-center gap-1 flex-1">
+                                  <Button
+                                    onClick={() => openPopup('promissory', agreement)}
+                                    size="sm"
+                                    variant="outline"
+                                    className="flex-1 bg-white/80 border-0 hover:bg-white text-slate-700 text-xs"
+                                  >
+                                    Note
+                                  </Button>
+                                  <div
+                                    className="relative"
+                                    onMouseEnter={() => setActiveInfoTooltip(`promissory-mobile-${agreement.id}`)}
+                                    onMouseLeave={() => setActiveInfoTooltip(null)}
+                                  >
+                                    <div className="w-4 h-4 rounded-full bg-white flex items-center justify-center cursor-help shadow-sm">
+                                      <span className="text-[10px] font-bold text-slate-800">i</span>
+                                    </div>
+                                    {activeInfoTooltip === `promissory-mobile-${agreement.id}` && (
+                                      <div className="absolute right-0 bottom-6 z-50 w-48 bg-slate-800 text-white text-xs rounded-lg p-3 shadow-lg">
+                                        A promissory note is a legal document where the borrower promises to repay the loan.
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-1 flex-1">
+                                  <Button
+                                    onClick={() => openPopup('amortization', agreement)}
+                                    size="sm"
+                                    variant="outline"
+                                    className="flex-1 bg-white/80 border-0 hover:bg-white text-slate-700 text-xs"
+                                  >
+                                    Schedule
+                                  </Button>
+                                  <div
+                                    className="relative"
+                                    onMouseEnter={() => setActiveInfoTooltip(`amortization-mobile-${agreement.id}`)}
+                                    onMouseLeave={() => setActiveInfoTooltip(null)}
+                                  >
+                                    <div className="w-4 h-4 rounded-full bg-white flex items-center justify-center cursor-help shadow-sm">
+                                      <span className="text-[10px] font-bold text-slate-800">i</span>
+                                    </div>
+                                    {activeInfoTooltip === `amortization-mobile-${agreement.id}` && (
+                                      <div className="absolute right-0 bottom-6 z-50 w-48 bg-slate-800 text-white text-xs rounded-lg p-3 shadow-lg">
+                                        Shows the breakdown of each payment over the loan's life.
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
                                 <Button
                                   onClick={() => openPopup('summary', agreement)}
                                   size="sm"

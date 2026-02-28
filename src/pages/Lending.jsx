@@ -2054,8 +2054,8 @@ export default function Lending() {
                                           onMouseLeave={() => setActiveInfoTooltip(null)}
                                           onClick={(e) => e.stopPropagation()}
                                         >
-                                          <div className="w-4 h-4 rounded-full bg-slate-600 flex items-center justify-center cursor-help">
-                                            <Info className="w-2.5 h-2.5 text-white" />
+                                          <div className="w-4 h-4 rounded-full bg-white flex items-center justify-center cursor-help shadow-sm">
+                                            <span className="text-[10px] font-bold text-slate-800">i</span>
                                           </div>
                                           {activeInfoTooltip === 'promissory' && (
                                             <div className="absolute left-6 top-0 z-50 w-56 bg-slate-800 text-white text-xs rounded-lg p-3 shadow-lg">
@@ -2085,8 +2085,8 @@ export default function Lending() {
                                           onMouseLeave={() => setActiveInfoTooltip(null)}
                                           onClick={(e) => e.stopPropagation()}
                                         >
-                                          <div className="w-4 h-4 rounded-full bg-slate-600 flex items-center justify-center cursor-help">
-                                            <Info className="w-2.5 h-2.5 text-white" />
+                                          <div className="w-4 h-4 rounded-full bg-white flex items-center justify-center cursor-help shadow-sm">
+                                            <span className="text-[10px] font-bold text-slate-800">i</span>
                                           </div>
                                           {activeInfoTooltip === 'amortization' && (
                                             <div className="absolute left-6 top-0 z-50 w-56 bg-slate-800 text-white text-xs rounded-lg p-3 shadow-lg">
