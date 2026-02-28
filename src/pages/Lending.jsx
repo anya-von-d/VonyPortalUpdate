@@ -28,7 +28,7 @@ import {
   DollarSign, Calendar, Percent, FileText, User as UserIcon,
   AlertCircle, Zap, ClipboardList, Send, Clock,
   TrendingUp, Pencil, X, Save, History, PlusCircle, Settings, BarChart3,
-  Download, CheckCircle, FolderOpen
+  Download, CheckCircle, FolderOpen, Info
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { addMonths, addWeeks, addDays, format } from "date-fns";
@@ -61,6 +61,7 @@ export default function Lending() {
   const [loanAgreements, setLoanAgreements] = useState([]);
   const [activeDocPopup, setActiveDocPopup] = useState(null); // 'promissory', 'amortization', 'summary'
   const [docPopupAgreement, setDocPopupAgreement] = useState(null);
+  const [activeInfoTooltip, setActiveInfoTooltip] = useState(null); // 'promissory' or 'amortization'
 
   const [formData, setFormData] = useState({
     borrower_username: '',
@@ -2038,28 +2039,62 @@ export default function Lending() {
                                     {/* Promissory Note */}
                                     <button
                                       onClick={() => openDocPopup('promissory', agreement)}
-                                      className="bg-[#83F384] rounded-xl p-4 text-left hover:opacity-90 transition-opacity cursor-pointer group"
+                                      className="bg-[#83F384] rounded-xl p-4 text-left hover:opacity-90 transition-opacity cursor-pointer group relative"
                                     >
                                       <div className="w-10 h-10 rounded-full bg-[#DBFFEB] flex items-center justify-center mb-3">
                                         <ClipboardList className="w-5 h-5 text-slate-700" />
                                       </div>
-                                      <p className="font-semibold text-slate-800 text-sm group-hover:text-[#00A86B] transition-colors">
-                                        Promissory Note
-                                      </p>
+                                      <div className="flex items-center gap-1">
+                                        <p className="font-semibold text-slate-800 text-sm group-hover:text-[#00A86B] transition-colors">
+                                          Promissory Note
+                                        </p>
+                                        <div
+                                          className="relative"
+                                          onMouseEnter={(e) => { e.stopPropagation(); setActiveInfoTooltip('promissory'); }}
+                                          onMouseLeave={() => setActiveInfoTooltip(null)}
+                                          onClick={(e) => e.stopPropagation()}
+                                        >
+                                          <div className="w-4 h-4 rounded-full bg-slate-600 flex items-center justify-center cursor-help">
+                                            <Info className="w-2.5 h-2.5 text-white" />
+                                          </div>
+                                          {activeInfoTooltip === 'promissory' && (
+                                            <div className="absolute left-6 top-0 z-50 w-56 bg-slate-800 text-white text-xs rounded-lg p-3 shadow-lg">
+                                              A promissory note is a legal document where the borrower promises to repay the loan amount plus any interest by a specific date. It serves as written proof of the debt.
+                                            </div>
+                                          )}
+                                        </div>
+                                      </div>
                                       <p className="text-xs text-slate-600 mt-1">Legal agreement</p>
                                     </button>
 
                                     {/* Amortization Schedule */}
                                     <button
                                       onClick={() => openDocPopup('amortization', agreement)}
-                                      className="bg-[#6EE8B5] rounded-xl p-4 text-left hover:opacity-90 transition-opacity cursor-pointer group"
+                                      className="bg-[#6EE8B5] rounded-xl p-4 text-left hover:opacity-90 transition-opacity cursor-pointer group relative"
                                     >
                                       <div className="w-10 h-10 rounded-full bg-[#DBFFEB] flex items-center justify-center mb-3">
                                         <BarChart3 className="w-5 h-5 text-slate-700" />
                                       </div>
-                                      <p className="font-semibold text-slate-800 text-sm group-hover:text-[#00A86B] transition-colors">
-                                        Amortization Schedule
-                                      </p>
+                                      <div className="flex items-center gap-1">
+                                        <p className="font-semibold text-slate-800 text-sm group-hover:text-[#00A86B] transition-colors">
+                                          Amortization Schedule
+                                        </p>
+                                        <div
+                                          className="relative"
+                                          onMouseEnter={(e) => { e.stopPropagation(); setActiveInfoTooltip('amortization'); }}
+                                          onMouseLeave={() => setActiveInfoTooltip(null)}
+                                          onClick={(e) => e.stopPropagation()}
+                                        >
+                                          <div className="w-4 h-4 rounded-full bg-slate-600 flex items-center justify-center cursor-help">
+                                            <Info className="w-2.5 h-2.5 text-white" />
+                                          </div>
+                                          {activeInfoTooltip === 'amortization' && (
+                                            <div className="absolute left-6 top-0 z-50 w-56 bg-slate-800 text-white text-xs rounded-lg p-3 shadow-lg">
+                                              An amortization schedule shows the breakdown of each payment over the life of the loan, including how much goes toward principal vs. interest.
+                                            </div>
+                                          )}
+                                        </div>
+                                      </div>
                                       <p className="text-xs text-slate-600 mt-1">Payment breakdown</p>
                                     </button>
                                   </div>
