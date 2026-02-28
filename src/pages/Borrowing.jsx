@@ -829,9 +829,11 @@ export default function Borrowing() {
                   </div>
                 )}
 
-                {/* Loans Ranked By */}
+                {/* Loans Ranked By + Month Payment Amount */}
                 {activeLoans.length > 0 && (
-                  <div className="bg-[#DBFFEB] rounded-2xl p-5">
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {/* Loans Ranked By - Left */}
+                    <div className="bg-white rounded-2xl p-5 border-0">
                       {/* Header with dropdown */}
                       <div className="flex items-center gap-2 mb-4">
                         <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
@@ -842,13 +844,13 @@ export default function Borrowing() {
                             <SelectValue>
                               {rankingFilter === 'highest_interest' && 'Highest Interest'}
                               {rankingFilter === 'highest_payment' && 'Highest Payment'}
-                              {rankingFilter === 'soonest_deadline' && 'Soonest Payment Deadline'}
+                              {rankingFilter === 'soonest_deadline' && 'Soonest Deadline'}
                             </SelectValue>
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="highest_interest">Highest Interest</SelectItem>
                             <SelectItem value="highest_payment">Highest Payment</SelectItem>
-                            <SelectItem value="soonest_deadline">Soonest Payment Deadline</SelectItem>
+                            <SelectItem value="soonest_deadline">Soonest Deadline</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -870,7 +872,7 @@ export default function Borrowing() {
                             });
                           }
 
-                          return sortedLoans.map((loan, index) => {
+                          return sortedLoans.slice(0, 5).map((loan, index) => {
                             const lender = publicProfiles.find(p => p.user_id === loan.lender_id);
                             const bgColors = ['#D0ED6F', '#83F384', '#6EE8B5'];
 
@@ -880,55 +882,87 @@ export default function Borrowing() {
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: index * 0.05 }}
-                                className="rounded-xl p-4 flex items-center gap-3"
+                                className="rounded-xl p-3 flex items-center gap-3"
                                 style={{ backgroundColor: bgColors[index % 3] }}
                               >
                                 {/* Rank Number */}
-                                <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center flex-shrink-0">
-                                  <span className="text-sm font-bold text-slate-800">{index + 1}</span>
+                                <div className="w-7 h-7 rounded-full bg-white flex items-center justify-center flex-shrink-0">
+                                  <span className="text-xs font-bold text-slate-800">{index + 1}</span>
                                 </div>
 
                                 {/* Loan Info */}
                                 <div className="flex-1 min-w-0">
-                                  <div className="flex items-center gap-2">
-                                    <p className="font-semibold text-slate-800 text-sm">
-                                      @{lender?.username || 'user'}
-                                    </p>
-                                    <span className="text-slate-500 text-xs">•</span>
-                                    <p className="text-sm text-slate-700">
-                                      ${(loan.amount || 0).toLocaleString()}
-                                    </p>
-                                  </div>
-                                  <div className="flex items-center gap-3 mt-1 text-xs text-slate-600">
+                                  <p className="font-semibold text-slate-800 text-sm truncate">
+                                    @{lender?.username || 'user'}
+                                  </p>
+                                  <div className="text-xs text-slate-600 mt-0.5">
                                     {rankingFilter === 'highest_interest' && (
-                                      <span className="font-medium text-slate-700">{loan.interest_rate || 0}% interest</span>
+                                      <span>{loan.interest_rate || 0}% interest</span>
                                     )}
                                     {rankingFilter === 'highest_payment' && (
-                                      <span className="font-medium text-slate-700">${(loan.payment_amount || 0).toLocaleString()} / {loan.payment_frequency || 'month'}</span>
+                                      <span>${(loan.payment_amount || 0).toLocaleString()}/{loan.payment_frequency === 'weekly' ? 'wk' : 'mo'}</span>
                                     )}
                                     {rankingFilter === 'soonest_deadline' && loan.next_payment_date && (
-                                      <span className="font-medium text-slate-700">
-                                        Due {format(new Date(loan.next_payment_date), 'MMM d, yyyy')}
-                                      </span>
+                                      <span>Due {format(new Date(loan.next_payment_date), 'MMM d')}</span>
                                     )}
                                     {rankingFilter === 'soonest_deadline' && !loan.next_payment_date && (
-                                      <span className="font-medium text-slate-500">No payment date set</span>
+                                      <span className="text-slate-400">No date</span>
                                     )}
                                   </div>
                                 </div>
 
                                 {/* Amount remaining */}
                                 <div className="text-right flex-shrink-0">
-                                  <p className="text-xs text-slate-500">Remaining</p>
                                   <p className="font-semibold text-slate-800 text-sm">
                                     ${((loan.total_amount || loan.amount || 0) - (loan.amount_paid || 0)).toLocaleString()}
                                   </p>
+                                  <p className="text-[10px] text-slate-500">left</p>
                                 </div>
                               </motion.div>
                             );
                           });
                         })()}
                       </div>
+                    </div>
+
+                    {/* Monthly Payment Amount - Right */}
+                    <div className="bg-white rounded-2xl p-5 border-0">
+                      <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                        Monthly Payment Amount
+                      </p>
+                      <div className="space-y-3">
+                        {activeLoans.map((loan, index) => {
+                          const lender = publicProfiles.find(p => p.user_id === loan.lender_id);
+                          const bgColors = ['#D0ED6F', '#83F384', '#6EE8B5'];
+                          return (
+                            <div key={loan.id} className="flex items-center justify-between p-3 rounded-xl" style={{ backgroundColor: bgColors[index % 3] }}>
+                              <div className="flex items-center gap-2">
+                                <div className="w-6 h-6 rounded-full bg-white flex items-center justify-center">
+                                  <span className="text-xs font-medium text-[#00A86B]">
+                                    {lender?.full_name?.charAt(0) || '?'}
+                                  </span>
+                                </div>
+                                <span className="text-sm font-medium text-slate-700">@{lender?.username || 'user'}</span>
+                              </div>
+                              <div className="text-right">
+                                <p className="text-sm font-bold text-slate-800">
+                                  ${(loan.payment_amount || 0).toLocaleString()}
+                                </p>
+                                <p className="text-[10px] text-slate-500">/{loan.payment_frequency === 'weekly' ? 'week' : 'month'}</p>
+                              </div>
+                            </div>
+                          );
+                        })}
+                        {activeLoans.length > 0 && (
+                          <div className="border-t border-slate-100 pt-3 flex items-center justify-between">
+                            <span className="text-sm font-medium text-slate-600">Total</span>
+                            <span className="text-sm font-bold text-slate-800">
+                              ${activeLoans.reduce((sum, l) => sum + (l.payment_amount || 0), 0).toLocaleString()}/mo
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 )}
 
@@ -1608,22 +1642,23 @@ export default function Borrowing() {
       )}
 
       <AlertDialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Cancel Loan</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to cancel this loan? This action cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Keep Loan</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={confirmCancelLoan}
-              className="bg-red-600 hover:bg-red-700"
-            >
-              Cancel Loan
+        <AlertDialogContent className="rounded-2xl border-0 p-0 overflow-hidden" style={{ backgroundColor: '#DBEEE3' }}>
+          <div className="p-6 pb-4">
+            <AlertDialogHeader>
+              <AlertDialogTitle className="text-xl font-bold text-slate-800" style={{ fontFamily: "'Libre Baskerville', Georgia, serif" }}>Cancel Loan</AlertDialogTitle>
+              <AlertDialogDescription className="text-sm text-slate-600 mt-1">
+                Are you sure you want to cancel this loan? This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+          </div>
+          <div className="px-6 pb-6 flex flex-col sm:flex-row gap-3">
+            <AlertDialogCancel className="flex-1 rounded-xl border-0 font-semibold text-[#0A1A10] text-[14px] h-12 hover:opacity-90 transition-all" style={{ backgroundColor: '#83F384' }}>
+              Keep Loan
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={confirmCancelLoan} className="flex-1 rounded-xl border-0 font-semibold text-[#0A1A10] text-[14px] h-12 hover:opacity-90 transition-all" style={{ backgroundColor: '#D0ED6F' }}>
+              Request Loan Cancellation
             </AlertDialogAction>
-          </AlertDialogFooter>
+          </div>
         </AlertDialogContent>
       </AlertDialog>
     </>
