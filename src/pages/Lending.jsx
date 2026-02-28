@@ -2148,16 +2148,10 @@ export default function Lending() {
                 ) : (
                   <div className="space-y-4">
                     {/* Loan Selector Dropdown */}
-                    <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60">
-                      <CardHeader className="pb-2">
-                        <CardTitle className="flex items-center gap-2 text-base">
-                          <div className="w-8 h-8 rounded-full bg-[#E8FCF0] flex items-center justify-center">
-                            <Settings className="w-4 h-4 text-[#00A86B]" />
-                          </div>
-                          Manage Loans
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
+                    <div className="bg-white rounded-2xl p-5 border-0">
+                      <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                        Your Loans
+                      </p>
                         <Select
                           value={manageLoanSelected?.id || ''}
                           onValueChange={(value) => {
@@ -2216,19 +2210,16 @@ export default function Lending() {
                             })}
                           </SelectContent>
                         </Select>
-                      </CardContent>
-                    </Card>
+                    </div>
 
                     {/* Loan Details - Below Dropdown */}
                     {!manageLoanSelected ? (
-                      <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60">
-                        <CardContent className="flex items-center justify-center py-16">
-                          <div className="text-center text-slate-400">
-                            <BarChart3 className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                            <p>Select a loan above to view details</p>
-                          </div>
-                        </CardContent>
-                      </Card>
+                      <div className="bg-white rounded-2xl p-5 border-0 flex items-center justify-center py-16">
+                        <div className="text-center text-[#4A6B55]">
+                          <BarChart3 className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                          <p>Select a loan above to view details</p>
+                        </div>
+                      </div>
                     ) : (
                       <>
                           {/* Loan Information Box */}
@@ -2433,81 +2424,76 @@ export default function Lending() {
                                 }
 
                                 return (
-                                  <div className="grid grid-cols-1 gap-3">
+                                  <div className="flex flex-col gap-3">
                                     {/* Loan Summary */}
                                     <button
                                       onClick={() => openDocPopup('summary', agreement)}
-                                      className="bg-[#D0ED6F] rounded-xl p-4 text-left hover:opacity-90 transition-opacity cursor-pointer group"
+                                      className="bg-[#D0ED6F] rounded-xl p-3 md:p-4 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-3"
                                     >
-                                      <div className="w-10 h-10 rounded-full bg-[#DBFFEB] flex items-center justify-center mb-3">
-                                        <FileText className="w-5 h-5 text-slate-700" />
+                                      <div className="w-9 h-9 rounded-full bg-[#DBFFEB] flex items-center justify-center flex-shrink-0">
+                                        <FileText className="w-4 h-4 text-[#0A1A10]" />
                                       </div>
-                                      <p className="font-semibold text-slate-800 text-sm group-hover:text-[#00A86B] transition-colors">
+                                      <p className="font-semibold text-[#0A1A10] text-[14px] group-hover:text-[#00A86B] transition-colors">
                                         Loan Summary
                                       </p>
-                                      <p className="text-xs text-slate-600 mt-1">View loan details</p>
                                     </button>
 
                                     {/* Promissory Note */}
                                     <button
                                       onClick={() => openDocPopup('promissory', agreement)}
-                                      className="bg-[#83F384] rounded-xl p-4 text-left hover:opacity-90 transition-opacity cursor-pointer group relative"
+                                      className="bg-[#83F384] rounded-xl p-3 md:p-4 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-3"
                                     >
-                                      <div className="w-10 h-10 rounded-full bg-[#DBFFEB] flex items-center justify-center mb-3">
-                                        <ClipboardList className="w-5 h-5 text-slate-700" />
+                                      <div className="w-9 h-9 rounded-full bg-[#DBFFEB] flex items-center justify-center flex-shrink-0">
+                                        <ClipboardList className="w-4 h-4 text-[#0A1A10]" />
                                       </div>
-                                      <div className="flex items-center gap-1">
-                                        <p className="font-semibold text-slate-800 text-sm group-hover:text-[#00A86B] transition-colors">
-                                          Promissory Note
-                                        </p>
-                                        <div
-                                          className="relative"
-                                          onMouseEnter={(e) => { e.stopPropagation(); setActiveInfoTooltip('promissory'); }}
-                                          onMouseLeave={() => setActiveInfoTooltip(null)}
-                                          onClick={(e) => e.stopPropagation()}
-                                        >
-                                          <div className="w-4 h-4 rounded-full bg-[#6EE8B5] flex items-center justify-center cursor-help shadow-sm">
-                                            <span className="text-[10px] font-bold text-slate-800">i</span>
-                                          </div>
-                                          {activeInfoTooltip === 'promissory' && (
-                                            <div className="absolute left-6 top-0 z-50 w-56 bg-slate-800 text-white text-xs rounded-lg p-3 shadow-lg">
-                                              A promissory note is a legal document where the borrower promises to repay the loan amount plus any interest by a specific date. It serves as written proof of the debt.
-                                            </div>
-                                          )}
+                                      <p className="font-semibold text-[#0A1A10] text-[14px] group-hover:text-[#00A86B] transition-colors">
+                                        Promissory Note
+                                      </p>
+                                      <div
+                                        className="relative ml-auto"
+                                        onMouseEnter={(e) => { e.stopPropagation(); setActiveInfoTooltip('promissory'); }}
+                                        onMouseLeave={() => setActiveInfoTooltip(null)}
+                                        onClick={(e) => { e.stopPropagation(); setActiveInfoTooltip(activeInfoTooltip === 'promissory' ? null : 'promissory'); }}
+                                      >
+                                        <div className="w-4 h-4 rounded-full bg-slate-900 flex items-center justify-center cursor-help shadow-sm">
+                                          <span className="text-[10px] font-bold text-white">i</span>
                                         </div>
+                                        {activeInfoTooltip === 'promissory' && (
+                                          <div className="absolute bottom-full right-0 mb-2 z-[9999] w-56 bg-slate-800 text-white text-xs rounded-lg p-3 shadow-lg">
+                                            A promissory note is a legal document where the borrower promises to repay the loan amount plus any interest by a specific date. It serves as written proof of the debt.
+                                            <div className="absolute top-full right-2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent border-t-slate-800" />
+                                          </div>
+                                        )}
                                       </div>
-                                      <p className="text-xs text-slate-600 mt-1">Legal agreement</p>
                                     </button>
 
                                     {/* Amortization Schedule */}
                                     <button
                                       onClick={() => openDocPopup('amortization', agreement)}
-                                      className="bg-[#6EE8B5] rounded-xl p-4 text-left hover:opacity-90 transition-opacity cursor-pointer group relative"
+                                      className="bg-[#6EE8B5] rounded-xl p-3 md:p-4 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-3"
                                     >
-                                      <div className="w-10 h-10 rounded-full bg-[#DBFFEB] flex items-center justify-center mb-3">
-                                        <BarChart3 className="w-5 h-5 text-slate-700" />
+                                      <div className="w-9 h-9 rounded-full bg-[#DBFFEB] flex items-center justify-center flex-shrink-0">
+                                        <BarChart3 className="w-4 h-4 text-[#0A1A10]" />
                                       </div>
-                                      <div className="flex items-center gap-1">
-                                        <p className="font-semibold text-slate-800 text-sm group-hover:text-[#00A86B] transition-colors">
-                                          Amortization Schedule
-                                        </p>
-                                        <div
-                                          className="relative"
-                                          onMouseEnter={(e) => { e.stopPropagation(); setActiveInfoTooltip('amortization'); }}
-                                          onMouseLeave={() => setActiveInfoTooltip(null)}
-                                          onClick={(e) => e.stopPropagation()}
-                                        >
-                                          <div className="w-4 h-4 rounded-full bg-[#6EE8B5] flex items-center justify-center cursor-help shadow-sm">
-                                            <span className="text-[10px] font-bold text-slate-800">i</span>
-                                          </div>
-                                          {activeInfoTooltip === 'amortization' && (
-                                            <div className="absolute left-6 top-0 z-50 w-56 bg-slate-800 text-white text-xs rounded-lg p-3 shadow-lg">
-                                              An amortization schedule shows the breakdown of each payment over the life of the loan, including how much goes toward principal vs. interest.
-                                            </div>
-                                          )}
+                                      <p className="font-semibold text-[#0A1A10] text-[14px] group-hover:text-[#00A86B] transition-colors">
+                                        Amortization Schedule
+                                      </p>
+                                      <div
+                                        className="relative ml-auto"
+                                        onMouseEnter={(e) => { e.stopPropagation(); setActiveInfoTooltip('amortization'); }}
+                                        onMouseLeave={() => setActiveInfoTooltip(null)}
+                                        onClick={(e) => { e.stopPropagation(); setActiveInfoTooltip(activeInfoTooltip === 'amortization' ? null : 'amortization'); }}
+                                      >
+                                        <div className="w-4 h-4 rounded-full bg-slate-900 flex items-center justify-center cursor-help shadow-sm">
+                                          <span className="text-[10px] font-bold text-white">i</span>
                                         </div>
+                                        {activeInfoTooltip === 'amortization' && (
+                                          <div className="absolute bottom-full right-0 mb-2 z-[9999] w-56 bg-slate-800 text-white text-xs rounded-lg p-3 shadow-lg">
+                                            An amortization schedule shows the breakdown of each payment over the life of the loan, including how much goes toward principal vs. interest.
+                                            <div className="absolute top-full right-2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent border-t-slate-800" />
+                                          </div>
+                                        )}
                                       </div>
-                                      <p className="text-xs text-slate-600 mt-1">Payment breakdown</p>
                                     </button>
                                   </div>
                                 );
@@ -2520,30 +2506,28 @@ export default function Lending() {
                             <p className="text-[10px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                               Actions
                             </p>
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <div className="flex flex-col sm:flex-row gap-3">
                               <button
                                 onClick={() => handleMakePayment(manageLoanSelected)}
-                                className="bg-[#D0ED6F] rounded-xl p-4 text-left hover:opacity-90 transition-opacity cursor-pointer group"
+                                className="bg-[#D0ED6F] rounded-xl p-3 md:p-4 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-3 flex-1"
                               >
-                                <div className="w-10 h-10 rounded-full bg-[#DBFFEB] flex items-center justify-center mb-3">
-                                  <DollarSign className="w-5 h-5 text-slate-700" />
+                                <div className="w-9 h-9 rounded-full bg-[#DBFFEB] flex items-center justify-center flex-shrink-0">
+                                  <DollarSign className="w-4 h-4 text-[#0A1A10]" />
                                 </div>
-                                <p className="font-semibold text-slate-800 text-sm group-hover:text-[#00A86B] transition-colors">
+                                <p className="font-semibold text-[#0A1A10] text-[14px] group-hover:text-[#00A86B] transition-colors">
                                   Record Payment
                                 </p>
-                                <p className="text-xs text-slate-600 mt-1">Log a received payment</p>
                               </button>
                               <button
                                 onClick={() => handleEditLoan(manageLoanSelected)}
-                                className="bg-[#83F384] rounded-xl p-4 text-left hover:opacity-90 transition-opacity cursor-pointer group"
+                                className="bg-[#83F384] rounded-xl p-3 md:p-4 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-3 flex-1"
                               >
-                                <div className="w-10 h-10 rounded-full bg-[#DBFFEB] flex items-center justify-center mb-3">
-                                  <Pencil className="w-5 h-5 text-slate-700" />
+                                <div className="w-9 h-9 rounded-full bg-[#DBFFEB] flex items-center justify-center flex-shrink-0">
+                                  <Pencil className="w-4 h-4 text-[#0A1A10]" />
                                 </div>
-                                <p className="font-semibold text-slate-800 text-sm group-hover:text-[#00A86B] transition-colors">
+                                <p className="font-semibold text-[#0A1A10] text-[14px] group-hover:text-[#00A86B] transition-colors">
                                   Edit Loan
                                 </p>
-                                <p className="text-xs text-slate-600 mt-1">Modify loan details</p>
                               </button>
                               <button
                                 onClick={() => {
@@ -2551,15 +2535,14 @@ export default function Lending() {
                                     // Handle cancel loan
                                   }
                                 }}
-                                className="bg-[#6EE8B5] rounded-xl p-4 text-left hover:opacity-90 transition-opacity cursor-pointer group"
+                                className="bg-[#6EE8B5] rounded-xl p-3 md:p-4 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-3 flex-1"
                               >
-                                <div className="w-10 h-10 rounded-full bg-[#DBFFEB] flex items-center justify-center mb-3">
-                                  <X className="w-5 h-5 text-slate-700" />
+                                <div className="w-9 h-9 rounded-full bg-[#DBFFEB] flex items-center justify-center flex-shrink-0">
+                                  <X className="w-4 h-4 text-[#0A1A10]" />
                                 </div>
-                                <p className="font-semibold text-slate-800 text-sm group-hover:text-[#00A86B] transition-colors">
+                                <p className="font-semibold text-[#0A1A10] text-[14px] group-hover:text-[#00A86B] transition-colors">
                                   Cancel Loan
                                 </p>
-                                <p className="text-xs text-slate-600 mt-1">End this loan early</p>
                               </button>
                             </div>
                           </div>

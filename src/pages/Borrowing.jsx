@@ -774,7 +774,7 @@ export default function Borrowing() {
                     {/* Loan Selector Dropdown */}
                     <div className="bg-white rounded-2xl p-5 border-0">
                       <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
-                        Manage Loans
+                        Your Loans
                       </p>
                         <Select
                           value={manageLoanSelected?.id || ''}
@@ -1034,45 +1034,42 @@ export default function Borrowing() {
                           <p className="text-[10px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                             Actions
                           </p>
-                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                          <div className="flex flex-col sm:flex-row gap-3">
                             <button
                               onClick={() => handleMakePayment(manageLoanSelected)}
-                              className="bg-[#D0ED6F] rounded-xl p-4 text-left hover:opacity-90 transition-opacity cursor-pointer group"
+                              className="bg-[#D0ED6F] rounded-xl p-3 md:p-4 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-3 flex-1"
                             >
-                              <div className="w-10 h-10 rounded-full bg-[#DBFFEB] flex items-center justify-center mb-3">
-                                <DollarSign className="w-5 h-5 text-slate-700" />
+                              <div className="w-9 h-9 rounded-full bg-[#DBFFEB] flex items-center justify-center flex-shrink-0">
+                                <DollarSign className="w-4 h-4 text-[#0A1A10]" />
                               </div>
-                              <p className="font-semibold text-slate-800 text-sm group-hover:text-[#00A86B] transition-colors">
+                              <p className="font-semibold text-[#0A1A10] text-[14px] group-hover:text-[#00A86B] transition-colors">
                                 Make Payment
                               </p>
-                              <p className="text-xs text-slate-600 mt-1">Submit a payment</p>
                             </button>
                             <button
                               onClick={() => handleViewDetails(manageLoanSelected)}
-                              className="bg-[#83F384] rounded-xl p-4 text-left hover:opacity-90 transition-opacity cursor-pointer group"
+                              className="bg-[#83F384] rounded-xl p-3 md:p-4 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-3 flex-1"
                             >
-                              <div className="w-10 h-10 rounded-full bg-[#DBFFEB] flex items-center justify-center mb-3">
-                                <FileText className="w-5 h-5 text-slate-700" />
+                              <div className="w-9 h-9 rounded-full bg-[#DBFFEB] flex items-center justify-center flex-shrink-0">
+                                <FileText className="w-4 h-4 text-[#0A1A10]" />
                               </div>
-                              <p className="font-semibold text-slate-800 text-sm group-hover:text-[#00A86B] transition-colors">
+                              <p className="font-semibold text-[#0A1A10] text-[14px] group-hover:text-[#00A86B] transition-colors">
                                 View Details
                               </p>
-                              <p className="text-xs text-slate-600 mt-1">See full loan info</p>
                             </button>
                             <button
                               onClick={() => {
                                 // Handle request late payment
                                 alert('Late payment request functionality coming soon');
                               }}
-                              className="bg-[#6EE8B5] rounded-xl p-4 text-left hover:opacity-90 transition-opacity cursor-pointer group"
+                              className="bg-[#6EE8B5] rounded-xl p-3 md:p-4 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-3 flex-1"
                             >
-                              <div className="w-10 h-10 rounded-full bg-[#DBFFEB] flex items-center justify-center mb-3">
-                                <Clock className="w-5 h-5 text-slate-700" />
+                              <div className="w-9 h-9 rounded-full bg-[#DBFFEB] flex items-center justify-center flex-shrink-0">
+                                <Clock className="w-4 h-4 text-[#0A1A10]" />
                               </div>
-                              <p className="font-semibold text-slate-800 text-sm group-hover:text-[#00A86B] transition-colors">
+                              <p className="font-semibold text-[#0A1A10] text-[14px] group-hover:text-[#00A86B] transition-colors">
                                 Request Late Payment
                               </p>
-                              <p className="text-xs text-slate-600 mt-1">Ask for extension</p>
                             </button>
                           </div>
                         </div>
