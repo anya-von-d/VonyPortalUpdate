@@ -1617,7 +1617,7 @@ export default function Lending() {
               >
                 {/* Form */}
                 <div className="lg:col-span-2">
-                  <div className="bg-[#DBFFEB] rounded-2xl p-5 border-0">
+                  <div className="bg-white rounded-2xl p-5 border-0">
                     <div className="mb-5">
                       <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                         {loanType === 'flexible' ? 'Create Quick Payment Request' : 'Create Loan Offer'}
@@ -1703,14 +1703,14 @@ export default function Lending() {
 
                             {/* Repeating Options */}
                             {formData.is_repeating && (
-                              <div className="p-4 bg-[#DBFFEB] rounded-xl">
-                                <p className="text-sm text-slate-700 leading-[3.2] [&_input]:inline-flex [&_input]:align-baseline [&_input]:my-[2px] [&_input[type=number]]:appearance-none [&_input[type=number]]:[-moz-appearance:textfield] [&_input[type=number]::-webkit-outer-spin-button]:appearance-none [&_input[type=number]::-webkit-inner-spin-button]:appearance-none [&_.inline-flex]:my-[2px]" style={{ marginBottom: '-0.8em' }}>
+                              <div className="p-5 bg-[#DBFFEB] rounded-xl">
+                                <p className="text-sm text-slate-700 leading-[3.8] [&_input]:inline-flex [&_input]:align-baseline [&_input]:my-[2px] [&_input[type=number]]:appearance-none [&_input[type=number]]:[-moz-appearance:textfield] [&_input[type=number]::-webkit-outer-spin-button]:appearance-none [&_input[type=number]::-webkit-inner-spin-button]:appearance-none [&_.inline-flex]:my-[2px]">
                                   Payments of{' '}
                                   <Input
                                     type="number"
                                     step="0.01"
                                     min="0"
-                                    placeholder="$0.00"
+                                    placeholder=""
                                     value={formData.amount}
                                     onChange={(e) => handleInputChange('amount', e.target.value)}
                                     className="w-24 h-8 px-3 bg-white inline-flex"
@@ -1800,7 +1800,7 @@ export default function Lending() {
                                   <Input
                                     type="number"
                                     min="1"
-                                    placeholder="#"
+                                    placeholder=""
                                     value={formData.repeating_num_payments}
                                     onChange={(e) => handleInputChange('repeating_num_payments', e.target.value)}
                                     className="w-16 h-8 px-3 bg-white inline-flex"
@@ -1823,8 +1823,8 @@ export default function Lending() {
 
                         {/* Scheduled loan fields - Sentence format */}
                         {loanType === 'scheduled' && (
-                          <div className="p-4 bg-[#DBFFEB] rounded-xl">
-                            <p className="text-sm text-slate-700 leading-[3.2] [&_input]:inline-flex [&_input]:align-baseline [&_input]:my-[2px] [&_input[type=number]]:appearance-none [&_input[type=number]]:[-moz-appearance:textfield] [&_input[type=number]::-webkit-outer-spin-button]:appearance-none [&_input[type=number]::-webkit-inner-spin-button]:appearance-none [&_.inline-flex]:my-[2px] [&:last-child]:mb-0" style={{ marginBottom: '-0.8em' }}>
+                          <div className="p-5 bg-[#DBFFEB] rounded-xl">
+                            <p className="text-sm text-slate-700 leading-[3.8] [&_input]:inline-flex [&_input]:align-baseline [&_input]:my-[2px] [&_input[type=number]]:appearance-none [&_input[type=number]]:[-moz-appearance:textfield] [&_input[type=number]::-webkit-outer-spin-button]:appearance-none [&_input[type=number]::-webkit-inner-spin-button]:appearance-none [&_.inline-flex]:my-[2px] [&:last-child]:mb-0">
                               The lender agrees to lend{' '}
                               <span className="text-[#00A86B] font-medium">
                                 {formData.borrower_username ? `@${formData.borrower_username}` : 'the borrower'}
@@ -1834,7 +1834,7 @@ export default function Lending() {
                                 step="0.01"
                                 min="0"
                                 max="5000"
-                                placeholder="$0.00"
+                                placeholder=""
                                 value={formData.amount}
                                 onChange={(e) => handleInputChange('amount', e.target.value)}
                                 className="w-24 h-8 px-3 bg-white inline-flex"
@@ -1854,7 +1854,7 @@ export default function Lending() {
                                 step="0.1"
                                 min="0"
                                 max="8"
-                                placeholder="%"
+                                placeholder=""
                                 value={formData.interest_rate}
                                 onChange={(e) => handleInputChange('interest_rate', e.target.value)}
                                 className="w-16 h-8 px-3 bg-white inline-flex"
@@ -1864,7 +1864,7 @@ export default function Lending() {
                               <Input
                                 type="number"
                                 min="1"
-                                placeholder="#"
+                                placeholder=""
                                 value={formData.repayment_period}
                                 onChange={(e) => handleInputChange('repayment_period', e.target.value)}
                                 className="w-16 h-8 px-3 bg-white inline-flex"
@@ -1978,7 +1978,7 @@ export default function Lending() {
                                 return (
                                   <>
                                     , with the first of the{' '}
-                                    <span className="font-bold text-[#00A86B]">{numPayments || '—'}</span>{' '}
+                                    <span className="font-bold text-[#00A86B]">{numPayments || '_____'}</span>{' '}
                                     payments due on{' '}
                                     <Input
                                       type="date"
@@ -1989,7 +1989,7 @@ export default function Lending() {
                                     />{' '}
                                     and the last payment due on{' '}
                                     <span className="font-bold text-[#00A86B]">
-                                      {lastPaymentDate ? format(lastPaymentDate, 'MMM d, yyyy') : '—'}
+                                      {lastPaymentDate ? format(lastPaymentDate, 'MMM d, yyyy') : '_____'}
                                     </span>
                                     .
                                   </>
@@ -2014,8 +2014,8 @@ export default function Lending() {
                           disabled={isSubmitting || !formData.borrower_username || !formData.amount}
                           className={`w-full py-3 text-base font-semibold rounded-xl border-0 mt-4 transition-all duration-200 ${
                             isSubmitting || !formData.borrower_username || !formData.amount
-                              ? 'bg-[#DBEEE3] text-[#83F384]/60 cursor-not-allowed opacity-70'
-                              : 'bg-[#DBEEE3] text-[#83F384] hover:bg-[#DBEEE3]/80 opacity-100'
+                              ? 'bg-[#83F384]/40 text-[#DBEEE3]/70 cursor-not-allowed grayscale-[30%]'
+                              : 'bg-[#83F384] text-[#DBEEE3] hover:bg-[#83F384]/90 opacity-100'
                           }`}
                         >
                           <Send className="w-4 h-4 mr-2" />
