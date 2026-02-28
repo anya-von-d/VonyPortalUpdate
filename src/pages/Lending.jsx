@@ -74,7 +74,8 @@ export default function Lending() {
     purpose: '',
     is_repeating: false,
     repeating_frequency: 'monthly',
-    repeating_end_date: ''
+    repeating_end_date: '',
+    first_payment_date: ''
   });
 
   useEffect(() => {
@@ -1478,42 +1479,56 @@ export default function Lending() {
                               </div>
                             </div>
 
-                            <div className="space-y-2">
-                              <Label className="flex items-center gap-2">
-                                <Calendar className="w-4 h-4 text-[#00A86B]" />
-                                Repayment Period
-                              </Label>
-                              <div className="grid grid-cols-2 gap-3">
-                                <Select
-                                  value={formData.repayment_unit}
-                                  onValueChange={(value) => handleInputChange('repayment_unit', value)}
-                                >
-                                  <SelectTrigger>
-                                    <SelectValue placeholder="Select unit" />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="days">Days</SelectItem>
-                                    <SelectItem value="weeks">Weeks</SelectItem>
-                                    <SelectItem value="months">Months</SelectItem>
-                                    <SelectItem value="custom">Custom Date</SelectItem>
-                                  </SelectContent>
-                                </Select>
-                                {formData.repayment_unit === 'custom' ? (
-                                  <Input
-                                    type="text"
-                                    placeholder="MM/DD/YYYY"
-                                    value={formData.custom_due_date}
-                                    onChange={(e) => handleInputChange('custom_due_date', e.target.value)}
-                                  />
-                                ) : (
-                                  <Input
-                                    type="number"
-                                    min="1"
-                                    placeholder={`Enter ${formData.repayment_unit}`}
-                                    value={formData.repayment_period}
-                                    onChange={(e) => handleInputChange('repayment_period', e.target.value)}
-                                  />
-                                )}
+                            <div className="grid sm:grid-cols-2 gap-4">
+                              <div className="space-y-2">
+                                <Label className="flex items-center gap-2">
+                                  <Calendar className="w-4 h-4 text-[#00A86B]" />
+                                  Repayment Period
+                                </Label>
+                                <div className="grid grid-cols-2 gap-2">
+                                  <Select
+                                    value={formData.repayment_unit}
+                                    onValueChange={(value) => handleInputChange('repayment_unit', value)}
+                                  >
+                                    <SelectTrigger>
+                                      <SelectValue placeholder="Unit" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value="days">Days</SelectItem>
+                                      <SelectItem value="weeks">Weeks</SelectItem>
+                                      <SelectItem value="months">Months</SelectItem>
+                                      <SelectItem value="custom">Custom</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                  {formData.repayment_unit === 'custom' ? (
+                                    <Input
+                                      type="text"
+                                      placeholder="MM/DD/YYYY"
+                                      value={formData.custom_due_date}
+                                      onChange={(e) => handleInputChange('custom_due_date', e.target.value)}
+                                    />
+                                  ) : (
+                                    <Input
+                                      type="number"
+                                      min="1"
+                                      placeholder={`# ${formData.repayment_unit}`}
+                                      value={formData.repayment_period}
+                                      onChange={(e) => handleInputChange('repayment_period', e.target.value)}
+                                    />
+                                  )}
+                                </div>
+                              </div>
+                              <div className="space-y-2">
+                                <Label className="flex items-center gap-2">
+                                  <Calendar className="w-4 h-4 text-[#00A86B]" />
+                                  First Payment Date
+                                </Label>
+                                <Input
+                                  type="date"
+                                  value={formData.first_payment_date}
+                                  onChange={(e) => handleInputChange('first_payment_date', e.target.value)}
+                                  min={format(new Date(), 'yyyy-MM-dd')}
+                                />
                               </div>
                             </div>
                           </>
