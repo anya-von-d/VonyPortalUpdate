@@ -441,7 +441,7 @@ export default function Home() {
                               {nextLenderPayment ? (
                                 <>
                                   <p className="text-lg font-bold text-slate-800">
-                                    {format(nextLenderPayment.date, 'EEE')}, {format(nextLenderPayment.date, 'MMM d')}, in {getDaysUntilPayment()}
+                                    {format(nextLenderPayment.date, 'EEE')}, {format(nextLenderPayment.date, 'MMM d')} ({getDaysUntilPayment()})
                                   </p>
                                   <p className="text-xs text-slate-500 mt-1">from @{nextLenderPayment.username}</p>
                                 </>
@@ -498,7 +498,7 @@ export default function Home() {
                               {nextBorrowerPayment ? (
                                 <>
                                   <p className="text-lg font-bold text-slate-800">
-                                    {format(nextBorrowerPayment.date, 'EEE')}, {format(nextBorrowerPayment.date, 'MMM d')}, in {getDaysUntilPayment()}
+                                    {format(nextBorrowerPayment.date, 'EEE')}, {format(nextBorrowerPayment.date, 'MMM d')} ({getDaysUntilPayment()})
                                   </p>
                                   <p className="text-xs text-slate-500 mt-1">to @{nextBorrowerPayment.username}</p>
                                 </>

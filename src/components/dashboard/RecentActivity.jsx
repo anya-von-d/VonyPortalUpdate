@@ -158,8 +158,8 @@ export default function RecentActivity({ loans, payments, isLoading, user, allUs
 
         {/* Scrollable area */}
         <div className="relative">
-          {/* Scrollable content */}
-          <div className="max-h-[380px] overflow-y-auto space-y-3">
+          {/* Scrollable content - shows ~3 items, scroll for more */}
+          <div className="max-h-[180px] overflow-y-auto space-y-3">
             {recentActivity.length === 0 ? (
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
