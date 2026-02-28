@@ -28,6 +28,7 @@ export default function Friends() {
   const [activeTab, setActiveTab] = useState(tabFromUrl === 'add' ? 'add' : 'friends');
   const [friends, setFriends] = useState([]);
   const [sentRequests, setSentRequests] = useState([]);
+  const [receivedRequests, setReceivedRequests] = useState([]);
   const [profiles, setProfiles] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [editMode, setEditMode] = useState(false);
@@ -73,6 +74,12 @@ export default function Friends() {
       );
       setSentRequests(pending);
 
+      // Get pending requests received by the user
+      const received = allFriendships.filter(f =>
+        f.status === 'pending' && f.friend_id === user.id
+      );
+      setReceivedRequests(received);
+
     } catch (error) {
       console.error("Error loading friends data:", error);
     }
@@ -95,12 +102,18 @@ export default function Friends() {
       );
       if (isFriend) return false;
 
-      // Check if request already sent
+      // Check if request already sent by current user
       const requestSent = sentRequests.some(r => r.friend_id === profile.user_id);
       if (requestSent) return false;
 
-      // Match username starting with search query
-      return profile.username?.toLowerCase().startsWith(query);
+      // Check if request already received from this user
+      const requestReceived = receivedRequests.some(r => r.user_id === profile.user_id);
+      if (requestReceived) return false;
+
+      // Match username or full name containing search query
+      const usernameMatch = profile.username?.toLowerCase().includes(query);
+      const nameMatch = profile.full_name?.toLowerCase().includes(query);
+      return usernameMatch || nameMatch;
     });
 
     setSearchResults(results);
