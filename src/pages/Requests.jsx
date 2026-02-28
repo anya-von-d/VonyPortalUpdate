@@ -349,15 +349,14 @@ export default function Requests() {
   };
 
   const totalLoanOffers = loanOffersReceived.length + loanOffersSent.length;
-  const totalRequests = paymentsToConfirm.length + paymentsAwaitingConfirmation.length + termChangeRequests.length + extensionRequests.length + totalLoanOffers + friendRequestsReceived.length;
+  const totalRequests = paymentsToConfirm.length + paymentsAwaitingConfirmation.length + termChangeRequests.length + totalLoanOffers + friendRequestsReceived.length;
 
   const tabs = [
     { id: 'all', label: 'All', count: totalRequests },
     { id: 'friends', label: 'Friend Requests', count: friendRequestsReceived.length },
     { id: 'offers', label: 'Loan Offers', count: totalLoanOffers },
-    { id: 'payments', label: 'Confirm Payment', count: paymentsToConfirm.length + paymentsAwaitingConfirmation.length },
-    { id: 'terms', label: 'Term Changes', count: termChangeRequests.length },
-    { id: 'extensions', label: 'Extensions', count: extensionRequests.length },
+    { id: 'payments', label: 'Payments', count: paymentsToConfirm.length + paymentsAwaitingConfirmation.length },
+    { id: 'terms', label: 'Loan Changes', count: termChangeRequests.length },
   ];
 
   const colors = ['#D0ED6F', '#83F384', '#6EE8B5'];
@@ -927,71 +926,6 @@ export default function Requests() {
                           <Button
                             size="sm"
                             onClick={() => handleApproveTermChange(loan)}
-                            disabled={processingId === loan.id}
-                            className="bg-[#00A86B] hover:bg-[#0D9B76] text-white"
-                          >
-                            <CheckCircle className="w-4 h-4 mr-1" />
-                            Approve
-                          </Button>
-                        </div>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-        )}
-
-        {/* Extension Requests */}
-        {(activeTab === 'all' || activeTab === 'extensions') && extensionRequests.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-          >
-            <Card className="bg-[#DBFFEB] border-0 rounded-2xl">
-              <CardContent className="p-5">
-                <p className="text-[10px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
-                  Extension Requests
-                </p>
-                <div className="space-y-3">
-                  {extensionRequests.map((loan, index) => (
-                    <motion.div
-                      key={loan.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.05 }}
-                      className="p-4 rounded-xl"
-                      style={{ backgroundColor: colors[index % 3] }}
-                    >
-                      <div className="flex flex-col gap-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-[#DBFFEB] flex items-center justify-center flex-shrink-0">
-                            <Calendar className="w-5 h-5 text-purple-600" />
-                          </div>
-                          <div className="flex-1">
-                            <p className="font-semibold text-slate-800">
-                              @{getLoanOtherParty(loan)} requested a due date extension
-                            </p>
-                            <p className="text-xs text-slate-600">
-                              Current due date: {loan.due_date ? format(new Date(loan.due_date), 'MMM d, yyyy') : 'N/A'}
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="flex gap-2 justify-end">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            disabled={processingId === loan.id}
-                            className="border-red-300 text-red-600 hover:bg-red-50 bg-white"
-                          >
-                            <XCircle className="w-4 h-4 mr-1" />
-                            Deny
-                          </Button>
-                          <Button
-                            size="sm"
                             disabled={processingId === loan.id}
                             className="bg-[#00A86B] hover:bg-[#0D9B76] text-white"
                           >
