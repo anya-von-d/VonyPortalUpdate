@@ -426,14 +426,28 @@ export default function Home() {
                           index={1}
                           bgColor="#83F384"
                         />
-                        <StatsCard
-                          title="Next Payment Date"
-                          value={nextLenderPayment ? format(nextLenderPayment.date, 'MMM d, yyyy') : '-'}
-                          color="orange"
-                          change={nextLenderPayment ? `from @${nextLenderPayment.username} • ${getDaysUntilPayment()}` : 'N/A'}
-                          index={2}
-                          bgColor="#83F384"
-                        />
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.4, delay: 0.2, ease: "easeOut" }}
+                          whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                        >
+                          <Card className="backdrop-blur-sm hover:shadow-xl transition-all duration-300 h-full cursor-default border-0" style={{ backgroundColor: '#83F384' }}>
+                            <CardContent className="p-5 flex flex-col items-center justify-center h-full text-center">
+                              <p className="text-sm font-medium text-slate-600 mb-2">Next Payment Date</p>
+                              {nextLenderPayment ? (
+                                <>
+                                  <p className="text-lg font-bold text-slate-800">
+                                    {format(nextLenderPayment.date, 'EEE')}, {format(nextLenderPayment.date, 'MMM d')}, in {getDaysUntilPayment()}
+                                  </p>
+                                  <p className="text-xs text-slate-500 mt-1">from @{nextLenderPayment.username}</p>
+                                </>
+                              ) : (
+                                <p className="text-lg font-bold text-slate-800">-</p>
+                              )}
+                            </CardContent>
+                          </Card>
+                        </motion.div>
                       </>
                     );
                   } else {
@@ -466,14 +480,28 @@ export default function Home() {
                           index={1}
                           bgColor="#6EE8B5"
                         />
-                        <StatsCard
-                          title="Next Payment Date"
-                          value={nextBorrowerPayment ? format(nextBorrowerPayment.date, 'MMM d, yyyy') : '-'}
-                          color="orange"
-                          change={nextBorrowerPayment ? `to @${nextBorrowerPayment.username} • ${getDaysUntilPayment()}` : 'N/A'}
-                          index={2}
-                          bgColor="#6EE8B5"
-                        />
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.4, delay: 0.2, ease: "easeOut" }}
+                          whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                        >
+                          <Card className="backdrop-blur-sm hover:shadow-xl transition-all duration-300 h-full cursor-default border-0" style={{ backgroundColor: '#6EE8B5' }}>
+                            <CardContent className="p-5 flex flex-col items-center justify-center h-full text-center">
+                              <p className="text-sm font-medium text-slate-600 mb-2">Next Payment Date</p>
+                              {nextBorrowerPayment ? (
+                                <>
+                                  <p className="text-lg font-bold text-slate-800">
+                                    {format(nextBorrowerPayment.date, 'EEE')}, {format(nextBorrowerPayment.date, 'MMM d')}, in {getDaysUntilPayment()}
+                                  </p>
+                                  <p className="text-xs text-slate-500 mt-1">to @{nextBorrowerPayment.username}</p>
+                                </>
+                              ) : (
+                                <p className="text-lg font-bold text-slate-800">-</p>
+                              )}
+                            </CardContent>
+                          </Card>
+                        </motion.div>
                       </>
                     );
                   }
