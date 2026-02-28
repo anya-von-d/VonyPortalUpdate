@@ -27,10 +27,13 @@ import { createPageUrl } from "@/utils";
 import {
   DollarSign, Calendar, Percent, FileText, User as UserIcon,
   AlertCircle, Zap, ClipboardList, Send, Clock,
-  TrendingUp, Pencil, X, Save, History, PlusCircle, Settings, BarChart3
+  TrendingUp, Pencil, X, Save, History, PlusCircle, Settings, BarChart3,
+  Download, CheckCircle, FolderOpen
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { addMonths, format } from "date-fns";
+import { addMonths, addWeeks, addDays, format } from "date-fns";
+import { jsPDF } from "jspdf";
+import { formatMoney } from "@/components/utils/formatMoney";
 
 export default function Lending() {
   const navigate = useNavigate();
@@ -55,6 +58,9 @@ export default function Lending() {
   const [manageLoanSelected, setManageLoanSelected] = useState(null);
   const [showEditLoanModal, setShowEditLoanModal] = useState(false);
   const [editLoanData, setEditLoanData] = useState(null);
+  const [loanAgreements, setLoanAgreements] = useState([]);
+  const [activeDocPopup, setActiveDocPopup] = useState(null); // 'promissory', 'amortization', 'summary'
+  const [docPopupAgreement, setDocPopupAgreement] = useState(null);
 
   const [formData, setFormData] = useState({
     borrower_username: '',
@@ -78,13 +84,15 @@ export default function Lending() {
       const user = await User.me();
       setCurrentUser(user);
 
-      const [allLoans, profiles] = await Promise.all([
+      const [allLoans, profiles, agreements] = await Promise.all([
         Loan.list('-created_at').catch(() => []),
-        PublicProfile.list().catch(() => [])
+        PublicProfile.list().catch(() => []),
+        LoanAgreement.list().catch(() => [])
       ]);
 
       setLoans(allLoans || []);
       setPublicProfiles(profiles || []);
+      setLoanAgreements(agreements || []);
 
       // Filter out current user for borrower selection
       const otherUsers = (profiles || []).filter(p => p && p.user_id !== user.id && !p.user_id?.startsWith('sample-user-'));
@@ -461,6 +469,532 @@ export default function Lending() {
 
   const details = calculateLoanDetails();
 
+  // Get loan agreement for a specific loan
+  const getAgreementForLoan = (loanId) => {
+    return loanAgreements.find(a => a.loan_id === loanId);
+  };
+
+  // Get user by ID
+  const getUserById = (userId) => {
+    const profile = publicProfiles.find(p => p.user_id === userId);
+    return profile || { username: 'user', full_name: 'Unknown User' };
+  };
+
+  // Generate amortization schedule
+  const generateAmortizationSchedule = (agreement) => {
+    const schedule = [];
+    const principal = agreement.amount || 0;
+    const totalAmount = agreement.total_amount || principal;
+    const paymentAmount = agreement.payment_amount || 0;
+    const frequency = agreement.payment_frequency || 'monthly';
+    const interestRate = agreement.interest_rate || 0;
+
+    if (paymentAmount <= 0) return schedule;
+
+    let remainingBalance = totalAmount;
+    let currentDate = new Date(agreement.created_at);
+    let paymentNumber = 1;
+
+    while (remainingBalance > 0.01 && paymentNumber <= 120) {
+      if (frequency === 'weekly') {
+        currentDate = addWeeks(currentDate, 1);
+      } else if (frequency === 'biweekly') {
+        currentDate = addWeeks(currentDate, 2);
+      } else if (frequency === 'daily') {
+        currentDate = addDays(currentDate, 1);
+      } else {
+        currentDate = addMonths(currentDate, 1);
+      }
+
+      const payment = Math.min(paymentAmount, remainingBalance);
+      const interestPortion = (remainingBalance * (interestRate / 100)) / 12;
+      const principalPortion = payment - interestPortion;
+      remainingBalance = Math.max(0, remainingBalance - payment);
+
+      schedule.push({
+        number: paymentNumber,
+        date: new Date(currentDate),
+        payment: payment,
+        principal: principalPortion > 0 ? principalPortion : payment,
+        interest: interestPortion > 0 ? interestPortion : 0,
+        balance: remainingBalance
+      });
+
+      paymentNumber++;
+    }
+
+    return schedule;
+  };
+
+  // Download Promissory Note PDF
+  const downloadPromissoryNote = (agreement) => {
+    const doc = new jsPDF();
+    const lenderInfo = getUserById(agreement.lender_id);
+    const borrowerInfo = getUserById(agreement.borrower_id);
+
+    doc.setFontSize(24);
+    doc.setFont(undefined, 'bold');
+    doc.text('PROMISSORY NOTE', 105, 25, { align: 'center' });
+
+    doc.setFontSize(10);
+    doc.setFont(undefined, 'normal');
+    doc.setTextColor(100, 100, 100);
+    doc.text(`Document ID: ${agreement.id}`, 105, 35, { align: 'center' });
+    doc.setTextColor(0, 0, 0);
+
+    doc.setFontSize(11);
+    doc.text(`Date: ${format(new Date(agreement.created_at), 'MMMM d, yyyy')}`, 20, 50);
+    doc.text(`Location: United States`, 20, 58);
+
+    doc.setFillColor(240, 240, 240);
+    doc.rect(20, 68, 170, 25, 'F');
+    doc.setFontSize(12);
+    doc.setFont(undefined, 'bold');
+    doc.text('PRINCIPAL AMOUNT', 25, 78);
+    doc.setFontSize(20);
+    doc.text(formatMoney(agreement.amount), 25, 88);
+
+    doc.setFontSize(11);
+    doc.setFont(undefined, 'normal');
+    let yPos = 105;
+    const promiseText = `FOR VALUE RECEIVED, the undersigned Borrower, ${borrowerInfo.full_name} (@${borrowerInfo.username}), promises to pay to the order of ${lenderInfo.full_name} (@${lenderInfo.username}), hereinafter referred to as "Lender", the principal sum of ${formatMoney(agreement.amount)}, together with interest at the rate of ${agreement.interest_rate}% per annum.`;
+    const promiseLines = doc.splitTextToSize(promiseText, 170);
+    doc.text(promiseLines, 20, yPos);
+    yPos += promiseLines.length * 6 + 10;
+
+    doc.setFont(undefined, 'bold');
+    doc.text('TERMS OF REPAYMENT:', 20, yPos);
+    yPos += 8;
+    doc.setFont(undefined, 'normal');
+
+    const terms = [
+      `Total Amount Due: ${formatMoney(agreement.total_amount)}`,
+      `Interest Rate: ${agreement.interest_rate}% per annum`,
+      `Payment Amount: ${formatMoney(agreement.payment_amount)} ${agreement.payment_frequency}`,
+      `Repayment Period: ${agreement.repayment_period} ${agreement.repayment_unit || 'months'}`,
+      `Due Date: ${agreement.due_date ? format(new Date(agreement.due_date), 'MMMM d, yyyy') : 'As per payment schedule'}`,
+    ];
+
+    terms.forEach(term => {
+      doc.text(`• ${term}`, 25, yPos);
+      yPos += 7;
+    });
+
+    if (agreement.purpose) {
+      yPos += 5;
+      doc.text(`Purpose: ${agreement.purpose}`, 20, yPos);
+      yPos += 10;
+    }
+
+    yPos += 5;
+    doc.setFont(undefined, 'bold');
+    doc.text('DEFAULT:', 20, yPos);
+    yPos += 8;
+    doc.setFont(undefined, 'normal');
+    const defaultText = 'In the event of default in payment of any installment when due, the entire unpaid balance shall, at the option of the Lender, become immediately due and payable.';
+    const defaultLines = doc.splitTextToSize(defaultText, 170);
+    doc.text(defaultLines, 20, yPos);
+    yPos += defaultLines.length * 6 + 15;
+
+    doc.setFont(undefined, 'bold');
+    doc.text('SIGNATURES:', 20, yPos);
+    yPos += 12;
+
+    doc.setFont(undefined, 'normal');
+    doc.text('Borrower:', 20, yPos);
+    doc.setFont(undefined, 'italic');
+    doc.setFontSize(16);
+    doc.text(agreement.borrower_name || borrowerInfo.full_name, 20, yPos + 10);
+    doc.setFontSize(9);
+    doc.setFont(undefined, 'normal');
+    if (agreement.borrower_signed_date) {
+      doc.text(`Signed: ${format(new Date(agreement.borrower_signed_date), 'MMM d, yyyy h:mm a')}`, 20, yPos + 18);
+    }
+
+    doc.setFontSize(11);
+    doc.text('Lender:', 120, yPos);
+    doc.setFont(undefined, 'italic');
+    doc.setFontSize(16);
+    doc.text(agreement.lender_name || lenderInfo.full_name, 120, yPos + 10);
+    doc.setFontSize(9);
+    doc.setFont(undefined, 'normal');
+    if (agreement.lender_signed_date) {
+      doc.text(`Signed: ${format(new Date(agreement.lender_signed_date), 'MMM d, yyyy h:mm a')}`, 120, yPos + 18);
+    }
+
+    if (agreement.contract_modified && agreement.modification_history) {
+      const modifications = JSON.parse(agreement.modification_history || '[]');
+      modifications.forEach((mod, index) => {
+        doc.addPage();
+        doc.setFontSize(18);
+        doc.setFont(undefined, 'bold');
+        doc.text(`AMENDMENT ${index + 1}`, 105, 25, { align: 'center' });
+        doc.setFontSize(10);
+        doc.setFont(undefined, 'normal');
+        doc.text(`Date of Amendment: ${mod.date ? format(new Date(mod.date), 'MMMM d, yyyy') : 'N/A'}`, 20, 45);
+        doc.setFontSize(11);
+        doc.setFont(undefined, 'bold');
+        doc.text('CHANGES:', 20, 60);
+        doc.setFont(undefined, 'normal');
+        let modYPos = 70;
+        const changeLines = doc.splitTextToSize(mod.changes || 'No changes recorded', 170);
+        doc.text(changeLines, 20, modYPos);
+      });
+    }
+
+    doc.save(`promissory-note-${agreement.id}.pdf`);
+  };
+
+  // Download Amortization Schedule PDF
+  const downloadAmortizationSchedule = (agreement) => {
+    const doc = new jsPDF();
+    const lenderInfo = getUserById(agreement.lender_id);
+    const borrowerInfo = getUserById(agreement.borrower_id);
+    const schedule = generateAmortizationSchedule(agreement);
+
+    doc.setFontSize(20);
+    doc.setFont(undefined, 'bold');
+    doc.text('AMORTIZATION SCHEDULE', 105, 20, { align: 'center' });
+
+    doc.setFontSize(10);
+    doc.setFont(undefined, 'normal');
+    doc.text(`Loan Agreement: ${agreement.id}`, 20, 35);
+    doc.text(`Lender: ${lenderInfo.full_name} (@${lenderInfo.username})`, 20, 42);
+    doc.text(`Borrower: ${borrowerInfo.full_name} (@${borrowerInfo.username})`, 20, 49);
+
+    doc.setFillColor(240, 240, 240);
+    doc.rect(20, 55, 170, 30, 'F');
+    doc.setFontSize(10);
+    doc.text(`Principal: ${formatMoney(agreement.amount)}`, 25, 65);
+    doc.text(`Interest Rate: ${agreement.interest_rate}%`, 85, 65);
+    doc.text(`Total Amount: ${formatMoney(agreement.total_amount)}`, 140, 65);
+    doc.text(`Payment: ${formatMoney(agreement.payment_amount)} ${agreement.payment_frequency}`, 25, 77);
+    doc.text(`Term: ${agreement.repayment_period} ${agreement.repayment_unit || 'months'}`, 85, 77);
+    doc.text(`Total Payments: ${schedule.length}`, 140, 77);
+
+    let yPos = 95;
+    doc.setFont(undefined, 'bold');
+    doc.setFontSize(9);
+    doc.text('#', 22, yPos);
+    doc.text('Date', 35, yPos);
+    doc.text('Payment', 70, yPos);
+    doc.text('Principal', 100, yPos);
+    doc.text('Interest', 130, yPos);
+    doc.text('Balance', 160, yPos);
+
+    doc.line(20, yPos + 2, 190, yPos + 2);
+    yPos += 8;
+
+    doc.setFont(undefined, 'normal');
+    schedule.forEach((row, index) => {
+      if (yPos > 270) {
+        doc.addPage();
+        yPos = 20;
+        doc.setFont(undefined, 'bold');
+        doc.text('#', 22, yPos);
+        doc.text('Date', 35, yPos);
+        doc.text('Payment', 70, yPos);
+        doc.text('Principal', 100, yPos);
+        doc.text('Interest', 130, yPos);
+        doc.text('Balance', 160, yPos);
+        doc.line(20, yPos + 2, 190, yPos + 2);
+        yPos += 8;
+        doc.setFont(undefined, 'normal');
+      }
+
+      doc.text(String(row.number), 22, yPos);
+      doc.text(format(row.date, 'MMM d, yyyy'), 35, yPos);
+      doc.text(formatMoney(row.payment), 70, yPos);
+      doc.text(formatMoney(row.principal), 100, yPos);
+      doc.text(formatMoney(row.interest), 130, yPos);
+      doc.text(formatMoney(row.balance), 160, yPos);
+      yPos += 6;
+    });
+
+    yPos += 5;
+    doc.line(20, yPos, 190, yPos);
+    yPos += 8;
+    doc.setFont(undefined, 'bold');
+    const totalPayments = schedule.reduce((sum, r) => sum + r.payment, 0);
+    const totalPrincipal = schedule.reduce((sum, r) => sum + r.principal, 0);
+    const totalInterest = schedule.reduce((sum, r) => sum + r.interest, 0);
+    doc.text('TOTAL', 22, yPos);
+    doc.text(formatMoney(totalPayments), 70, yPos);
+    doc.text(formatMoney(totalPrincipal), 100, yPos);
+    doc.text(formatMoney(totalInterest), 130, yPos);
+
+    doc.save(`amortization-schedule-${agreement.id}.pdf`);
+  };
+
+  // Open document popup
+  const openDocPopup = (type, agreement) => {
+    setActiveDocPopup(type);
+    setDocPopupAgreement(agreement);
+  };
+
+  const closeDocPopup = () => {
+    setActiveDocPopup(null);
+    setDocPopupAgreement(null);
+  };
+
+  // Promissory Note Popup Content
+  const PromissoryNotePopup = ({ agreement }) => {
+    const lenderInfo = getUserById(agreement.lender_id);
+    const borrowerInfo = getUserById(agreement.borrower_id);
+
+    return (
+      <div className="space-y-6">
+        <div className="text-center border-b border-slate-200 pb-4">
+          <h2 className="text-2xl font-bold text-slate-800">PROMISSORY NOTE</h2>
+          <p className="text-sm text-slate-500 mt-1">Document ID: {agreement.id}</p>
+        </div>
+
+        <div className="bg-[#DBFFEB] rounded-xl p-4">
+          <p className="text-sm text-slate-600 mb-1">Principal Amount</p>
+          <p className="text-3xl font-bold text-slate-800">{formatMoney(agreement.amount)}</p>
+        </div>
+
+        <div className="space-y-3 text-sm">
+          <p className="leading-relaxed">
+            FOR VALUE RECEIVED, the undersigned Borrower, <span className="font-semibold">{borrowerInfo.full_name}</span> (@{borrowerInfo.username}),
+            promises to pay to the order of <span className="font-semibold">{lenderInfo.full_name}</span> (@{lenderInfo.username}),
+            the principal sum of <span className="font-semibold">{formatMoney(agreement.amount)}</span>,
+            together with interest at the rate of <span className="font-semibold">{agreement.interest_rate}%</span> per annum.
+          </p>
+        </div>
+
+        <div className="bg-slate-50 rounded-xl p-4 space-y-2">
+          <h3 className="font-semibold text-slate-800 mb-3">Terms of Repayment</h3>
+          <div className="grid grid-cols-2 gap-3 text-sm">
+            <div><span className="text-slate-500">Total Amount Due:</span> <span className="font-medium">{formatMoney(agreement.total_amount)}</span></div>
+            <div><span className="text-slate-500">Interest Rate:</span> <span className="font-medium">{agreement.interest_rate}%</span></div>
+            <div><span className="text-slate-500">Payment:</span> <span className="font-medium">{formatMoney(agreement.payment_amount)} {agreement.payment_frequency}</span></div>
+            <div><span className="text-slate-500">Term:</span> <span className="font-medium">{agreement.repayment_period} {agreement.repayment_unit || 'months'}</span></div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div className="bg-slate-50 rounded-lg p-4">
+            <p className="text-xs text-slate-500 mb-1">Borrower</p>
+            <p className="text-lg font-serif italic text-slate-800">{agreement.borrower_name || borrowerInfo.full_name}</p>
+            {agreement.borrower_signed_date && (
+              <p className="text-xs text-slate-500 mt-1">Signed {format(new Date(agreement.borrower_signed_date), 'MMM d, yyyy')}</p>
+            )}
+          </div>
+          <div className="bg-slate-50 rounded-lg p-4">
+            <p className="text-xs text-slate-500 mb-1">Lender</p>
+            <p className="text-lg font-serif italic text-slate-800">{agreement.lender_name || lenderInfo.full_name}</p>
+            {agreement.lender_signed_date && (
+              <p className="text-xs text-slate-500 mt-1">Signed {format(new Date(agreement.lender_signed_date), 'MMM d, yyyy')}</p>
+            )}
+          </div>
+        </div>
+
+        <Button
+          onClick={() => downloadPromissoryNote(agreement)}
+          className="w-full bg-[#00A86B] hover:bg-[#0D9B76] text-white"
+        >
+          <Download className="w-4 h-4 mr-2" />
+          Download PDF
+        </Button>
+      </div>
+    );
+  };
+
+  // Amortization Schedule Popup Content
+  const AmortizationSchedulePopup = ({ agreement }) => {
+    const schedule = generateAmortizationSchedule(agreement);
+    const loan = manageLoanSelected;
+    const paidPayments = loan?.amount_paid ? Math.floor(loan.amount_paid / agreement.payment_amount) : 0;
+
+    return (
+      <div className="space-y-6">
+        <div className="text-center border-b border-slate-200 pb-4">
+          <h2 className="text-2xl font-bold text-slate-800">AMORTIZATION SCHEDULE</h2>
+          <p className="text-sm text-slate-500 mt-1">{schedule.length} payments · {agreement.payment_frequency}</p>
+        </div>
+
+        <div className="grid grid-cols-3 gap-3">
+          <div className="bg-[#DBFFEB] rounded-xl p-3 text-center">
+            <p className="text-xs text-slate-600">Principal</p>
+            <p className="text-lg font-bold text-slate-800">{formatMoney(agreement.amount)}</p>
+          </div>
+          <div className="bg-[#DBFFEB] rounded-xl p-3 text-center">
+            <p className="text-xs text-slate-600">Interest</p>
+            <p className="text-lg font-bold text-slate-800">{formatMoney((agreement.total_amount || 0) - (agreement.amount || 0))}</p>
+          </div>
+          <div className="bg-[#DBFFEB] rounded-xl p-3 text-center">
+            <p className="text-xs text-slate-600">Total</p>
+            <p className="text-lg font-bold text-slate-800">{formatMoney(agreement.total_amount)}</p>
+          </div>
+        </div>
+
+        <div className="max-h-[300px] overflow-y-auto rounded-xl border border-slate-200">
+          <table className="w-full text-sm">
+            <thead className="bg-slate-50 sticky top-0">
+              <tr>
+                <th className="px-3 py-2 text-left font-medium text-slate-600">#</th>
+                <th className="px-3 py-2 text-left font-medium text-slate-600">Date</th>
+                <th className="px-3 py-2 text-right font-medium text-slate-600">Payment</th>
+                <th className="px-3 py-2 text-right font-medium text-slate-600">Balance</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {schedule.map((row, index) => (
+                <tr
+                  key={row.number}
+                  className={index < paidPayments ? 'bg-green-50' : ''}
+                >
+                  <td className="px-3 py-2 text-slate-600">
+                    {index < paidPayments && <CheckCircle className="w-4 h-4 text-green-500 inline mr-1" />}
+                    {row.number}
+                  </td>
+                  <td className="px-3 py-2 text-slate-800">{format(row.date, 'MMM d, yyyy')}</td>
+                  <td className="px-3 py-2 text-right font-medium text-slate-800">{formatMoney(row.payment)}</td>
+                  <td className="px-3 py-2 text-right text-slate-600">{formatMoney(row.balance)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <Button
+          onClick={() => downloadAmortizationSchedule(agreement)}
+          className="w-full bg-[#00A86B] hover:bg-[#0D9B76] text-white"
+        >
+          <Download className="w-4 h-4 mr-2" />
+          Download PDF
+        </Button>
+      </div>
+    );
+  };
+
+  // Loan Summary Popup Content
+  const LoanSummaryPopup = ({ agreement }) => {
+    const lenderInfo = getUserById(agreement.lender_id);
+    const borrowerInfo = getUserById(agreement.borrower_id);
+    const loan = manageLoanSelected;
+
+    const getStatusColor = (status) => {
+      switch(status) {
+        case 'active': return 'bg-green-100 text-green-800 border-green-200';
+        case 'completed': return 'bg-blue-100 text-blue-800 border-blue-200';
+        case 'cancelled': return 'bg-red-100 text-red-800 border-red-200';
+        default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      }
+    };
+
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between border-b border-slate-200 pb-4">
+          <div>
+            <h2 className="text-2xl font-bold text-slate-800">Loan Summary</h2>
+            <p className="text-sm text-slate-500 mt-1">{format(new Date(agreement.created_at), 'MMMM d, yyyy')}</p>
+          </div>
+          <Badge className={`${getStatusColor(loan?.status)} capitalize`}>{loan?.status || 'active'}</Badge>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div className="bg-[#DBFFEB] rounded-xl p-4">
+            <p className="text-xs text-slate-600 mb-1">Loan Amount</p>
+            <p className="text-2xl font-bold text-slate-800">{formatMoney(agreement.amount)}</p>
+          </div>
+          <div className="bg-[#DBFFEB] rounded-xl p-4">
+            <p className="text-xs text-slate-600 mb-1">Total Due</p>
+            <p className="text-2xl font-bold text-[#00A86B]">{formatMoney(agreement.total_amount)}</p>
+          </div>
+        </div>
+
+        {loan && (
+          <div className="bg-slate-50 rounded-xl p-4">
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-sm text-slate-600">Payment Progress</span>
+              <span className="text-sm font-medium text-slate-800">
+                {formatMoney(loan.amount_paid || 0)} / {formatMoney(agreement.total_amount)}
+              </span>
+            </div>
+            <div className="w-full bg-slate-200 rounded-full h-2">
+              <div
+                className="bg-[#00A86B] h-2 rounded-full transition-all"
+                style={{ width: `${Math.min(100, ((loan.amount_paid || 0) / agreement.total_amount) * 100)}%` }}
+              />
+            </div>
+          </div>
+        )}
+
+        <div className="grid grid-cols-2 gap-4 text-sm">
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <Percent className="w-4 h-4 text-slate-400" />
+              <div>
+                <p className="text-slate-500">Interest Rate</p>
+                <p className="font-semibold text-slate-800">{agreement.interest_rate}%</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <DollarSign className="w-4 h-4 text-slate-400" />
+              <div>
+                <p className="text-slate-500">Payment Amount</p>
+                <p className="font-semibold text-slate-800">{formatMoney(agreement.payment_amount)}</p>
+              </div>
+            </div>
+          </div>
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <Clock className="w-4 h-4 text-slate-400" />
+              <div>
+                <p className="text-slate-500">Payment Frequency</p>
+                <p className="font-semibold text-slate-800 capitalize">{agreement.payment_frequency}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Calendar className="w-4 h-4 text-slate-400" />
+              <div>
+                <p className="text-slate-500">Due Date</p>
+                <p className="font-semibold text-slate-800">{agreement.due_date ? format(new Date(agreement.due_date), 'MMM d, yyyy') : 'N/A'}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="border-t border-slate-200 pt-4">
+          <h4 className="font-semibold text-slate-800 mb-3">Parties</h4>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex items-center gap-3">
+              <img
+                src={lenderInfo.profile_picture_url || `https://ui-avatars.com/api/?name=${encodeURIComponent((lenderInfo.full_name || 'L').charAt(0))}&background=22c55e&color=fff&size=64`}
+                alt={lenderInfo.full_name}
+                className="w-10 h-10 rounded-full"
+              />
+              <div>
+                <p className="text-xs text-slate-500">Lender</p>
+                <p className="font-medium text-slate-800">{lenderInfo.full_name}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <img
+                src={borrowerInfo.profile_picture_url || `https://ui-avatars.com/api/?name=${encodeURIComponent((borrowerInfo.full_name || 'B').charAt(0))}&background=22c55e&color=fff&size=64`}
+                alt={borrowerInfo.full_name}
+                className="w-10 h-10 rounded-full"
+              />
+              <div>
+                <p className="text-xs text-slate-500">Borrower</p>
+                <p className="font-medium text-slate-800">{borrowerInfo.full_name}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {agreement.purpose && (
+          <div className="bg-slate-50 rounded-xl p-4">
+            <p className="text-xs text-slate-500 mb-1">Purpose</p>
+            <p className="text-slate-800">{agreement.purpose}</p>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   const tabs = [
     { id: 'lending', label: 'All' },
     { id: 'create', label: 'Create Offer' },
@@ -470,6 +1004,49 @@ export default function Lending() {
 
   return (
     <>
+      {/* Document Popup Modal */}
+      <AnimatePresence>
+        {activeDocPopup && docPopupAgreement && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+            onClick={closeDocPopup}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl"
+            >
+              <div className="sticky top-0 bg-white border-b border-slate-100 p-4 flex justify-between items-center">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-[#DBFFEB] flex items-center justify-center">
+                    <FileText className="w-4 h-4 text-[#00A86B]" />
+                  </div>
+                  <span className="font-medium text-slate-800">
+                    {activeDocPopup === 'promissory' && 'Promissory Note'}
+                    {activeDocPopup === 'amortization' && 'Amortization Schedule'}
+                    {activeDocPopup === 'summary' && 'Loan Summary'}
+                  </span>
+                </div>
+                <Button variant="ghost" size="sm" onClick={closeDocPopup} className="text-slate-500 hover:text-slate-800">
+                  <X className="w-5 h-5" />
+                </Button>
+              </div>
+
+              <div className="p-6">
+                {activeDocPopup === 'promissory' && <PromissoryNotePopup agreement={docPopupAgreement} />}
+                {activeDocPopup === 'amortization' && <AmortizationSchedulePopup agreement={docPopupAgreement} />}
+                {activeDocPopup === 'summary' && <LoanSummaryPopup agreement={docPopupAgreement} />}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <SignatureModal
         isOpen={showSignatureModal}
         onClose={() => {
@@ -1424,6 +2001,72 @@ export default function Lending() {
                               View Full Details
                             </Button>
                           </div>
+
+                          {/* Document Center Box */}
+                          <Card className="bg-[#DBFFEB] border-0">
+                            <CardContent className="p-5">
+                              <p className="text-[10px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                                Document Center
+                              </p>
+                              {(() => {
+                                const agreement = getAgreementForLoan(manageLoanSelected.id);
+                                if (!agreement) {
+                                  return (
+                                    <div className="text-center py-6 text-slate-500">
+                                      <FolderOpen className="w-10 h-10 mx-auto mb-2 opacity-50" />
+                                      <p className="text-sm">No signed agreement found for this loan</p>
+                                    </div>
+                                  );
+                                }
+
+                                return (
+                                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                    {/* Loan Summary */}
+                                    <button
+                                      onClick={() => openDocPopup('summary', agreement)}
+                                      className="bg-[#D0ED6F] rounded-xl p-4 text-left hover:opacity-90 transition-opacity cursor-pointer group"
+                                    >
+                                      <div className="w-10 h-10 rounded-full bg-[#DBFFEB] flex items-center justify-center mb-3">
+                                        <FileText className="w-5 h-5 text-slate-700" />
+                                      </div>
+                                      <p className="font-semibold text-slate-800 text-sm group-hover:text-[#00A86B] transition-colors">
+                                        Loan Summary
+                                      </p>
+                                      <p className="text-xs text-slate-600 mt-1">View loan details</p>
+                                    </button>
+
+                                    {/* Promissory Note */}
+                                    <button
+                                      onClick={() => openDocPopup('promissory', agreement)}
+                                      className="bg-[#83F384] rounded-xl p-4 text-left hover:opacity-90 transition-opacity cursor-pointer group"
+                                    >
+                                      <div className="w-10 h-10 rounded-full bg-[#DBFFEB] flex items-center justify-center mb-3">
+                                        <ClipboardList className="w-5 h-5 text-slate-700" />
+                                      </div>
+                                      <p className="font-semibold text-slate-800 text-sm group-hover:text-[#00A86B] transition-colors">
+                                        Promissory Note
+                                      </p>
+                                      <p className="text-xs text-slate-600 mt-1">Legal agreement</p>
+                                    </button>
+
+                                    {/* Amortization Schedule */}
+                                    <button
+                                      onClick={() => openDocPopup('amortization', agreement)}
+                                      className="bg-[#6EE8B5] rounded-xl p-4 text-left hover:opacity-90 transition-opacity cursor-pointer group"
+                                    >
+                                      <div className="w-10 h-10 rounded-full bg-[#DBFFEB] flex items-center justify-center mb-3">
+                                        <BarChart3 className="w-5 h-5 text-slate-700" />
+                                      </div>
+                                      <p className="font-semibold text-slate-800 text-sm group-hover:text-[#00A86B] transition-colors">
+                                        Amortization Schedule
+                                      </p>
+                                      <p className="text-xs text-slate-600 mt-1">Payment breakdown</p>
+                                    </button>
+                                  </div>
+                                );
+                              })()}
+                            </CardContent>
+                          </Card>
                         </>
                       )}
                   </div>
