@@ -165,20 +165,6 @@ export default function Borrowing() {
     setIsQuickProcessing(false);
   };
 
-  // Get unique lenders from active loans
-  const uniqueLenders = activeLoans.reduce((acc, loan) => {
-    const lender = getUserById(loan.lender_id);
-    if (!acc.find(l => l.userId === loan.lender_id)) {
-      acc.push({ userId: loan.lender_id, username: lender?.username, fullName: lender?.full_name });
-    }
-    return acc;
-  }, []);
-
-  // Filter loans by selected person
-  const filteredLoansForQuickPay = quickPayPerson
-    ? activeLoans.filter(l => l.lender_id === quickPayPerson)
-    : activeLoans;
-
   const handleCancelLoan = (loan) => {
     setLoanToCancel(loan);
     setShowCancelDialog(true);
@@ -315,6 +301,20 @@ export default function Borrowing() {
     const profile = publicProfiles.find(p => p.user_id === userId);
     return profile || { username: 'user', full_name: 'Unknown User' };
   };
+
+  // Get unique lenders from active loans
+  const uniqueLenders = activeLoans.reduce((acc, loan) => {
+    const lender = getUserById(loan.lender_id);
+    if (!acc.find(l => l.userId === loan.lender_id)) {
+      acc.push({ userId: loan.lender_id, username: lender?.username, fullName: lender?.full_name });
+    }
+    return acc;
+  }, []);
+
+  // Filter loans by selected person
+  const filteredLoansForQuickPay = quickPayPerson
+    ? activeLoans.filter(l => l.lender_id === quickPayPerson)
+    : activeLoans;
 
   // Generate amortization schedule
   const generateAmortizationSchedule = (agreement) => {
