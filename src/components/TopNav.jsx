@@ -36,17 +36,17 @@ const moreMenuItems = [
     url: createPageUrl("LoanAgreements"),
   },
   {
-    title: "Activity",
+    title: "Recent Activity",
     url: createPageUrl("RecentActivity"),
-  },
-  {
-    title: "Learn",
-    url: createPageUrl("Learn"),
-    comingSoon: true,
   },
   {
     title: "Financial Products",
     url: createPageUrl("Shop"),
+    comingSoon: true,
+  },
+  {
+    title: "Learn",
+    url: createPageUrl("Learn"),
     comingSoon: true,
   },
   {

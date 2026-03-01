@@ -1560,7 +1560,7 @@ export default function Lending() {
                       {showMonthDropdown && (
                         <>
                           <div className="fixed inset-0 z-10" onClick={() => setShowMonthDropdown(false)} />
-                          <div className="absolute top-full left-0 mt-2 bg-white rounded-xl shadow-lg border z-20 py-2 min-w-[160px]">
+                          <div className="absolute top-full left-0 mt-2 bg-white rounded-xl shadow-lg border z-20 py-2 min-w-[160px] max-h-[120px] overflow-y-auto">
                             {Array.from({ length: 12 }, (_, i) => {
                               const monthDate = new Date(new Date().getFullYear(), i, 1);
                               return (

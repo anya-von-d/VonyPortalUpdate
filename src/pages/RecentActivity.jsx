@@ -303,7 +303,7 @@ export default function RecentActivityPage() {
           className="py-5"
         >
           <h1 className="text-4xl md:text-5xl font-bold text-slate-800 mb-4 tracking-tight text-left">
-            Activity
+            Recent Activity
           </h1>
         </motion.div>
 

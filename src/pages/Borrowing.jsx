@@ -964,33 +964,6 @@ export default function Borrowing() {
                   </div>
                 </div>
 
-                {/* Pending Offers Alert */}
-                {pendingOffers.length > 0 && (
-                  <div className="bg-[#DBFFEB] rounded-2xl p-5">
-                    <div className="flex items-center justify-between gap-4 flex-wrap">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-[#DBFFEB] flex items-center justify-center flex-shrink-0">
-                          <Clock className="w-5 h-5 text-[#0A1A10]" />
-                        </div>
-                        <div>
-                          <h3 className="font-semibold text-slate-800 text-base">
-                            You have {pendingOffers.length} pending loan offer{pendingOffers.length !== 1 ? 's' : ''}
-                          </h3>
-                          <p className="text-slate-600 text-xs">
-                            Review and respond to loan offers from friends
-                          </p>
-                        </div>
-                      </div>
-                      <Button
-                        onClick={() => setActiveSection('offers')}
-                        className="bg-[#00A86B] hover:bg-[#0D9B76] text-white font-semibold gap-2 text-sm"
-                      >
-                        View Offers
-                      </Button>
-                    </div>
-                  </div>
-                )}
-
                 {/* Month Payment + Loans Ranked By */}
                 {activeLoans.length > 0 && (
                   <div className="grid md:grid-cols-2 gap-4">
@@ -1065,7 +1038,7 @@ export default function Borrowing() {
                       {showMonthDropdown && (
                         <>
                           <div className="fixed inset-0 z-10" onClick={() => setShowMonthDropdown(false)} />
-                          <div className="absolute top-full left-0 mt-2 bg-white rounded-xl shadow-lg border z-20 py-2 min-w-[160px]">
+                          <div className="absolute top-full left-0 mt-2 bg-white rounded-xl shadow-lg border z-20 py-2 min-w-[160px] max-h-[120px] overflow-y-auto">
                             {Array.from({ length: 12 }, (_, i) => {
                               const monthDate = new Date(new Date().getFullYear(), i, 1);
                               return (
