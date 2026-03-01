@@ -859,7 +859,7 @@ export default function Borrowing() {
                         disabled={!quickPayLoanId || !quickPayAmount || !quickPayMethod}
                         className={`h-8 px-4 rounded-lg text-sm font-medium border-0 transition-all ${
                           !quickPayLoanId || !quickPayAmount || !quickPayMethod
-                            ? 'bg-[#00A86B]/30 text-[#00A86B]/50 cursor-not-allowed'
+                            ? 'bg-[#00A86B]/50 text-white/70 cursor-not-allowed'
                             : 'bg-[#00A86B] text-white hover:bg-[#0D9B76]'
                         }`}
                       >

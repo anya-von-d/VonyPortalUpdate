@@ -1308,7 +1308,8 @@ export default function Lending() {
                   </div>
                 </div>
 
-                {/* Quick Record Payment */}
+                {/* Quick Record Payment - only show when there are active loans */}
+                {activeLoans.length > 0 && (
                 <div className="bg-[#96FFD0] rounded-2xl p-5 border-0">
                   <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                     Record Payment
@@ -1381,7 +1382,7 @@ export default function Lending() {
                       disabled={!quickPayLoanId || !quickPayAmount}
                       className={`h-8 px-4 rounded-lg text-sm font-medium border-0 transition-all ${
                         !quickPayLoanId || !quickPayAmount
-                          ? 'bg-[#00A86B]/30 text-[#00A86B]/50 cursor-not-allowed'
+                          ? 'bg-[#00A86B]/50 text-white/70 cursor-not-allowed'
                           : 'bg-[#00A86B] text-white hover:bg-[#0D9B76]'
                       }`}
                     >
@@ -1389,6 +1390,7 @@ export default function Lending() {
                     </Button>
                   </div>
                 </div>
+                )}
 
                 {/* Upcoming Payments + Individual Loan Progress */}
                 <div className="grid md:grid-cols-2 gap-4">
@@ -2299,7 +2301,8 @@ export default function Lending() {
                   </p>
                 </div>
 
-                {/* Quick Record Payment */}
+                {/* Quick Record Payment - only show when there are active loans */}
+                {activeLoans.length > 0 && (
                 <div className="lg:col-span-3 bg-[#96FFD0] rounded-2xl p-5 border-0">
                   <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                     Record Payment
@@ -2372,7 +2375,7 @@ export default function Lending() {
                       disabled={!quickPayLoanId || !quickPayAmount}
                       className={`h-8 px-4 rounded-lg text-sm font-medium border-0 transition-all ${
                         !quickPayLoanId || !quickPayAmount
-                          ? 'bg-[#00A86B]/30 text-[#00A86B]/50 cursor-not-allowed'
+                          ? 'bg-[#00A86B]/50 text-white/70 cursor-not-allowed'
                           : 'bg-[#00A86B] text-white hover:bg-[#0D9B76]'
                       }`}
                     >
@@ -2380,6 +2383,7 @@ export default function Lending() {
                     </Button>
                   </div>
                 </div>
+                )}
               </motion.div>
             )}
 
@@ -2822,7 +2826,8 @@ export default function Lending() {
                   </div>
                 )}
 
-                {/* Quick Record Payment */}
+                {/* Quick Record Payment - only show when there are active loans */}
+                {activeLoans.length > 0 && (
                 <div className="bg-[#96FFD0] rounded-2xl p-5 border-0 mt-4">
                   <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                     Record Payment
@@ -2895,7 +2900,7 @@ export default function Lending() {
                       disabled={!quickPayLoanId || !quickPayAmount}
                       className={`h-8 px-4 rounded-lg text-sm font-medium border-0 transition-all ${
                         !quickPayLoanId || !quickPayAmount
-                          ? 'bg-[#00A86B]/30 text-[#00A86B]/50 cursor-not-allowed'
+                          ? 'bg-[#00A86B]/50 text-white/70 cursor-not-allowed'
                           : 'bg-[#00A86B] text-white hover:bg-[#0D9B76]'
                       }`}
                     >
@@ -2903,6 +2908,7 @@ export default function Lending() {
                     </Button>
                   </div>
                 </div>
+                )}
               </motion.div>
             )}
 
