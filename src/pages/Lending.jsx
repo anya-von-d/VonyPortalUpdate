@@ -1239,7 +1239,7 @@ export default function Lending() {
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {/* Pie Chart */}
-                    <div className="rounded-xl p-3 flex flex-col items-center justify-center" style={{ backgroundColor: '#83F384' }}>
+                    <div className="rounded-xl p-3 flex flex-col items-center justify-center" style={{ backgroundColor: '#6EE8B5' }}>
                       {(() => {
                         const totalOwed = activeLoans.reduce((sum, loan) => sum + (loan.total_amount || loan.amount || 0), 0);
                         const totalPaid = activeLoans.reduce((sum, loan) => sum + (loan.amount_paid || 0), 0);
@@ -1279,7 +1279,7 @@ export default function Lending() {
                     </div>
 
                     {/* Stats Card - Total Lent */}
-                    <Card className="backdrop-blur-sm hover:shadow-xl transition-all duration-300 h-full cursor-default border-0 rounded-xl" style={{ backgroundColor: '#30FFA8' }}>
+                    <Card className="backdrop-blur-sm hover:shadow-xl transition-all duration-300 h-full cursor-default border-0 rounded-xl" style={{ backgroundColor: '#6EE8B5' }}>
                       <CardContent className="p-4 flex flex-col h-full">
                         <p className="text-sm font-medium text-slate-600 mb-2 text-left">Total Lent</p>
                         <p className="text-2xl font-bold text-slate-800 text-center flex-1 flex items-center justify-center">${totalLent.toLocaleString()}</p>
@@ -1288,7 +1288,7 @@ export default function Lending() {
                     </Card>
 
                     {/* Stats Card - Expected Back */}
-                    <Card className="backdrop-blur-sm hover:shadow-xl transition-all duration-300 h-full cursor-default border-0 rounded-xl" style={{ backgroundColor: '#6EE8A2' }}>
+                    <Card className="backdrop-blur-sm hover:shadow-xl transition-all duration-300 h-full cursor-default border-0 rounded-xl" style={{ backgroundColor: '#6EE8B5' }}>
                       <CardContent className="p-4 flex flex-col h-full">
                         <p className="text-sm font-medium text-slate-600 mb-2 text-left">Expected Back</p>
                         <p className="text-2xl font-bold text-slate-800 text-center flex-1 flex items-center justify-center">${totalExpectedBack.toLocaleString()}</p>
