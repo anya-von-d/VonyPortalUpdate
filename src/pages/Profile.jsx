@@ -12,15 +12,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
-  User as UserIcon,
-  Mail,
-  Phone,
-  Shield,
   CheckCircle,
   XCircle,
-  MapPin,
   Camera,
-  AtSign,
   LogOut,
   Image,
   Trash2,
@@ -321,9 +315,6 @@ export default function Profile() {
           animate={{ opacity: 1, y: 0 }}
           className="py-5"
         >
-          <h1 className="text-4xl md:text-5xl font-bold text-slate-800 mb-4 tracking-tight text-left">
-            Profile
-          </h1>
           <div className="flex flex-col items-center">
           <div className="relative inline-block group">
             <img
@@ -394,10 +385,9 @@ export default function Profile() {
             Member since {user.created_at ? new Date(user.created_at).getFullYear() : new Date().getFullYear()}
           </p>
           <Button
-            variant="outline"
             onClick={() => setShowPhotoMenu(!showPhotoMenu)}
             disabled={isSaving}
-            className="mt-4"
+            className="mt-4 bg-[#00A86B] hover:bg-[#0D9B76] text-white font-semibold"
           >
             Edit Profile Photo
           </Button>
@@ -438,12 +428,12 @@ export default function Profile() {
               <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                 Personal Information
               </p>
-              <div className="space-y-4 md:space-y-6">
-                {/* Name and Email fields */}
-                <div className="grid md:grid-cols-2 gap-3 md:gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="full_name" className="flex items-center gap-2">
-                      <UserIcon className="w-4 h-4 text-slate-500" />
+
+              {/* Inner mint box with fields */}
+              <div className="bg-[#96FFD0] rounded-xl p-4 space-y-4">
+                <div className="grid md:grid-cols-2 gap-3 md:gap-4">
+                  <div className="space-y-1">
+                    <Label htmlFor="full_name" className="text-xs font-medium text-slate-600">
                       Full Name
                     </Label>
                     <Input
@@ -451,27 +441,24 @@ export default function Profile() {
                       value={formData.full_name}
                       disabled
                       placeholder="Enter your full name"
-                      className="bg-slate-50"
+                      className="bg-white/70"
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label className="flex items-center gap-2">
-                      <Mail className="w-4 h-4 text-slate-500" />
-                      Email Address
+                  <div className="space-y-1">
+                    <Label className="text-xs font-medium text-slate-600">
+                      Email
                     </Label>
                     <Input
                       value={user.email || 'Not provided'}
                       disabled
-                      className="bg-slate-50"
+                      className="bg-white/70"
                     />
                   </div>
                 </div>
 
-                {/* Username Field */}
-                <div className="space-y-2">
-                  <Label htmlFor="username" className="flex items-center gap-2">
-                    <AtSign className="w-4 h-4 text-green-600" />
+                <div className="space-y-1">
+                  <Label htmlFor="username" className="text-xs font-medium text-slate-600">
                     Username
                   </Label>
                   <Input
@@ -480,7 +467,7 @@ export default function Profile() {
                     onChange={(e) => handleInputChange('username', e.target.value)}
                     disabled={!isEditing || isSaving}
                     placeholder="Choose a unique username"
-                    className={!isEditing ? 'bg-slate-50' : usernameError ? 'border-red-300' : ''}
+                    className={!isEditing ? 'bg-white/70' : usernameError ? 'border-red-300 bg-white' : 'bg-white'}
                     required
                   />
                   {isCheckingUsername && (
@@ -494,11 +481,9 @@ export default function Profile() {
                   )}
                 </div>
 
-                {/* Editable fields */}
-                <div className="grid md:grid-cols-2 gap-3 md:gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="phone" className="flex items-center gap-2">
-                      <Phone className="w-4 h-4 text-blue-600" />
+                <div className="grid md:grid-cols-2 gap-3 md:gap-4">
+                  <div className="space-y-1">
+                    <Label htmlFor="phone" className="text-xs font-medium text-slate-600">
                       Phone Number
                     </Label>
                     <Input
@@ -507,13 +492,12 @@ export default function Profile() {
                       onChange={(e) => handleInputChange('phone', e.target.value)}
                       disabled={!isEditing || isSaving}
                       placeholder="Enter your phone number"
-                      className={!isEditing ? 'bg-slate-50' : ''}
+                      className={!isEditing ? 'bg-white/70' : 'bg-white'}
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="location" className="flex items-center gap-2">
-                      <MapPin className="w-4 h-4 text-red-600" />
+                  <div className="space-y-1">
+                    <Label htmlFor="location" className="text-xs font-medium text-slate-600">
                       Location
                     </Label>
                     <Input
@@ -522,25 +506,20 @@ export default function Profile() {
                       onChange={(e) => handleInputChange('location', e.target.value)}
                       disabled={!isEditing || isSaving}
                       placeholder="City, State"
-                      className={!isEditing ? 'bg-slate-50' : ''}
+                      className={!isEditing ? 'bg-white/70' : 'bg-white'}
                     />
                   </div>
                 </div>
+              </div>
 
+              {/* Edit button below mint box, right-aligned, inside outer box */}
+              <div className="flex justify-end mt-4">
                 {isEditing ? (
                   <div className="flex gap-3">
-                    <Button
-                      onClick={handleSave}
-                      disabled={isSaving || usernameError || isCheckingUsername}
-                      className="bg-[#00A86B] hover:bg-[#0D9B76] text-white font-semibold"
-                    >
-                      {isSaving ? 'Saving...' : 'Save Changes'}
-                    </Button>
                     <Button
                       variant="outline"
                       onClick={() => {
                         setIsEditing(false);
-                        // Reset form data to original user data
                         setFormData({
                           full_name: user?.full_name || '',
                           username: user?.username || '',
@@ -551,8 +530,16 @@ export default function Profile() {
                         });
                         setUsernameError(null);
                       }}
+                      className="bg-white hover:bg-slate-50"
                     >
                       Cancel
+                    </Button>
+                    <Button
+                      onClick={handleSave}
+                      disabled={isSaving || usernameError || isCheckingUsername}
+                      className="bg-[#00A86B] hover:bg-[#0D9B76] text-white font-semibold"
+                    >
+                      {isSaving ? 'Saving...' : 'Save Changes'}
                     </Button>
                   </div>
                 ) : (

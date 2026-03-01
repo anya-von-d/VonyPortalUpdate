@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { VenmoConnection, PayPalConnection, User } from "@/entities/all";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+// Card imports removed - using div-based layout now
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { AlertCircle, Check, Trash2, Loader, Smartphone, CreditCard, DollarSign } from "lucide-react";
+import { AlertCircle, Check, Trash2, Loader } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function PaymentMethodsConnect() {
@@ -218,11 +218,14 @@ export default function PaymentMethodsConnect() {
 
   if (isLoading) {
     return (
-      <Card className="bg-[#DBFFEB] backdrop-blur-sm border-0">
-        <CardContent className="p-6 flex items-center justify-center">
+      <div className="bg-[#DBFFEB] rounded-2xl p-5">
+        <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+          Payment Methods
+        </p>
+        <div className="flex items-center justify-center py-6">
           <Loader className="w-6 h-6 animate-spin text-green-600" />
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     );
   }
 
@@ -231,36 +234,31 @@ export default function PaymentMethodsConnect() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
     >
-      <Card className="bg-[#96FFD0] backdrop-blur-sm border-0 overflow-hidden w-full">
-        <CardHeader className="pb-3 px-3 md:px-6">
-          <CardTitle className="flex items-center gap-2 text-slate-800 text-base md:text-xl">
-            <div className="w-8 h-8 rounded-full bg-[#DBFFEB] flex items-center justify-center flex-shrink-0">
-              <CreditCard className="w-4 h-4 text-green-600" />
-            </div>
-            Payment Methods
-          </CardTitle>
-          <p className="text-xs md:text-sm text-slate-500 mt-1">
-            Connect your payment accounts so friends can easily pay you
-          </p>
-        </CardHeader>
+      <div className="bg-[#DBFFEB] rounded-2xl p-5 w-full">
+        <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+          Payment Methods
+        </p>
+        <p className="text-xs text-slate-500 mb-4">
+          Connect your payment accounts so friends can easily pay you
+        </p>
 
-        <CardContent className="p-3 md:p-6 pt-3 space-y-3 md:space-y-4">
-          {error && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-3 flex items-start gap-2">
-              <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
-              <p className="text-sm text-red-700">{error}</p>
-            </div>
-          )}
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-3 flex items-start gap-2 mb-4">
+            <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
+            <p className="text-sm text-red-700">{error}</p>
+          </div>
+        )}
 
+        <div className="space-y-3">
           {/* Venmo */}
-          <div className="p-3 bg-slate-50/50 rounded-xl space-y-3">
+          <div className="p-3 bg-[#AAFFA3] rounded-xl space-y-3">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 bg-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
-                <Smartphone className="w-4 h-4 text-white" />
+              <div className="w-9 h-9 bg-white rounded-full flex items-center justify-center flex-shrink-0">
+                <span className="text-sm font-bold text-slate-800">V</span>
               </div>
               <span className="font-medium text-slate-700">Venmo</span>
               {venmoConnection && (
-                <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full flex items-center gap-1">
+                <span className="text-xs bg-white/60 text-green-700 px-2 py-0.5 rounded-full flex items-center gap-1">
                   <Check className="w-3 h-3" /> Connected
                 </span>
               )}
@@ -270,7 +268,7 @@ export default function PaymentMethodsConnect() {
                 placeholder="@username"
                 value={venmoUsername}
                 onChange={(e) => setVenmoUsername(e.target.value)}
-                className="flex-1 min-w-0"
+                className="flex-1 min-w-0 bg-white/70"
               />
               <div className="flex items-center gap-2">
                 {venmoConnection ? (
@@ -279,7 +277,7 @@ export default function PaymentMethodsConnect() {
                       onClick={handleSaveVenmo}
                       disabled={isSaving.venmo || venmoUsername === venmoConnection.venmo_username}
                       size="sm"
-                      className="bg-green-600 hover:bg-green-700 flex-shrink-0 flex-1 md:flex-none"
+                      className="bg-[#00A86B] hover:bg-[#0D9B76] text-white flex-shrink-0 flex-1 md:flex-none"
                     >
                       {isSaving.venmo ? "..." : "Update"}
                     </Button>
@@ -288,7 +286,7 @@ export default function PaymentMethodsConnect() {
                       disabled={isSaving.venmo}
                       size="sm"
                       variant="outline"
-                      className="text-red-600 border-red-200 hover:bg-red-50 flex-shrink-0"
+                      className="text-red-600 border-red-200 hover:bg-red-50 flex-shrink-0 bg-white"
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>
@@ -298,7 +296,7 @@ export default function PaymentMethodsConnect() {
                     onClick={handleSaveVenmo}
                     disabled={isSaving.venmo || !venmoUsername.trim()}
                     size="sm"
-                    className="bg-blue-500 hover:bg-blue-600 flex-shrink-0 w-full md:w-auto"
+                    className="bg-[#00A86B] hover:bg-[#0D9B76] text-white flex-shrink-0 w-full md:w-auto"
                   >
                     {isSaving.venmo ? "..." : "Connect"}
                   </Button>
@@ -308,14 +306,14 @@ export default function PaymentMethodsConnect() {
           </div>
 
           {/* Cash App */}
-          <div className="p-3 bg-slate-50/50 rounded-xl space-y-3">
+          <div className="p-3 bg-[#30FFA8] rounded-xl space-y-3">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 bg-green-500 rounded-lg flex items-center justify-center flex-shrink-0">
-                <DollarSign className="w-4 h-4 text-white" />
+              <div className="w-9 h-9 bg-white rounded-full flex items-center justify-center flex-shrink-0">
+                <span className="text-sm font-bold text-slate-800">$</span>
               </div>
               <span className="font-medium text-slate-700">Cash App</span>
               {cashappHandle && user?.cashapp_handle && (
-                <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full flex items-center gap-1">
+                <span className="text-xs bg-white/60 text-green-700 px-2 py-0.5 rounded-full flex items-center gap-1">
                   <Check className="w-3 h-3" /> Connected
                 </span>
               )}
@@ -325,7 +323,7 @@ export default function PaymentMethodsConnect() {
                 placeholder="$cashtag"
                 value={cashappHandle}
                 onChange={(e) => setCashappHandle(e.target.value)}
-                className="flex-1 min-w-0"
+                className="flex-1 min-w-0 bg-white/70"
               />
               <div className="flex items-center gap-2">
                 {cashappHandle && user?.cashapp_handle ? (
@@ -334,7 +332,7 @@ export default function PaymentMethodsConnect() {
                       onClick={handleSaveCashapp}
                       disabled={isSaving.cashapp || cashappHandle === user.cashapp_handle}
                       size="sm"
-                      className="bg-green-600 hover:bg-green-700 flex-shrink-0 flex-1 md:flex-none"
+                      className="bg-[#00A86B] hover:bg-[#0D9B76] text-white flex-shrink-0 flex-1 md:flex-none"
                     >
                       {isSaving.cashapp ? "..." : "Update"}
                     </Button>
@@ -343,7 +341,7 @@ export default function PaymentMethodsConnect() {
                       disabled={isSaving.cashapp}
                       size="sm"
                       variant="outline"
-                      className="text-red-600 border-red-200 hover:bg-red-50 flex-shrink-0"
+                      className="text-red-600 border-red-200 hover:bg-red-50 flex-shrink-0 bg-white"
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>
@@ -353,7 +351,7 @@ export default function PaymentMethodsConnect() {
                     onClick={handleSaveCashapp}
                     disabled={isSaving.cashapp || !cashappHandle.trim()}
                     size="sm"
-                    className="bg-green-500 hover:bg-green-600 flex-shrink-0 w-full md:w-auto"
+                    className="bg-[#00A86B] hover:bg-[#0D9B76] text-white flex-shrink-0 w-full md:w-auto"
                   >
                     {isSaving.cashapp ? "..." : "Connect"}
                   </Button>
@@ -363,14 +361,14 @@ export default function PaymentMethodsConnect() {
           </div>
 
           {/* Zelle */}
-          <div className="p-3 bg-slate-50/50 rounded-xl space-y-3">
+          <div className="p-3 bg-[#96FFD0] rounded-xl space-y-3">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 bg-purple-500 rounded-lg flex items-center justify-center flex-shrink-0">
-                <Smartphone className="w-4 h-4 text-white" />
+              <div className="w-9 h-9 bg-white rounded-full flex items-center justify-center flex-shrink-0">
+                <span className="text-sm font-bold text-slate-800">Z</span>
               </div>
               <span className="font-medium text-slate-700">Zelle</span>
               {zelleEmail && user?.zelle_email && (
-                <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full flex items-center gap-1">
+                <span className="text-xs bg-white/60 text-green-700 px-2 py-0.5 rounded-full flex items-center gap-1">
                   <Check className="w-3 h-3" /> Connected
                 </span>
               )}
@@ -380,7 +378,7 @@ export default function PaymentMethodsConnect() {
                 placeholder="Email or phone"
                 value={zelleEmail}
                 onChange={(e) => setZelleEmail(e.target.value)}
-                className="flex-1 min-w-0"
+                className="flex-1 min-w-0 bg-white/70"
               />
               <div className="flex items-center gap-2">
                 {zelleEmail && user?.zelle_email ? (
@@ -389,7 +387,7 @@ export default function PaymentMethodsConnect() {
                       onClick={handleSaveZelle}
                       disabled={isSaving.zelle || zelleEmail === user.zelle_email}
                       size="sm"
-                      className="bg-green-600 hover:bg-green-700 flex-shrink-0 flex-1 md:flex-none"
+                      className="bg-[#00A86B] hover:bg-[#0D9B76] text-white flex-shrink-0 flex-1 md:flex-none"
                     >
                       {isSaving.zelle ? "..." : "Update"}
                     </Button>
@@ -398,7 +396,7 @@ export default function PaymentMethodsConnect() {
                       disabled={isSaving.zelle}
                       size="sm"
                       variant="outline"
-                      className="text-red-600 border-red-200 hover:bg-red-50 flex-shrink-0"
+                      className="text-red-600 border-red-200 hover:bg-red-50 flex-shrink-0 bg-white"
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>
@@ -408,7 +406,7 @@ export default function PaymentMethodsConnect() {
                     onClick={handleSaveZelle}
                     disabled={isSaving.zelle || !zelleEmail.trim()}
                     size="sm"
-                    className="bg-purple-500 hover:bg-purple-600 flex-shrink-0 w-full md:w-auto"
+                    className="bg-[#00A86B] hover:bg-[#0D9B76] text-white flex-shrink-0 w-full md:w-auto"
                   >
                     {isSaving.zelle ? "..." : "Connect"}
                   </Button>
@@ -418,14 +416,14 @@ export default function PaymentMethodsConnect() {
           </div>
 
           {/* PayPal */}
-          <div className="p-3 bg-slate-50/50 rounded-xl space-y-3">
+          <div className="p-3 bg-[#6EE8A2] rounded-xl space-y-3">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                <CreditCard className="w-4 h-4 text-white" />
+              <div className="w-9 h-9 bg-white rounded-full flex items-center justify-center flex-shrink-0">
+                <span className="text-sm font-bold text-slate-800">P</span>
               </div>
               <span className="font-medium text-slate-700">PayPal</span>
               {paypalConnection && (
-                <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full flex items-center gap-1">
+                <span className="text-xs bg-white/60 text-green-700 px-2 py-0.5 rounded-full flex items-center gap-1">
                   <Check className="w-3 h-3" /> Connected
                 </span>
               )}
@@ -435,7 +433,7 @@ export default function PaymentMethodsConnect() {
                 placeholder="Email or PayPal.me"
                 value={paypalEmail}
                 onChange={(e) => setPaypalEmail(e.target.value)}
-                className="flex-1 min-w-0"
+                className="flex-1 min-w-0 bg-white/70"
               />
               <div className="flex items-center gap-2">
                 {paypalConnection ? (
@@ -444,7 +442,7 @@ export default function PaymentMethodsConnect() {
                       onClick={handleSavePaypal}
                       disabled={isSaving.paypal || paypalEmail === paypalConnection.paypal_email}
                       size="sm"
-                      className="bg-green-600 hover:bg-green-700 flex-shrink-0 flex-1 md:flex-none"
+                      className="bg-[#00A86B] hover:bg-[#0D9B76] text-white flex-shrink-0 flex-1 md:flex-none"
                     >
                       {isSaving.paypal ? "..." : "Update"}
                     </Button>
@@ -453,7 +451,7 @@ export default function PaymentMethodsConnect() {
                       disabled={isSaving.paypal}
                       size="sm"
                       variant="outline"
-                      className="text-red-600 border-red-200 hover:bg-red-50 flex-shrink-0"
+                      className="text-red-600 border-red-200 hover:bg-red-50 flex-shrink-0 bg-white"
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>
@@ -463,7 +461,7 @@ export default function PaymentMethodsConnect() {
                     onClick={handleSavePaypal}
                     disabled={isSaving.paypal || !paypalEmail.trim()}
                     size="sm"
-                    className="bg-blue-600 hover:bg-blue-700 flex-shrink-0 w-full md:w-auto"
+                    className="bg-[#00A86B] hover:bg-[#0D9B76] text-white flex-shrink-0 w-full md:w-auto"
                   >
                     {isSaving.paypal ? "..." : "Connect"}
                   </Button>
@@ -471,9 +469,8 @@ export default function PaymentMethodsConnect() {
               </div>
             </div>
           </div>
-
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </motion.div>
   );
 }
