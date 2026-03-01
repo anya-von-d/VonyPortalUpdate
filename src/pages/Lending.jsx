@@ -1232,77 +1232,67 @@ export default function Lending() {
                 className="space-y-7"
               >
                 {/* Lending Overview Section */}
-                <div className="bg-[#DBFFEB] rounded-2xl p-5">
-                  <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                <div className="bg-[#DBFFEB] rounded-2xl p-4">
+                  <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-3" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                     Lending Overview
                   </p>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {/* Pie Chart */}
-                    <div className="rounded-xl p-4 flex flex-col items-center justify-center" style={{ backgroundColor: '#6EE8B5' }}>
-                      <p className="text-sm font-medium text-slate-600 mb-3">Repayment Progress</p>
+                    <div className="rounded-xl p-3 flex flex-col items-center justify-center" style={{ backgroundColor: '#83F384' }}>
                       {(() => {
                         const totalOwed = activeLoans.reduce((sum, loan) => sum + (loan.total_amount || loan.amount || 0), 0);
                         const totalPaid = activeLoans.reduce((sum, loan) => sum + (loan.amount_paid || 0), 0);
                         const percentPaid = totalOwed > 0 ? Math.round((totalPaid / totalOwed) * 100) : 0;
-                        const circumference = 2 * Math.PI * 45;
-                        const strokeDashoffset = circumference - (percentPaid / 100) * circumference;
 
                         return (
-                          <div className="relative w-36 h-36">
-                            <svg className="w-full h-full transform -rotate-90">
-                              {/* Background circle */}
-                              <circle
-                                cx="72"
-                                cy="72"
-                                r="45"
-                                fill="none"
-                                stroke="#e2e8f0"
-                                strokeWidth="12"
-                              />
-                              {/* Progress circle */}
-                              <circle
-                                cx="72"
-                                cy="72"
-                                r="45"
-                                fill="none"
-                                stroke="#35B276"
-                                strokeWidth="12"
-                                strokeLinecap="round"
-                                strokeDasharray={circumference}
-                                strokeDashoffset={strokeDashoffset}
-                                className="transition-all duration-500"
-                              />
-                            </svg>
-                            <div className="absolute inset-0 flex flex-col items-center justify-center">
-                              <span className="text-2xl font-bold text-slate-800">{percentPaid}%</span>
-                              <span className="text-xs text-slate-500">Repaid</span>
+                          <>
+                            <div className="relative w-24 h-24">
+                              <svg className="w-full h-full transform -rotate-90" viewBox="0 0 120 120">
+                                <circle cx="60" cy="60" r="52" fill="none" stroke="#DBFFEB" strokeWidth="7" />
+                                <circle
+                                  cx="60"
+                                  cy="60"
+                                  r="52"
+                                  fill="none"
+                                  stroke="#00A86B"
+                                  strokeWidth="7"
+                                  strokeLinecap="round"
+                                  strokeDasharray={2 * Math.PI * 52}
+                                  strokeDashoffset={2 * Math.PI * 52 - (percentPaid / 100) * 2 * Math.PI * 52}
+                                  className="transition-all duration-500"
+                                />
+                              </svg>
+                              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                <span className="text-lg font-bold text-slate-800">{percentPaid}%</span>
+                                <span className="text-[9px] text-slate-500 uppercase tracking-wider">Repaid</span>
+                              </div>
                             </div>
-                          </div>
+                            <div className="mt-2 text-center">
+                              <p className="text-xs text-slate-500">
+                                ${totalPaid.toLocaleString()} of ${totalOwed.toLocaleString()}
+                              </p>
+                            </div>
+                          </>
                         );
                       })()}
-                      <div className="mt-3 text-center">
-                        <p className="text-xs text-slate-500">
-                          ${activeLoans.reduce((sum, loan) => sum + (loan.amount_paid || 0), 0).toLocaleString()} of ${activeLoans.reduce((sum, loan) => sum + (loan.total_amount || loan.amount || 0), 0).toLocaleString()}
-                        </p>
-                      </div>
                     </div>
 
                     {/* Stats Card - Total Lent */}
                     <Card className="backdrop-blur-sm hover:shadow-xl transition-all duration-300 h-full cursor-default border-0 rounded-xl" style={{ backgroundColor: '#30FFA8' }}>
-                      <CardContent className="p-5 flex flex-col items-center justify-center h-full text-center">
-                        <p className="text-sm font-medium text-slate-600 mb-2">Total Lent</p>
-                        <p className="text-lg font-bold text-slate-800">${totalLent.toLocaleString()}</p>
-                        <p className="text-xs text-slate-500 mt-1">{activeLoans.length} active loans</p>
+                      <CardContent className="p-4 flex flex-col h-full">
+                        <p className="text-sm font-medium text-slate-600 mb-2 text-left">Total Lent</p>
+                        <p className="text-lg font-bold text-slate-800 text-center flex-1 flex items-center justify-center">${totalLent.toLocaleString()}</p>
+                        <p className="text-xs text-slate-500 mt-1 text-right">{activeLoans.length} active loans</p>
                       </CardContent>
                     </Card>
 
                     {/* Stats Card - Expected Back */}
                     <Card className="backdrop-blur-sm hover:shadow-xl transition-all duration-300 h-full cursor-default border-0 rounded-xl" style={{ backgroundColor: '#6EE8A2' }}>
-                      <CardContent className="p-5 flex flex-col items-center justify-center h-full text-center">
-                        <p className="text-sm font-medium text-slate-600 mb-2">Expected Back</p>
-                        <p className="text-lg font-bold text-slate-800">${totalExpectedBack.toLocaleString()}</p>
-                        <p className="text-xs text-slate-500 mt-1">Including interest</p>
+                      <CardContent className="p-4 flex flex-col h-full">
+                        <p className="text-sm font-medium text-slate-600 mb-2 text-left">Expected Back</p>
+                        <p className="text-lg font-bold text-slate-800 text-center flex-1 flex items-center justify-center">${totalExpectedBack.toLocaleString()}</p>
+                        <p className="text-xs text-slate-500 mt-1 text-right">Including interest</p>
                       </CardContent>
                     </Card>
                   </div>
