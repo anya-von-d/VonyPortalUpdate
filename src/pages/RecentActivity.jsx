@@ -3,7 +3,7 @@ import { Loan, Payment, User, PublicProfile } from "@/entities/all";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Activity, ArrowUpRight, ArrowDownRight, Send, Check, X, Ban, FileText, DollarSign, Eye, ChevronDown, Users } from "lucide-react";
+import { Activity, ArrowUpRight, ArrowDownRight, Send, Check, X, Ban, FileText, DollarSign, Eye, ChevronDown, Users, Clock, CheckCircle, XCircle, AlertCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { format } from "date-fns";
 import {
@@ -13,16 +13,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-const statusColors = {
-  pending: "bg-yellow-100 text-yellow-800 border-yellow-200",
-  active: "bg-green-100 text-green-800 border-green-200",
-  completed: "bg-blue-100 text-blue-800 border-blue-200",
-  defaulted: "bg-red-100 text-red-800 border-red-200",
-  cancelled: "bg-gray-100 text-gray-800 border-gray-200",
-  declined: "bg-red-100 text-red-800 border-red-200"
+const statusConfig = {
+  pending: { bg: 'bg-[#6EE8A2]', icon: Clock, iconColor: 'text-slate-500', textColor: 'text-slate-600' },
+  active: { bg: 'bg-[#30FFA8]', icon: Activity, iconColor: 'text-[#00A86B]', textColor: 'text-[#00A86B]' },
+  completed: { bg: 'bg-[#96FFD0]', icon: CheckCircle, iconColor: 'text-[#00A86B]', textColor: 'text-[#00A86B]' },
+  defaulted: { bg: 'bg-[#AAFFA3]', icon: AlertCircle, iconColor: 'text-red-500', textColor: 'text-red-500' },
+  cancelled: { bg: 'bg-[#6EE8A2]', icon: XCircle, iconColor: 'text-red-500', textColor: 'text-red-500' },
+  declined: { bg: 'bg-[#6EE8A2]', icon: XCircle, iconColor: 'text-red-500', textColor: 'text-red-500' }
 };
 
-const bgColors = ['#D0ED6F', '#83F384', '#6EE8B5'];
+const bgColors = ['#AAFFA3', '#30FFA8', '#96FFD0', '#74FF71', '#83F384', '#6EE8A2'];
 
 export default function RecentActivityPage() {
   const [loans, setLoans] = useState([]);
@@ -464,7 +464,7 @@ export default function RecentActivityPage() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.3, delay: index * 0.03 }}
                         className="rounded-xl p-3 md:p-4 flex items-center gap-3 group hover:opacity-90 transition-all duration-200"
-                        style={{ backgroundColor: bgColors[index % 3] }}
+                        style={{ backgroundColor: bgColors[index % 6] }}
                       >
                         {/* Circular Icon */}
                         <div className="w-9 h-9 rounded-full bg-[#DBFFEB] flex items-center justify-center flex-shrink-0">
@@ -482,11 +482,16 @@ export default function RecentActivityPage() {
                         </div>
 
                         {/* Status Badge */}
-                        {status && (
-                          <Badge className={`${statusColors[status]} border font-medium capitalize text-[10px] flex-shrink-0`}>
-                            {status}
-                          </Badge>
-                        )}
+                        {status && statusConfig[status] && (() => {
+                          const config = statusConfig[status];
+                          const StatusIcon = config.icon;
+                          return (
+                            <div className={`${config.bg} rounded-xl px-4 py-2 flex items-center gap-1.5 flex-shrink-0`}>
+                              <StatusIcon className={`w-3.5 h-3.5 ${config.iconColor}`} />
+                              <span className={`text-sm font-medium ${config.textColor} capitalize`}>{status}</span>
+                            </div>
+                          );
+                        })()}
                       </motion.div>
                     );
                   })}

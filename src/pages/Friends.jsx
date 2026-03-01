@@ -233,7 +233,7 @@ export default function Friends() {
     { id: 'add', label: 'Add Friends' },
   ];
 
-  const colors = ['#D0ED6F', '#83F384', '#6EE8B5'];
+  const colors = ['#AAFFA3', '#30FFA8', '#96FFD0', '#74FF71', '#83F384', '#6EE8A2'];
 
   return (
     <div className="min-h-screen p-6" style={{background: `linear-gradient(to bottom right, rgb(var(--theme-bg-from)), rgb(var(--theme-bg-to)))`}}>
@@ -330,7 +330,7 @@ export default function Friends() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: index * 0.05 }}
                             className="p-4 rounded-xl"
-                            style={{ backgroundColor: colors[index % 3] }}
+                            style={{ backgroundColor: colors[index % 6] }}
                           >
                             <div className="flex items-center gap-4">
                               {/* Profile Photo */}
@@ -463,7 +463,7 @@ export default function Friends() {
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: index * 0.05 }}
                                 className="p-4 rounded-xl"
-                                style={{ backgroundColor: colors[index % 3] }}
+                                style={{ backgroundColor: colors[index % 6] }}
                               >
                                 <div className="flex items-center gap-4">
                                   {/* Profile Photo */}
@@ -566,7 +566,7 @@ export default function Friends() {
                               animate={{ opacity: 1, y: 0 }}
                               transition={{ delay: index * 0.05 }}
                               className="p-4 rounded-xl"
-                              style={{ backgroundColor: colors[index % 3] }}
+                              style={{ backgroundColor: colors[index % 6] }}
                             >
                               <div className="flex items-center gap-4">
                                 {/* Profile Photo */}
@@ -595,22 +595,20 @@ export default function Friends() {
                                 </div>
 
                                 {/* Cancel Request Button */}
-                                <Button
-                                  size="sm"
+                                <button
                                   onClick={() => handleCancelRequest(request.id)}
                                   disabled={processingId === request.id}
-                                  variant="outline"
-                                  className="border-red-300 text-red-600 hover:bg-red-50 bg-white"
+                                  className="bg-[#6EE8A2] rounded-xl px-4 py-2 flex items-center gap-1.5 hover:bg-red-50 transition-colors disabled:opacity-50"
                                 >
                                   {processingId === request.id ? (
                                     <div className="w-4 h-4 border-2 border-red-400 border-t-transparent rounded-full animate-spin" />
                                   ) : (
                                     <>
-                                      <Trash2 className="w-4 h-4 mr-1" />
-                                      Cancel
+                                      <XCircle className="w-3.5 h-3.5 text-red-500" />
+                                      <span className="text-sm font-medium text-red-500">Cancel</span>
                                     </>
                                   )}
-                                </Button>
+                                </button>
                               </div>
                             </motion.div>
                           );
