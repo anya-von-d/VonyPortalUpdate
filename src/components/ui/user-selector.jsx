@@ -137,7 +137,7 @@ export function UserSelector({ users = [], value, onSelect, placeholder = "Choos
                 {/* Add Friends Option */}
                 {showAddFriends && (
                   <div
-                    className="flex items-center gap-3 px-3 py-2.5 mx-2 my-1 rounded-xl cursor-pointer hover:opacity-90 transition-all duration-200 bg-[#AAFFA3]"
+                    className="flex items-center gap-3 px-3 py-2.5 mx-2 my-1 rounded-xl cursor-pointer transition-all duration-200 bg-white hover:bg-[#DBFFEB]/50"
                     onClick={handleAddFriends}
                   >
                     <div className="w-9 h-9 rounded-full bg-[#00A86B] flex items-center justify-center flex-shrink-0">
@@ -158,7 +158,7 @@ export function UserSelector({ users = [], value, onSelect, placeholder = "Choos
                   {searchTerm ? 'No friends found' : 'No friends yet'}
                 </div>
                 <div
-                  className="flex items-center gap-3 px-3 py-2.5 mx-2 my-1 rounded-xl cursor-pointer hover:opacity-90 transition-all duration-200 bg-[#AAFFA3]"
+                  className="flex items-center gap-3 px-3 py-2.5 mx-2 my-1 rounded-xl cursor-pointer transition-all duration-200 bg-white hover:bg-[#DBFFEB]/50"
                   onClick={handleAddFriends}
                 >
                   <div className="w-9 h-9 rounded-full bg-[#00A86B] flex items-center justify-center flex-shrink-0">
