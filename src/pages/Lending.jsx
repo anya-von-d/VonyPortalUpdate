@@ -1781,7 +1781,7 @@ export default function Lending() {
 
                             {/* Repeating Options */}
                             {formData.is_repeating && (
-                              <div className="px-5 pt-5 pb-3 bg-[#DBFFEB] rounded-xl">
+                              <div className="px-5 pt-5 pb-1 bg-[#DBFFEB] rounded-xl overflow-hidden">
                                 <p className="text-sm text-slate-700 leading-[4.2] [&_input]:inline-flex [&_input]:align-baseline [&_input]:my-[2px] [&_input[type=number]]:appearance-none [&_input[type=number]]:[-moz-appearance:textfield] [&_input[type=number]::-webkit-outer-spin-button]:appearance-none [&_input[type=number]::-webkit-inner-spin-button]:appearance-none [&_.inline-flex]:my-[2px]">
                                   Payments of{' '}
                                   <Input
@@ -1901,7 +1901,7 @@ export default function Lending() {
 
                         {/* Scheduled loan fields - Sentence format */}
                         {loanType === 'scheduled' && (
-                          <div className="px-5 pt-5 pb-3 bg-[#DBFFEB] rounded-xl">
+                          <div className="px-5 pt-5 pb-1 bg-[#DBFFEB] rounded-xl overflow-hidden">
                             <p className="text-sm text-slate-700 leading-[4.2] [&_input]:inline-flex [&_input]:align-baseline [&_input]:my-[2px] [&_input[type=number]]:appearance-none [&_input[type=number]]:[-moz-appearance:textfield] [&_input[type=number]::-webkit-outer-spin-button]:appearance-none [&_input[type=number]::-webkit-inner-spin-button]:appearance-none [&_.inline-flex]:my-[2px] [&:last-child]:mb-0">
                               The lender agrees to lend{' '}
                               <span className="text-[#00A86B] font-medium">
