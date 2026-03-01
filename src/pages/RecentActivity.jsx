@@ -14,12 +14,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const statusConfig = {
-  pending: { bg: 'bg-[#6EE8A2]', icon: Clock, iconColor: 'text-slate-500', textColor: 'text-slate-600' },
-  active: { bg: 'bg-[#30FFA8]', icon: Activity, iconColor: 'text-[#00A86B]', textColor: 'text-[#00A86B]' },
-  completed: { bg: 'bg-[#96FFD0]', icon: CheckCircle, iconColor: 'text-[#00A86B]', textColor: 'text-[#00A86B]' },
-  defaulted: { bg: 'bg-[#AAFFA3]', icon: AlertCircle, iconColor: 'text-red-500', textColor: 'text-red-500' },
-  cancelled: { bg: 'bg-[#6EE8A2]', icon: XCircle, iconColor: 'text-red-500', textColor: 'text-red-500' },
-  declined: { bg: 'bg-[#6EE8A2]', icon: XCircle, iconColor: 'text-red-500', textColor: 'text-red-500' }
+  pending: { bg: 'bg-white', icon: Clock, iconColor: 'text-slate-500', textColor: 'text-slate-600' },
+  active: { bg: 'bg-white', icon: Activity, iconColor: 'text-[#00A86B]', textColor: 'text-[#00A86B]' },
+  completed: { bg: 'bg-white', icon: CheckCircle, iconColor: 'text-[#00A86B]', textColor: 'text-[#00A86B]' },
+  defaulted: { bg: 'bg-white', icon: AlertCircle, iconColor: 'text-red-500', textColor: 'text-red-500' },
+  cancelled: { bg: 'bg-white', icon: XCircle, iconColor: 'text-red-500', textColor: 'text-red-500' },
+  declined: { bg: 'bg-white', icon: XCircle, iconColor: 'text-red-500', textColor: 'text-red-500' }
 };
 
 const bgColors = ['#AAFFA3', '#30FFA8', '#96FFD0', '#74FF71', '#83F384', '#6EE8A2'];

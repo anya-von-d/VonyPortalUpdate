@@ -547,7 +547,7 @@ export default function Requests() {
                               setShowSignatureModal(true);
                             }}
                             disabled={processingId === offer.id}
-                            className="bg-[#30FFA8] rounded-xl px-4 py-2 flex items-center gap-1.5 hover:bg-[#c8f5d8] transition-colors disabled:opacity-50 flex-shrink-0"
+                            className="bg-white rounded-xl px-4 py-2 flex items-center gap-1.5 hover:bg-[#c8f5d8] transition-colors disabled:opacity-50 flex-shrink-0"
                           >
                             <Eye className="w-3.5 h-3.5 text-[#00A86B]" />
                             <span className="text-sm font-medium text-[#00A86B]">View Details</span>
@@ -596,14 +596,14 @@ export default function Requests() {
                             </p>
                           </div>
                           <div className="flex items-center gap-2 flex-shrink-0">
-                            <div className="bg-[#6EE8A2] rounded-xl px-4 py-2 flex items-center gap-1.5">
+                            <div className="bg-white rounded-xl px-4 py-2 flex items-center gap-1.5">
                               <Clock className="w-3.5 h-3.5 text-slate-500" />
                               <span className="text-sm font-medium text-slate-600">Pending</span>
                             </div>
                             <button
                               onClick={() => setConfirmingDeleteOffer(offer)}
                               disabled={processingId === offer.id}
-                              className="bg-[#6EE8A2] rounded-xl px-4 py-2 flex items-center gap-1.5 hover:bg-red-50 transition-colors disabled:opacity-50"
+                              className="bg-white rounded-xl px-4 py-2 flex items-center gap-1.5 hover:bg-red-50 transition-colors disabled:opacity-50"
                             >
                               <XCircle className="w-3.5 h-3.5 text-red-500" />
                               <span className="text-sm font-medium text-red-500">Cancel</span>
@@ -613,7 +613,7 @@ export default function Requests() {
                                 setSelectedOffer(offer);
                                 setShowSignatureModal(true);
                               }}
-                              className="bg-[#30FFA8] rounded-xl px-4 py-2 flex items-center gap-1.5 hover:bg-[#c8f5d8] transition-colors"
+                              className="bg-white rounded-xl px-4 py-2 flex items-center gap-1.5 hover:bg-[#c8f5d8] transition-colors"
                             >
                               <Eye className="w-3.5 h-3.5 text-[#00A86B]" />
                               <span className="text-sm font-medium text-[#00A86B]">View Details</span>
@@ -749,7 +749,7 @@ export default function Requests() {
                             <button
                               onClick={() => setConfirmingDeny(payment)}
                               disabled={processingId === payment.id}
-                              className="bg-[#6EE8A2] rounded-xl px-4 py-2 flex items-center gap-1.5 hover:bg-red-50 transition-colors disabled:opacity-50"
+                              className="bg-white rounded-xl px-4 py-2 flex items-center gap-1.5 hover:bg-red-50 transition-colors disabled:opacity-50"
                             >
                               <XCircle className="w-3.5 h-3.5 text-red-500" />
                               <span className="text-sm font-medium text-red-500">Deny</span>
@@ -757,7 +757,7 @@ export default function Requests() {
                             <button
                               onClick={() => handleConfirmPayment(payment)}
                               disabled={processingId === payment.id}
-                              className="bg-[#30FFA8] rounded-xl px-4 py-2 flex items-center gap-1.5 hover:bg-[#c8f5d8] transition-colors disabled:opacity-50"
+                              className="bg-white rounded-xl px-4 py-2 flex items-center gap-1.5 hover:bg-[#c8f5d8] transition-colors disabled:opacity-50"
                             >
                               <CheckCircle className="w-3.5 h-3.5 text-[#00A86B]" />
                               <span className="text-sm font-medium text-[#00A86B]">Confirm</span>
@@ -808,14 +808,14 @@ export default function Requests() {
                             </p>
                           </div>
                           <div className="flex items-center gap-2 flex-shrink-0">
-                            <div className="bg-[#30FFA8] rounded-xl px-4 py-2 flex items-center gap-1.5">
+                            <div className="bg-white rounded-xl px-4 py-2 flex items-center gap-1.5">
                               <Clock className="w-3.5 h-3.5 text-slate-500" />
                               <span className="text-sm font-medium text-slate-600">Pending</span>
                             </div>
                             <button
                               onClick={() => handleConfirmPayment(payment)}
                               disabled={processingId === payment.id}
-                              className="bg-[#30FFA8] rounded-xl px-4 py-2 flex items-center gap-1.5 hover:bg-[#c8f5d8] transition-colors disabled:opacity-50"
+                              className="bg-white rounded-xl px-4 py-2 flex items-center gap-1.5 hover:bg-[#c8f5d8] transition-colors disabled:opacity-50"
                             >
                               <CheckCircle className="w-3.5 h-3.5 text-[#00A86B]" />
                               <span className="text-sm font-medium text-[#00A86B]">Confirm</span>
@@ -823,7 +823,7 @@ export default function Requests() {
                             <button
                               onClick={() => setConfirmingCancel(payment)}
                               disabled={processingId === payment.id}
-                              className="bg-[#6EE8A2] rounded-xl px-4 py-2 flex items-center gap-1.5 hover:bg-red-50 transition-colors disabled:opacity-50"
+                              className="bg-white rounded-xl px-4 py-2 flex items-center gap-1.5 hover:bg-red-50 transition-colors disabled:opacity-50"
                             >
                               <XCircle className="w-3.5 h-3.5 text-red-500" />
                               <span className="text-sm font-medium text-red-500">Cancel</span>
