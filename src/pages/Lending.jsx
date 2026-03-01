@@ -1044,14 +1044,14 @@ export default function Lending() {
         </div>
 
         {loan && (
-          <div className="bg-slate-50 rounded-xl p-4">
+          <div className="bg-[#DBFFEB] rounded-xl p-4">
             <div className="flex justify-between items-center mb-2">
               <span className="text-sm text-slate-600">Payment Progress</span>
               <span className="text-sm font-medium text-slate-800">
                 {formatMoney(loan.amount_paid || 0)} / {formatMoney(agreement.total_amount)}
               </span>
             </div>
-            <div className="w-full bg-slate-200 rounded-full h-2">
+            <div className="w-full bg-white rounded-full h-2">
               <div
                 className="bg-[#00A86B] h-2 rounded-full transition-all"
                 style={{ width: `${Math.min(100, ((loan.amount_paid || 0) / agreement.total_amount) * 100)}%` }}
@@ -2309,20 +2309,23 @@ export default function Lending() {
                     <div className="w-8 h-8 border-2 border-green-600 border-t-transparent rounded-full animate-spin mx-auto" />
                   </div>
                 ) : manageableLoans.length === 0 ? (
-                  <Card className="bg-[#DBFFEB] backdrop-blur-sm border-0">
-                    <CardContent className="py-12">
-                      <div className="text-center text-slate-500">
-                        <Settings className="w-12 h-12 mx-auto mb-3 opacity-30" />
-                        <p>No loans to manage</p>
-                        <Button
-                          onClick={() => setActiveSection('create')}
-                          className="mt-4 bg-[#00A86B] hover:bg-[#0D9B76]"
-                        >
-                          Create a Loan Offer
-                        </Button>
+                  <div className="bg-[#DBFFEB] rounded-2xl p-8 border-0">
+                    <div className="flex flex-col items-center text-center">
+                      <div className="w-16 h-16 bg-[#AAFFA3] rounded-full flex items-center justify-center mb-4">
+                        <CheckCircle className="w-8 h-8 text-[#00A86B]" />
                       </div>
-                    </CardContent>
-                  </Card>
+                      <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-2">All Clear</p>
+                      <p className="text-lg font-semibold text-slate-800 mb-1">No loans to manage</p>
+                      <p className="text-sm text-slate-500 mb-5">You're all caught up! Create a new loan offer to get started.</p>
+                      <Button
+                        onClick={() => setActiveSection('create')}
+                        className="bg-[#00A86B] hover:bg-[#0D9B76] text-white rounded-xl px-6 h-11"
+                      >
+                        <PlusCircle className="w-4 h-4 mr-2" />
+                        Create a Loan Offer
+                      </Button>
+                    </div>
+                  </div>
                 ) : (
                   <div className="space-y-4">
                     {/* Loan Selector Dropdown */}

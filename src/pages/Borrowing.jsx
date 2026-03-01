@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import {
   Clock, Calendar, DollarSign, AlertCircle, FileText, ChevronDown, BarChart3,
-  Pencil, X, FolderOpen, ClipboardList, Info, Check, Shield, Smartphone, CreditCard, Banknote
+  Pencil, X, FolderOpen, ClipboardList, Info, Check, Shield, Smartphone, CreditCard, Banknote, CheckCircle
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format, addMonths, addWeeks, startOfMonth, endOfMonth, isSameMonth } from "date-fns";
@@ -531,14 +531,14 @@ export default function Borrowing() {
         </div>
 
         {loan && (
-          <div className="bg-slate-50 rounded-xl p-4">
+          <div className="bg-[#DBFFEB] rounded-xl p-4">
             <div className="flex justify-between items-center mb-2">
               <span className="text-sm text-slate-600">Payment Progress</span>
               <span className="text-sm font-medium text-slate-800">
                 {formatMoney(loan.amount_paid || 0)} / {formatMoney(agreement.total_amount)}
               </span>
             </div>
-            <div className="w-full bg-slate-200 rounded-full h-2">
+            <div className="w-full bg-white rounded-full h-2">
               <div
                 className="bg-[#00A86B] h-2 rounded-full transition-all"
                 style={{ width: `${Math.min(100, ((loan.amount_paid || 0) / agreement.total_amount) * 100)}%` }}
@@ -1288,10 +1288,13 @@ export default function Borrowing() {
                   </div>
                 ) : manageableLoans.length === 0 ? (
                   <div className="bg-[#DBFFEB] rounded-2xl p-8 border-0">
-                    <div className="text-center text-[#4A6B55]">
-                      <p className="text-4xl mb-3">✓</p>
-                      <p>No loans to manage</p>
-                      <p className="text-sm">You're all caught up!</p>
+                    <div className="flex flex-col items-center text-center">
+                      <div className="w-16 h-16 bg-[#AAFFA3] rounded-full flex items-center justify-center mb-4">
+                        <CheckCircle className="w-8 h-8 text-[#00A86B]" />
+                      </div>
+                      <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-2">All Clear</p>
+                      <p className="text-lg font-semibold text-slate-800 mb-1">No loans to manage</p>
+                      <p className="text-sm text-slate-500">You're all caught up!</p>
                     </div>
                   </div>
                 ) : (

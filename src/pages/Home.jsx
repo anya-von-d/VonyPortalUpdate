@@ -681,18 +681,19 @@ export default function Home() {
                                   {format(day, 'd')}
                                 </span>
                                 {/* Payment Indicators */}
-                                <div className="flex gap-0.5 absolute bottom-1">
+                                <div className="flex gap-0.5 absolute bottom-0.5">
                                   {hasSend && (
-                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="#EF4444" stroke="none">
-                                      <path d="M12 4 L4 14 L12 11 L20 14 Z" />
-                                    </svg>
+                                    <div className="w-2 h-2 rounded-full bg-[#EF4444]" />
                                   )}
                                   {hasReceive && (
-                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="#00A86B" stroke="none">
-                                      <path d="M12 20 L4 10 L12 13 L20 10 Z" />
-                                    </svg>
+                                    <div className="w-2 h-2 rounded-full bg-[#00A86B]" />
                                   )}
                                 </div>
+                                {(hasSend || hasReceive) && (
+                                  <div className={`absolute inset-0 rounded-lg ${
+                                    hasSend && hasReceive ? 'bg-amber-50' : hasSend ? 'bg-red-50' : 'bg-[#DBFFEB]'
+                                  }`} style={{ zIndex: -1 }} />
+                                )}
                               </div>
                             );
                           })}
@@ -701,18 +702,18 @@ export default function Home() {
                     })()}
 
                     {/* Legend */}
-                    <div className="flex items-center justify-center gap-4 mt-4 pt-3 border-t border-white/50">
-                      <div className="flex items-center gap-1.5">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="#EF4444" stroke="none">
-                          <path d="M12 4 L4 14 L12 11 L20 14 Z" />
-                        </svg>
-                        <span className="text-xs text-slate-600">Send</span>
+                    <div className="flex items-center justify-center gap-6 mt-4 pt-3 border-t border-white/50">
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-full bg-[#EF4444]" />
+                        <span className="text-sm font-medium text-slate-700">Send</span>
                       </div>
-                      <div className="flex items-center gap-1.5">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="#00A86B" stroke="none">
-                          <path d="M12 20 L4 10 L12 13 L20 10 Z" />
-                        </svg>
-                        <span className="text-xs text-slate-600">Receive</span>
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-full bg-[#00A86B]" />
+                        <span className="text-sm font-medium text-slate-700">Receive</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-full bg-amber-200 border border-amber-300" />
+                        <span className="text-sm font-medium text-slate-700">Both</span>
                       </div>
                     </div>
                   </CardContent>
