@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Loan, Payment, User, LoanAgreement, PublicProfile, Friendship } from "@/entities/all";
+import { Loan, Payment, User, LoanAgreement, PublicProfile, Friendship, VenmoConnection, PayPalConnection } from "@/entities/all";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import {
   Clock, Calendar, DollarSign, AlertCircle, FileText, ChevronDown, BarChart3,
-  Pencil, X, FolderOpen, ClipboardList, Info
+  Pencil, X, FolderOpen, ClipboardList, Info, Check, Shield, Smartphone, CreditCard, Banknote
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format, addMonths, addWeeks, startOfMonth, endOfMonth, isSameMonth } from "date-fns";
@@ -55,6 +55,11 @@ export default function Borrowing() {
   const [quickPayAmount, setQuickPayAmount] = useState('');
   const [quickPayMethod, setQuickPayMethod] = useState('');
   const [quickPayLoanId, setQuickPayLoanId] = useState('');
+  const [quickPayPerson, setQuickPayPerson] = useState('');
+  const [showQuickConfirm, setShowQuickConfirm] = useState(false);
+  const [isQuickProcessing, setIsQuickProcessing] = useState(false);
+  const [isQuickSuccess, setIsQuickSuccess] = useState(false);
+  const [quickPayTransactionId, setQuickPayTransactionId] = useState('');
 
   useEffect(() => {
     loadData();
@@ -107,6 +112,72 @@ export default function Borrowing() {
     setSelectedLoan(null);
     await loadData();
   };
+
+  const PAYMENT_METHOD_LABELS = {
+    venmo: 'Venmo', zelle: 'Zelle', cashapp: 'Cash App',
+    paypal: 'PayPal', cash: 'Cash', other: 'Other'
+  };
+
+  const generateTransactionId = () => {
+    const timestamp = Date.now().toString(36);
+    const random = Math.random().toString(36).substring(2, 8);
+    return `VNY-${timestamp}-${random}`.toUpperCase();
+  };
+
+  const handleQuickPaySubmit = () => {
+    setShowQuickConfirm(true);
+  };
+
+  const handleQuickPayConfirm = async () => {
+    setIsQuickProcessing(true);
+    try {
+      const loan = activeLoans.find(l => l.id === quickPayLoanId);
+      if (!loan) return;
+
+      const txnId = generateTransactionId();
+      setQuickPayTransactionId(txnId);
+      const methodLabel = PAYMENT_METHOD_LABELS[quickPayMethod] || quickPayMethod;
+
+      await Payment.create({
+        loan_id: loan.id,
+        amount: parseFloat(quickPayAmount),
+        payment_date: format(new Date(), 'yyyy-MM-dd'),
+        payment_method: quickPayMethod,
+        recorded_by: user?.id,
+        status: 'pending_confirmation',
+        notes: `${methodLabel} payment of $${parseFloat(quickPayAmount).toFixed(2)} via ${methodLabel} [Ref: ${txnId}]`
+      });
+
+      setIsQuickSuccess(true);
+      setTimeout(() => {
+        setShowQuickConfirm(false);
+        setIsQuickSuccess(false);
+        setQuickPayAmount('');
+        setQuickPayMethod('');
+        setQuickPayLoanId('');
+        setQuickPayPerson('');
+        setQuickPayTransactionId('');
+        loadData(false);
+      }, 3000);
+    } catch (error) {
+      console.error("Error recording payment:", error);
+    }
+    setIsQuickProcessing(false);
+  };
+
+  // Get unique lenders from active loans
+  const uniqueLenders = activeLoans.reduce((acc, loan) => {
+    const lender = getUserById(loan.lender_id);
+    if (!acc.find(l => l.userId === loan.lender_id)) {
+      acc.push({ userId: loan.lender_id, username: lender?.username, fullName: lender?.full_name });
+    }
+    return acc;
+  }, []);
+
+  // Filter loans by selected person
+  const filteredLoansForQuickPay = quickPayPerson
+    ? activeLoans.filter(l => l.lender_id === quickPayPerson)
+    : activeLoans;
 
   const handleCancelLoan = (loan) => {
     setLoanToCancel(loan);
@@ -735,11 +806,22 @@ export default function Borrowing() {
                         style={{ MozAppearance: 'textfield' }}
                       />
                       <span>to</span>
-                      <span className="text-[#00A86B] font-medium">
-                        {quickPayLoanId
-                          ? `@${getUserById(activeLoans.find(l => l.id === quickPayLoanId)?.lender_id)?.username || 'user'}`
-                          : '@_____'}
-                      </span>
+                      <Select value={quickPayPerson} onValueChange={(val) => {
+                        setQuickPayPerson(val);
+                        // Reset loan selection when person changes
+                        setQuickPayLoanId('');
+                      }}>
+                        <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex min-w-[120px]">
+                          <SelectValue placeholder="select person" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {uniqueLenders.map((lender) => (
+                            <SelectItem key={lender.userId} value={lender.userId}>
+                              @{lender.username || 'user'}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                       <span>via</span>
                       <Select value={quickPayMethod} onValueChange={setQuickPayMethod}>
                         <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex">
@@ -760,7 +842,7 @@ export default function Borrowing() {
                           <SelectValue placeholder="select loan" />
                         </SelectTrigger>
                         <SelectContent>
-                          {activeLoans.map((loan) => {
+                          {filteredLoansForQuickPay.map((loan) => {
                             const lender = getUserById(loan.lender_id);
                             return (
                               <SelectItem key={loan.id} value={loan.id}>
@@ -770,25 +852,12 @@ export default function Borrowing() {
                           })}
                         </SelectContent>
                       </Select>
-                      {quickPayLoanId && activeLoans.find(l => l.id === quickPayLoanId)?.purpose && (
-                        <span className="text-slate-500">({activeLoans.find(l => l.id === quickPayLoanId).purpose})</span>
-                      )}
                       <Button
                         type="button"
-                        onClick={() => {
-                          const loan = activeLoans.find(l => l.id === quickPayLoanId);
-                          if (loan) {
-                            setSelectedLoan({
-                              ...loan,
-                              _prefillAmount: quickPayAmount,
-                              _prefillMethod: quickPayMethod,
-                            });
-                            setShowPaymentModal(true);
-                          }
-                        }}
-                        disabled={!quickPayLoanId || !quickPayAmount}
+                        onClick={handleQuickPaySubmit}
+                        disabled={!quickPayLoanId || !quickPayAmount || !quickPayMethod}
                         className={`h-8 px-4 rounded-lg text-sm font-medium border-0 transition-all ${
-                          !quickPayLoanId || !quickPayAmount
+                          !quickPayLoanId || !quickPayAmount || !quickPayMethod
                             ? 'bg-[#83F384] text-[#DBEEE3] saturate-[0.7] brightness-[0.92] cursor-not-allowed'
                             : 'bg-[#83F384] text-[#DBEEE3] hover:bg-[#83F384]/90'
                         }`}
@@ -1699,6 +1768,141 @@ export default function Borrowing() {
           </div>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Quick Confirm Payment Popup */}
+      <AnimatePresence>
+        {showQuickConfirm && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+            onClick={() => !isQuickProcessing && !isQuickSuccess && setShowQuickConfirm(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-[#DBEEE3] rounded-2xl max-w-md w-full shadow-2xl overflow-hidden"
+            >
+              {isQuickSuccess ? (
+                <div className="p-6 text-center">
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: 'spring', stiffness: 200, damping: 15 }}
+                    className="w-16 h-16 rounded-full bg-[#00A86B] flex items-center justify-center mx-auto mb-4"
+                  >
+                    <Check className="w-8 h-8 text-white" />
+                  </motion.div>
+                  <h3 className="text-xl font-bold text-slate-800 mb-1">Payment Recorded!</h3>
+                  <p className="text-sm text-slate-500 mb-4">Waiting for the Lender to confirm</p>
+                  <div className="bg-[#DBFFEB] rounded-2xl p-4 space-y-2">
+                    <p className="text-2xl font-bold text-slate-800">${parseFloat(quickPayAmount).toFixed(2)}</p>
+                    <p className="text-xs text-slate-500">via {PAYMENT_METHOD_LABELS[quickPayMethod]}</p>
+                    {quickPayTransactionId && (
+                      <p className="text-[10px] font-mono text-slate-400 mt-2">Ref: {quickPayTransactionId}</p>
+                    )}
+                  </div>
+                  <p className="text-xs text-slate-400 mt-3">The loan balance will update once both parties confirm.</p>
+                </div>
+              ) : (
+                <div className="p-5 space-y-4">
+                  {/* Header */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-[#DBFFEB] flex items-center justify-center">
+                        <Shield className="w-4 h-4 text-[#00A86B]" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-slate-800">Confirm Payment</h3>
+                        <p className="text-xs text-slate-500">Review and confirm the details</p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setShowQuickConfirm(false)}
+                      className="w-8 h-8 rounded-full bg-white/60 hover:bg-white flex items-center justify-center transition-colors"
+                    >
+                      <X className="w-4 h-4 text-slate-600" />
+                    </button>
+                  </div>
+
+                  {/* Payment Details */}
+                  <div className="bg-[#DBFFEB] rounded-2xl p-4 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500">Amount</span>
+                      <span className="text-2xl font-bold text-slate-800">${quickPayAmount ? parseFloat(quickPayAmount).toFixed(2) : '0.00'}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500">To</span>
+                      <span className="font-medium text-slate-800">
+                        {quickPayLoanId
+                          ? getUserById(activeLoans.find(l => l.id === quickPayLoanId)?.lender_id)?.full_name || 'Lender'
+                          : '_____'}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500">Method</span>
+                      <span className="font-medium text-slate-800">{PAYMENT_METHOD_LABELS[quickPayMethod] || '_____'}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500">For</span>
+                      <span className="font-medium text-slate-800">
+                        {quickPayLoanId
+                          ? (activeLoans.find(l => l.id === quickPayLoanId)?.purpose || `Loan $${activeLoans.find(l => l.id === quickPayLoanId)?.amount}`)
+                          : '_____'}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500">Date</span>
+                      <span className="font-medium text-slate-800">{format(new Date(), 'MMM d, yyyy')}</span>
+                    </div>
+                  </div>
+
+                  {/* Notice */}
+                  <div className="bg-[#DBFFEB] rounded-xl p-3 flex items-start gap-2">
+                    <AlertCircle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+                    <p className="text-xs text-slate-600">
+                      The Lender will need to confirm this payment. Make sure the details are correct.
+                    </p>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-3 pt-1">
+                    <Button
+                      onClick={() => setShowQuickConfirm(false)}
+                      className="flex-1 bg-white hover:bg-white/80 text-slate-700 border-0 rounded-xl"
+                      disabled={isQuickProcessing}
+                    >
+                      Cancel
+                    </Button>
+                    <motion.div className="flex-1" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                      <Button
+                        onClick={handleQuickPayConfirm}
+                        disabled={isQuickProcessing}
+                        className="w-full bg-[#00A86B] hover:bg-[#0D9B76] text-white rounded-xl"
+                      >
+                        {isQuickProcessing ? (
+                          <>
+                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
+                            Recording...
+                          </>
+                        ) : (
+                          <>
+                            <Check className="w-4 h-4 mr-1" />
+                            Confirm Payment
+                          </>
+                        )}
+                      </Button>
+                    </motion.div>
+                  </div>
+                </div>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }
