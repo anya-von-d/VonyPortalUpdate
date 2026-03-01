@@ -577,7 +577,7 @@ export default function LoanAgreements() {
                 {formatMoney(loan.amount_paid || 0)} / {formatMoney(agreement.total_amount)}
               </span>
             </div>
-            <div className="w-full bg-slate-200 rounded-full h-2">
+            <div className="w-full bg-white rounded-full h-2">
               <div
                 className="bg-[#00A86B] h-2 rounded-full transition-all"
                 style={{ width: `${Math.min(100, ((loan.amount_paid || 0) / agreement.total_amount) * 100)}%` }}

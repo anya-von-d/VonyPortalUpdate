@@ -37,7 +37,7 @@ export default function LoanProgress({ loans, userId }) {
               {formatMoney(lentPaid)} / {formatMoney(totalLent)}
             </span>
           </div>
-          <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
+          <div className="w-full h-2 bg-white rounded-full overflow-hidden">
             <div
               className="h-full bg-gradient-to-r from-green-500 to-green-600 transition-all duration-500"
               style={{ width: `${lentProgress}%` }}
@@ -59,7 +59,7 @@ export default function LoanProgress({ loans, userId }) {
               {formatMoney(borrowedPaid)} / {formatMoney(totalBorrowed)}
             </span>
           </div>
-          <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
+          <div className="w-full h-2 bg-white rounded-full overflow-hidden">
             <div
               className="h-full bg-gradient-to-r transition-all duration-500"
               style={{ width: `${borrowedProgress}%`, backgroundImage: 'linear-gradient(to right, #347571, #2d6360)' }}

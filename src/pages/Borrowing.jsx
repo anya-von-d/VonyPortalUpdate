@@ -937,7 +937,7 @@ export default function Borrowing() {
                                   </div>
                                   <span className="text-xs text-slate-500">{percentPaid}%</span>
                                 </div>
-                                <div className="relative h-3 bg-slate-200 rounded-full overflow-hidden">
+                                <div className="relative h-3 bg-white rounded-full overflow-hidden">
                                   <div
                                     className="absolute top-0 left-0 h-full bg-[#00A86B] rounded-full transition-all duration-500"
                                     style={{ width: `${percentPaid}%` }}
@@ -1842,7 +1842,7 @@ export default function Borrowing() {
                       <span className="font-medium text-slate-800">
                         {quickPayLoanId
                           ? getUserById(activeLoans.find(l => l.id === quickPayLoanId)?.lender_id)?.full_name || 'Lender'
-                          : '_____'}
+                          : '—'}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
@@ -1854,7 +1854,7 @@ export default function Borrowing() {
                       <span className="font-medium text-slate-800">
                         {quickPayLoanId
                           ? (activeLoans.find(l => l.id === quickPayLoanId)?.purpose || `Loan $${activeLoans.find(l => l.id === quickPayLoanId)?.amount}`)
-                          : '_____'}
+                          : '—'}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">

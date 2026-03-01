@@ -1029,7 +1029,7 @@ export default function Lending() {
 
         <div className="bg-[#74FF71] rounded-xl p-4 mb-1">
           <p className="text-xs text-slate-600 mb-1">Purpose</p>
-          <p className="text-sm font-semibold text-slate-800">{loan?.purpose || agreement.purpose || '_____'}</p>
+          <p className="text-sm font-semibold text-slate-800">{loan?.purpose || agreement.purpose || '—'}</p>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
@@ -1330,7 +1330,7 @@ export default function Lending() {
                       <span className="text-[#00A86B] font-medium">
                         {quickPayLoanId
                           ? `@${getUserById(activeLoans.find(l => l.id === quickPayLoanId)?.borrower_id)?.username || 'user'}`
-                          : '@_____'}
+                          : '@—'}
                       </span>
                       <span>via</span>
                       <Select value={quickPayMethod} onValueChange={setQuickPayMethod}>
@@ -1460,7 +1460,7 @@ export default function Lending() {
                                 </div>
                                 <span className="text-xs text-slate-500">{percentPaid}%</span>
                               </div>
-                              <div className="relative h-3 bg-slate-200 rounded-full overflow-hidden">
+                              <div className="relative h-3 bg-white rounded-full overflow-hidden">
                                 <div
                                   className="absolute top-0 left-0 h-full bg-[#00A86B] rounded-full transition-all duration-500"
                                   style={{ width: `${percentPaid}%` }}
@@ -2112,7 +2112,7 @@ export default function Lending() {
                                 return (
                                   <>
                                     , with the first of the{' '}
-                                    <span className="font-bold text-[#00A86B]">{numPayments || '_____'}</span>{' '}
+                                    <span className="font-bold text-[#00A86B]">{numPayments || '—'}</span>{' '}
                                     payments due on{' '}
                                     <Input
                                       type="date"
@@ -2123,7 +2123,7 @@ export default function Lending() {
                                     />{' '}
                                     and the last payment due on{' '}
                                     <span className="font-bold text-[#00A86B]">
-                                      {lastPaymentDate ? format(lastPaymentDate, 'MMM d, yyyy') : '_____'}
+                                      {lastPaymentDate ? format(lastPaymentDate, 'MMM d, yyyy') : '—'}
                                     </span>
                                     .
                                   </>
@@ -2221,10 +2221,10 @@ export default function Lending() {
                         )}
                       </p>
                       <p className="text-2xl font-bold text-slate-800 text-center my-1">
-                        {formData.amount && details.monthlyPayment > 0 ? `$${details.monthlyPayment.toFixed(2)}` : '$_____'}
+                        {formData.amount && details.monthlyPayment > 0 ? `$${details.monthlyPayment.toFixed(2)}` : '$0.00'}
                       </p>
                       <p className="text-xs text-slate-500 text-center">
-                        {formData.payment_frequency || '_____'} after interest
+                        {formData.payment_frequency || '—'} after interest
                       </p>
                     </div>
                   )}
@@ -2237,14 +2237,14 @@ export default function Lending() {
                     <div className="space-y-3">
                       <div className="pb-2 border-b border-[#83F384] flex items-baseline gap-1">
                         <span className="text-slate-600 text-sm flex-shrink-0">For:</span>
-                        <p className={`font-medium truncate ${formData.purpose ? 'text-slate-800' : 'text-slate-400'}`}>{formData.purpose || '_____'}</p>
+                        <p className={`font-medium truncate ${formData.purpose ? 'text-slate-800' : 'text-slate-400'}`}>{formData.purpose || '—'}</p>
                       </div>
                       {/* For repeating payments, show per payment amount and number of payments */}
                       {loanType === 'flexible' && formData.is_repeating && formData.repeating_num_payments ? (
                         <>
                           <div className="flex justify-between">
                             <span className="text-slate-600">Per Payment:</span>
-                            <span className={`font-bold ${formData.amount ? 'text-slate-800' : 'text-slate-400'}`}>{formData.amount ? `$${parseFloat(formData.amount).toLocaleString()}` : '_____'}</span>
+                            <span className={`font-bold ${formData.amount ? 'text-slate-800' : 'text-slate-400'}`}>{formData.amount ? `$${parseFloat(formData.amount).toLocaleString()}` : '$0.00'}</span>
                           </div>
                           <div className="flex justify-between">
                             <span className="text-slate-600">Payments:</span>
@@ -2254,7 +2254,7 @@ export default function Lending() {
                             <div className="flex justify-between text-lg">
                               <span className="text-slate-600">Total:</span>
                               <span className={`font-bold ${formData.amount && formData.repeating_num_payments ? 'text-slate-800' : 'text-slate-400'}`}>
-                                {formData.amount && formData.repeating_num_payments ? `$${(parseFloat(formData.amount) * parseInt(formData.repeating_num_payments)).toFixed(2)}` : '_____'}
+                                {formData.amount && formData.repeating_num_payments ? `$${(parseFloat(formData.amount) * parseInt(formData.repeating_num_payments)).toFixed(2)}` : '$0.00'}
                               </span>
                             </div>
                           </div>
@@ -2263,12 +2263,12 @@ export default function Lending() {
                         <>
                           <div className="flex justify-between">
                             <span className="text-slate-600">Amount:</span>
-                            <span className={`font-bold ${formData.amount ? 'text-slate-800' : 'text-slate-400'}`}>{formData.amount ? `$${parseFloat(formData.amount).toLocaleString()}` : '_____'}</span>
+                            <span className={`font-bold ${formData.amount ? 'text-slate-800' : 'text-slate-400'}`}>{formData.amount ? `$${parseFloat(formData.amount).toLocaleString()}` : '$0.00'}</span>
                           </div>
                           {loanType === 'scheduled' && (
                             <div className="flex justify-between">
                               <span className="text-slate-600">Interest:</span>
-                              <span className={`font-bold ${formData.amount && formData.interest_rate ? 'text-slate-800' : 'text-slate-400'}`}>{formData.amount && formData.interest_rate ? `$${details.totalInterest.toFixed(2)}` : '_____'}</span>
+                              <span className={`font-bold ${formData.amount && formData.interest_rate ? 'text-slate-800' : 'text-slate-400'}`}>{formData.amount && formData.interest_rate ? `$${details.totalInterest.toFixed(2)}` : '$0.00'}</span>
                             </div>
                           )}
                           <div className="border-t border-[#83F384] pt-2">
@@ -2279,7 +2279,7 @@ export default function Lending() {
                                   ? `$${loanType === 'flexible'
                                       ? parseFloat(formData.amount).toFixed(2)
                                       : details.totalAmount.toFixed(2)}`
-                                  : '_____'}
+                                  : '$0.00'}
                               </span>
                             </div>
                           </div>
