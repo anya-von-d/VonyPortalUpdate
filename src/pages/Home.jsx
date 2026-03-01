@@ -254,7 +254,7 @@ export default function Home() {
               <PendingLoanOffers offers={pendingOffers} />
             )}
 
-            <div className="bg-[#DBFFEB] rounded-2xl p-5 relative">
+            <div className="bg-[#DBFFEB] rounded-2xl p-4 relative">
               {/* Left Arrow - on outer box */}
               <button
                 onClick={() => setOverviewType(overviewType === 'lending' ? 'borrowing' : 'lending')}
@@ -277,20 +277,21 @@ export default function Home() {
                 </svg>
               </button>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
                 {/* Pie Chart Card with Carousel */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, ease: "easeOut" }}
+                  className="flex flex-col"
                 >
                   {/* Title */}
-                  <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                  <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-3" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                     {overviewType === 'lending' ? 'Lending Overview' : 'Borrowing Overview'}
                   </p>
 
                   <div
-                    className="rounded-xl p-4 flex flex-col items-center justify-center transition-colors duration-300"
+                    className="rounded-xl p-3 flex flex-col items-center justify-center transition-colors duration-300 flex-1"
                     style={{ backgroundColor: overviewType === 'lending' ? '#83F384' : '#6EE8B5' }}
                   >
                     <motion.div
@@ -310,7 +311,7 @@ export default function Home() {
 
                           return (
                             <>
-                              <div className="relative w-32 h-32">
+                              <div className="relative w-24 h-24">
                                 <svg className="w-full h-full transform -rotate-90" viewBox="0 0 120 120">
                                   <circle cx="60" cy="60" r="52" fill="none" stroke="#DBFFEB" strokeWidth="7" />
                                   <circle
@@ -327,11 +328,11 @@ export default function Home() {
                                   />
                                 </svg>
                                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                  <span className="text-2xl font-bold text-slate-800">{percentRepaid}%</span>
-                                  <span className="text-[10px] text-slate-500 uppercase tracking-wider">Repaid</span>
+                                  <span className="text-lg font-bold text-slate-800">{percentRepaid}%</span>
+                                  <span className="text-[9px] text-slate-500 uppercase tracking-wider">Repaid</span>
                                 </div>
                               </div>
-                              <div className="mt-3 text-center">
+                              <div className="mt-2 text-center">
                                 <p className="text-xs text-slate-500">
                                   {formatMoney(totalRepaid)} of {formatMoney(totalLentAmount)}
                                 </p>
@@ -347,7 +348,7 @@ export default function Home() {
 
                           return (
                             <>
-                              <div className="relative w-32 h-32">
+                              <div className="relative w-24 h-24">
                                 <svg className="w-full h-full transform -rotate-90" viewBox="0 0 120 120">
                                   <circle cx="60" cy="60" r="52" fill="none" stroke="#DBFFEB" strokeWidth="7" />
                                   <circle
@@ -364,11 +365,11 @@ export default function Home() {
                                   />
                                 </svg>
                                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                  <span className="text-2xl font-bold text-slate-800">{percentPaid}%</span>
-                                  <span className="text-[10px] text-slate-500 uppercase tracking-wider">Paid</span>
+                                  <span className="text-lg font-bold text-slate-800">{percentPaid}%</span>
+                                  <span className="text-[9px] text-slate-500 uppercase tracking-wider">Paid</span>
                                 </div>
                               </div>
-                              <div className="mt-3 text-center">
+                              <div className="mt-2 text-center">
                                 <p className="text-xs text-slate-500">
                                   {formatMoney(totalPaidBack)} of {formatMoney(totalBorrowedAmount)}
                                 </p>
@@ -404,7 +405,8 @@ export default function Home() {
 
                     return (
                       <>
-                        <div className="mt-[28px]">
+                        <div className="flex flex-col">
+                          <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-3 invisible" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>Spacer</p>
                           <StatsCard
                             title="Next Payment"
                             value={nextLenderPayment ? formatMoney(nextLenderPayment.payment_amount || 0) : '-'}
@@ -419,10 +421,11 @@ export default function Home() {
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ duration: 0.4, delay: 0.2, ease: "easeOut" }}
                           whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                          className="mt-[28px]"
+                          className="flex flex-col"
                         >
-                          <Card className="backdrop-blur-sm hover:shadow-xl transition-all duration-300 h-full cursor-default border-0" style={{ backgroundColor: '#83F384' }}>
-                            <CardContent className="p-5 flex flex-col h-full">
+                          <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-3 invisible" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>Spacer</p>
+                          <Card className="backdrop-blur-sm hover:shadow-xl transition-all duration-300 flex-1 cursor-default border-0" style={{ backgroundColor: '#83F384' }}>
+                            <CardContent className="p-4 flex flex-col h-full">
                               <p className="text-sm font-medium text-slate-600 mb-2 text-left">Next Payment Date</p>
                               {nextLenderPayment ? (
                                 <>
@@ -471,7 +474,8 @@ export default function Home() {
 
                     return (
                       <>
-                        <div className="mt-[28px]">
+                        <div className="flex flex-col">
+                          <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-3 invisible" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>Spacer</p>
                           <StatsCard
                             title="Next Payment"
                             value={nextBorrowerPayment ? formatMoney(nextBorrowerPayment.payment_amount || 0) : '-'}
@@ -486,10 +490,11 @@ export default function Home() {
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ duration: 0.4, delay: 0.2, ease: "easeOut" }}
                           whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                          className="mt-[28px]"
+                          className="flex flex-col"
                         >
-                          <Card className="backdrop-blur-sm hover:shadow-xl transition-all duration-300 h-full cursor-default border-0" style={{ backgroundColor: '#6EE8B5' }}>
-                            <CardContent className="p-5 flex flex-col h-full">
+                          <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-3 invisible" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>Spacer</p>
+                          <Card className="backdrop-blur-sm hover:shadow-xl transition-all duration-300 flex-1 cursor-default border-0" style={{ backgroundColor: '#6EE8B5' }}>
+                            <CardContent className="p-4 flex flex-col h-full">
                               <p className="text-sm font-medium text-slate-600 mb-2 text-left">Next Payment Date</p>
                               {nextBorrowerPayment ? (
                                 <>
@@ -673,14 +678,14 @@ export default function Home() {
                                 {/* Payment Indicators */}
                                 <div className="flex gap-0.5 absolute bottom-0.5">
                                   {hasSend && (
-                                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#96FFD0' }} />
+                                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#35B276' }} />
                                   )}
                                   {hasReceive && (
-                                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#AAFFA3' }} />
+                                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#74FF71' }} />
                                   )}
                                 </div>
                                 {(hasSend || hasReceive) && (
-                                  <div className="absolute inset-0 rounded-lg" style={{ backgroundColor: hasSend && hasReceive ? '#6EE8A2' : hasSend ? '#96FFD0' : '#AAFFA3', opacity: 0.3, zIndex: -1 }} />
+                                  <div className="absolute inset-0 rounded-lg" style={{ backgroundColor: hasSend && hasReceive ? '#6EE8A2' : hasSend ? '#35B276' : '#74FF71', opacity: 0.3, zIndex: -1 }} />
                                 )}
                               </div>
                             );
@@ -692,11 +697,11 @@ export default function Home() {
                     {/* Legend */}
                     <div className="flex items-center justify-center gap-6 mt-4 pt-3 border-t border-white/50">
                       <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#96FFD0' }} />
+                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#35B276' }} />
                         <span className="text-sm font-medium text-slate-700">Send</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#AAFFA3' }} />
+                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#74FF71' }} />
                         <span className="text-sm font-medium text-slate-700">Receive</span>
                       </div>
                       <div className="flex items-center gap-2">

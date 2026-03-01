@@ -49,12 +49,13 @@ export default function StatsCard({ title, value, icon: Icon, color, change, isL
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: index * 0.1, ease: "easeOut" }}
       whileHover={{ y: -4, transition: { duration: 0.2 } }}
+      className="h-full"
     >
       <Card
         className="backdrop-blur-sm hover:shadow-xl transition-all duration-300 group h-full cursor-default border-0"
         style={{ backgroundColor: bgColor || 'white' }}
       >
-        <CardContent className="p-5 flex flex-col h-full">
+        <CardContent className="p-4 flex flex-col h-full">
           <p className="text-sm font-medium text-slate-600 mb-2 text-left">{title}</p>
           <motion.p
             className="text-lg font-bold text-slate-800 text-center flex-1 flex items-center justify-center"
