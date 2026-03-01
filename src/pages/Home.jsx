@@ -307,38 +307,33 @@ export default function Home() {
                           const totalLentAmount = lentLoans.reduce((sum, loan) => sum + (loan.total_amount || loan.amount || 0), 0);
                           const totalRepaid = lentLoans.reduce((sum, loan) => sum + (loan.amount_paid || 0), 0);
                           const percentRepaid = totalLentAmount > 0 ? Math.round((totalRepaid / totalLentAmount) * 100) : 0;
-                          const circumference = 2 * Math.PI * 40;
-                          const strokeDashoffset = circumference - (percentRepaid / 100) * circumference;
 
                           return (
                             <>
-                              <div className="relative w-24 h-24">
-                                <svg className="w-full h-full transform -rotate-90">
-                                  <circle cx="48" cy="48" r="40" fill="none" stroke="#e2e8f0" strokeWidth="8" />
+                              <div className="relative w-32 h-32">
+                                <svg className="w-full h-full transform -rotate-90" viewBox="0 0 120 120">
+                                  <circle cx="60" cy="60" r="50" fill="none" stroke="#e2e8f0" strokeWidth="12" />
                                   <circle
-                                    cx="48"
-                                    cy="48"
-                                    r="40"
+                                    cx="60"
+                                    cy="60"
+                                    r="50"
                                     fill="none"
                                     stroke="#00A86B"
-                                    strokeWidth="8"
+                                    strokeWidth="12"
                                     strokeLinecap="round"
-                                    strokeDasharray={circumference}
-                                    strokeDashoffset={strokeDashoffset}
+                                    strokeDasharray={2 * Math.PI * 50}
+                                    strokeDashoffset={2 * Math.PI * 50 - (percentRepaid / 100) * 2 * Math.PI * 50}
                                     className="transition-all duration-500"
                                   />
                                 </svg>
                                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                  <span className="text-lg font-bold text-slate-800">{percentRepaid}%</span>
-                                  <span className="text-[10px] text-slate-500">Repaid</span>
+                                  <span className="text-2xl font-bold text-slate-800">{percentRepaid}%</span>
+                                  <span className="text-[10px] text-slate-500 uppercase tracking-wider">Repaid</span>
                                 </div>
                               </div>
                               <div className="mt-3 text-center">
                                 <p className="text-xs text-slate-500">
                                   {formatMoney(totalRepaid)} of {formatMoney(totalLentAmount)}
-                                </p>
-                                <p className="text-xs text-slate-400 mt-1">
-                                  {lentLoans.length} active loan{lentLoans.length !== 1 ? 's' : ''}
                                 </p>
                               </div>
                             </>
@@ -349,38 +344,33 @@ export default function Home() {
                           const totalBorrowedAmount = borrowedLoans.reduce((sum, loan) => sum + (loan.total_amount || loan.amount || 0), 0);
                           const totalPaidBack = borrowedLoans.reduce((sum, loan) => sum + (loan.amount_paid || 0), 0);
                           const percentPaid = totalBorrowedAmount > 0 ? Math.round((totalPaidBack / totalBorrowedAmount) * 100) : 0;
-                          const circumference = 2 * Math.PI * 40;
-                          const strokeDashoffset = circumference - (percentPaid / 100) * circumference;
 
                           return (
                             <>
-                              <div className="relative w-24 h-24">
-                                <svg className="w-full h-full transform -rotate-90">
-                                  <circle cx="48" cy="48" r="40" fill="none" stroke="#e2e8f0" strokeWidth="8" />
+                              <div className="relative w-32 h-32">
+                                <svg className="w-full h-full transform -rotate-90" viewBox="0 0 120 120">
+                                  <circle cx="60" cy="60" r="50" fill="none" stroke="#e2e8f0" strokeWidth="12" />
                                   <circle
-                                    cx="48"
-                                    cy="48"
-                                    r="40"
+                                    cx="60"
+                                    cy="60"
+                                    r="50"
                                     fill="none"
-                                    stroke="#3B82F6"
-                                    strokeWidth="8"
+                                    stroke="#00A86B"
+                                    strokeWidth="12"
                                     strokeLinecap="round"
-                                    strokeDasharray={circumference}
-                                    strokeDashoffset={strokeDashoffset}
+                                    strokeDasharray={2 * Math.PI * 50}
+                                    strokeDashoffset={2 * Math.PI * 50 - (percentPaid / 100) * 2 * Math.PI * 50}
                                     className="transition-all duration-500"
                                   />
                                 </svg>
                                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                  <span className="text-lg font-bold text-slate-800">{percentPaid}%</span>
-                                  <span className="text-[10px] text-slate-500">Paid</span>
+                                  <span className="text-2xl font-bold text-slate-800">{percentPaid}%</span>
+                                  <span className="text-[10px] text-slate-500 uppercase tracking-wider">Paid</span>
                                 </div>
                               </div>
                               <div className="mt-3 text-center">
                                 <p className="text-xs text-slate-500">
                                   {formatMoney(totalPaidBack)} of {formatMoney(totalBorrowedAmount)}
-                                </p>
-                                <p className="text-xs text-slate-400 mt-1">
-                                  {borrowedLoans.length} active loan{borrowedLoans.length !== 1 ? 's' : ''}
                                 </p>
                               </div>
                             </>

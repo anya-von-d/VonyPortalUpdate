@@ -1815,7 +1815,7 @@ export default function Borrowing() {
                       <span className="font-medium text-slate-800">
                         {quickPayLoanId
                           ? getUserById(activeLoans.find(l => l.id === quickPayLoanId)?.lender_id)?.full_name || 'Lender'
-                          : '—'}
+                          : '_'}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
@@ -1827,7 +1827,7 @@ export default function Borrowing() {
                       <span className="font-medium text-slate-800">
                         {quickPayLoanId
                           ? (activeLoans.find(l => l.id === quickPayLoanId)?.purpose || `Loan $${activeLoans.find(l => l.id === quickPayLoanId)?.amount}`)
-                          : '—'}
+                          : '_'}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">

@@ -1,12 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import { User, PublicProfile } from "@/entities/all";
 import { UploadFile } from "@/integrations/Core";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
@@ -18,18 +16,14 @@ import {
   Mail,
   Phone,
   Shield,
-  TrendingUp,
   CheckCircle,
   XCircle,
   MapPin,
   Camera,
   AtSign,
   LogOut,
-  Palette,
   Image,
   Trash2,
-  PiggyBank,
-  Sun,
   Landmark,
   Clock
 } from "lucide-react";
@@ -78,6 +72,7 @@ export default function Profile() {
   const [showComingSoonModal, setShowComingSoonModal] = useState(false);
   const fileInputRef = useRef(null);
   const cameraInputRef = useRef(null);
+  const photoMenuRef = useRef(null);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     full_name: '',
@@ -91,6 +86,21 @@ export default function Profile() {
   useEffect(() => {
     loadUserData();
   }, []);
+
+  // Close photo menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (photoMenuRef.current && !photoMenuRef.current.contains(event.target)) {
+        setShowPhotoMenu(false);
+      }
+    };
+    if (showPhotoMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showPhotoMenu]);
 
   const loadUserData = async () => {
     setIsLoading(true);
@@ -163,21 +173,6 @@ export default function Profile() {
       }, 500);
     }
 
-    // Auto-save theme preference
-    if (field === 'theme_preference') {
-      handleThemeChange(value);
-    }
-  };
-
-  const handleThemeChange = async (theme) => {
-    try {
-      await User.updateMyUserData({ theme_preference: theme });
-      setUser(prev => ({ ...prev, theme_preference: theme }));
-      // Dispatch event to notify Layout about theme change
-      window.dispatchEvent(new Event('themeChanged'));
-    } catch (error) {
-      console.error("Error updating theme:", error);
-    }
   };
 
   const handleProfilePictureChange = async (e) => {
@@ -271,12 +266,12 @@ export default function Profile() {
   if (isLoading) {
     return (
       <div className="min-h-screen p-6 flex items-center justify-center" style={{background: `linear-gradient(to bottom right, rgb(var(--theme-bg-from)), rgb(var(--theme-bg-to)))`}}>
-        <Card className="bg-[#DBFFEB] backdrop-blur-sm border-0 p-8">
+        <div className="bg-[#DBFFEB] rounded-2xl p-8">
           <div className="text-center">
             <div className="w-8 h-8 border-2 border-green-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
             <p className="text-slate-600">Loading profile...</p>
           </div>
-        </Card>
+        </div>
       </div>
     );
   }
@@ -285,18 +280,18 @@ export default function Profile() {
   if (error && !user) {
     return (
       <div className="min-h-screen p-6 flex items-center justify-center" style={{background: `linear-gradient(to bottom right, rgb(var(--theme-bg-from)), rgb(var(--theme-bg-to)))`}}>
-        <Card className="bg-[#DBFFEB] backdrop-blur-sm border-0 p-8 max-w-md">
+        <div className="bg-[#DBFFEB] rounded-2xl p-8 max-w-md">
           <div className="text-center">
             <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <XCircle className="w-8 h-8 text-red-600" />
             </div>
             <h3 className="text-lg font-semibold text-slate-800 mb-2">Connection Error</h3>
             <p className="text-slate-600 mb-4">{error}</p>
-            <Button onClick={loadUserData} className="bg-green-600 hover:bg-green-700">
+            <Button onClick={loadUserData} className="bg-[#00A86B] hover:bg-[#0D9B76] text-white">
               Try Again
             </Button>
           </div>
-        </Card>
+        </div>
       </div>
     );
   }
@@ -305,7 +300,7 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen p-3 md:p-6 overflow-x-hidden w-full max-w-full" style={{background: `linear-gradient(to bottom right, rgb(var(--theme-bg-from)), rgb(var(--theme-bg-to)))`}}>
-      <div className="max-w-4xl mx-auto space-y-6 md:space-y-8 overflow-hidden w-full">
+      <div className="max-w-4xl mx-auto space-y-7 overflow-hidden w-full">
         {/* Error Alert */}
         {error && (
           <motion.div
@@ -324,23 +319,25 @@ export default function Profile() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center py-4 md:py-6"
+          className="py-5"
         >
+          <h1 className="text-4xl md:text-5xl font-bold text-slate-800 mb-4 tracking-tight text-left">
+            Profile
+          </h1>
+          <div className="flex flex-col items-center">
           <div className="relative inline-block group">
             <img
               src={formData.profile_picture_url || `https://ui-avatars.com/api/?name=${encodeURIComponent((user.full_name || 'User').charAt(0))}&background=22c55e&color=fff&size=128`}
               alt="Profile"
               className="w-24 h-24 md:w-32 md:h-32 rounded-full mx-auto object-cover border-4 border-white shadow-lg"
             />
-            {isEditing && (
-              <button 
-                onClick={() => setShowPhotoMenu(!showPhotoMenu)}
-                className="absolute inset-0 w-full h-full bg-black/50 rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity"
-                disabled={isSaving}
-              >
-                <Camera className="w-8 h-8"/>
-              </button>
-            )}
+            <button
+              onClick={() => setShowPhotoMenu(!showPhotoMenu)}
+              className="absolute inset-0 w-full h-full bg-black/50 rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity"
+              disabled={isSaving}
+            >
+              <Camera className="w-8 h-8"/>
+            </button>
             <input 
               type="file" 
               ref={fileInputRef} 
@@ -359,6 +356,7 @@ export default function Profile() {
             
             {showPhotoMenu && (
               <motion.div
+                ref={photoMenuRef}
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 className="absolute top-full mt-2 left-1/2 -translate-x-1/2 bg-white rounded-lg shadow-lg border border-slate-200 overflow-hidden z-10"
@@ -397,12 +395,13 @@ export default function Profile() {
           </p>
           <Button
             variant="outline"
-            onClick={() => setIsEditing(!isEditing)}
+            onClick={() => setShowPhotoMenu(!showPhotoMenu)}
             disabled={isSaving}
             className="mt-4"
           >
-            {isEditing ? 'Cancel' : 'Edit Profile'}
+            Edit Profile Photo
           </Button>
+          </div>
         </motion.div>
 
         {/* Coming Soon Modal */}
@@ -435,117 +434,137 @@ export default function Profile() {
           {/* Profile Info */}
           <div className="lg:col-span-2 space-y-4 md:space-y-6 min-w-0 w-full">
             {/* Personal Information - First */}
-            <Card className="bg-[#DBFFEB] backdrop-blur-sm border-0 overflow-hidden w-full">
-              <CardHeader className="pb-3 px-3 md:px-6">
-                <CardTitle className="flex items-center gap-2 text-base md:text-xl">
-                  <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
-                    <UserIcon className="w-4 h-4 text-green-600" />
-                  </div>
-                  Personal Information
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-3 md:p-6 pt-3">
-                <div className="space-y-4 md:space-y-6">
-                  {/* Name and Email fields */}
-                  <div className="grid md:grid-cols-2 gap-3 md:gap-6">
-                    <div className="space-y-2">
-                      <Label htmlFor="full_name" className="flex items-center gap-2">
-                        <UserIcon className="w-4 h-4 text-slate-500" />
-                        Full Name
-                      </Label>
-                      <Input
-                        id="full_name"
-                        value={formData.full_name}
-                        disabled
-                        placeholder="Enter your full name"
-                        className="bg-slate-50"
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label className="flex items-center gap-2">
-                        <Mail className="w-4 h-4 text-slate-500" />
-                        Email Address
-                      </Label>
-                      <Input
-                        value={user.email || 'Not provided'}
-                        disabled
-                        className="bg-slate-50"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Username Field */}
+            <div className="bg-[#DBFFEB] rounded-2xl p-5 w-full">
+              <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                Personal Information
+              </p>
+              <div className="space-y-4 md:space-y-6">
+                {/* Name and Email fields */}
+                <div className="grid md:grid-cols-2 gap-3 md:gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="username" className="flex items-center gap-2">
-                      <AtSign className="w-4 h-4 text-green-600" />
-                      Username
+                    <Label htmlFor="full_name" className="flex items-center gap-2">
+                      <UserIcon className="w-4 h-4 text-slate-500" />
+                      Full Name
                     </Label>
                     <Input
-                      id="username"
-                      value={formData.username}
-                      onChange={(e) => handleInputChange('username', e.target.value)}
-                      disabled={!isEditing || isSaving}
-                      placeholder="Choose a unique username"
-                      className={!isEditing ? 'bg-slate-50' : usernameError ? 'border-red-300' : ''}
-                      required
+                      id="full_name"
+                      value={formData.full_name}
+                      disabled
+                      placeholder="Enter your full name"
+                      className="bg-slate-50"
                     />
-                    {isCheckingUsername && (
-                      <p className="text-xs text-blue-600">Checking availability...</p>
-                    )}
-                    {usernameError && (
-                      <p className="text-xs text-red-600">{usernameError}</p>
-                    )}
-                    {isEditing && !usernameError && formData.username && formData.username !== user.username && !isCheckingUsername && (
-                      <p className="text-xs text-green-600">Username is available!</p>
-                    )}
                   </div>
 
-                  {/* Editable fields */}
-                  <div className="grid md:grid-cols-2 gap-3 md:gap-6">
-                    <div className="space-y-2">
-                      <Label htmlFor="phone" className="flex items-center gap-2">
-                        <Phone className="w-4 h-4 text-blue-600" />
-                        Phone Number
-                      </Label>
-                      <Input
-                        id="phone"
-                        value={formData.phone}
-                        onChange={(e) => handleInputChange('phone', e.target.value)}
-                        disabled={!isEditing || isSaving}
-                        placeholder="Enter your phone number"
-                        className={!isEditing ? 'bg-slate-50' : ''}
-                      />
-                    </div>
+                  <div className="space-y-2">
+                    <Label className="flex items-center gap-2">
+                      <Mail className="w-4 h-4 text-slate-500" />
+                      Email Address
+                    </Label>
+                    <Input
+                      value={user.email || 'Not provided'}
+                      disabled
+                      className="bg-slate-50"
+                    />
+                  </div>
+                </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="location" className="flex items-center gap-2">
-                        <MapPin className="w-4 h-4 text-red-600" />
-                        Location
-                      </Label>
-                      <Input
-                        id="location"
-                        value={formData.location}
-                        onChange={(e) => handleInputChange('location', e.target.value)}
-                        disabled={!isEditing || isSaving}
-                        placeholder="City, State"
-                        className={!isEditing ? 'bg-slate-50' : ''}
-                      />
-                    </div>
+                {/* Username Field */}
+                <div className="space-y-2">
+                  <Label htmlFor="username" className="flex items-center gap-2">
+                    <AtSign className="w-4 h-4 text-green-600" />
+                    Username
+                  </Label>
+                  <Input
+                    id="username"
+                    value={formData.username}
+                    onChange={(e) => handleInputChange('username', e.target.value)}
+                    disabled={!isEditing || isSaving}
+                    placeholder="Choose a unique username"
+                    className={!isEditing ? 'bg-slate-50' : usernameError ? 'border-red-300' : ''}
+                    required
+                  />
+                  {isCheckingUsername && (
+                    <p className="text-xs text-blue-600">Checking availability...</p>
+                  )}
+                  {usernameError && (
+                    <p className="text-xs text-red-600">{usernameError}</p>
+                  )}
+                  {isEditing && !usernameError && formData.username && formData.username !== user.username && !isCheckingUsername && (
+                    <p className="text-xs text-green-600">Username is available!</p>
+                  )}
+                </div>
+
+                {/* Editable fields */}
+                <div className="grid md:grid-cols-2 gap-3 md:gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="phone" className="flex items-center gap-2">
+                      <Phone className="w-4 h-4 text-blue-600" />
+                      Phone Number
+                    </Label>
+                    <Input
+                      id="phone"
+                      value={formData.phone}
+                      onChange={(e) => handleInputChange('phone', e.target.value)}
+                      disabled={!isEditing || isSaving}
+                      placeholder="Enter your phone number"
+                      className={!isEditing ? 'bg-slate-50' : ''}
+                    />
                   </div>
 
-                  {isEditing && (
+                  <div className="space-y-2">
+                    <Label htmlFor="location" className="flex items-center gap-2">
+                      <MapPin className="w-4 h-4 text-red-600" />
+                      Location
+                    </Label>
+                    <Input
+                      id="location"
+                      value={formData.location}
+                      onChange={(e) => handleInputChange('location', e.target.value)}
+                      disabled={!isEditing || isSaving}
+                      placeholder="City, State"
+                      className={!isEditing ? 'bg-slate-50' : ''}
+                    />
+                  </div>
+                </div>
+
+                {isEditing ? (
+                  <div className="flex gap-3">
                     <Button
                       onClick={handleSave}
                       disabled={isSaving || usernameError || isCheckingUsername}
-                      className="bg-green-600 hover:bg-green-700 font-semibold"
+                      className="bg-[#00A86B] hover:bg-[#0D9B76] text-white font-semibold"
                     >
                       {isSaving ? 'Saving...' : 'Save Changes'}
                     </Button>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setIsEditing(false);
+                        // Reset form data to original user data
+                        setFormData({
+                          full_name: user?.full_name || '',
+                          username: user?.username || '',
+                          phone: user?.phone || '',
+                          location: user?.location || '',
+                          profile_picture_url: user?.profile_picture_url || '',
+                          theme_preference: user?.theme_preference || 'morning'
+                        });
+                        setUsernameError(null);
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                ) : (
+                  <Button
+                    onClick={() => setIsEditing(true)}
+                    className="bg-[#00A86B] hover:bg-[#0D9B76] text-white font-semibold"
+                  >
+                    Edit Personal Information
+                  </Button>
+                )}
+              </div>
+            </div>
 
             {/* Payment Methods - Second */}
             <PaymentMethodsConnect />
@@ -554,19 +573,16 @@ export default function Profile() {
           {/* Stats & Verification */}
           <div className="space-y-4 md:space-y-6 min-w-0 w-full">
             {/* Bank Account Connection */}
-            <Card className="bg-[#DBFFEB] backdrop-blur-sm border-0 overflow-hidden w-full">
-              <CardHeader className="px-3 md:px-6">
-                <CardTitle className="flex items-center gap-2 text-base md:text-lg">
-                  <Landmark className="w-5 h-5 text-green-600" />
-                  Bank Account
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4 px-3 md:px-6">
+            <div className="bg-[#DBFFEB] rounded-2xl p-5 w-full">
+              <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                Bank Account
+              </p>
+              <div className="space-y-4">
                 <p className="text-sm text-slate-600">
                   Securely connect your bank account using Plaid & Dwolla to enable bank transfers.
                 </p>
                 <Button
-                  className="w-full bg-green-600 hover:bg-green-700 text-white"
+                  className="w-full bg-[#00A86B] hover:bg-[#0D9B76] text-white"
                   onClick={() => setShowComingSoonModal(true)}
                 >
                   <Landmark className="w-4 h-4 mr-2" />
@@ -575,18 +591,15 @@ export default function Profile() {
                 <p className="text-xs text-slate-500 text-center">
                   Powered by Plaid & Dwolla - Bank grade security
                 </p>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
             {/* Verification Status */}
-            <Card className="bg-[#DBFFEB] backdrop-blur-sm border-0 overflow-hidden w-full">
-              <CardHeader className="px-3 md:px-6">
-                <CardTitle className="flex items-center gap-2 text-base md:text-lg">
-                  <Shield className="w-5 h-5 text-green-600" />
-                  Verification
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4 px-3 md:px-6">
+            <div className="bg-[#DBFFEB] rounded-2xl p-5 w-full">
+              <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                Verification
+              </p>
+              <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium">Email Verified</span>
                   <Badge className="bg-green-100 text-green-800 border-green-200">
@@ -620,40 +633,8 @@ export default function Profile() {
                     )}
                   </Badge>
                 </div>
-              </CardContent>
-            </Card>
-
-            {/* Theme Preference */}
-            <Card className="bg-[#DBFFEB] backdrop-blur-sm border-0 overflow-hidden w-full">
-              <CardHeader className="px-3 md:px-6">
-                <CardTitle className="flex items-center gap-2 text-base md:text-lg">
-                  <Palette className="w-5 h-5 text-purple-600" />
-                  Theme
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="px-3 md:px-6">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-slate-600">Appearance</span>
-                  <button
-                    type="button"
-                    onClick={() => handleInputChange('theme_preference', formData.theme_preference === 'morning' ? 'afternoon' : 'morning')}
-                    className={`relative w-20 h-10 rounded-full transition-all duration-300 ${
-                      formData.theme_preference === 'afternoon' ? 'bg-[#35B276]/30' : 'bg-[#F5DEB3]/30'
-                    }`}
-                  >
-                    <div className={`absolute top-1 left-1 w-8 h-8 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 ${
-                      formData.theme_preference === 'afternoon' ? 'translate-x-10 bg-[#35B276]' : 'translate-x-0 bg-[#F5DEB3]'
-                    }`}>
-                      {formData.theme_preference === 'morning' ? (
-                        <Sun className="w-4 h-4 text-white" />
-                      ) : (
-                        <PiggyBank className="w-4 h-4 text-white" />
-                      )}
-                    </div>
-                  </button>
-                </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
           </div>
         </div>
