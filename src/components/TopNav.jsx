@@ -40,12 +40,14 @@ const moreMenuItems = [
     url: createPageUrl("RecentActivity"),
   },
   {
-    title: "Learn (Coming Soon)",
+    title: "Learn",
     url: createPageUrl("Learn"),
+    comingSoon: true,
   },
   {
-    title: "Financial Products (Coming Soon)",
+    title: "Financial Products",
     url: createPageUrl("Shop"),
+    comingSoon: true,
   },
   {
     title: "Profile",
@@ -157,6 +159,7 @@ export default function TopNav({ location }) {
           {/* Mobile: Centered Logo */}
           <Link
             to={createPageUrl("Home")}
+            onClick={() => handleNavClick(createPageUrl("Home"))}
             className="md:hidden absolute left-1/2 -translate-x-1/2 font-display italic text-3xl text-[#0A1A10] tracking-wide"
           >
             Vony
@@ -169,6 +172,7 @@ export default function TopNav({ location }) {
               <Link
                 key={item.title}
                 to={item.url}
+                onClick={() => handleNavClick(item.url)}
                 className={`font-sans text-sm font-medium transition-colors duration-200 ${
                   location.pathname === item.url
                     ? "text-[#0A1A10]"
@@ -182,6 +186,7 @@ export default function TopNav({ location }) {
             {/* Center: Logo with extra horizontal margin */}
             <Link
               to={createPageUrl("Home")}
+              onClick={() => handleNavClick(createPageUrl("Home"))}
               className="font-display italic text-3xl text-[#0A1A10] tracking-wide mx-2"
             >
               Vony
@@ -192,6 +197,7 @@ export default function TopNav({ location }) {
               <Link
                 key={item.title}
                 to={item.url}
+                onClick={() => handleNavClick(item.url)}
                 className={`font-sans text-sm font-medium transition-colors duration-200 ${
                   location.pathname === item.url
                     ? "text-[#0A1A10]"
@@ -206,6 +212,7 @@ export default function TopNav({ location }) {
           {/* My Profile Button (Right) */}
           <Link
             to={createPageUrl("Profile")}
+            onClick={() => handleNavClick(createPageUrl("Profile"))}
             className="px-4 md:px-5 py-1.5 md:py-2 bg-[#36CE8E] hover:bg-[#36CE8E]/85 text-[#0A1A10] font-sans text-sm font-semibold rounded-lg shadow-md shadow-black/10 transition-all duration-200"
           >
             My Profile
@@ -232,21 +239,25 @@ export default function TopNav({ location }) {
               animate="visible"
               exit="exit"
             >
-              <div className="flex flex-col items-start w-full max-w-xs mx-auto pl-6">
+              <div className="flex flex-col items-center w-full">
                 {allNavItems.map((item) => (
-                  <motion.div key={item.title} variants={itemVariants} className="w-full">
+                  <motion.div key={item.title} variants={itemVariants} className="text-center">
                     <Link
                       to={item.url}
                       onClick={() => handleNavClick(item.url)}
-                      className={`flex items-center gap-3 py-2 text-2xl md:text-3xl font-bold tracking-tight transition-colors duration-200 ${
+                      className={`block py-2 text-2xl md:text-3xl font-bold tracking-tight transition-colors duration-200 ${
                         location.pathname === item.url
                           ? "text-[#0A1A10]"
                           : "text-[#0A1A10]/70 hover:text-[#0A1A10]"
                       }`}
                     >
-                      <span className="text-base">•</span>
                       {item.title}
                     </Link>
+                    {item.comingSoon && (
+                      <p className="text-xs text-[#0A1A10]/40 -mt-1 mb-1" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                        Coming Soon
+                      </p>
+                    )}
                   </motion.div>
                 ))}
               </div>

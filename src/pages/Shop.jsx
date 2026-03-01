@@ -131,7 +131,7 @@ export default function Shop() {
   const loanSubBoxColors = ['#6EE8A2', '#96FFD0', '#74FF71'];
 
   return (
-    <div className="min-h-screen p-6" style={{background: `linear-gradient(to bottom right, rgb(var(--theme-bg-from)), rgb(var(--theme-bg-to)))`}}>
+    <div className="min-h-screen p-3 md:p-6" style={{background: `linear-gradient(to bottom right, rgb(var(--theme-bg-from)), rgb(var(--theme-bg-to)))`}}>
       <div className="max-w-4xl mx-auto space-y-7">
         {/* Header */}
         <motion.div
@@ -149,12 +149,12 @@ export default function Shop() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="rounded-2xl p-5"
-          style={{ backgroundColor: '#83F384' }}
         >
-          <p className="text-center text-slate-800 font-semibold text-lg">
-            Loan and Credit Card Offers Coming Soon
-          </p>
+          <div className="rounded-xl p-3 flex items-center justify-between" style={{ backgroundColor: '#83F384' }}>
+            <p className="text-[11px] text-[#0A1A10] uppercase tracking-[0.12em] font-medium" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+              Loan and Credit Card Offers Coming Soon
+            </p>
+          </div>
         </motion.div>
 
         {/* Tab Navigation */}
@@ -162,10 +162,10 @@ export default function Shop() {
           <Button
             onClick={() => setActiveTab('cards')}
             variant={activeTab === 'cards' ? 'default' : 'outline'}
-            className={`whitespace-nowrap ${
+            className={`whitespace-nowrap rounded-xl ${
               activeTab === 'cards'
                 ? 'bg-[#00A86B] hover:bg-[#0D9B76] text-white'
-                : 'bg-white border-0 text-slate-600 hover:bg-slate-50'
+                : 'bg-white border-0 text-slate-600 hover:bg-[#DBFFEB]'
             }`}
           >
             Credit Cards
@@ -173,10 +173,10 @@ export default function Shop() {
           <Button
             onClick={() => setActiveTab('loans')}
             variant={activeTab === 'loans' ? 'default' : 'outline'}
-            className={`whitespace-nowrap ${
+            className={`whitespace-nowrap rounded-xl ${
               activeTab === 'loans'
                 ? 'bg-[#00A86B] hover:bg-[#0D9B76] text-white'
-                : 'bg-white border-0 text-slate-600 hover:bg-slate-50'
+                : 'bg-white border-0 text-slate-600 hover:bg-[#DBFFEB]'
             }`}
           >
             Loans
@@ -201,7 +201,7 @@ export default function Shop() {
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-[#DBFFEB] flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
                       <CreditCard className="w-5 h-5 text-[#0A1A10]" />
                     </div>
                     <div>
@@ -237,7 +237,7 @@ export default function Shop() {
                   ))}
                 </div>
 
-                <Button className="bg-[#00A86B] hover:bg-[#0D9B76] text-white">
+                <Button className="bg-[#00A86B] hover:bg-[#0D9B76] text-white rounded-xl">
                   Apply Now
                   <ChevronRight className="w-4 h-4 ml-1" />
                 </Button>
@@ -264,7 +264,7 @@ export default function Shop() {
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-[#DBFFEB] flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
                       <loan.icon className="w-5 h-5 text-[#0A1A10]" />
                     </div>
                     <div>
@@ -292,16 +292,16 @@ export default function Shop() {
                   ))}
                 </div>
 
-                <div className="space-y-1.5 mb-4">
+                <div className="flex flex-wrap gap-2 mb-4">
                   {loan.features.map((feature, i) => (
-                    <div key={i} className="flex items-center gap-2 text-xs text-slate-600">
-                      <Check className="w-3 h-3 text-[#00A86B] flex-shrink-0" />
+                    <div key={i} className="flex items-center gap-1.5 text-xs text-slate-600 bg-white px-2 py-1 rounded-lg">
+                      <Check className="w-3 h-3 text-[#00A86B]" />
                       {feature}
                     </div>
                   ))}
                 </div>
 
-                <Button className="w-full bg-[#00A86B] hover:bg-[#0D9B76] text-white">
+                <Button className="w-full bg-[#00A86B] hover:bg-[#0D9B76] text-white rounded-xl">
                   Check Your Rate
                   <ChevronRight className="w-4 h-4 ml-1" />
                 </Button>
