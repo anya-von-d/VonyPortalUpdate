@@ -23,7 +23,8 @@ import {
   Percent,
   Trash2,
   UserPlus,
-  Users
+  Users,
+  Eye
 } from "lucide-react";
 import { format, addMonths } from "date-fns";
 import { motion, AnimatePresence } from "framer-motion";
@@ -359,7 +360,7 @@ export default function Requests() {
     { id: 'terms', label: 'Loan Changes', count: termChangeRequests.length },
   ];
 
-  const colors = ['#D0ED6F', '#83F384', '#6EE8B5'];
+  const colors = ['#AAFFA3', '#30FFA8', '#96FFD0', '#74FF71', '#83F384', '#6EE8A2'];
 
   if (isLoading) {
     return (
@@ -496,7 +497,7 @@ export default function Requests() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <Card className="bg-[#DBFFEB] border-0 rounded-2xl">
+            <Card className="bg-[#96FFD0] border-0 rounded-2xl">
               <CardContent className="py-16 text-center">
                 <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-white flex items-center justify-center">
                   <CheckCircle className="w-8 h-8 text-[#00A86B]" />
@@ -514,7 +515,7 @@ export default function Requests() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <Card className="bg-[#DBFFEB] border-0 rounded-2xl">
+            <Card className="bg-[#AAFFA3] border-0 rounded-2xl">
               <CardContent className="p-5">
                 <p className="text-[10px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                   Loan Offers For You
@@ -528,37 +529,29 @@ export default function Requests() {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.05 }}
-                        className="p-4 rounded-xl"
-                        style={{ backgroundColor: colors[index % 3] }}
+                        className="p-3 rounded-xl"
+                        style={{ backgroundColor: colors[index % 6] }}
                       >
-                        <div className="flex flex-col gap-4">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-[#DBFFEB] flex items-center justify-center flex-shrink-0">
-                              <Send className="w-5 h-5 text-[#00A86B]" />
-                            </div>
-                            <div className="flex-1">
-                              <p className="font-semibold text-slate-800">
-                                @{lender?.username || 'unknown'} wants to lend you ${offer.amount?.toLocaleString()} for {offer.purpose || 'Reason'}
-                              </p>
-                              <p className="text-xs text-slate-600">
-                                {offer.interest_rate}% APR · {offer.repayment_period} months · ${offer.payment_amount?.toFixed(2)}/{offer.payment_frequency || 'monthly'}
-                              </p>
-                            </div>
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                          <div className="flex-1 min-w-0">
+                            <p className="font-semibold text-slate-800">
+                              @{lender?.username || 'unknown'} wants to lend you ${offer.amount?.toLocaleString()} for {offer.purpose || 'Reason'}
+                            </p>
+                            <p className="text-xs text-slate-600">
+                              {offer.interest_rate}% APR · {offer.repayment_period} months · ${offer.payment_amount?.toFixed(2)}/{offer.payment_frequency || 'monthly'}
+                            </p>
                           </div>
-
-                          <div className="flex gap-2 justify-end">
-                            <Button
-                              size="sm"
-                              onClick={() => {
-                                setSelectedOffer(offer);
-                                setShowSignatureModal(true);
-                              }}
-                              disabled={processingId === offer.id}
-                              className="bg-[#00A86B] hover:bg-[#0D9B76] text-white"
-                            >
-                              View Details
-                            </Button>
-                          </div>
+                          <button
+                            onClick={() => {
+                              setSelectedOffer(offer);
+                              setShowSignatureModal(true);
+                            }}
+                            disabled={processingId === offer.id}
+                            className="bg-[#30FFA8] rounded-xl px-4 py-2 flex items-center gap-1.5 hover:bg-[#c8f5d8] transition-colors disabled:opacity-50 flex-shrink-0"
+                          >
+                            <Eye className="w-3.5 h-3.5 text-[#00A86B]" />
+                            <span className="text-sm font-medium text-[#00A86B]">View Details</span>
+                          </button>
                         </div>
                       </motion.div>
                     );
@@ -576,7 +569,7 @@ export default function Requests() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
           >
-            <Card className="bg-[#DBFFEB] border-0 rounded-2xl">
+            <Card className="bg-[#74FF71] border-0 rounded-2xl">
               <CardContent className="p-5">
                 <p className="text-[10px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                   Loan Offers You Sent
@@ -590,35 +583,40 @@ export default function Requests() {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.05 }}
-                        className="p-4 rounded-xl"
-                        style={{ backgroundColor: colors[index % 3] }}
+                        className="p-3 rounded-xl"
+                        style={{ backgroundColor: colors[index % 6] }}
                       >
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-[#DBFFEB] flex items-center justify-center flex-shrink-0">
-                              <ArrowUpRight className="w-5 h-5 text-blue-500" />
-                            </div>
-                            <div>
-                              <p className="font-semibold text-slate-800">
-                                ${offer.amount?.toLocaleString()} to @{borrower?.username || 'unknown'} for {offer.purpose || 'Reason'}
-                              </p>
-                              <p className="text-xs text-slate-600">
-                                {offer.interest_rate}% APR · Awaiting acceptance
-                              </p>
-                            </div>
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                          <div className="flex-1 min-w-0">
+                            <p className="font-semibold text-slate-800">
+                              ${offer.amount?.toLocaleString()} to @{borrower?.username || 'unknown'} for {offer.purpose || 'Reason'}
+                            </p>
+                            <p className="text-xs text-slate-600">
+                              {offer.interest_rate}% APR · Awaiting acceptance
+                            </p>
                           </div>
-                          <div className="flex items-center gap-2">
-                            <div className="bg-[#DBFFEB] rounded-xl px-4 py-2 flex items-center gap-1.5">
+                          <div className="flex items-center gap-2 flex-shrink-0">
+                            <div className="bg-[#6EE8A2] rounded-xl px-4 py-2 flex items-center gap-1.5">
                               <Clock className="w-3.5 h-3.5 text-slate-500" />
                               <span className="text-sm font-medium text-slate-600">Pending</span>
                             </div>
                             <button
                               onClick={() => setConfirmingDeleteOffer(offer)}
                               disabled={processingId === offer.id}
-                              className="bg-[#DBFFEB] rounded-xl px-4 py-2 flex items-center gap-1.5 hover:bg-red-50 transition-colors disabled:opacity-50"
+                              className="bg-[#6EE8A2] rounded-xl px-4 py-2 flex items-center gap-1.5 hover:bg-red-50 transition-colors disabled:opacity-50"
                             >
                               <XCircle className="w-3.5 h-3.5 text-red-500" />
                               <span className="text-sm font-medium text-red-500">Cancel</span>
+                            </button>
+                            <button
+                              onClick={() => {
+                                setSelectedOffer(offer);
+                                setShowSignatureModal(true);
+                              }}
+                              className="bg-[#30FFA8] rounded-xl px-4 py-2 flex items-center gap-1.5 hover:bg-[#c8f5d8] transition-colors"
+                            >
+                              <Eye className="w-3.5 h-3.5 text-[#00A86B]" />
+                              <span className="text-sm font-medium text-[#00A86B]">View Details</span>
                             </button>
                           </div>
                         </div>
@@ -637,7 +635,7 @@ export default function Requests() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <Card className="bg-[#DBFFEB] border-0 rounded-2xl">
+            <Card className="bg-[#30FFA8] border-0 rounded-2xl">
               <CardContent className="p-5">
                 <p className="text-[10px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                   Friend Requests
@@ -652,7 +650,7 @@ export default function Requests() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.05 }}
                         className="p-4 rounded-xl"
-                        style={{ backgroundColor: colors[index % 3] }}
+                        style={{ backgroundColor: colors[index % 6] }}
                       >
                         <div className="flex items-center gap-4">
                           <div className="w-12 h-12 rounded-full bg-[#83F384] flex items-center justify-center flex-shrink-0">
@@ -719,7 +717,7 @@ export default function Requests() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <Card className="bg-[#DBFFEB] border-0 rounded-2xl">
+            <Card className="bg-[#96FFD0] border-0 rounded-2xl">
               <CardContent className="p-5">
                 <p className="text-[10px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                   Payments Awaiting Your Confirmation
@@ -735,43 +733,35 @@ export default function Requests() {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.05 }}
-                        className="p-4 rounded-xl"
-                        style={{ backgroundColor: colors[index % 3] }}
+                        className="p-3 rounded-xl"
+                        style={{ backgroundColor: colors[index % 6] }}
                       >
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-[#DBFFEB] flex items-center justify-center flex-shrink-0">
-                              <ArrowDownLeft className="w-5 h-5 text-[#00A86B]" />
-                            </div>
-                            <div>
-                              <p className="font-semibold text-slate-800">
-                                ${payment.amount?.toFixed(2)} from @{getOtherPartyName(payment)}
-                              </p>
-                              <p className="text-xs text-slate-600">
-                                via {methodInfo.label} · {format(new Date(payment.payment_date), 'MMM d, yyyy')}
-                              </p>
-                            </div>
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                          <div className="flex-1 min-w-0">
+                            <p className="font-semibold text-slate-800">
+                              ${payment.amount?.toFixed(2)} from @{getOtherPartyName(payment)}
+                            </p>
+                            <p className="text-xs text-slate-600">
+                              via {methodInfo.label} · {format(new Date(payment.payment_date), 'MMM d, yyyy')}
+                            </p>
                           </div>
-                          <div className="flex gap-2">
-                            <Button
-                              size="sm"
-                              variant="outline"
+                          <div className="flex items-center gap-2 flex-shrink-0">
+                            <button
                               onClick={() => setConfirmingDeny(payment)}
                               disabled={processingId === payment.id}
-                              className="border-red-300 text-red-600 hover:bg-red-50 bg-white"
+                              className="bg-[#6EE8A2] rounded-xl px-4 py-2 flex items-center gap-1.5 hover:bg-red-50 transition-colors disabled:opacity-50"
                             >
-                              <XCircle className="w-4 h-4 mr-1" />
-                              Deny
-                            </Button>
-                            <Button
-                              size="sm"
+                              <XCircle className="w-3.5 h-3.5 text-red-500" />
+                              <span className="text-sm font-medium text-red-500">Deny</span>
+                            </button>
+                            <button
                               onClick={() => handleConfirmPayment(payment)}
                               disabled={processingId === payment.id}
-                              className="bg-[#00A86B] hover:bg-[#0D9B76] text-white"
+                              className="bg-[#30FFA8] rounded-xl px-4 py-2 flex items-center gap-1.5 hover:bg-[#c8f5d8] transition-colors disabled:opacity-50"
                             >
-                              <CheckCircle className="w-4 h-4 mr-1" />
-                              Confirm
-                            </Button>
+                              <CheckCircle className="w-3.5 h-3.5 text-[#00A86B]" />
+                              <span className="text-sm font-medium text-[#00A86B]">Confirm</span>
+                            </button>
                           </div>
                         </div>
                       </motion.div>
@@ -790,7 +780,7 @@ export default function Requests() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
           >
-            <Card className="bg-[#DBFFEB] border-0 rounded-2xl">
+            <Card className="bg-[#6EE8A2] border-0 rounded-2xl">
               <CardContent className="p-5">
                 <p className="text-[10px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                   Your Payments Awaiting Confirmation
@@ -805,32 +795,27 @@ export default function Requests() {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.05 }}
-                        className="p-4 rounded-xl"
-                        style={{ backgroundColor: colors[index % 3] }}
+                        className="p-3 rounded-xl"
+                        style={{ backgroundColor: colors[index % 6] }}
                       >
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-[#DBFFEB] flex items-center justify-center flex-shrink-0">
-                              <ArrowUpRight className="w-5 h-5 text-blue-500" />
-                            </div>
-                            <div>
-                              <p className="font-semibold text-slate-800">
-                                ${payment.amount?.toFixed(2)} to @{getOtherPartyName(payment, true)}
-                              </p>
-                              <p className="text-xs text-slate-600">
-                                via {methodInfo.label} · Waiting for confirmation
-                              </p>
-                            </div>
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                          <div className="flex-1 min-w-0">
+                            <p className="font-semibold text-slate-800">
+                              ${payment.amount?.toFixed(2)} to @{getOtherPartyName(payment, true)}
+                            </p>
+                            <p className="text-xs text-slate-600">
+                              via {methodInfo.label} · Waiting for confirmation
+                            </p>
                           </div>
-                          <div className="flex items-center gap-2">
-                            <div className="bg-[#DBFFEB] rounded-xl px-4 py-2 flex items-center gap-1.5">
+                          <div className="flex items-center gap-2 flex-shrink-0">
+                            <div className="bg-[#30FFA8] rounded-xl px-4 py-2 flex items-center gap-1.5">
                               <Clock className="w-3.5 h-3.5 text-slate-500" />
                               <span className="text-sm font-medium text-slate-600">Pending</span>
                             </div>
                             <button
                               onClick={() => handleConfirmPayment(payment)}
                               disabled={processingId === payment.id}
-                              className="bg-[#DBFFEB] rounded-xl px-4 py-2 flex items-center gap-1.5 hover:bg-[#c8f5d8] transition-colors disabled:opacity-50"
+                              className="bg-[#30FFA8] rounded-xl px-4 py-2 flex items-center gap-1.5 hover:bg-[#c8f5d8] transition-colors disabled:opacity-50"
                             >
                               <CheckCircle className="w-3.5 h-3.5 text-[#00A86B]" />
                               <span className="text-sm font-medium text-[#00A86B]">Confirm</span>
@@ -838,7 +823,7 @@ export default function Requests() {
                             <button
                               onClick={() => setConfirmingCancel(payment)}
                               disabled={processingId === payment.id}
-                              className="bg-[#DBFFEB] rounded-xl px-4 py-2 flex items-center gap-1.5 hover:bg-red-50 transition-colors disabled:opacity-50"
+                              className="bg-[#6EE8A2] rounded-xl px-4 py-2 flex items-center gap-1.5 hover:bg-red-50 transition-colors disabled:opacity-50"
                             >
                               <XCircle className="w-3.5 h-3.5 text-red-500" />
                               <span className="text-sm font-medium text-red-500">Cancel</span>
@@ -861,7 +846,7 @@ export default function Requests() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <Card className="bg-[#DBFFEB] border-0 rounded-2xl">
+            <Card className="bg-[#AAFFA3] border-0 rounded-2xl">
               <CardContent className="p-5">
                 <p className="text-[10px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                   Term Change Requests
@@ -874,11 +859,11 @@ export default function Requests() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.05 }}
                       className="p-4 rounded-xl"
-                      style={{ backgroundColor: colors[index % 3] }}
+                      style={{ backgroundColor: colors[index % 6] }}
                     >
                       <div className="flex flex-col gap-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-[#DBFFEB] flex items-center justify-center flex-shrink-0">
+                          <div className="w-10 h-10 rounded-full bg-[#96FFD0] flex items-center justify-center flex-shrink-0">
                             <Edit3 className="w-5 h-5 text-amber-600" />
                           </div>
                           <div className="flex-1">
