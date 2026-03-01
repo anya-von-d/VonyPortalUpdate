@@ -1309,88 +1309,86 @@ export default function Lending() {
                 </div>
 
                 {/* Quick Record Payment */}
-                {activeLoans.length > 0 && (
-                  <div className="bg-[#96FFD0] rounded-2xl p-5 border-0">
-                    <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
-                      Record Payment
-                    </p>
-                    <div className="flex flex-wrap items-center gap-2 text-sm text-slate-700">
-                      <span>Record payment of</span>
-                      <span className="font-medium">$</span>
-                      <Input
-                        type="number"
-                        step="0.01"
-                        min="0.01"
-                        placeholder=""
-                        value={quickPayAmount}
-                        onChange={(e) => setQuickPayAmount(e.target.value)}
-                        className="w-24 h-8 px-3 bg-white inline-flex"
-                        style={{ MozAppearance: 'textfield' }}
-                      />
-                      <span>from</span>
-                      <span className="text-[#00A86B] font-medium">
-                        {quickPayLoanId
-                          ? `@${getUserById(activeLoans.find(l => l.id === quickPayLoanId)?.borrower_id)?.username || 'user'}`
-                          : '@_'}
-                      </span>
-                      <span>via</span>
-                      <Select value={quickPayMethod} onValueChange={setQuickPayMethod}>
-                        <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex">
-                          <SelectValue placeholder="select method" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="venmo">Venmo</SelectItem>
-                          <SelectItem value="zelle">Zelle</SelectItem>
-                          <SelectItem value="cashapp">Cash App</SelectItem>
-                          <SelectItem value="paypal">PayPal</SelectItem>
-                          <SelectItem value="cash">Cash</SelectItem>
-                          <SelectItem value="other">Other</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <span>for</span>
-                      <Select value={quickPayLoanId} onValueChange={setQuickPayLoanId}>
-                        <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex min-w-[140px]">
-                          <SelectValue placeholder="select loan" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {activeLoans.map((loan) => {
-                            const borrower = getUserById(loan.borrower_id);
-                            return (
-                              <SelectItem key={loan.id} value={loan.id}>
-                                @{borrower?.username || 'user'} - {loan.purpose || `$${loan.amount}`}
-                              </SelectItem>
-                            );
-                          })}
-                        </SelectContent>
-                      </Select>
-                      {quickPayLoanId && activeLoans.find(l => l.id === quickPayLoanId)?.purpose && (
-                        <span className="text-slate-500">({activeLoans.find(l => l.id === quickPayLoanId).purpose})</span>
-                      )}
-                      <Button
-                        type="button"
-                        onClick={() => {
-                          const loan = activeLoans.find(l => l.id === quickPayLoanId);
-                          if (loan) {
-                            setSelectedLoan({
-                              ...loan,
-                              _prefillAmount: quickPayAmount,
-                              _prefillMethod: quickPayMethod,
-                            });
-                            setShowPaymentModal(true);
-                          }
-                        }}
-                        disabled={!quickPayLoanId || !quickPayAmount}
-                        className={`h-8 px-4 rounded-lg text-sm font-medium border-0 transition-all ${
-                          !quickPayLoanId || !quickPayAmount
-                            ? 'bg-[#00A86B]/30 text-[#00A86B]/50 cursor-not-allowed'
-                            : 'bg-[#00A86B] text-white hover:bg-[#0D9B76]'
-                        }`}
-                      >
-                        Submit
-                      </Button>
-                    </div>
+                <div className="bg-[#96FFD0] rounded-2xl p-5 border-0">
+                  <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                    Record Payment
+                  </p>
+                  <div className="flex flex-wrap items-center gap-2 text-sm text-slate-700">
+                    <span>Record payment of</span>
+                    <span className="font-medium">$</span>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      min="0.01"
+                      placeholder=""
+                      value={quickPayAmount}
+                      onChange={(e) => setQuickPayAmount(e.target.value)}
+                      className="w-24 h-8 px-3 bg-white inline-flex"
+                      style={{ MozAppearance: 'textfield' }}
+                    />
+                    <span>from</span>
+                    <span className="text-[#00A86B] font-medium">
+                      {quickPayLoanId
+                        ? `@${getUserById(activeLoans.find(l => l.id === quickPayLoanId)?.borrower_id)?.username || 'user'}`
+                        : '@_'}
+                    </span>
+                    <span>via</span>
+                    <Select value={quickPayMethod} onValueChange={setQuickPayMethod}>
+                      <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex">
+                        <SelectValue placeholder="select method" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="venmo">Venmo</SelectItem>
+                        <SelectItem value="zelle">Zelle</SelectItem>
+                        <SelectItem value="cashapp">Cash App</SelectItem>
+                        <SelectItem value="paypal">PayPal</SelectItem>
+                        <SelectItem value="cash">Cash</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <span>for</span>
+                    <Select value={quickPayLoanId} onValueChange={setQuickPayLoanId}>
+                      <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex min-w-[140px]">
+                        <SelectValue placeholder="select loan" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {activeLoans.map((loan) => {
+                          const borrower = getUserById(loan.borrower_id);
+                          return (
+                            <SelectItem key={loan.id} value={loan.id}>
+                              @{borrower?.username || 'user'} - {loan.purpose || `$${loan.amount}`}
+                            </SelectItem>
+                          );
+                        })}
+                      </SelectContent>
+                    </Select>
+                    {quickPayLoanId && activeLoans.find(l => l.id === quickPayLoanId)?.purpose && (
+                      <span className="text-slate-500">({activeLoans.find(l => l.id === quickPayLoanId).purpose})</span>
+                    )}
+                    <Button
+                      type="button"
+                      onClick={() => {
+                        const loan = activeLoans.find(l => l.id === quickPayLoanId);
+                        if (loan) {
+                          setSelectedLoan({
+                            ...loan,
+                            _prefillAmount: quickPayAmount,
+                            _prefillMethod: quickPayMethod,
+                          });
+                          setShowPaymentModal(true);
+                        }
+                      }}
+                      disabled={!quickPayLoanId || !quickPayAmount}
+                      className={`h-8 px-4 rounded-lg text-sm font-medium border-0 transition-all ${
+                        !quickPayLoanId || !quickPayAmount
+                          ? 'bg-[#00A86B]/30 text-[#00A86B]/50 cursor-not-allowed'
+                          : 'bg-[#00A86B] text-white hover:bg-[#0D9B76]'
+                      }`}
+                    >
+                      Submit
+                    </Button>
                   </div>
-                )}
+                </div>
 
                 {/* Upcoming Payments + Individual Loan Progress */}
                 <div className="grid md:grid-cols-2 gap-4">
@@ -2302,88 +2300,86 @@ export default function Lending() {
                 </div>
 
                 {/* Quick Record Payment */}
-                {activeLoans.length > 0 && (
-                  <div className="lg:col-span-3 bg-[#96FFD0] rounded-2xl p-5 border-0">
-                    <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
-                      Record Payment
-                    </p>
-                    <div className="flex flex-wrap items-center gap-2 text-sm text-slate-700">
-                      <span>Record payment of</span>
-                      <span className="font-medium">$</span>
-                      <Input
-                        type="number"
-                        step="0.01"
-                        min="0.01"
-                        placeholder=""
-                        value={quickPayAmount}
-                        onChange={(e) => setQuickPayAmount(e.target.value)}
-                        className="w-24 h-8 px-3 bg-white inline-flex"
-                        style={{ MozAppearance: 'textfield' }}
-                      />
-                      <span>from</span>
-                      <span className="text-[#00A86B] font-medium">
-                        {quickPayLoanId
-                          ? `@${getUserById(activeLoans.find(l => l.id === quickPayLoanId)?.borrower_id)?.username || 'user'}`
-                          : '@_'}
-                      </span>
-                      <span>via</span>
-                      <Select value={quickPayMethod} onValueChange={setQuickPayMethod}>
-                        <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex">
-                          <SelectValue placeholder="select method" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="venmo">Venmo</SelectItem>
-                          <SelectItem value="zelle">Zelle</SelectItem>
-                          <SelectItem value="cashapp">Cash App</SelectItem>
-                          <SelectItem value="paypal">PayPal</SelectItem>
-                          <SelectItem value="cash">Cash</SelectItem>
-                          <SelectItem value="other">Other</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <span>for</span>
-                      <Select value={quickPayLoanId} onValueChange={setQuickPayLoanId}>
-                        <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex min-w-[140px]">
-                          <SelectValue placeholder="select loan" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {activeLoans.map((loan) => {
-                            const borrower = getUserById(loan.borrower_id);
-                            return (
-                              <SelectItem key={loan.id} value={loan.id}>
-                                @{borrower?.username || 'user'} - {loan.purpose || `$${loan.amount}`}
-                              </SelectItem>
-                            );
-                          })}
-                        </SelectContent>
-                      </Select>
-                      {quickPayLoanId && activeLoans.find(l => l.id === quickPayLoanId)?.purpose && (
-                        <span className="text-slate-500">({activeLoans.find(l => l.id === quickPayLoanId).purpose})</span>
-                      )}
-                      <Button
-                        type="button"
-                        onClick={() => {
-                          const loan = activeLoans.find(l => l.id === quickPayLoanId);
-                          if (loan) {
-                            setSelectedLoan({
-                              ...loan,
-                              _prefillAmount: quickPayAmount,
-                              _prefillMethod: quickPayMethod,
-                            });
-                            setShowPaymentModal(true);
-                          }
-                        }}
-                        disabled={!quickPayLoanId || !quickPayAmount}
-                        className={`h-8 px-4 rounded-lg text-sm font-medium border-0 transition-all ${
-                          !quickPayLoanId || !quickPayAmount
-                            ? 'bg-[#00A86B]/30 text-[#00A86B]/50 cursor-not-allowed'
-                            : 'bg-[#00A86B] text-white hover:bg-[#0D9B76]'
-                        }`}
-                      >
-                        Submit
-                      </Button>
-                    </div>
+                <div className="lg:col-span-3 bg-[#96FFD0] rounded-2xl p-5 border-0">
+                  <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                    Record Payment
+                  </p>
+                  <div className="flex flex-wrap items-center gap-2 text-sm text-slate-700">
+                    <span>Record payment of</span>
+                    <span className="font-medium">$</span>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      min="0.01"
+                      placeholder=""
+                      value={quickPayAmount}
+                      onChange={(e) => setQuickPayAmount(e.target.value)}
+                      className="w-24 h-8 px-3 bg-white inline-flex"
+                      style={{ MozAppearance: 'textfield' }}
+                    />
+                    <span>from</span>
+                    <span className="text-[#00A86B] font-medium">
+                      {quickPayLoanId
+                        ? `@${getUserById(activeLoans.find(l => l.id === quickPayLoanId)?.borrower_id)?.username || 'user'}`
+                        : '@_'}
+                    </span>
+                    <span>via</span>
+                    <Select value={quickPayMethod} onValueChange={setQuickPayMethod}>
+                      <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex">
+                        <SelectValue placeholder="select method" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="venmo">Venmo</SelectItem>
+                        <SelectItem value="zelle">Zelle</SelectItem>
+                        <SelectItem value="cashapp">Cash App</SelectItem>
+                        <SelectItem value="paypal">PayPal</SelectItem>
+                        <SelectItem value="cash">Cash</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <span>for</span>
+                    <Select value={quickPayLoanId} onValueChange={setQuickPayLoanId}>
+                      <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex min-w-[140px]">
+                        <SelectValue placeholder="select loan" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {activeLoans.map((loan) => {
+                          const borrower = getUserById(loan.borrower_id);
+                          return (
+                            <SelectItem key={loan.id} value={loan.id}>
+                              @{borrower?.username || 'user'} - {loan.purpose || `$${loan.amount}`}
+                            </SelectItem>
+                          );
+                        })}
+                      </SelectContent>
+                    </Select>
+                    {quickPayLoanId && activeLoans.find(l => l.id === quickPayLoanId)?.purpose && (
+                      <span className="text-slate-500">({activeLoans.find(l => l.id === quickPayLoanId).purpose})</span>
+                    )}
+                    <Button
+                      type="button"
+                      onClick={() => {
+                        const loan = activeLoans.find(l => l.id === quickPayLoanId);
+                        if (loan) {
+                          setSelectedLoan({
+                            ...loan,
+                            _prefillAmount: quickPayAmount,
+                            _prefillMethod: quickPayMethod,
+                          });
+                          setShowPaymentModal(true);
+                        }
+                      }}
+                      disabled={!quickPayLoanId || !quickPayAmount}
+                      className={`h-8 px-4 rounded-lg text-sm font-medium border-0 transition-all ${
+                        !quickPayLoanId || !quickPayAmount
+                          ? 'bg-[#00A86B]/30 text-[#00A86B]/50 cursor-not-allowed'
+                          : 'bg-[#00A86B] text-white hover:bg-[#0D9B76]'
+                      }`}
+                    >
+                      Submit
+                    </Button>
                   </div>
-                )}
+                </div>
               </motion.div>
             )}
 
@@ -2827,88 +2823,86 @@ export default function Lending() {
                 )}
 
                 {/* Quick Record Payment */}
-                {activeLoans.length > 0 && (
-                  <div className="bg-[#96FFD0] rounded-2xl p-5 border-0 mt-4">
-                    <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
-                      Record Payment
-                    </p>
-                    <div className="flex flex-wrap items-center gap-2 text-sm text-slate-700">
-                      <span>Record payment of</span>
-                      <span className="font-medium">$</span>
-                      <Input
-                        type="number"
-                        step="0.01"
-                        min="0.01"
-                        placeholder=""
-                        value={quickPayAmount}
-                        onChange={(e) => setQuickPayAmount(e.target.value)}
-                        className="w-24 h-8 px-3 bg-white inline-flex"
-                        style={{ MozAppearance: 'textfield' }}
-                      />
-                      <span>from</span>
-                      <span className="text-[#00A86B] font-medium">
-                        {quickPayLoanId
-                          ? `@${getUserById(activeLoans.find(l => l.id === quickPayLoanId)?.borrower_id)?.username || 'user'}`
-                          : '@_'}
-                      </span>
-                      <span>via</span>
-                      <Select value={quickPayMethod} onValueChange={setQuickPayMethod}>
-                        <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex">
-                          <SelectValue placeholder="select method" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="venmo">Venmo</SelectItem>
-                          <SelectItem value="zelle">Zelle</SelectItem>
-                          <SelectItem value="cashapp">Cash App</SelectItem>
-                          <SelectItem value="paypal">PayPal</SelectItem>
-                          <SelectItem value="cash">Cash</SelectItem>
-                          <SelectItem value="other">Other</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <span>for</span>
-                      <Select value={quickPayLoanId} onValueChange={setQuickPayLoanId}>
-                        <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex min-w-[140px]">
-                          <SelectValue placeholder="select loan" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {activeLoans.map((loan) => {
-                            const borrower = getUserById(loan.borrower_id);
-                            return (
-                              <SelectItem key={loan.id} value={loan.id}>
-                                @{borrower?.username || 'user'} - {loan.purpose || `$${loan.amount}`}
-                              </SelectItem>
-                            );
-                          })}
-                        </SelectContent>
-                      </Select>
-                      {quickPayLoanId && activeLoans.find(l => l.id === quickPayLoanId)?.purpose && (
-                        <span className="text-slate-500">({activeLoans.find(l => l.id === quickPayLoanId).purpose})</span>
-                      )}
-                      <Button
-                        type="button"
-                        onClick={() => {
-                          const loan = activeLoans.find(l => l.id === quickPayLoanId);
-                          if (loan) {
-                            setSelectedLoan({
-                              ...loan,
-                              _prefillAmount: quickPayAmount,
-                              _prefillMethod: quickPayMethod,
-                            });
-                            setShowPaymentModal(true);
-                          }
-                        }}
-                        disabled={!quickPayLoanId || !quickPayAmount}
-                        className={`h-8 px-4 rounded-lg text-sm font-medium border-0 transition-all ${
-                          !quickPayLoanId || !quickPayAmount
-                            ? 'bg-[#00A86B]/30 text-[#00A86B]/50 cursor-not-allowed'
-                            : 'bg-[#00A86B] text-white hover:bg-[#0D9B76]'
-                        }`}
-                      >
-                        Submit
-                      </Button>
-                    </div>
+                <div className="bg-[#96FFD0] rounded-2xl p-5 border-0 mt-4">
+                  <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                    Record Payment
+                  </p>
+                  <div className="flex flex-wrap items-center gap-2 text-sm text-slate-700">
+                    <span>Record payment of</span>
+                    <span className="font-medium">$</span>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      min="0.01"
+                      placeholder=""
+                      value={quickPayAmount}
+                      onChange={(e) => setQuickPayAmount(e.target.value)}
+                      className="w-24 h-8 px-3 bg-white inline-flex"
+                      style={{ MozAppearance: 'textfield' }}
+                    />
+                    <span>from</span>
+                    <span className="text-[#00A86B] font-medium">
+                      {quickPayLoanId
+                        ? `@${getUserById(activeLoans.find(l => l.id === quickPayLoanId)?.borrower_id)?.username || 'user'}`
+                        : '@_'}
+                    </span>
+                    <span>via</span>
+                    <Select value={quickPayMethod} onValueChange={setQuickPayMethod}>
+                      <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex">
+                        <SelectValue placeholder="select method" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="venmo">Venmo</SelectItem>
+                        <SelectItem value="zelle">Zelle</SelectItem>
+                        <SelectItem value="cashapp">Cash App</SelectItem>
+                        <SelectItem value="paypal">PayPal</SelectItem>
+                        <SelectItem value="cash">Cash</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <span>for</span>
+                    <Select value={quickPayLoanId} onValueChange={setQuickPayLoanId}>
+                      <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex min-w-[140px]">
+                        <SelectValue placeholder="select loan" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {activeLoans.map((loan) => {
+                          const borrower = getUserById(loan.borrower_id);
+                          return (
+                            <SelectItem key={loan.id} value={loan.id}>
+                              @{borrower?.username || 'user'} - {loan.purpose || `$${loan.amount}`}
+                            </SelectItem>
+                          );
+                        })}
+                      </SelectContent>
+                    </Select>
+                    {quickPayLoanId && activeLoans.find(l => l.id === quickPayLoanId)?.purpose && (
+                      <span className="text-slate-500">({activeLoans.find(l => l.id === quickPayLoanId).purpose})</span>
+                    )}
+                    <Button
+                      type="button"
+                      onClick={() => {
+                        const loan = activeLoans.find(l => l.id === quickPayLoanId);
+                        if (loan) {
+                          setSelectedLoan({
+                            ...loan,
+                            _prefillAmount: quickPayAmount,
+                            _prefillMethod: quickPayMethod,
+                          });
+                          setShowPaymentModal(true);
+                        }
+                      }}
+                      disabled={!quickPayLoanId || !quickPayAmount}
+                      className={`h-8 px-4 rounded-lg text-sm font-medium border-0 transition-all ${
+                        !quickPayLoanId || !quickPayAmount
+                          ? 'bg-[#00A86B]/30 text-[#00A86B]/50 cursor-not-allowed'
+                          : 'bg-[#00A86B] text-white hover:bg-[#0D9B76]'
+                      }`}
+                    >
+                      Submit
+                    </Button>
                   </div>
-                )}
+                </div>
               </motion.div>
             )}
 
