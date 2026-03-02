@@ -237,7 +237,7 @@ export default function Home() {
     const paymentStatus = getPaymentStatus();
 
     return (
-        <div className="min-h-screen p-6"  style={{background: `linear-gradient(to bottom right, rgb(var(--theme-bg-from)), rgb(var(--theme-bg-to)))`}}>
+        <div className="min-h-screen p-6" style={{backgroundColor: '#FFFFFF'}}>
            <div className="max-w-6xl mx-auto space-y-7">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="py-5">
               <h1 className="text-4xl md:text-5xl font-bold text-slate-800 mb-4 tracking-tight text-left">
