@@ -38,7 +38,7 @@ export default function RecentActivity({ loans, payments, isLoading, user, allUs
         transition={{ duration: 0.4, delay: 0.3 }}
       >
         <div className="rounded-lg p-5 max-w-[85%] mx-auto lg:max-w-none" style={{backgroundColor: '#E2EBE5'}}>
-          <p className="text-xl font-bold text-slate-800 mb-4 tracking-tight font-serif">
+          <p className="text-xl font-bold text-slate-800 mb-4 tracking-tight font-sans">
             Activity
           </p>
           <div className="relative">
@@ -147,7 +147,7 @@ export default function RecentActivity({ loans, payments, isLoading, user, allUs
       <div className="rounded-lg p-5 max-w-[85%] mx-auto lg:max-w-none" style={{backgroundColor: '#E2EBE5'}}>
         {/* Title */}
         <div className="flex items-center justify-between mb-4">
-          <p className="text-xl font-bold text-slate-800 tracking-tight font-serif">
+          <p className="text-xl font-bold text-slate-800 tracking-tight font-sans">
             Activity
           </p>
           <Link to={createPageUrl("RecentActivity")}>

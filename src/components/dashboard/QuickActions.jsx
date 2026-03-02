@@ -36,7 +36,7 @@ export default function QuickActions() {
     >
       <div className="rounded-lg p-5 max-w-[85%] mx-auto lg:max-w-none" style={{backgroundColor: '#E2EBE5'}}>
         {/* Title */}
-        <p className="text-xl font-bold text-slate-800 mb-4 tracking-tight font-serif">
+        <p className="text-xl font-bold text-slate-800 mb-4 tracking-tight font-sans">
           Quick Actions
         </p>
 

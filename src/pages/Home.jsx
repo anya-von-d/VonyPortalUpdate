@@ -237,7 +237,7 @@ export default function Home() {
     const paymentStatus = getPaymentStatus();
 
     return (
-        <div className="min-h-screen p-6" style={{backgroundColor: '#DBEEE3'}}>
+        <div className="min-h-screen p-6" style={{backgroundColor: '#C8E6D0'}}>
            <div className="max-w-6xl mx-auto space-y-7">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="py-5">
               <h1 className="text-4xl md:text-5xl font-bold text-slate-800 mb-4 tracking-tight text-left">
@@ -321,7 +321,7 @@ export default function Home() {
                     {overviewType === 'lending' ? (
                       /* ===== LENDING OVERVIEW — Dark green card ===== */
                       <>
-                        <p className="text-xl font-bold mb-5 text-white tracking-tight font-serif">
+                        <p className="text-xl font-bold mb-5 text-white tracking-tight font-sans">
                           Lending Overview
                         </p>
                         <div className="flex items-center gap-6">
@@ -393,7 +393,7 @@ export default function Home() {
                     ) : (
                       /* ===== BORROWING OVERVIEW — Dark green card (same style as lending) ===== */
                       <>
-                        <p className="text-xl font-bold mb-5 text-white tracking-tight font-serif">
+                        <p className="text-xl font-bold mb-5 text-white tracking-tight font-sans">
                           Borrowing Overview
                         </p>
                         <div className="flex items-center gap-6">
@@ -665,7 +665,7 @@ export default function Home() {
               >
                 <Card className="border-0 rounded-lg overflow-hidden h-full" style={{backgroundColor: '#E2EBE5'}}>
                   <CardContent className="p-5 h-full flex flex-col">
-                    <p className="text-xl font-bold text-slate-800 mb-4 tracking-tight font-serif">
+                    <p className="text-xl font-bold text-slate-800 mb-4 tracking-tight font-sans">
                       {format(calendarMonth, 'MMMM')} Overview
                     </p>
 
