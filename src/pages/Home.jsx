@@ -254,7 +254,7 @@ export default function Home() {
               <PendingLoanOffers offers={pendingOffers} />
             )}
 
-            <div className="grid lg:grid-cols-3 gap-6 items-start">
+            <div className="grid lg:grid-cols-[2fr_1fr_1fr] gap-6 items-start">
             {(() => {
               // Compute data for both views
               const lentLoans = myLoans.filter(l => l && l.lender_id === user.id && l.status === 'active');
@@ -663,69 +663,6 @@ export default function Home() {
                 transition={{ duration: 0.4, delay: 0.3 }}
                 className="flex flex-col gap-3"
               >
-                {/* Month Balance Box */}
-                {(() => {
-                  const monthEnd = endOfMonth(calendarMonth);
-                  const activeLoans = myLoans.filter(l => l && l.status === 'active');
-                  let totalReceive = 0;
-                  let totalSend = 0;
-
-                  activeLoans.forEach(loan => {
-                    if (!loan.next_payment_date) return;
-                    const paymentDate = new Date(loan.next_payment_date);
-                    const isLender = loan.lender_id === user.id;
-                    const paymentAmount = loan.payment_amount || 0;
-
-                    const addAmountIfInMonth = (date) => {
-                      if (isSameMonth(date, calendarMonth)) {
-                        if (isLender) {
-                          totalReceive += paymentAmount;
-                        } else {
-                          totalSend += paymentAmount;
-                        }
-                      }
-                    };
-
-                    addAmountIfInMonth(paymentDate);
-
-                    const frequency = loan.payment_frequency;
-                    if (frequency && frequency !== 'none') {
-                      let currentDate = new Date(loan.next_payment_date);
-                      let iterations = 0;
-                      while (iterations < 10) {
-                        if (frequency === 'weekly') {
-                          currentDate = new Date(currentDate.setDate(currentDate.getDate() + 7));
-                        } else if (frequency === 'biweekly') {
-                          currentDate = new Date(currentDate.setDate(currentDate.getDate() + 14));
-                        } else if (frequency === 'monthly') {
-                          currentDate = addMonths(currentDate, 1);
-                        } else if (frequency === 'daily') {
-                          currentDate = new Date(currentDate.setDate(currentDate.getDate() + 1));
-                        } else {
-                          break;
-                        }
-                        if (currentDate > monthEnd) break;
-                        addAmountIfInMonth(currentDate);
-                        iterations++;
-                      }
-                    }
-                  });
-
-                  const netBalance = totalReceive - totalSend;
-                  const isPositive = netBalance >= 0;
-
-                  return (
-                    <div className="bg-[#83F384] rounded-lg p-2.5 flex items-center justify-between">
-                      <p className="text-sm font-semibold text-[#0A1A10]">
-                        {format(calendarMonth, 'MMMM')} Balance
-                      </p>
-                      <p className="text-sm font-bold text-[#0A1A10]">
-                        {isPositive ? '+' : '-'}${Math.abs(netBalance).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                      </p>
-                    </div>
-                  );
-                })()}
-
                 <Card className="bg-white border-0 rounded-xl overflow-hidden h-full">
                   <CardContent className="p-5 h-full flex flex-col">
                     <p className="text-xl font-bold text-slate-800 mb-4 tracking-tight font-serif">
@@ -863,6 +800,69 @@ export default function Home() {
                     </div>
                   </CardContent>
                 </Card>
+
+                {/* Month Balance Box */}
+                {(() => {
+                  const monthEnd = endOfMonth(calendarMonth);
+                  const activeLoans = myLoans.filter(l => l && l.status === 'active');
+                  let totalReceive = 0;
+                  let totalSend = 0;
+
+                  activeLoans.forEach(loan => {
+                    if (!loan.next_payment_date) return;
+                    const paymentDate = new Date(loan.next_payment_date);
+                    const isLender = loan.lender_id === user.id;
+                    const paymentAmount = loan.payment_amount || 0;
+
+                    const addAmountIfInMonth = (date) => {
+                      if (isSameMonth(date, calendarMonth)) {
+                        if (isLender) {
+                          totalReceive += paymentAmount;
+                        } else {
+                          totalSend += paymentAmount;
+                        }
+                      }
+                    };
+
+                    addAmountIfInMonth(paymentDate);
+
+                    const frequency = loan.payment_frequency;
+                    if (frequency && frequency !== 'none') {
+                      let currentDate = new Date(loan.next_payment_date);
+                      let iterations = 0;
+                      while (iterations < 10) {
+                        if (frequency === 'weekly') {
+                          currentDate = new Date(currentDate.setDate(currentDate.getDate() + 7));
+                        } else if (frequency === 'biweekly') {
+                          currentDate = new Date(currentDate.setDate(currentDate.getDate() + 14));
+                        } else if (frequency === 'monthly') {
+                          currentDate = addMonths(currentDate, 1);
+                        } else if (frequency === 'daily') {
+                          currentDate = new Date(currentDate.setDate(currentDate.getDate() + 1));
+                        } else {
+                          break;
+                        }
+                        if (currentDate > monthEnd) break;
+                        addAmountIfInMonth(currentDate);
+                        iterations++;
+                      }
+                    }
+                  });
+
+                  const netBalance = totalReceive - totalSend;
+                  const isPositive = netBalance >= 0;
+
+                  return (
+                    <div className="bg-[#83F384] rounded-lg p-2.5 flex items-center justify-between">
+                      <p className="text-sm font-semibold text-[#0A1A10]">
+                        {format(calendarMonth, 'MMMM')} Balance
+                      </p>
+                      <p className="text-sm font-bold text-[#0A1A10]">
+                        {isPositive ? '+' : '-'}${Math.abs(netBalance).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </p>
+                    </div>
+                  );
+                })()}
               </motion.div>
 
             </div>
