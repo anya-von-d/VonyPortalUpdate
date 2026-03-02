@@ -37,7 +37,7 @@ export default function RecentActivity({ loans, payments, isLoading, user, allUs
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.3 }}
       >
-        <div className="bg-white rounded-lg p-5 max-w-[85%] mx-auto lg:max-w-none">
+        <div className="rounded-lg p-5 max-w-[85%] mx-auto lg:max-w-none" style={{backgroundColor: '#F7FAF8'}}>
           <p className="text-xl font-bold text-slate-800 mb-4 tracking-tight font-serif">
             Activity
           </p>
@@ -144,7 +144,7 @@ export default function RecentActivity({ loans, payments, isLoading, user, allUs
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: 0.3 }}
     >
-      <div className="bg-white rounded-lg p-5 max-w-[85%] mx-auto lg:max-w-none">
+      <div className="rounded-lg p-5 max-w-[85%] mx-auto lg:max-w-none" style={{backgroundColor: '#F7FAF8'}}>
         {/* Title */}
         <div className="flex items-center justify-between mb-4">
           <p className="text-xl font-bold text-slate-800 tracking-tight font-serif">
