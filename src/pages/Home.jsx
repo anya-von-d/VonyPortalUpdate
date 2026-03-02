@@ -287,7 +287,7 @@ export default function Home() {
                 <div
                   className="lg:col-span-2 rounded-lg p-5 md:p-7 relative transition-all duration-300 overflow-hidden"
                   style={{
-                    background: '#218359'
+                    background: '#052e16'
                   }}
                 >
                   {/* Left Arrow */}

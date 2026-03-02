@@ -121,7 +121,7 @@ export default function TopNav({ location }) {
   return (
     <>
       {/* Fixed Navigation Bar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 h-14 bg-[#218359] shadow-sm shadow-black/5">
+      <nav className="fixed top-0 left-0 right-0 z-50 h-14 bg-green-950 shadow-sm shadow-black/5">
         <div className="h-full px-6 md:px-10 flex items-center justify-between">
 
           {/* Hamburger Menu Button - Always Visible */}
