@@ -16,7 +16,7 @@ export default function LoanProgress({ loans, userId }) {
   const borrowedProgress = totalBorrowed > 0 ? (borrowedPaid / totalBorrowed) * 100 : 0;
 
   return (
-    <Card className="bg-[#DBFFEB] backdrop-blur-sm border-0 h-full">
+    <Card className="bg-white backdrop-blur-sm border-0 h-full">
       <CardHeader className="pb-4 pt-4 px-4">
         <CardTitle className="flex items-center gap-2 text-base">
           <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">

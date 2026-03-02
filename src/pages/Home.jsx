@@ -237,7 +237,7 @@ export default function Home() {
     const paymentStatus = getPaymentStatus();
 
     return (
-        <div className="min-h-screen p-6" style={{backgroundColor: '#FFFFFF'}}>
+        <div className="min-h-screen p-6" style={{backgroundColor: '#F3F4F6'}}>
            <div className="max-w-6xl mx-auto space-y-7">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="py-5">
               <h1 className="text-4xl md:text-5xl font-bold text-slate-800 mb-4 tracking-tight text-left">
@@ -289,7 +289,7 @@ export default function Home() {
                   style={{
                     background: overviewType === 'lending'
                       ? 'linear-gradient(135deg, #0A3D2A 0%, #0D5C3E 50%, #0A4D32 100%)'
-                      : '#DBFFEB'
+                      : '#FFFFFF'
                   }}
                 >
                   {/* Left Arrow */}
@@ -527,7 +527,7 @@ export default function Home() {
                   const isPositive = netBalance >= 0;
 
                   return (
-                    <div className="bg-[#83F384] rounded-xl p-3 flex items-center justify-between">
+                    <div className="bg-[#DBFFEB] rounded-xl p-3 flex items-center justify-between">
                       <p className="text-[11px] text-[#0A1A10] uppercase tracking-[0.12em] font-medium" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                         {format(calendarMonth, 'MMMM')} Balance
                       </p>
@@ -538,7 +538,7 @@ export default function Home() {
                   );
                 })()}
 
-                <Card className="bg-[#DBFFEB] border-0 rounded-2xl overflow-hidden h-full">
+                <Card className="bg-white border-0 rounded-2xl overflow-hidden h-full">
                   <CardContent className="p-5 h-full flex flex-col">
                     <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                       {format(calendarMonth, 'MMMM')} Overview
@@ -620,7 +620,7 @@ export default function Home() {
                           );
                         }
 
-                        const colors = ['#AAFFA3', '#30FFA8', '#96FFD0', '#6EE8B5', '#83F384', '#6EE8A2'];
+                        const colors = ['#DBFFEB', '#DBFFEB', '#DBFFEB', '#DBFFEB', '#DBFFEB', '#DBFFEB'];
 
                         return events.map((event, index) => (
                           <div
@@ -683,7 +683,7 @@ export default function Home() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.2 }}
               >
-                <Card className="bg-[#DBFFEB] border-0 rounded-2xl overflow-hidden">
+                <Card className="bg-white border-0 rounded-2xl overflow-hidden">
                   <CardContent className="p-5">
                     {/* Calendar Header with Navigation */}
                     <div className="flex items-center justify-between mb-4">

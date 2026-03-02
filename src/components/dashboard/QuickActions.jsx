@@ -34,7 +34,7 @@ export default function QuickActions() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: 0.2 }}
     >
-      <div className="bg-[#DBFFEB] rounded-2xl p-5 max-w-[85%] mx-auto lg:max-w-none">
+      <div className="bg-white rounded-2xl p-5 max-w-[85%] mx-auto lg:max-w-none">
         {/* Title */}
         <p className="text-[11px] text-[#7A9A85] uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
           Quick Actions
@@ -46,7 +46,7 @@ export default function QuickActions() {
             const hoverColor = hoverAccentColors[index % 4];
             const isHovered = hoveredIndex === index;
             const Icon = action.icon;
-            const cardBgColors = ['#83F384', '#AAFFA3', '#6EE8A2'];
+            const cardBgColors = ['#DBFFEB', '#DBFFEB', '#DBFFEB'];
 
             return (
               <Link key={action.title} to={createPageUrl(action.url)}>
