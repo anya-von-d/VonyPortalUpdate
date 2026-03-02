@@ -244,7 +244,7 @@ export default function Home() {
                 {(() => {
                   const hour = new Date().getHours();
                   const greeting = hour < 12 ? "Good Morning" : hour < 18 ? "Good Afternoon" : "Good Evening";
-                  return <>{greeting}, <span style={{color: '#36CE8E'}}>{user.full_name?.split(' ')[0] || 'User'}</span></>;
+                  return <>{greeting}, <span style={{color: '#AFF383'}}>{user.full_name?.split(' ')[0] || 'User'}</span></>;
                 })()}
               </h1>
           </motion.div>
@@ -332,7 +332,7 @@ export default function Home() {
                               <circle
                                 cx="70" cy="70" r="58"
                                 fill="none"
-                                stroke="#36CE8E"
+                                stroke="#AFF383"
                                 strokeWidth="10"
                                 strokeLinecap="round"
                                 strokeDasharray={2 * Math.PI * 58}
@@ -404,7 +404,7 @@ export default function Home() {
                               <circle
                                 cx="70" cy="70" r="58"
                                 fill="none"
-                                stroke="#36CE8E"
+                                stroke="#AFF383"
                                 strokeWidth="10"
                                 strokeLinecap="round"
                                 strokeDasharray={2 * Math.PI * 58}
@@ -745,7 +745,7 @@ export default function Home() {
                           );
                         }
 
-                        const colors = ['#36CE8E', '#36CE8E', '#36CE8E', '#36CE8E', '#36CE8E', '#36CE8E'];
+                        const colors = ['#AFF383', '#AFF383', '#AFF383', '#AFF383', '#AFF383', '#AFF383'];
 
                         return events.map((event, index) => (
                           <div
@@ -853,7 +853,7 @@ export default function Home() {
                   const isPositive = netBalance >= 0;
 
                   return (
-                    <div className="bg-[#36CE8E] rounded-md p-2.5 flex items-center justify-between">
+                    <div className="bg-[#AFF383] rounded-md p-2.5 flex items-center justify-between">
                       <p className="text-sm font-semibold text-[#0A1A10]">
                         {format(calendarMonth, 'MMMM')} Balance
                       </p>
