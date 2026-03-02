@@ -19,10 +19,10 @@ export default function PendingLoanOffers({ offers }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="bg-white rounded-2xl p-5 max-w-[85%] mx-auto lg:max-w-none">
+      <div className="bg-white rounded-xl p-5 max-w-[85%] mx-auto lg:max-w-none">
         <div className="flex items-center justify-between gap-4 flex-wrap">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-[#DBFFEB] flex items-center justify-center flex-shrink-0">
+            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center flex-shrink-0">
               <Bell className="w-5 h-5 text-[#0A1A10]" />
             </div>
             <div>

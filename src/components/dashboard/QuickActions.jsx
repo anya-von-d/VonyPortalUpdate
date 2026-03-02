@@ -34,9 +34,9 @@ export default function QuickActions() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: 0.2 }}
     >
-      <div className="bg-white rounded-2xl p-5 max-w-[85%] mx-auto lg:max-w-none">
+      <div className="bg-white rounded-xl p-5 max-w-[85%] mx-auto lg:max-w-none">
         {/* Title */}
-        <p className="text-[11px] text-[#7A9A85] uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+        <p className="text-sm font-semibold text-[#7A9A85] mb-4">
           Quick Actions
         </p>
 
@@ -60,7 +60,7 @@ export default function QuickActions() {
                   style={{ backgroundColor: cardBgColors[index % 6] }}
                 >
                   {/* Circular Icon */}
-                  <div className="w-9 h-9 rounded-full bg-[#DBFFEB] flex items-center justify-center flex-shrink-0">
+                  <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center flex-shrink-0">
                     <Icon className="w-4 h-4 text-[#0A1A10]" />
                   </div>
 

@@ -285,10 +285,10 @@ export default function Home() {
 
               return (
                 <div
-                  className="lg:col-span-2 rounded-[22px] p-7 relative transition-all duration-300"
+                  className="lg:col-span-2 rounded-xl p-7 relative transition-all duration-300"
                   style={{
                     background: overviewType === 'lending'
-                      ? 'linear-gradient(135deg, #0A3D2A 0%, #0D5C3E 50%, #0A4D32 100%)'
+                      ? 'linear-gradient(135deg, #052e16 0%, #14532d 50%, #052e16 100%)'
                       : '#FFFFFF'
                   }}
                 >
@@ -323,7 +323,7 @@ export default function Home() {
                     {overviewType === 'lending' ? (
                       /* ===== LENDING OVERVIEW — Dark green card ===== */
                       <>
-                        <p className="text-[11px] uppercase tracking-[0.12em] font-medium mb-5" style={{ fontFamily: 'IBM Plex Mono, monospace', color: 'rgba(255,255,255,0.5)' }}>
+                        <p className="text-sm font-semibold mb-5 text-white/50">
                           Lending Overview
                         </p>
                         <div className="flex items-center gap-6">
@@ -395,7 +395,7 @@ export default function Home() {
                     ) : (
                       /* ===== BORROWING OVERVIEW — Light green card ===== */
                       <>
-                        <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-3" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                        <p className="text-sm font-semibold text-slate-600 mb-3">
                           Borrowing Overview
                         </p>
                         <div className="flex items-center gap-6">
@@ -466,8 +466,13 @@ export default function Home() {
             </div>
             </div>
 
-            {/* Monthly Overview, Calendar & Activity Row */}
+            {/* Activity, Calendar & Monthly Overview Row */}
             <div className="grid lg:grid-cols-3 gap-6">
+              {/* Activity */}
+              <div>
+                <RecentActivity loans={myLoans} payments={payments} user={user} allUsers={safeAllProfiles} />
+              </div>
+
               {/* Monthly Overview */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -528,7 +533,7 @@ export default function Home() {
 
                   return (
                     <div className="bg-[#DBFFEB] rounded-xl p-3 flex items-center justify-between">
-                      <p className="text-[11px] text-[#0A1A10] uppercase tracking-[0.12em] font-medium" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                      <p className="text-sm font-semibold text-[#0A1A10]">
                         {format(calendarMonth, 'MMMM')} Balance
                       </p>
                       <p className="text-sm font-bold text-[#0A1A10]">
@@ -538,9 +543,9 @@ export default function Home() {
                   );
                 })()}
 
-                <Card className="bg-white border-0 rounded-2xl overflow-hidden h-full">
+                <Card className="bg-white border-0 rounded-xl overflow-hidden h-full">
                   <CardContent className="p-5 h-full flex flex-col">
-                    <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                    <p className="text-sm font-semibold text-slate-600 mb-4">
                       {format(calendarMonth, 'MMMM')} Overview
                     </p>
 
@@ -683,7 +688,7 @@ export default function Home() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.2 }}
               >
-                <Card className="bg-white border-0 rounded-2xl overflow-hidden">
+                <Card className="bg-white border-0 rounded-xl overflow-hidden">
                   <CardContent className="p-5">
                     {/* Calendar Header with Navigation */}
                     <div className="flex items-center justify-between mb-4">
@@ -853,10 +858,6 @@ export default function Home() {
                 </Card>
               </motion.div>
 
-              {/* Activity */}
-              <div>
-                <RecentActivity loans={myLoans} payments={payments} user={user} allUsers={safeAllProfiles} />
-              </div>
             </div>
           </div>
 
