@@ -34,7 +34,7 @@ export default function QuickActions() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: 0.2 }}
     >
-      <div className="rounded-lg p-5 max-w-[85%] mx-auto lg:max-w-none" style={{backgroundColor: '#F7FAF8'}}>
+      <div className="rounded-lg p-5 max-w-[85%] mx-auto lg:max-w-none" style={{backgroundColor: '#EDF5F0'}}>
         {/* Title */}
         <p className="text-xl font-bold text-slate-800 mb-4 tracking-tight font-serif">
           Quick Actions
@@ -46,7 +46,7 @@ export default function QuickActions() {
             const hoverColor = hoverAccentColors[index % 4];
             const isHovered = hoveredIndex === index;
             const Icon = action.icon;
-            const cardBgColors = ['#AFF383', '#AFF383', '#AFF383'];
+            const cardBgColors = ['#83F384', '#83F384', '#83F384'];
 
             return (
               <Link key={action.title} to={createPageUrl(action.url)}>

@@ -237,14 +237,14 @@ export default function Home() {
     const paymentStatus = getPaymentStatus();
 
     return (
-        <div className="min-h-screen p-6" style={{backgroundColor: '#C2FFDC'}}>
+        <div className="min-h-screen p-6" style={{backgroundColor: '#DBEEE3'}}>
            <div className="max-w-6xl mx-auto space-y-7">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="py-5">
               <h1 className="text-4xl md:text-5xl font-bold text-slate-800 mb-4 tracking-tight text-left">
                 {(() => {
                   const hour = new Date().getHours();
                   const greeting = hour < 12 ? "Good Morning" : hour < 18 ? "Good Afternoon" : "Good Evening";
-                  return <>{greeting}, <span style={{color: '#AFF383'}}>{user.full_name?.split(' ')[0] || 'User'}</span></>;
+                  return <>{greeting}, <span style={{color: '#83F384'}}>{user.full_name?.split(' ')[0] || 'User'}</span></>;
                 })()}
               </h1>
           </motion.div>
@@ -332,7 +332,7 @@ export default function Home() {
                               <circle
                                 cx="70" cy="70" r="58"
                                 fill="none"
-                                stroke="#AFF383"
+                                stroke="#83F384"
                                 strokeWidth="10"
                                 strokeLinecap="round"
                                 strokeDasharray={2 * Math.PI * 58}
@@ -404,7 +404,7 @@ export default function Home() {
                               <circle
                                 cx="70" cy="70" r="58"
                                 fill="none"
-                                stroke="#AFF383"
+                                stroke="#83F384"
                                 strokeWidth="10"
                                 strokeLinecap="round"
                                 strokeDasharray={2 * Math.PI * 58}
@@ -486,7 +486,7 @@ export default function Home() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.2 }}
               >
-                <Card className="border-0 rounded-lg overflow-hidden" style={{backgroundColor: '#F7FAF8'}}>
+                <Card className="border-0 rounded-lg overflow-hidden" style={{backgroundColor: '#EDF5F0'}}>
                   <CardContent className="p-5">
                     {/* Calendar Header with Navigation */}
                     <div className="flex items-center justify-between mb-4">
@@ -663,7 +663,7 @@ export default function Home() {
                 transition={{ duration: 0.4, delay: 0.3 }}
                 className="flex flex-col gap-1.5"
               >
-                <Card className="border-0 rounded-lg overflow-hidden h-full" style={{backgroundColor: '#F7FAF8'}}>
+                <Card className="border-0 rounded-lg overflow-hidden h-full" style={{backgroundColor: '#EDF5F0'}}>
                   <CardContent className="p-5 h-full flex flex-col">
                     <p className="text-xl font-bold text-slate-800 mb-4 tracking-tight font-serif">
                       {format(calendarMonth, 'MMMM')} Overview
@@ -745,7 +745,7 @@ export default function Home() {
                           );
                         }
 
-                        const colors = ['#AFF383', '#AFF383', '#AFF383', '#AFF383', '#AFF383', '#AFF383'];
+                        const colors = ['#83F384', '#83F384', '#83F384', '#83F384', '#83F384', '#83F384'];
 
                         return events.map((event, index) => (
                           <div
@@ -853,7 +853,7 @@ export default function Home() {
                   const isPositive = netBalance >= 0;
 
                   return (
-                    <div className="bg-[#AFF383] rounded-md p-2.5 flex items-center justify-between">
+                    <div className="bg-[#83F384] rounded-md p-2.5 flex items-center justify-between">
                       <p className="text-sm font-semibold text-[#0A1A10]">
                         {format(calendarMonth, 'MMMM')} Balance
                       </p>
