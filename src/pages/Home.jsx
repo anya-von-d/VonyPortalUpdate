@@ -244,7 +244,7 @@ export default function Home() {
                 {(() => {
                   const hour = new Date().getHours();
                   const greeting = hour < 12 ? "Good Morning" : hour < 18 ? "Good Afternoon" : "Good Evening";
-                  return <>{greeting}, <span style={{color: '#83F384'}}>{user.full_name?.split(' ')[0] || 'User'}</span></>;
+                  return <>{greeting}, <span className="text-green-950">{user.full_name?.split(' ')[0] || 'User'}</span></>;
                 })()}
               </h1>
           </motion.div>
