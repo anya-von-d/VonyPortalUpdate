@@ -321,7 +321,7 @@ export default function Home() {
                     {overviewType === 'lending' ? (
                       /* ===== LENDING OVERVIEW — Dark green card ===== */
                       <>
-                        <p className="text-xl font-bold mb-5 text-white tracking-tight">
+                        <p className="text-xl font-bold mb-5 text-white tracking-tight font-serif">
                           Lending Overview
                         </p>
                         <div className="flex items-center gap-6">
@@ -393,7 +393,7 @@ export default function Home() {
                     ) : (
                       /* ===== BORROWING OVERVIEW — Dark green card (same style as lending) ===== */
                       <>
-                        <p className="text-xl font-bold mb-5 text-white tracking-tight">
+                        <p className="text-xl font-bold mb-5 text-white tracking-tight font-serif">
                           Borrowing Overview
                         </p>
                         <div className="flex items-center gap-6">
@@ -474,7 +474,7 @@ export default function Home() {
             </div>
 
             {/* Activity, Calendar & Monthly Overview Row */}
-            <div className="grid lg:grid-cols-3 gap-6">
+            <div className="grid lg:grid-cols-[2fr_1fr_1fr] gap-6">
               {/* Activity */}
               <div>
                 <RecentActivity loans={myLoans} payments={payments} user={user} allUsers={safeAllProfiles} />
@@ -715,7 +715,7 @@ export default function Home() {
                   const isPositive = netBalance >= 0;
 
                   return (
-                    <div className="bg-[#83F384] rounded-xl p-3 flex items-center justify-between">
+                    <div className="bg-[#83F384] rounded-lg p-2.5 flex items-center justify-between">
                       <p className="text-sm font-semibold text-[#0A1A10]">
                         {format(calendarMonth, 'MMMM')} Balance
                       </p>
@@ -728,7 +728,7 @@ export default function Home() {
 
                 <Card className="bg-white border-0 rounded-xl overflow-hidden h-full">
                   <CardContent className="p-5 h-full flex flex-col">
-                    <p className="text-xl font-bold text-slate-800 mb-4 tracking-tight">
+                    <p className="text-xl font-bold text-slate-800 mb-4 tracking-tight font-serif">
                       {format(calendarMonth, 'MMMM')} Overview
                     </p>
 
@@ -813,11 +813,11 @@ export default function Home() {
                         return events.map((event, index) => (
                           <div
                             key={index}
-                            className="flex items-center gap-3 p-3 rounded-xl"
+                            className="flex items-center gap-2.5 p-2 md:p-2.5 rounded-lg"
                             style={{ backgroundColor: colors[index % 6] }}
                           >
                             {/* Date Box */}
-                            <div className="bg-white/50 rounded-lg px-3 py-2 flex-shrink-0 text-center min-w-[50px]">
+                            <div className="bg-white/50 rounded-md px-2.5 py-1.5 flex-shrink-0 text-center min-w-[44px]">
                               <p className="text-xs text-slate-500 uppercase" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                                 {format(event.date, 'MMM')}
                               </p>

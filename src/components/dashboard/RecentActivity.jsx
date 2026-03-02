@@ -38,7 +38,7 @@ export default function RecentActivity({ loans, payments, isLoading, user, allUs
         transition={{ duration: 0.4, delay: 0.3 }}
       >
         <div className="bg-white rounded-xl p-5 max-w-[85%] mx-auto lg:max-w-none">
-          <p className="text-xl font-bold text-slate-800 mb-4 tracking-tight">
+          <p className="text-xl font-bold text-slate-800 mb-4 tracking-tight font-serif">
             Activity
           </p>
           <div className="relative">
@@ -46,7 +46,7 @@ export default function RecentActivity({ loans, payments, isLoading, user, allUs
               {Array(3).fill(0).map((_, i) => (
                 <div
                   key={i}
-                  className="rounded-xl p-4 md:p-5"
+                  className="rounded-lg p-2.5 md:p-3"
                   style={{ backgroundColor: cardBgColors[i % 6] }}
                 >
                   <SkeletonShimmer className="h-4 w-48 mb-2" />
@@ -147,7 +147,7 @@ export default function RecentActivity({ loans, payments, isLoading, user, allUs
       <div className="bg-white rounded-xl p-5 max-w-[85%] mx-auto lg:max-w-none">
         {/* Title */}
         <div className="flex items-center justify-between mb-4">
-          <p className="text-xl font-bold text-slate-800 tracking-tight">
+          <p className="text-xl font-bold text-slate-800 tracking-tight font-serif">
             Activity
           </p>
           <Link to={createPageUrl("RecentActivity")}>
@@ -190,12 +190,12 @@ export default function RecentActivity({ loans, payments, isLoading, user, allUs
                     transition={{ duration: 0.3, delay: 0.1 + index * 0.05 }}
                     onMouseEnter={() => setHoveredIndex(index)}
                     onMouseLeave={() => setHoveredIndex(null)}
-                    className="rounded-xl p-3 md:p-4 cursor-pointer transition-all duration-200 flex items-center gap-3"
+                    className="rounded-lg p-2 md:p-2.5 cursor-pointer transition-all duration-200 flex items-center gap-2.5"
                     style={{ backgroundColor: bgColor }}
                   >
                     {/* Circular Icon */}
-                    <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center flex-shrink-0">
-                      <Icon className="w-4 h-4 text-[#0A1A10]" />
+                    <div className="w-7 h-7 rounded-full bg-white flex items-center justify-center flex-shrink-0">
+                      <Icon className="w-3.5 h-3.5 text-[#0A1A10]" />
                     </div>
 
                     {/* Content */}

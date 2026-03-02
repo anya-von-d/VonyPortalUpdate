@@ -36,7 +36,7 @@ export default function QuickActions() {
     >
       <div className="bg-white rounded-xl p-5 max-w-[85%] mx-auto lg:max-w-none">
         {/* Title */}
-        <p className="text-xl font-bold text-slate-800 mb-4 tracking-tight">
+        <p className="text-xl font-bold text-slate-800 mb-4 tracking-tight font-serif">
           Quick Actions
         </p>
 
@@ -56,12 +56,12 @@ export default function QuickActions() {
                   transition={{ duration: 0.3, delay: 0.1 + index * 0.05 }}
                   onMouseEnter={() => setHoveredIndex(index)}
                   onMouseLeave={() => setHoveredIndex(null)}
-                  className="rounded-xl p-3 md:p-4 cursor-pointer transition-all duration-200 flex items-center gap-3"
+                  className="rounded-lg p-2 md:p-2.5 cursor-pointer transition-all duration-200 flex items-center gap-2.5"
                   style={{ backgroundColor: cardBgColors[index % 6] }}
                 >
                   {/* Circular Icon */}
-                  <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center flex-shrink-0">
-                    <Icon className="w-4 h-4 text-[#0A1A10]" />
+                  <div className="w-7 h-7 rounded-full bg-white flex items-center justify-center flex-shrink-0">
+                    <Icon className="w-3.5 h-3.5 text-[#0A1A10]" />
                   </div>
 
                   {/* Content - Title only */}
