@@ -413,7 +413,7 @@ export default function Home() {
           </div>
 
           {/* Main Content Below Hero */}
-          <div className="px-8 py-6 md:px-14 lg:px-20" style={{backgroundColor: '#1C4332'}}>
+          <div className="px-10 py-6 md:px-20 lg:px-28" style={{backgroundColor: '#1C4332'}}>
            <div className="max-w-6xl mx-auto space-y-5 md:space-y-7">
 
             {pendingOffers.length > 0 && (
