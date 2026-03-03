@@ -14,7 +14,6 @@ import RecordPaymentModal from "@/components/loans/RecordPaymentModal";
 
 import StatsCard from "../components/dashboard/StatsCard";
 import RecentActivity from "../components/dashboard/RecentActivity";
-import QuickActions from "../components/dashboard/QuickActions";
 import PendingLoanOffers from "../components/dashboard/PendingLoanOffers";
 import LoanProgress from "../components/dashboard/LoanProgress";
 
@@ -414,40 +413,35 @@ export default function Home() {
           <div className="px-4 py-6 md:px-6" style={{backgroundColor: '#1C4332'}}>
            <div className="max-w-6xl mx-auto space-y-5 md:space-y-7">
 
-            {/* Quick Action Buttons Row */}
-            <div className="flex flex-wrap gap-2 justify-center">
-              <Link
-                to={createPageUrl("Lending")}
-                className="px-5 py-2.5 rounded-full text-sm font-semibold text-[#1C4332] transition-colors duration-200 hover:opacity-90"
-                style={{ backgroundColor: '#83F384' }}
-              >
-                Create Loan Offer
-              </Link>
-              <Link
-                to={createPageUrl("Requests")}
-                className="px-5 py-2.5 rounded-full text-sm font-semibold text-[#1C4332] transition-colors duration-200 hover:opacity-90"
-                style={{ backgroundColor: '#83F384' }}
-              >
-                View Requests
-              </Link>
-              <Link
-                to={createPageUrl("LoanAgreements")}
-                className="px-5 py-2.5 rounded-full text-sm font-semibold text-[#1C4332] transition-colors duration-200 hover:opacity-90"
-                style={{ backgroundColor: '#83F384' }}
-              >
-                View Documents
-              </Link>
-            </div>
-
             {pendingOffers.length > 0 && (
               <PendingLoanOffers offers={pendingOffers} />
             )}
 
             {/* Quick Actions & Activity Row */}
             <div className="grid lg:grid-cols-[1fr_2fr] gap-4 md:gap-6 items-start">
-              {/* Quick Actions */}
-              <div>
-                <QuickActions />
+              {/* Stacked Quick Action Buttons */}
+              <div className="flex flex-col gap-2">
+                <Link
+                  to={createPageUrl("Lending")}
+                  className="px-5 py-2.5 rounded-full text-sm font-semibold text-[#1C4332] text-center transition-colors duration-200 hover:opacity-90"
+                  style={{ backgroundColor: '#83F384' }}
+                >
+                  Create Loan Offer
+                </Link>
+                <Link
+                  to={createPageUrl("Requests")}
+                  className="px-5 py-2.5 rounded-full text-sm font-semibold text-[#1C4332] text-center transition-colors duration-200 hover:opacity-90"
+                  style={{ backgroundColor: '#83F384' }}
+                >
+                  View Requests
+                </Link>
+                <Link
+                  to={createPageUrl("LoanAgreements")}
+                  className="px-5 py-2.5 rounded-full text-sm font-semibold text-[#1C4332] text-center transition-colors duration-200 hover:opacity-90"
+                  style={{ backgroundColor: '#83F384' }}
+                >
+                  View Documents
+                </Link>
               </div>
 
               {/* Activity */}
