@@ -405,31 +405,32 @@ export default function Home() {
                   </motion.div>
                 </div>
 
-                {/* Quick Action Buttons */}
-                <div className="flex flex-wrap gap-2 mt-4 lg:justify-end">
-                  <Link
-                    to={createPageUrl("Lending")}
-                    className="px-4 py-2 rounded-full text-sm font-semibold text-white transition-colors duration-200 hover:opacity-90"
-                    style={{ backgroundColor: '#1C4332' }}
-                  >
-                    Create Loan Offer
-                  </Link>
-                  <Link
-                    to={createPageUrl("Requests")}
-                    className="px-4 py-2 rounded-full text-sm font-semibold text-white transition-colors duration-200 hover:opacity-90"
-                    style={{ backgroundColor: '#1C4332' }}
-                  >
-                    View Requests
-                  </Link>
-                  <Link
-                    to={createPageUrl("LoanAgreements")}
-                    className="px-4 py-2 rounded-full text-sm font-semibold text-white transition-colors duration-200 hover:opacity-90"
-                    style={{ backgroundColor: '#1C4332' }}
-                  >
-                    View Documents
-                  </Link>
-                </div>
               </motion.div>
+
+              {/* Quick Action Buttons */}
+              <div className="flex flex-wrap gap-2 mt-5 justify-center lg:justify-end">
+                <Link
+                  to={createPageUrl("Lending")}
+                  className="px-4 py-2 rounded-full text-sm font-semibold text-white transition-colors duration-200 hover:opacity-90"
+                  style={{ backgroundColor: '#1C4332' }}
+                >
+                  Create Loan Offer
+                </Link>
+                <Link
+                  to={createPageUrl("Requests")}
+                  className="px-4 py-2 rounded-full text-sm font-semibold text-white transition-colors duration-200 hover:opacity-90"
+                  style={{ backgroundColor: '#1C4332' }}
+                >
+                  View Requests
+                </Link>
+                <Link
+                  to={createPageUrl("LoanAgreements")}
+                  className="px-4 py-2 rounded-full text-sm font-semibold text-white transition-colors duration-200 hover:opacity-90"
+                  style={{ backgroundColor: '#1C4332' }}
+                >
+                  View Documents
+                </Link>
+              </div>
             </div>
           </div>
 
