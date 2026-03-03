@@ -336,7 +336,7 @@ export default function Home() {
                     transition={{ duration: 0.3, ease: "easeOut" }}
                     className="px-6"
                   >
-                    <p className="text-lg font-bold text-slate-800 mb-5 tracking-tight font-serif">
+                    <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-5" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                       {overviewType === 'lending' ? 'Lending Overview' : 'Borrowing Overview'}
                     </p>
 
@@ -551,7 +551,7 @@ export default function Home() {
                           <polyline points="15 18 9 12 15 6"></polyline>
                         </svg>
                       </button>
-                      <p className="text-xl font-bold text-slate-800 tracking-tight font-serif">
+                      <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                         {format(calendarMonth, 'MMMM')} Overview
                       </p>
                       <button
@@ -746,7 +746,7 @@ export default function Home() {
               >
                 <Card className="border-0 rounded-lg overflow-hidden" style={{backgroundColor: '#DBFFEB'}}>
                   <CardContent className="p-4 md:p-5">
-                    <p className="text-xl font-bold text-slate-800 mb-4 tracking-tight font-serif">
+                    <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                       Your Friends
                     </p>
 
