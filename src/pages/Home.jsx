@@ -305,31 +305,6 @@ export default function Home() {
                   })()}
                 </div>
 
-                {/* Stacked Quick Action Buttons */}
-                <div className="hidden lg:flex flex-col gap-2 flex-shrink-0">
-                  <Link
-                    to={createPageUrl("Lending")}
-                    className="px-5 py-2.5 rounded-full text-sm font-semibold text-white transition-colors duration-200 hover:opacity-90 text-center"
-                    style={{ backgroundColor: '#1C4332' }}
-                  >
-                    Create Loan Offer
-                  </Link>
-                  <Link
-                    to={createPageUrl("Requests")}
-                    className="px-5 py-2.5 rounded-full text-sm font-semibold text-white transition-colors duration-200 hover:opacity-90 text-center"
-                    style={{ backgroundColor: '#1C4332' }}
-                  >
-                    View Requests
-                  </Link>
-                  <Link
-                    to={createPageUrl("LoanAgreements")}
-                    className="px-5 py-2.5 rounded-full text-sm font-semibold text-white transition-colors duration-200 hover:opacity-90 text-center"
-                    style={{ backgroundColor: '#1C4332' }}
-                  >
-                    View Documents
-                  </Link>
-                </div>
-
                 {/* Right Side - Overview box with arrows */}
                 <div className="rounded-xl p-5 md:p-7 flex-1 lg:max-w-md shadow-sm relative overflow-hidden" style={{backgroundColor: '#DBFFEB'}}>
                   {/* Left Arrow */}
@@ -432,36 +407,37 @@ export default function Home() {
 
               </motion.div>
 
-              {/* Quick Action Buttons - Mobile Only */}
-              <div className="flex lg:hidden flex-wrap gap-2 mt-5 justify-center">
-                <Link
-                  to={createPageUrl("Lending")}
-                  className="px-4 py-2 rounded-full text-sm font-semibold text-white transition-colors duration-200 hover:opacity-90"
-                  style={{ backgroundColor: '#1C4332' }}
-                >
-                  Create Loan Offer
-                </Link>
-                <Link
-                  to={createPageUrl("Requests")}
-                  className="px-4 py-2 rounded-full text-sm font-semibold text-white transition-colors duration-200 hover:opacity-90"
-                  style={{ backgroundColor: '#1C4332' }}
-                >
-                  View Requests
-                </Link>
-                <Link
-                  to={createPageUrl("LoanAgreements")}
-                  className="px-4 py-2 rounded-full text-sm font-semibold text-white transition-colors duration-200 hover:opacity-90"
-                  style={{ backgroundColor: '#1C4332' }}
-                >
-                  View Documents
-                </Link>
-              </div>
             </div>
           </div>
 
           {/* Main Content Below Hero */}
           <div className="px-4 py-6 md:px-6" style={{backgroundColor: '#1C4332'}}>
            <div className="max-w-6xl mx-auto space-y-5 md:space-y-7">
+
+            {/* Quick Action Buttons Row */}
+            <div className="flex flex-wrap gap-2 justify-center">
+              <Link
+                to={createPageUrl("Lending")}
+                className="px-5 py-2.5 rounded-full text-sm font-semibold text-[#1C4332] transition-colors duration-200 hover:opacity-90"
+                style={{ backgroundColor: '#83F384' }}
+              >
+                Create Loan Offer
+              </Link>
+              <Link
+                to={createPageUrl("Requests")}
+                className="px-5 py-2.5 rounded-full text-sm font-semibold text-[#1C4332] transition-colors duration-200 hover:opacity-90"
+                style={{ backgroundColor: '#83F384' }}
+              >
+                View Requests
+              </Link>
+              <Link
+                to={createPageUrl("LoanAgreements")}
+                className="px-5 py-2.5 rounded-full text-sm font-semibold text-[#1C4332] transition-colors duration-200 hover:opacity-90"
+                style={{ backgroundColor: '#83F384' }}
+              >
+                View Documents
+              </Link>
+            </div>
 
             {pendingOffers.length > 0 && (
               <PendingLoanOffers offers={pendingOffers} />
