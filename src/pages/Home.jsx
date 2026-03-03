@@ -237,14 +237,14 @@ export default function Home() {
     const paymentStatus = getPaymentStatus();
 
     return (
-        <div className="min-h-screen px-4 py-6 md:p-6" style={{backgroundColor: '#052e16'}}>
+        <div className="min-h-screen px-4 py-6 md:p-6" style={{backgroundColor: '#ffffff'}}>
            <div className="max-w-6xl mx-auto space-y-5 md:space-y-7">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="py-3 md:py-5">
-              <h1 className="text-3xl md:text-5xl font-bold text-white mb-4 tracking-tight text-left">
+              <h1 className="text-3xl md:text-5xl font-bold text-slate-800 mb-4 tracking-tight text-left">
                 {(() => {
                   const hour = new Date().getHours();
                   const greeting = hour < 12 ? "Good Morning" : hour < 18 ? "Good Afternoon" : "Good Evening";
-                  return <>{greeting}, <span className="text-[#83F384]">{user.full_name?.split(' ')[0] || 'User'}</span></>;
+                  return <>{greeting}, <span className="text-black">{user.full_name?.split(' ')[0] || 'User'}</span></>;
                 })()}
               </h1>
           </motion.div>
@@ -254,6 +254,7 @@ export default function Home() {
               <PendingLoanOffers offers={pendingOffers} />
             )}
 
+            <div className="grid lg:grid-cols-[2fr_1fr] gap-4 md:gap-6 items-start">
             {(() => {
               // Compute data for both views
               const lentLoans = myLoans.filter(l => l && l.lender_id === user.id && l.status === 'active');
@@ -459,7 +460,10 @@ export default function Home() {
               );
             })()}
 
-            <QuickActions />
+            <div className="lg:col-span-1">
+              <QuickActions />
+            </div>
+            </div>
 
             {/* Activity, Calendar & Monthly Overview Row */}
             <div className="grid lg:grid-cols-[2fr_1fr_1fr] gap-4 md:gap-6">
