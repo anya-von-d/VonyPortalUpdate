@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Loan, Payment, PublicProfile } from "@/entities/all";
+import { Loan, Payment, PublicProfile, Friendship } from "@/entities/all";
 import { useAuth } from "@/lib/AuthContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -50,6 +50,7 @@ export default function Home() {
   const [loans, setLoans] = useState([]);
   const [payments, setPayments] = useState([]);
   const [publicProfiles, setPublicProfiles] = useState([]);
+  const [friendships, setFriendships] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false);
@@ -83,15 +84,17 @@ export default function Home() {
     setIsLoading(true);
     try {
       // Only fetch loan data - user profile comes from context
-      const [allLoans, recentPayments, allProfiles] = await Promise.all([
+      const [allLoans, recentPayments, allProfiles, allFriendships] = await Promise.all([
         safeEntityCall(() => Loan.list('-created_at')),
         safeEntityCall(() => Payment.list('-created_at', 10)),
         safeEntityCall(() => PublicProfile.list()),
+        safeEntityCall(() => Friendship.list()),
       ]);
 
       setLoans(allLoans);
       setPayments(recentPayments);
       setPublicProfiles(allProfiles);
+      setFriendships(allFriendships);
       setDataLoaded(true);
 
       // Sync profile in background if we have user data
@@ -410,7 +413,7 @@ export default function Home() {
           </div>
 
           {/* Main Content Below Hero */}
-          <div className="px-4 py-6 md:px-6" style={{backgroundColor: '#1C4332'}}>
+          <div className="px-6 py-6 md:px-10 lg:px-14" style={{backgroundColor: '#1C4332'}}>
            <div className="max-w-6xl mx-auto space-y-5 md:space-y-7">
 
             {pendingOffers.length > 0 && (
@@ -418,26 +421,26 @@ export default function Home() {
             )}
 
             {/* Quick Actions & Activity Row */}
-            <div className="grid lg:grid-cols-[1fr_2fr] gap-4 md:gap-6 items-start">
+            <div className="grid lg:grid-cols-[auto_1fr] gap-4 md:gap-6 items-center">
               {/* Stacked Quick Action Buttons */}
               <div className="flex flex-col gap-2">
                 <Link
                   to={createPageUrl("Lending")}
-                  className="px-5 py-2.5 rounded-full text-sm font-semibold text-[#1C4332] text-center transition-colors duration-200 hover:opacity-90"
+                  className="px-4 py-2.5 rounded-full text-sm font-semibold text-[#1C4332] text-center transition-colors duration-200 hover:opacity-90 whitespace-nowrap"
                   style={{ backgroundColor: '#83F384' }}
                 >
                   Create Loan Offer
                 </Link>
                 <Link
                   to={createPageUrl("Requests")}
-                  className="px-5 py-2.5 rounded-full text-sm font-semibold text-[#1C4332] text-center transition-colors duration-200 hover:opacity-90"
+                  className="px-4 py-2.5 rounded-full text-sm font-semibold text-[#1C4332] text-center transition-colors duration-200 hover:opacity-90 whitespace-nowrap"
                   style={{ backgroundColor: '#83F384' }}
                 >
                   View Requests
                 </Link>
                 <Link
                   to={createPageUrl("LoanAgreements")}
-                  className="px-5 py-2.5 rounded-full text-sm font-semibold text-[#1C4332] text-center transition-colors duration-200 hover:opacity-90"
+                  className="px-4 py-2.5 rounded-full text-sm font-semibold text-[#1C4332] text-center transition-colors duration-200 hover:opacity-90 whitespace-nowrap"
                   style={{ backgroundColor: '#83F384' }}
                 >
                   View Documents
@@ -527,86 +530,8 @@ export default function Home() {
               </div>
             )}
 
-            {/* Requests & Monthly Overview Row */}
+            {/* Monthly Overview & Your Friends Row */}
             <div className="grid lg:grid-cols-[1fr_2fr] gap-4 md:gap-6 items-start">
-              {/* Requests */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.25 }}
-              >
-                <Card className="border-0 rounded-lg overflow-hidden" style={{backgroundColor: '#DBFFEB'}}>
-                  <CardContent className="p-4 md:p-5">
-                    <p className="text-xl font-bold text-slate-800 mb-4 tracking-tight font-serif">
-                      Requests
-                    </p>
-
-                    <div className="space-y-2">
-                      {/* Pending Loan Offers */}
-                      {pendingOffers.length > 0 && (
-                        <div className="flex items-center gap-2.5 p-2.5 rounded-md" style={{ backgroundColor: '#83F384' }}>
-                          <div className="w-7 h-7 rounded-full bg-white flex items-center justify-center flex-shrink-0">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0A1A10" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-                            </svg>
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-semibold text-[#0A1A10]">{pendingOffers.length} Loan Offer{pendingOffers.length !== 1 ? 's' : ''}</p>
-                            <p className="text-xs text-[#0A1A10]/60">Awaiting your review</p>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Payments to Confirm */}
-                      {(() => {
-                        const paymentsToConfirm = payments.filter(p =>
-                          p && p.status === 'pending' && p.confirmed_by_lender === false &&
-                          myLoans.some(l => l.id === p.loan_id && l.lender_id === user.id)
-                        );
-                        if (paymentsToConfirm.length === 0) return null;
-                        return (
-                          <div className="flex items-center gap-2.5 p-2.5 rounded-md" style={{ backgroundColor: '#83F384' }}>
-                            <div className="w-7 h-7 rounded-full bg-white flex items-center justify-center flex-shrink-0">
-                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0A1A10" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
-                                <path d="M9 12l2 2 4-4"></path>
-                              </svg>
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm font-semibold text-[#0A1A10]">{paymentsToConfirm.length} Payment{paymentsToConfirm.length !== 1 ? 's' : ''} to Confirm</p>
-                              <p className="text-xs text-[#0A1A10]/60">Needs your confirmation</p>
-                            </div>
-                          </div>
-                        );
-                      })()}
-
-                      {/* No Requests */}
-                      {pendingOffers.length === 0 && payments.filter(p =>
-                        p && p.status === 'pending' && p.confirmed_by_lender === false &&
-                        myLoans.some(l => l.id === p.loan_id && l.lender_id === user.id)
-                      ).length === 0 && (
-                        <div className="flex flex-col items-center justify-center py-6 text-slate-400">
-                          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="opacity-40 mb-2">
-                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-                          </svg>
-                          <p className="text-sm">No pending requests</p>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* View All Link */}
-                    <Link
-                      to={createPageUrl("Requests")}
-                      className="block mt-4 text-center text-sm font-semibold text-[#00A86B] hover:text-[#0D9B76] transition-colors"
-                    >
-                      View All Requests →
-                    </Link>
-                  </CardContent>
-                </Card>
-              </motion.div>
-
               {/* Monthly Overview */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -812,6 +737,103 @@ export default function Home() {
                 );
               })()}
             </motion.div>
+
+              {/* Your Friends */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.25 }}
+              >
+                <Card className="border-0 rounded-lg overflow-hidden" style={{backgroundColor: '#DBFFEB'}}>
+                  <CardContent className="p-4 md:p-5">
+                    <p className="text-xl font-bold text-slate-800 mb-4 tracking-tight font-serif">
+                      Your Friends
+                    </p>
+
+                    <div className="space-y-3 overflow-y-auto max-h-[320px] pr-1">
+                      {(() => {
+                        const acceptedFriends = friendships.filter(f =>
+                          f.status === 'accepted' && (f.user_id === user.id || f.friend_id === user.id)
+                        );
+
+                        if (acceptedFriends.length === 0) {
+                          return (
+                            <div className="flex flex-col items-center justify-center py-6 text-slate-400">
+                              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="opacity-40 mb-2">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <line x1="19" y1="8" x2="19" y2="14"></line>
+                                <line x1="22" y1="11" x2="16" y2="11"></line>
+                              </svg>
+                              <p className="text-sm">No friends yet</p>
+                            </div>
+                          );
+                        }
+
+                        return acceptedFriends.map((friendship) => {
+                          const friendUserId = friendship.user_id === user.id ? friendship.friend_id : friendship.user_id;
+                          const friendProfile = safeAllProfiles.find(p => p.user_id === friendUserId);
+                          const friendActiveLoans = myLoans.filter(l =>
+                            l.status === 'active' && (
+                              (l.lender_id === user.id && l.borrower_id === friendUserId) ||
+                              (l.borrower_id === user.id && l.lender_id === friendUserId)
+                            )
+                          );
+
+                          const defaultAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent((friendProfile?.full_name || 'U').charAt(0))}&background=22c55e&color=fff&size=128`;
+
+                          return (
+                            <div key={friendship.id} className="flex items-center gap-3 p-2.5 rounded-lg" style={{ backgroundColor: '#83F384' }}>
+                              {/* Profile Photo */}
+                              <img
+                                src={friendProfile?.profile_picture_url || defaultAvatar}
+                                alt={friendProfile?.full_name || 'Friend'}
+                                className="w-9 h-9 rounded-full object-cover flex-shrink-0 bg-white"
+                              />
+
+                              {/* Name & Active Loans */}
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-semibold text-[#0A1A10] truncate">
+                                  {friendProfile?.full_name || friendProfile?.username || 'Friend'}
+                                </p>
+                                <div className="bg-white rounded-md px-2 py-0.5 inline-block mt-0.5">
+                                  <p className="text-xs font-medium text-slate-600">
+                                    {friendActiveLoans.length} active loan{friendActiveLoans.length !== 1 ? 's' : ''}
+                                  </p>
+                                </div>
+                              </div>
+
+                              {/* Lend & Borrow Buttons */}
+                              <div className="flex gap-1.5 flex-shrink-0">
+                                <Link
+                                  to={createPageUrl("Lending")}
+                                  className="px-3 py-1.5 rounded-md bg-white text-xs font-semibold text-[#1C4332] hover:bg-white/80 transition-colors"
+                                >
+                                  Lend
+                                </Link>
+                                <Link
+                                  to={createPageUrl("Borrowing")}
+                                  className="px-3 py-1.5 rounded-md bg-white text-xs font-semibold text-[#1C4332] hover:bg-white/80 transition-colors"
+                                >
+                                  Borrow
+                                </Link>
+                              </div>
+                            </div>
+                          );
+                        });
+                      })()}
+                    </div>
+
+                    {/* View All Link */}
+                    <Link
+                      to={createPageUrl("Friends")}
+                      className="block mt-4 text-center text-sm font-semibold text-[#00A86B] hover:text-[#0D9B76] transition-colors"
+                    >
+                      View All Friends →
+                    </Link>
+                  </CardContent>
+                </Card>
+              </motion.div>
             </div>
 
           </div>
