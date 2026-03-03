@@ -237,7 +237,7 @@ export default function Home() {
     const paymentStatus = getPaymentStatus();
 
     return (
-        <div className="min-h-screen px-4 py-6 md:p-6" style={{backgroundColor: '#ffffff'}}>
+        <div className="min-h-screen px-4 py-6 md:p-6" style={{backgroundColor: '#F4F7F5'}}>
            <div className="max-w-6xl mx-auto space-y-5 md:space-y-7">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="py-3 md:py-5">
               <h1 className="text-3xl md:text-5xl font-bold text-slate-800 mb-4 tracking-tight text-left">
@@ -479,7 +479,7 @@ export default function Home() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.2 }}
               >
-                <Card className="border-0 rounded-lg overflow-hidden" style={{backgroundColor: '#EBF2EE'}}>
+                <Card className="border-0 rounded-lg overflow-hidden" style={{backgroundColor: '#ffffff'}}>
                   <CardContent className="p-4 md:p-5">
                     {/* Calendar Header with Navigation */}
                     <div className="flex items-center justify-between mb-4">
@@ -656,7 +656,7 @@ export default function Home() {
                 transition={{ duration: 0.4, delay: 0.3 }}
                 className="flex flex-col gap-1.5"
               >
-                <Card className="border-0 rounded-lg overflow-hidden" style={{backgroundColor: '#EBF2EE'}}>
+                <Card className="border-0 rounded-lg overflow-hidden" style={{backgroundColor: '#ffffff'}}>
                   <CardContent className="p-4 md:p-5 flex flex-col">
                     <p className="text-xl font-bold text-slate-800 mb-4 tracking-tight font-serif">
                       {format(calendarMonth, 'MMMM')} Overview
