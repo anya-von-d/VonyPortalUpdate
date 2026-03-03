@@ -3,9 +3,12 @@ import { Loan, Payment, PublicProfile } from "@/entities/all";
 import { useAuth } from "@/lib/AuthContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { motion } from "framer-motion";
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths, getDay } from "date-fns";
 import { formatMoney } from "@/components/utils/formatMoney";
+import RecordPaymentModal from "@/components/loans/RecordPaymentModal";
 
 import StatsCard from "../components/dashboard/StatsCard";
 import RecentActivity from "../components/dashboard/RecentActivity";
@@ -51,6 +54,11 @@ export default function Home() {
   const [dataLoaded, setDataLoaded] = useState(false);
   const [overviewType, setOverviewType] = useState('lending'); // 'lending' or 'borrowing'
   const [calendarMonth, setCalendarMonth] = useState(new Date());
+  const [quickPayAmount, setQuickPayAmount] = useState('');
+  const [quickPayMethod, setQuickPayMethod] = useState('');
+  const [quickPayLoanId, setQuickPayLoanId] = useState('');
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [selectedLoan, setSelectedLoan] = useState(null);
 
   // Use profile from context
   const user = userProfile ? { ...userProfile, id: authUser?.id, email: authUser?.email } : null;
@@ -295,80 +303,128 @@ export default function Home() {
                   })()}
                 </div>
 
-                {/* Right Side - White box with bar chart + payment info */}
-                <div className="bg-white rounded-xl p-5 md:p-7 flex-1 lg:max-w-md shadow-sm">
-                  <p className="text-lg font-bold text-slate-800 mb-5 tracking-tight font-serif">Overview</p>
+                {/* Right Side - White box with arrows + lending/borrowing overview */}
+                <div className="bg-white rounded-xl p-5 md:p-7 flex-1 lg:max-w-md shadow-sm relative overflow-hidden">
+                  {/* Left Arrow */}
+                  <button
+                    onClick={() => setOverviewType(overviewType === 'lending' ? 'borrowing' : 'lending')}
+                    className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-7 h-7 rounded-full flex items-center justify-center transition-colors duration-200 bg-[#E2F5EA] hover:bg-[#c8e6d0]"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#052e16" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                  </button>
 
-                  {/* Bar Chart */}
-                  <div className="space-y-3 mb-6">
-                    {/* Total Lent bar */}
-                    <div>
-                      <div className="flex items-center justify-between mb-1">
-                        <p className="text-xs font-medium text-slate-500">Total Lent</p>
-                        <p className="text-xs font-bold text-slate-700">{formatMoney(totalLentAmount)}</p>
+                  {/* Right Arrow */}
+                  <button
+                    onClick={() => setOverviewType(overviewType === 'lending' ? 'borrowing' : 'lending')}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-7 h-7 rounded-full flex items-center justify-center transition-colors duration-200 bg-[#E2F5EA] hover:bg-[#c8e6d0]"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#052e16" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                  </button>
+
+                  <motion.div
+                    key={overviewType}
+                    initial={{ opacity: 0, x: overviewType === 'lending' ? -20 : 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.3, ease: "easeOut" }}
+                    className="px-6"
+                  >
+                    <p className="text-lg font-bold text-slate-800 mb-5 tracking-tight font-serif">
+                      {overviewType === 'lending' ? 'Lending Overview' : 'Borrowing Overview'}
+                    </p>
+
+                    {/* Bar Chart */}
+                    <div className="space-y-3 mb-6">
+                      <div>
+                        <div className="flex items-center justify-between mb-1">
+                          <p className="text-xs font-medium text-slate-500">
+                            {overviewType === 'lending' ? 'Total Lent' : 'Total Borrowed'}
+                          </p>
+                          <p className="text-xs font-bold text-slate-700">
+                            {formatMoney(overviewType === 'lending' ? totalLentAmount : totalBorrowedAmount)}
+                          </p>
+                        </div>
+                        <div className="w-full h-6 bg-[#E2F5EA] rounded-md overflow-hidden">
+                          <div
+                            className="h-full rounded-md transition-all duration-500 flex items-center justify-end pr-2"
+                            style={{
+                              width: `${Math.max(((overviewType === 'lending' ? totalLentAmount : totalBorrowedAmount) / Math.max(overviewType === 'lending' ? totalLentAmount : totalBorrowedAmount, 1)) * 100, 2)}%`,
+                              backgroundColor: '#052e16'
+                            }}
+                          >
+                            <span className="text-[10px] font-bold text-white">
+                              {formatMoney(overviewType === 'lending' ? totalLentAmount : totalBorrowedAmount)}
+                            </span>
+                          </div>
+                        </div>
                       </div>
-                      <div className="w-full h-6 bg-[#E2F5EA] rounded-md overflow-hidden">
-                        <div
-                          className="h-full rounded-md transition-all duration-500 flex items-center justify-end pr-2"
-                          style={{
-                            width: `${Math.max((totalLentAmount / barChartMax) * 100, 2)}%`,
-                            backgroundColor: '#052e16'
-                          }}
-                        >
-                          {totalLentAmount > 0 && <span className="text-[10px] font-bold text-white">{formatMoney(totalRepaid)} repaid</span>}
+
+                      <div>
+                        <div className="flex items-center justify-between mb-1">
+                          <p className="text-xs font-medium text-slate-500">
+                            {overviewType === 'lending' ? 'Repaid' : 'Paid Back'}
+                          </p>
+                          <p className="text-xs font-bold text-[#00A86B]">
+                            {formatMoney(overviewType === 'lending' ? totalRepaid : totalPaidBack)}
+                          </p>
+                        </div>
+                        <div className="w-full h-6 bg-[#E2F5EA] rounded-md overflow-hidden">
+                          <div
+                            className="h-full rounded-md transition-all duration-500 flex items-center justify-end pr-2"
+                            style={{
+                              width: `${Math.max(((overviewType === 'lending' ? totalRepaid : totalPaidBack) / Math.max(overviewType === 'lending' ? totalLentAmount : totalBorrowedAmount, 1)) * 100, 2)}%`,
+                              backgroundColor: '#00A86B'
+                            }}
+                          >
+                            {(overviewType === 'lending' ? totalRepaid : totalPaidBack) > 0 && (
+                              <span className="text-[10px] font-bold text-white">
+                                {overviewType === 'lending' ? percentRepaid : percentPaid}%
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
 
-                    {/* Total Borrowed bar */}
-                    <div>
-                      <div className="flex items-center justify-between mb-1">
-                        <p className="text-xs font-medium text-slate-500">Total Borrowed</p>
-                        <p className="text-xs font-bold text-slate-700">{formatMoney(totalBorrowedAmount)}</p>
-                      </div>
-                      <div className="w-full h-6 bg-[#E2F5EA] rounded-md overflow-hidden">
-                        <div
-                          className="h-full rounded-md transition-all duration-500 flex items-center justify-end pr-2"
-                          style={{
-                            width: `${Math.max((totalBorrowedAmount / barChartMax) * 100, 2)}%`,
-                            backgroundColor: '#00A86B'
-                          }}
-                        >
-                          {totalBorrowedAmount > 0 && <span className="text-[10px] font-bold text-white">{formatMoney(totalPaidBack)} paid</span>}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Next Payment Info */}
-                  <div className="border-t border-slate-100 pt-4 grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-xs text-slate-400 mb-1">Next Payment Date</p>
-                      <p className="text-sm font-bold text-slate-800">
-                        {nextBorrowerPayment ? format(nextBorrowerPayment.date, 'EEE, MMM d') : nextLenderPayment ? format(nextLenderPayment.date, 'EEE, MMM d') : 'N/A'}
-                      </p>
-                      {(nextBorrowerPayment || nextLenderPayment) && (
-                        <p className="text-xs text-[#00A86B] mt-0.5">
-                          {(() => {
-                            const payment = nextBorrowerPayment || nextLenderPayment;
-                            const days = Math.ceil((payment.date - new Date()) / (1000 * 60 * 60 * 24));
-                            return days > 0 ? `${days} day${days !== 1 ? 's' : ''} away` : days === 0 ? 'Due today' : `${Math.abs(days)} day${Math.abs(days) !== 1 ? 's' : ''} overdue`;
-                          })()}
+                    {/* Next Payment Info */}
+                    <div className="border-t border-slate-100 pt-4 grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-xs text-slate-400 mb-1">Next Payment Date</p>
+                        <p className="text-sm font-bold text-slate-800">
+                          {overviewType === 'lending'
+                            ? (nextLenderPayment ? format(nextLenderPayment.date, 'EEE, MMM d') : 'N/A')
+                            : (nextBorrowerPayment ? format(nextBorrowerPayment.date, 'EEE, MMM d') : 'N/A')
+                          }
                         </p>
-                      )}
-                    </div>
-                    <div>
-                      <p className="text-xs text-slate-400 mb-1">Next Payment Amount</p>
-                      <p className="text-sm font-bold text-slate-800">
-                        {nextBorrowerPayment ? formatMoney(nextBorrowerPayment.payment_amount || 0) : nextLenderPayment ? formatMoney(nextLenderPayment.payment_amount || 0) : 'N/A'}
-                      </p>
-                      {(nextBorrowerPayment || nextLenderPayment) && (
-                        <p className="text-xs text-slate-400 mt-0.5">
-                          {nextBorrowerPayment ? `to @${nextBorrowerPayment.username}` : `from @${nextLenderPayment.username}`}
+                        {((overviewType === 'lending' && nextLenderPayment) || (overviewType === 'borrowing' && nextBorrowerPayment)) && (
+                          <p className="text-xs text-[#00A86B] mt-0.5">
+                            {(() => {
+                              const payment = overviewType === 'lending' ? nextLenderPayment : nextBorrowerPayment;
+                              const days = Math.ceil((payment.date - new Date()) / (1000 * 60 * 60 * 24));
+                              return days > 0 ? `${days} day${days !== 1 ? 's' : ''} away` : days === 0 ? 'Due today' : `${Math.abs(days)} day${Math.abs(days) !== 1 ? 's' : ''} overdue`;
+                            })()}
+                          </p>
+                        )}
+                      </div>
+                      <div>
+                        <p className="text-xs text-slate-400 mb-1">Next Payment Amount</p>
+                        <p className="text-sm font-bold text-slate-800">
+                          {overviewType === 'lending'
+                            ? (nextLenderPayment ? formatMoney(nextLenderPayment.payment_amount || 0) : 'N/A')
+                            : (nextBorrowerPayment ? formatMoney(nextBorrowerPayment.payment_amount || 0) : 'N/A')
+                          }
                         </p>
-                      )}
+                        {((overviewType === 'lending' && nextLenderPayment) || (overviewType === 'borrowing' && nextBorrowerPayment)) && (
+                          <p className="text-xs text-slate-400 mt-0.5">
+                            {overviewType === 'lending' ? `from @${nextLenderPayment.username}` : `to @${nextBorrowerPayment.username}`}
+                          </p>
+                        )}
+                      </div>
                     </div>
-                  </div>
+                  </motion.div>
                 </div>
               </motion.div>
             </div>
@@ -378,196 +434,16 @@ export default function Home() {
           <div className="px-4 py-6 md:px-6">
            <div className="max-w-6xl mx-auto space-y-5 md:space-y-7">
 
-          <div className="space-y-5 md:space-y-7">
             {pendingOffers.length > 0 && (
               <PendingLoanOffers offers={pendingOffers} />
             )}
 
-            <QuickActions />
-
-            {/* Activity, Calendar & Monthly Overview Row */}
-            <div className="rounded-xl p-4 md:p-6" style={{backgroundColor: '#E2F5EA'}}>
-            <div className="grid lg:grid-cols-[2fr_1fr_1fr] gap-4 md:gap-6">
+            {/* Activity & Monthly Overview Row */}
+            <div className="grid lg:grid-cols-[2fr_1fr] gap-4 md:gap-6 items-start">
               {/* Activity */}
               <div>
                 <RecentActivity loans={myLoans} payments={payments} user={user} allUsers={safeAllProfiles} />
               </div>
-
-              {/* Calendar */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.2 }}
-              >
-                <Card className="border-0 rounded-lg overflow-hidden" style={{backgroundColor: '#ffffff'}}>
-                  <CardContent className="p-4 md:p-5">
-                    {/* Calendar Header with Navigation */}
-                    <div className="flex items-center justify-between mb-4">
-                      <button
-                        onClick={() => setCalendarMonth(subMonths(calendarMonth, 1))}
-                        className="w-9 h-9 rounded-full bg-white/50 hover:bg-white/80 flex items-center justify-center transition-colors duration-200"
-                      >
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00A86B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <polyline points="15 18 9 12 15 6"></polyline>
-                        </svg>
-                      </button>
-                      <p className="text-xl font-bold text-slate-800 tracking-tight font-serif">
-                        {format(calendarMonth, 'MMMM yyyy')}
-                      </p>
-                      <button
-                        onClick={() => setCalendarMonth(addMonths(calendarMonth, 1))}
-                        className="w-9 h-9 rounded-full bg-white/50 hover:bg-white/80 flex items-center justify-center transition-colors duration-200"
-                      >
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00A86B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <polyline points="9 18 15 12 9 6"></polyline>
-                        </svg>
-                      </button>
-                    </div>
-
-                    {/* Day Labels */}
-                    <div className="grid grid-cols-7 gap-1 mb-2">
-                      {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-                        <div key={day} className="text-center text-xs font-medium text-slate-500 py-1">
-                          {day}
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Calendar Grid */}
-                    {(() => {
-                      const monthStart = startOfMonth(calendarMonth);
-                      const monthEnd = endOfMonth(calendarMonth);
-                      const daysInMonth = eachDayOfInterval({ start: monthStart, end: monthEnd });
-                      const startDayOfWeek = getDay(monthStart);
-
-                      // Get all payment events for this month
-                      const getPaymentEvents = () => {
-                        const events = [];
-                        const activeLoans = myLoans.filter(l => l && l.status === 'active');
-
-                        activeLoans.forEach(loan => {
-                          if (!loan.next_payment_date) return;
-
-                          const paymentDate = new Date(loan.next_payment_date);
-                          const isLender = loan.lender_id === user.id;
-                          const otherUserId = isLender ? loan.borrower_id : loan.lender_id;
-                          const otherUser = safeAllProfiles.find(p => p.user_id === otherUserId);
-
-                          // Check if this payment falls in the current calendar month
-                          if (isSameMonth(paymentDate, calendarMonth)) {
-                            events.push({
-                              date: paymentDate,
-                              type: isLender ? 'receive' : 'send',
-                              amount: loan.payment_amount || 0,
-                              username: otherUser?.username || 'user'
-                            });
-                          }
-
-                          // Also check for recurring payments within the month
-                          const frequency = loan.payment_frequency;
-                          if (frequency && frequency !== 'none') {
-                            let currentDate = new Date(loan.next_payment_date);
-                            const maxIterations = 10;
-                            let iterations = 0;
-
-                            while (iterations < maxIterations) {
-                              // Move to next payment date based on frequency
-                              if (frequency === 'weekly') {
-                                currentDate = new Date(currentDate.setDate(currentDate.getDate() + 7));
-                              } else if (frequency === 'biweekly') {
-                                currentDate = new Date(currentDate.setDate(currentDate.getDate() + 14));
-                              } else if (frequency === 'monthly') {
-                                currentDate = addMonths(currentDate, 1);
-                              } else if (frequency === 'daily') {
-                                currentDate = new Date(currentDate.setDate(currentDate.getDate() + 1));
-                              } else {
-                                break;
-                              }
-
-                              // Stop if we've gone past the calendar month
-                              if (currentDate > monthEnd) break;
-
-                              // Add if this payment is in the calendar month
-                              if (isSameMonth(currentDate, calendarMonth)) {
-                                events.push({
-                                  date: new Date(currentDate),
-                                  type: isLender ? 'receive' : 'send',
-                                  amount: loan.payment_amount || 0,
-                                  username: otherUser?.username || 'user'
-                                });
-                              }
-
-                              iterations++;
-                            }
-                          }
-                        });
-
-                        return events;
-                      };
-
-                      const paymentEvents = getPaymentEvents();
-
-                      // Create empty cells for days before the first day of the month
-                      const emptyCells = Array(startDayOfWeek).fill(null);
-
-                      return (
-                        <div className="grid grid-cols-7 gap-1">
-                          {emptyCells.map((_, index) => (
-                            <div key={`empty-${index}`} className="h-10" />
-                          ))}
-                          {daysInMonth.map(day => {
-                            const dayEvents = paymentEvents.filter(e => isSameDay(e.date, day));
-                            const hasSend = dayEvents.some(e => e.type === 'send');
-                            const hasReceive = dayEvents.some(e => e.type === 'receive');
-                            const isToday = isSameDay(day, new Date());
-
-                            return (
-                              <div
-                                key={day.toISOString()}
-                                className={`h-10 flex flex-col items-center justify-center rounded-lg relative ${
-                                  isToday ? 'bg-white ring-2 ring-[#00A86B]' : ''
-                                }`}
-                              >
-                                <span className={`text-sm ${isToday ? 'font-bold text-[#00A86B]' : 'text-slate-700'}`}>
-                                  {format(day, 'd')}
-                                </span>
-                                {/* Payment Indicators */}
-                                <div className="flex gap-0.5 absolute bottom-0.5">
-                                  {hasSend && (
-                                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#35B276' }} />
-                                  )}
-                                  {hasReceive && (
-                                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#74FF71' }} />
-                                  )}
-                                </div>
-                                {(hasSend || hasReceive) && (
-                                  <div className="absolute inset-0 rounded-lg" style={{ backgroundColor: hasSend && hasReceive ? '#6EE8A2' : hasSend ? '#35B276' : '#74FF71', opacity: 0.3, zIndex: -1 }} />
-                                )}
-                              </div>
-                            );
-                          })}
-                        </div>
-                      );
-                    })()}
-
-                    {/* Legend */}
-                    <div className="flex items-center justify-center gap-6 mt-4 pt-3 border-t border-white/50">
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#35B276' }} />
-                        <span className="text-sm font-medium text-slate-700">Send</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#74FF71' }} />
-                        <span className="text-sm font-medium text-slate-700">Receive</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#6EE8A2' }} />
-                        <span className="text-sm font-medium text-slate-700">Both</span>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
 
               {/* Monthly Overview */}
               <motion.div
@@ -597,7 +473,6 @@ export default function Home() {
                           const otherUserId = isLender ? loan.borrower_id : loan.lender_id;
                           const otherUser = safeAllProfiles.find(p => p.user_id === otherUserId);
 
-                          // Helper to add event if in month
                           const addEventIfInMonth = (date) => {
                             if (isSameMonth(date, calendarMonth)) {
                               events.push({
@@ -611,7 +486,6 @@ export default function Home() {
 
                           addEventIfInMonth(paymentDate);
 
-                          // Add recurring payments
                           const frequency = loan.payment_frequency;
                           if (frequency && frequency !== 'none') {
                             let currentDate = new Date(loan.next_payment_date);
@@ -638,7 +512,6 @@ export default function Home() {
                           }
                         });
 
-                        // Sort by date
                         events.sort((a, b) => a.date - b.date);
 
                         if (events.length === 0) {
@@ -655,15 +528,12 @@ export default function Home() {
                           );
                         }
 
-                        const colors = ['#83F384', '#83F384', '#83F384', '#83F384', '#83F384', '#83F384'];
-
                         return events.map((event, index) => (
                           <div
                             key={index}
                             className="flex items-center gap-2.5 p-2 md:p-2.5 rounded-md"
-                            style={{ backgroundColor: colors[index % 6] }}
+                            style={{ backgroundColor: '#83F384' }}
                           >
-                            {/* Date Box */}
                             <div className="bg-white/50 rounded-md px-2.5 py-1.5 flex-shrink-0 text-center min-w-[44px]">
                               <p className="text-xs text-slate-500 uppercase" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                                 {format(event.date, 'MMM')}
@@ -673,7 +543,6 @@ export default function Home() {
                               </p>
                             </div>
 
-                            {/* Event Details */}
                             <div className="flex-1 min-w-0">
                               <p className="text-sm font-medium text-slate-800">
                                 <span className={event.type === 'send' ? 'text-red-600' : 'text-[#00A86B]'}>
@@ -682,15 +551,12 @@ export default function Home() {
                                 {' '}
                                 <span className="font-bold">${event.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                                 {' '}
-                                <span className="text-slate-600">
-                                  {event.type === 'send' ? 'to' : 'from'}
-                                </span>
+                                <span className="text-slate-600">{event.type === 'send' ? 'to' : 'from'}</span>
                                 {' '}
                                 <span className="font-medium">@{event.username}</span>
                               </p>
                             </div>
 
-                            {/* Arrow indicator */}
                             <div className="flex-shrink-0">
                               {event.type === 'send' ? (
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#EF4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -714,11 +580,11 @@ export default function Home() {
                 {/* Month Balance Box */}
                 {(() => {
                   const monthEnd = endOfMonth(calendarMonth);
-                  const activeLoans = myLoans.filter(l => l && l.status === 'active');
+                  const activeLoansForBalance = myLoans.filter(l => l && l.status === 'active');
                   let totalReceive = 0;
                   let totalSend = 0;
 
-                  activeLoans.forEach(loan => {
+                  activeLoansForBalance.forEach(loan => {
                     if (!loan.next_payment_date) return;
                     const paymentDate = new Date(loan.next_payment_date);
                     const isLender = loan.lender_id === user.id;
@@ -726,11 +592,8 @@ export default function Home() {
 
                     const addAmountIfInMonth = (date) => {
                       if (isSameMonth(date, calendarMonth)) {
-                        if (isLender) {
-                          totalReceive += paymentAmount;
-                        } else {
-                          totalSend += paymentAmount;
-                        }
+                        if (isLender) totalReceive += paymentAmount;
+                        else totalSend += paymentAmount;
                       }
                     };
 
@@ -741,17 +604,11 @@ export default function Home() {
                       let currentDate = new Date(loan.next_payment_date);
                       let iterations = 0;
                       while (iterations < 10) {
-                        if (frequency === 'weekly') {
-                          currentDate = new Date(currentDate.setDate(currentDate.getDate() + 7));
-                        } else if (frequency === 'biweekly') {
-                          currentDate = new Date(currentDate.setDate(currentDate.getDate() + 14));
-                        } else if (frequency === 'monthly') {
-                          currentDate = addMonths(currentDate, 1);
-                        } else if (frequency === 'daily') {
-                          currentDate = new Date(currentDate.setDate(currentDate.getDate() + 1));
-                        } else {
-                          break;
-                        }
+                        if (frequency === 'weekly') currentDate = new Date(currentDate.setDate(currentDate.getDate() + 7));
+                        else if (frequency === 'biweekly') currentDate = new Date(currentDate.setDate(currentDate.getDate() + 14));
+                        else if (frequency === 'monthly') currentDate = addMonths(currentDate, 1);
+                        else if (frequency === 'daily') currentDate = new Date(currentDate.setDate(currentDate.getDate() + 1));
+                        else break;
                         if (currentDate > monthEnd) break;
                         addAmountIfInMonth(currentDate);
                         iterations++;
@@ -774,13 +631,113 @@ export default function Home() {
                   );
                 })()}
               </motion.div>
-
             </div>
-            </div>
-          </div>
+
+            {/* Record Payment Box */}
+            {myLoans.filter(l => l && l.status === 'active').length > 0 && (
+              <div className="bg-[#96FFD0] rounded-2xl p-5 border-0">
+                <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                  Record Payment
+                </p>
+                <div className="flex flex-wrap items-center gap-2 text-sm text-slate-700">
+                  <span>Record payment of</span>
+                  <span className="font-medium">$</span>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    min="0.01"
+                    placeholder=""
+                    value={quickPayAmount}
+                    onChange={(e) => setQuickPayAmount(e.target.value)}
+                    className="w-24 h-8 px-3 bg-white inline-flex"
+                    style={{ MozAppearance: 'textfield' }}
+                  />
+                  <span>via</span>
+                  <Select value={quickPayMethod} onValueChange={setQuickPayMethod}>
+                    <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex">
+                      <SelectValue placeholder="select method" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="venmo">Venmo</SelectItem>
+                      <SelectItem value="zelle">Zelle</SelectItem>
+                      <SelectItem value="cashapp">Cash App</SelectItem>
+                      <SelectItem value="paypal">PayPal</SelectItem>
+                      <SelectItem value="cash">Cash</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <span>for</span>
+                  <Select value={quickPayLoanId} onValueChange={setQuickPayLoanId}>
+                    <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex min-w-[140px]">
+                      <SelectValue placeholder="select loan" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {myLoans.filter(l => l && l.status === 'active').map((loan) => {
+                        const isLender = loan.lender_id === user.id;
+                        const otherUserId = isLender ? loan.borrower_id : loan.lender_id;
+                        const otherUser = safeAllProfiles.find(p => p.user_id === otherUserId);
+                        return (
+                          <SelectItem key={loan.id} value={loan.id}>
+                            @{otherUser?.username || 'user'} - {loan.purpose || `$${loan.amount}`}
+                          </SelectItem>
+                        );
+                      })}
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      const loan = myLoans.find(l => l.id === quickPayLoanId);
+                      if (loan) {
+                        setSelectedLoan({
+                          ...loan,
+                          _prefillAmount: quickPayAmount,
+                          _prefillMethod: quickPayMethod,
+                        });
+                        setShowPaymentModal(true);
+                      }
+                    }}
+                    disabled={!quickPayLoanId || !quickPayAmount}
+                    className={`h-8 px-4 rounded-lg text-sm font-medium border-0 transition-all ${
+                      !quickPayLoanId || !quickPayAmount
+                        ? 'bg-[#00A86B]/50 text-white/70 cursor-not-allowed'
+                        : 'bg-[#00A86B] text-white hover:bg-[#0D9B76]'
+                    }`}
+                  >
+                    Submit
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {/* Quick Actions at bottom */}
+            <QuickActions />
 
           </div>
           </div>
+
+          {/* Record Payment Modal */}
+          {showPaymentModal && selectedLoan && (
+            <RecordPaymentModal
+              loan={selectedLoan}
+              onClose={() => {
+                setShowPaymentModal(false);
+                setSelectedLoan(null);
+                setQuickPayAmount('');
+                setQuickPayMethod('');
+                setQuickPayLoanId('');
+              }}
+              onPaymentComplete={() => {
+                setShowPaymentModal(false);
+                setSelectedLoan(null);
+                setQuickPayAmount('');
+                setQuickPayMethod('');
+                setQuickPayLoanId('');
+                loadData();
+              }}
+              isLender={selectedLoan.lender_id === user.id}
+            />
+          )}
           </div>
     );
     }
