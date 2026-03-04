@@ -687,14 +687,10 @@ export default function Borrowing() {
               </div>
 
               {/* Right Side - Overview box */}
-              <div className="bg-white rounded-xl p-5 md:p-7 flex-1 lg:max-w-md shadow-sm">
-                <p className="text-lg font-bold text-slate-800 mb-5 tracking-tight font-serif">
-                  Borrowing Overview
-                </p>
-
+              <div className="rounded-xl p-5 md:p-7 flex-1 lg:max-w-md shadow-sm" style={{backgroundColor: '#DBFFEB'}}>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {/* Pie Chart */}
-                  <div className="rounded-xl p-3 flex flex-col items-center justify-center" style={{ backgroundColor: '#DBFFEB' }}>
+                  <div className="flex flex-col items-center justify-center">
                     {(() => {
                       const percentPaid = totalOwed > 0 ? Math.round((totalPaid / totalOwed) * 100) : 0;
 
@@ -731,15 +727,15 @@ export default function Borrowing() {
                     })()}
                   </div>
 
-                  {/* Stats Card - Total Borrowed */}
-                  <div className="rounded-xl p-4 flex flex-col h-full" style={{ backgroundColor: '#DBFFEB' }}>
+                  {/* Stats - Total Borrowed */}
+                  <div className="flex flex-col h-full">
                     <p className="text-sm font-medium text-slate-600 mb-2 text-left">Total Borrowed</p>
                     <p className="text-2xl font-bold text-slate-800 text-center flex-1 flex items-center justify-center">${totalBorrowed.toLocaleString()}</p>
                     <p className="text-xs text-slate-500 text-right">{activeLoans.length} active loans</p>
                   </div>
 
-                  {/* Stats Card - Remaining */}
-                  <div className="rounded-xl p-4 flex flex-col h-full" style={{ backgroundColor: '#DBFFEB' }}>
+                  {/* Stats - Remaining */}
+                  <div className="flex flex-col h-full">
                     <p className="text-sm font-medium text-slate-600 mb-2 text-left">Remaining Balance</p>
                     <p className="text-2xl font-bold text-slate-800 text-center flex-1 flex items-center justify-center">${remainingBalance.toLocaleString()}</p>
                     <p className="text-xs text-slate-500 text-right">${totalPaid.toLocaleString()} paid</p>
