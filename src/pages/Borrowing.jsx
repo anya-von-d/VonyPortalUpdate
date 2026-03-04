@@ -763,42 +763,47 @@ export default function Borrowing() {
                       Borrowing Overview
                     </p>
 
-                    {/* Bar Chart */}
-                    <div className="space-y-3 mb-6">
-                      <div>
-                        <div className="flex items-center justify-between mb-1">
-                          <p className="text-xs font-medium text-slate-500">Paid Back</p>
-                          <p className="text-xs font-bold text-[#00A86B]">
-                            {formatMoney(totalPaid)} / {formatMoney(totalOwed)}
-                          </p>
-                        </div>
-                        <div className="w-full h-6 bg-gray-200 rounded-md overflow-hidden">
-                          <div
-                            className="h-full rounded-md transition-all duration-500 flex items-center justify-end pr-2"
-                            style={{
-                              width: `${Math.max(totalOwed > 0 ? (totalPaid / totalOwed) * 100 : 0, 2)}%`,
-                              backgroundColor: '#1C4332'
-                            }}
-                          >
-                            {totalPaid > 0 && (
-                              <span className="text-[10px] font-bold text-white">
-                                {totalOwed > 0 ? Math.round((totalPaid / totalOwed) * 100) : 0}%
-                              </span>
-                            )}
-                          </div>
-                        </div>
+                    <div className="flex items-center gap-6">
+                      {/* Pie Chart - Left */}
+                      <div className="flex-shrink-0">
+                        {(() => {
+                          const percentPaid = totalOwed > 0 ? Math.round((totalPaid / totalOwed) * 100) : 0;
+                          return (
+                            <div className="relative w-28 h-28">
+                              <svg className="w-full h-full transform -rotate-90" viewBox="0 0 120 120">
+                                <circle cx="60" cy="60" r="52" fill="none" stroke="#E2F5EA" strokeWidth="8" />
+                                <circle
+                                  cx="60"
+                                  cy="60"
+                                  r="52"
+                                  fill="none"
+                                  stroke="#1C4332"
+                                  strokeWidth="8"
+                                  strokeLinecap="round"
+                                  strokeDasharray={2 * Math.PI * 52}
+                                  strokeDashoffset={2 * Math.PI * 52 - (percentPaid / 100) * 2 * Math.PI * 52}
+                                  className="transition-all duration-500"
+                                />
+                              </svg>
+                              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                <span className="text-xl font-bold text-gray-700">{percentPaid}%</span>
+                                <span className="text-[9px] text-gray-500 uppercase tracking-wider">Paid</span>
+                              </div>
+                            </div>
+                          );
+                        })()}
                       </div>
-                    </div>
 
-                    {/* Stats */}
-                    <div className="pt-4 grid grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-sm text-gray-600 mb-1">Total Borrowed</p>
-                        <p className="text-lg font-bold text-gray-700">${totalBorrowed.toLocaleString()} <span className="text-sm font-medium text-gray-600">· {activeLoans.length} active</span></p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-600 mb-1">Remaining Balance</p>
-                        <p className="text-lg font-bold text-gray-700">${remainingBalance.toLocaleString()} <span className="text-sm font-medium text-gray-600">· ${totalPaid.toLocaleString()} paid</span></p>
+                      {/* Stats - Right, stacked */}
+                      <div className="flex flex-col gap-4 flex-1">
+                        <div>
+                          <p className="text-sm text-gray-600 mb-1">Total Borrowed</p>
+                          <p className="text-lg font-bold text-gray-700">${totalBorrowed.toLocaleString()} <span className="text-sm font-medium text-gray-600">· {activeLoans.length} active</span></p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-600 mb-1">Remaining Balance</p>
+                          <p className="text-lg font-bold text-gray-700">${remainingBalance.toLocaleString()} <span className="text-sm font-medium text-gray-600">· ${totalPaid.toLocaleString()} paid</span></p>
+                        </div>
                       </div>
                     </div>
                   </div>
