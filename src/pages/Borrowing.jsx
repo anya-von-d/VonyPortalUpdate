@@ -758,19 +758,20 @@ export default function Borrowing() {
                 {/* Borrowing Overview + Upcoming Payments */}
                 <div className="grid md:grid-cols-2 gap-4">
                   {/* Borrowing Overview Box - Left */}
-                  <div className="bg-[#C2FFDC] rounded-2xl p-4 sm:p-5 border-0">
-                    <p className="text-lg font-bold text-slate-800 mb-4 tracking-tight font-serif whitespace-nowrap">
-                      Borrowing Overview
-                    </p>
-
-                    <div className="flex items-center gap-6 pl-6">
-                      {/* Pie Chart - Left */}
+                  <div className="bg-[#C2FFDC] rounded-2xl p-4 sm:p-5 border-0 flex">
+                    {/* Left side: Title + Pie Chart */}
+                    <div className="flex flex-col">
+                      <p className="text-lg font-bold text-slate-800 mb-4 tracking-tight font-serif whitespace-nowrap">
+                        Borrowing Overview
+                      </p>
                       <div className="flex-shrink-0 ml-4">
                         {(() => {
                           const percentPaid = totalOwed > 0 ? Math.round((totalPaid / totalOwed) * 100) : 0;
                           return (
                             <div className="relative w-28 h-28">
                               <svg className="w-full h-full transform -rotate-90" viewBox="0 0 120 120">
+                                <circle cx="60" cy="60" r="57" fill="none" stroke="#83F384" strokeWidth="1.5" />
+                                <circle cx="60" cy="60" r="47" fill="none" stroke="#83F384" strokeWidth="1.5" />
                                 <circle cx="60" cy="60" r="52" fill="none" stroke="#DBFFEB" strokeWidth="8" />
                                 <circle
                                   cx="60"
@@ -793,17 +794,17 @@ export default function Borrowing() {
                           );
                         })()}
                       </div>
+                    </div>
 
-                      {/* Stats - Right, stacked */}
-                      <div className="flex flex-col justify-center gap-4 ml-auto pr-4 text-left">
-                        <div>
-                          <p className="text-sm text-gray-600 mb-1">Total Borrowed</p>
-                          <p className="text-lg font-bold text-gray-700">${totalBorrowed.toLocaleString()} <span className="text-sm font-medium text-gray-600">· {activeLoans.length} active</span></p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-gray-600 mb-1">Remaining Balance</p>
-                          <p className="text-lg font-bold text-gray-700">${remainingBalance.toLocaleString()} <span className="text-sm font-medium text-gray-600">· ${totalPaid.toLocaleString()} paid</span></p>
-                        </div>
+                    {/* Stats - Right, vertically centered across full box height */}
+                    <div className="flex flex-col justify-center gap-4 ml-auto pr-4 text-left">
+                      <div>
+                        <p className="text-sm text-gray-600 mb-1">Total Borrowed</p>
+                        <p className="text-lg font-bold text-gray-700">${totalBorrowed.toLocaleString()} <span className="text-sm font-medium text-gray-600">· {activeLoans.length} active</span></p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-600 mb-1">Remaining Balance</p>
+                        <p className="text-lg font-bold text-gray-700">${remainingBalance.toLocaleString()} <span className="text-sm font-medium text-gray-600">· ${totalPaid.toLocaleString()} paid</span></p>
                       </div>
                     </div>
                   </div>
@@ -961,7 +962,7 @@ export default function Borrowing() {
                                   </div>
                                   <span className="text-xs text-slate-500">{percentPaid}%</span>
                                 </div>
-                                <div className="w-full h-5 rounded-md overflow-hidden" style={{ backgroundColor: '#DBFFEB' }}>
+                                <div className="w-full h-5 rounded-md overflow-hidden border border-[#83F384]" style={{ backgroundColor: '#DBFFEB' }}>
                                   <div
                                     className="h-full rounded-md transition-all duration-500"
                                     style={{ width: `${Math.max(percentPaid, 2)}%`, backgroundColor: '#83F384' }}
