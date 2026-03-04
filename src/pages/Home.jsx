@@ -298,8 +298,8 @@ export default function Home() {
                     const firstName = user.full_name?.split(' ')[0] || 'User';
                     return (
                       <div>
-                        <p className="text-xl md:text-2xl font-bold text-[#1C4332] tracking-tight leading-tight font-serif">{greeting}</p>
-                        <p className="text-xl md:text-2xl font-bold text-[#1C4332] tracking-tight leading-tight font-serif">{firstName}</p>
+                        <p className="text-2xl md:text-3xl font-bold text-[#1C4332] tracking-tight leading-tight font-serif">{greeting}</p>
+                        <p className="text-2xl md:text-3xl font-bold text-[#1C4332] tracking-tight leading-tight font-serif">{firstName}</p>
                       </div>
                     );
                   })()}
