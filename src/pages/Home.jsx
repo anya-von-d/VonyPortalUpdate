@@ -283,7 +283,7 @@ export default function Home() {
     return (
         <div className="min-h-screen" style={{backgroundColor: '#F4F7F5'}}>
           {/* Hero Section */}
-          <div className="px-12 py-8 md:px-24 md:py-12 lg:px-36" style={{backgroundColor: '#C2FFDC'}}>
+          <div className="px-12 pt-8 pb-4 md:px-24 md:pt-12 md:pb-4 lg:px-36" style={{backgroundColor: '#C2FFDC'}}>
             <div className="max-w-6xl mx-auto">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -298,8 +298,8 @@ export default function Home() {
                     const firstName = user.full_name?.split(' ')[0] || 'User';
                     return (
                       <div>
-                        <p className="text-3xl md:text-4xl font-bold text-[#1C4332] tracking-tight leading-tight font-serif">{greeting}</p>
-                        <p className="text-3xl md:text-4xl font-bold text-[#1C4332] tracking-tight leading-tight font-serif">{firstName}</p>
+                        <p className="text-4xl md:text-5xl font-bold text-[#1C4332] tracking-tight leading-tight font-serif">{greeting}</p>
+                        <p className="text-4xl md:text-5xl font-bold text-[#1C4332] tracking-tight leading-tight font-serif">{firstName}</p>
                       </div>
                     );
                   })()}
@@ -411,7 +411,7 @@ export default function Home() {
           </div>
 
           {/* Main Content Below Hero */}
-          <div className="px-12 pt-10 pb-8 md:px-24 md:pt-14 md:pb-10 lg:px-36" style={{backgroundColor: '#C2FFDC'}}>
+          <div className="px-12 pt-4 pb-8 md:px-24 md:pt-4 md:pb-10 lg:px-36" style={{backgroundColor: '#C2FFDC'}}>
            <div className="max-w-6xl mx-auto">
             <div className="rounded-2xl p-6 md:p-10 space-y-8 md:space-y-10" style={{backgroundColor: '#1C4332'}}>
 
