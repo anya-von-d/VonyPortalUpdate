@@ -1178,67 +1178,138 @@ export default function Borrowing() {
                           </div>
                         </div>
 
-                        {/* Payment Overview - mirrors Borrowing Overview style */}
-                        <div className="rounded-2xl p-4 sm:p-5 border-0 flex" style={{backgroundColor: '#83F384'}}>
-                          {/* Left side: Title + Pie Chart */}
-                          <div className="flex flex-col">
+                        {/* Payment Progress + Payments Schedule */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {/* Payment Progress - Left */}
+                          <div className="rounded-2xl p-4 sm:p-5 border-0 flex flex-col" style={{backgroundColor: '#83F384'}}>
                             <p className="text-lg font-bold text-slate-800 mb-4 tracking-tight font-serif whitespace-nowrap">
                               Payment Progress
                             </p>
-                            <div className="flex-shrink-0 ml-8">
-                              {(() => {
-                                const totalOwed = manageLoanSelected.total_amount || manageLoanSelected.amount || 0;
-                                const amountPaid = manageLoanSelected.amount_paid || 0;
-                                const percentPaid = totalOwed > 0 ? Math.round((amountPaid / totalOwed) * 100) : 0;
-                                return (
-                                  <div className="relative w-28 h-28">
-                                    <svg className="w-full h-full transform -rotate-90" viewBox="0 0 120 120">
-                                      <circle cx="60" cy="60" r="52" fill="none" stroke="#DBFFEB" strokeWidth="8" />
-                                      <circle
-                                        cx="60"
-                                        cy="60"
-                                        r="52"
-                                        fill="none"
-                                        stroke="#1C4332"
-                                        strokeWidth="8"
-                                        strokeLinecap="round"
-                                        strokeDasharray={2 * Math.PI * 52}
-                                        strokeDashoffset={2 * Math.PI * 52 - (percentPaid / 100) * 2 * Math.PI * 52}
-                                        className="transition-all duration-500"
-                                      />
-                                    </svg>
-                                    <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                      <span className="text-xl font-bold text-gray-700">{percentPaid}%</span>
-                                      <span className="text-[9px] text-gray-500 uppercase tracking-wider">Paid</span>
+                            <div className="flex items-center gap-4 flex-1">
+                              <div className="flex-shrink-0 ml-2">
+                                {(() => {
+                                  const totalOwed = manageLoanSelected.total_amount || manageLoanSelected.amount || 0;
+                                  const amountPaid = manageLoanSelected.amount_paid || 0;
+                                  const percentPaid = totalOwed > 0 ? Math.round((amountPaid / totalOwed) * 100) : 0;
+                                  return (
+                                    <div className="relative w-24 h-24">
+                                      <svg className="w-full h-full transform -rotate-90" viewBox="0 0 120 120">
+                                        <circle cx="60" cy="60" r="52" fill="none" stroke="#DBFFEB" strokeWidth="8" />
+                                        <circle
+                                          cx="60"
+                                          cy="60"
+                                          r="52"
+                                          fill="none"
+                                          stroke="#1C4332"
+                                          strokeWidth="8"
+                                          strokeLinecap="round"
+                                          strokeDasharray={2 * Math.PI * 52}
+                                          strokeDashoffset={2 * Math.PI * 52 - (percentPaid / 100) * 2 * Math.PI * 52}
+                                          className="transition-all duration-500"
+                                        />
+                                      </svg>
+                                      <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                        <span className="text-lg font-bold text-gray-700">{percentPaid}%</span>
+                                        <span className="text-[8px] text-gray-500 uppercase tracking-wider">Paid</span>
+                                      </div>
                                     </div>
-                                  </div>
-                                );
-                              })()}
+                                  );
+                                })()}
+                              </div>
+                              <div className="flex flex-col justify-center gap-3 text-left">
+                                <div>
+                                  <p className="text-xs text-gray-600 mb-0.5">Next Payment</p>
+                                  <p className="text-sm font-bold text-gray-700">
+                                    {manageLoanSelected.next_payment_date
+                                      ? format(new Date(manageLoanSelected.next_payment_date), 'MMM d, yyyy')
+                                      : 'N/A'}
+                                  </p>
+                                </div>
+                                <div>
+                                  <p className="text-xs text-gray-600 mb-0.5">Amount</p>
+                                  <p className="text-sm font-bold text-gray-700">
+                                    ${(manageLoanSelected.payment_amount || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                    <span className="text-xs font-medium text-gray-600 capitalize"> · {manageLoanSelected.payment_frequency || 'One-time'}</span>
+                                  </p>
+                                </div>
+                              </div>
                             </div>
                           </div>
 
-                          {/* Stats - Right, vertically centered across full box height */}
-                          <div className="flex flex-col justify-center gap-4 ml-auto pr-0 text-left">
-                            <div>
-                              <p className="text-sm text-gray-600 mb-1">Next Payment Date</p>
-                              <p className="text-lg font-bold text-gray-700">
-                                {manageLoanSelected.next_payment_date
-                                  ? format(new Date(manageLoanSelected.next_payment_date), 'MMM d, yyyy')
-                                  : 'N/A'}
-                                {manageLoanSelected.next_payment_date && (
-                                  <span className="text-sm font-medium text-gray-600"> · {(() => {
-                                    const days = Math.ceil((new Date(manageLoanSelected.next_payment_date) - new Date()) / (1000 * 60 * 60 * 24));
-                                    return days > 0 ? `${days} day${days !== 1 ? 's' : ''} away` : days === 0 ? 'Due today' : `${Math.abs(days)} day${Math.abs(days) !== 1 ? 's' : ''} overdue`;
-                                  })()}</span>
-                                )}
-                              </p>
-                            </div>
-                            <div>
-                              <p className="text-sm text-gray-600 mb-1">Payment Amount</p>
-                              <p className="text-lg font-bold text-gray-700">
-                                ${(manageLoanSelected.payment_amount || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                <span className="text-sm font-medium text-gray-600 capitalize"> · {manageLoanSelected.payment_frequency || 'One-time'}</span>
-                              </p>
+                          {/* Payments Schedule - Right */}
+                          <div className="bg-[#C2FFDC] rounded-2xl p-4 sm:p-5 border-0">
+                            <p className="text-lg font-bold text-slate-800 mb-3 tracking-tight font-serif">
+                              Payments
+                            </p>
+                            <div className="max-h-[200px] overflow-y-auto space-y-2 pr-1">
+                              {(() => {
+                                const agreement = getAgreementForLoan(manageLoanSelected.id);
+                                if (!agreement) {
+                                  // Fallback: generate simple schedule from loan data
+                                  const totalOwed = manageLoanSelected.total_amount || manageLoanSelected.amount || 0;
+                                  const paymentAmt = manageLoanSelected.payment_amount || 0;
+                                  const totalPayments = paymentAmt > 0 ? Math.ceil(totalOwed / paymentAmt) : 0;
+                                  const amountPaid = manageLoanSelected.amount_paid || 0;
+                                  const completedPayments = paymentAmt > 0 ? Math.floor(amountPaid / paymentAmt) : 0;
+
+                                  if (totalPayments === 0) return <p className="text-sm text-slate-500">No payment schedule available</p>;
+
+                                  let currentDate = manageLoanSelected.next_payment_date ? new Date(manageLoanSelected.next_payment_date) : new Date();
+                                  const freq = manageLoanSelected.payment_frequency || 'monthly';
+
+                                  return Array.from({ length: totalPayments }, (_, i) => {
+                                    const isPaid = i < completedPayments;
+                                    let payDate;
+                                    if (i === completedPayments && manageLoanSelected.next_payment_date) {
+                                      payDate = new Date(manageLoanSelected.next_payment_date);
+                                    } else if (i < completedPayments) {
+                                      payDate = null;
+                                    } else {
+                                      const offset = i - completedPayments;
+                                      if (freq === 'weekly') payDate = addWeeks(currentDate, offset);
+                                      else if (freq === 'biweekly') payDate = addWeeks(currentDate, offset * 2);
+                                      else payDate = addMonths(currentDate, offset);
+                                    }
+                                    const isLast = i === totalPayments - 1;
+                                    const displayAmt = isLast ? (totalOwed - paymentAmt * (totalPayments - 1)) : paymentAmt;
+
+                                    return (
+                                      <div key={i} className={`flex items-center justify-between p-2 rounded-lg ${isPaid ? 'opacity-50' : ''}`} style={{ backgroundColor: '#83F384' }}>
+                                        <div className="flex items-center gap-2">
+                                          <span className="text-xs font-bold text-slate-700 w-5">#{i + 1}</span>
+                                          <span className="text-sm font-medium text-slate-800">${displayAmt.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                          <span className="text-xs text-slate-600">{payDate ? format(payDate, 'MMM d, yyyy') : 'Paid'}</span>
+                                          {isPaid && <span className="text-[10px] font-bold text-[#1C4332]">✓</span>}
+                                        </div>
+                                      </div>
+                                    );
+                                  });
+                                }
+
+                                const schedule = generateAmortizationSchedule(agreement);
+                                const amountPaid = manageLoanSelected.amount_paid || 0;
+                                const paymentAmt = manageLoanSelected.payment_amount || 0;
+                                const completedPayments = paymentAmt > 0 ? Math.floor(amountPaid / paymentAmt) : 0;
+
+                                return schedule.map((entry, i) => {
+                                  const isPaid = i < completedPayments;
+                                  const totalPayment = Math.round((entry.principal + entry.interest) * 100) / 100;
+                                  return (
+                                    <div key={i} className={`flex items-center justify-between p-2 rounded-lg ${isPaid ? 'opacity-50' : ''}`} style={{ backgroundColor: '#83F384' }}>
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-xs font-bold text-slate-700 w-5">#{entry.number}</span>
+                                        <span className="text-sm font-medium text-slate-800">${totalPayment.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                                      </div>
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-xs text-slate-600">{format(entry.date, 'MMM d, yyyy')}</span>
+                                        {isPaid && <span className="text-[10px] font-bold text-[#1C4332]">✓</span>}
+                                      </div>
+                                    </div>
+                                  );
+                                });
+                              })()}
                             </div>
                           </div>
                         </div>
