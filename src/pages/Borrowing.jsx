@@ -759,8 +759,8 @@ export default function Borrowing() {
                 {/* Borrowing Overview + Upcoming Payments */}
                 <div className="grid md:grid-cols-2 gap-4">
                   {/* Borrowing Overview Box - Left */}
-                  <div className="rounded-xl p-4 sm:p-5 md:p-7 shadow-sm relative overflow-hidden" style={{backgroundColor: '#1C4332'}}>
-                    <p className="text-lg font-bold text-[#C2FFDC] mb-5 tracking-tight font-serif">
+                  <div className="bg-[#C2FFDC] rounded-2xl p-4 sm:p-5 border-0">
+                    <p className="text-xl font-bold text-slate-800 mb-4 tracking-tight font-serif">
                       Borrowing Overview
                     </p>
 
@@ -768,21 +768,21 @@ export default function Borrowing() {
                     <div className="space-y-3 mb-6">
                       <div>
                         <div className="flex items-center justify-between mb-1">
-                          <p className="text-xs font-medium text-[#C2FFDC]/60">Paid Back</p>
-                          <p className="text-xs font-bold text-[#83F384]">
+                          <p className="text-xs font-medium text-slate-500">Paid Back</p>
+                          <p className="text-xs font-bold text-[#00A86B]">
                             {formatMoney(totalPaid)} / {formatMoney(totalOwed)}
                           </p>
                         </div>
-                        <div className="w-full h-6 bg-[#2a5a45] rounded-md overflow-hidden">
+                        <div className="w-full h-6 bg-[#E2F5EA] rounded-md overflow-hidden">
                           <div
                             className="h-full rounded-md transition-all duration-500 flex items-center justify-end pr-2"
                             style={{
                               width: `${Math.max(totalOwed > 0 ? (totalPaid / totalOwed) * 100 : 0, 2)}%`,
-                              backgroundColor: '#83F384'
+                              backgroundColor: '#00A86B'
                             }}
                           >
                             {totalPaid > 0 && (
-                              <span className="text-[10px] font-bold text-[#1C4332]">
+                              <span className="text-[10px] font-bold text-white">
                                 {totalOwed > 0 ? Math.round((totalPaid / totalOwed) * 100) : 0}%
                               </span>
                             )}
@@ -792,16 +792,16 @@ export default function Borrowing() {
                     </div>
 
                     {/* Stats */}
-                    <div className="border-t border-[#C2FFDC]/20 pt-4 grid grid-cols-2 gap-4">
+                    <div className="border-t border-slate-200 pt-4 grid grid-cols-2 gap-4">
                       <div>
-                        <p className="text-xs text-[#C2FFDC]/50 mb-1">Total Borrowed</p>
-                        <p className="text-sm font-bold text-[#C2FFDC]">${totalBorrowed.toLocaleString()}</p>
-                        <p className="text-xs text-[#83F384] mt-0.5">{activeLoans.length} active loan{activeLoans.length !== 1 ? 's' : ''}</p>
+                        <p className="text-xs text-slate-400 mb-1">Total Borrowed</p>
+                        <p className="text-sm font-bold text-slate-800">${totalBorrowed.toLocaleString()}</p>
+                        <p className="text-xs text-[#00A86B] mt-0.5">{activeLoans.length} active loan{activeLoans.length !== 1 ? 's' : ''}</p>
                       </div>
                       <div>
-                        <p className="text-xs text-[#C2FFDC]/50 mb-1">Remaining Balance</p>
-                        <p className="text-sm font-bold text-[#C2FFDC]">${remainingBalance.toLocaleString()}</p>
-                        <p className="text-xs text-[#C2FFDC]/50 mt-0.5">${totalPaid.toLocaleString()} paid</p>
+                        <p className="text-xs text-slate-400 mb-1">Remaining Balance</p>
+                        <p className="text-sm font-bold text-slate-800">${remainingBalance.toLocaleString()}</p>
+                        <p className="text-xs text-slate-400 mt-0.5">${totalPaid.toLocaleString()} paid</p>
                       </div>
                     </div>
                   </div>
@@ -832,9 +832,9 @@ export default function Borrowing() {
                                     Due {format(new Date(loan.next_payment_date), 'MMM d, yyyy')}
                                   </p>
                                 </div>
-                                <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center">
-                                  <span className="text-xs font-bold text-slate-800">
-                                    {Math.ceil((new Date(loan.next_payment_date) - new Date()) / (1000 * 60 * 60 * 24))}d
+                                <div className="px-2.5 py-1 rounded-full bg-white flex items-center justify-center">
+                                  <span className="text-[10px] font-bold text-slate-800 whitespace-nowrap">
+                                    {(() => { const d = Math.ceil((new Date(loan.next_payment_date) - new Date()) / (1000 * 60 * 60 * 24)); return `${d} day${d !== 1 ? 's' : ''}`; })()}
                                   </span>
                                 </div>
                               </div>
