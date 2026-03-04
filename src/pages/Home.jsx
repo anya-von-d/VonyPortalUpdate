@@ -304,49 +304,47 @@ export default function Home() {
                 </div>
 
                 {/* Two Overview Boxes Side by Side */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 w-full">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 w-full">
                   {/* Lending Overview Box */}
-                  <div className="rounded-xl p-4 sm:p-5 md:p-7 shadow-sm bg-white">
-                    <p className="text-lg font-bold text-[#213B75] mb-5 tracking-tight font-sans">
+                  <div className="rounded-xl px-4 py-3 shadow-sm bg-white">
+                    <p className="text-sm font-bold text-[#213B75] mb-2 tracking-tight font-sans">
                       Lending Overview
                     </p>
 
                     {/* Bar Chart */}
-                    <div className="space-y-3 mb-6">
-                      <div>
-                        <div className="flex items-center justify-between mb-1">
-                          <p className="text-xs font-medium text-[#4C7FC4]">Repaid</p>
-                          <p className="text-xs font-bold text-[#213B75]">
-                            {formatMoney(totalRepaid)} / {formatMoney(totalLentAmount)}
-                          </p>
-                        </div>
-                        <div className="w-full h-6 bg-[#CDE7F8] rounded-md overflow-hidden">
-                          <div
-                            className="h-full rounded-md transition-all duration-500 flex items-center justify-end pr-2"
-                            style={{
-                              width: `${Math.max((totalRepaid / Math.max(totalLentAmount, 1)) * 100, 2)}%`,
-                              backgroundColor: '#4C7FC4'
-                            }}
-                          >
-                            {totalRepaid > 0 && (
-                              <span className="text-[10px] font-bold text-white">
-                                {percentRepaid}%
-                              </span>
-                            )}
-                          </div>
+                    <div className="mb-3">
+                      <div className="flex items-center justify-between mb-0.5">
+                        <p className="text-[11px] font-medium text-[#4C7FC4]">Repaid</p>
+                        <p className="text-[11px] font-bold text-[#213B75]">
+                          {formatMoney(totalRepaid)} / {formatMoney(totalLentAmount)}
+                        </p>
+                      </div>
+                      <div className="w-full h-5 bg-[#CDE7F8] rounded-md overflow-hidden">
+                        <div
+                          className="h-full rounded-md transition-all duration-500 flex items-center justify-end pr-2"
+                          style={{
+                            width: `${Math.max((totalRepaid / Math.max(totalLentAmount, 1)) * 100, 2)}%`,
+                            backgroundColor: '#4C7FC4'
+                          }}
+                        >
+                          {totalRepaid > 0 && (
+                            <span className="text-[10px] font-bold text-white">
+                              {percentRepaid}%
+                            </span>
+                          )}
                         </div>
                       </div>
                     </div>
 
                     {/* Next Payment Info */}
-                    <div className="border-t border-[#CDE7F8] pt-4 grid grid-cols-2 gap-4">
+                    <div className="border-t border-[#CDE7F8] pt-2 grid grid-cols-2 gap-3">
                       <div>
-                        <p className="text-xs text-[#4C7FC4] mb-1">Next Payment Date</p>
+                        <p className="text-[11px] text-[#4C7FC4] mb-0.5">Next Payment Date</p>
                         <p className="text-sm font-bold text-[#213B75]">
                           {nextLenderPayment ? format(nextLenderPayment.date, 'EEE, MMM d') : 'N/A'}
                         </p>
                         {nextLenderPayment && (
-                          <p className="text-xs text-[#4C7FC4] mt-0.5">
+                          <p className="text-[11px] text-[#4C7FC4]">
                             {(() => {
                               const days = Math.ceil((nextLenderPayment.date - new Date()) / (1000 * 60 * 60 * 24));
                               return days > 0 ? `${days} day${days !== 1 ? 's' : ''} away` : days === 0 ? 'Due today' : `${Math.abs(days)} day${Math.abs(days) !== 1 ? 's' : ''} overdue`;
@@ -355,12 +353,12 @@ export default function Home() {
                         )}
                       </div>
                       <div>
-                        <p className="text-xs text-[#4C7FC4] mb-1">Next Payment Amount</p>
+                        <p className="text-[11px] text-[#4C7FC4] mb-0.5">Next Payment Amount</p>
                         <p className="text-sm font-bold text-[#213B75]">
                           {nextLenderPayment ? formatMoney(nextLenderPayment.payment_amount || 0) : 'N/A'}
                         </p>
                         {nextLenderPayment && (
-                          <p className="text-xs text-[#4C7FC4] mt-0.5">
+                          <p className="text-[11px] text-[#4C7FC4]">
                             from @{nextLenderPayment.username}
                           </p>
                         )}
@@ -369,47 +367,45 @@ export default function Home() {
                   </div>
 
                   {/* Borrowing Overview Box */}
-                  <div className="rounded-xl p-4 sm:p-5 md:p-7 shadow-sm bg-white">
-                    <p className="text-lg font-bold text-[#213B75] mb-5 tracking-tight font-sans">
+                  <div className="rounded-xl px-4 py-3 shadow-sm bg-white">
+                    <p className="text-sm font-bold text-[#213B75] mb-2 tracking-tight font-sans">
                       Borrowing Overview
                     </p>
 
                     {/* Bar Chart */}
-                    <div className="space-y-3 mb-6">
-                      <div>
-                        <div className="flex items-center justify-between mb-1">
-                          <p className="text-xs font-medium text-[#4C7FC4]">Paid Back</p>
-                          <p className="text-xs font-bold text-[#213B75]">
-                            {formatMoney(totalPaidBack)} / {formatMoney(totalBorrowedAmount)}
-                          </p>
-                        </div>
-                        <div className="w-full h-6 bg-[#CDE7F8] rounded-md overflow-hidden">
-                          <div
-                            className="h-full rounded-md transition-all duration-500 flex items-center justify-end pr-2"
-                            style={{
-                              width: `${Math.max((totalPaidBack / Math.max(totalBorrowedAmount, 1)) * 100, 2)}%`,
-                              backgroundColor: '#4C7FC4'
-                            }}
-                          >
-                            {totalPaidBack > 0 && (
-                              <span className="text-[10px] font-bold text-white">
-                                {percentPaid}%
-                              </span>
-                            )}
-                          </div>
+                    <div className="mb-3">
+                      <div className="flex items-center justify-between mb-0.5">
+                        <p className="text-[11px] font-medium text-[#4C7FC4]">Paid Back</p>
+                        <p className="text-[11px] font-bold text-[#213B75]">
+                          {formatMoney(totalPaidBack)} / {formatMoney(totalBorrowedAmount)}
+                        </p>
+                      </div>
+                      <div className="w-full h-5 bg-[#CDE7F8] rounded-md overflow-hidden">
+                        <div
+                          className="h-full rounded-md transition-all duration-500 flex items-center justify-end pr-2"
+                          style={{
+                            width: `${Math.max((totalPaidBack / Math.max(totalBorrowedAmount, 1)) * 100, 2)}%`,
+                            backgroundColor: '#4C7FC4'
+                          }}
+                        >
+                          {totalPaidBack > 0 && (
+                            <span className="text-[10px] font-bold text-white">
+                              {percentPaid}%
+                            </span>
+                          )}
                         </div>
                       </div>
                     </div>
 
                     {/* Next Payment Info */}
-                    <div className="border-t border-[#CDE7F8] pt-4 grid grid-cols-2 gap-4">
+                    <div className="border-t border-[#CDE7F8] pt-2 grid grid-cols-2 gap-3">
                       <div>
-                        <p className="text-xs text-[#4C7FC4] mb-1">Next Payment Date</p>
+                        <p className="text-[11px] text-[#4C7FC4] mb-0.5">Next Payment Date</p>
                         <p className="text-sm font-bold text-[#213B75]">
                           {nextBorrowerPayment ? format(nextBorrowerPayment.date, 'EEE, MMM d') : 'N/A'}
                         </p>
                         {nextBorrowerPayment && (
-                          <p className="text-xs text-[#4C7FC4] mt-0.5">
+                          <p className="text-[11px] text-[#4C7FC4]">
                             {(() => {
                               const days = Math.ceil((nextBorrowerPayment.date - new Date()) / (1000 * 60 * 60 * 24));
                               return days > 0 ? `${days} day${days !== 1 ? 's' : ''} away` : days === 0 ? 'Due today' : `${Math.abs(days)} day${Math.abs(days) !== 1 ? 's' : ''} overdue`;
@@ -418,12 +414,12 @@ export default function Home() {
                         )}
                       </div>
                       <div>
-                        <p className="text-xs text-[#4C7FC4] mb-1">Next Payment Amount</p>
+                        <p className="text-[11px] text-[#4C7FC4] mb-0.5">Next Payment Amount</p>
                         <p className="text-sm font-bold text-[#213B75]">
                           {nextBorrowerPayment ? formatMoney(nextBorrowerPayment.payment_amount || 0) : 'N/A'}
                         </p>
                         {nextBorrowerPayment && (
-                          <p className="text-xs text-[#4C7FC4] mt-0.5">
+                          <p className="text-[11px] text-[#4C7FC4]">
                             to @{nextBorrowerPayment.username}
                           </p>
                         )}
