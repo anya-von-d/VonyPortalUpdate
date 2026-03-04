@@ -961,10 +961,10 @@ export default function Borrowing() {
                                   </div>
                                   <span className="text-xs text-slate-500">{percentPaid}%</span>
                                 </div>
-                                <div className="relative h-3 bg-gray-200 rounded-full overflow-hidden">
+                                <div className="w-full h-5 bg-[#2a5a45] rounded-md overflow-hidden">
                                   <div
-                                    className="absolute top-0 left-0 h-full rounded-full transition-all duration-500"
-                                    style={{ width: `${percentPaid}%`, background: percentPaid > 0 ? 'linear-gradient(to right, #83F384 0%, #83F384 6px, #1C4332 6px, #1C4332 100%)' : undefined }}
+                                    className="h-full rounded-md transition-all duration-500"
+                                    style={{ width: `${Math.max(percentPaid, 2)}%`, background: percentPaid > 0 ? 'linear-gradient(to right, #83F384 0%, #83F384 8px, #1C4332 8px, #1C4332 100%)' : undefined }}
                                   />
                                 </div>
                                 <div className="flex justify-between text-xs text-slate-500">
