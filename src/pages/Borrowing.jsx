@@ -859,15 +859,15 @@ export default function Borrowing() {
                         type="number"
                         step="0.01"
                         min="0.01"
-                        placeholder=""
+                        placeholder="______"
                         value={quickPayAmount}
                         onChange={(e) => setQuickPayAmount(e.target.value)}
-                        className="w-24 h-8 px-3 inline-flex border-0"
-                        style={{ backgroundColor: '#83F384', MozAppearance: 'textfield' }}
+                        className="w-24 h-8 px-1 inline-flex border-0 bg-transparent text-[#1C4332] placeholder:text-[#1C4332] focus-visible:ring-0 focus-visible:ring-offset-0"
+                        style={{ MozAppearance: 'textfield' }}
                       />
                       <span>via</span>
                       <Select value={quickPayMethod} onValueChange={setQuickPayMethod}>
-                        <SelectTrigger className="w-auto h-8 px-3 inline-flex border-0" style={{backgroundColor: '#83F384'}}>
+                        <SelectTrigger className="w-auto h-8 px-2 inline-flex border-0 bg-transparent focus:ring-0 focus:ring-offset-0">
                           <SelectValue placeholder="select method" />
                         </SelectTrigger>
                         <SelectContent>
@@ -881,7 +881,7 @@ export default function Borrowing() {
                       </Select>
                       <span>for</span>
                       <Select value={quickPayLoanId} onValueChange={setQuickPayLoanId}>
-                        <SelectTrigger className="w-auto h-8 px-3 inline-flex min-w-[140px] border-0" style={{backgroundColor: '#83F384'}}>
+                        <SelectTrigger className="w-auto h-8 px-2 inline-flex min-w-[140px] border-0 bg-transparent focus:ring-0 focus:ring-offset-0">
                           <SelectValue placeholder="select loan" />
                         </SelectTrigger>
                         <SelectContent>
@@ -922,7 +922,7 @@ export default function Borrowing() {
                           Loans Ranked By
                         </p>
                         <Select value={rankingFilter} onValueChange={setRankingFilter}>
-                          <SelectTrigger className="w-auto h-7 text-xs border-0 gap-1 px-2" style={{backgroundColor: '#83F384'}}>
+                          <SelectTrigger className="w-auto h-7 text-xs border-0 bg-transparent gap-1 px-2 focus:ring-0 focus:ring-offset-0">
                             <SelectValue>
                               {rankingFilter === 'highest_interest' && 'Highest Interest'}
                               {rankingFilter === 'highest_payment' && 'Highest Payment'}
