@@ -848,7 +848,7 @@ export default function Borrowing() {
                 {/* Quick Record Payment */}
                 {activeLoans.length > 0 && (
                   <div className="rounded-2xl p-5 border-0" style={{backgroundColor: '#83F384'}}>
-                    <p className="text-xl font-bold text-slate-800 mb-4 tracking-tight font-serif">
+                    <p className="text-[10px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                       Record Payment
                     </p>
                     <div className="flex flex-wrap items-center gap-2 text-sm text-slate-700">
