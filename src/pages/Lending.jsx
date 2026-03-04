@@ -1263,8 +1263,8 @@ export default function Lending() {
                 className="space-y-7"
               >
                 {/* Lending Overview Section */}
-                <div className="bg-[#1C4332] rounded-2xl p-4">
-                  <p className="text-[11px] text-[#DBFFEB] uppercase tracking-[0.12em] font-medium mb-3" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                <div className="bg-[#DBFFEB] rounded-2xl p-4">
+                  <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-3" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                     Lending Overview
                   </p>
 

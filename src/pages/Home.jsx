@@ -306,13 +306,13 @@ export default function Home() {
                 </div>
 
                 {/* Right Side - Overview box with arrows */}
-                <div className="rounded-xl p-5 md:p-7 flex-1 lg:max-w-md shadow-sm relative overflow-hidden" style={{backgroundColor: '#DBFFEB'}}>
+                <div className="rounded-xl p-5 md:p-7 flex-1 lg:max-w-md shadow-sm relative overflow-hidden" style={{backgroundColor: '#1C4332'}}>
                   {/* Left Arrow */}
                   <button
                     onClick={() => setOverviewType(overviewType === 'lending' ? 'borrowing' : 'lending')}
-                    className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-7 h-7 rounded-full flex items-center justify-center transition-colors duration-200 bg-[#E2F5EA] hover:bg-[#c8e6d0]"
+                    className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-7 h-7 rounded-full flex items-center justify-center transition-colors duration-200 bg-[#2a5a45] hover:bg-[#356e54]"
                   >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#052e16" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#DBFFEB" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="15 18 9 12 15 6"></polyline>
                     </svg>
                   </button>
@@ -320,9 +320,9 @@ export default function Home() {
                   {/* Right Arrow */}
                   <button
                     onClick={() => setOverviewType(overviewType === 'lending' ? 'borrowing' : 'lending')}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-7 h-7 rounded-full flex items-center justify-center transition-colors duration-200 bg-[#E2F5EA] hover:bg-[#c8e6d0]"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-7 h-7 rounded-full flex items-center justify-center transition-colors duration-200 bg-[#2a5a45] hover:bg-[#356e54]"
                   >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#052e16" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#DBFFEB" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="9 18 15 12 9 6"></polyline>
                     </svg>
                   </button>
@@ -334,7 +334,7 @@ export default function Home() {
                     transition={{ duration: 0.3, ease: "easeOut" }}
                     className="px-6"
                   >
-                    <p className="text-lg font-bold text-slate-800 mb-5 tracking-tight font-serif">
+                    <p className="text-lg font-bold text-[#DBFFEB] mb-5 tracking-tight font-serif">
                       {overviewType === 'lending' ? 'Lending Overview' : 'Borrowing Overview'}
                     </p>
 
@@ -342,23 +342,23 @@ export default function Home() {
                     <div className="space-y-3 mb-6">
                       <div>
                         <div className="flex items-center justify-between mb-1">
-                          <p className="text-xs font-medium text-slate-500">
+                          <p className="text-xs font-medium text-[#DBFFEB]/60">
                             {overviewType === 'lending' ? 'Repaid' : 'Paid Back'}
                           </p>
-                          <p className="text-xs font-bold text-[#00A86B]">
+                          <p className="text-xs font-bold text-[#83F384]">
                             {formatMoney(overviewType === 'lending' ? totalRepaid : totalPaidBack)} / {formatMoney(overviewType === 'lending' ? totalLentAmount : totalBorrowedAmount)}
                           </p>
                         </div>
-                        <div className="w-full h-6 bg-[#E2F5EA] rounded-md overflow-hidden">
+                        <div className="w-full h-6 bg-[#2a5a45] rounded-md overflow-hidden">
                           <div
                             className="h-full rounded-md transition-all duration-500 flex items-center justify-end pr-2"
                             style={{
                               width: `${Math.max(((overviewType === 'lending' ? totalRepaid : totalPaidBack) / Math.max(overviewType === 'lending' ? totalLentAmount : totalBorrowedAmount, 1)) * 100, 2)}%`,
-                              backgroundColor: '#00A86B'
+                              backgroundColor: '#83F384'
                             }}
                           >
                             {(overviewType === 'lending' ? totalRepaid : totalPaidBack) > 0 && (
-                              <span className="text-[10px] font-bold text-white">
+                              <span className="text-[10px] font-bold text-[#1C4332]">
                                 {overviewType === 'lending' ? percentRepaid : percentPaid}%
                               </span>
                             )}
@@ -368,17 +368,17 @@ export default function Home() {
                     </div>
 
                     {/* Next Payment Info */}
-                    <div className="border-t border-slate-100 pt-4 grid grid-cols-2 gap-4">
+                    <div className="border-t border-[#DBFFEB]/20 pt-4 grid grid-cols-2 gap-4">
                       <div>
-                        <p className="text-xs text-slate-400 mb-1">Next Payment Date</p>
-                        <p className="text-sm font-bold text-slate-800">
+                        <p className="text-xs text-[#DBFFEB]/50 mb-1">Next Payment Date</p>
+                        <p className="text-sm font-bold text-[#DBFFEB]">
                           {overviewType === 'lending'
                             ? (nextLenderPayment ? format(nextLenderPayment.date, 'EEE, MMM d') : 'N/A')
                             : (nextBorrowerPayment ? format(nextBorrowerPayment.date, 'EEE, MMM d') : 'N/A')
                           }
                         </p>
                         {((overviewType === 'lending' && nextLenderPayment) || (overviewType === 'borrowing' && nextBorrowerPayment)) && (
-                          <p className="text-xs text-[#00A86B] mt-0.5">
+                          <p className="text-xs text-[#83F384] mt-0.5">
                             {(() => {
                               const payment = overviewType === 'lending' ? nextLenderPayment : nextBorrowerPayment;
                               const days = Math.ceil((payment.date - new Date()) / (1000 * 60 * 60 * 24));
@@ -388,15 +388,15 @@ export default function Home() {
                         )}
                       </div>
                       <div>
-                        <p className="text-xs text-slate-400 mb-1">Next Payment Amount</p>
-                        <p className="text-sm font-bold text-slate-800">
+                        <p className="text-xs text-[#DBFFEB]/50 mb-1">Next Payment Amount</p>
+                        <p className="text-sm font-bold text-[#DBFFEB]">
                           {overviewType === 'lending'
                             ? (nextLenderPayment ? formatMoney(nextLenderPayment.payment_amount || 0) : 'N/A')
                             : (nextBorrowerPayment ? formatMoney(nextBorrowerPayment.payment_amount || 0) : 'N/A')
                           }
                         </p>
                         {((overviewType === 'lending' && nextLenderPayment) || (overviewType === 'borrowing' && nextBorrowerPayment)) && (
-                          <p className="text-xs text-slate-400 mt-0.5">
+                          <p className="text-xs text-[#DBFFEB]/50 mt-0.5">
                             {overviewType === 'lending' ? `from @${nextLenderPayment.username}` : `to @${nextBorrowerPayment.username}`}
                           </p>
                         )}
