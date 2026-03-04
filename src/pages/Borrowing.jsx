@@ -717,7 +717,6 @@ export default function Borrowing() {
               {/* Left Side - Title */}
               <div className="flex-shrink-0">
                 <p className="text-4xl md:text-6xl font-bold text-[#1C4332] tracking-tight leading-tight font-serif">Borrowing</p>
-                <p className="text-4xl md:text-6xl font-bold text-[#1C4332] tracking-tight leading-tight font-serif">Overview</p>
               </div>
 
             </motion.div>
@@ -830,7 +829,7 @@ export default function Borrowing() {
                                     Due {format(new Date(loan.next_payment_date), 'MMM d, yyyy')}
                                   </p>
                                 </div>
-                                <div className="px-2.5 py-1 rounded-full bg-white flex items-center justify-center">
+                                <div className="px-2.5 py-1 rounded-full bg-[#C2FFDC] flex items-center justify-center">
                                   <span className="text-[10px] font-bold text-slate-800 whitespace-nowrap">
                                     {(() => { const d = Math.ceil((new Date(loan.next_payment_date) - new Date()) / (1000 * 60 * 60 * 24)); return `${d} day${d !== 1 ? 's' : ''}`; })()}
                                   </span>
@@ -859,7 +858,7 @@ export default function Borrowing() {
                         placeholder=""
                         value={quickPayAmount}
                         onChange={(e) => setQuickPayAmount(e.target.value)}
-                        className="w-24 h-8 px-3 bg-white inline-flex"
+                        className="w-24 h-8 px-3 bg-[#C2FFDC] inline-flex"
                         style={{ MozAppearance: 'textfield' }}
                       />
                       <span>to</span>
@@ -868,7 +867,7 @@ export default function Borrowing() {
                         // Reset loan selection when person changes
                         setQuickPayLoanId('');
                       }}>
-                        <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex min-w-[120px]">
+                        <SelectTrigger className="w-auto h-8 px-3 bg-[#C2FFDC] inline-flex min-w-[120px]">
                           <SelectValue placeholder="select person" />
                         </SelectTrigger>
                         <SelectContent>
@@ -881,7 +880,7 @@ export default function Borrowing() {
                       </Select>
                       <span>via</span>
                       <Select value={quickPayMethod} onValueChange={setQuickPayMethod}>
-                        <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex">
+                        <SelectTrigger className="w-auto h-8 px-3 bg-[#C2FFDC] inline-flex">
                           <SelectValue placeholder="select method" />
                         </SelectTrigger>
                         <SelectContent>
@@ -895,7 +894,7 @@ export default function Borrowing() {
                       </Select>
                       <span>for</span>
                       <Select value={quickPayLoanId} onValueChange={setQuickPayLoanId}>
-                        <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex min-w-[140px]">
+                        <SelectTrigger className="w-auto h-8 px-3 bg-[#C2FFDC] inline-flex min-w-[140px]">
                           <SelectValue placeholder="select loan" />
                         </SelectTrigger>
                         <SelectContent>
@@ -991,7 +990,7 @@ export default function Borrowing() {
                           Loans Ranked By
                         </p>
                         <Select value={rankingFilter} onValueChange={setRankingFilter}>
-                          <SelectTrigger className="w-auto h-7 text-xs bg-white border-slate-200 gap-1 px-2">
+                          <SelectTrigger className="w-auto h-7 text-xs bg-[#C2FFDC] border-slate-200 gap-1 px-2">
                             <SelectValue>
                               {rankingFilter === 'highest_interest' && 'Highest Interest'}
                               {rankingFilter === 'highest_payment' && 'Highest Payment'}
@@ -1037,7 +1036,7 @@ export default function Borrowing() {
                                 style={{ backgroundColor: bgColors[index % 6] }}
                               >
                                 {/* Rank Number */}
-                                <div className="w-7 h-7 rounded-full bg-white flex items-center justify-center flex-shrink-0">
+                                <div className="w-7 h-7 rounded-full bg-[#C2FFDC] flex items-center justify-center flex-shrink-0">
                                   <span className="text-xs font-bold text-slate-800">{index + 1}</span>
                                 </div>
 
@@ -1261,7 +1260,7 @@ export default function Borrowing() {
                                   : 'N/A'}
                               </p>
                               {manageLoanSelected.next_payment_date && (
-                                <div className="mt-2 px-3 py-1 bg-white rounded-full">
+                                <div className="mt-2 px-3 py-1 bg-[#C2FFDC] rounded-full">
                                   <p className="text-sm font-semibold text-[#00A86B]">
                                     {(() => {
                                       const days = Math.ceil((new Date(manageLoanSelected.next_payment_date) - new Date()) / (1000 * 60 * 60 * 24));
