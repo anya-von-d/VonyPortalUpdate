@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 // Top bar items
 const topBarItems = [
   {
-    title: "Document Center",
+    title: "My Loan Documents",
     url: createPageUrl("LoanAgreements"),
   },
   {

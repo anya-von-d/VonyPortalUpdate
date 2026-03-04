@@ -298,8 +298,8 @@ export default function Home() {
                     const firstName = user.full_name?.split(' ')[0] || 'User';
                     return (
                       <div>
-                        <p className="text-2xl md:text-3xl font-bold text-[#1C4332] tracking-tight leading-tight font-serif">{greeting}</p>
-                        <p className="text-2xl md:text-3xl font-bold text-[#1C4332] tracking-tight leading-tight font-serif">{firstName}</p>
+                        <p className="text-3xl md:text-4xl font-bold text-[#1C4332] tracking-tight leading-tight font-serif">{greeting}</p>
+                        <p className="text-3xl md:text-4xl font-bold text-[#1C4332] tracking-tight leading-tight font-serif">{firstName}</p>
                       </div>
                     );
                   })()}
@@ -646,7 +646,7 @@ export default function Home() {
                           <polyline points="15 18 9 12 15 6"></polyline>
                         </svg>
                       </button>
-                      <p className="text-xl font-bold text-slate-800 tracking-tight font-serif">
+                      <p className="text-base font-bold text-slate-800 tracking-tight font-serif">
                         {format(calendarMonth, 'MMMM')} Overview
                       </p>
                       <button
