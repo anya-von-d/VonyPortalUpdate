@@ -706,7 +706,7 @@ export default function Borrowing() {
 
       <div className="min-h-screen" style={{backgroundColor: '#C2FFDC'}}>
         {/* Full page background */}
-        <div className="px-10 py-8 md:px-20 md:py-12 lg:px-28">
+        <div className="px-4 pt-8 pb-6 sm:px-8 md:px-24 md:pt-12 md:pb-6 lg:px-36">
           <div className="max-w-6xl mx-auto space-y-8 md:space-y-10">
             {/* Hero - Title + Overview Box */}
             <motion.div
@@ -741,8 +741,8 @@ export default function Borrowing() {
             </div>
 
             {/* Dark Green Content Box */}
-            <div className="rounded-2xl p-6 md:p-8 lg:p-10" style={{backgroundColor: '#1C4332'}}>
-              <div className="space-y-8 md:space-y-10">
+            <div className="rounded-2xl p-4 sm:p-6 md:p-10" style={{backgroundColor: '#1C4332'}}>
+              <div className="space-y-6 sm:space-y-8 md:space-y-10">
 
           {/* Content Sections */}
           <AnimatePresence mode="wait">
@@ -759,13 +759,13 @@ export default function Borrowing() {
                 <div className="grid md:grid-cols-2 gap-4">
                   {/* Borrowing Overview Box - Left */}
                   <div className="bg-[#C2FFDC] rounded-2xl p-4 sm:p-5 border-0">
-                    <p className="text-xl font-bold text-slate-800 mb-4 tracking-tight font-serif whitespace-nowrap">
+                    <p className="text-lg font-bold text-slate-800 mb-4 tracking-tight font-serif whitespace-nowrap">
                       Borrowing Overview
                     </p>
 
-                    <div className="flex items-center gap-6 pl-4">
+                    <div className="flex items-center gap-6 pl-6">
                       {/* Pie Chart - Left */}
-                      <div className="flex-shrink-0 ml-2">
+                      <div className="flex-shrink-0 ml-4">
                         {(() => {
                           const percentPaid = totalOwed > 0 ? Math.round((totalPaid / totalOwed) * 100) : 0;
                           return (
@@ -795,7 +795,7 @@ export default function Borrowing() {
                       </div>
 
                       {/* Stats - Right, stacked */}
-                      <div className="flex flex-col gap-4 flex-1 pl-6">
+                      <div className="flex flex-col gap-4 flex-1 pl-10">
                         <div>
                           <p className="text-sm text-gray-600 mb-1">Total Borrowed</p>
                           <p className="text-lg font-bold text-gray-700">${totalBorrowed.toLocaleString()} <span className="text-sm font-medium text-gray-600">· {activeLoans.length} active</span></p>
@@ -810,7 +810,7 @@ export default function Borrowing() {
 
                   {/* Upcoming Payments - Right */}
                   <div className="bg-[#C2FFDC] rounded-2xl p-5 border-0">
-                    <p className="text-xl font-bold text-slate-800 mb-4 tracking-tight font-serif">
+                    <p className="text-lg font-bold text-slate-800 mb-4 tracking-tight font-serif">
                       Upcoming Payments
                     </p>
                     {activeLoans.filter(l => l.next_payment_date).length === 0 ? (
@@ -934,7 +934,7 @@ export default function Borrowing() {
                   <div className="grid md:grid-cols-2 gap-4">
                     {/* Left column: Individual Loan Progress */}
                     <div className="bg-[#C2FFDC] rounded-2xl p-5 border-0">
-                      <p className="text-xl font-bold text-slate-800 mb-4 tracking-tight font-serif">
+                      <p className="text-lg font-bold text-slate-800 mb-4 tracking-tight font-serif">
                         Individual Loan Progress
                       </p>
                       {activeLoans.length === 0 ? (
@@ -991,7 +991,7 @@ export default function Borrowing() {
                     <div className="bg-[#C2FFDC] rounded-2xl p-5 border-0">
                       {/* Header with dropdown */}
                       <div className="flex items-center gap-2 mb-4">
-                        <p className="text-xl font-bold text-slate-800 tracking-tight font-serif">
+                        <p className="text-lg font-bold text-slate-800 tracking-tight font-serif">
                           Loans Ranked By
                         </p>
                         <Select value={rankingFilter} onValueChange={setRankingFilter}>
@@ -1099,7 +1099,7 @@ export default function Borrowing() {
                   <div className="space-y-4">
                     {/* Loan Selector Dropdown */}
                     <div className="bg-[#C2FFDC] rounded-2xl p-5 border-0">
-                      <p className="text-xl font-bold text-slate-800 mb-4 tracking-tight font-serif">
+                      <p className="text-lg font-bold text-slate-800 mb-4 tracking-tight font-serif">
                         Your Loans
                       </p>
                         <Select
