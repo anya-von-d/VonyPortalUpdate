@@ -283,7 +283,7 @@ export default function Home() {
     return (
         <div className="min-h-screen" style={{backgroundColor: '#F4F7F5'}}>
           {/* Hero Section */}
-          <div className="px-12 py-8 md:px-24 md:py-12 lg:px-36" style={{backgroundColor: '#1C4332'}}>
+          <div className="px-12 py-8 md:px-24 md:py-12 lg:px-36" style={{backgroundColor: '#83F384'}}>
             <div className="max-w-6xl mx-auto">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -298,8 +298,8 @@ export default function Home() {
                     const firstName = user.full_name?.split(' ')[0] || 'User';
                     return (
                       <div>
-                        <p className="text-3xl md:text-4xl font-bold text-[#DBFFEB] tracking-tight leading-tight font-serif">{greeting}</p>
-                        <p className="text-3xl md:text-4xl font-bold text-[#DBFFEB] tracking-tight leading-tight font-serif">{firstName}</p>
+                        <p className="text-3xl md:text-4xl font-bold text-[#1C4332] tracking-tight leading-tight font-serif">{greeting}</p>
+                        <p className="text-3xl md:text-4xl font-bold text-[#1C4332] tracking-tight leading-tight font-serif">{firstName}</p>
                       </div>
                     );
                   })()}
@@ -411,7 +411,7 @@ export default function Home() {
           </div>
 
           {/* Main Content Below Hero */}
-          <div className="px-12 pt-10 pb-8 md:px-24 md:pt-14 md:pb-10 lg:px-36" style={{backgroundColor: '#DBFFEB'}}>
+          <div className="px-12 pt-10 pb-8 md:px-24 md:pt-14 md:pb-10 lg:px-36" style={{backgroundColor: '#1C4332'}}>
            <div className="max-w-6xl mx-auto space-y-8 md:space-y-10">
 
             {pendingOffers.length > 0 && (
@@ -424,22 +424,22 @@ export default function Home() {
               <div className="flex flex-col gap-2 items-stretch w-[180px] mx-auto lg:mx-0">
                 <Link
                   to={createPageUrl("Lending")}
-                  className="py-2.5 rounded-full text-sm font-semibold text-[#DBFFEB] text-center transition-colors duration-200 hover:opacity-90 whitespace-nowrap"
-                  style={{ backgroundColor: '#1C4332' }}
+                  className="py-2.5 rounded-full text-sm font-semibold text-[#1C4332] text-center transition-colors duration-200 hover:opacity-90 whitespace-nowrap"
+                  style={{ backgroundColor: '#83F384' }}
                 >
                   Create Loan Offer
                 </Link>
                 <Link
                   to={createPageUrl("Requests")}
-                  className="py-2.5 rounded-full text-sm font-semibold text-[#DBFFEB] text-center transition-colors duration-200 hover:opacity-90 whitespace-nowrap"
-                  style={{ backgroundColor: '#1C4332' }}
+                  className="py-2.5 rounded-full text-sm font-semibold text-[#1C4332] text-center transition-colors duration-200 hover:opacity-90 whitespace-nowrap"
+                  style={{ backgroundColor: '#83F384' }}
                 >
                   View Requests
                 </Link>
                 <Link
                   to={createPageUrl("LoanAgreements")}
-                  className="py-2.5 rounded-full text-sm font-semibold text-[#DBFFEB] text-center transition-colors duration-200 hover:opacity-90 whitespace-nowrap"
-                  style={{ backgroundColor: '#1C4332' }}
+                  className="py-2.5 rounded-full text-sm font-semibold text-[#1C4332] text-center transition-colors duration-200 hover:opacity-90 whitespace-nowrap"
+                  style={{ backgroundColor: '#83F384' }}
                 >
                   View Documents
                 </Link>
@@ -536,9 +536,9 @@ export default function Home() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.25 }}
               >
-                <Card className="border-0 rounded-lg overflow-hidden" style={{backgroundColor: '#1C4332'}}>
+                <Card className="border-0 rounded-lg overflow-hidden" style={{backgroundColor: '#DBFFEB'}}>
                   <CardContent className="p-4 md:p-5">
-                    <p className="text-xl font-bold text-[#DBFFEB] mb-4 tracking-tight font-serif">
+                    <p className="text-xl font-bold text-slate-800 mb-4 tracking-tight font-serif">
                       Your Friends
                     </p>
 
@@ -550,7 +550,7 @@ export default function Home() {
 
                         if (acceptedFriends.length === 0) {
                           return (
-                            <div className="flex flex-col items-center justify-center py-6 text-[#DBFFEB]/60">
+                            <div className="flex flex-col items-center justify-center py-6 text-slate-400">
                               <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="opacity-40 mb-2">
                                 <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
                                 <circle cx="9" cy="7" r="4"></circle>
@@ -619,7 +619,7 @@ export default function Home() {
                     {/* View All Link */}
                     <Link
                       to={createPageUrl("Friends")}
-                      className="block mt-4 text-center text-sm font-semibold text-[#83F384] hover:text-[#DBFFEB] transition-colors"
+                      className="block mt-4 text-center text-sm font-semibold text-[#00A86B] hover:text-[#0D9B76] transition-colors"
                     >
                       View All Friends →
                     </Link>
@@ -634,26 +634,26 @@ export default function Home() {
                 transition={{ duration: 0.4, delay: 0.3 }}
                 className="flex flex-col gap-1.5"
               >
-                <Card className="border-0 rounded-lg overflow-hidden" style={{backgroundColor: '#1C4332'}}>
+                <Card className="border-0 rounded-lg overflow-hidden" style={{backgroundColor: '#DBFFEB'}}>
                   <CardContent className="p-4 md:p-5 flex flex-col">
                     {/* Month Title with Arrows */}
                     <div className="flex items-center justify-center gap-3 mb-4">
                       <button
                         onClick={() => setCalendarMonth(subMonths(calendarMonth, 1))}
-                        className="w-7 h-7 rounded-full flex items-center justify-center transition-colors duration-200 bg-white/10 hover:bg-white/20"
+                        className="w-7 h-7 rounded-full flex items-center justify-center transition-colors duration-200 bg-[#E2F5EA] hover:bg-[#c8e6d0]"
                       >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#DBFFEB" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#052e16" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <polyline points="15 18 9 12 15 6"></polyline>
                         </svg>
                       </button>
-                      <p className="text-base font-bold text-[#DBFFEB] tracking-tight font-serif">
+                      <p className="text-base font-bold text-slate-800 tracking-tight font-serif">
                         {format(calendarMonth, 'MMMM')} Overview
                       </p>
                       <button
                         onClick={() => setCalendarMonth(addMonths(calendarMonth, 1))}
-                        className="w-7 h-7 rounded-full flex items-center justify-center transition-colors duration-200 bg-white/10 hover:bg-white/20"
+                        className="w-7 h-7 rounded-full flex items-center justify-center transition-colors duration-200 bg-[#E2F5EA] hover:bg-[#c8e6d0]"
                       >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#DBFFEB" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#052e16" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <polyline points="9 18 15 12 9 6"></polyline>
                         </svg>
                       </button>
@@ -717,7 +717,7 @@ export default function Home() {
 
                       if (events.length === 0) {
                         return (
-                          <div className="flex flex-col items-center justify-center py-8 text-[#DBFFEB]/60">
+                          <div className="flex flex-col items-center justify-center py-8 text-slate-500">
                             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="opacity-40 mb-2">
                               <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                               <line x1="16" y1="2" x2="16" y2="6"></line>
@@ -822,10 +822,10 @@ export default function Home() {
 
                 return (
                   <div className="bg-[#83F384] rounded-md p-2.5 flex items-center justify-between">
-                    <p className="text-sm font-semibold text-[#1C4332]">
+                    <p className="text-sm font-semibold text-[#0A1A10]">
                       {format(calendarMonth, 'MMMM')} Balance
                     </p>
-                    <p className="text-sm font-bold text-[#1C4332]">
+                    <p className="text-sm font-bold text-[#0A1A10]">
                       {isPositive ? '+' : '-'}${Math.abs(netBalance).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </p>
                   </div>

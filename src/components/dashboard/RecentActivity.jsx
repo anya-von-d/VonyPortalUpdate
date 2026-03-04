@@ -37,8 +37,8 @@ export default function RecentActivity({ loans, payments, isLoading, user, allUs
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.3 }}
       >
-        <div className="rounded-lg p-5 max-w-[85%] mx-auto lg:max-w-none" style={{backgroundColor: '#1C4332'}}>
-          <p className="text-base font-bold text-[#DBFFEB] mb-4 tracking-tight font-serif">
+        <div className="rounded-lg p-5 max-w-[85%] mx-auto lg:max-w-none" style={{backgroundColor: '#DBFFEB'}}>
+          <p className="text-base font-bold text-slate-800 mb-4 tracking-tight font-serif">
             Activity
           </p>
           <div className="relative">
@@ -144,14 +144,14 @@ export default function RecentActivity({ loans, payments, isLoading, user, allUs
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: 0.3 }}
     >
-      <div className="rounded-lg p-5 max-w-[85%] mx-auto lg:max-w-none" style={{backgroundColor: '#1C4332'}}>
+      <div className="rounded-lg p-5 max-w-[85%] mx-auto lg:max-w-none" style={{backgroundColor: '#DBFFEB'}}>
         {/* Title */}
         <div className="flex items-center justify-between mb-4">
-          <p className="text-base font-bold text-[#DBFFEB] tracking-tight font-serif">
+          <p className="text-base font-bold text-slate-800 tracking-tight font-serif">
             Activity
           </p>
           <Link to={createPageUrl("RecentActivity")}>
-            <Button variant="ghost" size="sm" className="text-[#83F384] hover:text-[#DBFFEB] hover:bg-transparent text-xs">
+            <Button variant="ghost" size="sm" className="text-[#00A86B] hover:text-[#0D9B76] hover:bg-transparent text-xs">
               View All
             </Button>
           </Link>
