@@ -759,8 +759,8 @@ export default function Borrowing() {
                 {/* Borrowing Overview + Upcoming Payments */}
                 <div className="grid md:grid-cols-2 gap-4">
                   {/* Borrowing Overview Box - Left */}
-                  <div className="bg-[#DBFFEB] rounded-2xl p-5 border-0">
-                    <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                  <div className="bg-[#1C4332] rounded-2xl p-5 border-0">
+                    <p className="text-[11px] text-[#DBFFEB]/70 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                       Borrowing Overview
                     </p>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -773,13 +773,13 @@ export default function Borrowing() {
                             <>
                               <div className="relative w-24 h-24">
                                 <svg className="w-full h-full transform -rotate-90" viewBox="0 0 120 120">
-                                  <circle cx="60" cy="60" r="52" fill="none" stroke="#E2F5EA" strokeWidth="7" />
+                                  <circle cx="60" cy="60" r="52" fill="none" stroke="#DBFFEB20" strokeWidth="7" />
                                   <circle
                                     cx="60"
                                     cy="60"
                                     r="52"
                                     fill="none"
-                                    stroke="#00A86B"
+                                    stroke="#83F384"
                                     strokeWidth="7"
                                     strokeLinecap="round"
                                     strokeDasharray={2 * Math.PI * 52}
@@ -788,12 +788,12 @@ export default function Borrowing() {
                                   />
                                 </svg>
                                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                  <span className="text-lg font-bold text-slate-800">{percentPaid}%</span>
-                                  <span className="text-[9px] text-slate-500 uppercase tracking-wider">Paid</span>
+                                  <span className="text-lg font-bold text-[#DBFFEB]">{percentPaid}%</span>
+                                  <span className="text-[9px] text-[#DBFFEB]/60 uppercase tracking-wider">Paid</span>
                                 </div>
                               </div>
                               <div className="mt-2 text-center">
-                                <p className="text-xs text-slate-500">
+                                <p className="text-xs text-[#DBFFEB]/60">
                                   ${totalPaid.toLocaleString()} of ${totalOwed.toLocaleString()}
                                 </p>
                               </div>
@@ -804,27 +804,27 @@ export default function Borrowing() {
 
                       {/* Stats - Total Borrowed */}
                       <div className="flex flex-col h-full">
-                        <p className="text-sm font-medium text-slate-600 mb-2 text-left">Total Borrowed</p>
-                        <p className="text-2xl font-bold text-slate-800 text-center flex-1 flex items-center justify-center">${totalBorrowed.toLocaleString()}</p>
-                        <p className="text-xs text-slate-500 text-right">{activeLoans.length} active loans</p>
+                        <p className="text-sm font-medium text-[#DBFFEB]/70 mb-2 text-left">Total Borrowed</p>
+                        <p className="text-2xl font-bold text-[#DBFFEB] text-center flex-1 flex items-center justify-center">${totalBorrowed.toLocaleString()}</p>
+                        <p className="text-xs text-[#DBFFEB]/60 text-right">{activeLoans.length} active loans</p>
                       </div>
 
                       {/* Stats - Remaining */}
                       <div className="flex flex-col h-full">
-                        <p className="text-sm font-medium text-slate-600 mb-2 text-left">Remaining Balance</p>
-                        <p className="text-2xl font-bold text-slate-800 text-center flex-1 flex items-center justify-center">${remainingBalance.toLocaleString()}</p>
-                        <p className="text-xs text-slate-500 text-right">${totalPaid.toLocaleString()} paid</p>
+                        <p className="text-sm font-medium text-[#DBFFEB]/70 mb-2 text-left">Remaining Balance</p>
+                        <p className="text-2xl font-bold text-[#DBFFEB] text-center flex-1 flex items-center justify-center">${remainingBalance.toLocaleString()}</p>
+                        <p className="text-xs text-[#DBFFEB]/60 text-right">${totalPaid.toLocaleString()} paid</p>
                       </div>
                     </div>
                   </div>
 
                   {/* Upcoming Payments - Right */}
-                  <div className="bg-[#DBFFEB] rounded-2xl p-5 border-0">
-                    <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                  <div className="bg-[#1C4332] rounded-2xl p-5 border-0">
+                    <p className="text-[11px] text-[#DBFFEB]/70 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                       Upcoming Payments
                     </p>
                     {activeLoans.filter(l => l.next_payment_date).length === 0 ? (
-                      <p className="text-slate-500 text-sm">No upcoming payments</p>
+                      <p className="text-[#DBFFEB]/60 text-sm">No upcoming payments</p>
                     ) : (
                       <div className="space-y-3">
                         {activeLoans
@@ -837,15 +837,15 @@ export default function Borrowing() {
                             return (
                               <div key={loan.id} className="flex items-center justify-between p-3 rounded-xl" style={{ backgroundColor: bgColors[index % 6] }}>
                                 <div>
-                                  <p className="font-medium text-sm text-slate-800">
+                                  <p className="font-medium text-sm text-[#1C4332]">
                                     ${loan.payment_amount?.toLocaleString() || 0} to @{lender?.username || 'user'}
                                   </p>
-                                  <p className="text-xs text-slate-600">
+                                  <p className="text-xs text-[#1C4332]/70">
                                     Due {format(new Date(loan.next_payment_date), 'MMM d, yyyy')}
                                   </p>
                                 </div>
                                 <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center">
-                                  <span className="text-xs font-bold text-slate-800">
+                                  <span className="text-xs font-bold text-[#1C4332]">
                                     {Math.ceil((new Date(loan.next_payment_date) - new Date()) / (1000 * 60 * 60 * 24))}d
                                   </span>
                                 </div>
@@ -859,11 +859,11 @@ export default function Borrowing() {
 
                 {/* Quick Record Payment */}
                 {activeLoans.length > 0 && (
-                  <div className="bg-[#DBFFEB] rounded-2xl p-5 border-0">
-                    <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                  <div className="bg-[#1C4332] rounded-2xl p-5 border-0">
+                    <p className="text-[11px] text-[#DBFFEB]/70 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                       Record Payment
                     </p>
-                    <div className="flex flex-wrap items-center gap-2 text-sm text-slate-700">
+                    <div className="flex flex-wrap items-center gap-2 text-sm text-[#DBFFEB]">
                       <span>Record payment of</span>
                       <span className="font-medium">$</span>
                       <Input
@@ -943,12 +943,12 @@ export default function Borrowing() {
                 {activeLoans.length > 0 && (
                   <div className="grid md:grid-cols-2 gap-4">
                     {/* Left column: Individual Loan Progress */}
-                    <div className="bg-[#DBFFEB] rounded-2xl p-5 border-0">
-                      <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                    <div className="bg-[#1C4332] rounded-2xl p-5 border-0">
+                      <p className="text-[11px] text-[#DBFFEB]/70 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                         Individual Loan Progress
                       </p>
                       {activeLoans.length === 0 ? (
-                        <p className="text-slate-500 text-sm">No active loans to track</p>
+                        <p className="text-[#DBFFEB]/60 text-sm">No active loans to track</p>
                       ) : (
                         <div className="space-y-4">
                           {activeLoans.slice(0, 5).map(loan => {
@@ -966,18 +966,18 @@ export default function Borrowing() {
                                         {lender?.full_name?.charAt(0) || '?'}
                                       </span>
                                     </div>
-                                    <span className="text-sm font-medium text-slate-700">@{lender?.username || 'user'}</span>
-                                    <span className="text-xs text-slate-400 truncate max-w-[100px]">· {loan.purpose || 'Reason'}</span>
+                                    <span className="text-sm font-medium text-[#DBFFEB]">@{lender?.username || 'user'}</span>
+                                    <span className="text-xs text-[#DBFFEB]/50 truncate max-w-[100px]">· {loan.purpose || 'Reason'}</span>
                                   </div>
-                                  <span className="text-xs text-slate-500">{percentPaid}%</span>
+                                  <span className="text-xs text-[#DBFFEB]/70">{percentPaid}%</span>
                                 </div>
-                                <div className="relative h-3 bg-white rounded-full overflow-hidden">
+                                <div className="relative h-3 bg-[#DBFFEB]/20 rounded-full overflow-hidden">
                                   <div
                                     className="absolute top-0 left-0 h-full bg-[#00A86B] rounded-full transition-all duration-500"
                                     style={{ width: `${percentPaid}%` }}
                                   />
                                 </div>
-                                <div className="flex justify-between text-xs text-slate-500">
+                                <div className="flex justify-between text-xs text-[#DBFFEB]/60">
                                   <span>${amountPaid.toLocaleString()} paid</span>
                                   <span>${loanTotalOwed.toLocaleString()} total</span>
                                 </div>
@@ -998,10 +998,10 @@ export default function Borrowing() {
                     </div>
 
                     {/* Loans Ranked By - Right */}
-                    <div className="bg-[#DBFFEB] rounded-2xl p-5 border-0">
+                    <div className="bg-[#1C4332] rounded-2xl p-5 border-0">
                       {/* Header with dropdown */}
                       <div className="flex items-center gap-2 mb-4">
-                        <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                        <p className="text-[11px] text-[#DBFFEB]/70 uppercase tracking-[0.12em] font-medium" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                           Loans Ranked By
                         </p>
                         <Select value={rankingFilter} onValueChange={setRankingFilter}>
