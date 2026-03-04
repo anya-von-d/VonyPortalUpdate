@@ -283,7 +283,7 @@ export default function Home() {
     return (
         <div className="min-h-screen" style={{backgroundColor: '#F4F7F5'}}>
           {/* Hero Section */}
-          <div className="px-12 py-8 md:px-24 md:py-12 lg:px-36" style={{backgroundColor: '#83F384'}}>
+          <div className="px-12 py-8 md:px-24 md:py-12 lg:px-36" style={{backgroundColor: '#DBFFEB'}}>
             <div className="max-w-6xl mx-auto">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
