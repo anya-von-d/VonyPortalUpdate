@@ -794,14 +794,12 @@ export default function Borrowing() {
                     {/* Stats */}
                     <div className="border-t border-slate-200 pt-4 grid grid-cols-2 gap-4">
                       <div>
-                        <p className="text-xs text-slate-400 mb-1">Total Borrowed</p>
-                        <p className="text-sm font-bold text-slate-800">${totalBorrowed.toLocaleString()}</p>
-                        <p className="text-xs text-[#00A86B] mt-0.5">{activeLoans.length} active loan{activeLoans.length !== 1 ? 's' : ''}</p>
+                        <p className="text-sm text-slate-400 mb-1">Total Borrowed</p>
+                        <p className="text-lg font-bold text-slate-800">${totalBorrowed.toLocaleString()} <span className="text-sm font-medium text-[#00A86B]">· {activeLoans.length} active</span></p>
                       </div>
                       <div>
-                        <p className="text-xs text-slate-400 mb-1">Remaining Balance</p>
-                        <p className="text-sm font-bold text-slate-800">${remainingBalance.toLocaleString()}</p>
-                        <p className="text-xs text-slate-400 mt-0.5">${totalPaid.toLocaleString()} paid</p>
+                        <p className="text-sm text-slate-400 mb-1">Remaining Balance</p>
+                        <p className="text-lg font-bold text-slate-800">${remainingBalance.toLocaleString()} <span className="text-sm font-medium text-slate-400">· ${totalPaid.toLocaleString()} paid</span></p>
                       </div>
                     </div>
                   </div>
