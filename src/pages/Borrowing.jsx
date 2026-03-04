@@ -704,8 +704,8 @@ export default function Borrowing() {
         )}
       </AnimatePresence>
 
-      <div className="min-h-screen" style={{backgroundColor: '#83F384'}}>
-        {/* Full page bright green background */}
+      <div className="min-h-screen" style={{backgroundColor: '#DBFFEB'}}>
+        {/* Full page background */}
         <div className="px-10 py-8 md:px-20 md:py-12 lg:px-28">
           <div className="max-w-6xl mx-auto space-y-8 md:space-y-10">
             {/* Hero - Title + Overview Box */}
