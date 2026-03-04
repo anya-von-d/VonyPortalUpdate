@@ -283,7 +283,7 @@ export default function Home() {
     return (
         <div className="min-h-screen" style={{backgroundColor: '#F4F7F5'}}>
           {/* Hero Section */}
-          <div className="px-10 py-8 md:px-20 md:py-12 lg:px-28" style={{backgroundColor: '#83F384'}}>
+          <div className="px-12 py-8 md:px-24 md:py-12 lg:px-36" style={{backgroundColor: '#83F384'}}>
             <div className="max-w-6xl mx-auto">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -411,7 +411,7 @@ export default function Home() {
           </div>
 
           {/* Main Content Below Hero */}
-          <div className="px-10 pt-10 pb-8 md:px-20 md:pt-14 md:pb-10 lg:px-28" style={{backgroundColor: '#1C4332'}}>
+          <div className="px-12 pt-10 pb-8 md:px-24 md:pt-14 md:pb-10 lg:px-36" style={{backgroundColor: '#1C4332'}}>
            <div className="max-w-6xl mx-auto space-y-8 md:space-y-10">
 
             {pendingOffers.length > 0 && (
