@@ -411,8 +411,9 @@ export default function Home() {
           </div>
 
           {/* Main Content Below Hero */}
-          <div className="px-12 pt-10 pb-8 md:px-24 md:pt-14 md:pb-10 lg:px-36" style={{backgroundColor: '#1C4332'}}>
-           <div className="max-w-6xl mx-auto space-y-8 md:space-y-10">
+          <div className="px-12 pt-10 pb-8 md:px-24 md:pt-14 md:pb-10 lg:px-36" style={{backgroundColor: '#C2FFDC'}}>
+           <div className="max-w-6xl mx-auto">
+            <div className="rounded-2xl p-6 md:p-10 space-y-8 md:space-y-10" style={{backgroundColor: '#1C4332'}}>
 
             {pendingOffers.length > 0 && (
               <PendingLoanOffers offers={pendingOffers} />
@@ -832,6 +833,7 @@ export default function Home() {
                 );
               })()}
             </motion.div>
+            </div>
             </div>
 
           </div>
