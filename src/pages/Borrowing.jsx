@@ -1377,50 +1377,37 @@ export default function Borrowing() {
                             </div>
                           </div>
 
-                          {/* Document Center Box - Right */}
-                          <div className="bg-[#C2FFDC] rounded-2xl p-5">
-                            <p className="text-base font-bold text-slate-800 mb-4 tracking-tight font-serif">
-                              Document Center
-                            </p>
+                          {/* Document Buttons - Right */}
+                          <div className="flex flex-col gap-3 justify-center">
                             {(() => {
                               const agreement = getAgreementForLoan(manageLoanSelected.id);
                               if (!agreement) {
                                 return (
                                   <div className="text-center py-6 text-slate-500">
-                                    <FolderOpen className="w-10 h-10 mx-auto mb-2 opacity-50" />
                                     <p className="text-sm">No signed agreement found for this loan</p>
                                   </div>
                                 );
                               }
 
                               return (
-                                <div className="flex flex-col gap-3">
-                                  {/* Loan Summary */}
+                                <>
                                   <button
                                     onClick={() => openDocPopup('summary', agreement)}
-                                    className="bg-[#83F384] rounded-xl p-3 md:p-4 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-3"
+                                    className="py-2.5 rounded-full text-sm font-semibold text-[#1C4332] text-center transition-colors duration-200 hover:opacity-90 whitespace-nowrap flex items-center justify-center gap-2"
+                                    style={{ backgroundColor: '#83F384' }}
                                   >
-                                    <div className="w-9 h-9 rounded-full bg-[#C2FFDC] flex items-center justify-center flex-shrink-0">
-                                      <FileText className="w-4 h-4 text-[#0A1A10]" />
-                                    </div>
-                                    <p className="font-semibold text-[#0A1A10] text-[14px] group-hover:text-[#00A86B] transition-colors">
-                                      Loan Summary
-                                    </p>
+                                    Loan Summary
                                   </button>
-
-                                  {/* Promissory Note */}
-                                  <button
-                                    onClick={() => openDocPopup('promissory', agreement)}
-                                    className="bg-[#83F384] rounded-xl p-3 md:p-4 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-3"
-                                  >
-                                    <div className="w-9 h-9 rounded-full bg-[#C2FFDC] flex items-center justify-center flex-shrink-0">
-                                      <ClipboardList className="w-4 h-4 text-[#0A1A10]" />
-                                    </div>
-                                    <p className="font-semibold text-[#0A1A10] text-[14px] group-hover:text-[#00A86B] transition-colors">
+                                  <div className="relative flex items-center">
+                                    <button
+                                      onClick={() => openDocPopup('promissory', agreement)}
+                                      className="py-2.5 rounded-full text-sm font-semibold text-[#1C4332] text-center transition-colors duration-200 hover:opacity-90 whitespace-nowrap flex-1"
+                                      style={{ backgroundColor: '#83F384' }}
+                                    >
                                       Promissory Note
-                                    </p>
+                                    </button>
                                     <div
-                                      className="relative ml-auto"
+                                      className="relative ml-2 flex-shrink-0"
                                       onMouseEnter={(e) => { e.stopPropagation(); setActiveInfoTooltip('promissory'); }}
                                       onMouseLeave={() => setActiveInfoTooltip(null)}
                                       onClick={(e) => { e.stopPropagation(); setActiveInfoTooltip(activeInfoTooltip === 'promissory' ? null : 'promissory'); }}
@@ -1435,21 +1422,17 @@ export default function Borrowing() {
                                         </div>
                                       )}
                                     </div>
-                                  </button>
-
-                                  {/* Amortization Schedule */}
-                                  <button
-                                    onClick={() => openDocPopup('amortization', agreement)}
-                                    className="bg-[#83F384] rounded-xl p-3 md:p-4 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-3"
-                                  >
-                                    <div className="w-9 h-9 rounded-full bg-[#C2FFDC] flex items-center justify-center flex-shrink-0">
-                                      <BarChart3 className="w-4 h-4 text-[#0A1A10]" />
-                                    </div>
-                                    <p className="font-semibold text-[#0A1A10] text-[14px] group-hover:text-[#00A86B] transition-colors">
+                                  </div>
+                                  <div className="relative flex items-center">
+                                    <button
+                                      onClick={() => openDocPopup('amortization', agreement)}
+                                      className="py-2.5 rounded-full text-sm font-semibold text-[#1C4332] text-center transition-colors duration-200 hover:opacity-90 whitespace-nowrap flex-1"
+                                      style={{ backgroundColor: '#83F384' }}
+                                    >
                                       Amortization Schedule
-                                    </p>
+                                    </button>
                                     <div
-                                      className="relative ml-auto"
+                                      className="relative ml-2 flex-shrink-0"
                                       onMouseEnter={(e) => { e.stopPropagation(); setActiveInfoTooltip('amortization'); }}
                                       onMouseLeave={() => setActiveInfoTooltip(null)}
                                       onClick={(e) => { e.stopPropagation(); setActiveInfoTooltip(activeInfoTooltip === 'amortization' ? null : 'amortization'); }}
@@ -1464,8 +1447,8 @@ export default function Borrowing() {
                                         </div>
                                       )}
                                     </div>
-                                  </button>
-                                </div>
+                                  </div>
+                                </>
                               );
                             })()}
                           </div>
