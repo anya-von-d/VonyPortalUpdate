@@ -764,7 +764,7 @@ export default function Borrowing() {
                       <p className="text-lg font-bold text-slate-800 mb-4 tracking-tight font-serif whitespace-nowrap">
                         Borrowing Overview
                       </p>
-                      <div className="flex-shrink-0 ml-6">
+                      <div className="flex-shrink-0 ml-8">
                         {(() => {
                           const percentPaid = totalOwed > 0 ? Math.round((totalPaid / totalOwed) * 100) : 0;
                           return (
@@ -795,7 +795,7 @@ export default function Borrowing() {
                     </div>
 
                     {/* Stats - Right, vertically centered across full box height */}
-                    <div className="flex flex-col justify-center gap-4 ml-auto pr-2 text-left">
+                    <div className="flex flex-col justify-center gap-4 ml-auto pr-0 text-left">
                       <div>
                         <p className="text-sm text-gray-600 mb-1">Total Borrowed</p>
                         <p className="text-lg font-bold text-gray-700">${totalBorrowed.toLocaleString()} <span className="text-sm font-medium text-gray-600">· {activeLoans.length} active</span></p>
@@ -922,7 +922,7 @@ export default function Borrowing() {
                           Loans Ranked By
                         </p>
                         <Select value={rankingFilter} onValueChange={setRankingFilter}>
-                          <SelectTrigger className="w-auto h-7 text-xs bg-[#C2FFDC] border-slate-200 gap-1 px-2">
+                          <SelectTrigger className="w-auto h-7 text-xs border-0 gap-1 px-2" style={{backgroundColor: '#83F384'}}>
                             <SelectValue>
                               {rankingFilter === 'highest_interest' && 'Highest Interest'}
                               {rankingFilter === 'highest_payment' && 'Highest Payment'}
