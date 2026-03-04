@@ -121,13 +121,13 @@ export default function TopNav({ location }) {
       {/* Fixed Double Navigation Bar */}
       <nav className="fixed top-0 left-0 right-0 z-50 shadow-sm shadow-black/5">
         {/* Top Bar - Secondary Navigation */}
-        <div className="h-10" style={{backgroundColor: '#83F384'}}>
+        <div className="h-10" style={{backgroundColor: '#1C4332'}}>
           <div className="h-full px-6 md:px-10 flex items-center justify-between">
             {/* Hamburger Menu Button - Mobile only */}
             <button
               type="button"
               onClick={() => setMenuOpen(!menuOpen)}
-              className="md:hidden w-8 h-8 flex items-center justify-center text-[#1C4332]"
+              className="md:hidden w-8 h-8 flex items-center justify-center text-[#DBFFEB]"
               aria-label="Toggle menu"
             >
               <AnimatePresence mode="wait">
@@ -164,8 +164,8 @@ export default function TopNav({ location }) {
                   onClick={() => handleNavClick(item.url)}
                   className={`font-sans text-xs font-medium transition-colors duration-200 ${
                     location.pathname === item.url
-                      ? "text-[#1C4332] font-bold"
-                      : "text-[#1C4332]/60 hover:text-[#1C4332]"
+                      ? "text-[#DBFFEB] font-bold"
+                      : "text-[#DBFFEB]/60 hover:text-[#DBFFEB]"
                   }`}
                 >
                   {item.title}
@@ -177,7 +177,7 @@ export default function TopNav({ location }) {
             <Link
               to={createPageUrl("Home")}
               onClick={() => handleNavClick(createPageUrl("Home"))}
-              className="md:hidden absolute left-1/2 -translate-x-1/2 font-display italic text-2xl text-[#1C4332] tracking-wide"
+              className="md:hidden absolute left-1/2 -translate-x-1/2 font-display italic text-2xl text-[#DBFFEB] tracking-wide"
             >
               Vony
             </Link>
@@ -186,7 +186,7 @@ export default function TopNav({ location }) {
             <Link
               to={createPageUrl("Profile")}
               onClick={() => handleNavClick(createPageUrl("Profile"))}
-              className="md:hidden px-3 py-1 bg-[#1C4332] hover:bg-[#1C4332]/85 text-[#DBFFEB] font-sans text-xs font-semibold rounded-md transition-all duration-200"
+              className="md:hidden px-3 py-1 bg-[#83F384] hover:bg-[#83F384]/85 text-[#1C4332] font-sans text-xs font-semibold rounded-md transition-all duration-200"
             >
               Profile
             </Link>
