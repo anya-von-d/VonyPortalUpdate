@@ -1199,53 +1199,34 @@ export default function Borrowing() {
                             Your Loans
                           </p>
 
-                          {/* Select a Loan — single-row horizontal scroll */}
-                          <div className="bg-white rounded-xl px-3 py-2.5 shadow-sm mb-4">
-                            <p className="text-xs font-bold text-[#1C4332] mb-1.5 tracking-tight font-sans">
+                          {/* Select a Loan — bright green bar with centered title + dropdown */}
+                          <div className="rounded-xl px-4 py-3 shadow-sm mb-4" style={{ backgroundColor: '#6AD478' }}>
+                            <p className="text-sm font-bold text-[#1C4332] text-center tracking-tight font-sans mb-2">
                               Select a Loan to Learn More
                             </p>
-                            <div className="overflow-x-auto scroll-smooth flex gap-1.5 pb-1" id="loan-list-scroll" style={{ scrollbarWidth: 'thin' }}>
-                              {manageableLoans.map((loan) => {
-                                const lender = publicProfiles.find(p => p.user_id === loan.lender_id);
-                                const isSelected = manageLoanSelected?.id === loan.id;
-                                const defaultAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent((lender?.full_name || 'U').charAt(0))}&background=00A86B&color=fff&size=128`;
-
-                                return (
-                                  <button
-                                    key={loan.id}
-                                    id={`loan-item-${loan.id}`}
-                                    onClick={() => {
-                                      setManageLoanSelected(loan);
-                                      setTimeout(() => {
-                                        const el = document.getElementById(`loan-item-${loan.id}`);
-                                        if (el) {
-                                          el.scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
-                                        }
-                                      }, 50);
-                                    }}
-                                    className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-left transition-all cursor-pointer flex items-center gap-2 ${
-                                      isSelected
-                                        ? 'bg-[#6AD478]'
-                                        : 'bg-[#C2FFDC] hover:bg-[#b0f0c8]'
-                                    }`}
-                                  >
-                                    <img
-                                      src={lender?.profile_picture_url || lender?.avatar_url || defaultAvatar}
-                                      alt={lender?.full_name || 'Lender'}
-                                      className="w-6 h-6 rounded-full object-cover flex-shrink-0 bg-white"
-                                    />
-                                    <div className="min-w-0">
-                                      <p className="text-[11px] font-semibold text-[#1C4332] whitespace-nowrap font-sans">
-                                        @{lender?.username || 'user'}
-                                      </p>
-                                      <p className="text-[9px] text-[#1C4332]/60 whitespace-nowrap font-sans">
-                                        ${loan.amount?.toLocaleString()}
-                                        {loan.status === 'cancelled' && ' · Cancelled'}
-                                      </p>
-                                    </div>
-                                  </button>
-                                );
-                              })}
+                            <div className="relative">
+                              <select
+                                value={manageLoanSelected?.id || ''}
+                                onChange={(e) => {
+                                  const selected = manageableLoans.find(l => l.id === e.target.value);
+                                  if (selected) setManageLoanSelected(selected);
+                                }}
+                                className="w-full appearance-none rounded-lg px-3 py-2 text-[12px] font-semibold text-[#1C4332] font-sans bg-white cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#1C4332]/20"
+                              >
+                                {manageableLoans.map((loan) => {
+                                  const lender = publicProfiles.find(p => p.user_id === loan.lender_id);
+                                  return (
+                                    <option key={loan.id} value={loan.id}>
+                                      @{lender?.username || 'user'} — ${loan.amount?.toLocaleString()}{loan.status === 'cancelled' ? ' · Cancelled' : ''}
+                                    </option>
+                                  );
+                                })}
+                              </select>
+                              <div className="pointer-events-none absolute inset-y-0 right-2.5 flex items-center">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1C4332" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                  <polyline points="6 9 12 15 18 9"></polyline>
+                                </svg>
+                              </div>
                             </div>
                           </div>
 
