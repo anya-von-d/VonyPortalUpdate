@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { motion } from "framer-motion";
-import { format, startOfMonth, endOfMonth, addMonths, isBefore, isAfter, differenceInDays } from "date-fns";
+import { format, startOfMonth, endOfMonth, addMonths, subMonths, isBefore, isAfter, differenceInDays, eachDayOfInterval, getDay, isSameDay, isSameMonth } from "date-fns";
 import { formatMoney } from "@/components/utils/formatMoney";
 import RecordPaymentModal from "@/components/loans/RecordPaymentModal";
 import { AnimatePresence } from "framer-motion";
@@ -184,6 +184,7 @@ export default function Home() {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [selectedLoan, setSelectedLoan] = useState(null);
   const [candidateLoans, setCandidateLoans] = useState([]);
+  const [calendarMonth, setCalendarMonth] = useState(new Date());
 
   // Use profile from context
   const user = userProfile ? { ...userProfile, id: authUser?.id, email: authUser?.email } : null;
@@ -998,120 +999,283 @@ export default function Home() {
                       )}
                     </div>
 
-                    {/* Upcoming Payments Box */}
-                    <div className="rounded-xl px-4 py-3 shadow-sm bg-white">
-                      <p className="text-sm font-bold text-[#213B75] mb-2.5 tracking-tight font-sans">
-                        Upcoming Payments
-                      </p>
-                      {(() => {
-                        const safePaymentsUp = Array.isArray(payments) ? payments : [];
-                        const activeLoansForPayments = myLoans.filter(l => l && l.status === 'active' && l.next_payment_date);
+                    {/* Upcoming & Overdue Payments — shared data computation */}
+                    {(() => {
+                      const safePaymentsUp = Array.isArray(payments) ? payments : [];
+                      const activeLoansForPayments = myLoans.filter(l => l && l.status === 'active' && l.next_payment_date);
 
-                        // Build upcoming payment events, calculating remaining amount per payment period
-                        const upcomingEvents = activeLoansForPayments
-                          .map(loan => {
-                            const isLender = loan.lender_id === user.id;
-                            const otherUserId = isLender ? loan.borrower_id : loan.lender_id;
-                            const otherProfile = safeAllProfiles.find(p => p.user_id === otherUserId);
-                            const paymentDate = new Date(loan.next_payment_date);
-                            const today = new Date();
-                            today.setHours(0, 0, 0, 0);
-                            const payDateClean = new Date(paymentDate);
-                            payDateClean.setHours(0, 0, 0, 0);
-                            const days = differenceInDays(payDateClean, today);
+                      // Build all payment events with remaining amounts
+                      const allEvents = activeLoansForPayments
+                        .map(loan => {
+                          const isLender = loan.lender_id === user.id;
+                          const otherUserId = isLender ? loan.borrower_id : loan.lender_id;
+                          const otherProfile = safeAllProfiles.find(p => p.user_id === otherUserId);
+                          const paymentDate = new Date(loan.next_payment_date);
+                          const today = new Date();
+                          today.setHours(0, 0, 0, 0);
+                          const payDateClean = new Date(paymentDate);
+                          payDateClean.setHours(0, 0, 0, 0);
+                          const days = differenceInDays(payDateClean, today);
 
-                            // Calculate remaining amount for this payment period
-                            const loanPayments = safePaymentsUp.filter(p => p && p.loan_id === loan.id);
-                            const now = new Date();
-                            const nextPayDate = new Date(loan.next_payment_date);
-                            let periodStart = new Date(nextPayDate);
-                            const freq = loan.payment_frequency || 'monthly';
-                            if (freq === 'weekly') periodStart.setDate(periodStart.getDate() - 7);
-                            else if (freq === 'bi-weekly') periodStart.setDate(periodStart.getDate() - 14);
-                            else periodStart.setMonth(periodStart.getMonth() - 1);
+                          // Remaining amount for this payment period
+                          const loanPayments = safePaymentsUp.filter(p => p && p.loan_id === loan.id);
+                          const now = new Date();
+                          const nextPayDate = new Date(loan.next_payment_date);
+                          let periodStart = new Date(nextPayDate);
+                          const freq = loan.payment_frequency || 'monthly';
+                          if (freq === 'weekly') periodStart.setDate(periodStart.getDate() - 7);
+                          else if (freq === 'bi-weekly') periodStart.setDate(periodStart.getDate() - 14);
+                          else periodStart.setMonth(periodStart.getMonth() - 1);
 
-                            const paidThisPeriod = loanPayments
-                              .filter(p => {
-                                const pDate = new Date(p.payment_date || p.created_at);
-                                return pDate >= periodStart && pDate <= now && p.status === 'completed';
-                              })
-                              .reduce((sum, p) => sum + (p.amount || 0), 0);
+                          const paidThisPeriod = loanPayments
+                            .filter(p => {
+                              const pDate = new Date(p.payment_date || p.created_at);
+                              return pDate >= periodStart && pDate <= now && p.status === 'completed';
+                            })
+                            .reduce((sum, p) => sum + (p.amount || 0), 0);
 
-                            const originalAmount = loan.payment_amount || 0;
-                            const remainingAmount = Math.max(0, originalAmount - paidThisPeriod);
+                          const originalAmount = loan.payment_amount || 0;
+                          const remainingAmount = Math.max(0, originalAmount - paidThisPeriod);
 
-                            return {
-                              date: paymentDate,
-                              days,
-                              originalAmount,
-                              remainingAmount,
-                              username: otherProfile?.username || 'user',
-                              isLender,
-                              loanId: loan.id
-                            };
-                          })
-                          // Filter out fully paid payments (remaining = 0)
-                          .filter(e => e.remainingAmount > 0)
-                          .sort((a, b) => a.date - b.date)
-                          .slice(0, 5);
+                          return {
+                            loan,
+                            date: paymentDate,
+                            days,
+                            originalAmount,
+                            remainingAmount,
+                            username: otherProfile?.username || 'user',
+                            isLender,
+                            loanId: loan.id
+                          };
+                        })
+                        .filter(e => e.remainingAmount > 0)
+                        .sort((a, b) => a.date - b.date);
 
-                        if (upcomingEvents.length === 0) {
-                          return (
-                            <div className="flex flex-col items-center justify-center py-6 text-[#4C7FC4]">
-                              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="opacity-40 mb-1.5">
-                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                <line x1="16" y1="2" x2="16" y2="6"></line>
-                                <line x1="8" y1="2" x2="8" y2="6"></line>
-                                <line x1="3" y1="10" x2="21" y2="10"></line>
-                              </svg>
-                              <p className="text-xs">No upcoming payments</p>
+                      const upcomingEvents = allEvents.filter(e => e.days >= 0).slice(0, 5);
+                      const overdueEvents = allEvents.filter(e => e.days < 0);
+
+                      return (
+                        <>
+                          {/* Upcoming Payments Box */}
+                          <div className="rounded-xl px-4 py-3 shadow-sm bg-white">
+                            <p className="text-sm font-bold text-[#213B75] mb-2.5 tracking-tight font-sans">
+                              Upcoming Payments
+                            </p>
+                            {upcomingEvents.length === 0 ? (
+                              <div className="flex flex-col items-center justify-center py-6 text-[#4C7FC4]">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="opacity-40 mb-1.5">
+                                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                                <p className="text-xs">No upcoming payments</p>
+                              </div>
+                            ) : (
+                              <div className="space-y-1.5">
+                                {upcomingEvents.map((event, idx) => {
+                                  const amountStr = event.remainingAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                                  const dueDateStr = format(event.date, 'MMM d, yyyy');
+                                  const loanPage = event.isLender ? 'Lending' : 'Borrowing';
+
+                                  return (
+                                    <div key={idx} className="flex items-start gap-2.5 p-2.5 rounded-lg bg-[#CDE7F8]">
+                                      <div className="flex-1 min-w-0">
+                                        <p className="text-[11px] text-[#213B75]">
+                                          {event.isLender
+                                            ? <>Receive payment of <span className="font-semibold">${amountStr}</span> from <span className="font-semibold">@{event.username}</span></>
+                                            : <>Send payment of <span className="font-semibold">${amountStr}</span> to <span className="font-semibold">@{event.username}</span></>
+                                          }
+                                        </p>
+                                        <div className="flex items-center justify-between mt-0.5">
+                                          <p className="text-[10px] text-[#4C7FC4]">{dueDateStr}</p>
+                                        </div>
+                                      </div>
+                                      <Link
+                                        to={createPageUrl(loanPage)}
+                                        className="flex-shrink-0 text-[10px] font-semibold px-2.5 py-1 rounded-lg mt-0.5"
+                                        style={{ backgroundColor: '#213B75', color: '#FFFFFF' }}
+                                      >
+                                        View Loan
+                                      </Link>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Overdue Payments Box — only shown if there are overdue payments */}
+                          {overdueEvents.length > 0 && (
+                            <div className="rounded-xl px-4 py-3 shadow-sm bg-white border border-red-200">
+                              <p className="text-sm font-bold text-red-500 mb-2.5 tracking-tight font-sans">
+                                Overdue Payments
+                              </p>
+                              <div className="space-y-1.5">
+                                {overdueEvents.map((event, idx) => {
+                                  const amountStr = event.remainingAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                                  const dueDateStr = format(event.date, 'MMM d, yyyy');
+                                  const overdueDays = Math.abs(event.days);
+
+                                  return (
+                                    <div key={idx} className="flex items-start gap-2.5 p-2.5 rounded-lg" style={{ backgroundColor: '#FEF2F2' }}>
+                                      <div className="flex-1 min-w-0">
+                                        <p className="text-[11px] text-[#213B75]">
+                                          {event.isLender
+                                            ? <>Receive payment of <span className="font-semibold">${amountStr}</span> from <span className="font-semibold">@{event.username}</span></>
+                                            : <>Send payment of <span className="font-semibold">${amountStr}</span> to <span className="font-semibold">@{event.username}</span></>
+                                          }
+                                        </p>
+                                        <p className="text-[10px] text-red-500 mt-0.5">
+                                          Due {dueDateStr} · {overdueDays} {overdueDays === 1 ? 'day' : 'days'} overdue
+                                        </p>
+                                      </div>
+                                      <button
+                                        onClick={() => {
+                                          setSelectedLoan({ ...event.loan });
+                                          setCandidateLoans([]);
+                                          setShowPaymentModal(true);
+                                        }}
+                                        className="flex-shrink-0 text-[10px] font-semibold px-2.5 py-1 rounded-lg mt-0.5 cursor-pointer"
+                                        style={{ backgroundColor: '#EF4444', color: '#FFFFFF' }}
+                                      >
+                                        Record Payment
+                                      </button>
+                                    </div>
+                                  );
+                                })}
+                              </div>
                             </div>
-                          );
-                        }
+                          )}
+                        </>
+                      );
+                    })()}
+
+                    {/* Monthly Overview Calendar */}
+                    <div className="rounded-xl px-4 py-3 shadow-sm bg-white">
+                      <div className="flex items-center justify-between mb-3">
+                        <button
+                          onClick={() => setCalendarMonth(prev => subMonths(prev, 1))}
+                          className="p-1 rounded-lg hover:bg-[#CDE7F8] transition-colors cursor-pointer"
+                        >
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#213B75" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="15 18 9 12 15 6"></polyline>
+                          </svg>
+                        </button>
+                        <p className="text-sm font-bold text-[#213B75] tracking-tight font-sans">
+                          Monthly Overview · {format(calendarMonth, 'MMMM yyyy')}
+                        </p>
+                        <button
+                          onClick={() => setCalendarMonth(prev => addMonths(prev, 1))}
+                          className="p-1 rounded-lg hover:bg-[#CDE7F8] transition-colors cursor-pointer"
+                        >
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#213B75" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                          </svg>
+                        </button>
+                      </div>
+
+                      {/* Calendar */}
+                      {(() => {
+                        const monthStart = startOfMonth(calendarMonth);
+                        const monthEnd = endOfMonth(calendarMonth);
+                        const daysInMonth = eachDayOfInterval({ start: monthStart, end: monthEnd });
+                        const startDayOfWeek = getDay(monthStart); // 0=Sun
+
+                        // Build payment map for this month
+                        const activeCalLoans = myLoans.filter(l => l && l.status === 'active' && l.next_payment_date);
+                        const paymentDayMap = {}; // date key -> { send: bool, receive: bool }
+
+                        activeCalLoans.forEach(loan => {
+                          const isLender = loan.lender_id === user.id;
+                          const payDate = new Date(loan.next_payment_date);
+                          // Check if this payment falls in the calendar month
+                          if (isSameMonth(payDate, calendarMonth)) {
+                            const key = format(payDate, 'yyyy-MM-dd');
+                            if (!paymentDayMap[key]) paymentDayMap[key] = { send: false, receive: false };
+                            if (isLender) paymentDayMap[key].receive = true;
+                            else paymentDayMap[key].send = true;
+                          }
+                        });
+
+                        const today = new Date();
+                        const dayLabels = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
 
                         return (
-                          <div className="space-y-1.5">
-                            {upcomingEvents.map((event, idx) => {
-                              const isOverdue = event.days < 0;
-                              const overdueDays = Math.abs(event.days);
-                              const amountStr = event.remainingAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                          <>
+                            {/* Day headers */}
+                            <div className="grid grid-cols-7 gap-0.5 mb-1">
+                              {dayLabels.map(d => (
+                                <div key={d} className="text-center">
+                                  <p className="text-[9px] font-semibold text-[#4C7FC4]">{d}</p>
+                                </div>
+                              ))}
+                            </div>
+                            {/* Calendar grid */}
+                            <div className="grid grid-cols-7 gap-0.5">
+                              {/* Empty cells for offset */}
+                              {Array.from({ length: startDayOfWeek }).map((_, i) => (
+                                <div key={`empty-${i}`} className="h-8" />
+                              ))}
+                              {daysInMonth.map(day => {
+                                const key = format(day, 'yyyy-MM-dd');
+                                const info = paymentDayMap[key];
+                                const isToday = isSameDay(day, today);
+                                const hasSend = info?.send;
+                                const hasReceive = info?.receive;
+                                const hasBoth = hasSend && hasReceive;
 
-                              return (
-                                <div key={idx} className="flex items-center gap-2.5 p-2 rounded-lg bg-[#CDE7F8]">
-                                  {/* Circle with days */}
+                                let bgColor = 'transparent';
+                                let dotColor = null;
+                                if (hasBoth) {
+                                  bgColor = '#E8D5F5'; // purple tint for both
+                                  dotColor = '#8B5CF6';
+                                } else if (hasSend) {
+                                  bgColor = '#DBEAFE'; // blue tint for send
+                                  dotColor = '#4C7FC4';
+                                } else if (hasReceive) {
+                                  bgColor = '#D1FAE5'; // green tint for receive
+                                  dotColor = '#00A86B';
+                                }
+
+                                return (
                                   <div
-                                    className="flex-shrink-0 flex items-center justify-center rounded-full"
-                                    style={{
-                                      width: 44,
-                                      height: 44,
-                                      backgroundColor: isOverdue ? '#FEE2E2' : '#FFFFFF',
-                                      border: isOverdue ? '2px solid #EF4444' : '2px solid #CDE7F8'
-                                    }}
+                                    key={key}
+                                    className="h-8 flex flex-col items-center justify-center rounded-md relative"
+                                    style={{ backgroundColor: bgColor }}
                                   >
-                                    <p className={`text-[10px] font-bold text-center leading-tight ${isOverdue ? 'text-red-500' : 'text-[#213B75]'}`}>
-                                      {isOverdue ? `-${overdueDays}` : event.days}{' '}
-                                      <span className="block text-[8px] font-medium opacity-70">
-                                        {Math.abs(event.days) === 1 ? 'day' : 'days'}
-                                      </span>
+                                    <p className={`text-[10px] leading-none ${isToday ? 'font-bold text-[#4C7FC4]' : 'text-[#213B75]'}`}>
+                                      {format(day, 'd')}
                                     </p>
-                                  </div>
-                                  {/* Payment info */}
-                                  <div className="flex-1 min-w-0">
-                                    <p className="text-[11px] text-[#213B75] truncate">
-                                      Payment {event.isLender ? 'from' : 'to'} @{event.username} due
-                                    </p>
-                                    {isOverdue && (
-                                      <p className="text-[10px] font-semibold text-red-500">Overdue</p>
+                                    {dotColor && (
+                                      <div
+                                        className="rounded-full mt-0.5"
+                                        style={{ width: 4, height: 4, backgroundColor: dotColor }}
+                                      />
+                                    )}
+                                    {isToday && (
+                                      <div className="absolute inset-0 rounded-md border-2 border-[#4C7FC4] pointer-events-none" />
                                     )}
                                   </div>
-                                  {/* Amount */}
-                                  <p className={`text-[11px] font-bold flex-shrink-0 ${event.isLender ? 'text-[#00A86B]' : 'text-[#213B75]'}`}>
-                                    {event.isLender ? '+' : '-'}${amountStr}
-                                  </p>
-                                </div>
-                              );
-                            })}
-                          </div>
+                                );
+                              })}
+                            </div>
+                            {/* Key */}
+                            <div className="flex items-center justify-center gap-4 mt-3 pt-2.5 border-t border-[#CDE7F8]">
+                              <div className="flex items-center gap-1.5">
+                                <div className="rounded-full" style={{ width: 8, height: 8, backgroundColor: '#4C7FC4' }} />
+                                <p className="text-[9px] text-[#213B75]">Send Payment</p>
+                              </div>
+                              <div className="flex items-center gap-1.5">
+                                <div className="rounded-full" style={{ width: 8, height: 8, backgroundColor: '#00A86B' }} />
+                                <p className="text-[9px] text-[#213B75]">Receive Payment</p>
+                              </div>
+                              <div className="flex items-center gap-1.5">
+                                <div className="rounded-full" style={{ width: 8, height: 8, backgroundColor: '#8B5CF6' }} />
+                                <p className="text-[9px] text-[#213B75]">Both</p>
+                              </div>
+                            </div>
+                          </>
                         );
                       })()}
                     </div>
