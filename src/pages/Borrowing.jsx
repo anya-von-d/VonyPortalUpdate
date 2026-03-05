@@ -1270,18 +1270,80 @@ export default function Borrowing() {
                                 );
                               })()}
 
-                              {/* Payment Progress Box */}
+                              {/* Payment Progress Box — Pie Chart */}
                               {manageLoanSelected && (() => {
                                 const totalAmt = manageLoanSelected.total_amount || manageLoanSelected.amount || 0;
                                 const paidAmt = manageLoanSelected.amount_paid || 0;
-                                const remainingAmt = Math.max(totalAmt - paidAmt, 0);
                                 const paidPct = totalAmt > 0 ? (paidAmt / totalAmt) * 100 : 0;
 
+                                /* Pie chart arc math */
+                                const size = 100;
+                                const cx = size / 2;
+                                const cy = size / 2;
+                                const r = 36;
+                                const paidAngle = (paidPct / 100) * 360;
+                                const toRad = (deg) => (deg - 90) * (Math.PI / 180);
+                                const paidEndX = cx + r * Math.cos(toRad(paidAngle));
+                                const paidEndY = cy + r * Math.sin(toRad(paidAngle));
+                                const largeArc = paidAngle > 180 ? 1 : 0;
+
+                                return (
+                                  <div className="bg-white rounded-xl px-4 py-3 shadow-sm">
+                                    <p className="text-sm font-bold text-[#1C4332] mb-2.5 tracking-tight font-sans">
+                                      Payment Progress
+                                    </p>
+                                    <div className="flex items-center gap-4">
+                                      {/* Pie Chart */}
+                                      <div className="flex-shrink-0">
+                                        <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+                                          {/* Background circle (remaining) */}
+                                          <circle cx={cx} cy={cy} r={r} fill="#C2FFDC" stroke="#C2FFDC" strokeWidth="1" />
+                                          {/* Paid arc */}
+                                          {paidPct > 0 && paidPct < 100 && (
+                                            <path
+                                              d={`M ${cx} ${cy - r} A ${r} ${r} 0 ${largeArc} 1 ${paidEndX} ${paidEndY} L ${cx} ${cy} Z`}
+                                              fill="#00A86B"
+                                            />
+                                          )}
+                                          {paidPct >= 100 && (
+                                            <circle cx={cx} cy={cy} r={r} fill="#00A86B" />
+                                          )}
+                                          {/* Center white circle for donut effect */}
+                                          <circle cx={cx} cy={cy} r={20} fill="white" />
+                                          {/* Center percentage */}
+                                          <text x={cx} y={cy + 1} textAnchor="middle" dominantBaseline="middle" className="text-[11px] font-bold fill-[#1C4332]" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                                            {Math.round(paidPct)}%
+                                          </text>
+                                        </svg>
+                                      </div>
+                                      {/* Legend */}
+                                      <div className="flex flex-col gap-2">
+                                        <div className="flex items-center gap-2">
+                                          <div className="w-2.5 h-2.5 rounded-sm bg-[#00A86B]" />
+                                          <div>
+                                            <p className="text-[10px] text-[#00A86B] font-sans">Paid</p>
+                                            <p className="text-[12px] font-semibold text-[#1C4332] font-sans">${paidAmt.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                                          </div>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                          <div className="w-2.5 h-2.5 rounded-sm bg-[#C2FFDC]" />
+                                          <div>
+                                            <p className="text-[10px] text-[#00A86B] font-sans">Remaining</p>
+                                            <p className="text-[12px] font-semibold text-[#1C4332] font-sans">${Math.max(totalAmt - paidAmt, 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                );
+                              })()}
+
+                              {/* Next Payment Box */}
+                              {manageLoanSelected && (() => {
                                 const selLender = publicProfiles.find(p => p.user_id === manageLoanSelected.lender_id);
                                 const lenderUsername = selLender?.username || 'user';
                                 const nextPmtAmt = manageLoanSelected.payment_amount || 0;
 
-                                /* Next payment date & days */
                                 let nextPmtDate = null;
                                 let daysUntil = null;
                                 if (manageLoanSelected.next_payment_date) {
@@ -1293,40 +1355,14 @@ export default function Borrowing() {
                                   daysUntil = Math.ceil((pmtDay - today) / (1000 * 60 * 60 * 24));
                                 }
 
-                                /* Venn diagram sizing */
-                                const vennW = 120;
-                                const vennH = 80;
-                                const circleR = 30;
-                                const overlap = 14;
-                                const cx1 = vennW / 2 - overlap;
-                                const cx2 = vennW / 2 + overlap;
-                                const cy = vennH / 2;
-
                                 return (
                                   <div className="bg-white rounded-xl px-4 py-3 shadow-sm">
                                     <p className="text-sm font-bold text-[#1C4332] mb-2.5 tracking-tight font-sans">
-                                      Payment Progress
+                                      Next Payment
                                     </p>
-
-                                    {/* Venn Diagram */}
-                                    <div className="flex justify-center mb-3">
-                                      <svg width={vennW} height={vennH} viewBox={`0 0 ${vennW} ${vennH}`}>
-                                        {/* Remaining circle (right, behind) */}
-                                        <circle cx={cx2} cy={cy} r={circleR} fill="#C2FFDC" stroke="#00A86B" strokeWidth="1.5" opacity="0.6" />
-                                        {/* Paid circle (left, front) */}
-                                        <circle cx={cx1} cy={cy} r={circleR} fill="#00A86B" stroke="#1C4332" strokeWidth="1.5" opacity="0.85" />
-                                        {/* Paid label */}
-                                        <text x={cx1 - 6} y={cy - 4} textAnchor="middle" className="text-[8px] font-bold fill-white" style={{ fontFamily: 'Outfit, sans-serif' }}>Paid</text>
-                                        <text x={cx1 - 6} y={cy + 7} textAnchor="middle" className="text-[7px] fill-white/80" style={{ fontFamily: 'Outfit, sans-serif' }}>{Math.round(paidPct)}%</text>
-                                        {/* Remaining label */}
-                                        <text x={cx2 + 6} y={cy - 4} textAnchor="middle" className="text-[8px] font-bold fill-[#1C4332]" style={{ fontFamily: 'Outfit, sans-serif' }}>Left</text>
-                                        <text x={cx2 + 6} y={cy + 7} textAnchor="middle" className="text-[7px] fill-[#1C4332]/60" style={{ fontFamily: 'Outfit, sans-serif' }}>{Math.round(100 - paidPct)}%</text>
-                                      </svg>
-                                    </div>
-
-                                    {/* Next Payment Date row */}
+                                    {/* Date row */}
                                     <div className="flex items-center justify-between mb-1.5">
-                                      <p className="text-[11px] text-[#00A86B] font-medium font-sans">Next Payment</p>
+                                      <p className="text-[11px] text-[#00A86B] font-medium font-sans">Date</p>
                                       <div className="flex items-center gap-1.5">
                                         {nextPmtDate ? (
                                           <>
@@ -1345,10 +1381,9 @@ export default function Borrowing() {
                                         )}
                                       </div>
                                     </div>
-
-                                    {/* Next Payment Amount row */}
+                                    {/* Amount row */}
                                     <div className="flex items-center justify-between">
-                                      <p className="text-[11px] text-[#00A86B] font-medium font-sans">Next Payment Amount</p>
+                                      <p className="text-[11px] text-[#00A86B] font-medium font-sans">Amount</p>
                                       <div className="flex items-center gap-1.5">
                                         <p className="text-[12px] font-semibold text-[#1C4332] font-sans">
                                           ${nextPmtAmt.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
