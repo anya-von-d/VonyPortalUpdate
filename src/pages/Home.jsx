@@ -85,7 +85,7 @@ function LoanCarousel({ hasLendingLoans, hasBorrowingLoans }) {
   ];
 
   return (
-    <div className="rounded-2xl relative overflow-hidden" style={{ backgroundColor: '#83F384' }}>
+    <div className="rounded-2xl relative overflow-hidden" style={{ backgroundColor: '#6AD478' }}>
       {/* Arrow buttons */}
       <button
         onClick={() => goToSlide('prev')}
@@ -444,7 +444,7 @@ export default function Home() {
                   <div className="flex items-start gap-5 sm:gap-6 flex-shrink-0">
                     <Link to={createPageUrl("CreateOffer")} className="flex flex-col items-center gap-1.5 group">
                       <div className="w-12 h-12 rounded-full bg-[#1C4332] shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#83F384" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6AD478" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                           <line x1="12" y1="5" x2="12" y2="19"></line>
                           <line x1="5" y1="12" x2="19" y2="12"></line>
                         </svg>
@@ -453,7 +453,7 @@ export default function Home() {
                     </Link>
                     <Link to={createPageUrl("RecentActivity")} className="flex flex-col items-center gap-1.5 group">
                       <div className="w-12 h-12 rounded-full bg-[#1C4332] shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#83F384" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6AD478" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                           <circle cx="12" cy="12" r="10"></circle>
                           <polyline points="12 6 12 12 16 14"></polyline>
                         </svg>
@@ -462,7 +462,7 @@ export default function Home() {
                     </Link>
                     <Link to={createPageUrl("LoanAgreements")} className="flex flex-col items-center gap-1.5 group">
                       <div className="w-12 h-12 rounded-full bg-[#1C4332] shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#83F384" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6AD478" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                           <polyline points="14 2 14 8 20 8"></polyline>
                           <line x1="16" y1="13" x2="8" y2="13"></line>
@@ -476,7 +476,7 @@ export default function Home() {
 
                 {/* Find Friends - shown above grid if user has no friends */}
                 {!hasFriends && (
-                  <div className="rounded-2xl px-6 py-8 sm:px-10 sm:py-10 text-center" style={{ backgroundColor: '#83F384' }}>
+                  <div className="rounded-2xl px-6 py-8 sm:px-10 sm:py-10 text-center" style={{ backgroundColor: '#6AD478' }}>
                     <p className="text-lg sm:text-xl font-bold text-[#1C4332] font-sans mb-1.5 tracking-tight">
                       Find friends to lend with
                     </p>
@@ -486,7 +486,7 @@ export default function Home() {
                     <div className="flex items-center justify-center gap-3 sm:gap-4">
                       <Link
                         to={createPageUrl("Friends")}
-                        className="px-6 py-2.5 rounded-xl bg-[#1C4332] text-sm font-semibold text-[#83F384] hover:bg-[#1C4332]/90 transition-colors font-sans"
+                        className="px-6 py-2.5 rounded-xl bg-[#1C4332] text-sm font-semibold text-[#6AD478] hover:bg-[#1C4332]/90 transition-colors font-sans"
                       >
                         Search for Friends
                       </Link>
@@ -718,7 +718,7 @@ export default function Home() {
                       const canSubmit = quickPayAmount && (quickPayFromPerson || quickPayToPerson);
 
                       return (
-                        <div className="rounded-xl px-4 py-3 shadow-sm mt-2 mb-2 lg:mt-0 lg:mb-0" style={{ backgroundColor: '#83F384' }}>
+                        <div className="rounded-xl px-4 py-3 shadow-sm mt-2 mb-2 lg:mt-0 lg:mb-0" style={{ backgroundColor: '#6AD478' }}>
                           <p className="text-sm font-bold text-[#1C4332] mb-2 tracking-tight font-serif">
                             Record Payment
                           </p>
@@ -782,7 +782,7 @@ export default function Home() {
                               className={`h-7 px-3 rounded-md text-xs font-semibold border-0 transition-all ${
                                 !canSubmit
                                   ? 'bg-[#1C4332]/20 text-[#1C4332]/50 cursor-not-allowed'
-                                  : 'bg-[#1C4332] text-[#83F384] hover:bg-[#1C4332]/90'
+                                  : 'bg-[#1C4332] text-[#6AD478] hover:bg-[#1C4332]/90'
                               }`}
                             >
                               Submit
@@ -917,7 +917,7 @@ export default function Home() {
                                           style={{
                                             width: barWidth,
                                             height: Math.max(oweHeight, oweHeight > 0 ? 2 : 0),
-                                            backgroundColor: '#83F384',
+                                            backgroundColor: '#6AD478',
                                             opacity: data.isFuture ? 0.35 : 1
                                           }}
                                           title={`${data.label}: $${data.youOwe.toLocaleString(undefined, { maximumFractionDigits: 0 })} you owe`}
@@ -948,7 +948,7 @@ export default function Home() {
                               <p className="text-[11px] text-[#C2FFDC]">Owed to you</p>
                             </div>
                             <div className="flex items-center gap-1.5">
-                              <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: '#83F384' }} />
+                              <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: '#6AD478' }} />
                               <p className="text-[11px] text-[#C2FFDC]">You owe</p>
                             </div>
                           </div>
@@ -992,7 +992,7 @@ export default function Home() {
                       overdueYouOwe.forEach(loan => {
                         const lenderProfile = safeAllProfiles.find(p => p.user_id === loan.lender_id);
                         allItems.push({
-                          text: `Your payment to @${lenderProfile?.username || 'user'} is overdue — if you made a payment make sure to record it`,
+                          text: `Your payment to @${lenderProfile?.username || 'user'} is overdue. If you made a payment, make sure to record it.`,
                           link: 'Borrowing',
                           icon: 'clock'
                         });
@@ -1032,7 +1032,7 @@ export default function Home() {
                       overdueFromOthers.forEach(loan => {
                         const borrowerProfile = safeAllProfiles.find(p => p.user_id === loan.borrower_id);
                         allItems.push({
-                          text: `@${borrowerProfile?.username || 'user'}'s payment to you is overdue — if they made a payment make sure to record it`,
+                          text: `@${borrowerProfile?.username || 'user'}'s payment to you is overdue. If they made a payment, make sure to record it.`,
                           link: 'Lending',
                           icon: 'clock'
                         });
@@ -1041,7 +1041,7 @@ export default function Home() {
                       // Fallback: no items at all
                       if (allItems.length === 0) {
                         return (
-                          <div className="rounded-xl px-4 py-3 shadow-sm flex items-center gap-3" style={{ backgroundColor: '#83F384' }}>
+                          <div className="rounded-xl px-4 py-3 shadow-sm flex items-center gap-3" style={{ backgroundColor: '#6AD478' }}>
                             <div className="w-10 h-10 rounded-full bg-[#1C4332]/15 flex items-center justify-center flex-shrink-0">
                               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1C4332" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                                 <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
@@ -1059,7 +1059,7 @@ export default function Home() {
                       const current = allItems[safeIdx];
 
                       return (
-                        <div className="rounded-xl px-4 py-3 shadow-sm flex items-center gap-3" style={{ backgroundColor: '#83F384' }}>
+                        <div className="rounded-xl px-4 py-3 shadow-sm flex items-center gap-3" style={{ backgroundColor: '#6AD478' }}>
                           <div className="w-10 h-10 rounded-full bg-[#1C4332]/15 flex items-center justify-center flex-shrink-0">
                             {current.icon === 'bell' ? (
                               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1C4332" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -1089,7 +1089,7 @@ export default function Home() {
                           </div>
                           <Link
                             to={createPageUrl(current.link)}
-                            className="flex-shrink-0 px-4 py-1.5 rounded-lg bg-[#1C4332] text-xs font-semibold text-[#83F384] hover:bg-[#1C4332]/90 transition-colors font-sans whitespace-nowrap"
+                            className="flex-shrink-0 px-4 py-1.5 rounded-lg bg-[#1C4332] text-xs font-semibold text-[#6AD478] hover:bg-[#1C4332]/90 transition-colors font-sans whitespace-nowrap"
                           >
                             {current.icon === 'bell' ? 'View Updates' : `Go to ${current.link}`}
                           </Link>
@@ -1114,7 +1114,7 @@ export default function Home() {
                     <div className="flex items-center justify-center gap-8 py-2">
                       <Link to={createPageUrl("Lending")} className="flex flex-col items-center gap-1.5 group">
                         <div className="w-11 h-11 rounded-full bg-[#1C4332] shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
-                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#83F384" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6AD478" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                             <line x1="12" y1="1" x2="12" y2="23"></line>
                             <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
                           </svg>
@@ -1123,7 +1123,7 @@ export default function Home() {
                       </Link>
                       <Link to={createPageUrl("Borrowing")} className="flex flex-col items-center gap-1.5 group">
                         <div className="w-11 h-11 rounded-full bg-[#1C4332] shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
-                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#83F384" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6AD478" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                             <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
                             <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
                           </svg>
@@ -1214,7 +1214,7 @@ export default function Home() {
                                   return (
                                     <div key={idx} className="flex items-center gap-2.5 p-2.5 rounded-lg bg-[#0F2B1F]">
                                       {/* White circle with days */}
-                                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#83F384] flex items-center justify-center shadow-sm">
+                                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#6AD478] flex items-center justify-center shadow-sm">
                                         <p className="text-[10px] font-bold text-[#1C4332] text-center leading-tight">
                                           {event.days}
                                           <span className="block text-[7px] font-medium text-[#1C4332]/60">
@@ -1234,7 +1234,7 @@ export default function Home() {
                                       <Link
                                         to={createPageUrl(loanPage)}
                                         className="flex-shrink-0 text-[9px] font-semibold px-2.5 py-1 rounded-md"
-                                        style={{ backgroundColor: '#83F384', color: '#1C4332' }}
+                                        style={{ backgroundColor: '#6AD478', color: '#1C4332' }}
                                       >
                                         View Loan
                                       </Link>
@@ -1377,11 +1377,11 @@ export default function Home() {
                           <div className="space-y-1.5">
                             {recent.map((item, idx) => {
                               const isPayment = item.type === 'payment';
-                              const iconColor = '#83F384';
+                              const iconColor = '#6AD478';
 
                               return (
                                 <div key={idx} className="flex items-center gap-2.5 p-2 rounded-lg bg-[#0F2B1F]">
-                                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#83F384]/20 flex items-center justify-center shadow-sm">
+                                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#6AD478]/20 flex items-center justify-center shadow-sm">
                                     {isPayment ? (
                                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={iconColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                         <line x1="12" y1="1" x2="12" y2="23"></line>
@@ -1428,7 +1428,7 @@ export default function Home() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: 0.3 }}
                 >
-                  <div className="rounded-2xl px-6 py-10 sm:px-10 sm:py-14 text-center" style={{ backgroundColor: '#83F384' }}>
+                  <div className="rounded-2xl px-6 py-10 sm:px-10 sm:py-14 text-center" style={{ backgroundColor: '#6AD478' }}>
                     <p className="text-xl sm:text-2xl font-bold text-[#1C4332] font-sans mb-2 tracking-tight">
                       Find friends to lend with
                     </p>
@@ -1438,7 +1438,7 @@ export default function Home() {
                     <div className="flex items-center justify-center gap-3 sm:gap-4">
                       <Link
                         to={createPageUrl("Friends")}
-                        className="px-6 py-2.5 rounded-xl bg-[#1C4332] text-sm font-semibold text-[#83F384] hover:bg-[#1C4332]/90 transition-colors font-sans"
+                        className="px-6 py-2.5 rounded-xl bg-[#1C4332] text-sm font-semibold text-[#6AD478] hover:bg-[#1C4332]/90 transition-colors font-sans"
                       >
                         Search for Friends
                       </Link>
