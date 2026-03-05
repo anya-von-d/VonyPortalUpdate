@@ -1270,7 +1270,7 @@ export default function Borrowing() {
                                 );
                               })()}
 
-                              {/* Payment Progress Box — Donut Chart */}
+                              {/* Payment Progress Box — Donut Chart left, Next Payment right */}
                               {manageLoanSelected && (() => {
                                 const loanAmount = manageLoanSelected.amount || 0;
                                 const totalAmt = manageLoanSelected.total_amount || loanAmount;
@@ -1311,41 +1311,39 @@ export default function Borrowing() {
                                     <p className="text-sm font-bold text-[#1C4332] mb-2.5 tracking-tight font-sans">
                                       Payment Progress
                                     </p>
-                                    {/* Donut Chart */}
-                                    <div className="flex justify-center">
-                                      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-                                        {/* Background ring (remaining) */}
-                                        <circle cx={cx} cy={cy} r={(outerR + innerR) / 2} fill="none" stroke="#C2FFDC" strokeWidth={outerR - innerR} />
-                                        {/* Paid arc ring */}
-                                        {paidPct > 0 && paidPct < 100 && (
-                                          <path
-                                            d={`M ${cx} ${cy - outerR} A ${outerR} ${outerR} 0 ${largeArc} 1 ${paidEndXo} ${paidEndYo} L ${paidEndXi} ${paidEndYi} A ${innerR} ${innerR} 0 ${largeArc} 0 ${cx} ${cy - innerR} Z`}
-                                            fill="#00A86B"
-                                          />
-                                        )}
-                                        {paidPct >= 100 && (
-                                          <circle cx={cx} cy={cy} r={(outerR + innerR) / 2} fill="none" stroke="#00A86B" strokeWidth={outerR - innerR} />
-                                        )}
-                                        {/* Center percentage */}
-                                        <text x={cx} y={cy + 1} textAnchor="middle" dominantBaseline="middle" className="text-[15px] font-bold fill-[#1C4332]" style={{ fontFamily: 'Outfit, sans-serif' }}>
-                                          {Math.round(paidPct)}%
-                                        </text>
-                                      </svg>
-                                    </div>
-                                    {/* $paid / $borrowed */}
-                                    <p className="text-center text-[13px] font-semibold text-[#1C4332] font-sans mt-2">
-                                      ${paidAmt.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                      <span className="text-[#00A86B]/60 font-normal"> / ${loanAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                                    </p>
-
-                                    {/* Next Payment Date row */}
-                                    <div className="flex items-center justify-between mt-3 mb-1.5">
-                                      <p className="text-[11px] text-[#00A86B] font-medium font-sans">Next Payment</p>
-                                      <div className="flex items-center gap-1.5">
+                                    <div className="flex items-center gap-4">
+                                      {/* Left — Donut Chart + $paid/$borrowed */}
+                                      <div className="flex-shrink-0 flex flex-col items-center">
+                                        <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+                                          {/* Background ring (remaining) */}
+                                          <circle cx={cx} cy={cy} r={(outerR + innerR) / 2} fill="none" stroke="#C2FFDC" strokeWidth={outerR - innerR} />
+                                          {/* Paid arc ring */}
+                                          {paidPct > 0 && paidPct < 100 && (
+                                            <path
+                                              d={`M ${cx} ${cy - outerR} A ${outerR} ${outerR} 0 ${largeArc} 1 ${paidEndXo} ${paidEndYo} L ${paidEndXi} ${paidEndYi} A ${innerR} ${innerR} 0 ${largeArc} 0 ${cx} ${cy - innerR} Z`}
+                                              fill="#00A86B"
+                                            />
+                                          )}
+                                          {paidPct >= 100 && (
+                                            <circle cx={cx} cy={cy} r={(outerR + innerR) / 2} fill="none" stroke="#00A86B" strokeWidth={outerR - innerR} />
+                                          )}
+                                          {/* Center percentage */}
+                                          <text x={cx} y={cy + 1} textAnchor="middle" dominantBaseline="middle" className="text-[15px] font-bold fill-[#1C4332]" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                                            {Math.round(paidPct)}%
+                                          </text>
+                                        </svg>
+                                        <p className="text-[12px] font-semibold text-[#1C4332] font-sans mt-1.5">
+                                          ${paidAmt.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                          <span className="text-[#00A86B]/60 font-normal"> / ${loanAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                                        </p>
+                                      </div>
+                                      {/* Right — Next Payment info */}
+                                      <div className="flex-1 min-w-0">
+                                        <p className="text-[10px] text-[#00A86B] font-medium font-sans mb-1">Next Payment</p>
                                         {nextPmtDate ? (
                                           <>
-                                            <p className="text-[12px] font-semibold text-[#1C4332] font-sans">{format(nextPmtDate, 'MMM d, yyyy')}</p>
-                                            <p className="text-[10px] text-[#00A86B] font-sans">
+                                            <p className="text-[13px] font-bold text-[#1C4332] font-sans">{format(nextPmtDate, 'MMM d, yyyy')}</p>
+                                            <p className="text-[10px] text-[#00A86B] font-sans mb-3">
                                               {daysUntil > 0
                                                 ? `Due in ${daysUntil} ${daysUntil === 1 ? 'day' : 'days'}`
                                                 : daysUntil === 0
@@ -1355,15 +1353,10 @@ export default function Borrowing() {
                                             </p>
                                           </>
                                         ) : (
-                                          <p className="text-[12px] text-[#1C4332]/40 font-sans">No upcoming payment</p>
+                                          <p className="text-[12px] text-[#1C4332]/40 font-sans mb-3">No upcoming payment</p>
                                         )}
-                                      </div>
-                                    </div>
-                                    {/* Next Payment Amount row */}
-                                    <div className="flex items-center justify-between">
-                                      <p className="text-[11px] text-[#00A86B] font-medium font-sans">Amount</p>
-                                      <div className="flex items-center gap-1.5">
-                                        <p className="text-[12px] font-semibold text-[#1C4332] font-sans">
+                                        <p className="text-[10px] text-[#00A86B] font-medium font-sans mb-1">Amount</p>
+                                        <p className="text-[13px] font-bold text-[#1C4332] font-sans">
                                           ${nextPmtAmt.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                         </p>
                                         <p className="text-[10px] text-[#00A86B] font-sans">to @{lenderUsername}</p>
@@ -1372,6 +1365,33 @@ export default function Borrowing() {
                                   </div>
                                 );
                               })()}
+
+                              {/* Quick Action Buttons — under Payment Progress */}
+                              {manageLoanSelected && manageLoanSelected.status !== 'cancelled' && (
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={() => handleMakePayment(manageLoanSelected)}
+                                    className="flex-1 py-2 rounded-lg text-[11px] font-semibold text-white font-sans cursor-pointer hover:opacity-90 transition-opacity"
+                                    style={{ backgroundColor: '#00A86B' }}
+                                  >
+                                    Record Payment
+                                  </button>
+                                  <button
+                                    onClick={() => handleEditLoan(manageLoanSelected)}
+                                    className="flex-1 py-2 rounded-lg text-[11px] font-semibold text-white font-sans cursor-pointer hover:opacity-90 transition-opacity"
+                                    style={{ backgroundColor: '#00A86B' }}
+                                  >
+                                    Request Loan Edit
+                                  </button>
+                                  <button
+                                    onClick={() => handleCancelLoan(manageLoanSelected)}
+                                    className="flex-1 py-2 rounded-lg text-[11px] font-semibold text-white font-sans cursor-pointer hover:opacity-90 transition-opacity"
+                                    style={{ backgroundColor: '#00A86B' }}
+                                  >
+                                    Request Cancellation
+                                  </button>
+                                </div>
+                              )}
 
                               <div className="bg-white rounded-xl px-4 py-3 shadow-sm">
                                 <p className="text-sm font-bold text-[#1C4332] mb-2.5 tracking-tight font-sans">
