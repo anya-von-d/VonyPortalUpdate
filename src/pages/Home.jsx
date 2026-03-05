@@ -309,47 +309,49 @@ export default function Home() {
                   )}
                 </div>
 
-                {/* Left-Aligned Greeting */}
-                <div>
-                  {(() => {
-                    const firstName = user.full_name?.split(' ')[0] || 'User';
-                    return (
-                      <p className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#213B75] tracking-tight leading-tight font-sans">Welcome Back, {firstName}</p>
-                    );
-                  })()}
-                </div>
+                {/* Greeting + Quick Action Circles on same row */}
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6">
+                  <div>
+                    {(() => {
+                      const firstName = user.full_name?.split(' ')[0] || 'User';
+                      return (
+                        <p className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#213B75] tracking-tight leading-tight font-sans">Welcome Back, {firstName}</p>
+                      );
+                    })()}
+                  </div>
 
-                {/* Quick Action Circles */}
-                <div className="flex items-start gap-6 sm:gap-8">
-                  <Link to={createPageUrl("Lending")} className="flex flex-col items-center gap-2 group">
-                    <div className="w-14 h-14 rounded-full bg-white shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4C7FC4" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                        <line x1="12" y1="5" x2="12" y2="19"></line>
-                        <polyline points="5 12 12 5 19 12"></polyline>
-                      </svg>
-                    </div>
-                    <p className="text-[11px] font-semibold text-[#213B75] text-center leading-tight font-sans">Make<br/>Lending Offer</p>
-                  </Link>
-                  <Link to={createPageUrl("Borrowing")} className="flex flex-col items-center gap-2 group">
-                    <div className="w-14 h-14 rounded-full bg-white shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4C7FC4" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                        <line x1="12" y1="19" x2="12" y2="5"></line>
-                        <polyline points="19 12 12 19 5 12"></polyline>
-                      </svg>
-                    </div>
-                    <p className="text-[11px] font-semibold text-[#213B75] text-center leading-tight font-sans">Request<br/>to Borrow</p>
-                  </Link>
-                  <Link to={createPageUrl("LoanAgreements")} className="flex flex-col items-center gap-2 group">
-                    <div className="w-14 h-14 rounded-full bg-white shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4C7FC4" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                        <polyline points="14 2 14 8 20 8"></polyline>
-                        <line x1="16" y1="13" x2="8" y2="13"></line>
-                        <line x1="16" y1="17" x2="8" y2="17"></line>
-                      </svg>
-                    </div>
-                    <p className="text-[11px] font-semibold text-[#213B75] text-center leading-tight font-sans">View<br/>Documents</p>
-                  </Link>
+                  {/* Quick Action Circles */}
+                  <div className="flex items-start gap-5 sm:gap-6 flex-shrink-0">
+                    <Link to={createPageUrl("Lending")} className="flex flex-col items-center gap-1.5 group">
+                      <div className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4C7FC4" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                          <line x1="12" y1="5" x2="12" y2="19"></line>
+                          <polyline points="5 12 12 5 19 12"></polyline>
+                        </svg>
+                      </div>
+                      <p className="text-[10px] font-semibold text-[#213B75] text-center leading-tight font-sans">Make<br/>Lending Offer</p>
+                    </Link>
+                    <Link to={createPageUrl("Borrowing")} className="flex flex-col items-center gap-1.5 group">
+                      <div className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4C7FC4" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                          <line x1="12" y1="19" x2="12" y2="5"></line>
+                          <polyline points="19 12 12 19 5 12"></polyline>
+                        </svg>
+                      </div>
+                      <p className="text-[10px] font-semibold text-[#213B75] text-center leading-tight font-sans">Request<br/>to Borrow</p>
+                    </Link>
+                    <Link to={createPageUrl("LoanAgreements")} className="flex flex-col items-center gap-1.5 group">
+                      <div className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4C7FC4" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                          <polyline points="14 2 14 8 20 8"></polyline>
+                          <line x1="16" y1="13" x2="8" y2="13"></line>
+                          <line x1="16" y1="17" x2="8" y2="17"></line>
+                        </svg>
+                      </div>
+                      <p className="text-[10px] font-semibold text-[#213B75] text-center leading-tight font-sans">View<br/>Documents</p>
+                    </Link>
+                  </div>
                 </div>
 
                 {/* Two-Column Layout: Left = Overviews stacked, Right = Updates + Activity */}

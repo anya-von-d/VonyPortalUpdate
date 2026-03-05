@@ -187,8 +187,8 @@ export default function TopNav({ location }) {
           </div>
         </div>
 
-        {/* Bottom Bar - White primary navigation with centered Vony logo */}
-        <div className="h-12 bg-white">
+        {/* Bottom Bar - Medium Blue (#4C7FC4) primary navigation with centered Vony logo */}
+        <div className="h-12" style={{backgroundColor: '#4C7FC4'}}>
           <div className="h-full px-6 md:px-10 flex items-center justify-center">
             {/* Mobile: Main nav links */}
             <div className="flex md:hidden items-center gap-6">
@@ -199,8 +199,8 @@ export default function TopNav({ location }) {
                   onClick={() => handleNavClick(item.url)}
                   className={`font-sans text-sm font-medium transition-colors duration-200 ${
                     location.pathname === item.url
-                      ? "text-[#213B75]"
-                      : "text-[#213B75]/40 hover:text-[#213B75]"
+                      ? "text-white"
+                      : "text-white/50 hover:text-white"
                   }`}
                 >
                   {item.title}
@@ -218,8 +218,8 @@ export default function TopNav({ location }) {
                   onClick={() => handleNavClick(item.url)}
                   className={`font-sans text-sm font-semibold transition-colors duration-200 ${
                     location.pathname === item.url
-                      ? "text-[#213B75]"
-                      : "text-[#213B75]/40 hover:text-[#213B75]"
+                      ? "text-white"
+                      : "text-white/50 hover:text-white"
                   }`}
                 >
                   {item.title}
@@ -230,7 +230,7 @@ export default function TopNav({ location }) {
               <Link
                 to={createPageUrl("Home")}
                 onClick={() => handleNavClick(createPageUrl("Home"))}
-                className="font-display italic text-3xl text-[#213B75] tracking-wide mx-2"
+                className="font-display italic text-3xl text-white tracking-wide mx-2"
               >
                 Vony
               </Link>
@@ -243,8 +243,8 @@ export default function TopNav({ location }) {
                   onClick={() => handleNavClick(item.url)}
                   className={`font-sans text-sm font-semibold transition-colors duration-200 ${
                     location.pathname === item.url
-                      ? "text-[#213B75]"
-                      : "text-[#213B75]/40 hover:text-[#213B75]"
+                      ? "text-white"
+                      : "text-white/50 hover:text-white"
                   }`}
                 >
                   {item.title}
