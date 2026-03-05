@@ -435,7 +435,7 @@ export default function Home() {
                     {(() => {
                       const firstName = user.full_name?.split(' ')[0] || 'User';
                       return (
-                        <p className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#213B75] tracking-tight leading-tight font-sans">Welcome Back, {firstName}</p>
+                        <p className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#213B75] tracking-tight leading-tight font-serif">Welcome Back, {firstName}</p>
                       );
                     })()}
                   </div>
@@ -516,7 +516,7 @@ export default function Home() {
                   <div className="flex flex-col gap-3 md:gap-4">
                     {/* Lending Overview Box */}
                     <div className="rounded-xl px-4 py-3 shadow-sm bg-white">
-                      <p className="text-sm font-bold text-[#213B75] mb-2 tracking-tight font-sans">
+                      <p className="text-sm font-bold text-[#213B75] mb-2 tracking-tight font-serif">
                         Lending Overview
                       </p>
                       <div className="mb-3">
@@ -577,7 +577,7 @@ export default function Home() {
 
                     {/* Borrowing Overview Box */}
                     <div className="rounded-xl px-4 py-3 shadow-sm bg-white">
-                      <p className="text-sm font-bold text-[#213B75] mb-2 tracking-tight font-sans">
+                      <p className="text-sm font-bold text-[#213B75] mb-2 tracking-tight font-serif">
                         Borrowing Overview
                       </p>
                       <div className="mb-3">
@@ -719,7 +719,7 @@ export default function Home() {
 
                       return (
                         <div className="rounded-xl px-4 py-3 shadow-sm mt-2 mb-2 lg:mt-0 lg:mb-0" style={{ backgroundColor: '#213B75' }}>
-                          <p className="text-sm font-bold text-white mb-2 tracking-tight font-sans">
+                          <p className="text-sm font-bold text-white mb-2 tracking-tight font-serif">
                             Record Payment
                           </p>
                           <div className="flex flex-wrap items-center gap-2 text-xs text-white">
@@ -879,7 +879,7 @@ export default function Home() {
 
                       return (
                         <div className="rounded-xl px-4 py-3 shadow-sm bg-white">
-                          <p className="text-sm font-bold text-[#213B75] mb-3 tracking-tight font-sans">
+                          <p className="text-sm font-bold text-[#213B75] mb-3 tracking-tight font-serif">
                             Loans Over Time
                           </p>
 
@@ -1191,7 +1191,7 @@ export default function Home() {
                         <>
                           {/* Upcoming Payments Box */}
                           <div className="rounded-xl px-4 py-3 shadow-sm bg-white">
-                            <p className="text-sm font-bold text-[#213B75] mb-2.5 tracking-tight font-sans">
+                            <p className="text-sm font-bold text-[#213B75] mb-2.5 tracking-tight font-serif">
                               Upcoming Payments
                             </p>
                             {upcomingEvents.length === 0 ? (
@@ -1248,7 +1248,7 @@ export default function Home() {
                           {/* Overdue Payments Box — only shown if there are overdue payments */}
                           {overdueEvents.length > 0 && (
                             <div className="rounded-xl px-4 py-3 shadow-sm bg-white border border-red-200">
-                              <p className="text-sm font-bold text-red-500 mb-2.5 tracking-tight font-sans">
+                              <p className="text-sm font-bold text-red-500 mb-2.5 tracking-tight font-serif">
                                 Overdue Payments
                               </p>
                               <div className="space-y-1.5">
@@ -1294,7 +1294,7 @@ export default function Home() {
                     {/* Recent Activity Box */}
                     <div className="rounded-xl px-4 py-3 shadow-sm bg-white">
                       <div className="flex items-center justify-between mb-2.5">
-                        <p className="text-sm font-bold text-[#213B75] tracking-tight font-sans">
+                        <p className="text-sm font-bold text-[#213B75] tracking-tight font-serif">
                           Recent Activity
                         </p>
                         <Link to={createPageUrl("RecentActivity")} className="text-[10px] font-semibold text-[#4C7FC4] hover:underline">
