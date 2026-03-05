@@ -1402,47 +1402,37 @@ export default function Borrowing() {
                                     </div>
                                   </div>
 
-                                  {/* Actions Box - only show for active loans */}
+                                  {/* Action Circles - only show for active loans */}
                                   {manageLoanSelected.status !== 'cancelled' && (
-                                  <div className="bg-white rounded-xl px-4 py-3 shadow-sm">
-                                    <p className="text-sm font-bold text-[#1C4332] mb-2.5 tracking-tight font-sans">
-                                      Actions
-                                    </p>
-                                    <div className="flex flex-col gap-1.5">
-                                      <button
-                                        onClick={() => handleMakePayment(manageLoanSelected)}
-                                        className="bg-[#C2FFDC] rounded-lg p-2 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-2 flex-1"
-                                      >
-                                        <div className="w-7 h-7 rounded-full bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
-                                          <DollarSign className="w-3 h-3 text-[#1C4332]" />
-                                        </div>
-                                        <p className="font-semibold text-[#1C4332] text-[11px] group-hover:text-[#00A86B] transition-colors">
-                                          Record Payment
-                                        </p>
-                                      </button>
-                                      <button
-                                        onClick={() => handleEditLoan(manageLoanSelected)}
-                                        className="bg-[#C2FFDC] rounded-lg p-2 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-2 flex-1"
-                                      >
-                                        <div className="w-7 h-7 rounded-full bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
-                                          <Pencil className="w-3 h-3 text-[#1C4332]" />
-                                        </div>
-                                        <p className="font-semibold text-[#1C4332] text-[11px] group-hover:text-[#00A86B] transition-colors">
-                                          Request Loan Edit
-                                        </p>
-                                      </button>
-                                      <button
-                                        onClick={() => handleCancelLoan(manageLoanSelected)}
-                                        className="bg-[#C2FFDC] rounded-lg p-2 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-2 flex-1"
-                                      >
-                                        <div className="w-7 h-7 rounded-full bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
-                                          <X className="w-3 h-3 text-[#1C4332]" />
-                                        </div>
-                                        <p className="font-semibold text-[#1C4332] text-[11px] group-hover:text-[#00A86B] transition-colors">
-                                          Request Cancellation
-                                        </p>
-                                      </button>
-                                    </div>
+                                  <div className="flex items-start justify-center gap-5 py-2">
+                                    <button onClick={() => handleMakePayment(manageLoanSelected)} className="flex flex-col items-center gap-1.5 group cursor-pointer">
+                                      <div className="w-12 h-12 rounded-full bg-[#1C4332] shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6AD478" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                                          <line x1="12" y1="1" x2="12" y2="23"></line>
+                                          <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                                        </svg>
+                                      </div>
+                                      <p className="text-[10px] font-semibold text-[#1C4332] text-center leading-tight font-sans">Record<br/>Payment</p>
+                                    </button>
+                                    <button onClick={() => handleEditLoan(manageLoanSelected)} className="flex flex-col items-center gap-1.5 group cursor-pointer">
+                                      <div className="w-12 h-12 rounded-full bg-[#1C4332] shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6AD478" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                                          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                        </svg>
+                                      </div>
+                                      <p className="text-[10px] font-semibold text-[#1C4332] text-center leading-tight font-sans">Request<br/>Loan Edit</p>
+                                    </button>
+                                    <button onClick={() => handleCancelLoan(manageLoanSelected)} className="flex flex-col items-center gap-1.5 group cursor-pointer">
+                                      <div className="w-12 h-12 rounded-full bg-[#1C4332] shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6AD478" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                                          <circle cx="12" cy="12" r="10"></circle>
+                                          <line x1="15" y1="9" x2="9" y2="15"></line>
+                                          <line x1="9" y1="9" x2="15" y2="15"></line>
+                                        </svg>
+                                      </div>
+                                      <p className="text-[10px] font-semibold text-[#1C4332] text-center leading-tight font-sans">Request<br/>Cancellation</p>
+                                    </button>
                                   </div>
                                   )}
 
