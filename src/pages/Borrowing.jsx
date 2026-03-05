@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import {
   Clock, Calendar, DollarSign, AlertCircle, FileText, BarChart3,
-  Pencil, X, FolderOpen, ClipboardList, Info, Check, Shield, Smartphone, CreditCard, Banknote, CheckCircle
+  Pencil, X, FolderOpen, ClipboardList, Info, Check, Shield, Smartphone, CreditCard, Banknote, CheckCircle, Search
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format, addDays, addMonths, addWeeks } from "date-fns";
@@ -45,6 +45,7 @@ export default function Borrowing() {
   const [showSignModal, setShowSignModal] = useState(false);
   const [selectedOffer, setSelectedOffer] = useState(null);
   const [manageLoanSelected, setManageLoanSelected] = useState(null);
+  const [manageLoanSearch, setManageLoanSearch] = useState('');
   const [rankingFilter, setRankingFilter] = useState('highest_interest'); // 'highest_interest', 'highest_payment', 'soonest_deadline'
   const [loanAgreements, setLoanAgreements] = useState([]);
   const [activeDocPopup, setActiveDocPopup] = useState(null);
@@ -1148,165 +1149,198 @@ export default function Borrowing() {
                   </div>
                 </div>
 
-                    {/* Manage Loans Section — inline at bottom of All tab */}
-                    {!isLoading && manageableLoans.length > 0 && (
-                      <div className="space-y-3 md:space-y-4 mt-4">
-                        <p className="text-sm font-bold text-[#C2FFDC] tracking-tight font-sans">
-                          Manage Loans
-                        </p>
-                        {/* Loan Selector Dropdown */}
-                        <div className="bg-white rounded-xl px-4 py-3 shadow-sm">
-                          <p className="text-sm font-bold text-[#1C4332] mb-2.5 tracking-tight font-sans">
+                    {/* Manage Loans Section — search + scrollable list on left, details on right */}
+                    {!isLoading && manageableLoans.length > 0 && (() => {
+                      const searchQuery = manageLoanSearch.toLowerCase().trim();
+                      const filteredLoans = searchQuery
+                        ? manageableLoans.filter(loan => {
+                            const lender = publicProfiles.find(p => p.user_id === loan.lender_id);
+                            const username = (lender?.username || '').toLowerCase();
+                            const fullName = (lender?.full_name || '').toLowerCase();
+                            const purpose = (loan.purpose || '').toLowerCase();
+                            const amount = `$${loan.amount}`;
+                            return username.includes(searchQuery) || fullName.includes(searchQuery) || purpose.includes(searchQuery) || amount.includes(searchQuery);
+                          })
+                        : manageableLoans;
+
+                      return (
+                        <div className="mt-4">
+                          <p className="text-sm font-bold text-[#C2FFDC] tracking-tight font-sans mb-3">
                             Your Loans
                           </p>
-                            <Select
-                              value={manageLoanSelected?.id || ''}
-                              onValueChange={(value) => {
-                                const loan = manageableLoans.find(l => l.id === value);
-                                setManageLoanSelected(loan || null);
-                              }}
-                            >
-                              <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Select a loan to manage...">
-                                  {manageLoanSelected && (() => {
-                                    const lender = publicProfiles.find(p => p.user_id === manageLoanSelected.lender_id);
+                          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-5">
+                            {/* Left: Search + Scrollable Loan List */}
+                            <div className="bg-white rounded-xl px-4 py-3 shadow-sm">
+                              {/* Search Bar */}
+                              <div className="relative mb-3">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#00A86B]/50" />
+                                <Input
+                                  type="text"
+                                  placeholder="Search loans..."
+                                  value={manageLoanSearch}
+                                  onChange={(e) => setManageLoanSearch(e.target.value)}
+                                  className="pl-9 bg-[#C2FFDC] border-0 text-[#1C4332] placeholder:text-[#00A86B]/50 font-sans text-sm h-9"
+                                />
+                                {manageLoanSearch && (
+                                  <button
+                                    onClick={() => setManageLoanSearch('')}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#00A86B] hover:text-[#1C4332]"
+                                  >
+                                    <X className="w-3.5 h-3.5" />
+                                  </button>
+                                )}
+                              </div>
+
+                              {/* Scrollable Loan List (max 5 visible) */}
+                              <div className="overflow-y-auto space-y-1.5" style={{ maxHeight: '280px' }}>
+                                {filteredLoans.length === 0 ? (
+                                  <div className="text-center py-6">
+                                    <p className="text-sm text-[#00A86B]/60 font-sans">No loans match your search</p>
+                                  </div>
+                                ) : (
+                                  filteredLoans.map((loan) => {
+                                    const lender = publicProfiles.find(p => p.user_id === loan.lender_id);
+                                    const isSelected = manageLoanSelected?.id === loan.id;
+                                    const defaultAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent((lender?.full_name || 'U').charAt(0))}&background=00A86B&color=fff&size=128`;
+
                                     return (
-                                      <div className="flex items-center gap-2">
-                                        <div className="w-6 h-6 rounded-full bg-[#C2FFDC] flex items-center justify-center">
-                                          <span className="text-xs font-medium text-[#00A86B]">
-                                            {lender?.full_name?.charAt(0) || '?'}
-                                          </span>
+                                      <button
+                                        key={loan.id}
+                                        onClick={() => setManageLoanSelected(loan)}
+                                        className={`w-full p-3 rounded-lg text-left transition-all cursor-pointer ${
+                                          isSelected
+                                            ? 'bg-[#1C4332] ring-2 ring-[#00A86B]'
+                                            : 'bg-[#C2FFDC] hover:bg-[#b0f0c8]'
+                                        }`}
+                                      >
+                                        <div className="flex items-center gap-3">
+                                          <img
+                                            src={lender?.profile_picture_url || lender?.avatar_url || defaultAvatar}
+                                            alt={lender?.full_name || 'Lender'}
+                                            className="w-9 h-9 rounded-full object-cover flex-shrink-0 bg-white"
+                                          />
+                                          <div className="flex-1 min-w-0">
+                                            <p className={`text-sm font-semibold truncate font-sans ${isSelected ? 'text-[#C2FFDC]' : 'text-[#1C4332]'}`}>
+                                              @{lender?.username || 'user'}
+                                            </p>
+                                            <p className={`text-xs truncate font-sans ${isSelected ? 'text-[#00A86B]' : 'text-[#00A86B]/70'}`}>
+                                              {loan.purpose || 'Loan'} · ${loan.amount?.toLocaleString()}
+                                            </p>
+                                          </div>
+                                          {loan.status === 'cancelled' && (
+                                            <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-md ${isSelected ? 'bg-red-500/20 text-red-300' : 'bg-red-100 text-red-500'}`}>
+                                              Cancelled
+                                            </span>
+                                          )}
                                         </div>
-                                        <span>@{lender?.username || 'user'}</span>
-                                        <span className="text-slate-400">·</span>
-                                        <span className="text-slate-500 truncate max-w-[120px]">{manageLoanSelected.purpose || 'Reason'}</span>
-                                        <span className="text-slate-400">·</span>
-                                        <span className="text-[#00A86B] font-medium">${manageLoanSelected.amount?.toLocaleString()}</span>
-                                        {manageLoanSelected.status === 'cancelled' && (
-                                          <span className="text-red-500 text-xs font-medium">(Cancelled)</span>
-                                        )}
-                                      </div>
+                                      </button>
                                     );
-                                  })()}
-                                </SelectValue>
-                              </SelectTrigger>
-                              <SelectContent>
-                                {manageableLoans.map((loan) => {
-                                  const lender = publicProfiles.find(p => p.user_id === loan.lender_id);
-                                  return (
-                                    <SelectItem key={loan.id} value={loan.id}>
-                                      <div className="flex items-center gap-2">
-                                        <div className="w-6 h-6 rounded-full bg-[#C2FFDC] flex items-center justify-center">
-                                          <span className="text-xs font-medium text-[#00A86B]">
-                                            {lender?.full_name?.charAt(0) || '?'}
-                                          </span>
-                                        </div>
-                                        <span>@{lender?.username || 'user'}</span>
-                                        <span className="text-slate-400">·</span>
-                                        <span className="text-slate-500 truncate max-w-[120px]">{loan.purpose || 'Reason'}</span>
-                                        <span className="text-slate-400">·</span>
-                                        <span className="text-[#00A86B] font-medium">${loan.amount?.toLocaleString()}</span>
-                                        {loan.status === 'cancelled' && (
-                                          <span className="text-red-500 text-xs font-medium">(Cancelled)</span>
-                                        )}
+                                  })
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Right: Loan Details */}
+                            <div className="flex flex-col gap-3">
+                              {!manageLoanSelected ? (
+                                <div className="bg-white rounded-xl px-4 py-3 shadow-sm flex items-center justify-center min-h-[200px]">
+                                  <div className="text-center">
+                                    <ClipboardList className="w-10 h-10 mx-auto mb-2 text-[#00A86B]/30" />
+                                    <p className="text-sm text-[#00A86B]/60 font-sans">Select a loan to view details</p>
+                                  </div>
+                                </div>
+                              ) : (
+                                <>
+                                  {/* Loan Information Box */}
+                                  <div className="bg-white rounded-xl px-4 py-3 shadow-sm">
+                                    <p className="text-sm font-bold text-[#1C4332] mb-2.5 tracking-tight font-sans">
+                                      Loan Information
+                                    </p>
+                                    <div className="grid grid-cols-2 gap-2">
+                                      <div className="bg-[#C2FFDC] rounded-lg p-3">
+                                        <p className="text-[10px] text-[#00A86B] uppercase tracking-[0.12em] font-medium mb-0.5" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>Amount</p>
+                                        <p className="text-lg font-bold text-[#1C4332]">
+                                          ${(manageLoanSelected.amount || 0).toLocaleString()}
+                                        </p>
                                       </div>
-                                    </SelectItem>
-                                  );
-                                })}
-                              </SelectContent>
-                            </Select>
+                                      <div className="bg-[#C2FFDC] rounded-lg p-3">
+                                        <p className="text-[10px] text-[#00A86B] uppercase tracking-[0.12em] font-medium mb-0.5" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>Interest</p>
+                                        <p className="text-lg font-bold text-[#1C4332]">
+                                          {manageLoanSelected.interest_rate || 0}%
+                                        </p>
+                                      </div>
+                                      <div className="bg-[#C2FFDC] rounded-lg p-3">
+                                        <p className="text-[10px] text-[#00A86B] uppercase tracking-[0.12em] font-medium mb-0.5" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>Term</p>
+                                        <p className="text-lg font-bold text-[#1C4332]">
+                                          {manageLoanSelected.repayment_period || 0} {manageLoanSelected.repayment_unit || 'months'}
+                                        </p>
+                                      </div>
+                                      <div className="bg-[#C2FFDC] rounded-lg p-3">
+                                        <p className="text-[10px] text-[#00A86B] uppercase tracking-[0.12em] font-medium mb-0.5" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>Payment</p>
+                                        <p className="text-lg font-bold text-[#1C4332]">
+                                          ${(manageLoanSelected.payment_amount || 0).toLocaleString()}
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  {/* Actions Box - only show for active loans */}
+                                  {manageLoanSelected.status !== 'cancelled' && (
+                                  <div className="bg-white rounded-xl px-4 py-3 shadow-sm">
+                                    <p className="text-sm font-bold text-[#1C4332] mb-2.5 tracking-tight font-sans">
+                                      Actions
+                                    </p>
+                                    <div className="flex flex-col sm:flex-row gap-2">
+                                      <button
+                                        onClick={() => handleMakePayment(manageLoanSelected)}
+                                        className="bg-[#C2FFDC] rounded-lg p-2.5 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-2.5 flex-1"
+                                      >
+                                        <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
+                                          <DollarSign className="w-3.5 h-3.5 text-[#1C4332]" />
+                                        </div>
+                                        <p className="font-semibold text-[#1C4332] text-[12px] group-hover:text-[#00A86B] transition-colors">
+                                          Record Payment
+                                        </p>
+                                      </button>
+                                      <button
+                                        onClick={() => handleEditLoan(manageLoanSelected)}
+                                        className="bg-[#C2FFDC] rounded-lg p-2.5 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-2.5 flex-1"
+                                      >
+                                        <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
+                                          <Pencil className="w-3.5 h-3.5 text-[#1C4332]" />
+                                        </div>
+                                        <p className="font-semibold text-[#1C4332] text-[12px] group-hover:text-[#00A86B] transition-colors">
+                                          Request Loan Edit
+                                        </p>
+                                      </button>
+                                      <button
+                                        onClick={() => handleCancelLoan(manageLoanSelected)}
+                                        className="bg-[#C2FFDC] rounded-lg p-2.5 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-2.5 flex-1"
+                                      >
+                                        <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
+                                          <X className="w-3.5 h-3.5 text-[#1C4332]" />
+                                        </div>
+                                        <p className="font-semibold text-[#1C4332] text-[12px] group-hover:text-[#00A86B] transition-colors">
+                                          Request Cancellation
+                                        </p>
+                                      </button>
+                                    </div>
+                                  </div>
+                                  )}
+
+                                  {/* Cancelled notice */}
+                                  {manageLoanSelected.status === 'cancelled' && (
+                                    <div className="bg-red-50 rounded-xl px-4 py-3 shadow-sm border border-red-200">
+                                      <p className="text-sm text-red-600 font-medium">This loan has been cancelled. Documentation is still available above.</p>
+                                    </div>
+                                  )}
+                                </>
+                              )}
+                            </div>
+                          </div>
                         </div>
-
-                        {/* Loan Details - Below Dropdown */}
-                        {manageLoanSelected && (
-                          <>
-                            {/* Loan Information Box */}
-                            <div className="bg-white rounded-xl px-4 py-3 shadow-sm">
-                              <p className="text-sm font-bold text-[#1C4332] mb-2.5 tracking-tight font-sans">
-                                Loan Information
-                              </p>
-                              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                                <div className="bg-[#C2FFDC] rounded-lg p-3">
-                                  <p className="text-[10px] text-[#00A86B] uppercase tracking-[0.12em] font-medium mb-0.5" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>Amount</p>
-                                  <p className="text-lg font-bold text-[#1C4332]">
-                                    ${(manageLoanSelected.amount || 0).toLocaleString()}
-                                  </p>
-                                </div>
-                                <div className="bg-[#C2FFDC] rounded-lg p-3">
-                                  <p className="text-[10px] text-[#00A86B] uppercase tracking-[0.12em] font-medium mb-0.5" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>Interest</p>
-                                  <p className="text-lg font-bold text-[#1C4332]">
-                                    {manageLoanSelected.interest_rate || 0}%
-                                  </p>
-                                </div>
-                                <div className="bg-[#C2FFDC] rounded-lg p-3">
-                                  <p className="text-[10px] text-[#00A86B] uppercase tracking-[0.12em] font-medium mb-0.5" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>Term</p>
-                                  <p className="text-lg font-bold text-[#1C4332]">
-                                    {manageLoanSelected.repayment_period || 0} {manageLoanSelected.repayment_unit || 'months'}
-                                  </p>
-                                </div>
-                                <div className="bg-[#C2FFDC] rounded-lg p-3">
-                                  <p className="text-[10px] text-[#00A86B] uppercase tracking-[0.12em] font-medium mb-0.5" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>Payment</p>
-                                  <p className="text-lg font-bold text-[#1C4332]">
-                                    ${(manageLoanSelected.payment_amount || 0).toLocaleString()}
-                                  </p>
-                                </div>
-                              </div>
-                            </div>
-
-                            {/* Actions Box - only show for active loans */}
-                            {manageLoanSelected.status !== 'cancelled' && (
-                            <div className="bg-white rounded-xl px-4 py-3 shadow-sm">
-                              <p className="text-sm font-bold text-[#1C4332] mb-2.5 tracking-tight font-sans">
-                                Actions
-                              </p>
-                              <div className="flex flex-col sm:flex-row gap-2">
-                                <button
-                                  onClick={() => handleMakePayment(manageLoanSelected)}
-                                  className="bg-[#C2FFDC] rounded-lg p-2.5 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-2.5 flex-1"
-                                >
-                                  <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
-                                    <DollarSign className="w-3.5 h-3.5 text-[#1C4332]" />
-                                  </div>
-                                  <p className="font-semibold text-[#1C4332] text-[12px] group-hover:text-[#00A86B] transition-colors">
-                                    Record Payment
-                                  </p>
-                                </button>
-                                <button
-                                  onClick={() => handleEditLoan(manageLoanSelected)}
-                                  className="bg-[#C2FFDC] rounded-lg p-2.5 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-2.5 flex-1"
-                                >
-                                  <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
-                                    <Pencil className="w-3.5 h-3.5 text-[#1C4332]" />
-                                  </div>
-                                  <p className="font-semibold text-[#1C4332] text-[12px] group-hover:text-[#00A86B] transition-colors">
-                                    Request Loan Edit
-                                  </p>
-                                </button>
-                                <button
-                                  onClick={() => handleCancelLoan(manageLoanSelected)}
-                                  className="bg-[#C2FFDC] rounded-lg p-2.5 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-2.5 flex-1"
-                                >
-                                  <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
-                                    <X className="w-3.5 h-3.5 text-[#1C4332]" />
-                                  </div>
-                                  <p className="font-semibold text-[#1C4332] text-[12px] group-hover:text-[#00A86B] transition-colors">
-                                    Request Cancellation
-                                  </p>
-                                </button>
-                              </div>
-                            </div>
-                            )}
-
-                            {/* Cancelled notice */}
-                            {manageLoanSelected.status === 'cancelled' && (
-                              <div className="bg-red-50 rounded-xl px-4 py-3 shadow-sm border border-red-200">
-                                <p className="text-sm text-red-600 font-medium">This loan has been cancelled. Documentation is still available above.</p>
-                              </div>
-                            )}
-                          </>
-                        )}
-                      </div>
-                    )}
+                      );
+                    })()}
 
               </motion.div>
             )}
