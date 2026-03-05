@@ -912,7 +912,7 @@ export default function Borrowing() {
                           <div className="space-y-1.5">
                             {upcomingLoans.map(loan => (
                               <div key={loan.id} className="flex items-center gap-2.5 p-2.5 rounded-lg bg-[#0F2B1F]">
-                                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#00A86B] flex items-center justify-center shadow-sm">
+                                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#6AD478] flex items-center justify-center shadow-sm">
                                   <p className="text-[10px] font-bold text-[#C2FFDC] text-center leading-tight">
                                     {loan.days}
                                     <span className="block text-[7px] font-medium text-[#00A86B]">
@@ -1138,7 +1138,7 @@ export default function Borrowing() {
 
                               return (
                                 <div key={loan.id} className="flex items-center gap-2.5 p-2.5 rounded-lg bg-[#0F2B1F]">
-                                  <div className="flex-shrink-0 w-7 h-7 rounded-full bg-[#00A86B]/20 flex items-center justify-center shadow-sm">
+                                  <div className="flex-shrink-0 w-7 h-7 rounded-full bg-[#6AD478]/20 flex items-center justify-center shadow-sm">
                                     <span className="text-xs font-bold text-[#1C4332]">{idx + 1}</span>
                                   </div>
                                   <div className="flex-1 min-w-0">
@@ -1206,7 +1206,7 @@ export default function Borrowing() {
                           </p>
 
                           {/* Select a Loan — bright green bar with centered title + dropdown */}
-                          <div className="rounded-xl px-4 py-3 shadow-sm mb-4" style={{ backgroundColor: '#00A86B' }}>
+                          <div className="rounded-xl px-4 py-3 shadow-sm mb-4" style={{ backgroundColor: '#6AD478' }}>
                             <p className="text-sm font-bold text-[#1C4332] text-center tracking-tight font-serif mb-2">
                               Select a Loan to Learn More
                             </p>
@@ -1529,7 +1529,7 @@ export default function Borrowing() {
                                             <span className="text-[9px] font-bold text-white leading-none">i</span>
                                           </div>
                                           <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2.5 py-1.5 bg-[#1C4332] rounded-lg shadow-lg opacity-0 group-hover/pn:opacity-100 pointer-events-none group-hover/pn:pointer-events-auto transition-opacity whitespace-nowrap z-50">
-                                            <p className="text-[10px] font-bold text-[#00A86B] mb-0.5">Promissory Note</p>
+                                            <p className="text-[10px] font-bold text-[#6AD478] mb-0.5">Promissory Note</p>
                                             <p className="text-[9px] text-[#C2FFDC]/80 leading-snug">A legal document where the borrower<br/>promises to repay the lender.</p>
                                             <div className="absolute top-full left-1/2 -translate-x-1/2 w-2 h-2 bg-[#1C4332] rotate-45 -mt-1"></div>
                                           </div>
@@ -1554,7 +1554,7 @@ export default function Borrowing() {
                                             <span className="text-[9px] font-bold text-white leading-none">i</span>
                                           </div>
                                           <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2.5 py-1.5 bg-[#1C4332] rounded-lg shadow-lg opacity-0 group-hover/as:opacity-100 pointer-events-none group-hover/as:pointer-events-auto transition-opacity whitespace-nowrap z-50">
-                                            <p className="text-[10px] font-bold text-[#00A86B] mb-0.5">Amortization Schedule</p>
+                                            <p className="text-[10px] font-bold text-[#6AD478] mb-0.5">Amortization Schedule</p>
                                             <p className="text-[9px] text-[#C2FFDC]/80 leading-snug">A table showing each payment broken<br/>down into principal and interest.</p>
                                             <div className="absolute top-full left-1/2 -translate-x-1/2 w-2 h-2 bg-[#1C4332] rotate-45 -mt-1"></div>
                                           </div>
@@ -1684,7 +1684,7 @@ export default function Borrowing() {
                                       });
 
                                       const statusConfig = {
-                                        completed: { label: 'Completed', bg: 'bg-[#00A86B]/20', text: 'text-[#00A86B]', ringColor: 'border-[#00A86B]' },
+                                        completed: { label: 'Completed', bg: 'bg-[#00A86B]/20', text: 'text-[#6AD478]', ringColor: 'border-[#00A86B]' },
                                         pending: { label: 'Pending', bg: 'bg-[#F59E0B]/20', text: 'text-[#F59E0B]', ringColor: 'border-[#F59E0B]' },
                                         record: { label: 'Record Payment', bg: 'bg-[#00A86B]', text: 'text-white', ringColor: 'border-[#00A86B]' },
                                         upcoming: { label: 'Upcoming', bg: 'bg-[#C2FFDC]/10', text: 'text-[#00A86B]', ringColor: 'border-[#00A86B]/30' },

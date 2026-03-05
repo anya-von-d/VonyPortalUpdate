@@ -449,7 +449,7 @@ export default function Friends() {
                                     <button
                                       onClick={() => handleSendRequest(profile.user_id)}
                                       disabled={processingId === profile.user_id}
-                                      className="bg-[#00A86B] rounded-lg px-3 py-1.5 flex items-center gap-1.5 hover:bg-[#00A86B]/90 transition-colors disabled:opacity-50 cursor-pointer"
+                                      className="bg-[#6AD478] rounded-lg px-3 py-1.5 flex items-center gap-1.5 hover:bg-[#6AD478]/90 transition-colors disabled:opacity-50 cursor-pointer"
                                     >
                                       {processingId === profile.user_id ? (
                                         <div className="w-4 h-4 border-2 border-[#1C4332] border-t-transparent rounded-full animate-spin" />
