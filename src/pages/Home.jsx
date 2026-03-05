@@ -443,8 +443,8 @@ export default function Home() {
                   {/* Quick Action Circles */}
                   <div className="flex items-start gap-5 sm:gap-6 flex-shrink-0">
                     <Link to={createPageUrl("CreateOffer")} className="flex flex-col items-center gap-1.5 group">
-                      <div className="w-12 h-12 rounded-full bg-[#1C4332] shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6AD478" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                      <div className="w-12 h-12 rounded-full bg-[#C2FFDC] shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1C4332" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                           <line x1="12" y1="5" x2="12" y2="19"></line>
                           <line x1="5" y1="12" x2="19" y2="12"></line>
                         </svg>
@@ -452,8 +452,8 @@ export default function Home() {
                       <p className="text-[10px] font-semibold text-[#C2FFDC] text-center leading-tight font-sans">Create<br/>Loan Offer</p>
                     </Link>
                     <Link to={createPageUrl("RecentActivity")} className="flex flex-col items-center gap-1.5 group">
-                      <div className="w-12 h-12 rounded-full bg-[#1C4332] shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6AD478" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                      <div className="w-12 h-12 rounded-full bg-[#C2FFDC] shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1C4332" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                           <circle cx="12" cy="12" r="10"></circle>
                           <polyline points="12 6 12 12 16 14"></polyline>
                         </svg>
@@ -461,8 +461,8 @@ export default function Home() {
                       <p className="text-[10px] font-semibold text-[#C2FFDC] text-center leading-tight font-sans">View Recent<br/>Activity</p>
                     </Link>
                     <Link to={createPageUrl("Friends")} className="flex flex-col items-center gap-1.5 group">
-                      <div className="w-12 h-12 rounded-full bg-[#1C4332] shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6AD478" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                      <div className="w-12 h-12 rounded-full bg-[#C2FFDC] shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1C4332" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                           <circle cx="9" cy="7" r="4"></circle>
                           <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
@@ -1238,8 +1238,8 @@ export default function Home() {
                     {/* View Lending / Borrowing Page */}
                     <div className="flex items-center justify-center gap-8 py-2">
                       <Link to={createPageUrl("Lending")} className="flex flex-col items-center gap-1.5 group">
-                        <div className="w-11 h-11 rounded-full bg-[#1C4332] shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
-                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6AD478" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <div className="w-11 h-11 rounded-full bg-[#C2FFDC] shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1C4332" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                             <line x1="12" y1="1" x2="12" y2="23"></line>
                             <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
                           </svg>
@@ -1247,8 +1247,8 @@ export default function Home() {
                         <p className="text-[10px] font-semibold text-[#C2FFDC] text-center leading-tight font-sans">View Lending<br/>Page</p>
                       </Link>
                       <Link to={createPageUrl("Borrowing")} className="flex flex-col items-center gap-1.5 group">
-                        <div className="w-11 h-11 rounded-full bg-[#1C4332] shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
-                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6AD478" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <div className="w-11 h-11 rounded-full bg-[#C2FFDC] shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1C4332" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                             <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
                             <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
                           </svg>
@@ -1256,8 +1256,8 @@ export default function Home() {
                         <p className="text-[10px] font-semibold text-[#C2FFDC] text-center leading-tight font-sans">View Borrowing<br/>Page</p>
                       </Link>
                       <Link to={createPageUrl("LoanAgreements")} className="flex flex-col items-center gap-1.5 group">
-                        <div className="w-11 h-11 rounded-full bg-[#1C4332] shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
-                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6AD478" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <div className="w-11 h-11 rounded-full bg-[#C2FFDC] shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1C4332" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                             <polyline points="14 2 14 8 20 8"></polyline>
                             <line x1="16" y1="13" x2="8" y2="13"></line>
