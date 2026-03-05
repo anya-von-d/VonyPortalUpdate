@@ -732,7 +732,7 @@ export default function Home() {
                               placeholder=""
                               value={quickPayAmount}
                               onChange={(e) => setQuickPayAmount(e.target.value)}
-                              className="w-20 h-7 px-2 bg-[#1C4332]/15 border-0 text-xs inline-flex rounded-md text-[#1C4332] placeholder:text-[#1C4332]/50"
+                              className="w-20 h-7 px-2 bg-[#C2FFDC] border-0 text-xs inline-flex rounded-md text-[#1C4332] placeholder:text-[#1C4332]/50"
                               style={{ MozAppearance: 'textfield' }}
                             />
                             {fromOptions.length > 0 && (
@@ -742,7 +742,7 @@ export default function Home() {
                                   value={quickPayFromPerson}
                                   onValueChange={handleFromChange}
                                 >
-                                  <SelectTrigger className="w-auto h-7 px-2 bg-[#1C4332]/15 border-0 text-xs inline-flex rounded-md text-[#1C4332]">
+                                  <SelectTrigger className="w-auto h-7 px-2 bg-[#C2FFDC] border-0 text-xs inline-flex rounded-md text-[#1C4332]">
                                     <SelectValue placeholder="select person" />
                                   </SelectTrigger>
                                   <SelectContent>
@@ -762,7 +762,7 @@ export default function Home() {
                                   value={quickPayToPerson}
                                   onValueChange={handleToChange}
                                 >
-                                  <SelectTrigger className="w-auto h-7 px-2 bg-[#1C4332]/15 border-0 text-xs inline-flex rounded-md text-[#1C4332]">
+                                  <SelectTrigger className="w-auto h-7 px-2 bg-[#C2FFDC] border-0 text-xs inline-flex rounded-md text-[#1C4332]">
                                     <SelectValue placeholder="select person" />
                                   </SelectTrigger>
                                   <SelectContent>
@@ -781,8 +781,8 @@ export default function Home() {
                               disabled={!canSubmit}
                               className={`h-7 px-3 rounded-md text-xs font-semibold border-0 transition-all ${
                                 !canSubmit
-                                  ? 'bg-[#1C4332]/20 text-[#1C4332]/50 cursor-not-allowed'
-                                  : 'bg-[#1C4332] text-[#6AD478] hover:bg-[#1C4332]/90'
+                                  ? 'bg-[#00A86B]/30 text-[#1C4332]/50 cursor-not-allowed'
+                                  : 'bg-[#00A86B] text-white hover:bg-[#00A86B]/90'
                               }`}
                             >
                               Submit

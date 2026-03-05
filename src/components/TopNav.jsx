@@ -118,8 +118,8 @@ export default function TopNav({ location }) {
     <>
       {/* Fixed Double Navigation Bar */}
       <nav className="fixed top-0 left-0 right-0 z-50 shadow-sm shadow-black/5">
-        {/* Top Bar - Medium Green (#00A86B) secondary navigation with Vony logo */}
-        <div className="h-10" style={{backgroundColor: '#00A86B'}}>
+        {/* Top Bar - Very Dark Green (#0F2B1F) secondary navigation with Vony logo */}
+        <div className="h-10" style={{backgroundColor: '#0F2B1F'}}>
           <div className="h-full px-4 sm:px-8 md:px-24 lg:px-36 mx-auto flex items-center justify-between">
             {/* Hamburger Menu Button - Mobile only */}
             <button
@@ -182,8 +182,8 @@ export default function TopNav({ location }) {
           </div>
         </div>
 
-        {/* Bottom Bar - Medium Green (#00A86B) primary navigation, left-aligned */}
-        <div className={`h-12 ${menuOpen ? 'hidden md:block' : ''}`} style={{backgroundColor: '#00A86B'}}>
+        {/* Bottom Bar - Light Green (#C2FFDC) primary navigation, left-aligned */}
+        <div className={`h-12 ${menuOpen ? 'hidden md:block' : ''}`} style={{backgroundColor: '#C2FFDC'}}>
           <div className="h-full px-4 sm:px-8 md:px-24 lg:px-36 mx-auto flex items-center justify-start">
             {/* Mobile: Main nav links left-aligned */}
             <div className="flex md:hidden items-center gap-6">
@@ -194,8 +194,8 @@ export default function TopNav({ location }) {
                   onClick={() => handleNavClick(item.url)}
                   className={`font-sans text-sm font-medium transition-colors duration-200 ${
                     location.pathname === item.url
-                      ? "text-white"
-                      : "text-white/50 hover:text-white"
+                      ? "text-[#1C4332]"
+                      : "text-[#1C4332]/50 hover:text-[#1C4332]"
                   }`}
                 >
                   {item.title}
@@ -212,8 +212,8 @@ export default function TopNav({ location }) {
                   onClick={() => handleNavClick(item.url)}
                   className={`font-sans text-sm font-semibold transition-colors duration-200 ${
                     location.pathname === item.url
-                      ? "text-white"
-                      : "text-white/50 hover:text-white"
+                      ? "text-[#1C4332]"
+                      : "text-[#1C4332]/50 hover:text-[#1C4332]"
                   }`}
                 >
                   {item.title}
@@ -233,7 +233,7 @@ export default function TopNav({ location }) {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
             className="fixed inset-0 z-40 flex flex-col md:hidden"
-            style={{ top: '40px', backgroundColor: '#00A86B' }}
+            style={{ top: '40px', backgroundColor: '#0F2B1F' }}
             onClick={(e) => {
               // Close menu when tapping the background (not a link)
               if (e.target === e.currentTarget) setMenuOpen(false);
