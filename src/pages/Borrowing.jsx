@@ -877,10 +877,10 @@ export default function Borrowing() {
                     )}
                   </div>
 
-                  {/* Upcoming Payments */}
+                  {/* Upcoming Payments (includes overdue with minus prefix) */}
                   {(() => {
-                    const upcomingLoans = activeLoans
-                      .filter(l => l.next_payment_date && new Date(l.next_payment_date) >= new Date())
+                    const allPaymentLoans = activeLoans
+                      .filter(l => l.next_payment_date)
                       .map(l => {
                         const lender = publicProfiles.find(p => p.user_id === l.lender_id);
                         const today = new Date();
@@ -890,15 +890,18 @@ export default function Borrowing() {
                         const days = Math.ceil((payDate - today) / (1000 * 60 * 60 * 24));
                         return { ...l, lenderUsername: lender?.username || 'user', days, payDate };
                       })
-                      .sort((a, b) => a.payDate - b.payDate)
-                      .slice(0, 5);
+                      .sort((a, b) => a.payDate - b.payDate);
+
+                    const overdueLoans = allPaymentLoans.filter(l => l.days < 0);
+                    const upcomingLoans = allPaymentLoans.filter(l => l.days >= 0).slice(0, 5);
+                    const combinedLoans = [...overdueLoans, ...upcomingLoans];
 
                     return (
                       <div className="rounded-xl px-4 py-3 shadow-sm bg-[#1C4332]">
                         <p className="text-sm font-bold text-[#C2FFDC] mb-2.5 tracking-tight font-serif">
                           Upcoming Payments
                         </p>
-                        {upcomingLoans.length === 0 ? (
+                        {combinedLoans.length === 0 ? (
                           <div className="flex flex-col items-center justify-center py-6 text-[#00A86B]">
                             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="opacity-40 mb-1.5">
                               <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
@@ -910,24 +913,33 @@ export default function Borrowing() {
                           </div>
                         ) : (
                           <div className="space-y-1.5">
-                            {upcomingLoans.map(loan => (
-                              <div key={loan.id} className="flex items-center gap-2.5 p-2.5 rounded-lg bg-[#0F2B1F]">
-                                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#6AD478] flex items-center justify-center shadow-sm">
-                                  <p className="text-[10px] font-bold text-[#C2FFDC] text-center leading-tight">
-                                    {loan.days}
-                                    <span className="block text-[7px] font-medium text-[#00A86B]">
-                                      {loan.days === 1 ? 'day' : 'days'}
+                            {combinedLoans.map(loan => {
+                              const isOverdue = loan.days < 0;
+                              const displayDays = isOverdue ? `-${Math.abs(loan.days)}` : loan.days;
+                              return (
+                                <div key={loan.id} className="flex items-center gap-2.5 p-2.5 rounded-lg bg-[#0F2B1F]">
+                                  <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#6AD478] flex items-center justify-center shadow-sm">
+                                    <p className="text-[10px] font-bold text-[#C2FFDC] text-center leading-tight">
+                                      {displayDays}
+                                      <span className="block text-[7px] font-medium text-[#00A86B]">
+                                        {Math.abs(loan.days) === 1 ? 'day' : 'days'}
+                                      </span>
+                                    </p>
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-[11px] text-[#C2FFDC]">
+                                      Send <span className="font-semibold">${(loan.payment_amount || 0).toLocaleString()}</span> to <span className="font-semibold">@{loan.lenderUsername}</span>
+                                    </p>
+                                    <p className={`text-[10px] mt-0.5 ${isOverdue ? 'text-red-400' : 'text-[#00A86B]'}`}>{format(loan.payDate, 'MMM d, yyyy')}</p>
+                                  </div>
+                                  {isOverdue && (
+                                    <span className="flex-shrink-0 text-[9px] font-semibold px-2.5 py-1 rounded-md bg-red-500 text-white">
+                                      Overdue
                                     </span>
-                                  </p>
+                                  )}
                                 </div>
-                                <div className="flex-1 min-w-0">
-                                  <p className="text-[11px] text-[#C2FFDC]">
-                                    Send <span className="font-semibold">${(loan.payment_amount || 0).toLocaleString()}</span> to <span className="font-semibold">@{loan.lenderUsername}</span>
-                                  </p>
-                                  <p className="text-[10px] text-[#00A86B] mt-0.5">{format(loan.payDate, 'MMM d, yyyy')}</p>
-                                </div>
-                              </div>
-                            ))}
+                              );
+                            })}
                           </div>
                         )}
                       </div>
@@ -982,54 +994,10 @@ export default function Borrowing() {
                       )}
                     </div>
 
-                    {/* Overdue Payments */}
-                    {(() => {
-                      const overdueLoans = activeLoans.filter(l => {
-                        if (!l.next_payment_date) return false;
-                        return new Date(l.next_payment_date) < new Date();
-                      });
-                      if (overdueLoans.length === 0) return null;
-                      return (
-                        <div className="rounded-xl px-4 py-3 shadow-sm bg-[#1C4332] border border-red-200">
-                          <p className="text-sm font-bold text-red-500 mb-2.5 tracking-tight font-sans">
-                            Overdue Payments
-                          </p>
-                          <div className="space-y-1.5">
-                            {overdueLoans.map(loan => {
-                              const lender = publicProfiles.find(p => p.user_id === loan.lender_id);
-                              const daysOverdue = Math.ceil((new Date() - new Date(loan.next_payment_date)) / (1000 * 60 * 60 * 24));
-                              return (
-                                <div key={loan.id} className="flex items-start gap-2.5 p-2.5 rounded-lg" style={{ backgroundColor: '#FEF2F2' }}>
-                                  <div className="flex-1 min-w-0">
-                                    <p className="text-[11px] text-[#C2FFDC]">
-                                      Send payment to <span className="font-semibold">@{lender?.username || 'user'}</span>
-                                    </p>
-                                    <p className="text-[10px] text-red-500 mt-0.5">
-                                      {daysOverdue} {daysOverdue === 1 ? 'day' : 'days'} overdue · record it if already paid
-                                    </p>
-                                  </div>
-                                  <button
-                                    onClick={() => {
-                                      setSelectedLoan({ ...loan });
-                                      setShowPaymentModal(true);
-                                    }}
-                                    className="flex-shrink-0 text-[10px] font-semibold px-2.5 py-1 rounded-lg mt-0.5 cursor-pointer"
-                                    style={{ backgroundColor: '#EF4444', color: '#FFFFFF' }}
-                                  >
-                                    Record Payment
-                                  </button>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      );
-                    })()}
-
                     {/* Record Payment */}
                     {activeLoans.length > 0 && (
-                      <div className="rounded-xl px-4 py-3 shadow-sm" style={{ backgroundColor: '#00A86B' }}>
-                        <p className="text-sm font-bold text-white mb-2 tracking-tight font-sans">
+                      <div className="rounded-xl px-4 py-3 shadow-sm" style={{ backgroundColor: '#6AD478' }}>
+                        <p className="text-sm font-bold text-[#1C4332] mb-2 tracking-tight font-serif">
                           Record Payment
                         </p>
                         <div className="flex flex-wrap items-center gap-2 text-xs text-white">
@@ -1201,13 +1169,9 @@ export default function Borrowing() {
 
                       return (
                         <div className="mt-4">
-                          <p className="text-sm font-bold text-[#C2FFDC] tracking-tight font-sans mb-3">
-                            Your Loans
-                          </p>
-
-                          {/* Select a Loan — bright green bar with centered title + dropdown */}
-                          <div className="rounded-xl px-4 py-3 shadow-sm mb-4" style={{ backgroundColor: '#6AD478' }}>
-                            <p className="text-sm font-bold text-[#1C4332] text-center tracking-tight font-serif mb-2">
+                          {/* Select a Loan — styled bar with left-aligned title + dropdown */}
+                          <div className="rounded-xl px-4 py-3 shadow-sm mb-4 bg-[#1C4332]">
+                            <p className="text-sm font-bold text-[#C2FFDC] tracking-tight font-serif mb-2">
                               Select a Loan to Learn More
                             </p>
                             <div className="relative">
@@ -1217,7 +1181,7 @@ export default function Borrowing() {
                                   const selected = manageableLoans.find(l => l.id === e.target.value);
                                   if (selected) setManageLoanSelected(selected);
                                 }}
-                                className="w-full appearance-none rounded-lg px-3 py-2 text-[12px] font-semibold text-[#C2FFDC] font-sans bg-white cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#1C4332]/20"
+                                className="w-full appearance-none rounded-lg px-3 py-2 text-[12px] font-semibold text-[#1C4332] font-sans bg-[#C2FFDC] cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#00A86B]/30"
                               >
                                 {manageableLoans.map((loan) => {
                                   const lender = publicProfiles.find(p => p.user_id === loan.lender_id);
