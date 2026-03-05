@@ -4,13 +4,13 @@ import { createPageUrl } from "@/utils";
 
 export default function Footer() {
   return (
-    <footer className="w-full" style={{ backgroundColor: '#213B75' }}>
+    <footer className="w-full" style={{ backgroundColor: '#00A86B' }}>
       {/* Top Section: About + Coming Soon + Contact Us */}
       <div className="px-6 md:px-10 lg:px-20 pt-10 pb-8">
         <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-16">
           {/* About Section */}
           <div>
-            <p className="text-xs font-semibold text-[#4C7FC4] uppercase tracking-widest mb-4 font-sans">
+            <p className="text-xs font-semibold text-white/50 uppercase tracking-widest mb-4 font-sans">
               About
             </p>
             <div className="flex flex-col gap-2.5">
@@ -35,7 +35,7 @@ export default function Footer() {
 
           {/* Coming Soon Section */}
           <div>
-            <p className="text-xs font-semibold text-[#4C7FC4] uppercase tracking-widest mb-4 font-sans">
+            <p className="text-xs font-semibold text-white/50 uppercase tracking-widest mb-4 font-sans">
               Coming Soon
             </p>
             <div className="flex flex-col gap-2.5">
@@ -56,7 +56,7 @@ export default function Footer() {
 
           {/* Contact Us Section */}
           <div>
-            <p className="text-xs font-semibold text-[#4C7FC4] uppercase tracking-widest mb-4 font-sans">
+            <p className="text-xs font-semibold text-white/50 uppercase tracking-widest mb-4 font-sans">
               Contact Us
             </p>
             <div className="flex flex-col gap-2.5">

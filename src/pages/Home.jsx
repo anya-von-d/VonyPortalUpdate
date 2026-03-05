@@ -1184,17 +1184,18 @@ export default function Home() {
                         .filter(e => e.remainingAmount > 0)
                         .sort((a, b) => a.date - b.date);
 
-                      const upcomingEvents = allEvents.filter(e => e.days >= 0).slice(0, 5);
+                      // Combine upcoming and overdue into one list, overdue first then upcoming
                       const overdueEvents = allEvents.filter(e => e.days < 0);
+                      const upcomingEvents = allEvents.filter(e => e.days >= 0).slice(0, 5);
+                      const combinedEvents = [...overdueEvents, ...upcomingEvents];
 
                       return (
-                        <>
-                          {/* Upcoming Payments Box */}
+                          /* Upcoming Payments Box (includes overdue with minus prefix) */
                           <div className="rounded-xl px-4 py-3 shadow-sm bg-[#1C4332]">
                             <p className="text-sm font-bold text-[#C2FFDC] mb-2.5 tracking-tight font-serif">
                               Upcoming Payments
                             </p>
-                            {upcomingEvents.length === 0 ? (
+                            {combinedEvents.length === 0 ? (
                               <div className="flex flex-col items-center justify-center py-6 text-[#00A86B]">
                                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="opacity-40 mb-1.5">
                                   <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
@@ -1206,19 +1207,21 @@ export default function Home() {
                               </div>
                             ) : (
                               <div className="space-y-1.5">
-                                {upcomingEvents.map((event, idx) => {
+                                {combinedEvents.map((event, idx) => {
                                   const amountStr = event.remainingAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                                   const dueDateStr = format(event.date, 'MMM d, yyyy');
                                   const loanPage = event.isLender ? 'Lending' : 'Borrowing';
+                                  const isOverdue = event.days < 0;
+                                  const displayDays = isOverdue ? `-${Math.abs(event.days)}` : event.days;
 
                                   return (
                                     <div key={idx} className="flex items-center gap-2.5 p-2.5 rounded-lg bg-[#0F2B1F]">
-                                      {/* White circle with days */}
-                                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#6AD478] flex items-center justify-center shadow-sm">
-                                        <p className="text-[10px] font-bold text-[#1C4332] text-center leading-tight">
-                                          {event.days}
-                                          <span className="block text-[7px] font-medium text-[#1C4332]/60">
-                                            {event.days === 1 ? 'day' : 'days'}
+                                      {/* Circle with days (minus prefix for overdue) */}
+                                      <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center shadow-sm ${isOverdue ? 'bg-red-500' : 'bg-[#6AD478]'}`}>
+                                        <p className={`text-[10px] font-bold text-center leading-tight ${isOverdue ? 'text-white' : 'text-[#1C4332]'}`}>
+                                          {displayDays}
+                                          <span className={`block text-[7px] font-medium ${isOverdue ? 'text-white/60' : 'text-[#1C4332]/60'}`}>
+                                            {Math.abs(event.days) === 1 ? 'day' : 'days'}
                                           </span>
                                         </p>
                                       </div>
@@ -1229,12 +1232,12 @@ export default function Home() {
                                             : <>Send payment of <span className="font-semibold">${amountStr}</span> to <span className="font-semibold">@{event.username}</span></>
                                           }
                                         </p>
-                                        <p className="text-[10px] text-[#00A86B] mt-0.5">{dueDateStr}</p>
+                                        <p className={`text-[10px] mt-0.5 ${isOverdue ? 'text-red-400' : 'text-[#00A86B]'}`}>{dueDateStr}</p>
                                       </div>
                                       <Link
                                         to={createPageUrl(loanPage)}
                                         className="flex-shrink-0 text-[9px] font-semibold px-2.5 py-1 rounded-md"
-                                        style={{ backgroundColor: '#6AD478', color: '#1C4332' }}
+                                        style={{ backgroundColor: isOverdue ? '#EF4444' : '#6AD478', color: isOverdue ? '#FFFFFF' : '#1C4332' }}
                                       >
                                         View Loan
                                       </Link>
@@ -1244,50 +1247,6 @@ export default function Home() {
                               </div>
                             )}
                           </div>
-
-                          {/* Overdue Payments Box — only shown if there are overdue payments */}
-                          {overdueEvents.length > 0 && (
-                            <div className="rounded-xl px-4 py-3 shadow-sm bg-[#1C4332] border border-red-500/30">
-                              <p className="text-sm font-bold text-red-500 mb-2.5 tracking-tight font-serif">
-                                Overdue Payments
-                              </p>
-                              <div className="space-y-1.5">
-                                {overdueEvents.map((event, idx) => {
-                                  const amountStr = event.remainingAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                                  const dueDateStr = format(event.date, 'MMM d, yyyy');
-                                  const overdueDays = Math.abs(event.days);
-
-                                  return (
-                                    <div key={idx} className="flex items-start gap-2.5 p-2.5 rounded-lg" style={{ backgroundColor: '#FEF2F2' }}>
-                                      <div className="flex-1 min-w-0">
-                                        <p className="text-[11px] text-[#C2FFDC]">
-                                          {event.isLender
-                                            ? <>Receive payment of <span className="font-semibold">${amountStr}</span> from <span className="font-semibold">@{event.username}</span></>
-                                            : <>Send payment of <span className="font-semibold">${amountStr}</span> to <span className="font-semibold">@{event.username}</span></>
-                                          }
-                                        </p>
-                                        <p className="text-[10px] text-red-500 mt-0.5">
-                                          Due {dueDateStr} · {overdueDays} {overdueDays === 1 ? 'day' : 'days'} overdue
-                                        </p>
-                                      </div>
-                                      <button
-                                        onClick={() => {
-                                          setSelectedLoan({ ...event.loan });
-                                          setCandidateLoans([]);
-                                          setShowPaymentModal(true);
-                                        }}
-                                        className="flex-shrink-0 text-[10px] font-semibold px-2.5 py-1 rounded-lg mt-0.5 cursor-pointer"
-                                        style={{ backgroundColor: '#EF4444', color: '#FFFFFF' }}
-                                      >
-                                        Record Payment
-                                      </button>
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                            </div>
-                          )}
-                        </>
                       );
                     })()}
 
