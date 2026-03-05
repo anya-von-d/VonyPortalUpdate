@@ -1193,7 +1193,7 @@ export default function Home() {
                                   const displayDays = isOverdue ? `-${Math.abs(event.days)}` : event.days;
 
                                   return (
-                                    <div key={idx} className="flex items-center gap-2.5 p-2.5 rounded-lg bg-[#00A86B]">
+                                    <div key={idx} className="flex items-center gap-2.5 p-2.5 rounded-lg bg-[#0F2B1F]">
                                       {/* Circle with days (minus prefix for overdue) */}
                                       <div className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center shadow-sm bg-[#6AD478]">
                                         <p className="text-[10px] font-bold text-center leading-tight text-[#1C4332]">
@@ -1204,13 +1204,13 @@ export default function Home() {
                                         </p>
                                       </div>
                                       <div className="flex-1 min-w-0">
-                                        <p className="text-[11px] text-[#1C4332]">
+                                        <p className="text-[11px] text-[#C2FFDC]">
                                           {event.isLender
                                             ? <>Receive payment of <span className="font-semibold">${amountStr}</span> from <span className="font-semibold">@{event.username}</span></>
                                             : <>Send payment of <span className="font-semibold">${amountStr}</span> to <span className="font-semibold">@{event.username}</span></>
                                           }
                                         </p>
-                                        <p className={`text-[10px] mt-0.5 ${isOverdue ? 'text-red-400' : 'text-[#1C4332]/60'}`}>{dueDateStr}</p>
+                                        <p className={`text-[10px] mt-0.5 ${isOverdue ? 'text-red-400' : 'text-[#00A86B]'}`}>{dueDateStr}</p>
                                       </div>
                                       <div className="flex items-center gap-1.5 flex-shrink-0">
                                         {isOverdue && (
@@ -1357,7 +1357,7 @@ export default function Home() {
                               const iconColor = '#6AD478';
 
                               return (
-                                <div key={idx} className="flex items-center gap-2.5 p-2 rounded-lg bg-[#00A86B]">
+                                <div key={idx} className="flex items-center gap-2.5 p-2 rounded-lg bg-[#0F2B1F]">
                                   <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#6AD478]/20 flex items-center justify-center shadow-sm">
                                     {isPayment ? (
                                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={iconColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -1372,8 +1372,8 @@ export default function Home() {
                                     )}
                                   </div>
                                   <div className="flex-1 min-w-0">
-                                    <p className="text-[11px] text-[#1C4332] truncate">{item.description}</p>
-                                    <p className="text-[9px] text-[#1C4332]/60">{format(item.date, 'MMM d, yyyy')}</p>
+                                    <p className="text-[11px] text-[#C2FFDC] truncate">{item.description}</p>
+                                    <p className="text-[9px] text-[#00A86B]">{format(item.date, 'MMM d, yyyy')}</p>
                                   </div>
                                 </div>
                               );
