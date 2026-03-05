@@ -1743,6 +1743,161 @@ export default function Borrowing() {
                                     })()}
                                   </div>
 
+                                  {/* Activity Box */}
+                                  <div className="bg-white rounded-xl px-4 py-3 shadow-sm">
+                                    <p className="text-sm font-bold text-[#1C4332] mb-2.5 tracking-tight font-sans">
+                                      Activity
+                                    </p>
+                                    {(() => {
+                                      const agreement = loanAgreements.find(a => a.loan_id === manageLoanSelected.id);
+                                      const loanPmts = allPayments.filter(p => p.loan_id === manageLoanSelected.id);
+                                      const lenderProfile = publicProfiles.find(p => p.user_id === manageLoanSelected.lender_id);
+                                      const borrowerProfile = publicProfiles.find(p => p.user_id === user?.id);
+                                      const lenderName = lenderProfile?.username || 'lender';
+                                      const borrowerName = borrowerProfile?.username || 'you';
+
+                                      const activities = [];
+
+                                      // Loan created
+                                      if (manageLoanSelected.created_at) {
+                                        activities.push({
+                                          timestamp: new Date(manageLoanSelected.created_at),
+                                          type: 'created',
+                                          description: `Loan created between @${borrowerName} and @${lenderName}`,
+                                        });
+                                      }
+
+                                      // Borrower signature
+                                      if (agreement?.borrower_signed_date) {
+                                        activities.push({
+                                          timestamp: new Date(agreement.borrower_signed_date),
+                                          type: 'signature',
+                                          description: `@${borrowerName} signed the loan agreement`,
+                                        });
+                                      }
+
+                                      // Lender signature
+                                      if (agreement?.lender_signed_date) {
+                                        activities.push({
+                                          timestamp: new Date(agreement.lender_signed_date),
+                                          type: 'signature',
+                                          description: `@${lenderName} signed the loan agreement`,
+                                        });
+                                      }
+
+                                      // Payments
+                                      loanPmts.forEach(payment => {
+                                        const pmtStatus = payment.status === 'confirmed' ? 'confirmed' : 'recorded';
+                                        activities.push({
+                                          timestamp: new Date(payment.payment_date || payment.created_at),
+                                          type: 'payment',
+                                          description: `Payment of $${(payment.amount || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${pmtStatus}`,
+                                        });
+                                      });
+
+                                      // Cancellation
+                                      if (agreement?.cancelled_date) {
+                                        activities.push({
+                                          timestamp: new Date(agreement.cancelled_date),
+                                          type: 'cancellation',
+                                          description: 'Loan was cancelled',
+                                        });
+                                      }
+
+                                      // Completion
+                                      if (manageLoanSelected.status === 'completed') {
+                                        activities.push({
+                                          timestamp: new Date(),
+                                          type: 'completion',
+                                          description: 'Loan repaid in full',
+                                        });
+                                      }
+
+                                      // Sort newest first
+                                      activities.sort((a, b) => b.timestamp - a.timestamp);
+
+                                      const getIcon = (type) => {
+                                        switch (type) {
+                                          case 'created':
+                                            return (
+                                              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="#00A86B" strokeWidth={2}>
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                                              </svg>
+                                            );
+                                          case 'signature':
+                                            return (
+                                              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="#1C4332" strokeWidth={2}>
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                              </svg>
+                                            );
+                                          case 'payment':
+                                            return (
+                                              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="#00A86B" strokeWidth={2}>
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                                              </svg>
+                                            );
+                                          case 'cancellation':
+                                            return (
+                                              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="#EF4444" strokeWidth={2}>
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                              </svg>
+                                            );
+                                          case 'completion':
+                                            return (
+                                              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="#00A86B" strokeWidth={2}>
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                              </svg>
+                                            );
+                                          default:
+                                            return null;
+                                        }
+                                      };
+
+                                      const getDotColor = (type) => {
+                                        switch (type) {
+                                          case 'created': return 'bg-[#C2FFDC] border-[#00A86B]';
+                                          case 'signature': return 'bg-[#F0FFF4] border-[#1C4332]';
+                                          case 'payment': return 'bg-[#C2FFDC] border-[#00A86B]';
+                                          case 'cancellation': return 'bg-red-50 border-red-400';
+                                          case 'completion': return 'bg-[#C2FFDC] border-[#00A86B]';
+                                          default: return 'bg-gray-100 border-gray-300';
+                                        }
+                                      };
+
+                                      if (activities.length === 0) {
+                                        return (
+                                          <p className="text-[11px] text-[#00A86B]/60 font-sans">No activity recorded yet.</p>
+                                        );
+                                      }
+
+                                      return (
+                                        <div className="space-y-0 max-h-[200px] overflow-y-auto" style={{ scrollbarWidth: 'thin' }}>
+                                          {activities.map((activity, idx) => (
+                                            <div key={idx} className="flex items-start gap-2.5 relative">
+                                              {/* Timeline line */}
+                                              {idx < activities.length - 1 && (
+                                                <div className="absolute left-[11px] top-[22px] w-[1px] bg-[#C2FFDC]" style={{ height: 'calc(100% - 6px)' }} />
+                                              )}
+                                              {/* Icon dot */}
+                                              <div className={`w-[23px] h-[23px] rounded-full border-[1.5px] ${getDotColor(activity.type)} flex items-center justify-center flex-shrink-0 z-10 mt-1`}>
+                                                {getIcon(activity.type)}
+                                              </div>
+                                              {/* Content */}
+                                              <div className="flex-1 min-w-0 pb-3">
+                                                <p className="text-[11px] text-[#1C4332] font-sans leading-snug">
+                                                  {activity.description}
+                                                </p>
+                                                <p className="text-[9px] text-[#00A86B]/60 font-sans mt-0.5">
+                                                  {format(activity.timestamp, 'MMM d, yyyy · h:mm a')}
+                                                </p>
+                                              </div>
+                                            </div>
+                                          ))}
+                                        </div>
+                                      );
+                                    })()}
+                                  </div>
+
                                   {/* Cancelled notice */}
                                   {manageLoanSelected.status === 'cancelled' && (
                                     <div className="bg-red-50 rounded-xl px-4 py-3 shadow-sm border border-red-200">
