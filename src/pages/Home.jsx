@@ -718,7 +718,7 @@ export default function Home() {
                       const canSubmit = quickPayAmount && (quickPayFromPerson || quickPayToPerson);
 
                       return (
-                        <div className="rounded-xl px-4 py-3 shadow-sm mt-2 mb-2 lg:mt-0 lg:mb-0" style={{ backgroundColor: '#00A86B' }}>
+                        <div className="rounded-xl px-4 py-3 shadow-sm mt-2 mb-2 lg:mt-0 lg:mb-0" style={{ backgroundColor: '#6AD478' }}>
                           <p className="text-sm font-bold text-[#1C4332] mb-2 tracking-tight font-serif">
                             Record Payment
                           </p>
