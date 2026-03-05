@@ -38,17 +38,17 @@ function LoanCarousel({ hasLendingLoans, hasBorrowingLoans }) {
   const slides = [
     // Slide 1: Track loan progress
     <div key="progress" className="text-center px-4">
-      <p className="text-lg sm:text-xl font-bold text-white font-sans mb-1.5 tracking-tight">
+      <p className="text-lg sm:text-xl font-bold text-[#1C4332] font-sans mb-1.5 tracking-tight">
         Stay on top of your loans
       </p>
-      <p className="text-sm text-white/60 font-sans mb-6 whitespace-nowrap">
+      <p className="text-sm text-[#1C4332]/60 font-sans mb-6 whitespace-nowrap">
         Check in on your payment progress and keep track of upcoming due dates
       </p>
       <div className="flex items-center justify-center gap-3">
         {hasBorrowingLoans && (
           <Link
             to={createPageUrl("Borrowing")}
-            className="px-5 py-2.5 rounded-xl bg-white text-sm font-semibold text-[#C2FFDC] hover:bg-white/90 transition-colors font-sans"
+            className="px-5 py-2.5 rounded-xl bg-[#1C4332] text-sm font-semibold text-[#6AD478] hover:bg-[#1C4332]/90 transition-colors font-sans"
           >
             Track Payment Progress
           </Link>
@@ -58,8 +58,8 @@ function LoanCarousel({ hasLendingLoans, hasBorrowingLoans }) {
             to={createPageUrl("Lending")}
             className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition-colors font-sans ${
               hasBorrowingLoans
-                ? 'bg-white/20 text-white hover:bg-white/30'
-                : 'bg-white text-[#C2FFDC] hover:bg-white/90'
+                ? 'bg-[#1C4332]/15 text-[#1C4332] hover:bg-[#1C4332]/25'
+                : 'bg-[#1C4332] text-[#6AD478] hover:bg-[#1C4332]/90'
             }`}
           >
             Track Repayment Progress
@@ -69,15 +69,15 @@ function LoanCarousel({ hasLendingLoans, hasBorrowingLoans }) {
     </div>,
     // Slide 2: View agreements
     <div key="agreements" className="text-center px-4">
-      <p className="text-lg sm:text-xl font-bold text-white font-sans mb-1.5 tracking-tight">
+      <p className="text-lg sm:text-xl font-bold text-[#1C4332] font-sans mb-1.5 tracking-tight">
         Review your loan agreements
       </p>
-      <p className="text-sm text-white/60 font-sans mb-6 whitespace-nowrap">
+      <p className="text-sm text-[#1C4332]/60 font-sans mb-6 whitespace-nowrap">
         View and download your loan documents anytime to stay informed
       </p>
       <Link
         to={createPageUrl("LoanAgreements")}
-        className="inline-block px-5 py-2.5 rounded-xl bg-white text-sm font-semibold text-[#C2FFDC] hover:bg-white/90 transition-colors font-sans"
+        className="inline-block px-5 py-2.5 rounded-xl bg-[#1C4332] text-sm font-semibold text-[#6AD478] hover:bg-[#1C4332]/90 transition-colors font-sans"
       >
         My Loan Documents
       </Link>
@@ -89,19 +89,19 @@ function LoanCarousel({ hasLendingLoans, hasBorrowingLoans }) {
       {/* Arrow buttons */}
       <button
         onClick={() => goToSlide('prev')}
-        className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
+        className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-[#1C4332]/10 hover:bg-[#1C4332]/20 flex items-center justify-center transition-colors"
         aria-label="Previous slide"
       >
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1C4332" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <polyline points="15 18 9 12 15 6"></polyline>
         </svg>
       </button>
       <button
         onClick={() => goToSlide('next')}
-        className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
+        className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-[#1C4332]/10 hover:bg-[#1C4332]/20 flex items-center justify-center transition-colors"
         aria-label="Next slide"
       >
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1C4332" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <polyline points="9 18 15 12 9 6"></polyline>
         </svg>
       </button>
@@ -128,7 +128,7 @@ function LoanCarousel({ hasLendingLoans, hasBorrowingLoans }) {
             key={index}
             onClick={() => setCurrentSlide(index)}
             className={`w-2 h-2 rounded-full transition-all duration-300 ${
-              currentSlide === index ? 'bg-white w-5' : 'bg-white/30'
+              currentSlide === index ? 'bg-[#1C4332] w-5' : 'bg-[#1C4332]/30'
             }`}
             aria-label={`Go to slide ${index + 1}`}
           />

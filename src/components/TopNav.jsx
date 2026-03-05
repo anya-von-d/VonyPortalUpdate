@@ -120,7 +120,7 @@ export default function TopNav({ location }) {
       <nav className="fixed top-0 left-0 right-0 z-50 shadow-sm shadow-black/5">
         {/* Top Bar - Medium Green (#00A86B) secondary navigation with Vony logo */}
         <div className="h-10" style={{backgroundColor: '#00A86B'}}>
-          <div className="h-full px-6 md:px-10 flex items-center justify-between">
+          <div className="h-full px-4 sm:px-8 md:px-24 lg:px-36 mx-auto flex items-center justify-between">
             {/* Hamburger Menu Button - Mobile only */}
             <button
               type="button"
@@ -184,7 +184,7 @@ export default function TopNav({ location }) {
 
         {/* Bottom Bar - Medium Green (#00A86B) primary navigation, left-aligned */}
         <div className={`h-12 ${menuOpen ? 'hidden md:block' : ''}`} style={{backgroundColor: '#00A86B'}}>
-          <div className="h-full px-6 md:px-10 flex items-center justify-start">
+          <div className="h-full px-4 sm:px-8 md:px-24 lg:px-36 mx-auto flex items-center justify-start">
             {/* Mobile: Main nav links left-aligned */}
             <div className="flex md:hidden items-center gap-6">
               {[...bottomLeftItems, ...bottomRightItems].map((item) => (
