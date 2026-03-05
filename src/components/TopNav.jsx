@@ -4,7 +4,7 @@ import { createPageUrl } from "@/utils";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-// Top bar items (dark blue #213B75 bar - secondary links)
+// Top bar items (medium green #00A86B bar - secondary links + Vony logo)
 const topBarItems = [
   {
     title: "Notifications",
@@ -118,8 +118,8 @@ export default function TopNav({ location }) {
     <>
       {/* Fixed Double Navigation Bar */}
       <nav className="fixed top-0 left-0 right-0 z-50 shadow-sm shadow-black/5">
-        {/* Top Bar - Dark Blue (#213B75) secondary navigation */}
-        <div className="h-10" style={{backgroundColor: '#213B75'}}>
+        {/* Top Bar - Medium Green (#00A86B) secondary navigation with Vony logo */}
+        <div className="h-10" style={{backgroundColor: '#00A86B'}}>
           <div className="h-full px-6 md:px-10 flex items-center justify-between">
             {/* Hamburger Menu Button - Mobile only */}
             <button
@@ -136,7 +136,15 @@ export default function TopNav({ location }) {
               )}
             </button>
 
-            {/* Desktop: Top bar links right-aligned */}
+            {/* Desktop: Vony logo left-aligned + Top bar links right-aligned */}
+            <Link
+              to={createPageUrl("Home")}
+              onClick={() => handleNavClick(createPageUrl("Home"))}
+              className="hidden md:block font-display italic text-3xl text-white tracking-wide"
+            >
+              Vony
+            </Link>
+
             <div className="hidden md:flex items-center gap-8 ml-auto">
               {topBarItems.map((item) => (
                 <Link
@@ -174,10 +182,10 @@ export default function TopNav({ location }) {
           </div>
         </div>
 
-        {/* Bottom Bar - Medium Blue (#4C7FC4) primary navigation with centered Vony logo */}
-        <div className={`h-12 ${menuOpen ? 'hidden md:block' : ''}`} style={{backgroundColor: '#4C7FC4'}}>
-          <div className="h-full px-6 md:px-10 flex items-center justify-center">
-            {/* Mobile: Main nav links */}
+        {/* Bottom Bar - Medium Green (#00A86B) primary navigation, left-aligned */}
+        <div className={`h-12 ${menuOpen ? 'hidden md:block' : ''}`} style={{backgroundColor: '#00A86B'}}>
+          <div className="h-full px-6 md:px-10 flex items-center justify-start">
+            {/* Mobile: Main nav links left-aligned */}
             <div className="flex md:hidden items-center gap-6">
               {[...bottomLeftItems, ...bottomRightItems].map((item) => (
                 <Link
@@ -195,35 +203,9 @@ export default function TopNav({ location }) {
               ))}
             </div>
 
-            {/* Desktop: Centered Nav Group (Links + Logo) */}
+            {/* Desktop: Left-aligned Nav Links */}
             <div className="hidden md:flex items-center gap-10">
-              {/* Left Nav Links */}
-              {bottomLeftItems.map((item) => (
-                <Link
-                  key={item.title}
-                  to={item.url}
-                  onClick={() => handleNavClick(item.url)}
-                  className={`font-sans text-sm font-semibold transition-colors duration-200 ${
-                    location.pathname === item.url
-                      ? "text-white"
-                      : "text-white/50 hover:text-white"
-                  }`}
-                >
-                  {item.title}
-                </Link>
-              ))}
-
-              {/* Center: Logo */}
-              <Link
-                to={createPageUrl("Home")}
-                onClick={() => handleNavClick(createPageUrl("Home"))}
-                className="font-display italic text-3xl text-white tracking-wide mx-2"
-              >
-                Vony
-              </Link>
-
-              {/* Right Nav Links */}
-              {bottomRightItems.map((item) => (
+              {[...bottomLeftItems, ...bottomRightItems].map((item) => (
                 <Link
                   key={item.title}
                   to={item.url}
@@ -251,7 +233,7 @@ export default function TopNav({ location }) {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
             className="fixed inset-0 z-40 flex flex-col md:hidden"
-            style={{ top: '40px', backgroundColor: '#4C7FC4' }}
+            style={{ top: '40px', backgroundColor: '#00A86B' }}
             onClick={(e) => {
               // Close menu when tapping the background (not a link)
               if (e.target === e.currentTarget) setMenuOpen(false);
