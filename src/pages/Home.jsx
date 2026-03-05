@@ -12,7 +12,6 @@ import { format, startOfMonth, endOfMonth, isSameMonth, addMonths, subMonths, di
 import { formatMoney } from "@/components/utils/formatMoney";
 import RecordPaymentModal from "@/components/loans/RecordPaymentModal";
 
-import RecentActivity from "../components/dashboard/RecentActivity";
 import PendingLoanOffers from "../components/dashboard/PendingLoanOffers";
 
 // Helper function to sync public profile, moved here to adhere to file structure rules
@@ -802,7 +801,7 @@ export default function Home() {
                       const isPositive = netBalance >= 0;
 
                       return (
-                        <div className="rounded-xl px-4 py-2.5 flex items-center justify-between shadow-sm" style={{ backgroundColor: '#213B75' }}>
+                        <div className="rounded-xl px-4 py-2.5 flex items-center justify-between shadow-sm" style={{ backgroundColor: '#4C7FC4' }}>
                           <p className="text-xs font-semibold text-white font-sans">
                             {format(calendarMonth, 'MMMM')} Balance
                           </p>
@@ -820,33 +819,54 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Main Content Below Hero */}
+          {/* Find Friends Section */}
           <div className="px-4 pt-4 pb-8 sm:px-8 md:px-24 md:pt-4 md:pb-10 lg:px-36" style={{backgroundColor: '#CDE7F8'}}>
-           <div className="max-w-6xl mx-auto">
-            <div className="rounded-2xl p-4 sm:p-6 md:p-10 space-y-6 sm:space-y-8 md:space-y-10" style={{backgroundColor: '#1C4332'}}>
+            <div className="max-w-6xl mx-auto">
+              {pendingOffers.length > 0 && (
+                <div className="mb-4">
+                  <PendingLoanOffers offers={pendingOffers} />
+                </div>
+              )}
 
-            {pendingOffers.length > 0 && (
-              <PendingLoanOffers offers={pendingOffers} />
-            )}
-
-            {/* Activity */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.3 }}
               >
-                <Card className="border-0 rounded-lg overflow-hidden" style={{backgroundColor: '#C2FFDC'}}>
-                  <CardContent className="p-4 md:p-5">
-                    <p className="text-base font-bold text-slate-800 tracking-tight font-sans mb-3">
-                      Activity
-                    </p>
-                    <RecentActivity loans={myLoans} payments={payments} user={user} allUsers={safeAllProfiles} />
-                  </CardContent>
-                </Card>
+                <div className="rounded-2xl px-6 py-10 sm:px-10 sm:py-14 text-center" style={{ backgroundColor: '#213B75' }}>
+                  <p className="text-xl sm:text-2xl font-bold text-white font-sans mb-2 tracking-tight">
+                    Find friends to lend with
+                  </p>
+                  <p className="text-sm text-white/60 font-sans mb-8 max-w-md mx-auto">
+                    Connect with people you trust to start lending and borrowing together
+                  </p>
+                  <div className="flex items-center justify-center gap-3 sm:gap-4">
+                    <Link
+                      to={createPageUrl("Friends")}
+                      className="px-6 py-2.5 rounded-xl bg-white text-sm font-semibold text-[#213B75] hover:bg-white/90 transition-colors font-sans"
+                    >
+                      Search for Friends
+                    </Link>
+                    <button
+                      onClick={() => {
+                        if (navigator.share) {
+                          navigator.share({
+                            title: 'Join me on Vony',
+                            text: 'Lending made simple — join me on Vony!',
+                            url: 'https://lend-with-vony.com',
+                          });
+                        } else {
+                          navigator.clipboard.writeText('https://lend-with-vony.com');
+                        }
+                      }}
+                      className="px-6 py-2.5 rounded-xl bg-white/20 text-sm font-semibold text-white hover:bg-white/30 transition-colors font-sans"
+                    >
+                      Invite Friends
+                    </button>
+                  </div>
+                </div>
               </motion.div>
             </div>
-            </div>
-
           </div>
 
           {/* Record Payment Modal */}
