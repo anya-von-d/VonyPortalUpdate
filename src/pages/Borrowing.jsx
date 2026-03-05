@@ -1131,6 +1131,7 @@ export default function Borrowing() {
                       // Build payment chart data for selected loan
                       let chartData = [];
                       let plannedPaymentAmount = 0;
+                      let recalculatedPayment = 0;
                       if (manageLoanSelected) {
                         const agreement = loanAgreements.find(a => a.loan_id === manageLoanSelected.id);
                         plannedPaymentAmount = manageLoanSelected.payment_amount || 0;
@@ -1142,14 +1143,36 @@ export default function Borrowing() {
                         // Sort payments by date
                         const sortedPayments = [...loanPayments].sort((a, b) => new Date(a.payment_date) - new Date(b.payment_date));
 
+                        // Calculate total paid so far and remaining balance
+                        const totalOwedForLoan = manageLoanSelected.total_amount || manageLoanSelected.amount || 0;
+                        const totalPaidForLoan = sortedPayments.reduce((sum, p) => sum + (p.amount || 0), 0);
+                        const remainingBalance = Math.max(0, totalOwedForLoan - totalPaidForLoan);
+                        const remainingPeriods = Math.max(1, totalPayments - sortedPayments.length);
+
+                        // Recalculated payment = remaining balance / remaining periods
+                        recalculatedPayment = remainingPeriods > 0 && remainingBalance > 0
+                          ? Math.round((remainingBalance / remainingPeriods) * 100) / 100
+                          : 0;
+
                         // Generate chart: each payment period gets a bar
                         for (let i = 0; i < totalPayments; i++) {
                           const payment = sortedPayments[i];
-                          chartData.push({
-                            label: `P${i + 1}`,
-                            amount: payment ? payment.amount : 0,
-                            isPaid: !!payment
-                          });
+                          if (payment) {
+                            chartData.push({
+                              label: `P${i + 1}`,
+                              amount: payment.amount,
+                              isPaid: true,
+                              isProjected: false
+                            });
+                          } else {
+                            // Unpaid future period — show projected recalculated amount
+                            chartData.push({
+                              label: `P${i + 1}`,
+                              amount: recalculatedPayment,
+                              isPaid: false,
+                              isProjected: true
+                            });
+                          }
                         }
 
                         // If there are more actual payments than periods, add them
@@ -1158,7 +1181,8 @@ export default function Borrowing() {
                             chartData.push({
                               label: `P${i + 1}`,
                               amount: sortedPayments[i].amount,
-                              isPaid: true
+                              isPaid: true,
+                              isProjected: false
                             });
                           }
                         }
@@ -1230,7 +1254,7 @@ export default function Borrowing() {
 
                                 const selLender = publicProfiles.find(p => p.user_id === manageLoanSelected.lender_id);
                                 const lenderUsername = selLender?.username || 'user';
-                                const nextPmtAmt = manageLoanSelected.payment_amount || 0;
+                                const nextPmtAmt = recalculatedPayment > 0 ? recalculatedPayment : (manageLoanSelected.payment_amount || 0);
 
                                 let nextPmtDate = null;
                                 let daysUntil = null;
@@ -1278,9 +1302,12 @@ export default function Borrowing() {
                                           {paidPct >= 100 && (
                                             <circle cx={cx} cy={cy} r={(outerR + innerR) / 2} fill="none" stroke="#00A86B" strokeWidth={outerR - innerR} />
                                           )}
-                                          {/* Center percentage */}
-                                          <text x={cx} y={cy + 1} textAnchor="middle" dominantBaseline="middle" className="text-[15px] font-bold fill-[#1C4332]" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                                          {/* Center percentage + repaid */}
+                                          <text x={cx} y={cy - 5} textAnchor="middle" dominantBaseline="middle" className="text-[15px] font-bold fill-[#1C4332]" style={{ fontFamily: 'Outfit, sans-serif' }}>
                                             {Math.round(paidPct)}%
+                                          </text>
+                                          <text x={cx} y={cy + 10} textAnchor="middle" dominantBaseline="middle" className="text-[8px] font-medium fill-[#1C4332]/60" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                                            repaid
                                           </text>
                                         </svg>
                                         <p className="text-[12px] font-semibold text-[#C2FFDC] font-sans mt-1.5">
@@ -1321,8 +1348,8 @@ export default function Borrowing() {
                               {manageLoanSelected && manageLoanSelected.status !== 'cancelled' && (
                                 <div className="flex items-start justify-center gap-5 py-1">
                                   <button onClick={() => handleMakePayment(manageLoanSelected)} className="flex flex-col items-center gap-1.5 group cursor-pointer">
-                                    <div className="w-12 h-12 rounded-full bg-[#0F2B1F] shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
-                                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1C4332" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <div className="w-12 h-12 rounded-full bg-[#C2FFDC] shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
+                                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00A86B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                                         <line x1="12" y1="1" x2="12" y2="23"></line>
                                         <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
                                       </svg>
@@ -1330,8 +1357,8 @@ export default function Borrowing() {
                                     <p className="text-[10px] font-semibold text-[#C2FFDC] text-center leading-tight font-sans">Record<br/>Payment</p>
                                   </button>
                                   <button onClick={() => handleEditLoan(manageLoanSelected)} className="flex flex-col items-center gap-1.5 group cursor-pointer">
-                                    <div className="w-12 h-12 rounded-full bg-[#0F2B1F] shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
-                                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1C4332" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <div className="w-12 h-12 rounded-full bg-[#C2FFDC] shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
+                                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00A86B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                                         <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                                       </svg>
@@ -1339,8 +1366,8 @@ export default function Borrowing() {
                                     <p className="text-[10px] font-semibold text-[#C2FFDC] text-center leading-tight font-sans">Request<br/>Loan Edit</p>
                                   </button>
                                   <button onClick={() => handleCancelLoan(manageLoanSelected)} className="flex flex-col items-center gap-1.5 group cursor-pointer">
-                                    <div className="w-12 h-12 rounded-full bg-[#0F2B1F] shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
-                                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1C4332" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <div className="w-12 h-12 rounded-full bg-[#C2FFDC] shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
+                                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00A86B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                                         <circle cx="12" cy="12" r="10"></circle>
                                         <line x1="15" y1="9" x2="9" y2="15"></line>
                                         <line x1="9" y1="9" x2="15" y2="15"></line>
@@ -1352,7 +1379,7 @@ export default function Borrowing() {
                               )}
 
                               <div className="bg-[#1C4332] rounded-xl px-4 py-3 shadow-sm">
-                                <p className="text-sm font-bold text-[#C2FFDC] mb-2.5 tracking-tight font-serif">
+                                <p className="text-sm font-bold text-[#C2FFDC] mb-5 tracking-tight font-serif">
                                   Payment History
                                 </p>
                                 {!manageLoanSelected ? (
@@ -1388,27 +1415,29 @@ export default function Borrowing() {
                                         )}
                                         {chartData.map((d, i) => {
                                           const barHeight = maxChartVal > 0 ? (d.amount / maxChartVal) * chartHeight : 0;
-                                          const isOver = d.amount >= plannedPaymentAmount && plannedPaymentAmount > 0;
+                                          const isOver = d.isPaid && d.amount >= plannedPaymentAmount && plannedPaymentAmount > 0;
                                           return (
                                             <div key={i} className="flex flex-col items-center flex-1" style={{ maxWidth: 40 }}>
                                               <div className="w-full flex justify-center">
                                                 <div
                                                   className={`rounded-t-sm transition-all ${
-                                                    d.amount === 0
-                                                      ? 'bg-[#C2FFDC]/50'
-                                                      : isOver
-                                                        ? 'bg-[#00A86B]'
-                                                        : 'bg-[#00A86B]/60'
+                                                    d.isProjected
+                                                      ? 'bg-[#C2FFDC]/30 border border-dashed border-[#C2FFDC]/50'
+                                                      : d.amount === 0
+                                                        ? 'bg-[#C2FFDC]/50'
+                                                        : isOver
+                                                          ? 'bg-[#00A86B]'
+                                                          : 'bg-[#00A86B]/60'
                                                   }`}
                                                   style={{
                                                     height: Math.max(barHeight, d.amount > 0 ? 4 : 2),
                                                     width: '70%',
                                                     minWidth: 8
                                                   }}
-                                                  title={`${d.label}: $${d.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}`}
+                                                  title={`${d.label}: $${d.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}${d.isProjected ? ' (projected)' : ''}`}
                                                 />
                                               </div>
-                                              <p className="text-[8px] text-[#00A86B] font-sans mt-1 leading-none">{d.label}</p>
+                                              <p className={`text-[8px] font-sans mt-1 leading-none ${d.isProjected ? 'text-[#C2FFDC]/40' : 'text-[#00A86B]'}`}>{d.label}</p>
                                             </div>
                                           );
                                         })}
@@ -1419,6 +1448,10 @@ export default function Borrowing() {
                                       <div className="flex items-center gap-1">
                                         <div className="w-2.5 h-2.5 rounded-sm bg-[#00A86B]" />
                                         <span className="text-[9px] text-[#00A86B] font-sans">Paid</span>
+                                      </div>
+                                      <div className="flex items-center gap-1">
+                                        <div className="w-2.5 h-2.5 rounded-sm bg-[#C2FFDC]/30 border border-dashed border-[#C2FFDC]/50" />
+                                        <span className="text-[9px] text-[#C2FFDC]/50 font-sans">Projected</span>
                                       </div>
                                       <div className="flex items-center gap-1">
                                         <div className="w-4 h-0 border-t-2 border-dashed border-[#C2FFDC]/40" />
@@ -1480,8 +1513,8 @@ export default function Borrowing() {
                                       const agreement = loanAgreements.find(a => a.loan_id === manageLoanSelected.id);
                                       if (agreement) openDocPopup('promissory', agreement);
                                     }} className="flex flex-col items-center gap-1.5 group cursor-pointer">
-                                      <div className="w-12 h-12 rounded-full bg-[#0F2B1F] shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow relative">
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1C4332" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                                      <div className="w-12 h-12 rounded-full bg-[#C2FFDC] shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow relative">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00A86B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                                           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                                           <polyline points="14 2 14 8 20 8"></polyline>
                                           <line x1="16" y1="13" x2="8" y2="13"></line>
@@ -1506,8 +1539,8 @@ export default function Borrowing() {
                                       const agreement = loanAgreements.find(a => a.loan_id === manageLoanSelected.id);
                                       if (agreement) openDocPopup('amortization', agreement);
                                     }} className="flex flex-col items-center gap-1.5 group cursor-pointer">
-                                      <div className="w-12 h-12 rounded-full bg-[#0F2B1F] shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow relative">
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1C4332" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                                      <div className="w-12 h-12 rounded-full bg-[#C2FFDC] shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow relative">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00A86B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                                           <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                                           <line x1="16" y1="2" x2="16" y2="6"></line>
                                           <line x1="8" y1="2" x2="8" y2="6"></line>
@@ -1531,8 +1564,8 @@ export default function Borrowing() {
                                       const agreement = loanAgreements.find(a => a.loan_id === manageLoanSelected.id);
                                       if (agreement) openDocPopup('summary', agreement);
                                     }} className="flex flex-col items-center gap-1.5 group cursor-pointer">
-                                      <div className="w-12 h-12 rounded-full bg-[#0F2B1F] shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1C4332" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                                      <div className="w-12 h-12 rounded-full bg-[#C2FFDC] shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00A86B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                                           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                                         </svg>
                                       </div>
@@ -1549,7 +1582,7 @@ export default function Borrowing() {
                                       const amount = manageLoanSelected.amount || 0;
                                       const totalAmount = manageLoanSelected.total_amount || amount;
                                       const amountPaid = manageLoanSelected.amount_paid || 0;
-                                      const paymentAmount = manageLoanSelected.payment_amount || 0;
+                                      const paymentAmount = recalculatedPayment > 0 ? recalculatedPayment : (manageLoanSelected.payment_amount || 0);
                                       const repaymentPeriod = manageLoanSelected.repayment_period || 0;
                                       const paymentFrequency = manageLoanSelected.payment_frequency || 'monthly';
                                       const lender = publicProfiles.find(p => p.user_id === manageLoanSelected.lender_id);
@@ -1620,6 +1653,7 @@ export default function Borrowing() {
 
                                       /* Determine status for each scheduled payment */
                                       const paymentAmt = manageLoanSelected.payment_amount || 0;
+                                      const upcomingAmt = recalculatedPayment > 0 ? recalculatedPayment : paymentAmt;
                                       let firstUnpaidFound = false;
 
                                       const paymentRows = schedule.map((s, idx) => {
@@ -1642,7 +1676,7 @@ export default function Borrowing() {
                                           ? sortedConfirmed[idx]?.amount || paymentAmt
                                           : status === 'pending'
                                             ? sortedPending[idx - sortedConfirmed.length]?.amount || paymentAmt
-                                            : paymentAmt;
+                                            : upcomingAmt;
 
                                         return { number: s.number, date: s.date, amount: displayAmount, status };
                                       });
@@ -1768,34 +1802,35 @@ export default function Borrowing() {
                                       activities.sort((a, b) => b.timestamp - a.timestamp);
 
                                       const getIcon = (type) => {
+                                        const strokeColor = type === 'cancellation' ? '#EF4444' : '#00A86B';
                                         switch (type) {
                                           case 'created':
                                             return (
-                                              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="#00A86B" strokeWidth={2}>
+                                              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke={strokeColor} strokeWidth={2}>
                                                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
                                               </svg>
                                             );
                                           case 'signature':
                                             return (
-                                              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="#1C4332" strokeWidth={2}>
+                                              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke={strokeColor} strokeWidth={2}>
                                                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                                               </svg>
                                             );
                                           case 'payment':
                                             return (
-                                              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="#00A86B" strokeWidth={2}>
+                                              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke={strokeColor} strokeWidth={2}>
                                                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
                                               </svg>
                                             );
                                           case 'cancellation':
                                             return (
-                                              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="#EF4444" strokeWidth={2}>
+                                              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke={strokeColor} strokeWidth={2}>
                                                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                                               </svg>
                                             );
                                           case 'completion':
                                             return (
-                                              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="#00A86B" strokeWidth={2}>
+                                              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke={strokeColor} strokeWidth={2}>
                                                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                                               </svg>
                                             );
@@ -1806,12 +1841,8 @@ export default function Borrowing() {
 
                                       const getDotColor = (type) => {
                                         switch (type) {
-                                          case 'created': return 'bg-[#C2FFDC] border-[#00A86B]';
-                                          case 'signature': return 'bg-[#F0FFF4] border-[#1C4332]';
-                                          case 'payment': return 'bg-[#C2FFDC] border-[#00A86B]';
                                           case 'cancellation': return 'bg-red-50 border-red-400';
-                                          case 'completion': return 'bg-[#C2FFDC] border-[#00A86B]';
-                                          default: return 'bg-gray-100 border-gray-300';
+                                          default: return 'bg-[#C2FFDC] border-[#00A86B]';
                                         }
                                       };
 
