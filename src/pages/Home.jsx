@@ -422,7 +422,7 @@ export default function Home() {
     return (
         <div className="min-h-screen" style={{backgroundColor: '#0F2B1F'}}>
           {/* Hero Section */}
-          <div className="px-4 pt-10 pb-8 sm:px-8 md:px-24 md:pt-14 md:pb-10 lg:px-36" style={{backgroundColor: '#0F2B1F'}}>
+          <div className="px-4 pt-14 pb-10 sm:px-8 md:px-24 md:pt-20 md:pb-14 lg:px-36" style={{backgroundColor: '#0F2B1F'}}>
             <div className="max-w-6xl mx-auto">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -1110,28 +1110,6 @@ export default function Home() {
                       );
                     })()}
 
-                    {/* View Lending / Borrowing Page */}
-                    <div className="flex items-center justify-center gap-8 py-2">
-                      <Link to={createPageUrl("Lending")} className="flex flex-col items-center gap-1.5 group">
-                        <div className="w-11 h-11 rounded-full bg-[#1C4332] shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
-                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6AD478" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                            <line x1="12" y1="1" x2="12" y2="23"></line>
-                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                          </svg>
-                        </div>
-                        <p className="text-[10px] font-semibold text-[#C2FFDC] text-center leading-tight font-sans">View Lending<br/>Page</p>
-                      </Link>
-                      <Link to={createPageUrl("Borrowing")} className="flex flex-col items-center gap-1.5 group">
-                        <div className="w-11 h-11 rounded-full bg-[#1C4332] shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
-                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6AD478" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                          </svg>
-                        </div>
-                        <p className="text-[10px] font-semibold text-[#C2FFDC] text-center leading-tight font-sans">View Borrowing<br/>Page</p>
-                      </Link>
-                    </div>
-
                     {/* Upcoming & Overdue Payments — shared data computation */}
                     {(() => {
                       const safePaymentsUp = Array.isArray(payments) ? payments : [];
@@ -1249,6 +1227,28 @@ export default function Home() {
                           </div>
                       );
                     })()}
+
+                    {/* View Lending / Borrowing Page */}
+                    <div className="flex items-center justify-center gap-8 py-2">
+                      <Link to={createPageUrl("Lending")} className="flex flex-col items-center gap-1.5 group">
+                        <div className="w-11 h-11 rounded-full bg-[#1C4332] shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6AD478" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                          </svg>
+                        </div>
+                        <p className="text-[10px] font-semibold text-[#C2FFDC] text-center leading-tight font-sans">View Lending<br/>Page</p>
+                      </Link>
+                      <Link to={createPageUrl("Borrowing")} className="flex flex-col items-center gap-1.5 group">
+                        <div className="w-11 h-11 rounded-full bg-[#1C4332] shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6AD478" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                          </svg>
+                        </div>
+                        <p className="text-[10px] font-semibold text-[#C2FFDC] text-center leading-tight font-sans">View Borrowing<br/>Page</p>
+                      </Link>
+                    </div>
 
                     {/* Recent Activity Box */}
                     <div className="rounded-xl px-4 py-3 shadow-sm bg-[#1C4332]">
