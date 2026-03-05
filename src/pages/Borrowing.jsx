@@ -1517,60 +1517,41 @@ export default function Borrowing() {
                                     })()}
                                   </div>
 
-                                  {/* Loan Terms Box */}
+                                  {/* Loan Overview Box — horizontal row style */}
                                   <div className="bg-white rounded-xl px-4 py-3 shadow-sm relative">
-                                    <p className="text-sm font-bold text-[#1C4332] mb-2.5 tracking-tight font-sans">
-                                      Loan Terms
-                                    </p>
-                                    {(() => {
-                                      const paymentAmount = manageLoanSelected.payment_amount || 0;
-                                      const repaymentPeriod = manageLoanSelected.repayment_period || 0;
-
-                                      const termRows = [
-                                        { label: 'Payment Amount', value: `$${paymentAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` },
-                                        { label: 'Number of Payments', value: `${repaymentPeriod}` },
-                                      ];
-
-                                      return (
-                                        <div className="divide-y divide-[#C2FFDC]">
-                                          {termRows.map((row, idx) => (
-                                            <div key={idx} className="flex items-center justify-between py-2 first:pt-0 last:pb-0">
-                                              <p className="text-[11px] text-[#00A86B] font-medium font-sans">{row.label}</p>
-                                              <p className="text-[12px] font-semibold text-[#1C4332] font-sans text-right">{row.value}</p>
-                                            </div>
-                                          ))}
-                                        </div>
-                                      );
-                                    })()}
-                                  </div>
-
-                                  {/* Loan Information Box */}
-                                  <div className="bg-white rounded-xl px-4 py-3 shadow-sm relative">
-                                    <p className="text-sm font-bold text-[#1C4332] mb-2.5 tracking-tight font-sans">
-                                      Loan Information
-                                    </p>
                                     {(() => {
                                       const amount = manageLoanSelected.amount || 0;
-                                      const purpose = manageLoanSelected.purpose || 'personal use';
                                       const totalAmount = manageLoanSelected.total_amount || amount;
                                       const amountPaid = manageLoanSelected.amount_paid || 0;
-                                      const remainingBal = totalAmount - amountPaid;
-                                      const status = manageLoanSelected.status || 'active';
+                                      const paymentAmount = manageLoanSelected.payment_amount || 0;
+                                      const repaymentPeriod = manageLoanSelected.repayment_period || 0;
+                                      const paymentFrequency = manageLoanSelected.payment_frequency || 'monthly';
+                                      const lender = publicProfiles.find(p => p.user_id === manageLoanSelected.lender_id);
+                                      const lenderUsername = lender?.username || 'user';
 
-                                      const infoRows = [
-                                        { label: 'Total Owed', value: `$${totalAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` },
-                                        { label: 'Amount Paid', value: `$${amountPaid.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` },
-                                        { label: 'Remaining Balance', value: `$${remainingBal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` },
-                                        { label: 'Purpose', value: purpose },
-                                        { label: 'Status', value: status.charAt(0).toUpperCase() + status.slice(1) },
+                                      /* Calculate payments made */
+                                      const loanPmts = allPayments.filter(p => p.loan_id === manageLoanSelected.id && (p.status === 'confirmed' || p.status === 'pending_confirmation'));
+                                      const paymentsMade = loanPmts.length;
+
+                                      /* Frequency label */
+                                      const freqLabel = paymentFrequency.charAt(0).toUpperCase() + paymentFrequency.slice(1);
+
+                                      const items = [
+                                        { label: 'Total Owed', value: `$${totalAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, sub: 'with interest' },
+                                        { label: 'Amount Paid', value: `$${amountPaid.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, sub: null },
+                                        { label: 'Payments Made', value: `${paymentsMade}/${repaymentPeriod}`, sub: 'payments' },
+                                        { label: `${freqLabel} Payments`, value: `$${paymentAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, sub: `to @${lenderUsername}` },
                                       ];
 
                                       return (
-                                        <div className="divide-y divide-[#C2FFDC]">
-                                          {infoRows.map((row, idx) => (
-                                            <div key={idx} className="flex items-center justify-between py-2 first:pt-0 last:pb-0">
-                                              <p className="text-[11px] text-[#00A86B] font-medium font-sans">{row.label}</p>
-                                              <p className="text-[12px] font-semibold text-[#1C4332] font-sans text-right">{row.value}</p>
+                                        <div className="grid grid-cols-4 gap-2">
+                                          {items.map((item, idx) => (
+                                            <div key={idx} className="text-center">
+                                              <p className="text-[10px] text-[#00A86B] font-medium font-sans mb-0.5">{item.label}</p>
+                                              <p className="text-[13px] font-bold text-[#1C4332] font-sans">{item.value}</p>
+                                              {item.sub && (
+                                                <p className="text-[9px] text-[#00A86B]/70 font-sans mt-0.5">{item.sub}</p>
+                                              )}
                                             </div>
                                           ))}
                                         </div>
