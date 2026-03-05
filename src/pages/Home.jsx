@@ -180,6 +180,7 @@ export default function Home() {
   const [quickPayAmount, setQuickPayAmount] = useState('');
   const [quickPayMethod, setQuickPayMethod] = useState('');
   const [quickPayLoanId, setQuickPayLoanId] = useState('');
+  const [quickPayPerson, setQuickPayPerson] = useState('');
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [selectedLoan, setSelectedLoan] = useState(null);
 
@@ -650,81 +651,120 @@ export default function Home() {
                     </div>
 
                     {/* Record Payment Box */}
-                    {myLoans.filter(l => l && l.status === 'active').length > 0 && (
-                      <div className="rounded-xl px-4 py-3 shadow-sm mt-2 mb-2 lg:mt-0 lg:mb-0" style={{ backgroundColor: '#4C7FC4' }}>
-                        <p className="text-sm font-bold text-white mb-2 tracking-tight font-sans">
-                          Record Payment
-                        </p>
-                        <div className="flex flex-wrap items-center gap-2 text-xs text-white">
-                          <span>Record payment of</span>
-                          <span className="font-medium">$</span>
-                          <Input
-                            type="number"
-                            step="0.01"
-                            min="0.01"
-                            placeholder=""
-                            value={quickPayAmount}
-                            onChange={(e) => setQuickPayAmount(e.target.value)}
-                            className="w-20 h-7 px-2 bg-white/20 border-0 text-xs inline-flex rounded-md text-white placeholder:text-white/50"
-                            style={{ MozAppearance: 'textfield' }}
-                          />
-                          <span>via</span>
-                          <Select value={quickPayMethod} onValueChange={setQuickPayMethod}>
-                            <SelectTrigger className="w-auto h-7 px-2 bg-white/20 border-0 text-xs inline-flex rounded-md text-white">
-                              <SelectValue placeholder="select method" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="venmo">Venmo</SelectItem>
-                              <SelectItem value="zelle">Zelle</SelectItem>
-                              <SelectItem value="cashapp">Cash App</SelectItem>
-                              <SelectItem value="paypal">PayPal</SelectItem>
-                              <SelectItem value="cash">Cash</SelectItem>
-                              <SelectItem value="other">Other</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <span>for</span>
-                          <Select value={quickPayLoanId} onValueChange={setQuickPayLoanId}>
-                            <SelectTrigger className="w-auto h-7 px-2 bg-white/20 border-0 text-xs inline-flex min-w-[120px] rounded-md text-white">
-                              <SelectValue placeholder="select loan" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {myLoans.filter(l => l && l.status === 'active').map((loan) => {
-                                const isLender = loan.lender_id === user.id;
-                                const otherUserId = isLender ? loan.borrower_id : loan.lender_id;
-                                const otherUser = safeAllProfiles.find(p => p.user_id === otherUserId);
-                                return (
-                                  <SelectItem key={loan.id} value={loan.id}>
-                                    @{otherUser?.username || 'user'} - {loan.purpose || `$${loan.amount}`}
+                    {myLoans.filter(l => l && l.status === 'active').length > 0 && (() => {
+                      const activeLoansAll = myLoans.filter(l => l && l.status === 'active');
+
+                      // Build person list: "Yourself" first (if you have borrowing loans), then people who owe you (lending loans)
+                      const personOptions = [];
+                      const borrowingLoansExist = activeLoansAll.some(l => l.borrower_id === user.id);
+                      if (borrowingLoansExist) {
+                        personOptions.push({ userId: 'self', username: 'Yourself', fullName: user.full_name });
+                      }
+                      // People who owe you (you are lender)
+                      const lendingLoansActive = activeLoansAll.filter(l => l.lender_id === user.id);
+                      const borrowerIds = [...new Set(lendingLoansActive.map(l => l.borrower_id))];
+                      borrowerIds.forEach(bId => {
+                        const profile = safeAllProfiles.find(p => p.user_id === bId);
+                        if (!personOptions.find(p => p.userId === bId)) {
+                          personOptions.push({ userId: bId, username: profile?.username || 'user', fullName: profile?.full_name || 'Unknown' });
+                        }
+                      });
+
+                      // Filter loans based on person selection
+                      let filteredLoans = activeLoansAll;
+                      if (quickPayPerson === 'self') {
+                        filteredLoans = activeLoansAll.filter(l => l.borrower_id === user.id);
+                      } else if (quickPayPerson) {
+                        filteredLoans = activeLoansAll.filter(l => l.lender_id === user.id && l.borrower_id === quickPayPerson);
+                      }
+
+                      // Auto-select loan if only one option
+                      const shouldAutoFill = filteredLoans.length === 1 && quickPayLoanId !== filteredLoans[0].id;
+                      if (shouldAutoFill) {
+                        setTimeout(() => setQuickPayLoanId(filteredLoans[0].id), 0);
+                      }
+
+                      return (
+                        <div className="rounded-xl px-4 py-3 shadow-sm mt-2 mb-2 lg:mt-0 lg:mb-0" style={{ backgroundColor: '#4C7FC4' }}>
+                          <p className="text-sm font-bold text-white mb-2 tracking-tight font-sans">
+                            Record Payment
+                          </p>
+                          <div className="flex flex-wrap items-center gap-2 text-xs text-white">
+                            <span>Record payment of</span>
+                            <span className="font-medium">$</span>
+                            <Input
+                              type="number"
+                              step="0.01"
+                              min="0.01"
+                              placeholder=""
+                              value={quickPayAmount}
+                              onChange={(e) => setQuickPayAmount(e.target.value)}
+                              className="w-20 h-7 px-2 bg-white/20 border-0 text-xs inline-flex rounded-md text-white placeholder:text-white/50"
+                              style={{ MozAppearance: 'textfield' }}
+                            />
+                            <span>from</span>
+                            <Select
+                              value={quickPayPerson}
+                              onValueChange={(val) => {
+                                setQuickPayPerson(val);
+                                setQuickPayLoanId('');
+                              }}
+                            >
+                              <SelectTrigger className="w-auto h-7 px-2 bg-white/20 border-0 text-xs inline-flex rounded-md text-white">
+                                <SelectValue placeholder="select person" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {personOptions.map((person) => (
+                                  <SelectItem key={person.userId} value={person.userId}>
+                                    {person.userId === 'self' ? 'Yourself' : `@${person.username}`}
                                   </SelectItem>
-                                );
-                              })}
-                            </SelectContent>
-                          </Select>
-                          <Button
-                            type="button"
-                            onClick={() => {
-                              const loan = myLoans.find(l => l.id === quickPayLoanId);
-                              if (loan) {
-                                setSelectedLoan({
-                                  ...loan,
-                                  _prefillAmount: quickPayAmount,
-                                  _prefillMethod: quickPayMethod,
-                                });
-                                setShowPaymentModal(true);
-                              }
-                            }}
-                            disabled={!quickPayLoanId || !quickPayAmount}
-                            className={`h-7 px-3 rounded-md text-xs font-semibold border-0 transition-all ${
-                              !quickPayLoanId || !quickPayAmount
-                                ? 'bg-white/30 text-white/70 cursor-not-allowed'
-                                : 'bg-white text-[#4C7FC4] hover:bg-white/90'
-                            }`}
-                          >
-                            Submit
-                          </Button>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <span>for</span>
+                            <Select value={quickPayLoanId} onValueChange={setQuickPayLoanId}>
+                              <SelectTrigger className="w-auto h-7 px-2 bg-white/20 border-0 text-xs inline-flex min-w-[120px] rounded-md text-white">
+                                <SelectValue placeholder="select loan" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {filteredLoans.map((loan) => {
+                                  const isLender = loan.lender_id === user.id;
+                                  const otherUserId = isLender ? loan.borrower_id : loan.lender_id;
+                                  const otherUser = safeAllProfiles.find(p => p.user_id === otherUserId);
+                                  return (
+                                    <SelectItem key={loan.id} value={loan.id}>
+                                      @{otherUser?.username || 'user'} - {loan.purpose || `$${loan.amount}`}
+                                    </SelectItem>
+                                  );
+                                })}
+                              </SelectContent>
+                            </Select>
+                            <Button
+                              type="button"
+                              onClick={() => {
+                                const loan = myLoans.find(l => l.id === quickPayLoanId);
+                                if (loan) {
+                                  setSelectedLoan({
+                                    ...loan,
+                                    _prefillAmount: quickPayAmount,
+                                    _prefillMethod: quickPayMethod,
+                                  });
+                                  setShowPaymentModal(true);
+                                }
+                              }}
+                              disabled={!quickPayLoanId || !quickPayAmount}
+                              className={`h-7 px-3 rounded-md text-xs font-semibold border-0 transition-all ${
+                                !quickPayLoanId || !quickPayAmount
+                                  ? 'bg-white/30 text-white/70 cursor-not-allowed'
+                                  : 'bg-white text-[#4C7FC4] hover:bg-white/90'
+                              }`}
+                            >
+                              Submit
+                            </Button>
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      );
+                    })()}
                   </div>
 
                   {/* Right Column: Updates + Monthly Overview */}
@@ -1050,6 +1090,7 @@ export default function Home() {
                 setQuickPayAmount('');
                 setQuickPayMethod('');
                 setQuickPayLoanId('');
+                setQuickPayPerson('');
               }}
               onPaymentComplete={() => {
                 setShowPaymentModal(false);
@@ -1057,6 +1098,7 @@ export default function Home() {
                 setQuickPayAmount('');
                 setQuickPayMethod('');
                 setQuickPayLoanId('');
+                setQuickPayPerson('');
                 loadData();
               }}
               isLender={selectedLoan.lender_id === user.id}

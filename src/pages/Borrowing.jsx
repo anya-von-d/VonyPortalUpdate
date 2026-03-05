@@ -314,6 +314,13 @@ export default function Borrowing() {
     ? activeLoans.filter(l => l.lender_id === quickPayPerson)
     : activeLoans;
 
+  // Auto-select loan if only one matches the person filter
+  useEffect(() => {
+    if (quickPayPerson && filteredLoansForQuickPay.length === 1) {
+      setQuickPayLoanId(filteredLoansForQuickPay[0].id);
+    }
+  }, [quickPayPerson, filteredLoansForQuickPay.length]);
+
   // Generate amortization schedule
   const generateAmortizationSchedule = (agreement) => {
     const schedule = [];
@@ -865,18 +872,23 @@ export default function Borrowing() {
                         className="w-24 h-8 px-1 inline-flex border-0 bg-transparent text-[#1C4332] placeholder:text-[#1C4332] focus-visible:ring-0 focus-visible:ring-offset-0"
                         style={{ MozAppearance: 'textfield' }}
                       />
-                      <span>via</span>
-                      <Select value={quickPayMethod} onValueChange={setQuickPayMethod}>
+                      <span>to</span>
+                      <Select
+                        value={quickPayPerson}
+                        onValueChange={(val) => {
+                          setQuickPayPerson(val);
+                          setQuickPayLoanId('');
+                        }}
+                      >
                         <SelectTrigger className="w-auto h-8 px-2 inline-flex border-0 bg-transparent focus:ring-0 focus:ring-offset-0">
-                          <SelectValue placeholder="select method" />
+                          <SelectValue placeholder="select person" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="venmo">Venmo</SelectItem>
-                          <SelectItem value="zelle">Zelle</SelectItem>
-                          <SelectItem value="cashapp">Cash App</SelectItem>
-                          <SelectItem value="paypal">PayPal</SelectItem>
-                          <SelectItem value="cash">Cash</SelectItem>
-                          <SelectItem value="other">Other</SelectItem>
+                          {uniqueLenders.map((lender) => (
+                            <SelectItem key={lender.userId} value={lender.userId}>
+                              @{lender.username || 'user'}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                       <span>for</span>
@@ -893,6 +905,20 @@ export default function Borrowing() {
                               </SelectItem>
                             );
                           })}
+                        </SelectContent>
+                      </Select>
+                      <span>via</span>
+                      <Select value={quickPayMethod} onValueChange={setQuickPayMethod}>
+                        <SelectTrigger className="w-auto h-8 px-2 inline-flex border-0 bg-transparent focus:ring-0 focus:ring-offset-0">
+                          <SelectValue placeholder="select method" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="venmo">Venmo</SelectItem>
+                          <SelectItem value="zelle">Zelle</SelectItem>
+                          <SelectItem value="cashapp">Cash App</SelectItem>
+                          <SelectItem value="paypal">PayPal</SelectItem>
+                          <SelectItem value="cash">Cash</SelectItem>
+                          <SelectItem value="other">Other</SelectItem>
                         </SelectContent>
                       </Select>
                       <Button
