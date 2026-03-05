@@ -1723,8 +1723,15 @@ export default function Borrowing() {
                                           <line x1="16" y1="17" x2="8" y2="17"></line>
                                           <polyline points="10 9 9 9 8 9"></polyline>
                                         </svg>
-                                        <div className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-[#00A86B] flex items-center justify-center">
-                                          <span className="text-[9px] font-bold text-white leading-none">i</span>
+                                        <div className="absolute -top-0.5 -right-0.5 group/pn" onClick={(e) => e.stopPropagation()}>
+                                          <div className="w-4 h-4 rounded-full bg-[#00A86B] flex items-center justify-center cursor-help">
+                                            <span className="text-[9px] font-bold text-white leading-none">i</span>
+                                          </div>
+                                          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2.5 py-1.5 bg-[#1C4332] rounded-lg shadow-lg opacity-0 group-hover/pn:opacity-100 pointer-events-none group-hover/pn:pointer-events-auto transition-opacity whitespace-nowrap z-50">
+                                            <p className="text-[10px] font-bold text-[#6AD478] mb-0.5">Promissory Note</p>
+                                            <p className="text-[9px] text-[#C2FFDC]/80 leading-snug">A legal document where the borrower<br/>promises to repay the lender.</p>
+                                            <div className="absolute top-full left-1/2 -translate-x-1/2 w-2 h-2 bg-[#1C4332] rotate-45 -mt-1"></div>
+                                          </div>
                                         </div>
                                       </div>
                                       <p className="text-[10px] font-semibold text-white text-center leading-tight font-sans">Promissory<br/>Note</p>
@@ -1741,8 +1748,15 @@ export default function Borrowing() {
                                           <line x1="8" y1="2" x2="8" y2="6"></line>
                                           <line x1="3" y1="10" x2="21" y2="10"></line>
                                         </svg>
-                                        <div className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-[#00A86B] flex items-center justify-center">
-                                          <span className="text-[9px] font-bold text-white leading-none">i</span>
+                                        <div className="absolute -top-0.5 -right-0.5 group/as" onClick={(e) => e.stopPropagation()}>
+                                          <div className="w-4 h-4 rounded-full bg-[#00A86B] flex items-center justify-center cursor-help">
+                                            <span className="text-[9px] font-bold text-white leading-none">i</span>
+                                          </div>
+                                          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2.5 py-1.5 bg-[#1C4332] rounded-lg shadow-lg opacity-0 group-hover/as:opacity-100 pointer-events-none group-hover/as:pointer-events-auto transition-opacity whitespace-nowrap z-50">
+                                            <p className="text-[10px] font-bold text-[#6AD478] mb-0.5">Amortization Schedule</p>
+                                            <p className="text-[9px] text-[#C2FFDC]/80 leading-snug">A table showing each payment broken<br/>down into principal and interest.</p>
+                                            <div className="absolute top-full left-1/2 -translate-x-1/2 w-2 h-2 bg-[#1C4332] rotate-45 -mt-1"></div>
+                                          </div>
                                         </div>
                                       </div>
                                       <p className="text-[10px] font-semibold text-white text-center leading-tight font-sans">Amortization<br/>Schedule</p>
