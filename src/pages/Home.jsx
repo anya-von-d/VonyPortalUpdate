@@ -511,9 +511,9 @@ export default function Home() {
                 )}
 
                 {/* Two-Column Layout: Left = Overviews stacked, Right = Updates + Activity */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-4 w-full">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-5 w-full">
                   {/* Left Column: Lending Overview + Borrowing Overview stacked */}
-                  <div className="flex flex-col gap-3 md:gap-4">
+                  <div className="flex flex-col gap-4 md:gap-5">
                     {/* Lending Overview Box */}
                     <div className="rounded-xl px-4 py-3 shadow-sm bg-[#1C4332]">
                       <p className="text-sm font-bold text-[#C2FFDC] mb-2 tracking-tight font-serif">
@@ -958,7 +958,7 @@ export default function Home() {
                   </div>
 
                   {/* Right Column: Updates */}
-                  <div className="flex flex-col gap-3 md:gap-4">
+                  <div className="flex flex-col gap-4 md:gap-5">
                     {/* Combined Requests + Notifications Carousel */}
                     {(() => {
                       const today = new Date();
