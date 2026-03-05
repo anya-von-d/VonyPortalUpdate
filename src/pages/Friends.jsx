@@ -16,24 +16,20 @@ import {
   Check,
   Trash2,
   CheckCircle,
-  XCircle
+  XCircle,
+  UserMinus
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Friends() {
   const { user: authUser, userProfile } = useAuth();
   const user = userProfile ? { ...userProfile, id: authUser?.id } : null;
-  const [searchParams] = useSearchParams();
 
-  // Check URL for tab parameter
-  const tabFromUrl = searchParams.get('tab');
-  const [activeTab, setActiveTab] = useState(tabFromUrl === 'add' ? 'add' : 'friends');
   const [friends, setFriends] = useState([]);
   const [sentRequests, setSentRequests] = useState([]);
   const [receivedRequests, setReceivedRequests] = useState([]);
   const [profiles, setProfiles] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [editMode, setEditMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [processingId, setProcessingId] = useState(null);
@@ -45,7 +41,7 @@ export default function Friends() {
   }, [user?.id]);
 
   useEffect(() => {
-    if (searchQuery.trim() && activeTab === 'add') {
+    if (searchQuery.trim()) {
       searchUsers();
     } else {
       setSearchResults([]);
@@ -100,9 +96,6 @@ export default function Friends() {
       );
       if (isFriend) return false;
 
-      const requestSent = sentRequests.some(r => r.friend_id === profile.user_id);
-      if (requestSent) return false;
-
       const usernameMatch = profile.username?.toLowerCase().includes(query);
       const nameMatch = profile.full_name?.toLowerCase().includes(query);
       return usernameMatch || nameMatch;
@@ -113,6 +106,10 @@ export default function Friends() {
 
   const getReceivedRequestFrom = (userId) => {
     return receivedRequests.find(r => r.user_id === userId);
+  };
+
+  const getSentRequestTo = (userId) => {
+    return sentRequests.find(r => r.friend_id === userId);
   };
 
   const handleAcceptRequestFromSearch = async (friendshipId) => {
@@ -138,8 +135,6 @@ export default function Friends() {
     return profiles.find(p => p.user_id === userId);
   };
 
-  const sentRequestsRef = React.useRef(null);
-
   const handleSendRequest = async (friendUserId) => {
     if (!user?.id || processingId) return;
     setProcessingId(friendUserId);
@@ -152,9 +147,6 @@ export default function Friends() {
         is_starred: false
       });
       await loadFriendsData();
-      setTimeout(() => {
-        sentRequestsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }, 100);
     } catch (error) {
       console.error("Error sending friend request:", error);
     }
@@ -217,279 +209,184 @@ export default function Friends() {
     );
   });
 
-  const tabs = [
-    { id: 'friends', label: 'Your Friends' },
-    { id: 'add', label: 'Add Friends' },
-  ];
+  // Include sent-request users in search results so they show "Unsend Friend Request"
+  const getSearchResultsWithPending = () => {
+    if (!searchQuery.trim()) return [];
+
+    const query = searchQuery.toLowerCase();
+    const results = profiles.filter(profile => {
+      if (profile.user_id === user?.id) return false;
+
+      // Exclude existing friends
+      const isFriend = friends.some(f =>
+        f.user_id === profile.user_id || f.friend_id === profile.user_id
+      );
+      if (isFriend) return false;
+
+      const usernameMatch = profile.username?.toLowerCase().includes(query);
+      const nameMatch = profile.full_name?.toLowerCase().includes(query);
+      return usernameMatch || nameMatch;
+    });
+
+    return results;
+  };
+
+  const allSearchResults = getSearchResultsWithPending();
 
   return (
-    <div className="min-h-screen" style={{backgroundColor: '#CDE7F8'}}>
-      <div className="px-4 pt-8 pb-8 sm:px-8 md:px-24 md:pt-12 lg:px-36">
-        <div className="max-w-4xl mx-auto space-y-5">
+    <div className="min-h-screen" style={{backgroundColor: '#0F2B1F'}}>
+      <div className="px-4 pt-14 pb-8 sm:px-8 md:px-24 md:pt-20 lg:px-36">
+        <div className="max-w-6xl mx-auto space-y-5">
           {/* Header */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#213B75] tracking-tight font-sans">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#C2FFDC] tracking-tight font-serif">
               Friends
             </h1>
           </motion.div>
 
-          {/* Tab Navigation */}
-          <div className="flex gap-2">
-            {tabs.map(tab => (
-              <button
-                key={tab.id}
-                onClick={() => {
-                  setActiveTab(tab.id);
-                  setEditMode(false);
-                  setSearchQuery('');
-                }}
-                className={`px-4 py-2 rounded-xl text-sm font-semibold font-sans transition-all ${
-                  activeTab === tab.id
-                    ? 'bg-[#213B75] text-white shadow-sm'
-                    : 'bg-white text-[#4C7FC4] hover:bg-white/80 shadow-sm'
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
+          {/* Two-Column Layout: Friends Left, Search + Requests Right */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-5">
+            {/* Left Column: Your Friends */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.05 }}
+            >
+              <div className="rounded-xl px-4 py-4 shadow-sm bg-[#1C4332]">
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-sm font-bold text-[#C2FFDC] tracking-tight font-serif">
+                    Your Friends
+                  </p>
+                </div>
 
-          {/* Content Sections */}
-          <AnimatePresence mode="wait">
-            {/* Your Friends Tab */}
-            {activeTab === 'friends' && (
-              <motion.div
-                key="friends"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                className="space-y-4"
-              >
-                {/* Incoming Friend Requests */}
-                {receivedRequests.length > 0 && (
-                  <div className="rounded-xl px-4 py-4 shadow-sm bg-white">
-                    <p className="text-sm font-bold text-[#213B75] mb-3 tracking-tight font-sans">
-                      Friend Requests
-                    </p>
-                    <div className="space-y-2">
-                      {receivedRequests.map((request, index) => {
-                        const profile = getProfileById(request.user_id);
-                        if (!profile) return null;
-                        const defaultAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent((profile?.full_name || 'U').charAt(0))}&background=4C7FC4&color=fff&size=128`;
+                {isLoading ? (
+                  <div className="text-center py-8">
+                    <div className="w-8 h-8 border-2 border-[#00A86B] border-t-transparent rounded-full animate-spin mx-auto" />
+                  </div>
+                ) : sortedFriends.length === 0 ? (
+                  <div className="text-center py-8">
+                    <Users className="w-12 h-12 mx-auto mb-3 text-[#00A86B]/30" />
+                    <p className="text-[#00A86B] font-sans text-sm">No friends yet</p>
+                    <p className="text-[#00A86B]/60 font-sans text-xs mt-1">Search for friends to get started</p>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {sortedFriends.map((friendship, index) => {
+                      const friendProfile = getFriendProfile(friendship);
+                      if (!friendProfile) return null;
 
-                        return (
-                          <motion.div
-                            key={request.id}
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: index * 0.05 }}
-                            className="p-3 rounded-lg bg-[#CDE7F8]"
-                          >
-                            <div className="flex items-center gap-3">
-                              <img
-                                src={profile.profile_picture_url || profile.avatar_url || defaultAvatar}
-                                alt={profile.full_name || 'User'}
-                                className="w-10 h-10 rounded-full object-cover flex-shrink-0 bg-white"
-                              />
-                              <div className="flex-1 min-w-0">
-                                <p className="text-sm font-semibold text-[#213B75] truncate font-sans">
-                                  {profile.full_name || profile.username}
-                                </p>
-                                <p className="text-xs text-[#4C7FC4] truncate font-sans">
-                                  @{profile.username}
-                                </p>
-                              </div>
-                              <div className="flex gap-2 flex-shrink-0">
-                                <button
-                                  onClick={() => handleAcceptRequestFromSearch(request.id)}
-                                  disabled={processingId === request.id}
-                                  className="bg-[#213B75] rounded-lg px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#1a3060] transition-colors disabled:opacity-50 font-sans cursor-pointer"
-                                >
-                                  {processingId === request.id ? (
-                                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                                  ) : 'Confirm'}
-                                </button>
-                                <button
-                                  onClick={() => handleCancelRequest(request.id)}
-                                  disabled={processingId === request.id}
-                                  className="bg-white rounded-lg px-3 py-1.5 text-xs font-semibold text-red-500 hover:bg-red-50 transition-colors disabled:opacity-50 font-sans cursor-pointer"
-                                >
-                                  Delete
-                                </button>
-                              </div>
+                      const defaultAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent((friendProfile?.full_name || 'U').charAt(0))}&background=00A86B&color=fff&size=128`;
+
+                      return (
+                        <motion.div
+                          key={friendship.id}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.05 }}
+                          className="p-3 rounded-lg bg-[#0F2B1F]"
+                        >
+                          <div className="flex items-center gap-3">
+                            {/* Profile Photo */}
+                            <img
+                              src={friendProfile.profile_picture_url || friendProfile.avatar_url || defaultAvatar}
+                              alt={friendProfile.full_name || 'Friend'}
+                              className="w-10 h-10 rounded-full object-cover flex-shrink-0 bg-[#1C4332]"
+                            />
+
+                            {/* Name and Username */}
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-semibold text-[#C2FFDC] truncate font-sans">
+                                {friendProfile.full_name || friendProfile.username}
+                              </p>
+                              <p className="text-xs text-[#00A86B] truncate font-sans">
+                                @{friendProfile.username}
+                              </p>
                             </div>
-                          </motion.div>
-                        );
-                      })}
-                    </div>
+
+                            {/* Star Button */}
+                            <button
+                              onClick={() => handleToggleStar(friendship)}
+                              disabled={processingId === friendship.id}
+                              className={`p-2 rounded-lg transition-all ${
+                                friendship.is_starred
+                                  ? 'text-yellow-500'
+                                  : 'text-[#00A86B]/40 hover:text-yellow-400'
+                              }`}
+                            >
+                              <Star
+                                className="w-5 h-5"
+                                fill={friendship.is_starred ? 'currentColor' : 'none'}
+                              />
+                            </button>
+
+                            {/* Unfriend Button */}
+                            <button
+                              onClick={() => handleRemoveFriend(friendship.id)}
+                              disabled={processingId === friendship.id}
+                              className="px-3 py-1.5 rounded-lg text-xs font-semibold text-red-400 bg-red-500/10 hover:bg-red-500/20 transition-all font-sans cursor-pointer"
+                            >
+                              {processingId === friendship.id ? (
+                                <div className="w-4 h-4 border-2 border-red-400 border-t-transparent rounded-full animate-spin" />
+                              ) : (
+                                'Unfriend'
+                              )}
+                            </button>
+                          </div>
+                        </motion.div>
+                      );
+                    })}
                   </div>
                 )}
+              </div>
+            </motion.div>
 
-                <div className="rounded-xl px-4 py-4 shadow-sm bg-white">
-                  <div className="flex items-center justify-between mb-3">
-                    <p className="text-sm font-bold text-[#213B75] tracking-tight font-sans">
-                      Your Friends
-                    </p>
-                    {sortedFriends.length > 0 && (
-                      <button
-                        onClick={() => setEditMode(!editMode)}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-semibold font-sans transition-all ${
-                          editMode
-                            ? 'bg-[#213B75] text-white'
-                            : 'bg-[#CDE7F8] text-[#4C7FC4] hover:bg-[#b8daf3]'
-                        }`}
-                      >
-                        {editMode ? 'Done' : 'Edit'}
-                      </button>
-                    )}
-                  </div>
-
-                  {isLoading ? (
-                    <div className="text-center py-8">
-                      <div className="w-8 h-8 border-2 border-[#4C7FC4] border-t-transparent rounded-full animate-spin mx-auto" />
-                    </div>
-                  ) : sortedFriends.length === 0 ? (
-                    <div className="text-center py-8">
-                      <Users className="w-12 h-12 mx-auto mb-3 text-[#CDE7F8]" />
-                      <p className="text-[#4C7FC4] font-sans">No friends yet</p>
-                      <button
-                        onClick={() => setActiveTab('add')}
-                        className="mt-3 text-[#213B75] font-semibold text-sm hover:underline font-sans"
-                      >
-                        Add your first friend
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="space-y-2">
-                      {sortedFriends.map((friendship, index) => {
-                        const friendProfile = getFriendProfile(friendship);
-                        if (!friendProfile) return null;
-
-                        const defaultAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent((friendProfile?.full_name || 'U').charAt(0))}&background=4C7FC4&color=fff&size=128`;
-
-                        return (
-                          <motion.div
-                            key={friendship.id}
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: index * 0.05 }}
-                            className="p-3 rounded-lg bg-[#CDE7F8]"
-                          >
-                            <div className="flex items-center gap-3">
-                              {/* Profile Photo */}
-                              <img
-                                src={friendProfile.profile_picture_url || friendProfile.avatar_url || defaultAvatar}
-                                alt={friendProfile.full_name || 'Friend'}
-                                className="w-10 h-10 rounded-full object-cover flex-shrink-0 bg-white"
-                              />
-
-                              {/* Name and Username */}
-                              <div className="flex-1 min-w-0">
-                                <p className="text-sm font-semibold text-[#213B75] truncate font-sans">
-                                  {friendProfile.full_name || friendProfile.username}
-                                </p>
-                                <p className="text-xs text-[#4C7FC4] truncate font-sans">
-                                  @{friendProfile.username}
-                                </p>
-                              </div>
-
-                              {/* Star Button */}
-                              <button
-                                onClick={() => handleToggleStar(friendship)}
-                                disabled={processingId === friendship.id}
-                                className={`p-2 rounded-lg transition-all ${
-                                  friendship.is_starred
-                                    ? 'text-yellow-500'
-                                    : 'text-[#4C7FC4]/40 hover:text-yellow-400'
-                                }`}
-                              >
-                                <Star
-                                  className="w-5 h-5"
-                                  fill={friendship.is_starred ? 'currentColor' : 'none'}
-                                />
-                              </button>
-
-                              {/* Remove Button (Edit Mode) */}
-                              {editMode && (
-                                <button
-                                  onClick={() => handleRemoveFriend(friendship.id)}
-                                  disabled={processingId === friendship.id}
-                                  className="p-2 rounded-lg text-red-400 hover:text-red-500 hover:bg-red-50 transition-all"
-                                >
-                                  {processingId === friendship.id ? (
-                                    <div className="w-5 h-5 border-2 border-red-400 border-t-transparent rounded-full animate-spin" />
-                                  ) : (
-                                    <Trash2 className="w-5 h-5" />
-                                  )}
-                                </button>
-                              )}
-                            </div>
-                          </motion.div>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              </motion.div>
-            )}
-
-            {/* Add Friends Tab */}
-            {activeTab === 'add' && (
+            {/* Right Column: Search + Friend Requests */}
+            <div className="flex flex-col gap-4 md:gap-5">
+              {/* Search for Friends */}
               <motion.div
-                key="add"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                className="space-y-4"
+                transition={{ delay: 0.1 }}
               >
-                {/* Search Box */}
-                <div className="rounded-xl px-4 py-4 shadow-sm bg-white">
-                  <p className="text-sm font-bold text-[#213B75] mb-3 tracking-tight font-sans">
+                <div className="rounded-xl px-4 py-4 shadow-sm bg-[#1C4332]">
+                  <p className="text-sm font-bold text-[#C2FFDC] mb-3 tracking-tight font-serif">
                     Search for Friends
                   </p>
                   <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#4C7FC4]/50" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#00A86B]/50" />
                     <Input
                       type="text"
                       placeholder="Search by username..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-10 bg-[#CDE7F8] border-0 text-[#213B75] placeholder:text-[#4C7FC4]/50 font-sans"
+                      className="pl-10 bg-[#0F2B1F] border-0 text-[#C2FFDC] placeholder:text-[#00A86B]/50 font-sans"
                     />
                     {searchQuery && (
                       <button
                         onClick={() => setSearchQuery('')}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-[#4C7FC4] hover:text-[#213B75]"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-[#00A86B] hover:text-[#C2FFDC]"
                       >
                         <X className="w-4 h-4" />
                       </button>
                     )}
                   </div>
-                </div>
 
-                {/* Search Results */}
-                {searchQuery.trim() && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                  >
-                    <div className="rounded-xl px-4 py-4 shadow-sm bg-white">
-                      <p className="text-sm font-bold text-[#213B75] mb-3 tracking-tight font-sans">
-                        Results
-                      </p>
-
-                      {searchResults.length === 0 ? (
-                        <div className="text-center py-6">
-                          <p className="text-[#4C7FC4] font-sans text-sm">No users found matching "{searchQuery}"</p>
+                  {/* Search Results inline */}
+                  {searchQuery.trim() && (
+                    <div className="mt-3">
+                      {allSearchResults.length === 0 ? (
+                        <div className="text-center py-4">
+                          <p className="text-[#00A86B] font-sans text-sm">No users found matching "{searchQuery}"</p>
                         </div>
                       ) : (
                         <div className="space-y-2">
-                          {searchResults.map((profile, index) => {
+                          {allSearchResults.map((profile, index) => {
                             const receivedRequest = getReceivedRequestFrom(profile.user_id);
-                            const defaultAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent((profile?.full_name || 'U').charAt(0))}&background=4C7FC4&color=fff&size=128`;
+                            const sentRequest = getSentRequestTo(profile.user_id);
+                            const defaultAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent((profile?.full_name || 'U').charAt(0))}&background=00A86B&color=fff&size=128`;
 
                             return (
                               <motion.div
@@ -497,32 +394,32 @@ export default function Friends() {
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: index * 0.05 }}
-                                className="p-3 rounded-lg bg-[#CDE7F8]"
+                                className="p-3 rounded-lg bg-[#0F2B1F]"
                               >
                                 <div className="flex items-center gap-3">
                                   {/* Profile Photo */}
                                   <img
                                     src={profile.profile_picture_url || profile.avatar_url || defaultAvatar}
                                     alt={profile.full_name || 'User'}
-                                    className="w-10 h-10 rounded-full object-cover flex-shrink-0 bg-white"
+                                    className="w-10 h-10 rounded-full object-cover flex-shrink-0 bg-[#1C4332]"
                                   />
 
                                   {/* Name and Username */}
                                   <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-semibold text-[#213B75] truncate font-sans">
+                                    <p className="text-sm font-semibold text-[#C2FFDC] truncate font-sans">
                                       {profile.full_name || profile.username}
                                     </p>
-                                    <p className="text-xs text-[#4C7FC4] truncate font-sans">
+                                    <p className="text-xs text-[#00A86B] truncate font-sans">
                                       @{profile.username}
                                     </p>
                                   </div>
 
-                                  {/* Accept or Send Request Button */}
+                                  {/* Action Button: Accept / Unsend / Send */}
                                   {receivedRequest ? (
                                     <button
                                       onClick={() => handleAcceptRequestFromSearch(receivedRequest.id)}
                                       disabled={processingId === receivedRequest.id}
-                                      className="bg-[#213B75] rounded-lg px-3 py-1.5 flex items-center gap-1.5 hover:bg-[#1a3060] transition-colors disabled:opacity-50"
+                                      className="bg-[#00A86B] rounded-lg px-3 py-1.5 flex items-center gap-1.5 hover:bg-[#00A86B]/90 transition-colors disabled:opacity-50 cursor-pointer"
                                     >
                                       {processingId === receivedRequest.id ? (
                                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -533,18 +430,33 @@ export default function Friends() {
                                         </>
                                       )}
                                     </button>
+                                  ) : sentRequest ? (
+                                    <button
+                                      onClick={() => handleCancelRequest(sentRequest.id)}
+                                      disabled={processingId === sentRequest.id}
+                                      className="bg-red-500/10 rounded-lg px-3 py-1.5 flex items-center gap-1.5 hover:bg-red-500/20 transition-colors disabled:opacity-50 cursor-pointer"
+                                    >
+                                      {processingId === sentRequest.id ? (
+                                        <div className="w-4 h-4 border-2 border-red-400 border-t-transparent rounded-full animate-spin" />
+                                      ) : (
+                                        <>
+                                          <UserMinus className="w-3.5 h-3.5 text-red-400" />
+                                          <span className="text-xs font-semibold text-red-400 font-sans">Unsend Friend Request</span>
+                                        </>
+                                      )}
+                                    </button>
                                   ) : (
                                     <button
                                       onClick={() => handleSendRequest(profile.user_id)}
                                       disabled={processingId === profile.user_id}
-                                      className="bg-white rounded-lg px-3 py-1.5 flex items-center gap-1.5 hover:bg-white/80 transition-colors disabled:opacity-50"
+                                      className="bg-[#6AD478] rounded-lg px-3 py-1.5 flex items-center gap-1.5 hover:bg-[#6AD478]/90 transition-colors disabled:opacity-50 cursor-pointer"
                                     >
                                       {processingId === profile.user_id ? (
-                                        <div className="w-4 h-4 border-2 border-[#4C7FC4] border-t-transparent rounded-full animate-spin" />
+                                        <div className="w-4 h-4 border-2 border-[#1C4332] border-t-transparent rounded-full animate-spin" />
                                       ) : (
                                         <>
-                                          <Send className="w-3.5 h-3.5 text-[#4C7FC4]" />
-                                          <span className="text-xs font-semibold text-[#213B75] font-sans">Send Request</span>
+                                          <Send className="w-3.5 h-3.5 text-[#1C4332]" />
+                                          <span className="text-xs font-semibold text-[#1C4332] font-sans">Send Request</span>
                                         </>
                                       )}
                                     </button>
@@ -556,87 +468,77 @@ export default function Friends() {
                         </div>
                       )}
                     </div>
-                  </motion.div>
-                )}
+                  )}
+                </div>
+              </motion.div>
 
-                {/* Your Friend Requests (Sent) */}
+              {/* Friend Requests (Received) */}
+              {receivedRequests.length > 0 && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 }}
+                  transition={{ delay: 0.15 }}
                 >
-                  <div ref={sentRequestsRef} className="rounded-xl px-4 py-4 shadow-sm bg-white">
-                    <p className="text-sm font-bold text-[#213B75] mb-3 tracking-tight font-sans">
-                      Sent Friend Requests
+                  <div className="rounded-xl px-4 py-4 shadow-sm bg-[#1C4332]">
+                    <p className="text-sm font-bold text-[#C2FFDC] mb-3 tracking-tight font-serif">
+                      Friend Requests
                     </p>
+                    <div className="space-y-2">
+                      {receivedRequests.map((request, index) => {
+                        const profile = getProfileById(request.user_id);
+                        if (!profile) return null;
+                        const defaultAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent((profile?.full_name || 'U').charAt(0))}&background=00A86B&color=fff&size=128`;
 
-                    {sentRequests.length === 0 ? (
-                      <div className="text-center py-6">
-                        <Clock className="w-10 h-10 mx-auto mb-2 text-[#CDE7F8]" />
-                        <p className="text-[#4C7FC4] text-sm font-sans">No pending requests</p>
-                      </div>
-                    ) : (
-                      <div className="space-y-2">
-                        {sentRequests.map((request, index) => {
-                          const profile = getProfileById(request.friend_id);
-                          if (!profile) return null;
-
-                          const defaultAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent((profile?.full_name || 'U').charAt(0))}&background=4C7FC4&color=fff&size=128`;
-
-                          return (
-                            <motion.div
-                              key={request.id}
-                              initial={{ opacity: 0, y: 10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              transition={{ delay: index * 0.05 }}
-                              className="p-3 rounded-lg bg-[#CDE7F8]"
-                            >
-                              <div className="flex items-center gap-3">
-                                {/* Profile Photo */}
-                                <img
-                                  src={profile.profile_picture_url || profile.avatar_url || defaultAvatar}
-                                  alt={profile.full_name || 'User'}
-                                  className="w-10 h-10 rounded-full object-cover flex-shrink-0 bg-white"
-                                />
-
-                                {/* Name and Username */}
-                                <div className="flex-1 min-w-0">
-                                  <p className="text-sm font-semibold text-[#213B75] truncate font-sans">
-                                    {profile.full_name || profile.username}
-                                  </p>
-                                  <p className="text-xs text-[#4C7FC4] truncate font-sans">
-                                    @{profile.username}
-                                  </p>
-                                </div>
-
-                                {/* Pending Badge + Cancel */}
-                                <div className="flex items-center gap-2">
-                                  <span className="text-[10px] font-semibold text-[#4C7FC4] bg-white rounded-md px-2 py-0.5 font-sans">
-                                    Pending
-                                  </span>
-                                  <button
-                                    onClick={() => handleCancelRequest(request.id)}
-                                    disabled={processingId === request.id}
-                                    className="p-1.5 rounded-lg text-red-400 hover:text-red-500 hover:bg-red-50 transition-all"
-                                  >
-                                    {processingId === request.id ? (
-                                      <div className="w-4 h-4 border-2 border-red-400 border-t-transparent rounded-full animate-spin" />
-                                    ) : (
-                                      <X className="w-4 h-4" />
-                                    )}
-                                  </button>
-                                </div>
+                        return (
+                          <motion.div
+                            key={request.id}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: index * 0.05 }}
+                            className="p-3 rounded-lg bg-[#0F2B1F]"
+                          >
+                            <div className="flex items-center gap-3">
+                              <img
+                                src={profile.profile_picture_url || profile.avatar_url || defaultAvatar}
+                                alt={profile.full_name || 'User'}
+                                className="w-10 h-10 rounded-full object-cover flex-shrink-0 bg-[#1C4332]"
+                              />
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-semibold text-[#C2FFDC] truncate font-sans">
+                                  {profile.full_name || profile.username}
+                                </p>
+                                <p className="text-xs text-[#00A86B] truncate font-sans">
+                                  @{profile.username}
+                                </p>
                               </div>
-                            </motion.div>
-                          );
-                        })}
-                      </div>
-                    )}
+                              <div className="flex gap-2 flex-shrink-0">
+                                <button
+                                  onClick={() => handleAcceptRequestFromSearch(request.id)}
+                                  disabled={processingId === request.id}
+                                  className="bg-[#00A86B] rounded-lg px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#00A86B]/90 transition-colors disabled:opacity-50 font-sans cursor-pointer"
+                                >
+                                  {processingId === request.id ? (
+                                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                  ) : 'Confirm'}
+                                </button>
+                                <button
+                                  onClick={() => handleCancelRequest(request.id)}
+                                  disabled={processingId === request.id}
+                                  className="bg-red-500/10 rounded-lg px-3 py-1.5 text-xs font-semibold text-red-400 hover:bg-red-500/20 transition-colors disabled:opacity-50 font-sans cursor-pointer"
+                                >
+                                  Delete
+                                </button>
+                              </div>
+                            </div>
+                          </motion.div>
+                        );
+                      })}
+                    </div>
                   </div>
                 </motion.div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>
