@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Loan, LoanAgreement, User, PublicProfile } from "@/entities/all";
+import { Loan, LoanAgreement, User, PublicProfile, Friendship } from "@/entities/all";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,22 +8,25 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { UserSelector } from "@/components/ui/user-selector";
 import SignatureModal from "@/components/loans/SignatureModal";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { PlusCircle, DollarSign, Calendar, Percent, FileText, User as UserIcon, AlertCircle, Zap, ClipboardList } from "lucide-react";
+import { PlusCircle, DollarSign, Calendar, Percent, FileText, User as UserIcon, AlertCircle, Zap, ClipboardList, Users, Send } from "lucide-react";
 import { motion } from "framer-motion";
 import { addMonths, format } from "date-fns";
 
 export default function CreateLoan() {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [users, setUsers] = useState([]);
+  const [friends, setFriends] = useState([]);
   const [isLoadingUsers, setIsLoadingUsers] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
+  const [currentUserProfile, setCurrentUserProfile] = useState(null);
   const [showSignatureModal, setShowSignatureModal] = useState(false);
   const [pendingLoanData, setPendingLoanData] = useState(null);
   const [loanType, setLoanType] = useState('flexible'); // 'flexible' or 'scheduled'
+  const [hasFriends, setHasFriends] = useState(true);
   const [formData, setFormData] = useState({
+    lender_username: '',
     borrower_username: '',
     amount: '',
     interest_rate: '',
@@ -34,6 +37,10 @@ export default function CreateLoan() {
     purpose: ''
   });
 
+  // Determine if user is the lender or borrower based on selection
+  const isUserLender = !formData.lender_username || formData.lender_username === currentUserProfile?.username;
+  const isUserBorrower = formData.lender_username && formData.lender_username !== currentUserProfile?.username;
+
   useEffect(() => {
     loadUsers();
   }, []);
@@ -43,21 +50,64 @@ export default function CreateLoan() {
     try {
       const user = await User.me();
       setCurrentUser(user);
-      
-      const publicProfiles = await PublicProfile.list();
+
+      const [publicProfiles, allFriendships] = await Promise.all([
+        PublicProfile.list().catch(() => []),
+        Friendship.list().catch(() => [])
+      ]);
       const safeProfiles = Array.isArray(publicProfiles) ? publicProfiles : [];
-      
-      // Filter out the current user's profile and any potential sample users left in DB
-      const otherRealUsers = safeProfiles.filter(p => p && p.user_id !== user.id && !p.user_id.startsWith('sample-user-'));
-      
-      // Remove duplicates by user_id
-      const uniqueUsers = Array.from(new Map(otherRealUsers.map(u => [u.user_id, u])).values());
-      
-      setUsers(uniqueUsers);
-      
+
+      // Get current user's profile
+      const myProfile = safeProfiles.find(p => p.user_id === user.id);
+      setCurrentUserProfile(myProfile || { user_id: user.id, username: user.username, full_name: user.full_name });
+
+      // Get accepted friendships involving this user
+      const myFriendships = allFriendships.filter(f =>
+        f.status === 'accepted' &&
+        (f.user_id === user.id || f.friend_id === user.id)
+      );
+
+      if (myFriendships.length === 0) {
+        setHasFriends(false);
+        setFriends([]);
+        setIsLoadingUsers(false);
+        return;
+      }
+
+      setHasFriends(true);
+
+      // Get friend user IDs
+      const friendUserIds = myFriendships.map(f =>
+        f.user_id === user.id ? f.friend_id : f.user_id
+      );
+
+      // Build friendship starred map
+      const starredMap = {};
+      myFriendships.forEach(f => {
+        const friendId = f.user_id === user.id ? f.friend_id : f.user_id;
+        starredMap[friendId] = f.is_starred || false;
+      });
+
+      // Filter profiles to only friends, exclude sample users
+      const friendProfiles = safeProfiles
+        .filter(p => p && friendUserIds.includes(p.user_id) && !p.user_id.startsWith('sample-user-'))
+        .map(p => ({ ...p, is_starred: starredMap[p.user_id] || false }));
+
+      // Remove duplicates
+      const uniqueFriends = Array.from(new Map(friendProfiles.map(u => [u.user_id, u])).values());
+
+      // Sort: starred first, then alphabetically
+      uniqueFriends.sort((a, b) => {
+        if (a.is_starred && !b.is_starred) return -1;
+        if (!a.is_starred && b.is_starred) return 1;
+        return (a.full_name || '').localeCompare(b.full_name || '');
+      });
+
+      setFriends(uniqueFriends);
+
     } catch (error) {
       console.error("Error loading users:", error);
-      setUsers([]);
+      setFriends([]);
     }
     setIsLoadingUsers(false);
   };
@@ -73,7 +123,7 @@ export default function CreateLoan() {
     const amount = parseFloat(formData.amount) || 0;
     const interestRate = parseFloat(formData.interest_rate) || 0;
     const period = parseInt(formData.repayment_period) || 0;
-    
+
     let periodInMonths = period;
     if (formData.repayment_unit === 'days') {
       periodInMonths = period / 30;
@@ -86,7 +136,7 @@ export default function CreateLoan() {
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       periodInMonths = diffDays / 30;
     }
-    
+
     if (amount > 0 && interestRate >= 0 && periodInMonths > 0) {
       const totalAmount = amount * (1 + (interestRate / 100) * (periodInMonths / 12));
       let paymentAmount;
@@ -113,8 +163,13 @@ export default function CreateLoan() {
 
   const findUserByUsername = async (username) => {
     if (!username) return null;
-    
-    const foundInLocal = users.find(u => u && u.username === username);
+
+    // Check if it's the current user
+    if (currentUserProfile && currentUserProfile.username === username) {
+      return currentUserProfile;
+    }
+
+    const foundInLocal = friends.find(u => u && u.username === username);
     if (foundInLocal) return foundInLocal;
 
     try {
@@ -137,22 +192,44 @@ export default function CreateLoan() {
         return;
       }
 
-      if (!formData.borrower_username.trim()) {
-        alert("Please select or enter a borrower's username.");
+      // Determine lender and borrower based on role
+      let lenderUsername, borrowerUsername;
+      if (isUserLender) {
+        lenderUsername = currentUserProfile?.username;
+        borrowerUsername = formData.borrower_username.trim();
+      } else {
+        lenderUsername = formData.lender_username.trim();
+        borrowerUsername = currentUserProfile?.username;
+      }
+
+      if (!borrowerUsername) {
+        alert("Please select or enter the borrower.");
+        setIsSubmitting(false);
+        return;
+      }
+      if (!lenderUsername) {
+        alert("Please select or enter the lender.");
         setIsSubmitting(false);
         return;
       }
 
-      const borrowerProfile = await findUserByUsername(formData.borrower_username.trim());
+      const lenderProfile = await findUserByUsername(lenderUsername);
+      const borrowerProfile = await findUserByUsername(borrowerUsername);
+
+      if (!lenderProfile || !lenderProfile.user_id) {
+        alert(`Lender "${lenderUsername}" could not be found.`);
+        setIsSubmitting(false);
+        return;
+      }
 
       if (!borrowerProfile || !borrowerProfile.user_id) {
-        alert(`User "${formData.borrower_username}" could not be found. They may need to log in once to activate their public profile.`);
+        alert(`Borrower "${borrowerUsername}" could not be found.`);
         setIsSubmitting(false);
         return;
       }
 
-      if (borrowerProfile.user_id === currentUser.id) {
-        alert("You cannot create a loan offer to yourself.");
+      if (lenderProfile.user_id === borrowerProfile.user_id) {
+        alert("The lender and borrower cannot be the same person.");
         setIsSubmitting(false);
         return;
       }
@@ -172,7 +249,7 @@ export default function CreateLoan() {
       }
 
       const loanData = {
-        lender_id: currentUser.id,
+        lender_id: lenderProfile.user_id,
         borrower_id: borrowerProfile.user_id,
         amount: parseFloat(formData.amount),
         interest_rate: parseFloat(formData.interest_rate),
@@ -204,12 +281,10 @@ export default function CreateLoan() {
       // Create the loan
       const createdLoan = await Loan.create(pendingLoanData);
 
-      // Create the agreement with lender signature
-      await LoanAgreement.create({
+      // Create the agreement with signer's signature
+      const agreementData = {
         loan_id: createdLoan.id,
         lender_id: pendingLoanData.lender_id,
-        lender_name: signature,
-        lender_signed_date: new Date().toISOString(),
         borrower_id: pendingLoanData.borrower_id,
         amount: pendingLoanData.amount,
         interest_rate: pendingLoanData.interest_rate,
@@ -220,7 +295,17 @@ export default function CreateLoan() {
         total_amount: pendingLoanData.total_amount,
         payment_amount: pendingLoanData.payment_amount,
         is_fully_signed: false
-      });
+      };
+
+      if (isUserLender) {
+        agreementData.lender_name = signature;
+        agreementData.lender_signed_date = new Date().toISOString();
+      } else {
+        agreementData.borrower_name = signature;
+        agreementData.borrower_signed_date = new Date().toISOString();
+      }
+
+      await LoanAgreement.create(agreementData);
 
       setShowSignatureModal(false);
       navigate(createPageUrl("MyLoans"));
@@ -233,6 +318,31 @@ export default function CreateLoan() {
 
   const details = calculateLoanDetails();
 
+  // Build lender dropdown users: self first, then starred friends, then others
+  const lenderDropdownUsers = (() => {
+    const selfEntry = currentUserProfile ? [{
+      ...currentUserProfile,
+      full_name: `${currentUserProfile.full_name || 'You'} (Yourself)`,
+      _isSelf: true
+    }] : [];
+    return [...selfEntry, ...friends.filter(f => f.username !== formData.borrower_username)];
+  })();
+
+  // Build borrower dropdown users: self first (if user is borrower), then starred friends, then others
+  const borrowerDropdownUsers = (() => {
+    if (isUserBorrower) {
+      // User is borrower — no need for dropdown, but show self
+      return [];
+    }
+    // User is lender — show friends excluding selected lender
+    return friends.filter(f => f.username !== formData.lender_username);
+  })();
+
+  // Get the selected other party's username for display
+  const otherPartyUsername = isUserLender
+    ? formData.borrower_username
+    : formData.lender_username;
+
   return (
     <>
       <SignatureModal
@@ -244,7 +354,7 @@ export default function CreateLoan() {
         onSign={handleSign}
         loanDetails={pendingLoanData || {}}
         userFullName={currentUser?.full_name || ''}
-        signingAs="Lender"
+        signingAs={isUserLender ? "Lender" : "Borrower"}
       />
       <div className="min-h-screen p-6" style={{background: `linear-gradient(to bottom right, rgb(var(--theme-bg-from)), rgb(var(--theme-bg-to)))`}}>
         <div className="max-w-4xl mx-auto space-y-7">
@@ -255,9 +365,43 @@ export default function CreateLoan() {
           className="py-5"
         >
           <h1 className="text-4xl md:text-5xl font-bold text-slate-800 mb-4 tracking-tight text-left">
-            Create Loan Offer
+            {isUserLender ? 'Create Loan Offer' : 'Request to Borrow'}
           </h1>
         </motion.div>
+
+        {/* No Friends Banner */}
+        {!isLoadingUsers && !hasFriends && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.05 }}
+          >
+            <div className="rounded-xl px-5 py-4 bg-amber-50 border border-amber-200 shadow-sm">
+              <div className="flex items-center gap-2 mb-3">
+                <AlertCircle className="w-5 h-5 text-amber-600" />
+                <p className="text-sm font-semibold text-amber-800">
+                  You can only send offers to people in your friends list
+                </p>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <Link
+                  to={createPageUrl("Friends")}
+                  className="flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-[#35B276] text-white font-semibold text-sm hover:bg-[#2da068] transition-colors"
+                >
+                  <Users className="w-4 h-4" />
+                  Find Your Friends
+                </Link>
+                <Link
+                  to={createPageUrl("Friends")}
+                  className="flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-white border border-slate-200 text-slate-700 font-semibold text-sm hover:bg-slate-50 transition-colors"
+                >
+                  <Send className="w-4 h-4" />
+                  Invite Your Friends
+                </Link>
+              </div>
+            </div>
+          </motion.div>
+        )}
 
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Form */}
@@ -273,35 +417,86 @@ export default function CreateLoan() {
               </CardHeader>
               <CardContent className="p-6 pt-3">
                 <form onSubmit={handleSubmit} className="space-y-6">
-                  {/* Borrower Selection */}
+
+                  {/* Lender Selection */}
                   <div className="space-y-2">
-                    <Label htmlFor="borrower_username" className="flex items-center gap-2">
+                    <Label className="flex items-center gap-2">
                       <UserIcon className="w-4 h-4 text-green-600" />
-                      Select Borrower
+                      Select the Lender
                     </Label>
-                    
+
                     {isLoadingUsers ? (
                       <div className="h-10 bg-slate-100 rounded-md animate-pulse flex items-center px-3">
-                        <span className="text-slate-500">Loading users...</span>
+                        <span className="text-slate-500">Loading friends...</span>
                       </div>
                     ) : (
-                      <div className="space-y-3">
-                        <UserSelector
-                          users={users}
-                          value={formData.borrower_username}
-                          onSelect={(username) => handleInputChange('borrower_username', username)}
-                          placeholder="Choose a user or type their username..."
-                        />
-                        {users.length === 0 && !isLoadingUsers && (
-                           <div className="p-3 bg-blue-50 border border-blue-200 rounded-md">
-                              <p className="text-blue-800 text-sm">
-                                <strong>No other users found.</strong> Invite others to the platform to start lending. Once they sign up, they will appear here.
-                              </p>
-                            </div>
-                        )}
-                      </div>
+                      <UserSelector
+                        users={lenderDropdownUsers}
+                        value={formData.lender_username || currentUserProfile?.username || ''}
+                        onSelect={(username) => {
+                          handleInputChange('lender_username', username);
+                          // If selecting yourself as lender, clear borrower if it was auto-set to self
+                          if (username === currentUserProfile?.username || !username) {
+                            // User is lender — keep borrower as is
+                          } else {
+                            // User is borrower — clear borrower_username since it'll be auto self
+                            handleInputChange('borrower_username', '');
+                          }
+                        }}
+                        placeholder="Choose the lender (yourself or a friend)..."
+                        showAddFriends
+                        onAddFriends={() => navigate(createPageUrl("Friends"))}
+                      />
                     )}
                   </div>
+
+                  {/* Borrower Selection — only show if user is lender */}
+                  {isUserLender && (
+                    <div className="space-y-2">
+                      <Label htmlFor="borrower_username" className="flex items-center gap-2">
+                        <UserIcon className="w-4 h-4 text-green-600" />
+                        Select the Borrower
+                      </Label>
+
+                      {isLoadingUsers ? (
+                        <div className="h-10 bg-slate-100 rounded-md animate-pulse flex items-center px-3">
+                          <span className="text-slate-500">Loading friends...</span>
+                        </div>
+                      ) : (
+                        <UserSelector
+                          users={borrowerDropdownUsers}
+                          value={formData.borrower_username}
+                          onSelect={(username) => handleInputChange('borrower_username', username)}
+                          placeholder="Choose a friend..."
+                          showAddFriends
+                          onAddFriends={() => navigate(createPageUrl("Friends"))}
+                        />
+                      )}
+                    </div>
+                  )}
+
+                  {/* If user is borrower, show who they're borrowing from */}
+                  {isUserBorrower && formData.lender_username && (
+                    <div className="p-3 bg-green-100 border border-green-200 rounded-lg">
+                      <p className="text-sm text-green-800 font-medium">
+                        The borrower requests to receive a loan of
+                        <span className="font-bold"> ${parseFloat(formData.amount || 0).toLocaleString() || '___'}</span> from
+                        <span className="font-bold"> @{formData.lender_username}</span>
+                        {loanType === 'scheduled' && formData.repayment_period && (
+                          <span> before <span className="font-bold">
+                            {formData.repayment_unit === 'custom' && formData.custom_due_date
+                              ? format(new Date(formData.custom_due_date), 'MMMM d, yyyy')
+                              : formData.repayment_unit === 'days'
+                              ? format(new Date(new Date().setDate(new Date().getDate() + parseInt(formData.repayment_period || 0))), 'MMMM d, yyyy')
+                              : formData.repayment_unit === 'weeks'
+                              ? format(new Date(new Date().setDate(new Date().getDate() + parseInt(formData.repayment_period || 0) * 7)), 'MMMM d, yyyy')
+                              : format(addMonths(new Date(), parseInt(formData.repayment_period || 0)), 'MMMM d, yyyy')
+                            }
+                          </span></span>
+                        )}.
+                      </p>
+                    </div>
+                  )}
 
                   {/* Loan Amount */}
                   <div className="space-y-2">
@@ -336,7 +531,11 @@ export default function CreateLoan() {
                       onChange={(e) => handleInputChange('purpose', e.target.value)}
                       maxLength={100}
                     />
-                    <p className="text-xs text-slate-500">Help your friend understand what this loan is for</p>
+                    <p className="text-xs text-slate-500">
+                      {isUserLender
+                        ? "Help your friend understand what this loan is for"
+                        : "Explain why you need to borrow this amount"}
+                    </p>
                   </div>
 
                   {/* Interest Rate - Only show for scheduled loans */}
@@ -434,10 +633,12 @@ export default function CreateLoan() {
                   {/* Submit Button */}
                   <Button
                     type="submit"
-                    disabled={isSubmitting || !formData.borrower_username || !formData.amount || (loanType === 'scheduled' && (!formData.interest_rate || (formData.repayment_unit === 'custom' ? !formData.custom_due_date : !formData.repayment_period)))}
+                    disabled={isSubmitting || !hasFriends || (isUserLender ? !formData.borrower_username : !formData.lender_username) || !formData.amount || (loanType === 'scheduled' && (!formData.interest_rate || (formData.repayment_unit === 'custom' ? !formData.custom_due_date : !formData.repayment_period)))}
                     className="w-full bg-green-600 hover:bg-green-700 text-white py-3 text-lg font-semibold"
                   >
-                    {isSubmitting ? "Sending Loan Offer..." : "Send Loan Offer"}
+                    {isSubmitting
+                      ? (isUserLender ? "Sending Loan Offer..." : "Sending Borrow Request...")
+                      : (isUserLender ? "Send Loan Offer" : "Request to Borrow")}
                   </Button>
                 </form>
               </CardContent>
@@ -485,6 +686,17 @@ export default function CreateLoan() {
                       </span>
                     </div>
                   </div>
+
+                  {/* Monthly payment info — adapts to lender/borrower role */}
+                  {loanType === 'scheduled' && details.paymentAmount > 0 && formData.payment_frequency !== 'none' && (
+                    <div className="border-t border-green-400/50 pt-3">
+                      <p className="text-sm opacity-90">
+                        {isUserBorrower
+                          ? `You will pay $${details.paymentAmount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} ${formData.payment_frequency} after interest`
+                          : `Borrower will pay $${details.paymentAmount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} ${formData.payment_frequency} after interest`}
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 {loanType === 'scheduled' && ((formData.repayment_period && formData.repayment_unit !== 'custom') || (formData.repayment_unit === 'custom' && formData.custom_due_date)) && (
