@@ -35,7 +35,7 @@ import { addMonths, addWeeks, addDays, format, startOfMonth, endOfMonth, isSameM
 import { jsPDF } from "jspdf";
 import { formatMoney } from "@/components/utils/formatMoney";
 
-export default function Lending() {
+export default function Lending({ initialTab }) {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -55,6 +55,7 @@ export default function Lending() {
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [loanToCancel, setLoanToCancel] = useState(null);
   const [activeSection, setActiveSection] = useState(() => {
+    if (initialTab && ['lending', 'create', 'active'].includes(initialTab)) return initialTab;
     const tab = searchParams.get('tab');
     return ['lending', 'create', 'active'].includes(tab) ? tab : 'lending';
   }); // 'lending', 'create', 'active'
@@ -1232,11 +1233,12 @@ export default function Lending() {
             className="py-5"
           >
             <h1 className="text-4xl md:text-5xl font-bold text-slate-800 mb-4 tracking-tight text-left">
-              Lending
+              {initialTab === 'create' ? 'Create Loan' : 'Lending'}
             </h1>
           </motion.div>
 
-          {/* Tab Navigation */}
+          {/* Tab Navigation — hidden when accessed as standalone Create Loan page */}
+          {!initialTab && (
           <div className="flex gap-2 overflow-x-auto pb-2">
             {tabs.map(tab => (
               <Button
@@ -1254,6 +1256,7 @@ export default function Lending() {
               </Button>
             ))}
           </div>
+          )}
 
           {/* Content Sections */}
           <AnimatePresence mode="wait">

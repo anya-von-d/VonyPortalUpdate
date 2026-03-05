@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { createPageUrl } from "@/utils";
 import { Payment, Loan, PublicProfile, LoanAgreement, Friendship } from "@/entities/all";
 import { useAuth } from "@/lib/AuthContext";
 import { Card, CardContent } from "@/components/ui/card";
@@ -490,7 +492,7 @@ export default function Requests() {
             animate={{ opacity: 1, y: 0 }}
           >
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#213B75] tracking-tight font-sans">
-              Updates
+              Notifications
             </h1>
           </motion.div>
 
@@ -732,24 +734,12 @@ export default function Requests() {
                                   @{senderProfile?.username} wants to be your friend
                                 </p>
                               </div>
-                              <div className="flex gap-2 flex-shrink-0">
-                                <button
-                                  onClick={() => handleAcceptFriendRequest(request)}
-                                  disabled={processingId === request.id}
-                                  className="bg-[#213B75] rounded-lg px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#1a3060] transition-colors disabled:opacity-50 font-sans"
-                                >
-                                  {processingId === request.id ? (
-                                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                                  ) : 'Accept'}
-                                </button>
-                                <button
-                                  onClick={() => handleDeclineFriendRequest(request)}
-                                  disabled={processingId === request.id}
-                                  className="bg-white rounded-lg px-3 py-1.5 text-xs font-semibold text-red-500 hover:bg-red-50 transition-colors disabled:opacity-50 font-sans"
-                                >
-                                  Decline
-                                </button>
-                              </div>
+                              <Link
+                                to={createPageUrl("Friends")}
+                                className="flex-shrink-0 bg-[#213B75] rounded-lg px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#1a3060] transition-colors font-sans"
+                              >
+                                View Request
+                              </Link>
                             </div>
                           </motion.div>
                         );

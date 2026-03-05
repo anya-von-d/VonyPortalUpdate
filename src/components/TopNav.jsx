@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 // Top bar items (dark blue #213B75 bar - secondary links)
 const topBarItems = [
   {
-    title: "Updates",
+    title: "Notifications",
     url: createPageUrl("Requests"),
   },
   {

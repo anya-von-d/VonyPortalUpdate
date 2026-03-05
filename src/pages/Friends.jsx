@@ -266,7 +266,68 @@ export default function Friends() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
+                className="space-y-4"
               >
+                {/* Incoming Friend Requests */}
+                {receivedRequests.length > 0 && (
+                  <div className="rounded-xl px-4 py-4 shadow-sm bg-white">
+                    <p className="text-sm font-bold text-[#213B75] mb-3 tracking-tight font-sans">
+                      Friend Requests
+                    </p>
+                    <div className="space-y-2">
+                      {receivedRequests.map((request, index) => {
+                        const profile = getProfileById(request.user_id);
+                        if (!profile) return null;
+                        const defaultAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent((profile?.full_name || 'U').charAt(0))}&background=4C7FC4&color=fff&size=128`;
+
+                        return (
+                          <motion.div
+                            key={request.id}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: index * 0.05 }}
+                            className="p-3 rounded-lg bg-[#CDE7F8]"
+                          >
+                            <div className="flex items-center gap-3">
+                              <img
+                                src={profile.profile_picture_url || profile.avatar_url || defaultAvatar}
+                                alt={profile.full_name || 'User'}
+                                className="w-10 h-10 rounded-full object-cover flex-shrink-0 bg-white"
+                              />
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-semibold text-[#213B75] truncate font-sans">
+                                  {profile.full_name || profile.username}
+                                </p>
+                                <p className="text-xs text-[#4C7FC4] truncate font-sans">
+                                  @{profile.username}
+                                </p>
+                              </div>
+                              <div className="flex gap-2 flex-shrink-0">
+                                <button
+                                  onClick={() => handleAcceptRequestFromSearch(request.id)}
+                                  disabled={processingId === request.id}
+                                  className="bg-[#213B75] rounded-lg px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#1a3060] transition-colors disabled:opacity-50 font-sans cursor-pointer"
+                                >
+                                  {processingId === request.id ? (
+                                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                  ) : 'Confirm'}
+                                </button>
+                                <button
+                                  onClick={() => handleCancelRequest(request.id)}
+                                  disabled={processingId === request.id}
+                                  className="bg-white rounded-lg px-3 py-1.5 text-xs font-semibold text-red-500 hover:bg-red-50 transition-colors disabled:opacity-50 font-sans cursor-pointer"
+                                >
+                                  Delete
+                                </button>
+                              </div>
+                            </div>
+                          </motion.div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
                 <div className="rounded-xl px-4 py-4 shadow-sm bg-white">
                   <div className="flex items-center justify-between mb-3">
                     <p className="text-sm font-bold text-[#213B75] tracking-tight font-sans">
@@ -506,7 +567,7 @@ export default function Friends() {
                 >
                   <div ref={sentRequestsRef} className="rounded-xl px-4 py-4 shadow-sm bg-white">
                     <p className="text-sm font-bold text-[#213B75] mb-3 tracking-tight font-sans">
-                      Your Friend Requests
+                      Sent Friend Requests
                     </p>
 
                     {sentRequests.length === 0 ? (
