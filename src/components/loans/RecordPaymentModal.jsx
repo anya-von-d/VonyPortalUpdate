@@ -10,7 +10,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
   DollarSign,
   CheckCircle,
@@ -39,80 +38,6 @@ const PAYMENT_METHODS = [
   { id: 'other', label: 'Other', icon: DollarSign, color: 'text-gray-500', bgColor: 'bg-gray-500' },
 ];
 
-// Deep link generators for payment apps
-const generateDeepLink = (method, amount, recipientHandle, note) => {
-  const encodedNote = encodeURIComponent(note || 'Loan payment via Vony');
-
-  switch (method) {
-    case 'venmo':
-      // Venmo deep link format
-      // Mobile: venmo://paycharge?txn=pay&recipients={username}&amount={amount}&note={note}
-      // Web fallback: https://venmo.com/{username}
-      if (recipientHandle) {
-        const username = recipientHandle.replace('@', '');
-        return {
-          mobile: `venmo://paycharge?txn=pay&recipients=${username}&amount=${amount}&note=${encodedNote}`,
-          web: `https://venmo.com/${username}`,
-          canDeepLink: true
-        };
-      }
-      return { mobile: null, web: 'https://venmo.com', canDeepLink: false };
-
-    case 'cashapp':
-      // Cash App deep link format
-      // Mobile: cashapp://cash.app/pay/{cashtag}/{amount}
-      // Web fallback: https://cash.app/{cashtag}
-      if (recipientHandle) {
-        const cashtag = recipientHandle.replace('$', '');
-        return {
-          mobile: `cashapp://cash.app/$${cashtag}/${amount}`,
-          web: `https://cash.app/$${cashtag}`,
-          canDeepLink: true
-        };
-      }
-      return { mobile: null, web: 'https://cash.app', canDeepLink: false };
-
-    case 'paypal':
-      // PayPal.me link format
-      // https://paypal.me/{username}/{amount}
-      if (recipientHandle) {
-        const username = recipientHandle.includes('@')
-          ? recipientHandle // email
-          : recipientHandle.replace('paypal.me/', ''); // PayPal.me username
-
-        if (username.includes('@')) {
-          // Email - can't use paypal.me, just open PayPal
-          return {
-            mobile: `https://www.paypal.com/paypalme/my/send?amount=${amount}`,
-            web: `https://www.paypal.com`,
-            canDeepLink: false
-          };
-        }
-        return {
-          mobile: `https://paypal.me/${username}/${amount}`,
-          web: `https://paypal.me/${username}/${amount}`,
-          canDeepLink: true
-        };
-      }
-      return { mobile: null, web: 'https://paypal.com', canDeepLink: false };
-
-    case 'zelle':
-      // Zelle doesn't have public deep links, but we can provide info
-      // Users need to use their bank's app
-      return {
-        mobile: null,
-        web: 'https://www.zellepay.com',
-        canDeepLink: false,
-        instructions: recipientHandle
-          ? `Send to: ${recipientHandle}`
-          : 'Open your bank app to send via Zelle'
-      };
-
-    default:
-      return { mobile: null, web: null, canDeepLink: false };
-  }
-};
-
 // Generate a unique transaction ID
 const generateTransactionId = () => {
   const timestamp = Date.now().toString(36);
@@ -123,25 +48,20 @@ const generateTransactionId = () => {
 export default function RecordPaymentModal({ loan, onClose, onPaymentComplete, isLender = false, currentUserId = null }) {
   const [amount, setAmount] = useState(loan._prefillAmount || loan.payment_amount?.toFixed(2) || "");
   const [paymentMethod, setPaymentMethod] = useState(loan._prefillMethod || "");
-  const [notes, setNotes] = useState("");
   const [paymentDate, setPaymentDate] = useState(format(new Date(), 'yyyy-MM-dd'));
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState("");
   const [recipientInfo, setRecipientInfo] = useState(null);
-  const [recipientPaymentHandles, setRecipientPaymentHandles] = useState({});
-  const [copiedHandle, setCopiedHandle] = useState(false);
-  const [showDeepLinkOption, setShowDeepLinkOption] = useState(false);
 
-  // New states for multi-step flow
+  // Multi-step flow
   const [step, setStep] = useState(1); // 1: Enter details, 2: Confirm, 3: Success
   const [transactionId, setTransactionId] = useState("");
-  const [showConfirmWarning, setShowConfirmWarning] = useState(false);
 
   const remainingBalance = (loan.total_amount || 0) - (loan.amount_paid || 0);
   const suggestedPayment = Math.min(loan.payment_amount || 0, remainingBalance);
 
-  // Inline validation states
+  // Inline validation
   const [amountError, setAmountError] = useState("");
   const [methodError, setMethodError] = useState("");
 
@@ -157,52 +77,14 @@ export default function RecordPaymentModal({ loan, onClose, onPaymentComplete, i
     }
   }, [amount, remainingBalance]);
 
-  // Fetch recipient's payment handles
+  // Fetch recipient's profile
   useEffect(() => {
     const fetchRecipientInfo = async () => {
       try {
-        // Determine who the recipient is (opposite party)
         const recipientId = isLender ? loan.borrower_id : loan.lender_id;
-
-        // Get recipient's profile
         const profiles = await PublicProfile.list();
         const recipientProfile = profiles.find(p => p.user_id === recipientId);
         setRecipientInfo(recipientProfile);
-
-        // Get payment handles
-        const handles = {};
-
-        // Venmo - fetch all connections and find recipient's
-        const allVenmoConnections = await VenmoConnection.list();
-        const recipientVenmo = allVenmoConnections.find(vc => vc.user_id === recipientId);
-        if (recipientVenmo) {
-          handles.venmo = recipientVenmo.venmo_username;
-        }
-
-        // PayPal - fetch all connections and find recipient's
-        const allPaypalConnections = await PayPalConnection.list();
-        const recipientPaypal = allPaypalConnections.find(pc => pc.user_id === recipientId);
-        if (recipientPaypal) {
-          handles.paypal = recipientPaypal.paypal_email || recipientPaypal.paypal_username;
-        }
-
-        // Try to get CashApp and Zelle from the user/profiles
-        try {
-          const users = await User.list();
-          const recipientUser = users?.find(u => u.id === recipientId);
-          if (recipientUser) {
-            if (recipientUser.cashapp_handle) {
-              handles.cashapp = recipientUser.cashapp_handle;
-            }
-            if (recipientUser.zelle_email) {
-              handles.zelle = recipientUser.zelle_email;
-            }
-          }
-        } catch (err) {
-          // Silently fail - CashApp/Zelle handles are optional
-        }
-
-        setRecipientPaymentHandles(handles);
       } catch (error) {
         console.error("Error fetching recipient info:", error);
       }
@@ -210,51 +92,6 @@ export default function RecordPaymentModal({ loan, onClose, onPaymentComplete, i
 
     fetchRecipientInfo();
   }, [loan, isLender]);
-
-  // Detect if user is on mobile device
-  const isMobileDevice = () => {
-    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-  };
-
-  const handleOpenPaymentApp = () => {
-    const handle = recipientPaymentHandles[paymentMethod];
-    const paymentAmount = parseFloat(amount) || suggestedPayment;
-    const paymentNote = `Loan payment to ${recipientInfo?.full_name || 'lender'}`;
-
-    const links = generateDeepLink(paymentMethod, paymentAmount, handle, paymentNote);
-
-    // On desktop, always use web links
-    if (!isMobileDevice()) {
-      if (links.web) {
-        window.open(links.web, '_blank');
-      }
-      return;
-    }
-
-    // On mobile, try deep link first with web fallback
-    if (links.mobile) {
-      const startTime = Date.now();
-      window.location.href = links.mobile;
-
-      // Fallback to web after a short delay if app doesn't open
-      setTimeout(() => {
-        if (Date.now() - startTime < 2000 && links.web) {
-          window.open(links.web, '_blank');
-        }
-      }, 1500);
-    } else if (links.web) {
-      window.open(links.web, '_blank');
-    }
-  };
-
-  const handleCopyHandle = () => {
-    const handle = recipientPaymentHandles[paymentMethod];
-    if (handle) {
-      navigator.clipboard.writeText(handle);
-      setCopiedHandle(true);
-      setTimeout(() => setCopiedHandle(false), 2000);
-    }
-  };
 
   // Proceed to confirmation step
   const handleProceedToConfirm = () => {
@@ -290,15 +127,12 @@ export default function RecordPaymentModal({ loan, onClose, onPaymentComplete, i
     setIsProcessing(true);
 
     try {
-      // Get current user ID
       const user = await User.me();
       const recordedById = user?.id || currentUserId;
 
-      // Generate transaction ID
       const txnId = generateTransactionId();
       setTransactionId(txnId);
 
-      // Create the payment record with pending_confirmation status
       const methodLabel = PAYMENT_METHODS.find(m => m.id === paymentMethod)?.label || paymentMethod;
       await Payment.create({
         loan_id: loan.id,
@@ -307,10 +141,8 @@ export default function RecordPaymentModal({ loan, onClose, onPaymentComplete, i
         payment_method: paymentMethod,
         recorded_by: recordedById,
         status: 'pending_confirmation',
-        notes: notes || `${methodLabel} payment of $${paymentAmount.toFixed(2)} via ${methodLabel} [Ref: ${txnId}]`
+        notes: `${methodLabel} payment of $${paymentAmount.toFixed(2)} via ${methodLabel} [Ref: ${txnId}]`
       });
-
-      // Don't update the loan yet - wait for confirmation from the other party
 
       setStep(3);
       setIsSuccess(true);
@@ -325,14 +157,13 @@ export default function RecordPaymentModal({ loan, onClose, onPaymentComplete, i
     setIsProcessing(false);
   };
 
-  // Get current deep link info
-  const currentHandle = recipientPaymentHandles[paymentMethod];
-  const currentLinks = paymentMethod ? generateDeepLink(
-    paymentMethod,
-    parseFloat(amount) || suggestedPayment,
-    currentHandle,
-    `Loan payment`
-  ) : null;
+  const otherPersonName = recipientInfo?.full_name || 'Unknown';
+  const otherPersonUsername = recipientInfo?.username || 'user';
+  const loanDirection = isLender ? 'from' : 'to';
+  const loanPurpose = loan.purpose || 'Personal loan';
+  const loanAmount = loan.total_amount || loan.amount || 0;
+  const nextPaymentAmount = loan.payment_amount || 0;
+  const nextPaymentDate = loan.next_payment_date ? format(new Date(loan.next_payment_date), 'MMM d, yyyy') : 'N/A';
 
   // Step 3: Success
   if (step === 3 && isSuccess) {
@@ -415,18 +246,14 @@ export default function RecordPaymentModal({ loan, onClose, onPaymentComplete, i
                     {format(new Date(paymentDate), 'MMM d, yyyy')}
                   </span>
                 </div>
-                {recipientInfo && (
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500">To</span>
-                    <span className="font-medium text-slate-800">{recipientInfo.full_name}</span>
-                  </div>
-                )}
-                {notes && (
-                  <div className="pt-3 border-t border-white/40">
-                    <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500">Notes</span>
-                    <p className="text-sm text-slate-800 mt-1">{notes}</p>
-                  </div>
-                )}
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500">{isLender ? 'From' : 'To'}</span>
+                  <span className="font-medium text-slate-800">@{otherPersonUsername}</span>
+                </div>
+                <div className="pt-3 border-t border-white/40">
+                  <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500">For</span>
+                  <p className="text-sm text-slate-800 mt-1">{loanPurpose}</p>
+                </div>
               </div>
 
               {/* Warning Notice */}
@@ -523,11 +350,17 @@ export default function RecordPaymentModal({ loan, onClose, onPaymentComplete, i
             </div>
           </div>
 
-          {/* Info banner */}
-          <div className="bg-[#DBFFEB] rounded-xl p-3 flex items-start gap-2">
-            <Clock className="w-4 h-4 text-[#00A86B] flex-shrink-0 mt-0.5" />
+          {/* Loan Information */}
+          <div className="bg-[#DBFFEB] rounded-2xl p-4 space-y-1.5">
+            <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-2">Loan Information</p>
+            <p className="text-sm font-semibold text-slate-800">
+              ${loanAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} loan {loanDirection} @{otherPersonUsername}
+            </p>
             <p className="text-xs text-slate-600">
-              {isLender ? 'The Borrower' : 'The Lender'} will need to confirm this payment before it updates the loan balance.
+              for {loanPurpose}
+            </p>
+            <p className="text-xs text-slate-600 pt-1.5 border-t border-white/40 mt-1.5">
+              Next payment of <span className="font-semibold text-slate-800">${nextPaymentAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span> due {nextPaymentDate}
             </p>
           </div>
 
@@ -539,30 +372,12 @@ export default function RecordPaymentModal({ loan, onClose, onPaymentComplete, i
               </div>
             )}
 
-            {/* Loan Summary */}
-            <div className="bg-[#DBFFEB] rounded-2xl p-4 space-y-2">
-              <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-2">Loan Balance</p>
-              <div className="flex justify-between text-sm">
-                <span className="text-slate-600">Total Loan Amount</span>
-                <span className="font-medium">${(loan.total_amount || 0).toFixed(2)}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-slate-600">Already Paid</span>
-                <span className="font-medium text-[#00A86B]">${(loan.amount_paid || 0).toFixed(2)}</span>
-              </div>
-              <div className="flex justify-between text-sm pt-2 border-t border-white/50">
-                <span className="text-slate-800 font-medium">Remaining Balance</span>
-                <span className="font-bold text-slate-800">${remainingBalance.toFixed(2)}</span>
-              </div>
-            </div>
-
             {/* Payment Method */}
             <div className="space-y-2">
               <p className={`text-[10px] font-mono uppercase tracking-[0.2em] ${methodError ? 'text-red-600' : 'text-slate-500'}`}>Payment Method</p>
               <div className="grid grid-cols-3 gap-2">
                 {PAYMENT_METHODS.map((method) => {
                   const Icon = method.icon;
-                  const hasHandle = !!recipientPaymentHandles[method.id];
                   return (
                     <motion.button
                       key={method.id}
@@ -572,9 +387,8 @@ export default function RecordPaymentModal({ loan, onClose, onPaymentComplete, i
                       onClick={() => {
                         setPaymentMethod(method.id);
                         setMethodError("");
-                        setShowDeepLinkOption(false);
                       }}
-                      className={`flex flex-col items-center gap-1 p-3 rounded-xl transition-all relative ${
+                      className={`flex flex-col items-center gap-1 p-3 rounded-xl transition-all ${
                         paymentMethod === method.id
                           ? 'bg-[#AAFFA3] shadow-sm'
                           : methodError
@@ -584,9 +398,6 @@ export default function RecordPaymentModal({ loan, onClose, onPaymentComplete, i
                     >
                       <Icon className={`w-5 h-5 ${method.color}`} />
                       <span className="text-xs font-medium text-slate-700">{method.label}</span>
-                      {hasHandle && (
-                        <div className="absolute -top-1 -right-1 w-3 h-3 bg-[#00A86B] rounded-full border-2 border-[#DBEEE3]" />
-                      )}
                     </motion.button>
                   );
                 })}
@@ -601,126 +412,47 @@ export default function RecordPaymentModal({ loan, onClose, onPaymentComplete, i
                   {methodError}
                 </motion.p>
               )}
-              <p className="text-xs text-slate-500">
-                <span className="inline-flex items-center gap-1">
-                  <span className="w-2 h-2 bg-[#00A86B] rounded-full"></span>
-                  indicates recipient has connected this method
-                </span>
-              </p>
             </div>
 
-            {/* Deep Link Section */}
-            {paymentMethod && ['venmo', 'cashapp', 'paypal', 'zelle'].includes(paymentMethod) && !isLender && (
-              <div className="bg-[#DBFFEB] rounded-xl p-4 space-y-3">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-medium text-slate-700">
-                    Quick Pay with {PAYMENT_METHODS.find(m => m.id === paymentMethod)?.label}
-                  </p>
-                  {currentHandle && (
-                    <span className="text-xs text-[#00A86B] font-medium flex items-center gap-1">
-                      <Check className="w-3 h-3" />
-                      Connected
-                    </span>
+            {/* Payment Amount - inline */}
+            <div className="space-y-1">
+              <div className="flex items-center gap-3">
+                <p className={`text-[10px] font-mono uppercase tracking-[0.2em] flex-shrink-0 ${amountError ? 'text-red-600' : 'text-slate-500'}`}>Payment Amount</p>
+                <div className="relative flex-1">
+                  <Input
+                    id="amount"
+                    type="number"
+                    step="0.01"
+                    min="0.01"
+                    max={remainingBalance}
+                    placeholder={suggestedPayment.toFixed(2)}
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    required
+                    className={`rounded-xl bg-white border-0 transition-all ${
+                      amountError
+                        ? 'ring-1 ring-red-300'
+                        : amount && !amountError
+                        ? 'ring-1 ring-[#00A86B]/30'
+                        : ''
+                    }`}
+                  />
+                  {amount && !amountError && (
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className="absolute right-3 top-1/2 -translate-y-1/2"
+                    >
+                      <Check className="w-5 h-5 text-[#00A86B]" />
+                    </motion.div>
                   )}
                 </div>
-
-                {currentHandle ? (
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 bg-white rounded-xl p-2">
-                      <span className="text-sm text-slate-600 flex-1 font-mono">
-                        {currentHandle}
-                      </span>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={handleCopyHandle}
-                        className="h-8 px-2"
-                      >
-                        {copiedHandle ? (
-                          <Check className="w-4 h-4 text-[#00A86B]" />
-                        ) : (
-                          <Copy className="w-4 h-4 text-slate-500" />
-                        )}
-                      </Button>
-                    </div>
-
-                    {currentLinks?.canDeepLink && (
-                      <Button
-                        type="button"
-                        onClick={handleOpenPaymentApp}
-                        className={`w-full ${PAYMENT_METHODS.find(m => m.id === paymentMethod)?.bgColor} hover:opacity-90 text-white rounded-xl`}
-                      >
-                        <ExternalLink className="w-4 h-4 mr-2" />
-                        Open {PAYMENT_METHODS.find(m => m.id === paymentMethod)?.label} to Pay ${parseFloat(amount) || suggestedPayment}
-                      </Button>
-                    )}
-
-                    {paymentMethod === 'zelle' && (
-                      <p className="text-xs text-slate-500">
-                        Open your bank app and send to the phone/email above via Zelle.
-                      </p>
-                    )}
-                  </div>
-                ) : (
-                  <div className="text-sm text-slate-500">
-                    <p>
-                      {recipientInfo?.full_name || 'The recipient'} hasn't connected their {PAYMENT_METHODS.find(m => m.id === paymentMethod)?.label} account yet.
-                    </p>
-                    {currentLinks?.web && (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => window.open(currentLinks.web, '_blank')}
-                        className="mt-2 rounded-xl border-0 bg-white"
-                      >
-                        <ExternalLink className="w-3 h-3 mr-1" />
-                        Open {PAYMENT_METHODS.find(m => m.id === paymentMethod)?.label}
-                      </Button>
-                    )}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Amount Input */}
-            <div className="space-y-2">
-              <p className={`text-[10px] font-mono uppercase tracking-[0.2em] ${amountError ? 'text-red-600' : 'text-slate-500'}`}>Payment Amount</p>
-              <div className="relative">
-                <Input
-                  id="amount"
-                  type="number"
-                  step="0.01"
-                  min="0.01"
-                  max={remainingBalance}
-                  placeholder={suggestedPayment.toFixed(2)}
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  required
-                  className={`text-lg rounded-xl bg-white border-0 transition-all ${
-                    amountError
-                      ? 'ring-1 ring-red-300'
-                      : amount && !amountError
-                      ? 'ring-1 ring-[#00A86B]/30'
-                      : ''
-                  }`}
-                />
-                {amount && !amountError && (
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className="absolute right-3 top-1/2 -translate-y-1/2"
-                  >
-                    <Check className="w-5 h-5 text-[#00A86B]" />
-                  </motion.div>
-                )}
               </div>
               {amountError && (
                 <motion.p
                   initial={{ opacity: 0, y: -5 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="text-xs text-red-600 flex items-center gap-1"
+                  className="text-xs text-red-600 flex items-center gap-1 pl-0"
                 >
                   <AlertCircle className="w-3 h-3" />
                   {amountError}
@@ -746,9 +478,9 @@ export default function RecordPaymentModal({ loan, onClose, onPaymentComplete, i
               </div>
             </div>
 
-            {/* Payment Date */}
-            <div className="space-y-2">
-              <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500">Payment Date</p>
+            {/* Payment Date - inline */}
+            <div className="flex items-center gap-3">
+              <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 flex-shrink-0">Date</p>
               <Input
                 id="paymentDate"
                 type="date"
@@ -756,20 +488,7 @@ export default function RecordPaymentModal({ loan, onClose, onPaymentComplete, i
                 onChange={(e) => setPaymentDate(e.target.value)}
                 max={format(new Date(), 'yyyy-MM-dd')}
                 required
-                className="rounded-xl bg-white border-0"
-              />
-            </div>
-
-            {/* Notes */}
-            <div className="space-y-2">
-              <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500">Notes (Optional)</p>
-              <Textarea
-                id="notes"
-                placeholder="Add any details about this payment..."
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                rows={2}
-                className="rounded-xl bg-white border-0"
+                className="rounded-xl bg-white border-0 flex-1"
               />
             </div>
 
