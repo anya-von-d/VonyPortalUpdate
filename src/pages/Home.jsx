@@ -911,10 +911,23 @@ export default function Home() {
 
                           return events.map((event, index) => {
                             const daysUntil = differenceInDays(event.date, new Date());
-                            let dueText = '';
-                            if (daysUntil > 0) dueText = `due in ${daysUntil} day${daysUntil !== 1 ? 's' : ''}`;
-                            else if (daysUntil === 0) dueText = 'due today';
-                            else dueText = `${Math.abs(daysUntil)} day${Math.abs(daysUntil) !== 1 ? 's' : ''} overdue`;
+                            let statusText = '';
+                            let statusColor = 'text-[#4C7FC4]';
+                            if (event.paymentStatus === 'completed') {
+                              statusText = 'Payment completed';
+                              statusColor = 'text-[#00A86B]';
+                            } else if (event.paymentStatus === 'pending') {
+                              statusText = 'Pending confirmation';
+                              statusColor = 'text-[#F59E0B]';
+                            } else if (daysUntil > 0) {
+                              statusText = `Due in ${daysUntil} day${daysUntil !== 1 ? 's' : ''}`;
+                            } else if (daysUntil === 0) {
+                              statusText = 'Due today';
+                              statusColor = 'text-[#F59E0B]';
+                            } else {
+                              statusText = `Overdue by ${Math.abs(daysUntil)} day${Math.abs(daysUntil) !== 1 ? 's' : ''}`;
+                              statusColor = 'text-red-500';
+                            }
 
                             const amountFormatted = event.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
@@ -933,7 +946,10 @@ export default function Home() {
                                   <p className="text-xs text-[#213B75] truncate">
                                     <span className="font-semibold">{event.type === 'send' ? 'Payment' : 'Repayment'}</span>{' '}
                                     of <span className="font-bold">${amountFormatted}</span>{' '}
-                                    {event.type === 'send' ? 'to' : 'from'} @{event.username} {dueText}
+                                    {event.type === 'send' ? 'to' : 'from'} @{event.username}
+                                  </p>
+                                  <p className={`text-[11px] ${statusColor}`}>
+                                    {statusText}
                                   </p>
                                 </div>
 
