@@ -1018,9 +1018,9 @@ export default function Home() {
                         const d = new Date(l.next_payment_date);
                         return l.borrower_id === user.id && d < today;
                       });
-                      if (overdueYouOwe.length > 0) {
+                      if (overdueYouOwe.length >= 2) {
                         notifications.push({
-                          text: `You have ${overdueYouOwe.length} overdue payment${overdueYouOwe.length !== 1 ? 's' : ''}`,
+                          text: `You have ${overdueYouOwe.length} overdue payments`,
                           link: 'Borrowing'
                         });
                       }
