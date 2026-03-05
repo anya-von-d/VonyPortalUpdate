@@ -48,7 +48,7 @@ function LoanCarousel({ hasLendingLoans, hasBorrowingLoans }) {
         {hasBorrowingLoans && (
           <Link
             to={createPageUrl("Borrowing")}
-            className="px-5 py-2.5 rounded-xl bg-white text-sm font-semibold text-[#213B75] hover:bg-white/90 transition-colors font-sans"
+            className="px-5 py-2.5 rounded-xl bg-white text-sm font-semibold text-[#C2FFDC] hover:bg-white/90 transition-colors font-sans"
           >
             Track Payment Progress
           </Link>
@@ -59,7 +59,7 @@ function LoanCarousel({ hasLendingLoans, hasBorrowingLoans }) {
             className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition-colors font-sans ${
               hasBorrowingLoans
                 ? 'bg-white/20 text-white hover:bg-white/30'
-                : 'bg-white text-[#213B75] hover:bg-white/90'
+                : 'bg-white text-[#C2FFDC] hover:bg-white/90'
             }`}
           >
             Track Repayment Progress
@@ -77,7 +77,7 @@ function LoanCarousel({ hasLendingLoans, hasBorrowingLoans }) {
       </p>
       <Link
         to={createPageUrl("LoanAgreements")}
-        className="inline-block px-5 py-2.5 rounded-xl bg-white text-sm font-semibold text-[#213B75] hover:bg-white/90 transition-colors font-sans"
+        className="inline-block px-5 py-2.5 rounded-xl bg-white text-sm font-semibold text-[#C2FFDC] hover:bg-white/90 transition-colors font-sans"
       >
         My Loan Documents
       </Link>
@@ -85,7 +85,7 @@ function LoanCarousel({ hasLendingLoans, hasBorrowingLoans }) {
   ];
 
   return (
-    <div className="rounded-2xl relative overflow-hidden" style={{ backgroundColor: '#213B75' }}>
+    <div className="rounded-2xl relative overflow-hidden" style={{ backgroundColor: '#83F384' }}>
       {/* Arrow buttons */}
       <button
         onClick={() => goToSlide('prev')}
@@ -420,9 +420,9 @@ export default function Home() {
     const hasBorrowingLoans = borrowedLoans.length > 0;
 
     return (
-        <div className="min-h-screen" style={{backgroundColor: '#F5F5F5'}}>
+        <div className="min-h-screen" style={{backgroundColor: '#0F2B1F'}}>
           {/* Hero Section */}
-          <div className="px-4 pt-10 pb-8 sm:px-8 md:px-24 md:pt-14 md:pb-10 lg:px-36" style={{backgroundColor: '#F5F5F5'}}>
+          <div className="px-4 pt-10 pb-8 sm:px-8 md:px-24 md:pt-14 md:pb-10 lg:px-36" style={{backgroundColor: '#0F2B1F'}}>
             <div className="max-w-6xl mx-auto">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -435,7 +435,7 @@ export default function Home() {
                     {(() => {
                       const firstName = user.full_name?.split(' ')[0] || 'User';
                       return (
-                        <p className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#213B75] tracking-tight leading-tight font-serif">Welcome Back, {firstName}</p>
+                        <p className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#C2FFDC] tracking-tight leading-tight font-serif">Welcome Back, {firstName}</p>
                       );
                     })()}
                   </div>
@@ -443,50 +443,50 @@ export default function Home() {
                   {/* Quick Action Circles */}
                   <div className="flex items-start gap-5 sm:gap-6 flex-shrink-0">
                     <Link to={createPageUrl("CreateOffer")} className="flex flex-col items-center gap-1.5 group">
-                      <div className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4C7FC4" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                      <div className="w-12 h-12 rounded-full bg-[#1C4332] shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#83F384" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                           <line x1="12" y1="5" x2="12" y2="19"></line>
                           <line x1="5" y1="12" x2="19" y2="12"></line>
                         </svg>
                       </div>
-                      <p className="text-[10px] font-semibold text-[#213B75] text-center leading-tight font-sans">Create<br/>Loan Offer</p>
+                      <p className="text-[10px] font-semibold text-[#C2FFDC] text-center leading-tight font-sans">Create<br/>Loan Offer</p>
                     </Link>
                     <Link to={createPageUrl("RecentActivity")} className="flex flex-col items-center gap-1.5 group">
-                      <div className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4C7FC4" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                      <div className="w-12 h-12 rounded-full bg-[#1C4332] shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#83F384" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                           <circle cx="12" cy="12" r="10"></circle>
                           <polyline points="12 6 12 12 16 14"></polyline>
                         </svg>
                       </div>
-                      <p className="text-[10px] font-semibold text-[#213B75] text-center leading-tight font-sans">View Recent<br/>Activity</p>
+                      <p className="text-[10px] font-semibold text-[#C2FFDC] text-center leading-tight font-sans">View Recent<br/>Activity</p>
                     </Link>
                     <Link to={createPageUrl("LoanAgreements")} className="flex flex-col items-center gap-1.5 group">
-                      <div className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4C7FC4" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                      <div className="w-12 h-12 rounded-full bg-[#1C4332] shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#83F384" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                           <polyline points="14 2 14 8 20 8"></polyline>
                           <line x1="16" y1="13" x2="8" y2="13"></line>
                           <line x1="16" y1="17" x2="8" y2="17"></line>
                         </svg>
                       </div>
-                      <p className="text-[10px] font-semibold text-[#213B75] text-center leading-tight font-sans">View<br/>Documents</p>
+                      <p className="text-[10px] font-semibold text-[#C2FFDC] text-center leading-tight font-sans">View<br/>Documents</p>
                     </Link>
                   </div>
                 </div>
 
                 {/* Find Friends - shown above grid if user has no friends */}
                 {!hasFriends && (
-                  <div className="rounded-2xl px-6 py-8 sm:px-10 sm:py-10 text-center" style={{ backgroundColor: '#213B75' }}>
-                    <p className="text-lg sm:text-xl font-bold text-white font-sans mb-1.5 tracking-tight">
+                  <div className="rounded-2xl px-6 py-8 sm:px-10 sm:py-10 text-center" style={{ backgroundColor: '#83F384' }}>
+                    <p className="text-lg sm:text-xl font-bold text-[#1C4332] font-sans mb-1.5 tracking-tight">
                       Find friends to lend with
                     </p>
-                    <p className="text-sm text-white/60 font-sans mb-6 max-w-md mx-auto">
+                    <p className="text-sm text-[#1C4332]/60 font-sans mb-6 max-w-md mx-auto">
                       Connect with people you trust to start lending and borrowing together
                     </p>
                     <div className="flex items-center justify-center gap-3 sm:gap-4">
                       <Link
                         to={createPageUrl("Friends")}
-                        className="px-6 py-2.5 rounded-xl bg-white text-sm font-semibold text-[#213B75] hover:bg-white/90 transition-colors font-sans"
+                        className="px-6 py-2.5 rounded-xl bg-[#1C4332] text-sm font-semibold text-[#83F384] hover:bg-[#1C4332]/90 transition-colors font-sans"
                       >
                         Search for Friends
                       </Link>
@@ -502,7 +502,7 @@ export default function Home() {
                             navigator.clipboard.writeText('https://lend-with-vony.com');
                           }
                         }}
-                        className="px-6 py-2.5 rounded-xl bg-white/20 text-sm font-semibold text-white hover:bg-white/30 transition-colors font-sans"
+                        className="px-6 py-2.5 rounded-xl bg-[#1C4332]/15 text-sm font-semibold text-[#1C4332] hover:bg-[#1C4332]/25 transition-colors font-sans"
                       >
                         Invite Friends
                       </button>
@@ -515,23 +515,23 @@ export default function Home() {
                   {/* Left Column: Lending Overview + Borrowing Overview stacked */}
                   <div className="flex flex-col gap-3 md:gap-4">
                     {/* Lending Overview Box */}
-                    <div className="rounded-xl px-4 py-3 shadow-sm bg-white">
-                      <p className="text-sm font-bold text-[#213B75] mb-2 tracking-tight font-serif">
+                    <div className="rounded-xl px-4 py-3 shadow-sm bg-[#1C4332]">
+                      <p className="text-sm font-bold text-[#C2FFDC] mb-2 tracking-tight font-serif">
                         Lending Overview
                       </p>
                       <div className="mb-3">
                         <div className="flex items-center justify-between mb-0.5">
-                          <p className="text-[11px] font-medium text-[#4C7FC4]">Repaid</p>
-                          <p className="text-[11px] font-bold text-[#213B75]">
+                          <p className="text-[11px] font-medium text-[#00A86B]">Repaid</p>
+                          <p className="text-[11px] font-bold text-[#C2FFDC]">
                             {formatMoney(totalRepaid)} / {formatMoney(totalLentAmount)}
                           </p>
                         </div>
-                        <div className="w-full h-5 bg-[#CDE7F8] rounded-md overflow-hidden">
+                        <div className="w-full h-5 bg-[#0F2B1F] rounded-md overflow-hidden">
                           <div
                             className="h-full rounded-md transition-all duration-500 flex items-center justify-end pr-2"
                             style={{
                               width: `${Math.max((totalRepaid / Math.max(totalLentAmount, 1)) * 100, 2)}%`,
-                              backgroundColor: '#4C7FC4'
+                              backgroundColor: '#00A86B'
                             }}
                           >
                             {totalRepaid > 0 && (
@@ -542,15 +542,15 @@ export default function Home() {
                           </div>
                         </div>
                       </div>
-                      <div className="border-t border-[#CDE7F8] pt-2 grid grid-cols-2 gap-3">
+                      <div className="border-t border-[#00A86B]/20 pt-2 grid grid-cols-2 gap-3">
                         <div>
-                          <p className="text-[11px] text-[#4C7FC4] mb-0.5">Next Payment Date</p>
+                          <p className="text-[11px] text-[#00A86B] mb-0.5">Next Payment Date</p>
                           <div className="flex items-baseline gap-1.5">
-                            <p className="text-base font-bold text-[#213B75]">
+                            <p className="text-base font-bold text-[#C2FFDC]">
                               {nextLenderPayment ? format(nextLenderPayment.date, 'EEE, MMM d') : 'N/A'}
                             </p>
                             {nextLenderPayment && (
-                              <p className="text-[11px] text-[#4C7FC4]">
+                              <p className="text-[11px] text-[#00A86B]">
                                 {(() => {
                                   const days = Math.ceil((nextLenderPayment.date - new Date()) / (1000 * 60 * 60 * 24));
                                   return days > 0 ? `${days}d away` : days === 0 ? 'Due today' : `${Math.abs(days)}d overdue`;
@@ -560,13 +560,13 @@ export default function Home() {
                           </div>
                         </div>
                         <div>
-                          <p className="text-[11px] text-[#4C7FC4] mb-0.5">Next Payment Amount</p>
+                          <p className="text-[11px] text-[#00A86B] mb-0.5">Next Payment Amount</p>
                           <div className="flex items-baseline gap-1.5">
-                            <p className="text-base font-bold text-[#213B75]">
+                            <p className="text-base font-bold text-[#C2FFDC]">
                               {nextLenderPayment ? formatMoney(nextLenderPayment.payment_amount || 0) : 'N/A'}
                             </p>
                             {nextLenderPayment && (
-                              <p className="text-[11px] text-[#4C7FC4]">
+                              <p className="text-[11px] text-[#00A86B]">
                                 from @{nextLenderPayment.username}
                               </p>
                             )}
@@ -576,23 +576,23 @@ export default function Home() {
                     </div>
 
                     {/* Borrowing Overview Box */}
-                    <div className="rounded-xl px-4 py-3 shadow-sm bg-white">
-                      <p className="text-sm font-bold text-[#213B75] mb-2 tracking-tight font-serif">
+                    <div className="rounded-xl px-4 py-3 shadow-sm bg-[#1C4332]">
+                      <p className="text-sm font-bold text-[#C2FFDC] mb-2 tracking-tight font-serif">
                         Borrowing Overview
                       </p>
                       <div className="mb-3">
                         <div className="flex items-center justify-between mb-0.5">
-                          <p className="text-[11px] font-medium text-[#4C7FC4]">Paid Back</p>
-                          <p className="text-[11px] font-bold text-[#213B75]">
+                          <p className="text-[11px] font-medium text-[#00A86B]">Paid Back</p>
+                          <p className="text-[11px] font-bold text-[#C2FFDC]">
                             {formatMoney(totalPaidBack)} / {formatMoney(totalBorrowedAmount)}
                           </p>
                         </div>
-                        <div className="w-full h-5 bg-[#CDE7F8] rounded-md overflow-hidden">
+                        <div className="w-full h-5 bg-[#0F2B1F] rounded-md overflow-hidden">
                           <div
                             className="h-full rounded-md transition-all duration-500 flex items-center justify-end pr-2"
                             style={{
                               width: `${Math.max((totalPaidBack / Math.max(totalBorrowedAmount, 1)) * 100, 2)}%`,
-                              backgroundColor: '#4C7FC4'
+                              backgroundColor: '#00A86B'
                             }}
                           >
                             {totalPaidBack > 0 && (
@@ -603,15 +603,15 @@ export default function Home() {
                           </div>
                         </div>
                       </div>
-                      <div className="border-t border-[#CDE7F8] pt-2 grid grid-cols-2 gap-3">
+                      <div className="border-t border-[#00A86B]/20 pt-2 grid grid-cols-2 gap-3">
                         <div>
-                          <p className="text-[11px] text-[#4C7FC4] mb-0.5">Next Payment Date</p>
+                          <p className="text-[11px] text-[#00A86B] mb-0.5">Next Payment Date</p>
                           <div className="flex items-baseline gap-1.5">
-                            <p className="text-base font-bold text-[#213B75]">
+                            <p className="text-base font-bold text-[#C2FFDC]">
                               {nextBorrowerPayment ? format(nextBorrowerPayment.date, 'EEE, MMM d') : 'N/A'}
                             </p>
                             {nextBorrowerPayment && (
-                              <p className="text-[11px] text-[#4C7FC4]">
+                              <p className="text-[11px] text-[#00A86B]">
                                 {(() => {
                                   const days = Math.ceil((nextBorrowerPayment.date - new Date()) / (1000 * 60 * 60 * 24));
                                   return days > 0 ? `${days}d away` : days === 0 ? 'Due today' : `${Math.abs(days)}d overdue`;
@@ -621,13 +621,13 @@ export default function Home() {
                           </div>
                         </div>
                         <div>
-                          <p className="text-[11px] text-[#4C7FC4] mb-0.5">Next Payment Amount</p>
+                          <p className="text-[11px] text-[#00A86B] mb-0.5">Next Payment Amount</p>
                           <div className="flex items-baseline gap-1.5">
-                            <p className="text-base font-bold text-[#213B75]">
+                            <p className="text-base font-bold text-[#C2FFDC]">
                               {nextBorrowerPayment ? formatMoney(nextBorrowerPayment.payment_amount || 0) : 'N/A'}
                             </p>
                             {nextBorrowerPayment && (
-                              <p className="text-[11px] text-[#4C7FC4]">
+                              <p className="text-[11px] text-[#00A86B]">
                                 to @{nextBorrowerPayment.username}
                               </p>
                             )}
@@ -718,11 +718,11 @@ export default function Home() {
                       const canSubmit = quickPayAmount && (quickPayFromPerson || quickPayToPerson);
 
                       return (
-                        <div className="rounded-xl px-4 py-3 shadow-sm mt-2 mb-2 lg:mt-0 lg:mb-0" style={{ backgroundColor: '#213B75' }}>
-                          <p className="text-sm font-bold text-white mb-2 tracking-tight font-serif">
+                        <div className="rounded-xl px-4 py-3 shadow-sm mt-2 mb-2 lg:mt-0 lg:mb-0" style={{ backgroundColor: '#83F384' }}>
+                          <p className="text-sm font-bold text-[#1C4332] mb-2 tracking-tight font-serif">
                             Record Payment
                           </p>
-                          <div className="flex flex-wrap items-center gap-2 text-xs text-white">
+                          <div className="flex flex-wrap items-center gap-2 text-xs text-[#1C4332]">
                             <span>Record payment of</span>
                             <span className="font-medium">$</span>
                             <Input
@@ -732,7 +732,7 @@ export default function Home() {
                               placeholder=""
                               value={quickPayAmount}
                               onChange={(e) => setQuickPayAmount(e.target.value)}
-                              className="w-20 h-7 px-2 bg-white/20 border-0 text-xs inline-flex rounded-md text-white placeholder:text-white/50"
+                              className="w-20 h-7 px-2 bg-[#1C4332]/15 border-0 text-xs inline-flex rounded-md text-[#1C4332] placeholder:text-[#1C4332]/50"
                               style={{ MozAppearance: 'textfield' }}
                             />
                             {fromOptions.length > 0 && (
@@ -742,7 +742,7 @@ export default function Home() {
                                   value={quickPayFromPerson}
                                   onValueChange={handleFromChange}
                                 >
-                                  <SelectTrigger className="w-auto h-7 px-2 bg-white/20 border-0 text-xs inline-flex rounded-md text-white">
+                                  <SelectTrigger className="w-auto h-7 px-2 bg-[#1C4332]/15 border-0 text-xs inline-flex rounded-md text-[#1C4332]">
                                     <SelectValue placeholder="select person" />
                                   </SelectTrigger>
                                   <SelectContent>
@@ -762,7 +762,7 @@ export default function Home() {
                                   value={quickPayToPerson}
                                   onValueChange={handleToChange}
                                 >
-                                  <SelectTrigger className="w-auto h-7 px-2 bg-white/20 border-0 text-xs inline-flex rounded-md text-white">
+                                  <SelectTrigger className="w-auto h-7 px-2 bg-[#1C4332]/15 border-0 text-xs inline-flex rounded-md text-[#1C4332]">
                                     <SelectValue placeholder="select person" />
                                   </SelectTrigger>
                                   <SelectContent>
@@ -781,8 +781,8 @@ export default function Home() {
                               disabled={!canSubmit}
                               className={`h-7 px-3 rounded-md text-xs font-semibold border-0 transition-all ${
                                 !canSubmit
-                                  ? 'bg-white/30 text-white/70 cursor-not-allowed'
-                                  : 'bg-white text-[#213B75] hover:bg-white/90'
+                                  ? 'bg-[#1C4332]/20 text-[#1C4332]/50 cursor-not-allowed'
+                                  : 'bg-[#1C4332] text-[#83F384] hover:bg-[#1C4332]/90'
                               }`}
                             >
                               Submit
@@ -878,8 +878,8 @@ export default function Home() {
                       const formatYLabel = (v) => v >= 1000 ? `$${(v / 1000).toFixed(v >= 10000 ? 0 : 1)}k` : `$${v}`;
 
                       return (
-                        <div className="rounded-xl px-4 py-3 shadow-sm bg-white">
-                          <p className="text-sm font-bold text-[#213B75] mb-3 tracking-tight font-serif">
+                        <div className="rounded-xl px-4 py-3 shadow-sm bg-[#1C4332]">
+                          <p className="text-sm font-bold text-[#C2FFDC] mb-3 tracking-tight font-serif">
                             Loans Over Time
                           </p>
 
@@ -887,9 +887,9 @@ export default function Home() {
                           <div className="flex">
                             {/* Y-axis labels */}
                             <div className="flex flex-col justify-between pr-2 flex-shrink-0" style={{ height: chartHeight }}>
-                              <p className="text-[9px] text-[#4C7FC4] text-right leading-none">{formatYLabel(Math.round(yMax))}</p>
-                              <p className="text-[9px] text-[#4C7FC4] text-right leading-none">{formatYLabel(yMid)}</p>
-                              <p className="text-[9px] text-[#4C7FC4] text-right leading-none">$0</p>
+                              <p className="text-[9px] text-[#00A86B] text-right leading-none">{formatYLabel(Math.round(yMax))}</p>
+                              <p className="text-[9px] text-[#00A86B] text-right leading-none">{formatYLabel(yMid)}</p>
+                              <p className="text-[9px] text-[#00A86B] text-right leading-none">$0</p>
                             </div>
 
                             {/* Bars — spread to fill full width */}
@@ -907,7 +907,7 @@ export default function Home() {
                                           style={{
                                             width: barWidth,
                                             height: Math.max(owedHeight, owedHeight > 0 ? 2 : 0),
-                                            backgroundColor: '#4C7FC4',
+                                            backgroundColor: '#00A86B',
                                             opacity: data.isFuture ? 0.35 : 1
                                           }}
                                           title={`${data.label}: $${data.owedToYou.toLocaleString(undefined, { maximumFractionDigits: 0 })} owed to you`}
@@ -917,7 +917,7 @@ export default function Home() {
                                           style={{
                                             width: barWidth,
                                             height: Math.max(oweHeight, oweHeight > 0 ? 2 : 0),
-                                            backgroundColor: '#213B75',
+                                            backgroundColor: '#83F384',
                                             opacity: data.isFuture ? 0.35 : 1
                                           }}
                                           title={`${data.label}: $${data.youOwe.toLocaleString(undefined, { maximumFractionDigits: 0 })} you owe`}
@@ -932,7 +932,7 @@ export default function Home() {
                                 {chartData.map((data, i) => (
                                   <p
                                     key={i}
-                                    className={`text-[10px] text-center flex-1 ${data.isCurrent ? 'font-bold text-[#213B75]' : 'text-[#4C7FC4]'}`}
+                                    className={`text-[10px] text-center flex-1 ${data.isCurrent ? 'font-bold text-[#C2FFDC]' : 'text-[#00A86B]'}`}
                                   >
                                     {data.label}
                                   </p>
@@ -942,14 +942,14 @@ export default function Home() {
                           </div>
 
                           {/* Key / Legend — centered */}
-                          <div className="flex items-center justify-center gap-4 mt-3 pt-2.5 border-t border-[#CDE7F8]">
+                          <div className="flex items-center justify-center gap-4 mt-3 pt-2.5 border-t border-[#00A86B]/20">
                             <div className="flex items-center gap-1.5">
-                              <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: '#4C7FC4' }} />
-                              <p className="text-[11px] text-[#213B75]">Owed to you</p>
+                              <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: '#00A86B' }} />
+                              <p className="text-[11px] text-[#C2FFDC]">Owed to you</p>
                             </div>
                             <div className="flex items-center gap-1.5">
-                              <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: '#213B75' }} />
-                              <p className="text-[11px] text-[#213B75]">You owe</p>
+                              <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: '#83F384' }} />
+                              <p className="text-[11px] text-[#C2FFDC]">You owe</p>
                             </div>
                           </div>
                         </div>
@@ -1041,14 +1041,14 @@ export default function Home() {
                       // Fallback: no items at all
                       if (allItems.length === 0) {
                         return (
-                          <div className="rounded-xl px-4 py-3 shadow-sm flex items-center gap-3" style={{ backgroundColor: '#213B75' }}>
-                            <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
-                              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                          <div className="rounded-xl px-4 py-3 shadow-sm flex items-center gap-3" style={{ backgroundColor: '#83F384' }}>
+                            <div className="w-10 h-10 rounded-full bg-[#1C4332]/15 flex items-center justify-center flex-shrink-0">
+                              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1C4332" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                                 <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
                                 <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
                               </svg>
                             </div>
-                            <p className="text-sm font-bold text-white tracking-tight font-sans flex-1">
+                            <p className="text-sm font-bold text-[#1C4332] tracking-tight font-sans flex-1">
                               You have no new notifications
                             </p>
                           </div>
@@ -1059,15 +1059,15 @@ export default function Home() {
                       const current = allItems[safeIdx];
 
                       return (
-                        <div className="rounded-xl px-4 py-3 shadow-sm flex items-center gap-3" style={{ backgroundColor: '#213B75' }}>
-                          <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+                        <div className="rounded-xl px-4 py-3 shadow-sm flex items-center gap-3" style={{ backgroundColor: '#83F384' }}>
+                          <div className="w-10 h-10 rounded-full bg-[#1C4332]/15 flex items-center justify-center flex-shrink-0">
                             {current.icon === 'bell' ? (
-                              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1C4332" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                                 <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
                                 <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
                               </svg>
                             ) : (
-                              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1C4332" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                                 <circle cx="12" cy="12" r="10"></circle>
                                 <polyline points="12 6 12 12 16 14"></polyline>
                               </svg>
@@ -1081,7 +1081,7 @@ export default function Home() {
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -8 }}
                                 transition={{ duration: 0.25 }}
-                                className="text-sm font-bold text-white tracking-tight font-sans leading-snug"
+                                className="text-sm font-bold text-[#1C4332] tracking-tight font-sans leading-snug"
                               >
                                 {current.text}
                               </motion.p>
@@ -1089,7 +1089,7 @@ export default function Home() {
                           </div>
                           <Link
                             to={createPageUrl(current.link)}
-                            className="flex-shrink-0 px-4 py-1.5 rounded-lg bg-white text-xs font-semibold text-[#213B75] hover:bg-white/90 transition-colors font-sans whitespace-nowrap"
+                            className="flex-shrink-0 px-4 py-1.5 rounded-lg bg-[#1C4332] text-xs font-semibold text-[#83F384] hover:bg-[#1C4332]/90 transition-colors font-sans whitespace-nowrap"
                           >
                             {current.icon === 'bell' ? 'View Updates' : `Go to ${current.link}`}
                           </Link>
@@ -1100,7 +1100,7 @@ export default function Home() {
                                   key={i}
                                   onClick={() => setNotifIndex(i)}
                                   className={`rounded-full transition-all cursor-pointer ${
-                                    i === safeIdx ? 'w-1.5 h-3 bg-white' : 'w-1.5 h-1.5 bg-white/40'
+                                    i === safeIdx ? 'w-1.5 h-3 bg-[#1C4332]' : 'w-1.5 h-1.5 bg-[#1C4332]/30'
                                   }`}
                                 />
                               ))}
@@ -1113,22 +1113,22 @@ export default function Home() {
                     {/* View Lending / Borrowing Page */}
                     <div className="flex items-center justify-center gap-8 py-2">
                       <Link to={createPageUrl("Lending")} className="flex flex-col items-center gap-1.5 group">
-                        <div className="w-11 h-11 rounded-full bg-white shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
-                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4C7FC4" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <div className="w-11 h-11 rounded-full bg-[#1C4332] shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#83F384" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                             <line x1="12" y1="1" x2="12" y2="23"></line>
                             <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
                           </svg>
                         </div>
-                        <p className="text-[10px] font-semibold text-[#213B75] text-center leading-tight font-sans">View Lending<br/>Page</p>
+                        <p className="text-[10px] font-semibold text-[#C2FFDC] text-center leading-tight font-sans">View Lending<br/>Page</p>
                       </Link>
                       <Link to={createPageUrl("Borrowing")} className="flex flex-col items-center gap-1.5 group">
-                        <div className="w-11 h-11 rounded-full bg-white shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
-                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4C7FC4" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <div className="w-11 h-11 rounded-full bg-[#1C4332] shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#83F384" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                             <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
                             <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
                           </svg>
                         </div>
-                        <p className="text-[10px] font-semibold text-[#213B75] text-center leading-tight font-sans">View Borrowing<br/>Page</p>
+                        <p className="text-[10px] font-semibold text-[#C2FFDC] text-center leading-tight font-sans">View Borrowing<br/>Page</p>
                       </Link>
                     </div>
 
@@ -1190,12 +1190,12 @@ export default function Home() {
                       return (
                         <>
                           {/* Upcoming Payments Box */}
-                          <div className="rounded-xl px-4 py-3 shadow-sm bg-white">
-                            <p className="text-sm font-bold text-[#213B75] mb-2.5 tracking-tight font-serif">
+                          <div className="rounded-xl px-4 py-3 shadow-sm bg-[#1C4332]">
+                            <p className="text-sm font-bold text-[#C2FFDC] mb-2.5 tracking-tight font-serif">
                               Upcoming Payments
                             </p>
                             {upcomingEvents.length === 0 ? (
-                              <div className="flex flex-col items-center justify-center py-6 text-[#4C7FC4]">
+                              <div className="flex flex-col items-center justify-center py-6 text-[#00A86B]">
                                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="opacity-40 mb-1.5">
                                   <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                                   <line x1="16" y1="2" x2="16" y2="6"></line>
@@ -1212,29 +1212,29 @@ export default function Home() {
                                   const loanPage = event.isLender ? 'Lending' : 'Borrowing';
 
                                   return (
-                                    <div key={idx} className="flex items-center gap-2.5 p-2.5 rounded-lg bg-[#CDE7F8]">
+                                    <div key={idx} className="flex items-center gap-2.5 p-2.5 rounded-lg bg-[#0F2B1F]">
                                       {/* White circle with days */}
-                                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm">
-                                        <p className="text-[10px] font-bold text-[#213B75] text-center leading-tight">
+                                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#83F384] flex items-center justify-center shadow-sm">
+                                        <p className="text-[10px] font-bold text-[#1C4332] text-center leading-tight">
                                           {event.days}
-                                          <span className="block text-[7px] font-medium text-[#4C7FC4]">
+                                          <span className="block text-[7px] font-medium text-[#1C4332]/60">
                                             {event.days === 1 ? 'day' : 'days'}
                                           </span>
                                         </p>
                                       </div>
                                       <div className="flex-1 min-w-0">
-                                        <p className="text-[11px] text-[#213B75]">
+                                        <p className="text-[11px] text-[#C2FFDC]">
                                           {event.isLender
                                             ? <>Receive payment of <span className="font-semibold">${amountStr}</span> from <span className="font-semibold">@{event.username}</span></>
                                             : <>Send payment of <span className="font-semibold">${amountStr}</span> to <span className="font-semibold">@{event.username}</span></>
                                           }
                                         </p>
-                                        <p className="text-[10px] text-[#4C7FC4] mt-0.5">{dueDateStr}</p>
+                                        <p className="text-[10px] text-[#00A86B] mt-0.5">{dueDateStr}</p>
                                       </div>
                                       <Link
                                         to={createPageUrl(loanPage)}
                                         className="flex-shrink-0 text-[9px] font-semibold px-2.5 py-1 rounded-md"
-                                        style={{ backgroundColor: '#213B75', color: '#FFFFFF' }}
+                                        style={{ backgroundColor: '#83F384', color: '#1C4332' }}
                                       >
                                         View Loan
                                       </Link>
@@ -1247,7 +1247,7 @@ export default function Home() {
 
                           {/* Overdue Payments Box — only shown if there are overdue payments */}
                           {overdueEvents.length > 0 && (
-                            <div className="rounded-xl px-4 py-3 shadow-sm bg-white border border-red-200">
+                            <div className="rounded-xl px-4 py-3 shadow-sm bg-[#1C4332] border border-red-500/30">
                               <p className="text-sm font-bold text-red-500 mb-2.5 tracking-tight font-serif">
                                 Overdue Payments
                               </p>
@@ -1260,7 +1260,7 @@ export default function Home() {
                                   return (
                                     <div key={idx} className="flex items-start gap-2.5 p-2.5 rounded-lg" style={{ backgroundColor: '#FEF2F2' }}>
                                       <div className="flex-1 min-w-0">
-                                        <p className="text-[11px] text-[#213B75]">
+                                        <p className="text-[11px] text-[#C2FFDC]">
                                           {event.isLender
                                             ? <>Receive payment of <span className="font-semibold">${amountStr}</span> from <span className="font-semibold">@{event.username}</span></>
                                             : <>Send payment of <span className="font-semibold">${amountStr}</span> to <span className="font-semibold">@{event.username}</span></>
@@ -1292,12 +1292,12 @@ export default function Home() {
                     })()}
 
                     {/* Recent Activity Box */}
-                    <div className="rounded-xl px-4 py-3 shadow-sm bg-white">
+                    <div className="rounded-xl px-4 py-3 shadow-sm bg-[#1C4332]">
                       <div className="flex items-center justify-between mb-2.5">
-                        <p className="text-sm font-bold text-[#213B75] tracking-tight font-serif">
+                        <p className="text-sm font-bold text-[#C2FFDC] tracking-tight font-serif">
                           Recent Activity
                         </p>
-                        <Link to={createPageUrl("RecentActivity")} className="text-[10px] font-semibold text-[#4C7FC4] hover:underline">
+                        <Link to={createPageUrl("RecentActivity")} className="text-[10px] font-semibold text-[#00A86B] hover:underline">
                           View All
                         </Link>
                       </div>
@@ -1364,7 +1364,7 @@ export default function Home() {
 
                         if (recent.length === 0) {
                           return (
-                            <div className="flex flex-col items-center justify-center py-6 text-[#4C7FC4]">
+                            <div className="flex flex-col items-center justify-center py-6 text-[#00A86B]">
                               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="opacity-40 mb-1.5">
                                 <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
                               </svg>
@@ -1377,11 +1377,11 @@ export default function Home() {
                           <div className="space-y-1.5">
                             {recent.map((item, idx) => {
                               const isPayment = item.type === 'payment';
-                              const iconColor = '#4C7FC4';
+                              const iconColor = '#83F384';
 
                               return (
-                                <div key={idx} className="flex items-center gap-2.5 p-2 rounded-lg bg-[#CDE7F8]">
-                                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm">
+                                <div key={idx} className="flex items-center gap-2.5 p-2 rounded-lg bg-[#0F2B1F]">
+                                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#83F384]/20 flex items-center justify-center shadow-sm">
                                     {isPayment ? (
                                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={iconColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                         <line x1="12" y1="1" x2="12" y2="23"></line>
@@ -1395,8 +1395,8 @@ export default function Home() {
                                     )}
                                   </div>
                                   <div className="flex-1 min-w-0">
-                                    <p className="text-[11px] text-[#213B75] truncate">{item.description}</p>
-                                    <p className="text-[9px] text-[#4C7FC4]">{format(item.date, 'MMM d, yyyy')}</p>
+                                    <p className="text-[11px] text-[#C2FFDC] truncate">{item.description}</p>
+                                    <p className="text-[9px] text-[#00A86B]">{format(item.date, 'MMM d, yyyy')}</p>
                                   </div>
                                 </div>
                               );
@@ -1415,7 +1415,7 @@ export default function Home() {
           </div>
 
           {/* Bottom Section: Carousel (if has loans) or Find Friends (if has friends but shown regardless as fallback) */}
-          <div className="px-4 pt-4 pb-8 sm:px-8 md:px-24 md:pt-4 md:pb-10 lg:px-36" style={{backgroundColor: '#F5F5F5'}}>
+          <div className="px-4 pt-4 pb-8 sm:px-8 md:px-24 md:pt-4 md:pb-10 lg:px-36" style={{backgroundColor: '#0F2B1F'}}>
             <div className="max-w-6xl mx-auto">
               {hasLoans ? (
                 <LoanCarousel
@@ -1428,17 +1428,17 @@ export default function Home() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: 0.3 }}
                 >
-                  <div className="rounded-2xl px-6 py-10 sm:px-10 sm:py-14 text-center" style={{ backgroundColor: '#213B75' }}>
-                    <p className="text-xl sm:text-2xl font-bold text-white font-sans mb-2 tracking-tight">
+                  <div className="rounded-2xl px-6 py-10 sm:px-10 sm:py-14 text-center" style={{ backgroundColor: '#83F384' }}>
+                    <p className="text-xl sm:text-2xl font-bold text-[#1C4332] font-sans mb-2 tracking-tight">
                       Find friends to lend with
                     </p>
-                    <p className="text-sm text-white/60 font-sans mb-8 max-w-md mx-auto">
+                    <p className="text-sm text-[#1C4332]/60 font-sans mb-8 max-w-md mx-auto">
                       Connect with people you trust to start lending and borrowing together
                     </p>
                     <div className="flex items-center justify-center gap-3 sm:gap-4">
                       <Link
                         to={createPageUrl("Friends")}
-                        className="px-6 py-2.5 rounded-xl bg-white text-sm font-semibold text-[#213B75] hover:bg-white/90 transition-colors font-sans"
+                        className="px-6 py-2.5 rounded-xl bg-[#1C4332] text-sm font-semibold text-[#83F384] hover:bg-[#1C4332]/90 transition-colors font-sans"
                       >
                         Search for Friends
                       </Link>
@@ -1454,7 +1454,7 @@ export default function Home() {
                             navigator.clipboard.writeText('https://lend-with-vony.com');
                           }
                         }}
-                        className="px-6 py-2.5 rounded-xl bg-white/20 text-sm font-semibold text-white hover:bg-white/30 transition-colors font-sans"
+                        className="px-6 py-2.5 rounded-xl bg-[#1C4332]/15 text-sm font-semibold text-[#1C4332] hover:bg-[#1C4332]/25 transition-colors font-sans"
                       >
                         Invite Friends
                       </button>
