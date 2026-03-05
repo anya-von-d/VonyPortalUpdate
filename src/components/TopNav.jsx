@@ -43,7 +43,7 @@ const bottomRightItems = [
     url: createPageUrl("Borrowing"),
   },
   {
-    title: "Requests",
+    title: "Updates",
     url: createPageUrl("Requests"),
   },
 ];
