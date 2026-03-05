@@ -1204,13 +1204,13 @@ export default function Home() {
                                         </p>
                                       </div>
                                       <div className="flex-1 min-w-0">
-                                        <p className="text-[11px] text-[#C2FFDC]">
+                                        <p className="text-[11px] text-[#1C4332]">
                                           {event.isLender
                                             ? <>Receive payment of <span className="font-semibold">${amountStr}</span> from <span className="font-semibold">@{event.username}</span></>
                                             : <>Send payment of <span className="font-semibold">${amountStr}</span> to <span className="font-semibold">@{event.username}</span></>
                                           }
                                         </p>
-                                        <p className={`text-[10px] mt-0.5 ${isOverdue ? 'text-red-400' : 'text-[#00A86B]'}`}>{dueDateStr}</p>
+                                        <p className={`text-[10px] mt-0.5 ${isOverdue ? 'text-red-400' : 'text-[#1C4332]/60'}`}>{dueDateStr}</p>
                                       </div>
                                       <div className="flex items-center gap-1.5 flex-shrink-0">
                                         {isOverdue && (
@@ -1372,8 +1372,8 @@ export default function Home() {
                                     )}
                                   </div>
                                   <div className="flex-1 min-w-0">
-                                    <p className="text-[11px] text-[#C2FFDC] truncate">{item.description}</p>
-                                    <p className="text-[9px] text-[#00A86B]">{format(item.date, 'MMM d, yyyy')}</p>
+                                    <p className="text-[11px] text-[#1C4332] truncate">{item.description}</p>
+                                    <p className="text-[9px] text-[#1C4332]/60">{format(item.date, 'MMM d, yyyy')}</p>
                                   </div>
                                 </div>
                               );
