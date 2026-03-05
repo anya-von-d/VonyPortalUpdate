@@ -1270,6 +1270,96 @@ export default function Borrowing() {
                                 );
                               })()}
 
+                              {/* Payment Progress Box */}
+                              {manageLoanSelected && (() => {
+                                const totalAmt = manageLoanSelected.total_amount || manageLoanSelected.amount || 0;
+                                const paidAmt = manageLoanSelected.amount_paid || 0;
+                                const remainingAmt = Math.max(totalAmt - paidAmt, 0);
+                                const paidPct = totalAmt > 0 ? (paidAmt / totalAmt) * 100 : 0;
+
+                                const selLender = publicProfiles.find(p => p.user_id === manageLoanSelected.lender_id);
+                                const lenderUsername = selLender?.username || 'user';
+                                const nextPmtAmt = manageLoanSelected.payment_amount || 0;
+
+                                /* Next payment date & days */
+                                let nextPmtDate = null;
+                                let daysUntil = null;
+                                if (manageLoanSelected.next_payment_date) {
+                                  nextPmtDate = new Date(manageLoanSelected.next_payment_date);
+                                  const today = new Date();
+                                  today.setHours(0, 0, 0, 0);
+                                  const pmtDay = new Date(nextPmtDate);
+                                  pmtDay.setHours(0, 0, 0, 0);
+                                  daysUntil = Math.ceil((pmtDay - today) / (1000 * 60 * 60 * 24));
+                                }
+
+                                /* Venn diagram sizing */
+                                const vennW = 120;
+                                const vennH = 80;
+                                const circleR = 30;
+                                const overlap = 14;
+                                const cx1 = vennW / 2 - overlap;
+                                const cx2 = vennW / 2 + overlap;
+                                const cy = vennH / 2;
+
+                                return (
+                                  <div className="bg-white rounded-xl px-4 py-3 shadow-sm">
+                                    <p className="text-sm font-bold text-[#1C4332] mb-2.5 tracking-tight font-sans">
+                                      Payment Progress
+                                    </p>
+
+                                    {/* Venn Diagram */}
+                                    <div className="flex justify-center mb-3">
+                                      <svg width={vennW} height={vennH} viewBox={`0 0 ${vennW} ${vennH}`}>
+                                        {/* Remaining circle (right, behind) */}
+                                        <circle cx={cx2} cy={cy} r={circleR} fill="#C2FFDC" stroke="#00A86B" strokeWidth="1.5" opacity="0.6" />
+                                        {/* Paid circle (left, front) */}
+                                        <circle cx={cx1} cy={cy} r={circleR} fill="#00A86B" stroke="#1C4332" strokeWidth="1.5" opacity="0.85" />
+                                        {/* Paid label */}
+                                        <text x={cx1 - 6} y={cy - 4} textAnchor="middle" className="text-[8px] font-bold fill-white" style={{ fontFamily: 'Outfit, sans-serif' }}>Paid</text>
+                                        <text x={cx1 - 6} y={cy + 7} textAnchor="middle" className="text-[7px] fill-white/80" style={{ fontFamily: 'Outfit, sans-serif' }}>{Math.round(paidPct)}%</text>
+                                        {/* Remaining label */}
+                                        <text x={cx2 + 6} y={cy - 4} textAnchor="middle" className="text-[8px] font-bold fill-[#1C4332]" style={{ fontFamily: 'Outfit, sans-serif' }}>Left</text>
+                                        <text x={cx2 + 6} y={cy + 7} textAnchor="middle" className="text-[7px] fill-[#1C4332]/60" style={{ fontFamily: 'Outfit, sans-serif' }}>{Math.round(100 - paidPct)}%</text>
+                                      </svg>
+                                    </div>
+
+                                    {/* Next Payment Date row */}
+                                    <div className="flex items-center justify-between mb-1.5">
+                                      <p className="text-[11px] text-[#00A86B] font-medium font-sans">Next Payment</p>
+                                      <div className="flex items-center gap-1.5">
+                                        {nextPmtDate ? (
+                                          <>
+                                            <p className="text-[12px] font-semibold text-[#1C4332] font-sans">{format(nextPmtDate, 'MMM d, yyyy')}</p>
+                                            <p className="text-[10px] text-[#00A86B] font-sans">
+                                              {daysUntil > 0
+                                                ? `Due in ${daysUntil} ${daysUntil === 1 ? 'day' : 'days'}`
+                                                : daysUntil === 0
+                                                  ? 'Due today'
+                                                  : `${Math.abs(daysUntil)} ${Math.abs(daysUntil) === 1 ? 'day' : 'days'} overdue`
+                                              }
+                                            </p>
+                                          </>
+                                        ) : (
+                                          <p className="text-[12px] text-[#1C4332]/40 font-sans">No upcoming payment</p>
+                                        )}
+                                      </div>
+                                    </div>
+
+                                    {/* Next Payment Amount row */}
+                                    <div className="flex items-center justify-between">
+                                      <p className="text-[11px] text-[#00A86B] font-medium font-sans">Next Payment Amount</p>
+                                      <div className="flex items-center gap-1.5">
+                                        <p className="text-[12px] font-semibold text-[#1C4332] font-sans">
+                                          ${nextPmtAmt.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                        </p>
+                                        <p className="text-[10px] text-[#00A86B] font-sans">to @{lenderUsername}</p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                );
+                              })()}
+
                               <div className="bg-white rounded-xl px-4 py-3 shadow-sm">
                                 <p className="text-sm font-bold text-[#1C4332] mb-2.5 tracking-tight font-sans">
                                   Payment History
