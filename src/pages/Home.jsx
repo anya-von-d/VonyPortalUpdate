@@ -916,6 +916,8 @@ export default function Home() {
                             else if (daysUntil === 0) dueText = 'due today';
                             else dueText = `${Math.abs(daysUntil)} day${Math.abs(daysUntil) !== 1 ? 's' : ''} overdue`;
 
+                            const amountFormatted = event.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
                             return (
                               <div
                                 key={index}
@@ -928,38 +930,16 @@ export default function Home() {
                                 </div>
 
                                 <div className="flex-1 min-w-0">
-                                  <p className="text-xs font-semibold text-[#213B75]">
-                                    {event.type === 'send'
-                                      ? <>Send payment of <span className="font-bold">${event.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></>
-                                      : <>Due to receive payment of <span className="font-bold">${event.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></>
-                                    }
-                                  </p>
-                                  <p className="text-[11px] text-[#4C7FC4]">
-                                    Payment {event.type === 'send' ? 'to' : 'from'} @{event.username} {dueText}
+                                  <p className="text-xs text-[#213B75] truncate">
+                                    <span className="font-semibold">{event.type === 'send' ? 'Payment' : 'Repayment'}</span>{' '}
+                                    of <span className="font-bold">${amountFormatted}</span>{' '}
+                                    {event.type === 'send' ? 'to' : 'from'} @{event.username} {dueText}
                                   </p>
                                 </div>
 
-                                <div className="flex-shrink-0">
-                                  {event.paymentStatus === 'completed' ? (
-                                    <span className="px-2.5 py-1 rounded-md bg-[#00A86B] text-[10px] font-semibold text-white whitespace-nowrap">
-                                      Payment Complete
-                                    </span>
-                                  ) : event.paymentStatus === 'pending' ? (
-                                    <span className="px-2.5 py-1 rounded-md bg-[#F59E0B] text-[10px] font-semibold text-white whitespace-nowrap">
-                                      Pending Confirmation
-                                    </span>
-                                  ) : (
-                                    <button
-                                      onClick={() => {
-                                        setSelectedLoan(event.loan);
-                                        setShowPaymentModal(true);
-                                      }}
-                                      className="px-2.5 py-1 rounded-md bg-[#4C7FC4] text-[10px] font-semibold text-white hover:bg-[#3a6bb0] transition-colors whitespace-nowrap"
-                                    >
-                                      Record Payment
-                                    </button>
-                                  )}
-                                </div>
+                                <p className={`text-xs font-bold flex-shrink-0 ${event.type === 'receive' ? 'text-[#00A86B]' : 'text-[#213B75]'}`}>
+                                  {event.type === 'receive' ? '+' : '-'}${amountFormatted}
+                                </p>
                               </div>
                             );
                           });
