@@ -59,6 +59,7 @@ export default function Borrowing() {
   const [isQuickProcessing, setIsQuickProcessing] = useState(false);
   const [isQuickSuccess, setIsQuickSuccess] = useState(false);
   const [quickPayTransactionId, setQuickPayTransactionId] = useState('');
+  const [allPayments, setAllPayments] = useState([]);
 
   useEffect(() => {
     loadData();
@@ -77,10 +78,11 @@ export default function Borrowing() {
     }
 
     try {
-      const [allLoans, allProfiles, allAgreements] = await Promise.all([
+      const [allLoans, allProfiles, allAgreements, allPmts] = await Promise.all([
         Loan.list('-created_at').catch(() => []),
         PublicProfile.list().catch(() => []),
-        LoanAgreement.list().catch(() => [])
+        LoanAgreement.list().catch(() => []),
+        Payment.list('-payment_date').catch(() => [])
       ]);
 
       const userLoans = (allLoans || []).filter(loan =>
@@ -90,6 +92,7 @@ export default function Borrowing() {
       setLoans(userLoans);
       setPublicProfiles(allProfiles || []);
       setLoanAgreements(allAgreements || []);
+      setAllPayments(allPmts || []);
     } catch (error) {
       console.error("Error loading data:", error);
     }
@@ -1149,7 +1152,7 @@ export default function Borrowing() {
                   </div>
                 </div>
 
-                    {/* Manage Loans Section — search + scrollable list on left, details on right */}
+                    {/* Your Loans Section — thin list + chart + details */}
                     {!isLoading && manageableLoans.length > 0 && (() => {
                       const searchQuery = manageLoanSearch.toLowerCase().trim();
                       const filteredLoans = searchQuery
@@ -1163,39 +1166,78 @@ export default function Borrowing() {
                           })
                         : manageableLoans;
 
+                      // Build payment chart data for selected loan
+                      let chartData = [];
+                      let plannedPaymentAmount = 0;
+                      if (manageLoanSelected) {
+                        const agreement = loanAgreements.find(a => a.loan_id === manageLoanSelected.id);
+                        plannedPaymentAmount = manageLoanSelected.payment_amount || 0;
+
+                        // Get schedule from agreement or generate one
+                        const totalPayments = manageLoanSelected.repayment_period || 1;
+                        const loanPayments = allPayments.filter(p => p.loan_id === manageLoanSelected.id && (p.status === 'confirmed' || p.status === 'pending_confirmation'));
+
+                        // Sort payments by date
+                        const sortedPayments = [...loanPayments].sort((a, b) => new Date(a.payment_date) - new Date(b.payment_date));
+
+                        // Generate chart: each payment period gets a bar
+                        for (let i = 0; i < totalPayments; i++) {
+                          const payment = sortedPayments[i];
+                          chartData.push({
+                            label: `P${i + 1}`,
+                            amount: payment ? payment.amount : 0,
+                            isPaid: !!payment
+                          });
+                        }
+
+                        // If there are more actual payments than periods, add them
+                        if (sortedPayments.length > totalPayments) {
+                          for (let i = totalPayments; i < sortedPayments.length; i++) {
+                            chartData.push({
+                              label: `P${i + 1}`,
+                              amount: sortedPayments[i].amount,
+                              isPaid: true
+                            });
+                          }
+                        }
+                      }
+
+                      const chartHeight = 140;
+                      const maxChartVal = Math.max(plannedPaymentAmount, ...chartData.map(d => d.amount), 1);
+
                       return (
                         <div className="mt-4">
                           <p className="text-sm font-bold text-[#C2FFDC] tracking-tight font-sans mb-3">
                             Your Loans
                           </p>
-                          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-5">
-                            {/* Left: Search + Scrollable Loan List */}
-                            <div className="bg-white rounded-xl px-4 py-3 shadow-sm">
+                          <div className="grid grid-cols-1 lg:grid-cols-[240px_1fr_1fr] gap-4 md:gap-5">
+                            {/* Left: Thin Search + Scrollable Loan List */}
+                            <div className="bg-white rounded-xl px-3 py-3 shadow-sm">
                               {/* Search Bar */}
-                              <div className="relative mb-3">
-                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#00A86B]/50" />
+                              <div className="relative mb-2">
+                                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#00A86B]/50" />
                                 <Input
                                   type="text"
-                                  placeholder="Search loans..."
+                                  placeholder="Search..."
                                   value={manageLoanSearch}
                                   onChange={(e) => setManageLoanSearch(e.target.value)}
-                                  className="pl-9 bg-[#C2FFDC] border-0 text-[#1C4332] placeholder:text-[#00A86B]/50 font-sans text-sm h-9"
+                                  className="pl-8 bg-[#C2FFDC] border-0 text-[#1C4332] placeholder:text-[#00A86B]/50 font-sans text-xs h-8"
                                 />
                                 {manageLoanSearch && (
                                   <button
                                     onClick={() => setManageLoanSearch('')}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#00A86B] hover:text-[#1C4332]"
+                                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#00A86B] hover:text-[#1C4332]"
                                   >
-                                    <X className="w-3.5 h-3.5" />
+                                    <X className="w-3 h-3" />
                                   </button>
                                 )}
                               </div>
 
                               {/* Scrollable Loan List (max 5 visible) */}
-                              <div className="overflow-y-auto space-y-1.5" style={{ maxHeight: '280px' }}>
+                              <div className="overflow-y-auto space-y-1" style={{ maxHeight: '260px' }}>
                                 {filteredLoans.length === 0 ? (
-                                  <div className="text-center py-6">
-                                    <p className="text-sm text-[#00A86B]/60 font-sans">No loans match your search</p>
+                                  <div className="text-center py-4">
+                                    <p className="text-xs text-[#00A86B]/60 font-sans">No loans found</p>
                                   </div>
                                 ) : (
                                   filteredLoans.map((loan) => {
@@ -1207,37 +1249,113 @@ export default function Borrowing() {
                                       <button
                                         key={loan.id}
                                         onClick={() => setManageLoanSelected(loan)}
-                                        className={`w-full p-3 rounded-lg text-left transition-all cursor-pointer ${
+                                        className={`w-full p-2 rounded-lg text-left transition-all cursor-pointer ${
                                           isSelected
                                             ? 'bg-[#1C4332] ring-2 ring-[#00A86B]'
                                             : 'bg-[#C2FFDC] hover:bg-[#b0f0c8]'
                                         }`}
                                       >
-                                        <div className="flex items-center gap-3">
+                                        <div className="flex items-center gap-2">
                                           <img
                                             src={lender?.profile_picture_url || lender?.avatar_url || defaultAvatar}
                                             alt={lender?.full_name || 'Lender'}
-                                            className="w-9 h-9 rounded-full object-cover flex-shrink-0 bg-white"
+                                            className="w-7 h-7 rounded-full object-cover flex-shrink-0 bg-white"
                                           />
                                           <div className="flex-1 min-w-0">
-                                            <p className={`text-sm font-semibold truncate font-sans ${isSelected ? 'text-[#C2FFDC]' : 'text-[#1C4332]'}`}>
+                                            <p className={`text-xs font-semibold truncate font-sans ${isSelected ? 'text-[#C2FFDC]' : 'text-[#1C4332]'}`}>
                                               @{lender?.username || 'user'}
                                             </p>
-                                            <p className={`text-xs truncate font-sans ${isSelected ? 'text-[#00A86B]' : 'text-[#00A86B]/70'}`}>
-                                              {loan.purpose || 'Loan'} · ${loan.amount?.toLocaleString()}
+                                            <p className={`text-[10px] truncate font-sans ${isSelected ? 'text-[#00A86B]' : 'text-[#00A86B]/70'}`}>
+                                              ${loan.amount?.toLocaleString()}
+                                              {loan.status === 'cancelled' && ' · Cancelled'}
                                             </p>
                                           </div>
-                                          {loan.status === 'cancelled' && (
-                                            <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-md ${isSelected ? 'bg-red-500/20 text-red-300' : 'bg-red-100 text-red-500'}`}>
-                                              Cancelled
-                                            </span>
-                                          )}
                                         </div>
                                       </button>
                                     );
                                   })
                                 )}
                               </div>
+                            </div>
+
+                            {/* Middle: Payment Bar Chart */}
+                            <div className="bg-white rounded-xl px-4 py-3 shadow-sm">
+                              <p className="text-sm font-bold text-[#1C4332] mb-2.5 tracking-tight font-sans">
+                                Payment History
+                              </p>
+                              {!manageLoanSelected ? (
+                                <div className="flex items-center justify-center" style={{ height: chartHeight }}>
+                                  <p className="text-xs text-[#00A86B]/60 font-sans">Select a loan to view chart</p>
+                                </div>
+                              ) : chartData.length === 0 ? (
+                                <div className="flex items-center justify-center" style={{ height: chartHeight }}>
+                                  <p className="text-xs text-[#00A86B]/60 font-sans">No payment schedule</p>
+                                </div>
+                              ) : (
+                                <div className="relative">
+                                  {/* Chart area */}
+                                  <div className="flex items-end gap-0.5" style={{ height: chartHeight }}>
+                                    {/* Y-axis labels */}
+                                    <div className="flex flex-col justify-between pr-1.5 flex-shrink-0 h-full">
+                                      <p className="text-[9px] text-[#00A86B]/60 font-mono">${maxChartVal.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+                                      <p className="text-[9px] text-[#00A86B]/60 font-mono">${Math.round(maxChartVal / 2).toLocaleString()}</p>
+                                      <p className="text-[9px] text-[#00A86B]/60 font-mono">$0</p>
+                                    </div>
+                                    {/* Bars */}
+                                    <div className="flex-1 flex items-end justify-between relative h-full">
+                                      {/* Dashed line at planned payment amount */}
+                                      {plannedPaymentAmount > 0 && (
+                                        <div
+                                          className="absolute left-0 right-0 border-t-2 border-dashed border-[#1C4332]/40 z-10"
+                                          style={{ bottom: `${(plannedPaymentAmount / maxChartVal) * 100}%` }}
+                                        >
+                                          <span className="absolute -top-3.5 right-0 text-[8px] font-semibold text-[#1C4332]/60 font-mono bg-white px-1">
+                                            ${plannedPaymentAmount.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                                          </span>
+                                        </div>
+                                      )}
+                                      {chartData.map((d, i) => {
+                                        const barHeight = maxChartVal > 0 ? (d.amount / maxChartVal) * chartHeight : 0;
+                                        const isOver = d.amount >= plannedPaymentAmount && plannedPaymentAmount > 0;
+                                        const isUnder = d.amount > 0 && d.amount < plannedPaymentAmount;
+                                        return (
+                                          <div key={i} className="flex flex-col items-center flex-1" style={{ maxWidth: 40 }}>
+                                            <div className="w-full flex justify-center">
+                                              <div
+                                                className={`rounded-t-sm transition-all ${
+                                                  d.amount === 0
+                                                    ? 'bg-[#C2FFDC]/50'
+                                                    : isOver
+                                                      ? 'bg-[#00A86B]'
+                                                      : 'bg-[#00A86B]/60'
+                                                }`}
+                                                style={{
+                                                  height: Math.max(barHeight, d.amount > 0 ? 4 : 2),
+                                                  width: '70%',
+                                                  minWidth: 8
+                                                }}
+                                                title={`${d.label}: $${d.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}`}
+                                              />
+                                            </div>
+                                            <p className="text-[8px] text-[#1C4332]/50 font-sans mt-1 leading-none">{d.label}</p>
+                                          </div>
+                                        );
+                                      })}
+                                    </div>
+                                  </div>
+                                  {/* Legend */}
+                                  <div className="flex items-center gap-3 mt-2 pt-2 border-t border-[#C2FFDC]">
+                                    <div className="flex items-center gap-1">
+                                      <div className="w-2.5 h-2.5 rounded-sm bg-[#00A86B]" />
+                                      <span className="text-[9px] text-[#1C4332]/60 font-sans">Paid</span>
+                                    </div>
+                                    <div className="flex items-center gap-1">
+                                      <div className="w-4 h-0 border-t-2 border-dashed border-[#1C4332]/40" />
+                                      <span className="text-[9px] text-[#1C4332]/60 font-sans">Plan Amount</span>
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
                             </div>
 
                             {/* Right: Loan Details */}
@@ -1257,27 +1375,27 @@ export default function Borrowing() {
                                       Loan Information
                                     </p>
                                     <div className="grid grid-cols-2 gap-2">
-                                      <div className="bg-[#C2FFDC] rounded-lg p-3">
+                                      <div className="bg-[#C2FFDC] rounded-lg p-2.5">
                                         <p className="text-[10px] text-[#00A86B] uppercase tracking-[0.12em] font-medium mb-0.5" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>Amount</p>
-                                        <p className="text-lg font-bold text-[#1C4332]">
+                                        <p className="text-base font-bold text-[#1C4332]">
                                           ${(manageLoanSelected.amount || 0).toLocaleString()}
                                         </p>
                                       </div>
-                                      <div className="bg-[#C2FFDC] rounded-lg p-3">
+                                      <div className="bg-[#C2FFDC] rounded-lg p-2.5">
                                         <p className="text-[10px] text-[#00A86B] uppercase tracking-[0.12em] font-medium mb-0.5" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>Interest</p>
-                                        <p className="text-lg font-bold text-[#1C4332]">
+                                        <p className="text-base font-bold text-[#1C4332]">
                                           {manageLoanSelected.interest_rate || 0}%
                                         </p>
                                       </div>
-                                      <div className="bg-[#C2FFDC] rounded-lg p-3">
+                                      <div className="bg-[#C2FFDC] rounded-lg p-2.5">
                                         <p className="text-[10px] text-[#00A86B] uppercase tracking-[0.12em] font-medium mb-0.5" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>Term</p>
-                                        <p className="text-lg font-bold text-[#1C4332]">
-                                          {manageLoanSelected.repayment_period || 0} {manageLoanSelected.repayment_unit || 'months'}
+                                        <p className="text-base font-bold text-[#1C4332]">
+                                          {manageLoanSelected.repayment_period || 0} {manageLoanSelected.repayment_unit || 'mo'}
                                         </p>
                                       </div>
-                                      <div className="bg-[#C2FFDC] rounded-lg p-3">
+                                      <div className="bg-[#C2FFDC] rounded-lg p-2.5">
                                         <p className="text-[10px] text-[#00A86B] uppercase tracking-[0.12em] font-medium mb-0.5" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>Payment</p>
-                                        <p className="text-lg font-bold text-[#1C4332]">
+                                        <p className="text-base font-bold text-[#1C4332]">
                                           ${(manageLoanSelected.payment_amount || 0).toLocaleString()}
                                         </p>
                                       </div>
@@ -1290,37 +1408,37 @@ export default function Borrowing() {
                                     <p className="text-sm font-bold text-[#1C4332] mb-2.5 tracking-tight font-sans">
                                       Actions
                                     </p>
-                                    <div className="flex flex-col sm:flex-row gap-2">
+                                    <div className="flex flex-col gap-1.5">
                                       <button
                                         onClick={() => handleMakePayment(manageLoanSelected)}
-                                        className="bg-[#C2FFDC] rounded-lg p-2.5 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-2.5 flex-1"
+                                        className="bg-[#C2FFDC] rounded-lg p-2 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-2 flex-1"
                                       >
-                                        <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
-                                          <DollarSign className="w-3.5 h-3.5 text-[#1C4332]" />
+                                        <div className="w-7 h-7 rounded-full bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
+                                          <DollarSign className="w-3 h-3 text-[#1C4332]" />
                                         </div>
-                                        <p className="font-semibold text-[#1C4332] text-[12px] group-hover:text-[#00A86B] transition-colors">
+                                        <p className="font-semibold text-[#1C4332] text-[11px] group-hover:text-[#00A86B] transition-colors">
                                           Record Payment
                                         </p>
                                       </button>
                                       <button
                                         onClick={() => handleEditLoan(manageLoanSelected)}
-                                        className="bg-[#C2FFDC] rounded-lg p-2.5 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-2.5 flex-1"
+                                        className="bg-[#C2FFDC] rounded-lg p-2 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-2 flex-1"
                                       >
-                                        <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
-                                          <Pencil className="w-3.5 h-3.5 text-[#1C4332]" />
+                                        <div className="w-7 h-7 rounded-full bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
+                                          <Pencil className="w-3 h-3 text-[#1C4332]" />
                                         </div>
-                                        <p className="font-semibold text-[#1C4332] text-[12px] group-hover:text-[#00A86B] transition-colors">
+                                        <p className="font-semibold text-[#1C4332] text-[11px] group-hover:text-[#00A86B] transition-colors">
                                           Request Loan Edit
                                         </p>
                                       </button>
                                       <button
                                         onClick={() => handleCancelLoan(manageLoanSelected)}
-                                        className="bg-[#C2FFDC] rounded-lg p-2.5 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-2.5 flex-1"
+                                        className="bg-[#C2FFDC] rounded-lg p-2 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-2 flex-1"
                                       >
-                                        <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
-                                          <X className="w-3.5 h-3.5 text-[#1C4332]" />
+                                        <div className="w-7 h-7 rounded-full bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
+                                          <X className="w-3 h-3 text-[#1C4332]" />
                                         </div>
-                                        <p className="font-semibold text-[#1C4332] text-[12px] group-hover:text-[#00A86B] transition-colors">
+                                        <p className="font-semibold text-[#1C4332] text-[11px] group-hover:text-[#00A86B] transition-colors">
                                           Request Cancellation
                                         </p>
                                       </button>
@@ -1331,7 +1449,7 @@ export default function Borrowing() {
                                   {/* Cancelled notice */}
                                   {manageLoanSelected.status === 'cancelled' && (
                                     <div className="bg-red-50 rounded-xl px-4 py-3 shadow-sm border border-red-200">
-                                      <p className="text-sm text-red-600 font-medium">This loan has been cancelled. Documentation is still available above.</p>
+                                      <p className="text-sm text-red-600 font-medium">This loan has been cancelled.</p>
                                     </div>
                                   )}
                                 </>
