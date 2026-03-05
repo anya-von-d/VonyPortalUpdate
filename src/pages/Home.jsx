@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Loan, Payment, PublicProfile } from "@/entities/all";
+import { Loan, Payment, PublicProfile, Friendship } from "@/entities/all";
 import { useAuth } from "@/lib/AuthContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,8 +11,143 @@ import { motion } from "framer-motion";
 import { format, startOfMonth, endOfMonth, isSameMonth, addMonths, subMonths, differenceInDays } from "date-fns";
 import { formatMoney } from "@/components/utils/formatMoney";
 import RecordPaymentModal from "@/components/loans/RecordPaymentModal";
+import { AnimatePresence } from "framer-motion";
 
-import PendingLoanOffers from "../components/dashboard/PendingLoanOffers";
+
+// Loan Carousel component for bottom section
+function LoanCarousel({ hasLendingLoans, hasBorrowingLoans }) {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const totalSlides = 2;
+
+  // Auto-flip through slides
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide(prev => (prev + 1) % totalSlides);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const goToSlide = (direction) => {
+    if (direction === 'next') {
+      setCurrentSlide(prev => (prev + 1) % totalSlides);
+    } else {
+      setCurrentSlide(prev => (prev - 1 + totalSlides) % totalSlides);
+    }
+  };
+
+  const slides = [
+    // Slide 1: Track loan progress
+    <div key="progress" className="text-center px-4">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mx-auto mb-4 opacity-60">
+        <line x1="12" y1="20" x2="12" y2="10"></line>
+        <line x1="18" y1="20" x2="18" y2="4"></line>
+        <line x1="6" y1="20" x2="6" y2="16"></line>
+      </svg>
+      <p className="text-lg sm:text-xl font-bold text-white font-sans mb-1.5 tracking-tight">
+        Stay on top of your loans
+      </p>
+      <p className="text-sm text-white/60 font-sans mb-6 max-w-sm mx-auto">
+        Check in on your payment progress and keep track of upcoming due dates
+      </p>
+      <div className="flex items-center justify-center gap-3">
+        {hasBorrowingLoans && (
+          <Link
+            to={createPageUrl("Borrowing")}
+            className="px-5 py-2.5 rounded-xl bg-white text-sm font-semibold text-[#213B75] hover:bg-white/90 transition-colors font-sans"
+          >
+            Track Payment Progress
+          </Link>
+        )}
+        {hasLendingLoans && (
+          <Link
+            to={createPageUrl("Lending")}
+            className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition-colors font-sans ${
+              hasBorrowingLoans
+                ? 'bg-white/20 text-white hover:bg-white/30'
+                : 'bg-white text-[#213B75] hover:bg-white/90'
+            }`}
+          >
+            Track Repayment Progress
+          </Link>
+        )}
+      </div>
+    </div>,
+    // Slide 2: View agreements
+    <div key="agreements" className="text-center px-4">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mx-auto mb-4 opacity-60">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+        <polyline points="14 2 14 8 20 8"></polyline>
+        <line x1="16" y1="13" x2="8" y2="13"></line>
+        <line x1="16" y1="17" x2="8" y2="17"></line>
+      </svg>
+      <p className="text-lg sm:text-xl font-bold text-white font-sans mb-1.5 tracking-tight">
+        Review your loan agreements
+      </p>
+      <p className="text-sm text-white/60 font-sans mb-6 max-w-sm mx-auto">
+        View and download your loan documents anytime to stay informed
+      </p>
+      <Link
+        to={createPageUrl("LoanAgreements")}
+        className="inline-block px-5 py-2.5 rounded-xl bg-white text-sm font-semibold text-[#213B75] hover:bg-white/90 transition-colors font-sans"
+      >
+        My Loan Documents
+      </Link>
+    </div>,
+  ];
+
+  return (
+    <div className="rounded-2xl relative overflow-hidden" style={{ backgroundColor: '#213B75' }}>
+      {/* Arrow buttons */}
+      <button
+        onClick={() => goToSlide('prev')}
+        className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
+        aria-label="Previous slide"
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+      <button
+        onClick={() => goToSlide('next')}
+        className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
+        aria-label="Next slide"
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+
+      {/* Slide content */}
+      <div className="px-10 sm:px-16 py-10 sm:py-14">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentSlide}
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -30 }}
+            transition={{ duration: 0.3 }}
+          >
+            {slides[currentSlide]}
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      {/* Dot indicators */}
+      <div className="flex items-center justify-center gap-2 pb-5">
+        {slides.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => setCurrentSlide(index)}
+            className={`w-2 h-2 rounded-full transition-all duration-300 ${
+              currentSlide === index ? 'bg-white w-5' : 'bg-white/30'
+            }`}
+            aria-label={`Go to slide ${index + 1}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
 
 // Helper function to sync public profile, moved here to adhere to file structure rules
 const syncPublicProfile = async (userData) => {
@@ -47,6 +182,7 @@ export default function Home() {
   const [loans, setLoans] = useState([]);
   const [payments, setPayments] = useState([]);
   const [publicProfiles, setPublicProfiles] = useState([]);
+  const [friendships, setFriendships] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false);
@@ -80,15 +216,17 @@ export default function Home() {
     setIsLoading(true);
     try {
       // Only fetch loan data - user profile comes from context
-      const [allLoans, recentPayments, allProfiles] = await Promise.all([
+      const [allLoans, recentPayments, allProfiles, allFriendships] = await Promise.all([
         safeEntityCall(() => Loan.list('-created_at')),
         safeEntityCall(() => Payment.list('-created_at', 10)),
         safeEntityCall(() => PublicProfile.list()),
+        safeEntityCall(() => Friendship.list()),
       ]);
 
       setLoans(allLoans);
       setPayments(recentPayments);
       setPublicProfiles(allProfiles);
+      setFriendships(allFriendships);
       setDataLoaded(true);
 
       // Sync profile in background if we have user data
@@ -274,6 +412,13 @@ export default function Home() {
     // Bar chart max value
     const barChartMax = Math.max(totalLentAmount, totalBorrowedAmount, 1);
 
+    // Check if user has friends
+    const acceptedFriendships = friendships.filter(f => f && f.status === 'accepted');
+    const hasFriends = acceptedFriendships.length > 0;
+    const hasLoans = myLoans.filter(l => l && l.status === 'active').length > 0;
+    const hasLendingLoans = lentLoans.length > 0;
+    const hasBorrowingLoans = borrowedLoans.length > 0;
+
     return (
         <div className="min-h-screen" style={{backgroundColor: '#CDE7F8'}}>
           {/* Hero Section */}
@@ -284,30 +429,6 @@ export default function Home() {
                 animate={{ opacity: 1, y: 0 }}
                 className="flex flex-col gap-6 md:gap-8 w-full"
               >
-                {/* Updates Box - Mobile: shows first, Desktop: hidden here (shown in right column) */}
-                <div className="lg:hidden rounded-xl px-4 py-3 shadow-sm w-full flex items-center gap-3" style={{ backgroundColor: '#4C7FC4' }}>
-                  <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                      <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-                    </svg>
-                  </div>
-                  <p className="text-sm font-bold text-white tracking-tight font-sans flex-1">
-                    {pendingOffers.length > 0
-                      ? `You have ${pendingOffers.length} new update${pendingOffers.length !== 1 ? 's' : ''}`
-                      : 'You have no new requests'
-                    }
-                  </p>
-                  {pendingOffers.length > 0 && (
-                    <Link
-                      to={createPageUrl("Requests")}
-                      className="flex-shrink-0 px-4 py-1.5 rounded-lg bg-white text-xs font-semibold text-[#213B75] hover:bg-white/90 transition-colors font-sans"
-                    >
-                      View Updates
-                    </Link>
-                  )}
-                </div>
-
                 {/* Greeting + Quick Action Circles on same row */}
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6">
                   <div>
@@ -352,6 +473,66 @@ export default function Home() {
                     </Link>
                   </div>
                 </div>
+
+                {/* Updates Box - Mobile: below action buttons, Desktop: hidden here (shown in right column) */}
+                <div className="lg:hidden rounded-xl px-4 py-3 shadow-sm w-full flex items-center gap-3" style={{ backgroundColor: '#4C7FC4' }}>
+                  <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                      <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                    </svg>
+                  </div>
+                  <p className="text-sm font-bold text-white tracking-tight font-sans flex-1">
+                    {pendingOffers.length > 0
+                      ? `You have ${pendingOffers.length} new update${pendingOffers.length !== 1 ? 's' : ''}`
+                      : 'You have no new requests'
+                    }
+                  </p>
+                  {pendingOffers.length > 0 && (
+                    <Link
+                      to={createPageUrl("Requests")}
+                      className="flex-shrink-0 px-4 py-1.5 rounded-lg bg-white text-xs font-semibold text-[#213B75] hover:bg-white/90 transition-colors font-sans"
+                    >
+                      View Updates
+                    </Link>
+                  )}
+                </div>
+
+                {/* Find Friends - shown above grid if user has no friends */}
+                {!hasFriends && (
+                  <div className="rounded-2xl px-6 py-8 sm:px-10 sm:py-10 text-center" style={{ backgroundColor: '#213B75' }}>
+                    <p className="text-lg sm:text-xl font-bold text-white font-sans mb-1.5 tracking-tight">
+                      Find friends to lend with
+                    </p>
+                    <p className="text-sm text-white/60 font-sans mb-6 max-w-md mx-auto">
+                      Connect with people you trust to start lending and borrowing together
+                    </p>
+                    <div className="flex items-center justify-center gap-3 sm:gap-4">
+                      <Link
+                        to={createPageUrl("Friends")}
+                        className="px-6 py-2.5 rounded-xl bg-white text-sm font-semibold text-[#213B75] hover:bg-white/90 transition-colors font-sans"
+                      >
+                        Search for Friends
+                      </Link>
+                      <button
+                        onClick={() => {
+                          if (navigator.share) {
+                            navigator.share({
+                              title: 'Join me on Vony',
+                              text: 'Lending made simple — join me on Vony!',
+                              url: 'https://lend-with-vony.com',
+                            });
+                          } else {
+                            navigator.clipboard.writeText('https://lend-with-vony.com');
+                          }
+                        }}
+                        className="px-6 py-2.5 rounded-xl bg-white/20 text-sm font-semibold text-white hover:bg-white/30 transition-colors font-sans"
+                      >
+                        Invite Friends
+                      </button>
+                    </div>
+                  </div>
+                )}
 
                 {/* Two-Column Layout: Left = Overviews stacked, Right = Updates + Activity */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-4 w-full">
@@ -819,53 +1000,54 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Find Friends Section */}
+          {/* Bottom Section: Carousel (if has loans) or Find Friends (if has friends but shown regardless as fallback) */}
           <div className="px-4 pt-4 pb-8 sm:px-8 md:px-24 md:pt-4 md:pb-10 lg:px-36" style={{backgroundColor: '#CDE7F8'}}>
             <div className="max-w-6xl mx-auto">
-              {pendingOffers.length > 0 && (
-                <div className="mb-4">
-                  <PendingLoanOffers offers={pendingOffers} />
-                </div>
-              )}
-
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.3 }}
-              >
-                <div className="rounded-2xl px-6 py-10 sm:px-10 sm:py-14 text-center" style={{ backgroundColor: '#213B75' }}>
-                  <p className="text-xl sm:text-2xl font-bold text-white font-sans mb-2 tracking-tight">
-                    Find friends to lend with
-                  </p>
-                  <p className="text-sm text-white/60 font-sans mb-8 max-w-md mx-auto">
-                    Connect with people you trust to start lending and borrowing together
-                  </p>
-                  <div className="flex items-center justify-center gap-3 sm:gap-4">
-                    <Link
-                      to={createPageUrl("Friends")}
-                      className="px-6 py-2.5 rounded-xl bg-white text-sm font-semibold text-[#213B75] hover:bg-white/90 transition-colors font-sans"
-                    >
-                      Search for Friends
-                    </Link>
-                    <button
-                      onClick={() => {
-                        if (navigator.share) {
-                          navigator.share({
-                            title: 'Join me on Vony',
-                            text: 'Lending made simple — join me on Vony!',
-                            url: 'https://lend-with-vony.com',
-                          });
-                        } else {
-                          navigator.clipboard.writeText('https://lend-with-vony.com');
-                        }
-                      }}
-                      className="px-6 py-2.5 rounded-xl bg-white/20 text-sm font-semibold text-white hover:bg-white/30 transition-colors font-sans"
-                    >
-                      Invite Friends
-                    </button>
+              {hasLoans ? (
+                <LoanCarousel
+                  hasLendingLoans={hasLendingLoans}
+                  hasBorrowingLoans={hasBorrowingLoans}
+                />
+              ) : (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: 0.3 }}
+                >
+                  <div className="rounded-2xl px-6 py-10 sm:px-10 sm:py-14 text-center" style={{ backgroundColor: '#213B75' }}>
+                    <p className="text-xl sm:text-2xl font-bold text-white font-sans mb-2 tracking-tight">
+                      Find friends to lend with
+                    </p>
+                    <p className="text-sm text-white/60 font-sans mb-8 max-w-md mx-auto">
+                      Connect with people you trust to start lending and borrowing together
+                    </p>
+                    <div className="flex items-center justify-center gap-3 sm:gap-4">
+                      <Link
+                        to={createPageUrl("Friends")}
+                        className="px-6 py-2.5 rounded-xl bg-white text-sm font-semibold text-[#213B75] hover:bg-white/90 transition-colors font-sans"
+                      >
+                        Search for Friends
+                      </Link>
+                      <button
+                        onClick={() => {
+                          if (navigator.share) {
+                            navigator.share({
+                              title: 'Join me on Vony',
+                              text: 'Lending made simple — join me on Vony!',
+                              url: 'https://lend-with-vony.com',
+                            });
+                          } else {
+                            navigator.clipboard.writeText('https://lend-with-vony.com');
+                          }
+                        }}
+                        className="px-6 py-2.5 rounded-xl bg-white/20 text-sm font-semibold text-white hover:bg-white/30 transition-colors font-sans"
+                      >
+                        Invite Friends
+                      </button>
+                    </div>
                   </div>
-                </div>
-              </motion.div>
+                </motion.div>
+              )}
             </div>
           </div>
 

@@ -7,7 +7,7 @@ export default function Footer() {
     <footer className="w-full" style={{ backgroundColor: '#1C4332' }}>
       {/* Top Section: About + Coming Soon */}
       <div className="px-6 md:px-10 lg:px-20 pt-10 pb-8">
-        <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-16">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-16">
           {/* About Section */}
           <div>
             <p className="text-xs font-semibold text-[#83F384] uppercase tracking-widest mb-4 font-sans">
@@ -51,6 +51,29 @@ export default function Footer() {
               >
                 Learn
               </Link>
+            </div>
+          </div>
+
+          {/* Contact Us Section */}
+          <div>
+            <p className="text-xs font-semibold text-[#83F384] uppercase tracking-widest mb-4 font-sans">
+              Contact Us
+            </p>
+            <div className="flex flex-col gap-2.5">
+              <a
+                href="https://www.vony-lending.com/contact-us"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-[#DBFFEB]/80 hover:text-[#DBFFEB] transition-colors font-sans"
+              >
+                Contact Page
+              </a>
+              <a
+                href="mailto:hello@vony-lending.com"
+                className="text-sm text-[#DBFFEB]/80 hover:text-[#DBFFEB] transition-colors font-sans"
+              >
+                hello@vony-lending.com
+              </a>
             </div>
           </div>
         </div>
