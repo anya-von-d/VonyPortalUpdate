@@ -182,8 +182,8 @@ export default function TopNav({ location }) {
           </div>
         </div>
 
-        {/* Bottom Bar - Medium Green (#00A86B) primary navigation, left-aligned */}
-        <div className={`h-12 ${menuOpen ? 'hidden md:block' : ''}`} style={{backgroundColor: '#00A86B'}}>
+        {/* Bottom Bar - Transparent primary navigation, left-aligned */}
+        <div className={`h-12 ${menuOpen ? 'hidden md:block' : ''}`} style={{backgroundColor: '#0A3D22'}}>
           <div className="h-full px-4 sm:px-8 md:px-24 lg:px-36 mx-auto flex items-center justify-start">
             {/* Mobile: Main nav links left-aligned */}
             <div className="flex md:hidden items-center gap-6">
@@ -194,8 +194,8 @@ export default function TopNav({ location }) {
                   onClick={() => handleNavClick(item.url)}
                   className={`font-sans text-sm font-medium transition-colors duration-200 ${
                     location.pathname === item.url
-                      ? "text-[#1C4332]"
-                      : "text-[#1C4332]/50 hover:text-[#1C4332]"
+                      ? "text-white"
+                      : "text-white/50 hover:text-white"
                   }`}
                 >
                   {item.title}
@@ -212,8 +212,8 @@ export default function TopNav({ location }) {
                   onClick={() => handleNavClick(item.url)}
                   className={`font-sans text-sm font-semibold transition-colors duration-200 ${
                     location.pathname === item.url
-                      ? "text-[#1C4332]"
-                      : "text-[#1C4332]/50 hover:text-[#1C4332]"
+                      ? "text-white"
+                      : "text-white/50 hover:text-white"
                   }`}
                 >
                   {item.title}

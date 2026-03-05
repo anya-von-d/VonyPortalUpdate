@@ -1195,10 +1195,10 @@ export default function Home() {
                                   return (
                                     <div key={idx} className="flex items-center gap-2.5 p-2.5 rounded-lg bg-[#0F2B1F]">
                                       {/* Circle with days (minus prefix for overdue) */}
-                                      <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center shadow-sm ${isOverdue ? 'bg-red-500' : 'bg-[#6AD478]'}`}>
-                                        <p className={`text-[10px] font-bold text-center leading-tight ${isOverdue ? 'text-white' : 'text-[#1C4332]'}`}>
+                                      <div className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center shadow-sm bg-[#6AD478]">
+                                        <p className="text-[10px] font-bold text-center leading-tight text-[#1C4332]">
                                           {displayDays}
-                                          <span className={`block text-[7px] font-medium ${isOverdue ? 'text-white/60' : 'text-[#1C4332]/60'}`}>
+                                          <span className="block text-[7px] font-medium text-[#1C4332]/60">
                                             {Math.abs(event.days) === 1 ? 'day' : 'days'}
                                           </span>
                                         </p>
@@ -1215,7 +1215,7 @@ export default function Home() {
                                       <Link
                                         to={createPageUrl(loanPage)}
                                         className="flex-shrink-0 text-[9px] font-semibold px-2.5 py-1 rounded-md"
-                                        style={{ backgroundColor: isOverdue ? '#EF4444' : '#6AD478', color: isOverdue ? '#FFFFFF' : '#1C4332' }}
+                                        style={{ backgroundColor: '#6AD478', color: '#1C4332' }}
                                       >
                                         View Loan
                                       </Link>
