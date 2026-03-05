@@ -194,8 +194,8 @@ export default function TopNav({ location }) {
                   onClick={() => handleNavClick(item.url)}
                   className={`font-sans text-sm font-medium transition-colors duration-200 ${
                     location.pathname === item.url
-                      ? "text-white"
-                      : "text-white/50 hover:text-white"
+                      ? "text-[#1C4332]"
+                      : "text-[#1C4332]/50 hover:text-[#1C4332]"
                   }`}
                 >
                   {item.title}
@@ -212,8 +212,8 @@ export default function TopNav({ location }) {
                   onClick={() => handleNavClick(item.url)}
                   className={`font-sans text-sm font-semibold transition-colors duration-200 ${
                     location.pathname === item.url
-                      ? "text-white"
-                      : "text-white/50 hover:text-white"
+                      ? "text-[#1C4332]"
+                      : "text-[#1C4332]/50 hover:text-[#1C4332]"
                   }`}
                 >
                   {item.title}
