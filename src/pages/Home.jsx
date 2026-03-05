@@ -1193,7 +1193,7 @@ export default function Home() {
                                   const displayDays = isOverdue ? `-${Math.abs(event.days)}` : event.days;
 
                                   return (
-                                    <div key={idx} className="flex items-center gap-2.5 p-2.5 rounded-lg bg-[#0F2B1F]">
+                                    <div key={idx} className="flex items-center gap-2.5 p-2.5 rounded-lg bg-[#00A86B]">
                                       {/* Circle with days (minus prefix for overdue) */}
                                       <div className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center shadow-sm bg-[#6AD478]">
                                         <p className="text-[10px] font-bold text-center leading-tight text-[#1C4332]">
@@ -1357,7 +1357,7 @@ export default function Home() {
                               const iconColor = '#6AD478';
 
                               return (
-                                <div key={idx} className="flex items-center gap-2.5 p-2 rounded-lg bg-[#0F2B1F]">
+                                <div key={idx} className="flex items-center gap-2.5 p-2 rounded-lg bg-[#00A86B]">
                                   <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#6AD478]/20 flex items-center justify-center shadow-sm">
                                     {isPayment ? (
                                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={iconColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
