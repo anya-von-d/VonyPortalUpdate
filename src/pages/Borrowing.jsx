@@ -486,7 +486,9 @@ export default function Borrowing() {
     const loanStart = new Date(loan.created_at);
     const periodConfirmedPayments = [];
     const periodAllPayments = []; // For chart display (confirmed + pending)
-    for (let i = 0; i < totalPeriods; i++) {
+    // Use the smaller of totalPeriods and scheduleDates.length to avoid undefined dates
+    const effectivePeriods = Math.min(totalPeriods, scheduleDates.length);
+    for (let i = 0; i < effectivePeriods; i++) {
       const periodStart = i === 0 ? loanStart : scheduleDates[i - 1];
       const periodEnd = scheduleDates[i];
       const confirmedInPeriod = confirmedPayments.filter(p => {
@@ -506,11 +508,11 @@ export default function Borrowing() {
       const lastDate = scheduleDates[scheduleDates.length - 1];
       const lateConfirmed = confirmedPayments.filter(p => new Date(p.payment_date) > lastDate);
       const lateAll = allLoanPayments.filter(p => new Date(p.payment_date) > lastDate);
-      if (lateConfirmed.length > 0) {
-        periodConfirmedPayments[totalPeriods - 1] = [...periodConfirmedPayments[totalPeriods - 1], ...lateConfirmed];
+      if (lateConfirmed.length > 0 && effectivePeriods > 0) {
+        periodConfirmedPayments[effectivePeriods - 1] = [...periodConfirmedPayments[effectivePeriods - 1], ...lateConfirmed];
       }
-      if (lateAll.length > 0) {
-        periodAllPayments[totalPeriods - 1] = [...periodAllPayments[totalPeriods - 1], ...lateAll];
+      if (lateAll.length > 0 && effectivePeriods > 0) {
+        periodAllPayments[effectivePeriods - 1] = [...periodAllPayments[effectivePeriods - 1], ...lateAll];
       }
     }
 
@@ -522,7 +524,7 @@ export default function Borrowing() {
     let deficit = 0; // rollover from previous period
     const periodResults = [];
 
-    for (let i = 0; i < totalPeriods; i++) {
+    for (let i = 0; i < effectivePeriods; i++) {
       // Interest accrued this period on remaining principal
       const periodInterest = Math.round(remainingPrincipal * r * 100) / 100;
       totalInterestAccrued += periodInterest;
