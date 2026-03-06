@@ -1139,7 +1139,7 @@ export default function Home() {
 
                           return {
                             loan,
-                            date: paymentDate,
+                            date: nextPayDate,
                             days,
                             originalAmount,
                             remainingAmount,
