@@ -463,6 +463,18 @@ input[type="date"] {
 
 /* Home page responsive */
 @media (max-width: 900px) {
+  .home-sidebar {
+    display: none !important;
+  }
+  .home-with-sidebar {
+    padding-left: 0 !important;
+  }
+  .home-top-bar {
+    left: 0 !important;
+  }
+  .home-nav-pill {
+    left: 50% !important;
+  }
   .home-top-row {
     grid-template-columns: 1fr 1fr !important;
   }
