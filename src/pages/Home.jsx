@@ -12,6 +12,7 @@ import { format, startOfMonth, endOfMonth, addMonths, addDays, isBefore, isAfter
 import { formatMoney } from "@/components/utils/formatMoney";
 import { toLocalDate, getLocalToday, daysUntil as daysUntilDate } from "@/components/utils/dateUtils";
 import RecordPaymentModal from "@/components/loans/RecordPaymentModal";
+import DashboardSidebar from "@/components/DashboardSidebar";
 
 // SVG star field data — exact positions from mockup
 const STAR_CIRCLES = [
@@ -620,68 +621,7 @@ export default function Home() {
   return (
     <div className="home-with-sidebar" style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 240 }}>
 
-      {/* ── Sidebar Navigation ── */}
-      <aside className="home-sidebar" style={{
-        position: 'fixed', left: 0, top: 0, bottom: 0, width: 240,
-        background: 'rgba(255,255,255,0.97)',
-        borderRight: '1px solid rgba(0,0,0,0.06)',
-        zIndex: 52, display: 'flex', flexDirection: 'column',
-        fontFamily: "'DM Sans', sans-serif", overflowY: 'auto',
-      }}>
-        <div style={{ padding: '22px 24px 32px' }}>
-          <Link to="/" style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 400, fontStyle: 'italic', fontSize: '1.5rem', letterSpacing: '-0.02em', color: '#1A1918', textDecoration: 'none' }}>Vony</Link>
-        </div>
-        <nav style={{ flex: 1, padding: '0 12px', display: 'flex', flexDirection: 'column', gap: 2 }}>
-          {/* Dashboard - Active */}
-          <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px', borderRadius: 10, textDecoration: 'none', color: '#678AFB', background: 'rgba(103,138,251,0.08)', fontWeight: 600, fontSize: 13 }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#678AFB" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" /></svg>
-            Dashboard
-          </Link>
-          {/* Create Loan */}
-          <Link to={createPageUrl("CreateOffer")} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px', borderRadius: 10, textDecoration: 'none', color: '#5C5B5A', fontSize: 13, fontWeight: 500, transition: 'background 0.15s, color 0.15s' }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5C5B5A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="16" /><line x1="8" y1="12" x2="16" y2="12" /></svg>
-            Create Loan
-          </Link>
-          {/* Lending */}
-          <Link to={createPageUrl("Lending")} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px', borderRadius: 10, textDecoration: 'none', color: '#5C5B5A', fontSize: 13, fontWeight: 500, transition: 'background 0.15s, color 0.15s' }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5C5B5A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>
-            Lending
-          </Link>
-          {/* Borrowing */}
-          <Link to={createPageUrl("Borrowing")} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px', borderRadius: 10, textDecoration: 'none', color: '#5C5B5A', fontSize: 13, fontWeight: 500, transition: 'background 0.15s, color 0.15s' }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5C5B5A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polyline points="7 13 12 18 17 13" /><line x1="12" y1="18" x2="12" y2="6" /></svg>
-            Borrowing
-          </Link>
-          <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', margin: '8px 14px' }} />
-          {/* Friends */}
-          <Link to={createPageUrl("Friends")} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px', borderRadius: 10, textDecoration: 'none', color: '#5C5B5A', fontSize: 13, fontWeight: 500, transition: 'background 0.15s, color 0.15s' }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5C5B5A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>
-            Friends
-          </Link>
-          {/* Recent Activity */}
-          <Link to={createPageUrl("RecentActivity")} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px', borderRadius: 10, textDecoration: 'none', color: '#5C5B5A', fontSize: 13, fontWeight: 500, transition: 'background 0.15s, color 0.15s' }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5C5B5A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
-            Recent Activity
-          </Link>
-          {/* Loan Documents */}
-          <Link to={createPageUrl("LoanAgreements")} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px', borderRadius: 10, textDecoration: 'none', color: '#5C5B5A', fontSize: 13, fontWeight: 500, transition: 'background 0.15s, color 0.15s' }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5C5B5A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" /></svg>
-            Loan Documents
-          </Link>
-        </nav>
-        {/* User profile at bottom */}
-        <div style={{ padding: '16px 20px', borderTop: '1px solid rgba(0,0,0,0.06)' }}>
-          <Link to={createPageUrl("Profile")} style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
-            <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#678AFB', color: 'white', fontWeight: 600, fontSize: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              {avatarInitial}
-            </div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user.full_name || 'User'}</div>
-              <div style={{ fontSize: 11, color: '#787776' }}>View profile</div>
-            </div>
-          </Link>
-        </div>
-      </aside>
+      <DashboardSidebar activePage="Dashboard" user={user} />
 
       {/* ── Galaxy gradient background ── */}
       <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', bottom: 0, overflow: 'hidden', zIndex: 0, pointerEvents: 'none' }}>

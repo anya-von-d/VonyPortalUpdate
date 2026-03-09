@@ -58,6 +58,7 @@ import Profile from './pages/Profile';
 import RecentActivity from './pages/RecentActivity';
 import Requests from './pages/Requests';
 import Shop from './pages/Shop';
+import Upcoming from './pages/Upcoming';
 import __Layout from './Layout.jsx';
 
 
@@ -73,6 +74,7 @@ export const PAGES = {
     "RecentActivity": RecentActivity,
     "Requests": Requests,
     "Shop": Shop,
+    "Upcoming": Upcoming,
 }
 
 export const pagesConfig = {

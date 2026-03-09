@@ -461,7 +461,14 @@ input[type="date"] {
   animation: twinkle 3.2s ease-in-out 1.5s infinite alternate;
 }
 
-/* Home page responsive */
+/* Upcoming page responsive */
+@media (max-width: 900px) {
+  .upcoming-summary-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Home + Dashboard pages responsive */
 @media (max-width: 900px) {
   .home-sidebar {
     display: none !important;

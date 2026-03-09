@@ -96,19 +96,20 @@ export default function Layout({ children }) {
   }, [theme, location.pathname]);
 
   const isHomePage = location.pathname === '/' || location.pathname === '/home';
+  const isDashboardStyle = isHomePage || location.pathname === '/Upcoming' || location.pathname === '/upcoming';
 
   return (
-    <div className="min-h-screen flex flex-col w-full safe-area-inset-top safe-area-inset-bottom" style={isHomePage ? { background: '#F7F7F7' } : { background: `linear-gradient(to bottom right, rgb(var(--theme-bg-from)), rgb(var(--theme-bg-to)))` }}>
-      {/* TopNav handles its own fixed positioning and mobile menu — hidden on Home page */}
-      {user && !isHomePage && <TopNav location={location} />}
+    <div className="min-h-screen flex flex-col w-full safe-area-inset-top safe-area-inset-bottom" style={isDashboardStyle ? { background: '#F7F7F7' } : { background: `linear-gradient(to bottom right, rgb(var(--theme-bg-from)), rgb(var(--theme-bg-to)))` }}>
+      {/* TopNav handles its own fixed positioning and mobile menu — hidden on dashboard-style pages */}
+      {user && !isDashboardStyle && <TopNav location={location} />}
 
       {/* Main content container */}
       <main className="flex-1 overflow-auto">
         {children}
       </main>
 
-      {/* Footer — hidden on Home page (Home renders its own footer) */}
-      {user && !isHomePage && <Footer />}
+      {/* Footer — hidden on dashboard-style pages (they render their own) */}
+      {user && !isDashboardStyle && <Footer />}
     </div>
   );
 }
