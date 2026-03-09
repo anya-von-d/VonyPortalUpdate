@@ -170,6 +170,8 @@ export default function Home() {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [selectedLoan, setSelectedLoan] = useState(null);
   const [candidateLoans, setCandidateLoans] = useState([]);
+  const [alertSlide, setAlertSlide] = useState(0);
+  const overdueCountRef = useRef(0);
 
   // Scroll state for top bar behavior
   const [topBarHidden, setTopBarHidden] = useState(false);
@@ -183,6 +185,18 @@ export default function Home() {
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Alert carousel auto-advance timer
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setAlertSlide(prev => {
+        const count = overdueCountRef.current;
+        if (count <= 1) return 0;
+        return (prev + 1) % count;
+      });
+    }, 6000);
+    return () => clearInterval(interval);
   }, []);
 
   // Use profile from context
@@ -599,14 +613,8 @@ export default function Home() {
     return { loan, days, username: lenderProfile?.username || 'user', amount: loan.payment_amount || 0 };
   }).sort((a, b) => b.days - a.days);
 
-  const [alertSlide, setAlertSlide] = useState(0);
   const alertTotal = overdueReminders.length;
-
-  useEffect(() => {
-    if (alertTotal <= 1) return;
-    const timer = setInterval(() => setAlertSlide(prev => (prev + 1) % alertTotal), 6000);
-    return () => clearInterval(timer);
-  }, [alertTotal]);
+  overdueCountRef.current = alertTotal;
 
   return (
     <div className="home-with-sidebar" style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 240 }}>
