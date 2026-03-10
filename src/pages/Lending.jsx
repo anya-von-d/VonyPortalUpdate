@@ -35,6 +35,19 @@ import { addMonths, addWeeks, addDays, format, startOfMonth, endOfMonth, isSameM
 import { jsPDF } from "jspdf";
 import { formatMoney } from "@/components/utils/formatMoney";
 import { toLocalDate, getLocalToday, daysUntil as daysUntilDate, daysBetween } from "@/components/utils/dateUtils";
+import DashboardSidebar from "@/components/DashboardSidebar";
+
+const STAR_CIRCLES = [
+  {cx:82,cy:45,o:0.7},{cx:195,cy:112,o:0.5},{cx:310,cy:28,o:0.8},{cx:420,cy:198,o:0.4},
+  {cx:530,cy:67,o:0.65},{cx:640,cy:245,o:0.55},{cx:755,cy:88,o:0.75},{cx:860,cy:156,o:0.45},
+  {cx:970,cy:34,o:0.7},{cx:1085,cy:201,o:0.6},{cx:1190,cy:78,o:0.5},{cx:1300,cy:267,o:0.7},
+  {cx:1410,cy:45,o:0.55},{cx:1520,cy:134,o:0.65},{cx:48,cy:189,o:0.4},{cx:158,cy:278,o:0.6},
+  {cx:268,cy:156,o:0.5},{cx:378,cy:89,o:0.7},{cx:488,cy:234,o:0.45},{cx:598,cy:145,o:0.6},
+  {cx:708,cy:312,o:0.35},{cx:818,cy:56,o:0.75},{cx:928,cy:223,o:0.5},{cx:1038,cy:98,o:0.65},
+  {cx:1148,cy:289,o:0.4},{cx:1258,cy:167,o:0.7},{cx:1368,cy:234,o:0.55},{cx:1478,cy:78,o:0.6},
+  {cx:1560,cy:256,o:0.45},{cx:125,cy:312,o:0.5},{cx:345,cy:267,o:0.6},{cx:565,cy:34,o:0.75},
+  {cx:685,cy:178,o:0.4},{cx:905,cy:289,o:0.55},{cx:1125,cy:45,o:0.7},{cx:1345,cy:145,o:0.5},
+];
 
 export default function Lending({ initialTab }) {
   const navigate = useNavigate();
@@ -683,7 +696,7 @@ export default function Lending({ initialTab }) {
     const canSubmit = quickPayAmount && (quickPayFromPerson || quickPayToPerson);
 
     return (
-      <div className={`bg-[#96FFD0] rounded-2xl p-5 border-0 ${extraClassName}`}>
+      <div className={`bg-[#A79DEA]/10 rounded-2xl p-5 border-0 ${extraClassName}`}>
         <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
           Record Payment
         </p>
@@ -744,8 +757,8 @@ export default function Lending({ initialTab }) {
             disabled={!canSubmit}
             className={`h-8 px-4 rounded-lg text-sm font-medium border-0 transition-all ${
               !canSubmit
-                ? 'bg-[#00A86B]/50 text-white/70 cursor-not-allowed'
-                : 'bg-[#00A86B] text-white hover:bg-[#0D9B76]'
+                ? 'bg-[#678AFB]/50 text-white/70 cursor-not-allowed'
+                : 'bg-[#678AFB] text-white hover:bg-[#5a7ae0]'
             }`}
           >
             Submit
@@ -1068,12 +1081,12 @@ export default function Lending({ initialTab }) {
           <p className="text-xs text-slate-400 mt-1">ID: {agreement.id}</p>
         </div>
 
-        <div className="bg-[#96FFD0] rounded-2xl p-5 text-center">
+        <div className="bg-[#A79DEA]/10 rounded-2xl p-5 text-center">
           <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-1">Principal Amount</p>
           <p className="text-3xl font-bold text-slate-800">{formatMoney(agreement.amount)}</p>
         </div>
 
-        <div className="bg-[#DBFFEB] rounded-2xl p-4">
+        <div className="glass-card rounded-2xl p-4">
           <p className="text-sm text-slate-700 leading-relaxed">
             FOR VALUE RECEIVED, the undersigned Borrower, <span className="font-semibold">{borrowerInfo.full_name}</span> (@{borrowerInfo.username}),
             promises to pay to the order of <span className="font-semibold">{lenderInfo.full_name}</span> (@{lenderInfo.username}),
@@ -1082,23 +1095,23 @@ export default function Lending({ initialTab }) {
           </p>
         </div>
 
-        <div className="bg-[#DBFFEB] rounded-2xl p-4 space-y-3">
+        <div className="glass-card rounded-2xl p-4 space-y-3">
           <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500">Terms of Repayment</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="bg-[#AAFFA3] rounded-xl p-3">
+            <div className="bg-[#678AFB]/8 rounded-xl p-3">
               <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-0.5">Total Due</p>
               <p className="font-bold text-slate-800">{formatMoney(agreement.total_amount)}</p>
             </div>
-            <div className="bg-[#30FFA8] rounded-xl p-3">
+            <div className="bg-[#678AFB]/12 rounded-xl p-3">
               <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-0.5">Interest</p>
               <p className="font-bold text-slate-800">{agreement.interest_rate}%</p>
             </div>
-            <div className="bg-[#6EE8A2] rounded-xl p-3">
+            <div className="bg-[#A79DEA]/8 rounded-xl p-3">
               <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-0.5">Payment</p>
               <p className="font-bold text-slate-800">{formatMoney(agreement.payment_amount)}</p>
               <p className="text-xs text-slate-500 capitalize">{agreement.payment_frequency}</p>
             </div>
-            <div className="bg-[#6EE8B5] rounded-xl p-3">
+            <div className="bg-[#678AFB]/8 rounded-xl p-3">
               <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-0.5">Term</p>
               <p className="font-bold text-slate-800">{agreement.repayment_period} {agreement.repayment_unit || 'months'}</p>
             </div>
@@ -1106,14 +1119,14 @@ export default function Lending({ initialTab }) {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div className="bg-[#DBFFEB] rounded-2xl p-4">
+          <div className="glass-card rounded-2xl p-4">
             <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-400 mb-1">Borrower</p>
             <p className="text-lg font-serif italic text-slate-800">{agreement.borrower_name || borrowerInfo.full_name}</p>
             {agreement.borrower_signed_date && (
               <p className="text-xs text-slate-400 mt-1">Signed {format(new Date(agreement.borrower_signed_date), 'MMM d, yyyy')}</p>
             )}
           </div>
-          <div className="bg-[#DBFFEB] rounded-2xl p-4">
+          <div className="glass-card rounded-2xl p-4">
             <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-400 mb-1">Lender</p>
             <p className="text-lg font-serif italic text-slate-800">{agreement.lender_name || lenderInfo.full_name}</p>
             {agreement.lender_signed_date && (
@@ -1124,7 +1137,7 @@ export default function Lending({ initialTab }) {
 
         <Button
           onClick={() => downloadPromissoryNote(agreement)}
-          className="w-full bg-[#00A86B] hover:bg-[#0D9B76] text-white rounded-xl py-3"
+          className="w-full bg-[#678AFB] hover:bg-[#5a7ae0] text-white rounded-xl py-3"
         >
           <Download className="w-4 h-4 mr-2" />
           Download PDF
@@ -1148,23 +1161,23 @@ export default function Lending({ initialTab }) {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div className="bg-[#AAFFA3] rounded-2xl p-3 text-center">
+          <div className="bg-[#678AFB]/8 rounded-2xl p-3 text-center">
             <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-0.5">Principal</p>
             <p className="text-lg font-bold text-slate-800">{formatMoney(agreement.amount)}</p>
           </div>
-          <div className="bg-[#30FFA8] rounded-2xl p-3 text-center">
+          <div className="bg-[#678AFB]/12 rounded-2xl p-3 text-center">
             <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-0.5">Interest</p>
             <p className="text-lg font-bold text-slate-800">{formatMoney((agreement.total_amount || 0) - (agreement.amount || 0))}</p>
           </div>
-          <div className="bg-[#96FFD0] rounded-2xl p-3 text-center">
+          <div className="bg-[#A79DEA]/10 rounded-2xl p-3 text-center">
             <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-0.5">Total</p>
             <p className="text-lg font-bold text-slate-800">{formatMoney(agreement.total_amount)}</p>
           </div>
         </div>
 
-        <div className="max-h-[300px] overflow-x-auto overflow-y-auto rounded-2xl bg-[#DBFFEB]">
+        <div className="max-h-[300px] overflow-x-auto overflow-y-auto rounded-2xl glass-card">
           <table className="w-full text-xs min-w-[580px]">
-            <thead className="bg-[#DBFFEB] sticky top-0">
+            <thead className="bg-white/90 backdrop-blur sticky top-0">
               <tr>
                 <th className="px-2 py-2.5 text-left text-[10px] font-mono uppercase tracking-wider text-slate-500">Payment</th>
                 <th className="px-2 py-2.5 text-left text-[10px] font-mono uppercase tracking-wider text-slate-500">Date</th>
@@ -1180,10 +1193,10 @@ export default function Lending({ initialTab }) {
               {schedule.map((row, index) => (
                 <tr
                   key={row.number}
-                  className={index < paidPayments ? 'bg-[#AAFFA3]/40' : index % 2 === 0 ? 'bg-white/40' : ''}
+                  className={index < paidPayments ? 'bg-[#678AFB]/8/40' : index % 2 === 0 ? 'bg-white/40' : ''}
                 >
                   <td className="px-2 py-2 text-slate-600">
-                    {index < paidPayments && <CheckCircle className="w-3 h-3 text-[#00A86B] inline mr-1" />}
+                    {index < paidPayments && <CheckCircle className="w-3 h-3 text-[#678AFB] inline mr-1" />}
                     {row.number}
                   </td>
                   <td className="px-2 py-2 text-slate-800">{format(row.date, 'MMM d, yyyy')}</td>
@@ -1201,7 +1214,7 @@ export default function Lending({ initialTab }) {
 
         <Button
           onClick={() => downloadAmortizationSchedule(agreement)}
-          className="w-full bg-[#00A86B] hover:bg-[#0D9B76] text-white rounded-xl py-3"
+          className="w-full bg-[#678AFB] hover:bg-[#5a7ae0] text-white rounded-xl py-3"
         >
           <Download className="w-4 h-4 mr-2" />
           Download PDF
@@ -1218,7 +1231,7 @@ export default function Lending({ initialTab }) {
 
     const getStatusColor = (status) => {
       switch(status) {
-        case 'active': return 'bg-green-100 text-green-800 border-green-200';
+        case 'active': return 'bg-blue-50 text-blue-800 border-blue-200';
         case 'completed': return 'bg-blue-100 text-blue-800 border-blue-200';
         case 'cancelled': return 'bg-red-100 text-red-800 border-red-200';
         default: return 'bg-gray-100 text-gray-800 border-gray-200';
@@ -1235,24 +1248,24 @@ export default function Lending({ initialTab }) {
           <Badge className={`${getStatusColor(loan?.status)} capitalize`}>{loan?.status || 'active'}</Badge>
         </div>
 
-        <div className="bg-[#6EE8B5] rounded-xl p-4 mb-1">
+        <div className="bg-[#678AFB]/8 rounded-xl p-4 mb-1">
           <p className="text-xs text-slate-600 mb-1">Purpose</p>
           <p className="text-sm font-semibold text-slate-800">{loan?.purpose || agreement.purpose || '_'}</p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="bg-[#6EE8A2] rounded-xl p-4">
+          <div className="bg-[#A79DEA]/8 rounded-xl p-4">
             <p className="text-xs text-slate-600 mb-1">Loan Amount</p>
             <p className="text-2xl font-bold text-slate-800">{formatMoney(agreement.amount)}</p>
           </div>
-          <div className="bg-[#AAFFA3] rounded-xl p-4">
+          <div className="bg-[#678AFB]/8 rounded-xl p-4">
             <p className="text-xs text-slate-600 mb-1">Total Due</p>
-            <p className="text-2xl font-bold text-[#00A86B]">{formatMoney(agreement.total_amount)}</p>
+            <p className="text-2xl font-bold text-[#678AFB]">{formatMoney(agreement.total_amount)}</p>
           </div>
         </div>
 
         {loan && (
-          <div className="bg-[#DBFFEB] rounded-xl p-4">
+          <div className="glass-card rounded-xl p-4">
             <div className="flex justify-between items-center mb-2">
               <span className="text-sm text-slate-600">Payment Progress</span>
               <span className="text-sm font-medium text-slate-800">
@@ -1261,7 +1274,7 @@ export default function Lending({ initialTab }) {
             </div>
             <div className="w-full bg-white rounded-full h-2">
               <div
-                className="bg-[#00A86B] h-2 rounded-full transition-all"
+                className="bg-[#678AFB] h-2 rounded-full transition-all"
                 style={{ width: `${Math.min(100, ((loan.amount_paid || 0) / agreement.total_amount) * 100)}%` }}
               />
             </div>
@@ -1360,8 +1373,8 @@ export default function Lending({ initialTab }) {
             >
               <div className="sticky top-0 bg-white border-b border-slate-100 p-4 flex justify-between items-center rounded-t-2xl z-10">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-[#DBFFEB] flex items-center justify-center">
-                    <FileText className="w-4 h-4 text-[#00A86B]" />
+                  <div className="w-8 h-8 rounded-full bg-[#678AFB]/10 flex items-center justify-center">
+                    <FileText className="w-4 h-4 text-[#678AFB]" />
                   </div>
                   <span className="font-medium text-slate-800">
                     {activeDocPopup === 'promissory' && 'Promissory Note'}
@@ -1396,31 +1409,60 @@ export default function Lending({ initialTab }) {
         signingAs="Lender"
       />
 
-      <div className="min-h-screen p-6" style={{background: `linear-gradient(to bottom right, rgb(var(--theme-bg-from)), rgb(var(--theme-bg-to)))`}}>
-        <div className="max-w-4xl mx-auto space-y-7">
+      <div className="home-with-sidebar" style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 240 }}>
+
+        <DashboardSidebar activePage={initialTab === 'create' ? 'Create Loan' : 'Lending'} user={currentUser} />
+
+        {/* Galaxy gradient background */}
+        <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', bottom: 0, overflow: 'hidden', zIndex: 0, pointerEvents: 'none' }}>
+          <div style={{
+            position: 'absolute', top: 0, left: '-10%', width: '120%', height: '100%', zIndex: 0,
+            background: 'linear-gradient(180deg, #527DFF 0%, #5580FF 5%, #678AFB 13%, #7792F4 22%, #8C9BEE 32%, #A19EEB 42%, #A79DEA 50%, #BB98E8 58%, #C89CE6 65%, #D4A0E4 72%, #DDA5E2 76%, #F0D8EA 80%, #F7F7F7 84%)'
+          }} />
+          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: 420, zIndex: 1, overflow: 'hidden' }}>
+            <svg width="100%" height="100%" viewBox="0 0 1617 329" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <radialGradient id="starGlowLending">
+                  <stop offset="0%" stopColor="#EAF9F3"/>
+                  <stop offset="100%" stopColor="#9FEBFB"/>
+                </radialGradient>
+              </defs>
+              {STAR_CIRCLES.map((s, i) => (
+                <circle key={i} cx={s.cx} cy={s.cy} r="1.75" fill="url(#starGlowLending)" opacity={s.o}/>
+              ))}
+            </svg>
+          </div>
+          <div className="twinkle-star" />
+          <div className="twinkle-star" />
+          <div className="twinkle-star" />
+          <div className="twinkle-star" />
+          <div className="twinkle-star" />
+        </div>
+
+        <div style={{ position: 'relative', zIndex: 1, maxWidth: 1080, margin: '0 auto', padding: '100px 28px 40px' }}>
           {/* Header */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="py-5"
+            style={{ marginBottom: 32 }}
           >
-            <h1 className="text-4xl md:text-5xl font-bold text-slate-800 mb-4 tracking-tight text-left">
+            <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 300, fontSize: '2.6rem', color: 'white', letterSpacing: '-0.02em', marginBottom: 4 }}>
               {initialTab === 'create' ? 'Create Loan' : 'Lending'}
             </h1>
           </motion.div>
 
           {/* Tab Navigation — hidden when accessed as standalone Create Loan page */}
           {!initialTab && (
-          <div className="flex gap-2 overflow-x-auto pb-2">
+          <div className="flex gap-2 overflow-x-auto pb-4 mb-2">
             {tabs.map(tab => (
               <Button
                 key={tab.id}
                 onClick={() => setActiveSection(tab.id)}
                 variant={activeSection === tab.id ? 'default' : 'outline'}
-                className={`whitespace-nowrap ${
+                className={`whitespace-nowrap rounded-full ${
                   activeSection === tab.id
-                    ? 'bg-[#00A86B] hover:bg-[#0D9B76] text-white'
-                    : 'bg-white border-0 text-slate-600 hover:bg-slate-50'
+                    ? 'bg-[#678AFB] hover:bg-[#5a7ae0] text-white border-0'
+                    : 'bg-white/80 backdrop-blur border-0 text-slate-600 hover:bg-white'
                 }`}
               >
                 <span className="hidden sm:inline">{tab.label}</span>
@@ -1441,14 +1483,14 @@ export default function Lending({ initialTab }) {
                 className="space-y-7"
               >
                 {/* Lending Overview Section */}
-                <div className="bg-[#DBFFEB] rounded-2xl p-4">
+                <div className="glass-card rounded-2xl p-4">
                   <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-3" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                     Lending Overview
                   </p>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {/* Pie Chart */}
-                    <div className="rounded-xl p-3 flex flex-col items-center justify-center" style={{ backgroundColor: '#6EE8B5' }}>
+                    <div className="rounded-xl p-3 flex flex-col items-center justify-center" style={{ backgroundColor: 'rgba(103,138,251,0.08)' }}>
                       {(() => {
                         const totalOwed = activeLoans.reduce((sum, loan) => sum + (loan.total_amount || loan.amount || 0), 0);
                         const totalPaid = activeLoans.reduce((sum, loan) => sum + (loan.amount_paid || 0), 0);
@@ -1458,13 +1500,13 @@ export default function Lending({ initialTab }) {
                           <>
                             <div className="relative w-24 h-24">
                               <svg className="w-full h-full transform -rotate-90" viewBox="0 0 120 120">
-                                <circle cx="60" cy="60" r="52" fill="none" stroke="#DBFFEB" strokeWidth="7" />
+                                <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(103,138,251,0.15)" strokeWidth="7" />
                                 <circle
                                   cx="60"
                                   cy="60"
                                   r="52"
                                   fill="none"
-                                  stroke="#00A86B"
+                                  stroke="#678AFB"
                                   strokeWidth="7"
                                   strokeLinecap="round"
                                   strokeDasharray={2 * Math.PI * 52}
@@ -1488,7 +1530,7 @@ export default function Lending({ initialTab }) {
                     </div>
 
                     {/* Stats Card - Total Lent */}
-                    <Card className="backdrop-blur-sm hover:shadow-xl transition-all duration-300 h-full cursor-default border-0 rounded-xl" style={{ backgroundColor: '#6EE8B5' }}>
+                    <Card className="backdrop-blur-sm hover:shadow-xl transition-all duration-300 h-full cursor-default border-0 rounded-xl" style={{ backgroundColor: 'rgba(103,138,251,0.08)' }}>
                       <CardContent className="p-4 flex flex-col h-full">
                         <p className="text-sm font-medium text-slate-600 mb-2 text-left">Total Lent</p>
                         <p className="text-2xl font-bold text-slate-800 text-center flex-1 flex items-center justify-center">${totalLent.toLocaleString()}</p>
@@ -1497,7 +1539,7 @@ export default function Lending({ initialTab }) {
                     </Card>
 
                     {/* Stats Card - Expected Back */}
-                    <Card className="backdrop-blur-sm hover:shadow-xl transition-all duration-300 h-full cursor-default border-0 rounded-xl" style={{ backgroundColor: '#6EE8B5' }}>
+                    <Card className="backdrop-blur-sm hover:shadow-xl transition-all duration-300 h-full cursor-default border-0 rounded-xl" style={{ backgroundColor: 'rgba(103,138,251,0.08)' }}>
                       <CardContent className="p-4 flex flex-col h-full">
                         <p className="text-sm font-medium text-slate-600 mb-2 text-left">Expected Back</p>
                         <p className="text-2xl font-bold text-slate-800 text-center flex-1 flex items-center justify-center">${totalExpectedBack.toLocaleString()}</p>
@@ -1513,7 +1555,7 @@ export default function Lending({ initialTab }) {
                 {/* Upcoming Payments + Individual Loan Progress */}
                 <div className="grid md:grid-cols-2 gap-4">
                   {/* Upcoming Payments - Left */}
-                  <div className="bg-[#DBFFEB] rounded-2xl p-5 border-0">
+                  <div className="glass-card rounded-2xl p-5 border-0">
                     <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                       Upcoming Payments
                     </p>
@@ -1527,7 +1569,7 @@ export default function Lending({ initialTab }) {
                           .slice(0, 3)
                           .map((loan, index) => {
                             const borrower = publicProfiles.find(p => p.user_id === loan.borrower_id);
-                            const bgColors = ['#AAFFA3', '#30FFA8', '#96FFD0', '#6EE8B5', '#83F384', '#6EE8A2'];
+                            const bgColors = ['rgba(103,138,251,0.06)', 'rgba(103,138,251,0.1)', 'rgba(167,157,234,0.08)', 'rgba(103,138,251,0.08)', 'rgba(103,138,251,0.12)', 'rgba(167,157,234,0.06)'];
                             return (
                               <div key={loan.id} className="flex items-center justify-between p-3 rounded-xl" style={{ backgroundColor: bgColors[index % 6] }}>
                                 <div>
@@ -1551,7 +1593,7 @@ export default function Lending({ initialTab }) {
                   </div>
 
                   {/* Individual Loan Progress - Right */}
-                  <div className="bg-[#DBFFEB] rounded-2xl p-5 border-0">
+                  <div className="glass-card rounded-2xl p-5 border-0">
                     <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                       Individual Loan Progress
                     </p>
@@ -1569,8 +1611,8 @@ export default function Lending({ initialTab }) {
                             <div key={loan.id} className="space-y-1">
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                  <div className="w-6 h-6 rounded-full bg-[#00A86B]/20 flex items-center justify-center">
-                                    <span className="text-xs font-medium text-[#00A86B]">
+                                  <div className="w-6 h-6 rounded-full bg-[#678AFB]/20 flex items-center justify-center">
+                                    <span className="text-xs font-medium text-[#678AFB]">
                                       {borrower?.full_name?.charAt(0) || '?'}
                                     </span>
                                   </div>
@@ -1581,7 +1623,7 @@ export default function Lending({ initialTab }) {
                               </div>
                               <div className="relative h-3 bg-white rounded-full overflow-hidden">
                                 <div
-                                  className="absolute top-0 left-0 h-full bg-[#00A86B] rounded-full transition-all duration-500"
+                                  className="absolute top-0 left-0 h-full bg-[#678AFB] rounded-full transition-all duration-500"
                                   style={{ width: `${percentPaid}%` }}
                                 />
                               </div>
@@ -1595,7 +1637,7 @@ export default function Lending({ initialTab }) {
                         {activeLoans.length > 5 && (
                           <Button
                             variant="ghost"
-                            className="w-full text-[#00A86B] hover:bg-transparent"
+                            className="w-full text-[#678AFB] hover:bg-transparent"
                             onClick={() => setActiveSection('active')}
                           >
                             View all {activeLoans.length} loans
@@ -1652,11 +1694,11 @@ export default function Lending({ initialTab }) {
                       });
 
                       return (
-                        <div className="bg-[#30FFA8] rounded-xl p-3 flex items-center justify-between">
-                          <p className="text-[11px] text-[#0A1A10] uppercase tracking-[0.12em] font-medium" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                        <div className="bg-[#678AFB]/12 rounded-xl p-3 flex items-center justify-between">
+                          <p className="text-[11px] text-[#1A1918] uppercase tracking-[0.12em] font-medium" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                             {format(selectedMonth, 'MMMM')} Repayment Amount
                           </p>
-                          <p className="text-sm font-bold text-[#0A1A10]">
+                          <p className="text-sm font-bold text-[#1A1918]">
                             +${totalReceive.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                           </p>
                         </div>
@@ -1664,7 +1706,7 @@ export default function Lending({ initialTab }) {
                     })()}
 
                     {/* Month Repayment Overview Box */}
-                    <div className="bg-[#DBFFEB] rounded-2xl p-5">
+                    <div className="glass-card rounded-2xl p-5">
                   <div className="flex items-center justify-between mb-4">
                     <div className="relative">
                       <button
@@ -1689,8 +1731,8 @@ export default function Lending({ initialTab }) {
                                     setSelectedMonth(monthDate);
                                     setShowMonthDropdown(false);
                                   }}
-                                  className={`w-full px-4 py-2 text-left text-sm hover:bg-[#96FFD0] transition-colors ${
-                                    isSameMonth(monthDate, selectedMonth) ? 'bg-[#96FFD0] font-medium text-[#00A86B]' : 'text-slate-700'
+                                  className={`w-full px-4 py-2 text-left text-sm hover:bg-[#A79DEA]/10 transition-colors ${
+                                    isSameMonth(monthDate, selectedMonth) ? 'bg-[#A79DEA]/10 font-medium text-[#678AFB]' : 'text-slate-700'
                                   }`}
                                 >
                                   {format(monthDate, 'MMMM')}
@@ -1763,7 +1805,7 @@ export default function Lending({ initialTab }) {
                         );
                       }
 
-                      const colors = ['#AAFFA3', '#30FFA8', '#96FFD0', '#6EE8B5', '#83F384', '#6EE8A2'];
+                      const colors = ['rgba(103,138,251,0.06)', 'rgba(103,138,251,0.1)', 'rgba(167,157,234,0.08)', 'rgba(103,138,251,0.08)', 'rgba(103,138,251,0.12)', 'rgba(167,157,234,0.06)'];
 
                       return events.map((event, index) => (
                         <div
@@ -1771,7 +1813,7 @@ export default function Lending({ initialTab }) {
                           className="flex items-center gap-3 p-3 rounded-xl"
                           style={{ backgroundColor: colors[index % 6] }}
                         >
-                          <div className="bg-[#AAFFA3] rounded-lg px-3 py-2 flex-shrink-0 text-center min-w-[50px]">
+                          <div className="bg-[#678AFB]/8 rounded-lg px-3 py-2 flex-shrink-0 text-center min-w-[50px]">
                             <p className="text-xs text-slate-500 uppercase" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                               {format(event.date, 'MMM')}
                             </p>
@@ -1781,7 +1823,7 @@ export default function Lending({ initialTab }) {
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium text-slate-800">
-                              <span className="text-[#00A86B]">Receive</span>
+                              <span className="text-[#678AFB]">Receive</span>
                               {' '}
                               <span className="font-bold">${event.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                               {' '}
@@ -1791,7 +1833,7 @@ export default function Lending({ initialTab }) {
                             </p>
                           </div>
                           <div className="flex-shrink-0">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00A86B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#678AFB" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                               <line x1="12" y1="19" x2="12" y2="5"></line>
                               <polyline points="5 12 12 5 19 12"></polyline>
                             </svg>
@@ -1804,15 +1846,15 @@ export default function Lending({ initialTab }) {
                   </div>
 
                   {/* Loan History - Right */}
-                  <div className="bg-[#DBFFEB] rounded-2xl p-5 border-0">
+                  <div className="glass-card rounded-2xl p-5 border-0">
                     <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                       Loan History
                     </p>
                     <div className="space-y-3">
                       {/* Total Amount Lent */}
-                      <div className="rounded-xl p-4 flex items-center gap-3" style={{ backgroundColor: '#AAFFA3' }}>
+                      <div className="rounded-xl p-4 flex items-center gap-3" style={{ backgroundColor: 'rgba(103,138,251,0.06)' }}>
                         <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center flex-shrink-0">
-                          <DollarSign className="w-4 h-4 text-[#0A1A10]" />
+                          <DollarSign className="w-4 h-4 text-[#1A1918]" />
                         </div>
                         <div className="flex-1">
                           <p className="text-[10px] text-slate-500 uppercase tracking-wide" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
@@ -1825,9 +1867,9 @@ export default function Lending({ initialTab }) {
                       </div>
 
                       {/* Number of Loans */}
-                      <div className="rounded-xl p-4 flex items-center gap-3" style={{ backgroundColor: '#83F384' }}>
+                      <div className="rounded-xl p-4 flex items-center gap-3" style={{ backgroundColor: 'rgba(103,138,251,0.1)' }}>
                         <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center flex-shrink-0">
-                          <FileText className="w-4 h-4 text-[#0A1A10]" />
+                          <FileText className="w-4 h-4 text-[#1A1918]" />
                         </div>
                         <div className="flex-1">
                           <p className="text-[10px] text-slate-500 uppercase tracking-wide" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
@@ -1840,9 +1882,9 @@ export default function Lending({ initialTab }) {
                       </div>
 
                       {/* Friends Lent To */}
-                      <div className="rounded-xl p-4 flex items-center gap-3" style={{ backgroundColor: '#96FFD0' }}>
+                      <div className="rounded-xl p-4 flex items-center gap-3" style={{ backgroundColor: 'rgba(167,157,234,0.08)' }}>
                         <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center flex-shrink-0">
-                          <UserIcon className="w-4 h-4 text-[#0A1A10]" />
+                          <UserIcon className="w-4 h-4 text-[#1A1918]" />
                         </div>
                         <div className="flex-1">
                           <p className="text-[10px] text-slate-500 uppercase tracking-wide" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
@@ -1993,7 +2035,7 @@ export default function Lending({ initialTab }) {
                                 type="button"
                                 onClick={() => handleInputChange('is_repeating', !formData.is_repeating)}
                                 className={`relative w-12 h-6 rounded-full transition-all ${
-                                  formData.is_repeating ? 'bg-[#00A86B]' : 'bg-slate-300'
+                                  formData.is_repeating ? 'bg-[#678AFB]' : 'bg-slate-300'
                                 }`}
                               >
                                 <div className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white shadow transition-all ${
@@ -2004,7 +2046,7 @@ export default function Lending({ initialTab }) {
 
                             {/* Repeating Options */}
                             {formData.is_repeating && (
-                              <div className="px-5 pt-5 pb-1 bg-[#DBFFEB] rounded-xl overflow-hidden">
+                              <div className="px-5 pt-5 pb-1 bg-[#678AFB]/5 rounded-xl overflow-hidden">
                                 <p className="text-sm text-slate-700 leading-[4.2] [&_input]:inline-flex [&_input]:align-baseline [&_input]:my-[2px] [&_input[type=number]]:appearance-none [&_input[type=number]]:[-moz-appearance:textfield] [&_input[type=number]::-webkit-outer-spin-button]:appearance-none [&_input[type=number]::-webkit-inner-spin-button]:appearance-none [&_.inline-flex]:my-[2px]">
                                   Payments of ${' '}
                                   <Input
@@ -2124,7 +2166,7 @@ export default function Lending({ initialTab }) {
 
                         {/* Scheduled loan fields - Sentence format */}
                         {loanType === 'scheduled' && (
-                          <div className="px-5 pt-5 pb-1 bg-[#DBFFEB] rounded-xl overflow-hidden">
+                          <div className="px-5 pt-5 pb-1 bg-[#678AFB]/5 rounded-xl overflow-hidden">
                             <p className="text-sm text-slate-700 leading-[4.2] [&_input]:inline-flex [&_input]:align-baseline [&_input]:my-[2px] [&_input[type=number]]:appearance-none [&_input[type=number]]:[-moz-appearance:textfield] [&_input[type=number]::-webkit-outer-spin-button]:appearance-none [&_input[type=number]::-webkit-inner-spin-button]:appearance-none [&_.inline-flex]:my-[2px] [&:last-child]:mb-0">
                               {isUserBorrower ? (
                                 <>
@@ -2141,14 +2183,14 @@ export default function Lending({ initialTab }) {
                                     style={{ MozAppearance: 'textfield' }}
                                   />{' '}
                                   from{' '}
-                                  <span className="text-[#00A86B] font-medium">
+                                  <span className="text-[#678AFB] font-medium">
                                     {formData.lender_username ? `@${formData.lender_username}` : 'the lender'}
                                   </span>{' '}
                                 </>
                               ) : (
                                 <>
                                   The lender agrees to lend{' '}
-                                  <span className="text-[#00A86B] font-medium">
+                                  <span className="text-[#678AFB] font-medium">
                                     {formData.borrower_username ? `@${formData.borrower_username}` : 'the borrower'}
                                   </span>{' '}
                                   ${' '}
@@ -2221,7 +2263,7 @@ export default function Lending({ initialTab }) {
                                 </SelectContent>
                               </Select>{' '}
                               payments of{' '}
-                              <span className="font-bold text-[#00A86B]">
+                              <span className="font-bold text-[#678AFB]">
                                 ${details.monthlyPayment.toFixed(2)}
                               </span>
                               . Payments will be due{' '}
@@ -2303,7 +2345,7 @@ export default function Lending({ initialTab }) {
                                 return (
                                   <>
                                     , with the first of the{' '}
-                                    <span className="font-bold text-[#00A86B]">{numPayments || '_'}</span>{' '}
+                                    <span className="font-bold text-[#678AFB]">{numPayments || '_'}</span>{' '}
                                     payments due on{' '}
                                     <Input
                                       type="date"
@@ -2313,7 +2355,7 @@ export default function Lending({ initialTab }) {
                                       className="w-auto h-8 px-3 bg-white inline-flex"
                                     />{' '}
                                     and the last payment due on{' '}
-                                    <span className="font-bold text-[#00A86B]">
+                                    <span className="font-bold text-[#678AFB]">
                                       {lastPaymentDate ? format(lastPaymentDate, 'MMM d, yyyy') : '_'}
                                     </span>
                                     .
@@ -2339,8 +2381,8 @@ export default function Lending({ initialTab }) {
                           disabled={isSubmitting || !formData.lender_username || !formData.borrower_username || !formData.amount || !formData.purpose || (loanType === 'scheduled' && (!formData.interest_rate || !formData.repayment_period || !formData.lender_send_funds_date || !formData.first_payment_date)) || (loanType === 'flexible' && formData.is_repeating && (!formData.repeating_start_date || !formData.repeating_num_payments))}
                           className={`w-full py-3 text-base font-semibold rounded-xl border-0 mt-4 transition-all duration-200 ${
                             isSubmitting || !formData.lender_username || !formData.borrower_username || !formData.amount || !formData.purpose || (loanType === 'scheduled' && (!formData.interest_rate || !formData.repayment_period || !formData.lender_send_funds_date || !formData.first_payment_date)) || (loanType === 'flexible' && formData.is_repeating && (!formData.repeating_start_date || !formData.repeating_num_payments))
-                              ? 'bg-[#83F384] text-[#DBEEE3] cursor-not-allowed saturate-[0.7] brightness-[0.92]'
-                              : 'bg-[#83F384] text-[#DBEEE3] hover:bg-[#83F384]/90'
+                              ? 'bg-[#678AFB]/40 text-white cursor-not-allowed'
+                              : 'bg-[#678AFB] text-white hover:bg-[#5a7ae0]'
                           }`}
                         >
                           <Send className="w-4 h-4 mr-2" />
@@ -2351,7 +2393,7 @@ export default function Lending({ initialTab }) {
 
                   {/* Will Your Payment Request Repeat? Info Box - Only show for Quick Payment Request */}
                   {loanType === 'flexible' && (
-                    <div className="bg-[#83F384] rounded-2xl p-4 mt-4">
+                    <div className="bg-[#678AFB]/10 rounded-2xl p-4 mt-4">
                       <p className="text-base font-semibold text-slate-800 mb-2">
                         {isUserBorrower ? 'Will This Payment Repeat?' : 'Will Your Payment Request Repeat?'}
                       </p>
@@ -2367,16 +2409,16 @@ export default function Lending({ initialTab }) {
                 {/* Summary Sidebar */}
                 <div className="space-y-4">
                   {/* Loan Type Toggle - Always First */}
-                  <div className="bg-[#DBFFEB] rounded-2xl p-4 border-0">
+                  <div className="glass-card rounded-2xl p-4 border-0">
                     <div className="flex items-center justify-center gap-3">
-                      <span className={`text-xs font-medium ${loanType === 'scheduled' ? 'text-[#00A86B]' : 'text-slate-400'}`}>
+                      <span className={`text-xs font-medium ${loanType === 'scheduled' ? 'text-[#678AFB]' : 'text-slate-400'}`}>
                         Loan
                       </span>
                       <button
                         type="button"
                         onClick={() => setLoanType(loanType === 'flexible' ? 'scheduled' : 'flexible')}
                         className={`relative w-14 h-7 rounded-full transition-all flex-shrink-0 ${
-                          loanType === 'flexible' ? 'bg-[#00A86B]' : 'bg-slate-300'
+                          loanType === 'flexible' ? 'bg-[#678AFB]' : 'bg-slate-300'
                         }`}
                       >
                         <div className={`absolute top-1 left-1 w-5 h-5 rounded-full bg-white shadow transition-all ${
@@ -2385,11 +2427,11 @@ export default function Lending({ initialTab }) {
                           {loanType === 'scheduled' ? (
                             <ClipboardList className="w-3 h-3 text-slate-500 m-1" />
                           ) : (
-                            <Zap className="w-3 h-3 text-[#00A86B] m-1" />
+                            <Zap className="w-3 h-3 text-[#678AFB] m-1" />
                           )}
                         </div>
                       </button>
-                      <span className={`text-xs font-medium text-center ${loanType === 'flexible' ? 'text-[#00A86B]' : 'text-slate-400'}`}>
+                      <span className={`text-xs font-medium text-center ${loanType === 'flexible' ? 'text-[#678AFB]' : 'text-slate-400'}`}>
                         Quick Payment Request
                       </span>
                     </div>
@@ -2406,7 +2448,7 @@ export default function Lending({ initialTab }) {
 
                   {/* Borrower Payment Box - Only for Loan type, always visible */}
                   {loanType === 'scheduled' && (
-                    <div className="bg-[#83F384] rounded-2xl p-4">
+                    <div className="bg-[#678AFB]/10 rounded-2xl p-4">
                       <p className="text-xs text-slate-500 text-center">
                         {isUserBorrower ? (
                           'You will pay'
@@ -2431,12 +2473,12 @@ export default function Lending({ initialTab }) {
                   )}
 
                   {/* Loan Summary - Always Last */}
-                  <div className="bg-[#DBFFEB] rounded-2xl p-5 sticky top-6">
+                  <div className="glass-card rounded-2xl p-5 sticky top-6">
                     <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                       Loan Summary
                     </p>
                     <div className="space-y-3">
-                      <div className="pb-2 border-b border-[#83F384] flex items-baseline gap-1">
+                      <div className="pb-2 border-b border-[#678AFB]/20 flex items-baseline gap-1">
                         <span className="text-slate-600 text-sm flex-shrink-0">For:</span>
                         <p className="font-medium truncate text-black">{formData.purpose || ''}</p>
                       </div>
@@ -2451,7 +2493,7 @@ export default function Lending({ initialTab }) {
                             <span className="text-slate-600">Payments:</span>
                             <span className="font-bold text-black">{formData.repeating_num_payments}</span>
                           </div>
-                          <div className="border-t border-[#83F384] pt-2">
+                          <div className="border-t border-[#678AFB]/20 pt-2">
                             <div className="flex justify-between text-lg">
                               <span className="text-slate-600">Total:</span>
                               <span className="font-bold text-black">
@@ -2472,7 +2514,7 @@ export default function Lending({ initialTab }) {
                               <span className="font-bold text-black">{formData.amount && formData.interest_rate ? `$${details.totalInterest.toFixed(2)}` : '$0.00'}</span>
                             </div>
                           )}
-                          <div className="border-t border-[#83F384] pt-2">
+                          <div className="border-t border-[#678AFB]/20 pt-2">
                             <div className="flex justify-between text-lg">
                               <span className="text-slate-600">Total:</span>
                               <span className="font-bold text-black">
@@ -2510,20 +2552,20 @@ export default function Lending({ initialTab }) {
               >
                 {isLoading ? (
                   <div className="text-center py-8">
-                    <div className="w-8 h-8 border-2 border-green-600 border-t-transparent rounded-full animate-spin mx-auto" />
+                    <div className="w-8 h-8 border-2 border-[#678AFB] border-t-transparent rounded-full animate-spin mx-auto" />
                   </div>
                 ) : manageableLoans.length === 0 ? (
-                  <div className="bg-[#DBFFEB] rounded-2xl p-8 border-0">
+                  <div className="glass-card rounded-2xl p-8 border-0">
                     <div className="flex flex-col items-center text-center">
-                      <div className="w-16 h-16 bg-[#AAFFA3] rounded-full flex items-center justify-center mb-4">
-                        <CheckCircle className="w-8 h-8 text-[#00A86B]" />
+                      <div className="w-16 h-16 bg-[#678AFB]/8 rounded-full flex items-center justify-center mb-4">
+                        <CheckCircle className="w-8 h-8 text-[#678AFB]" />
                       </div>
                       <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-2">All Clear</p>
                       <p className="text-lg font-semibold text-slate-800 mb-1">No loans to manage</p>
                       <p className="text-sm text-slate-500 mb-5">You're all caught up! Create a new loan offer to get started.</p>
                       <Button
                         onClick={() => setActiveSection('create')}
-                        className="bg-[#00A86B] hover:bg-[#0D9B76] text-white rounded-xl px-6 h-11"
+                        className="bg-[#678AFB] hover:bg-[#5a7ae0] text-white rounded-xl px-6 h-11"
                       >
                         <PlusCircle className="w-4 h-4 mr-2" />
                         Create a Loan Offer
@@ -2533,7 +2575,7 @@ export default function Lending({ initialTab }) {
                 ) : (
                   <div className="space-y-4">
                     {/* Loan Selector Dropdown */}
-                    <div className="bg-[#DBFFEB] rounded-2xl p-5 border-0">
+                    <div className="glass-card rounded-2xl p-5 border-0">
                       <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                         Your Loans
                       </p>
@@ -2550,8 +2592,8 @@ export default function Lending({ initialTab }) {
                                 const borrower = publicProfiles.find(p => p.user_id === manageLoanSelected.borrower_id);
                                 return (
                                   <div className="flex items-center gap-2">
-                                    <div className="w-6 h-6 rounded-full bg-[#00A86B]/20 flex items-center justify-center">
-                                      <span className="text-xs font-medium text-[#00A86B]">
+                                    <div className="w-6 h-6 rounded-full bg-[#678AFB]/20 flex items-center justify-center">
+                                      <span className="text-xs font-medium text-[#678AFB]">
                                         {borrower?.full_name?.charAt(0) || '?'}
                                       </span>
                                     </div>
@@ -2559,7 +2601,7 @@ export default function Lending({ initialTab }) {
                                     <span className="text-slate-400">•</span>
                                     <span className="text-slate-500 truncate max-w-[120px]">{manageLoanSelected.purpose || 'Reason'}</span>
                                     <span className="text-slate-400">•</span>
-                                    <span className="text-[#00A86B] font-medium">${manageLoanSelected.amount?.toLocaleString()}</span>
+                                    <span className="text-[#678AFB] font-medium">${manageLoanSelected.amount?.toLocaleString()}</span>
                                     {manageLoanSelected.status === 'cancelled' && (
                                       <span className="text-red-500 text-xs font-medium">(Cancelled)</span>
                                     )}
@@ -2574,8 +2616,8 @@ export default function Lending({ initialTab }) {
                               return (
                                 <SelectItem key={loan.id} value={loan.id}>
                                   <div className="flex items-center gap-2">
-                                    <div className="w-6 h-6 rounded-full bg-[#00A86B]/20 flex items-center justify-center">
-                                      <span className="text-xs font-medium text-[#00A86B]">
+                                    <div className="w-6 h-6 rounded-full bg-[#678AFB]/20 flex items-center justify-center">
+                                      <span className="text-xs font-medium text-[#678AFB]">
                                         {borrower?.full_name?.charAt(0) || '?'}
                                       </span>
                                     </div>
@@ -2583,7 +2625,7 @@ export default function Lending({ initialTab }) {
                                     <span className="text-slate-400">•</span>
                                     <span className="text-slate-500 truncate max-w-[120px]">{loan.purpose || 'Reason'}</span>
                                     <span className="text-slate-400">•</span>
-                                    <span className="text-[#00A86B] font-medium">${loan.amount?.toLocaleString()}</span>
+                                    <span className="text-[#678AFB] font-medium">${loan.amount?.toLocaleString()}</span>
                                     {loan.status === 'cancelled' && (
                                       <span className="text-red-500 text-xs font-medium">(Cancelled)</span>
                                     )}
@@ -2597,8 +2639,8 @@ export default function Lending({ initialTab }) {
 
                     {/* Loan Details - Below Dropdown */}
                     {!manageLoanSelected ? (
-                      <div className="bg-[#DBFFEB] rounded-2xl p-5 border-0 flex items-center justify-center py-16">
-                        <div className="text-center text-[#4A6B55]">
+                      <div className="glass-card rounded-2xl p-5 border-0 flex items-center justify-center py-16">
+                        <div className="text-center text-[#787776]">
                           <BarChart3 className="w-12 h-12 mx-auto mb-3 opacity-50" />
                           <p>Select a loan above to view details</p>
                         </div>
@@ -2606,30 +2648,30 @@ export default function Lending({ initialTab }) {
                     ) : (
                       <>
                           {/* Loan Information Box */}
-                          <div className="bg-[#DBFFEB] rounded-2xl p-5">
+                          <div className="glass-card rounded-2xl p-5">
                             <p className="text-[10px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                               Loan Information
                             </p>
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                              <div className="bg-[#AAFFA3] rounded-xl p-4">
+                              <div className="bg-[#678AFB]/8 rounded-xl p-4">
                                 <p className="text-[10px] text-slate-600 uppercase tracking-wide font-medium mb-1" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>Amount</p>
                                 <p className="text-xl font-bold text-slate-800">
                                   ${(manageLoanSelected.amount || 0).toLocaleString()}
                                 </p>
                               </div>
-                              <div className="bg-[#83F384] rounded-xl p-4">
+                              <div className="bg-[#678AFB]/10 rounded-xl p-4">
                                 <p className="text-[10px] text-slate-600 uppercase tracking-wide font-medium mb-1" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>Interest</p>
                                 <p className="text-xl font-bold text-slate-800">
                                   {manageLoanSelected.interest_rate || 0}%
                                 </p>
                               </div>
-                              <div className="bg-[#6EE8A2] rounded-xl p-4">
+                              <div className="bg-[#A79DEA]/8 rounded-xl p-4">
                                 <p className="text-[10px] text-slate-600 uppercase tracking-wide font-medium mb-1" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>Term</p>
                                 <p className="text-xl font-bold text-slate-800">
                                   {manageLoanSelected.repayment_period || 0} {manageLoanSelected.repayment_unit || 'months'}
                                 </p>
                               </div>
-                              <div className="bg-[#C2FFDC] rounded-xl p-4">
+                              <div className="bg-[#A79DEA]/8 rounded-xl p-4">
                                 <p className="text-[10px] text-slate-600 uppercase tracking-wide font-medium mb-1" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>Payment</p>
                                 <p className="text-xl font-bold text-slate-800">
                                   ${(manageLoanSelected.payment_amount || 0).toLocaleString()}
@@ -2641,7 +2683,7 @@ export default function Lending({ initialTab }) {
                           {/* Progress Pie Chart + Next Payment + Payment Amount */}
                           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             {/* Pie Chart - Left */}
-                            <div className="bg-[#6EE8B5] rounded-2xl p-5">
+                            <div className="bg-[#678AFB]/8 rounded-2xl p-5">
                               <p className="text-[10px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                                 Payment Progress
                               </p>
@@ -2664,7 +2706,7 @@ export default function Lending({ initialTab }) {
                                             cy="64"
                                             r="45"
                                             fill="none"
-                                            stroke="#00A86B"
+                                            stroke="#678AFB"
                                             strokeWidth="12"
                                             strokeLinecap="round"
                                             strokeDasharray={circumference}
@@ -2689,7 +2731,7 @@ export default function Lending({ initialTab }) {
                             </div>
 
                             {/* Next Payment Date - Middle */}
-                            <div className="bg-[#6EE8B5] rounded-2xl p-5 flex flex-col">
+                            <div className="bg-[#678AFB]/8 rounded-2xl p-5 flex flex-col">
                               <p className="text-[10px] text-slate-700 uppercase tracking-[0.12em] font-medium mb-2" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                                 Next Payment Date
                               </p>
@@ -2701,7 +2743,7 @@ export default function Lending({ initialTab }) {
                                 </p>
                                 {manageLoanSelected.next_payment_date && (
                                   <div className="mt-2 px-3 py-1 bg-white rounded-full">
-                                    <p className="text-sm font-semibold text-[#00A86B]">
+                                    <p className="text-sm font-semibold text-[#678AFB]">
                                       {(() => {
                                         const days = daysUntilDate(manageLoanSelected.next_payment_date);
                                         return days > 0 ? `${days} day${days !== 1 ? 's' : ''} away` : days === 0 ? 'Due today' : `${Math.abs(days)} day${Math.abs(days) !== 1 ? 's' : ''} overdue`;
@@ -2713,7 +2755,7 @@ export default function Lending({ initialTab }) {
                             </div>
 
                             {/* Payment Amount - Right */}
-                            <div className="bg-[#6EE8B5] rounded-2xl p-5 flex flex-col">
+                            <div className="bg-[#678AFB]/8 rounded-2xl p-5 flex flex-col">
                               <p className="text-[10px] text-slate-700 uppercase tracking-[0.12em] font-medium mb-2" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                                 Payment Amount
                               </p>
@@ -2732,12 +2774,12 @@ export default function Lending({ initialTab }) {
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {/* Interest Box + Loan Amounts - Left */}
                             <div className="space-y-4">
-                              <div className="bg-[#DBFFEB] rounded-2xl p-5">
+                              <div className="glass-card rounded-2xl p-5">
                                 <p className="text-[10px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                                   Interest
                                 </p>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                  <div className="bg-[#6EE8B5] rounded-xl p-4">
+                                  <div className="bg-[#678AFB]/8 rounded-xl p-4">
                                     <p className="text-[10px] text-slate-600 uppercase tracking-wide font-medium mb-1" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>Interest Accrued</p>
                                     <p className="text-xl font-bold text-slate-800">
                                       ${(() => {
@@ -2747,7 +2789,7 @@ export default function Lending({ initialTab }) {
                                       })()}
                                     </p>
                                   </div>
-                                  <div className="bg-[#6EE8B5] rounded-xl p-4">
+                                  <div className="bg-[#678AFB]/8 rounded-xl p-4">
                                     <p className="text-[10px] text-slate-600 uppercase tracking-wide font-medium mb-1" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>Predicted Interest</p>
                                     <p className="text-xl font-bold text-slate-800">
                                       ${(() => {
@@ -2763,18 +2805,18 @@ export default function Lending({ initialTab }) {
                                 </div>
                               </div>
                               {/* Loan Progress Box */}
-                              <div className="bg-[#DBFFEB] rounded-2xl p-5">
+                              <div className="glass-card rounded-2xl p-5">
                                 <p className="text-[10px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                                   Loan Progress
                                 </p>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                  <div className="bg-[#83F384] rounded-xl p-4">
+                                  <div className="bg-[#678AFB]/10 rounded-xl p-4">
                                     <p className="text-[10px] text-slate-600 uppercase tracking-wide font-medium mb-1" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>Amount Paid</p>
                                     <p className="text-xl font-bold text-black">
                                       ${(manageLoanSelected.amount_paid || 0).toLocaleString()}
                                     </p>
                                   </div>
-                                  <div className="bg-[#83F384] rounded-xl p-4">
+                                  <div className="bg-[#678AFB]/10 rounded-xl p-4">
                                     <p className="text-[10px] text-slate-600 uppercase tracking-wide font-medium mb-1" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>Completed Payments</p>
                                     <p className="text-xl font-bold text-slate-800">
                                       {(() => {
@@ -2792,7 +2834,7 @@ export default function Lending({ initialTab }) {
                             </div>
 
                             {/* Document Center Box - Right */}
-                            <div className="bg-[#DBFFEB] rounded-2xl p-5">
+                            <div className="glass-card rounded-2xl p-5">
                               <p className="text-[10px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                                 Document Center
                               </p>
@@ -2812,12 +2854,12 @@ export default function Lending({ initialTab }) {
                                     {/* Loan Summary */}
                                     <button
                                       onClick={() => openDocPopup('summary', agreement)}
-                                      className="bg-[#AAFFA3] rounded-xl p-3 md:p-4 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-3"
+                                      className="bg-[#678AFB]/8 rounded-xl p-3 md:p-4 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-3"
                                     >
-                                      <div className="w-9 h-9 rounded-full bg-[#DBFFEB] flex items-center justify-center flex-shrink-0">
-                                        <FileText className="w-4 h-4 text-[#0A1A10]" />
+                                      <div className="w-9 h-9 rounded-full bg-[#678AFB]/10 flex items-center justify-center flex-shrink-0">
+                                        <FileText className="w-4 h-4 text-[#1A1918]" />
                                       </div>
-                                      <p className="font-semibold text-[#0A1A10] text-[14px] group-hover:text-[#00A86B] transition-colors">
+                                      <p className="font-semibold text-[#1A1918] text-[14px] group-hover:text-[#5a7ae0] transition-colors">
                                         Loan Summary
                                       </p>
                                     </button>
@@ -2825,12 +2867,12 @@ export default function Lending({ initialTab }) {
                                     {/* Promissory Note */}
                                     <button
                                       onClick={() => openDocPopup('promissory', agreement)}
-                                      className="bg-[#83F384] rounded-xl p-3 md:p-4 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-3"
+                                      className="bg-[#678AFB]/10 rounded-xl p-3 md:p-4 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-3"
                                     >
-                                      <div className="w-9 h-9 rounded-full bg-[#DBFFEB] flex items-center justify-center flex-shrink-0">
-                                        <ClipboardList className="w-4 h-4 text-[#0A1A10]" />
+                                      <div className="w-9 h-9 rounded-full bg-[#678AFB]/10 flex items-center justify-center flex-shrink-0">
+                                        <ClipboardList className="w-4 h-4 text-[#1A1918]" />
                                       </div>
-                                      <p className="font-semibold text-[#0A1A10] text-[14px] group-hover:text-[#00A86B] transition-colors">
+                                      <p className="font-semibold text-[#1A1918] text-[14px] group-hover:text-[#5a7ae0] transition-colors">
                                         Promissory Note
                                       </p>
                                       <div
@@ -2854,12 +2896,12 @@ export default function Lending({ initialTab }) {
                                     {/* Amortization Schedule */}
                                     <button
                                       onClick={() => openDocPopup('amortization', agreement)}
-                                      className="bg-[#6EE8A2] rounded-xl p-3 md:p-4 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-3"
+                                      className="bg-[#A79DEA]/8 rounded-xl p-3 md:p-4 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-3"
                                     >
-                                      <div className="w-9 h-9 rounded-full bg-[#DBFFEB] flex items-center justify-center flex-shrink-0">
-                                        <BarChart3 className="w-4 h-4 text-[#0A1A10]" />
+                                      <div className="w-9 h-9 rounded-full bg-[#678AFB]/10 flex items-center justify-center flex-shrink-0">
+                                        <BarChart3 className="w-4 h-4 text-[#1A1918]" />
                                       </div>
-                                      <p className="font-semibold text-[#0A1A10] text-[14px] group-hover:text-[#00A86B] transition-colors">
+                                      <p className="font-semibold text-[#1A1918] text-[14px] group-hover:text-[#5a7ae0] transition-colors">
                                         Amortization Schedule
                                       </p>
                                       <div
@@ -2887,41 +2929,41 @@ export default function Lending({ initialTab }) {
 
                           {/* Actions Box - only show for active loans */}
                           {manageLoanSelected.status !== 'cancelled' && (
-                          <div className="bg-[#DBFFEB] rounded-2xl p-5">
+                          <div className="glass-card rounded-2xl p-5">
                             <p className="text-[10px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                               Actions
                             </p>
                             <div className="flex flex-col sm:flex-row gap-3">
                               <button
                                 onClick={() => handleMakePayment(manageLoanSelected)}
-                                className="bg-[#AAFFA3] rounded-xl p-3 md:p-4 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-3 flex-1"
+                                className="bg-[#678AFB]/8 rounded-xl p-3 md:p-4 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-3 flex-1"
                               >
-                                <div className="w-9 h-9 rounded-full bg-[#DBFFEB] flex items-center justify-center flex-shrink-0">
-                                  <DollarSign className="w-4 h-4 text-[#0A1A10]" />
+                                <div className="w-9 h-9 rounded-full bg-[#678AFB]/10 flex items-center justify-center flex-shrink-0">
+                                  <DollarSign className="w-4 h-4 text-[#1A1918]" />
                                 </div>
-                                <p className="font-semibold text-[#0A1A10] text-[14px] group-hover:text-[#00A86B] transition-colors">
+                                <p className="font-semibold text-[#1A1918] text-[14px] group-hover:text-[#5a7ae0] transition-colors">
                                   Record Payment
                                 </p>
                               </button>
                               <button
                                 onClick={() => handleEditLoan(manageLoanSelected)}
-                                className="bg-[#83F384] rounded-xl p-3 md:p-4 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-3 flex-1"
+                                className="bg-[#678AFB]/10 rounded-xl p-3 md:p-4 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-3 flex-1"
                               >
-                                <div className="w-9 h-9 rounded-full bg-[#DBFFEB] flex items-center justify-center flex-shrink-0">
-                                  <Pencil className="w-4 h-4 text-[#0A1A10]" />
+                                <div className="w-9 h-9 rounded-full bg-[#678AFB]/10 flex items-center justify-center flex-shrink-0">
+                                  <Pencil className="w-4 h-4 text-[#1A1918]" />
                                 </div>
-                                <p className="font-semibold text-[#0A1A10] text-[14px] group-hover:text-[#00A86B] transition-colors">
+                                <p className="font-semibold text-[#1A1918] text-[14px] group-hover:text-[#5a7ae0] transition-colors">
                                   Request Loan Edit
                                 </p>
                               </button>
                               <button
                                 onClick={() => handleCancelLoan(manageLoanSelected)}
-                                className="bg-[#6EE8A2] rounded-xl p-3 md:p-4 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-3 flex-1"
+                                className="bg-[#A79DEA]/8 rounded-xl p-3 md:p-4 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-3 flex-1"
                               >
-                                <div className="w-9 h-9 rounded-full bg-[#DBFFEB] flex items-center justify-center flex-shrink-0">
-                                  <X className="w-4 h-4 text-[#0A1A10]" />
+                                <div className="w-9 h-9 rounded-full bg-[#678AFB]/10 flex items-center justify-center flex-shrink-0">
+                                  <X className="w-4 h-4 text-[#1A1918]" />
                                 </div>
-                                <p className="font-semibold text-[#0A1A10] text-[14px] group-hover:text-[#00A86B] transition-colors">
+                                <p className="font-semibold text-[#1A1918] text-[14px] group-hover:text-[#5a7ae0] transition-colors">
                                   Request Loan Cancellation
                                 </p>
                               </button>
@@ -2974,7 +3016,7 @@ export default function Lending({ initialTab }) {
       )}
 
       <AlertDialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
-        <AlertDialogContent className="rounded-2xl border-0 p-0 overflow-hidden" style={{ backgroundColor: '#DBEEE3' }}>
+        <AlertDialogContent className="rounded-2xl border-0 p-0 overflow-hidden" style={{ backgroundColor: '#F7F7F7' }}>
           <div className="p-6 pb-4">
             <AlertDialogHeader>
               <AlertDialogTitle className="text-xl font-bold text-slate-800" style={{ fontFamily: "'Libre Baskerville', Georgia, serif" }}>Cancel Loan</AlertDialogTitle>
@@ -2984,10 +3026,10 @@ export default function Lending({ initialTab }) {
             </AlertDialogHeader>
           </div>
           <div className="px-6 pb-6 flex flex-col sm:flex-row gap-3">
-            <AlertDialogCancel className="flex-1 rounded-xl border-0 font-semibold text-[#0A1A10] text-[14px] h-12 hover:opacity-90 transition-all" style={{ backgroundColor: '#83F384' }}>
+            <AlertDialogCancel className="flex-1 rounded-xl border-0 font-semibold text-[#1A1918] text-[14px] h-12 hover:opacity-90 transition-all" style={{ backgroundColor: 'rgba(103,138,251,0.1)' }}>
               Keep Loan
             </AlertDialogCancel>
-            <AlertDialogAction onClick={confirmCancelLoan} className="flex-1 rounded-xl border-0 font-semibold text-[#0A1A10] text-[14px] h-12 hover:opacity-90 transition-all" style={{ backgroundColor: '#30FFA8' }}>
+            <AlertDialogAction onClick={confirmCancelLoan} className="flex-1 rounded-xl border-0 font-semibold text-[#1A1918] text-[14px] h-12 hover:opacity-90 transition-all" style={{ backgroundColor: 'rgba(103,138,251,0.12)' }}>
               Request Loan Cancellation
             </AlertDialogAction>
           </div>
