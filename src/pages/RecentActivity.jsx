@@ -400,21 +400,22 @@ export default function RecentActivityPage() {
       <div className="home-with-sidebar" style={{ minHeight: '100vh', background: '#F7F7F7', paddingLeft: 240, fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5 }}>
         <DashboardSidebar activePage="RecentActivity" user={user} />
 
-        {/* Galaxy gradient header */}
-        <div style={{ position: 'relative', overflow: 'hidden' }}>
-          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 520, background: 'linear-gradient(180deg, #527DFF 0%, #5580FF 5%, #678AFB 13%, #7792F4 22%, #8C9BEE 32%, #A19EEB 42%, #A79DEA 50%, #BB98E8 58%, #C89CE6 65%, #D4A0E4 72%, #DDA5E2 76%, #F0D8EA 80%, #F7F7F7 84%)', zIndex: 0 }} />
-          <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: 320, zIndex: 1, opacity: 0.6 }} viewBox="0 0 1617 329" fill="none">
+        {/* Galaxy gradient background — covers full page */}
+        <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', bottom: 0, overflow: 'hidden', zIndex: 0, pointerEvents: 'none' }}>
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 520, background: 'linear-gradient(180deg, #527DFF 0%, #5580FF 5%, #678AFB 13%, #7792F4 22%, #8C9BEE 32%, #A19EEB 42%, #A79DEA 50%, #BB98E8 58%, #C89CE6 65%, #D4A0E4 72%, #DDA5E2 76%, #F0D8EA 80%, #F7F7F7 84%)' }} />
+          <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: 320, opacity: 0.6 }} viewBox="0 0 1617 329" fill="none">
             <defs><radialGradient id="raStarGlow"><stop offset="0%" stopColor="#EAF9F3"/><stop offset="100%" stopColor="#9FEBFB"/></radialGradient></defs>
             {STAR_CIRCLES.map((s, i) => <circle key={i} cx={s.cx} cy={s.cy} r="1.75" fill="url(#raStarGlow)" opacity={s.o}/>)}
           </svg>
           <div className="twinkle-star" /><div className="twinkle-star" /><div className="twinkle-star" /><div className="twinkle-star" /><div className="twinkle-star" />
+        </div>
 
-          <div style={{ position: 'relative', zIndex: 10, maxWidth: 1080, margin: '0 auto', padding: '0 28px' }}>
-            <div style={{ paddingTop: 80, paddingBottom: 20, textAlign: 'center' }}>
-              <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '3.2rem', fontWeight: 600, letterSpacing: '-0.02em', lineHeight: 1.1, color: 'white', margin: 0 }}>
-                Recent Activity
-              </h1>
-            </div>
+        {/* Hero title */}
+        <div style={{ position: 'relative', zIndex: 10, maxWidth: 1080, margin: '0 auto', padding: '0 28px' }}>
+          <div style={{ paddingTop: 80, paddingBottom: 20, textAlign: 'center' }}>
+            <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '3.2rem', fontWeight: 600, letterSpacing: '-0.02em', lineHeight: 1.1, color: 'white', margin: 0 }}>
+              Recent Activity
+            </h1>
           </div>
         </div>
 
@@ -422,26 +423,30 @@ export default function RecentActivityPage() {
         <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 28px 64px', position: 'relative', zIndex: 10 }}>
 
           {/* ── Filter Bar ─────────────────────────────────────── */}
-          <div className="glass-card" style={{ padding: '16px 22px', marginBottom: 20 }}>
+          <div className="glass-card" style={{ padding: '16px 22px', marginBottom: 20, overflow: 'visible' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
               <SingleSelectDropdown options={DATE_OPTIONS} selected={dateFilter} onChange={setDateFilter} />
               <MultiSelectDropdown label="All Categories" options={CATEGORY_OPTIONS} selected={categoryFilter} onChange={setCategoryFilter} />
               {friendOptions.length > 0 && (
                 <MultiSelectDropdown label="All Friends" options={friendOptions} selected={friendFilter} onChange={setFriendFilter} />
               )}
-              {hasAnyFilter && (
-                <button
-                  onClick={clearFilters}
-                  style={{
-                    padding: '8px 14px', borderRadius: 10, border: '1px solid rgba(232,114,110,0.3)',
-                    background: 'rgba(232,114,110,0.06)', fontSize: 13, fontWeight: 500, color: '#E8726E',
-                    cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap',
-                    transition: 'background 0.15s',
-                  }}
-                >
-                  Clear Filters
-                </button>
-              )}
+              <button
+                onClick={clearFilters}
+                style={{
+                  marginLeft: 'auto',
+                  padding: '8px 14px', borderRadius: 10,
+                  border: hasAnyFilter ? '1px solid rgba(232,114,110,0.3)' : '1px solid rgba(0,0,0,0.08)',
+                  background: hasAnyFilter ? 'rgba(232,114,110,0.06)' : 'transparent',
+                  fontSize: 13, fontWeight: 500,
+                  color: hasAnyFilter ? '#E8726E' : '#787776',
+                  cursor: hasAnyFilter ? 'pointer' : 'default',
+                  opacity: hasAnyFilter ? 1 : 0.5,
+                  fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap',
+                  transition: 'background 0.15s, opacity 0.15s',
+                }}
+              >
+                Clear Filters
+              </button>
             </div>
           </div>
 
