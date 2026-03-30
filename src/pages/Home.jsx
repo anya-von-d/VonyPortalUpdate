@@ -641,36 +641,8 @@ export default function Home() {
         <div style={{ marginTop: 36 }}>
           <div className="home-top-row" style={{ display: 'grid', gridTemplateColumns: '0.75fr 1fr 1fr', columnGap: 16, rowGap: 16, alignItems: 'start' }}>
 
-            {/* Left column: Quick Actions + Next Repayment + Monthly Stats */}
+            {/* Left column: Next Repayment + Monthly Stats */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16, gridRow: '1 / 5' }}>
-              {/* Quick Actions */}
-              <div className="glass-quick-actions" style={{ position: 'relative', background: 'transparent', border: 'none', borderRadius: 16, display: 'flex', flexDirection: 'column', padding: 6, gap: 2 }}>
-                <Link to={createPageUrl("YourLoans")} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px', borderRadius: 10, textDecoration: 'none', color: '#0D0D0C', transition: 'background 0.15s' }}>
-                  <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(255,255,255,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5C5B5A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-                  </div>
-                  <div style={{ fontSize: 13, fontWeight: 500 }}>Lending</div>
-                </Link>
-                <Link to={createPageUrl("LoanAgreements")} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px', borderRadius: 10, textDecoration: 'none', color: '#0D0D0C', transition: 'background 0.15s' }}>
-                  <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(255,255,255,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5C5B5A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                  </div>
-                  <div style={{ fontSize: 13, fontWeight: 500 }}>Documents</div>
-                </Link>
-                <Link to={createPageUrl("Friends")} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px', borderRadius: 10, textDecoration: 'none', color: '#0D0D0C', transition: 'background 0.15s' }}>
-                  <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(255,255,255,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5C5B5A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                  </div>
-                  <div style={{ fontSize: 13, fontWeight: 500 }}>Friends</div>
-                </Link>
-                <Link to={createPageUrl("RecentActivity")} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px', borderRadius: 10, textDecoration: 'none', color: '#0D0D0C', transition: 'background 0.15s' }}>
-                  <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(255,255,255,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5C5B5A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                  </div>
-                  <div style={{ fontSize: 13, fontWeight: 500 }}>Recent Activity</div>
-                </Link>
-              </div>
-
               {/* Next Repayment card */}
               <div className="glass-card" style={{ overflow: 'hidden' }}>
                 <div style={{ padding: '22px 26px 0' }}>
