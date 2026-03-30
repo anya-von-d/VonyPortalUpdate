@@ -1,6 +1,6 @@
 import React from "react";
-import Lending from "./Lending";
+import CreateLoan from "./CreateLoan";
 
 export default function CreateOffer() {
-  return <Lending initialTab="create" />;
+  return <CreateLoan />;
 }
