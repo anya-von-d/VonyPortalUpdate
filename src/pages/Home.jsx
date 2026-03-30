@@ -521,7 +521,7 @@ export default function Home() {
       notifs.push({
         title: 'Stay on top of your loans',
         description: 'Check in on your payment progress and keep track of upcoming due dates.',
-        action: { label: 'Track Progress', onClick: () => window.location.href = createPageUrl("YourLoans") }
+        action: { label: 'Track Progress', onClick: () => window.location.href = createPageUrl("Borrowing") }
       });
     }
     if (hasLendingLoans) {
@@ -666,11 +666,11 @@ export default function Home() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16, gridRow: '1 / 5' }}>
               {/* Quick Actions */}
               <div className="glass-quick-actions" style={{ position: 'relative', background: 'transparent', border: 'none', borderRadius: 16, display: 'flex', flexDirection: 'column', padding: 6, gap: 2 }}>
-                <Link to={createPageUrl("YourLoans")} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px', borderRadius: 10, textDecoration: 'none', color: '#0D0D0C', transition: 'background 0.15s' }}>
+                <Link to={createPageUrl("Lending")} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px', borderRadius: 10, textDecoration: 'none', color: '#0D0D0C', transition: 'background 0.15s' }}>
                   <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(255,255,255,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5C5B5A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5C5B5A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
                   </div>
-                  <div style={{ fontSize: 13, fontWeight: 500 }}>Your Loans</div>
+                  <div style={{ fontSize: 13, fontWeight: 500 }}>Lending</div>
                 </Link>
                 <Link to={createPageUrl("LoanAgreements")} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px', borderRadius: 10, textDecoration: 'none', color: '#0D0D0C', transition: 'background 0.15s' }}>
                   <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(255,255,255,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -751,7 +751,7 @@ export default function Home() {
               <div className="glass-card" style={{ padding: '20px 22px 18px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
                   <div style={{ fontSize: 15, fontWeight: 600, color: '#0D0D0C', fontFamily: "'DM Sans', sans-serif" }}>You've lent</div>
-                  <Link to={createPageUrl("YourLoans")} style={{ fontSize: 11, fontWeight: 500, color: '#A79DEA', textDecoration: 'none' }}>Details</Link>
+                  <Link to={createPageUrl("Lending")} style={{ fontSize: 11, fontWeight: 500, color: '#A79DEA', textDecoration: 'none' }}>Details</Link>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 18, marginTop: 4 }}>
                   <div style={{ flex: 1, minWidth: 0 }}>
@@ -780,7 +780,7 @@ export default function Home() {
               <div className="glass-card" style={{ padding: '20px 22px 18px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
                   <div style={{ fontSize: 15, fontWeight: 600, color: '#0D0D0C', fontFamily: "'DM Sans', sans-serif" }}>You've borrowed</div>
-                  <Link to={createPageUrl("YourLoans")} style={{ fontSize: 11, fontWeight: 500, color: '#A79DEA', textDecoration: 'none' }}>Details</Link>
+                  <Link to={createPageUrl("Borrowing")} style={{ fontSize: 11, fontWeight: 500, color: '#A79DEA', textDecoration: 'none' }}>Details</Link>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 18, marginTop: 4 }}>
                   <div style={{ flex: 1, minWidth: 0 }}>
@@ -809,7 +809,7 @@ export default function Home() {
               <div className="glass-card" style={{ overflow: 'hidden' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '22px 26px 0' }}>
                   <div style={{ fontSize: 15, fontWeight: 600, color: '#0D0D0C', letterSpacing: '-0.02em', fontFamily: "'DM Sans', sans-serif" }}>Upcoming payments</div>
-                  <Link to={createPageUrl("YourLoans")} style={{ fontSize: 12, fontWeight: 500, color: '#A79DEA', textDecoration: 'none' }}>Full schedule</Link>
+                  <Link to={createPageUrl("Borrowing")} style={{ fontSize: 12, fontWeight: 500, color: '#A79DEA', textDecoration: 'none' }}>Full schedule</Link>
                 </div>
                 <div style={{ padding: '18px 26px 26px' }}>
                   {combinedPaymentEvents.length === 0 ? (
@@ -906,7 +906,7 @@ export default function Home() {
             <div className="glass-card" style={{ overflow: 'hidden' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 0, padding: '20px 26px 0' }}>
                 <div style={{ fontSize: 15, fontWeight: 600, color: '#0D0D0C', letterSpacing: '-0.02em', fontFamily: "'DM Sans', sans-serif" }}>Your loans</div>
-                <Link to={createPageUrl("YourLoans")} style={{ fontSize: 12, fontWeight: 500, color: '#A79DEA', textDecoration: 'none' }}>Manage</Link>
+                <Link to={createPageUrl("Lending")} style={{ fontSize: 12, fontWeight: 500, color: '#A79DEA', textDecoration: 'none' }}>Manage</Link>
               </div>
               {myLoans.filter(l => l && l.status === 'active').length === 0 ? (
                 <div style={{ padding: '20px 26px', textAlign: 'center', color: '#787776', fontSize: 13 }}>No active loans</div>
