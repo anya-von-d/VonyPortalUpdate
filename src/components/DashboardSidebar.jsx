@@ -82,7 +82,6 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
     <aside className="home-sidebar" style={{
       position: 'fixed', left: 0, top: 0, bottom: 0, width: 240,
       background: '#F5F4F0',
-      borderRight: '1px solid rgba(0,0,0,0.06)',
       zIndex: 52, display: 'flex', flexDirection: 'column',
       fontFamily: "'DM Sans', sans-serif", overflowY: 'auto',
     }}>
