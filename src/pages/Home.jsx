@@ -455,6 +455,48 @@ export default function Home() {
   // Recent activity
   const recentActivity = (() => {
     const items = [];
+
+    // Loan events
+    myLoans.forEach(loan => {
+      if (!loan || !loan.created_at) return;
+      const isLender = loan.lender_id === user.id;
+      const otherUserId = isLender ? loan.borrower_id : loan.lender_id;
+      const otherProfile = safeAllProfiles.find(pr => pr.user_id === otherUserId);
+      const username = `@${otherProfile?.username || 'user'}`;
+      const amount = `$${(loan.amount || 0).toLocaleString()}`;
+      const reason = loan.purpose || 'Reason';
+      let description = '';
+      let icon = 'loan';
+      let color = '#678AFB';
+
+      if (loan.status === 'pending' || !loan.status) {
+        description = isLender ? `Sent ${amount} loan offer to ${username} for ${reason}` : `Received ${amount} loan offer from ${username} for ${reason}`;
+        icon = isLender ? 'send' : 'receive';
+        color = isLender ? '#A79DEA' : '#678AFB';
+      } else if (loan.status === 'active') {
+        description = isLender ? `${username} accepted your ${amount} loan for ${reason}` : `You accepted ${amount} loan from ${username} for ${reason}`;
+        icon = 'check'; color = '#678AFB';
+      } else if (loan.status === 'declined') {
+        description = isLender ? `${username} declined your ${amount} loan for ${reason}` : `You declined ${amount} loan from ${username} for ${reason}`;
+        icon = 'x'; color = '#E8726E';
+      } else if (loan.status === 'cancelled') {
+        description = isLender ? `You cancelled ${amount} loan offer to ${username}` : `${username} cancelled their ${amount} loan offer`;
+        icon = 'x'; color = '#E8726E';
+      } else if (loan.status === 'completed') {
+        description = isLender ? `${username} fully repaid your ${amount} loan` : `You fully repaid ${amount} loan to ${username}`;
+        icon = 'check'; color = '#678AFB';
+      } else {
+        description = isLender ? `${amount} loan to ${username}` : `${amount} loan from ${username}`;
+      }
+
+      items.push({
+        type: 'loan', date: new Date(loan.created_at), description,
+        detail: format(new Date(loan.created_at), 'MMM d'),
+        icon, color, amount: null
+      });
+    });
+
+    // Payment events
     safePayments.filter(p => p && myLoans.some(l => l.id === p.loan_id)).forEach(p => {
       const loan = myLoans.find(l => l.id === p.loan_id);
       if (!loan) return;
@@ -464,13 +506,16 @@ export default function Home() {
       const amount = `$${(p.amount || 0).toLocaleString()}`;
       const username = `@${otherProfile?.username || 'user'}`;
       items.push({
-        type: 'payment', isIncoming: !isBorrower, date: new Date(p.payment_date || p.created_at),
-        description: isBorrower ? `You paid ${username}` : `${username} paid you`,
+        type: 'payment', date: new Date(p.payment_date || p.created_at),
+        description: isBorrower ? `You made a ${amount} payment to ${username}` : `Received ${amount} payment from ${username}`,
         detail: format(new Date(p.payment_date || p.created_at), 'MMM d') + (loan.purpose ? ` · ${loan.purpose}` : ''),
+        icon: isBorrower ? 'send' : 'receive',
+        color: isBorrower ? '#A79DEA' : '#678AFB',
         amount: isBorrower ? `-${amount}` : `+${amount}`
       });
     });
-    return items.sort((a, b) => b.date - a.date).slice(0, 4);
+
+    return items.sort((a, b) => b.date - a.date).slice(0, 5);
   })();
 
   // Carousel notifications
@@ -788,7 +833,7 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Loans Over Time chart */}
+            {/* Loans Over Time chart + Recent Activity */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div className="glass-card" style={{ overflow: 'hidden' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '22px 26px 0' }}>
@@ -841,79 +886,82 @@ export default function Home() {
                   )}
                 </div>
               </div>
+
+              {/* Recent Activity */}
+              <div className="glass-card" style={{ overflow: 'hidden' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '22px 26px 0' }}>
+                  <div style={{ fontSize: 15, fontWeight: 600, color: '#0D0D0C', letterSpacing: '-0.02em', fontFamily: "'DM Sans', sans-serif" }}>Recent activity</div>
+                  <Link to={createPageUrl("RecentActivity")} style={{ fontSize: 12, fontWeight: 500, color: '#A79DEA', textDecoration: 'none' }}>View all</Link>
+                </div>
+                <div style={{ padding: '18px 26px 26px' }}>
+                  {recentActivity.length === 0 ? (
+                    <div style={{ textAlign: 'center', padding: '20px 0', color: '#787776', fontSize: 13 }}>No recent activity</div>
+                  ) : (
+                    recentActivity.map((item, idx) => (
+                      <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '13px 0', paddingTop: idx === 0 ? 0 : 13, paddingBottom: idx === recentActivity.length - 1 ? 0 : 13 }}>
+                        <div style={{ width: 36, height: 36, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, background: `${item.color}20` }}>
+                          {item.icon === 'send' ? (
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={item.color} strokeWidth="2" strokeLinecap="round"><polyline points="7 13 12 18 17 13"></polyline><line x1="12" y1="18" x2="12" y2="6"></line></svg>
+                          ) : item.icon === 'receive' ? (
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={item.color} strokeWidth="2" strokeLinecap="round"><polyline points="17 11 12 6 7 11"></polyline><line x1="12" y1="6" x2="12" y2="18"></line></svg>
+                          ) : item.icon === 'check' ? (
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={item.color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                          ) : (
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={item.color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                          )}
+                        </div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ fontSize: 13, fontWeight: 500, color: '#1A1918' }}>{item.description}</div>
+                          <div style={{ fontSize: 11, color: '#787776', marginTop: 2 }}>{item.detail}</div>
+                        </div>
+                        {item.amount && (
+                          <div style={{ fontSize: 14, fontWeight: 600, flexShrink: 0, color: item.amount.startsWith('+') ? '#678AFB' : '#1A1918' }}>{item.amount}</div>
+                        )}
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
             </div>
 
           </div>
         </div>
 
-        {/* ── Loans + Recent Payments grid ── */}
+        {/* ── Your Loans ── */}
         <div style={{ marginTop: 16 }}>
-          <div className="home-loans-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, alignItems: 'start' }}>
-            {/* Your Loans */}
-            <div className="glass-card" style={{ overflow: 'hidden' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 0, padding: '20px 26px 0' }}>
-                <div style={{ fontSize: 15, fontWeight: 600, color: '#0D0D0C', letterSpacing: '-0.02em', fontFamily: "'DM Sans', sans-serif" }}>Your loans</div>
-                <Link to={createPageUrl("YourLoans")} style={{ fontSize: 12, fontWeight: 500, color: '#A79DEA', textDecoration: 'none' }}>Manage</Link>
-              </div>
-              {myLoans.filter(l => l && l.status === 'active').length === 0 ? (
-                <div style={{ padding: '20px 26px', textAlign: 'center', color: '#787776', fontSize: 13 }}>No active loans</div>
-              ) : (
-                myLoans.filter(l => l && l.status === 'active').slice(0, 4).map((loan, idx) => {
-                  const isLender = loan.lender_id === user.id;
-                  const otherUserId = isLender ? loan.borrower_id : loan.lender_id;
-                  const otherProfile = safeAllProfiles.find(p => p.user_id === otherUserId);
-                  const totalAmt = loan.total_amount || loan.amount || 0;
-                  const amountPaid = loan.amount_paid || 0;
-                  const remaining = totalAmt - amountPaid;
-                  const pct = totalAmt > 0 ? Math.round((amountPaid / totalAmt) * 100) : 0;
-                  return (
-                    <div key={loan.id} style={{ padding: '13px 26px', display: 'flex', alignItems: 'flex-start', gap: 16, paddingTop: idx === 0 ? 18 : 13 }}>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', marginBottom: 8 }}>
-                          {isLender ? `You lent @${otherProfile?.username || 'user'} ${formatMoney(totalAmt)}` : `@${otherProfile?.username || 'user'} lent you ${formatMoney(totalAmt)}`}
+          <div className="glass-card" style={{ overflow: 'hidden' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 0, padding: '20px 26px 0' }}>
+              <div style={{ fontSize: 15, fontWeight: 600, color: '#0D0D0C', letterSpacing: '-0.02em', fontFamily: "'DM Sans', sans-serif" }}>Your loans</div>
+              <Link to={createPageUrl("YourLoans")} style={{ fontSize: 12, fontWeight: 500, color: '#A79DEA', textDecoration: 'none' }}>Manage</Link>
+            </div>
+            {myLoans.filter(l => l && l.status === 'active').length === 0 ? (
+              <div style={{ padding: '20px 26px', textAlign: 'center', color: '#787776', fontSize: 13 }}>No active loans</div>
+            ) : (
+              myLoans.filter(l => l && l.status === 'active').slice(0, 4).map((loan, idx) => {
+                const isLender = loan.lender_id === user.id;
+                const otherUserId = isLender ? loan.borrower_id : loan.lender_id;
+                const otherProfile = safeAllProfiles.find(p => p.user_id === otherUserId);
+                const totalAmt = loan.total_amount || loan.amount || 0;
+                const amountPaid = loan.amount_paid || 0;
+                const remaining = totalAmt - amountPaid;
+                const pct = totalAmt > 0 ? Math.round((amountPaid / totalAmt) * 100) : 0;
+                return (
+                  <div key={loan.id} style={{ padding: '13px 26px', display: 'flex', alignItems: 'flex-start', gap: 16, paddingTop: idx === 0 ? 18 : 13 }}>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', marginBottom: 8 }}>
+                        {isLender ? `You lent @${otherProfile?.username || 'user'} ${formatMoney(totalAmt)}` : `@${otherProfile?.username || 'user'} lent you ${formatMoney(totalAmt)}`}
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                        <div style={{ flex: 1, height: 6, borderRadius: 3, overflow: 'hidden', background: isLender ? 'rgba(103,138,251,0.15)' : 'rgba(167,157,234,0.15)' }}>
+                          <div style={{ height: '100%', borderRadius: 3, width: `${pct}%`, background: isLender ? '#678AFB' : '#A79DEA' }} />
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                          <div style={{ flex: 1, height: 6, borderRadius: 3, overflow: 'hidden', background: isLender ? 'rgba(103,138,251,0.15)' : 'rgba(167,157,234,0.15)' }}>
-                            <div style={{ height: '100%', borderRadius: 3, width: `${pct}%`, background: isLender ? '#678AFB' : '#A79DEA' }} />
-                          </div>
-                          <div style={{ fontSize: 11, fontWeight: 500, color: '#787776', flexShrink: 0 }}>{formatMoney(amountPaid)} repaid &amp; {formatMoney(remaining)} remaining</div>
-                        </div>
+                        <div style={{ fontSize: 11, fontWeight: 500, color: '#787776', flexShrink: 0 }}>{formatMoney(amountPaid)} repaid &amp; {formatMoney(remaining)} remaining</div>
                       </div>
                     </div>
-                  );
-                })
-              )}
-            </div>
-
-            {/* Recent Payments */}
-            <div className="glass-card" style={{ overflow: 'hidden' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '22px 26px 0' }}>
-                <div style={{ fontSize: 15, fontWeight: 600, color: '#0D0D0C', letterSpacing: '-0.02em', fontFamily: "'DM Sans', sans-serif" }}>Recent payments</div>
-                <Link to={createPageUrl("RecentActivity")} style={{ fontSize: 12, fontWeight: 500, color: '#A79DEA', textDecoration: 'none' }}>View all</Link>
-              </div>
-              <div style={{ padding: '18px 26px 26px' }}>
-                {recentActivity.length === 0 ? (
-                  <div style={{ textAlign: 'center', padding: '20px 0', color: '#787776', fontSize: 13 }}>No recent payments</div>
-                ) : (
-                  recentActivity.map((item, idx) => (
-                    <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '13px 0', paddingTop: idx === 0 ? 0 : 13, paddingBottom: idx === recentActivity.length - 1 ? 0 : 13 }}>
-                      <div style={{ width: 36, height: 36, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, background: item.isIncoming ? 'rgba(103,138,251,0.15)' : 'rgba(167,157,234,0.15)' }}>
-                        {item.isIncoming ? (
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#678AFB" strokeWidth="2" strokeLinecap="round"><polyline points="17 11 12 6 7 11"></polyline><line x1="12" y1="6" x2="12" y2="18"></line></svg>
-                        ) : (
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A79DEA" strokeWidth="2" strokeLinecap="round"><polyline points="7 13 12 18 17 13"></polyline><line x1="12" y1="18" x2="12" y2="6"></line></svg>
-                        )}
-                      </div>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontSize: 13, fontWeight: 500, color: '#1A1918' }}>{item.description}</div>
-                        <div style={{ fontSize: 11, color: '#787776', marginTop: 2 }}>{item.detail}</div>
-                      </div>
-                      <div style={{ fontSize: 14, fontWeight: 600, flexShrink: 0, color: item.isIncoming ? '#678AFB' : '#1A1918' }}>{item.amount}</div>
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
+                  </div>
+                );
+              })
+            )}
           </div>
         </div>
 
