@@ -560,7 +560,7 @@ export default function Home() {
       <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', bottom: 0, overflow: 'hidden', zIndex: 0, pointerEvents: 'none' }}>
         <div style={{
           position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 0,
-          background: '#6C8CF8'
+          background: '#ECEEFC'
         }} />
       </div>
 
