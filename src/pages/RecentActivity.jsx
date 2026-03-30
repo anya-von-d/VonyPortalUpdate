@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Loan, Payment, User, PublicProfile, Friendship } from "@/entities/all";
-import { Activity, ArrowUpRight, ArrowDownRight, Send, Check, X, Ban, ChevronDown, Clock, CheckCircle, XCircle, AlertCircle } from "lucide-react";
+import { Activity, ArrowUpRight, ArrowDownRight, Send, Check, X, Ban, ChevronDown, Clock, CheckCircle, XCircle, AlertCircle, Search, Download } from "lucide-react";
 import { format, subDays, subMonths, subYears } from "date-fns";
 import DashboardSidebar from "@/components/DashboardSidebar";
 
@@ -17,11 +17,15 @@ const STAR_CIRCLES = [
 
 const STATUS_ICON_MAP = {
   pending: { icon: Clock, color: '#787776' },
+  pending_confirmation: { icon: Clock, color: '#787776' },
+  pending_borrower_approval: { icon: Clock, color: '#787776' },
   active: { icon: CheckCircle, color: '#678AFB' },
   completed: { icon: CheckCircle, color: '#678AFB' },
+  confirmed: { icon: CheckCircle, color: '#678AFB' },
   defaulted: { icon: AlertCircle, color: '#E8726E' },
   cancelled: { icon: XCircle, color: '#E8726E' },
   declined: { icon: XCircle, color: '#E8726E' },
+  rejected: { icon: XCircle, color: '#E8726E' },
 };
 
 const CATEGORY_OPTIONS = [
@@ -44,6 +48,33 @@ const DATE_OPTIONS = [
   { id: '6m', label: 'Last 6 Months' },
   { id: '1y', label: 'Last Year' },
   { id: 'older', label: 'Older' },
+];
+
+const STATUS_OPTIONS = [
+  { id: 'pending', label: 'Pending' },
+  { id: 'pending_confirmation', label: 'Awaiting Confirmation' },
+  { id: 'active', label: 'Active' },
+  { id: 'confirmed', label: 'Confirmed' },
+  { id: 'completed', label: 'Completed' },
+  { id: 'declined', label: 'Declined' },
+  { id: 'cancelled', label: 'Cancelled' },
+  { id: 'defaulted', label: 'Defaulted' },
+  { id: 'rejected', label: 'Rejected' },
+];
+
+const AMOUNT_MODES = [
+  { id: 'all', label: 'All amounts' },
+  { id: 'exactly', label: 'Exactly' },
+  { id: 'between', label: 'Between' },
+  { id: 'greater', label: 'Greater than' },
+  { id: 'less', label: 'Less than' },
+];
+
+const SORT_OPTIONS = [
+  { id: 'date_desc', label: 'Date (Newest)' },
+  { id: 'date_asc', label: 'Date (Oldest)' },
+  { id: 'amount_desc', label: 'Amount (High to Low)' },
+  { id: 'amount_asc', label: 'Amount (Low to High)' },
 ];
 
 /* ── Multi-select dropdown ─────────────────────────────────── */
@@ -173,6 +204,270 @@ function SingleSelectDropdown({ options, selected, onChange }) {
   );
 }
 
+/* ── Amount filter dropdown ────────────────────────────────── */
+function AmountFilterDropdown({ amountMode, setAmountMode, amountVal1, setAmountVal1, amountVal2, setAmountVal2, onApply }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  const isFiltered = amountMode !== 'all';
+  const displayLabel = amountMode === 'all' ? 'All Amounts'
+    : amountMode === 'exactly' ? (amountVal1 ? `Exactly $${amountVal1}` : 'Exactly')
+    : amountMode === 'between' ? (amountVal1 && amountVal2 ? `$${amountVal1} – $${amountVal2}` : 'Between')
+    : amountMode === 'greater' ? (amountVal1 ? `> $${amountVal1}` : 'Greater than')
+    : amountMode === 'less' ? (amountVal1 ? `< $${amountVal1}` : 'Less than')
+    : 'All Amounts';
+
+  const modeDescriptions = {
+    all: '',
+    exactly: 'Search for an exact transaction amount.',
+    between: 'Search for transactions between two number amounts.',
+    greater: 'Search for transactions above a certain amount.',
+    less: 'Search for transactions below a certain amount.',
+  };
+
+  return (
+    <div ref={ref} style={{ position: 'relative' }}>
+      <button
+        onClick={() => setOpen(!open)}
+        style={{
+          display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 10,
+          border: '1px solid rgba(0,0,0,0.08)', background: isFiltered ? 'rgba(103,138,251,0.08)' : 'white',
+          fontSize: 13, fontWeight: 500, color: '#1A1918', cursor: 'pointer',
+          fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap', transition: 'background 0.15s',
+        }}
+      >
+        {displayLabel}
+        <ChevronDown size={14} style={{ opacity: 0.5, transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+      </button>
+      {open && (
+        <div style={{
+          position: 'absolute', top: 'calc(100% + 6px)', left: 0, minWidth: 380,
+          background: 'white', borderRadius: 12, border: '1px solid rgba(0,0,0,0.08)',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.08)', zIndex: 50, display: 'flex', overflow: 'hidden',
+        }}>
+          {/* Left: mode list */}
+          <div style={{ borderRight: '1px solid rgba(0,0,0,0.06)', padding: '8px 0', minWidth: 140 }}>
+            {AMOUNT_MODES.map(mode => (
+              <button
+                key={mode.id}
+                onClick={() => { setAmountMode(mode.id); if (mode.id === 'all') { setAmountVal1(''); setAmountVal2(''); } }}
+                style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  width: '100%', textAlign: 'left', padding: '10px 16px', border: 'none', cursor: 'pointer',
+                  fontSize: 13, color: '#1A1918', fontFamily: "'DM Sans', sans-serif",
+                  background: amountMode === mode.id ? 'rgba(0,0,0,0.03)' : 'transparent',
+                  fontWeight: amountMode === mode.id ? 600 : 400,
+                  transition: 'background 0.1s',
+                }}
+                onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.03)'}
+                onMouseLeave={e => { if (amountMode !== mode.id) e.currentTarget.style.background = 'transparent'; }}
+              >
+                {mode.label}
+                {amountMode === mode.id && (
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1A1918" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+                )}
+              </button>
+            ))}
+          </div>
+          {/* Right: inputs */}
+          <div style={{ flex: 1, padding: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {amountMode === 'all' ? (
+              <p style={{ fontSize: 13, color: '#787776', margin: 0 }}>Showing transactions of any amount.</p>
+            ) : (
+              <>
+                <p style={{ fontSize: 13, color: '#787776', margin: 0 }}>{modeDescriptions[amountMode]}</p>
+                {amountMode === 'between' ? (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                      <span style={{ fontSize: 14, color: '#787776', fontWeight: 500 }}>$</span>
+                      <input
+                        type="number"
+                        placeholder="0"
+                        value={amountVal1}
+                        onChange={e => setAmountVal1(e.target.value)}
+                        style={{
+                          width: 70, padding: '8px 10px', borderRadius: 8, border: '1px solid rgba(0,0,0,0.1)',
+                          fontSize: 14, fontFamily: "'DM Sans', sans-serif", outline: 'none',
+                        }}
+                        onFocus={e => e.target.style.borderColor = '#678AFB'}
+                        onBlur={e => e.target.style.borderColor = 'rgba(0,0,0,0.1)'}
+                      />
+                    </div>
+                    <span style={{ fontSize: 13, color: '#787776' }}>›</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                      <span style={{ fontSize: 14, color: '#787776', fontWeight: 500 }}>$</span>
+                      <input
+                        type="number"
+                        placeholder="0"
+                        value={amountVal2}
+                        onChange={e => setAmountVal2(e.target.value)}
+                        style={{
+                          width: 70, padding: '8px 10px', borderRadius: 8, border: '1px solid rgba(0,0,0,0.1)',
+                          fontSize: 14, fontFamily: "'DM Sans', sans-serif", outline: 'none',
+                        }}
+                        onFocus={e => e.target.style.borderColor = '#678AFB'}
+                        onBlur={e => e.target.style.borderColor = 'rgba(0,0,0,0.1)'}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <span style={{ fontSize: 14, color: '#787776', fontWeight: 500 }}>$</span>
+                    <input
+                      type="number"
+                      placeholder="0"
+                      value={amountVal1}
+                      onChange={e => setAmountVal1(e.target.value)}
+                      style={{
+                        width: 100, padding: '8px 10px', borderRadius: 8, border: '1px solid rgba(0,0,0,0.1)',
+                        fontSize: 14, fontFamily: "'DM Sans', sans-serif", outline: 'none',
+                      }}
+                      onFocus={e => e.target.style.borderColor = '#678AFB'}
+                      onBlur={e => e.target.style.borderColor = 'rgba(0,0,0,0.1)'}
+                    />
+                  </div>
+                )}
+                <button
+                  onClick={() => { onApply(); setOpen(false); }}
+                  style={{
+                    padding: '8px 18px', borderRadius: 20, border: 'none', cursor: 'pointer',
+                    background: '#1A1918', color: 'white', fontSize: 13, fontWeight: 600,
+                    fontFamily: "'DM Sans', sans-serif", alignSelf: 'flex-start',
+                  }}
+                >
+                  Set Amount
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ── Sort dropdown ─────────────────────────────────────────── */
+function SortDropdown({ sortBy, onChange }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  const current = SORT_OPTIONS.find(o => o.id === sortBy) || SORT_OPTIONS[0];
+
+  return (
+    <div ref={ref} style={{ position: 'relative' }}>
+      <button
+        onClick={() => setOpen(!open)}
+        style={{
+          display: 'flex', alignItems: 'center', gap: 6, padding: '9px 16px', borderRadius: 22,
+          border: '1px solid rgba(0,0,0,0.08)', background: 'white',
+          fontSize: 13, fontWeight: 500, color: '#1A1918', cursor: 'pointer',
+          fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap',
+        }}
+      >
+        {current.label}
+        <ChevronDown size={14} style={{ opacity: 0.5, transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+      </button>
+      {open && (
+        <div style={{
+          position: 'absolute', top: 'calc(100% + 6px)', right: 0, minWidth: 190,
+          background: 'white', borderRadius: 12, border: '1px solid rgba(0,0,0,0.08)',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.08)', zIndex: 50, padding: 6,
+        }}>
+          {SORT_OPTIONS.map(opt => (
+            <button
+              key={opt.id}
+              onClick={() => { onChange(opt.id); setOpen(false); }}
+              style={{
+                display: 'block', width: '100%', textAlign: 'left', padding: '8px 10px', borderRadius: 8,
+                border: 'none', cursor: 'pointer', fontSize: 13, color: '#1A1918',
+                background: sortBy === opt.id ? 'rgba(103,138,251,0.08)' : 'transparent',
+                fontWeight: sortBy === opt.id ? 600 : 400, fontFamily: "'DM Sans', sans-serif",
+                transition: 'background 0.1s',
+              }}
+              onMouseEnter={e => { if (sortBy !== opt.id) e.currentTarget.style.background = 'rgba(0,0,0,0.03)'; }}
+              onMouseLeave={e => { if (sortBy !== opt.id) e.currentTarget.style.background = 'transparent'; }}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ── Export CSV dropdown ────────────────────────────────────── */
+function ExportDropdown({ filteredCount, totalCount, hasAnyFilter, onExport }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  const activeFilterCount = hasAnyFilter
+    ? [true].length // we'll pass the actual count
+    : 0;
+
+  return (
+    <div ref={ref} style={{ position: 'relative' }}>
+      <button
+        onClick={() => setOpen(!open)}
+        style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          width: 40, height: 40, borderRadius: 22, border: '1px solid rgba(0,0,0,0.08)',
+          background: 'white', cursor: 'pointer', flexShrink: 0,
+        }}
+      >
+        <Download size={16} style={{ color: '#5C5B5A' }} />
+      </button>
+      {open && (
+        <div style={{
+          position: 'absolute', top: 'calc(100% + 6px)', right: 0, width: 300,
+          background: 'white', borderRadius: 12, border: '1px solid rgba(0,0,0,0.08)',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.08)', zIndex: 50, padding: 20,
+        }}>
+          <h3 style={{ fontSize: 16, fontWeight: 700, color: '#1A1918', margin: '0 0 8px', fontFamily: "'DM Sans', sans-serif" }}>Download Activity</h3>
+          {hasAnyFilter ? (
+            <p style={{ fontSize: 13, color: '#787776', margin: '0 0 16px', lineHeight: 1.5 }}>
+              Your filters match <span style={{ fontWeight: 700, color: '#8B3A3A' }}>{filteredCount} {filteredCount === 1 ? 'transaction' : 'transactions'}</span> out of {totalCount} total.
+            </p>
+          ) : (
+            <p style={{ fontSize: 13, color: '#787776', margin: '0 0 16px', lineHeight: 1.5 }}>
+              To download specific transactions, apply your filters first. Without filters, all activity will be included.
+            </p>
+          )}
+          <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', margin: '0 0 16px' }} />
+          <button
+            onClick={() => { onExport(); setOpen(false); }}
+            style={{
+              width: '100%', padding: '12px 20px', borderRadius: 22, border: 'none', cursor: 'pointer',
+              background: '#1A1918', color: 'white', fontSize: 14, fontWeight: 600,
+              fontFamily: "'DM Sans', sans-serif",
+            }}
+          >
+            {hasAnyFilter ? `Download ${filteredCount} ${filteredCount === 1 ? 'transaction' : 'transactions'}` : 'Download all activity'}
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ══════════════════════════════════════════════════════════════
    MAIN COMPONENT
    ══════════════════════════════════════════════════════════════ */
@@ -187,6 +482,15 @@ export default function RecentActivityPage() {
   const [dateFilter, setDateFilter] = useState('all');
   const [categoryFilter, setCategoryFilter] = useState([]);
   const [friendFilter, setFriendFilter] = useState([]);
+  const [statusFilter, setStatusFilter] = useState([]);
+  const [amountMode, setAmountMode] = useState('all');
+  const [amountVal1, setAmountVal1] = useState('');
+  const [amountVal2, setAmountVal2] = useState('');
+  const [amountApplied, setAmountApplied] = useState(false);
+
+  // Search & sort
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState('date_desc');
 
   useEffect(() => { loadData(); }, []);
 
@@ -313,8 +617,19 @@ export default function RecentActivityPage() {
     return { id: uid, label: `@${p.username || 'user'}` };
   }).sort((a, b) => a.label.localeCompare(b.label));
 
+  const totalCount = allActivities.length;
+
   /* ── Apply filters ────────────────────────────────────────── */
   let filtered = allActivities;
+
+  // Search
+  if (searchQuery.trim()) {
+    const q = searchQuery.trim().toLowerCase();
+    filtered = filtered.filter(a => {
+      const info = getActivityInfo(a);
+      return info.title.toLowerCase().includes(q) || info.friendName.toLowerCase().includes(q) || info.amount.toLowerCase().includes(q);
+    });
+  }
 
   // Date filter
   if (dateFilter !== 'all') {
@@ -327,18 +642,50 @@ export default function RecentActivityPage() {
     else if (dateFilter === 'older') filtered = filtered.filter(a => new Date(a.date) < subYears(now, 1));
   }
 
-  // Category filter (multi-select — union)
-  if (categoryFilter.length > 0) {
-    filtered = filtered.filter(a => categoryFilter.includes(a._category));
-  }
-
   // Friend filter (multi-select — union)
   if (friendFilter.length > 0) {
     filtered = filtered.filter(a => a._otherPartyId && friendFilter.includes(a._otherPartyId));
   }
 
-  const hasAnyFilter = dateFilter !== 'all' || categoryFilter.length > 0 || friendFilter.length > 0;
-  const clearFilters = () => { setDateFilter('all'); setCategoryFilter([]); setFriendFilter([]); };
+  // Category filter (multi-select — union)
+  if (categoryFilter.length > 0) {
+    filtered = filtered.filter(a => categoryFilter.includes(a._category));
+  }
+
+  // Status filter
+  if (statusFilter.length > 0) {
+    filtered = filtered.filter(a => {
+      const s = a.status || '';
+      return statusFilter.includes(s);
+    });
+  }
+
+  // Amount filter
+  if (amountMode !== 'all' && amountApplied) {
+    const v1 = parseFloat(amountVal1) || 0;
+    const v2 = parseFloat(amountVal2) || 0;
+    filtered = filtered.filter(a => {
+      const amt = a.amount || 0;
+      if (amountMode === 'exactly') return amt === v1;
+      if (amountMode === 'between') return amt >= Math.min(v1, v2) && amt <= Math.max(v1, v2);
+      if (amountMode === 'greater') return amt > v1;
+      if (amountMode === 'less') return amt < v1;
+      return true;
+    });
+  }
+
+  // Sort
+  if (sortBy === 'date_desc') filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+  else if (sortBy === 'date_asc') filtered.sort((a, b) => new Date(a.date) - new Date(b.date));
+  else if (sortBy === 'amount_desc') filtered.sort((a, b) => (b.amount || 0) - (a.amount || 0));
+  else if (sortBy === 'amount_asc') filtered.sort((a, b) => (a.amount || 0) - (b.amount || 0));
+
+  const hasAnyFilter = dateFilter !== 'all' || categoryFilter.length > 0 || friendFilter.length > 0 || statusFilter.length > 0 || (amountMode !== 'all' && amountApplied) || searchQuery.trim() !== '';
+  const clearFilters = () => {
+    setDateFilter('all'); setCategoryFilter([]); setFriendFilter([]);
+    setStatusFilter([]); setAmountMode('all'); setAmountVal1(''); setAmountVal2('');
+    setAmountApplied(false); setSearchQuery('');
+  };
 
   /* ── Category display config ──────────────────────────────── */
   const CATEGORY_DISPLAY = {
@@ -423,6 +770,31 @@ export default function RecentActivityPage() {
     return { title, description, icon, status, friendName, amount, category };
   };
 
+  /* ── Export CSV ──────────────────────────────────────────── */
+  const handleExportCSV = () => {
+    const headers = ['Date', 'Friend', 'Category', 'Status', 'Amount', 'Description'];
+    const rows = filtered.map(activity => {
+      const info = getActivityInfo(activity);
+      const catDisplay = CATEGORY_DISPLAY[info.category] || CATEGORY_DISPLAY.sent_offer;
+      return [
+        activity.date ? format(new Date(activity.date), 'yyyy-MM-dd') : '',
+        info.friendName,
+        catDisplay.label,
+        info.status || '',
+        info.amount,
+        `"${info.title.replace(/"/g, '""')}"`,
+      ].join(',');
+    });
+    const csv = [headers.join(','), ...rows].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `vony-activity-${format(new Date(), 'yyyy-MM-dd')}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   /* ══════════════════════════════════════════════════════════
      RENDER
      ══════════════════════════════════════════════════════════ */
@@ -453,14 +825,52 @@ export default function RecentActivityPage() {
         {/* Page content */}
         <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 28px 64px', position: 'relative', zIndex: 10 }}>
 
+          {/* ── Search Bar + Sort + Export ───────────────────────── */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+            <div style={{
+              flex: 1, display: 'flex', alignItems: 'center', gap: 10,
+              padding: '0 16px', background: 'white', borderRadius: 22,
+              border: '1px solid rgba(0,0,0,0.08)', height: 42,
+            }}>
+              <Search size={16} style={{ color: '#787776', flexShrink: 0 }} />
+              <input
+                type="text"
+                placeholder="Search..."
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                style={{
+                  flex: 1, border: 'none', outline: 'none', fontSize: 14,
+                  fontFamily: "'DM Sans', sans-serif", color: '#1A1918', background: 'transparent',
+                }}
+              />
+            </div>
+            <SortDropdown sortBy={sortBy} onChange={setSortBy} />
+            <ExportDropdown
+              filteredCount={filtered.length}
+              totalCount={totalCount}
+              hasAnyFilter={hasAnyFilter}
+              onExport={handleExportCSV}
+            />
+          </div>
+
           {/* ── Filter Bar ─────────────────────────────────────── */}
           <div className="glass-card" style={{ padding: '16px 22px', marginBottom: 20, overflow: 'visible', position: 'relative', zIndex: 20 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
               <SingleSelectDropdown options={DATE_OPTIONS} selected={dateFilter} onChange={setDateFilter} />
-              <MultiSelectDropdown label="All Categories" options={CATEGORY_OPTIONS} selected={categoryFilter} onChange={setCategoryFilter} />
               {friendOptions.length > 0 && (
                 <MultiSelectDropdown label="All Friends" options={friendOptions} selected={friendFilter} onChange={setFriendFilter} />
               )}
+              <MultiSelectDropdown label="All Categories" options={CATEGORY_OPTIONS} selected={categoryFilter} onChange={setCategoryFilter} />
+              <MultiSelectDropdown label="All Statuses" options={STATUS_OPTIONS} selected={statusFilter} onChange={setStatusFilter} />
+              <AmountFilterDropdown
+                amountMode={amountMode}
+                setAmountMode={setAmountMode}
+                amountVal1={amountVal1}
+                setAmountVal1={setAmountVal1}
+                amountVal2={amountVal2}
+                setAmountVal2={setAmountVal2}
+                onApply={() => setAmountApplied(true)}
+              />
               <button
                 onClick={clearFilters}
                 style={{
@@ -483,15 +893,7 @@ export default function RecentActivityPage() {
 
           {/* ── Activity List ──────────────────────────────────── */}
           <div className="glass-card" style={{ overflow: 'hidden' }}>
-            <div style={{ padding: '20px 26px 0' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: 15, fontWeight: 600, color: '#0D0D0C', letterSpacing: '-0.02em' }}>All Activity</span>
-                <span style={{ fontSize: 12, color: '#787776' }}>
-                  {filtered.length} {filtered.length === 1 ? 'activity' : 'activities'}
-                </span>
-              </div>
-            </div>
-            <div style={{ padding: '14px 26px 26px' }}>
+            <div style={{ padding: '20px 26px 26px' }}>
               {filtered.length === 0 ? (
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 0', color: '#C7C6C4' }}>
                   <Activity size={32} style={{ opacity: 0.4, marginBottom: 8 }} />
@@ -500,16 +902,18 @@ export default function RecentActivityPage() {
                 </div>
               ) : (
                 <>
-                  {/* Desktop table header */}
+                  {/* Desktop table header — aligned to row columns */}
                   <div className="activity-table-header" style={{
-                    display: 'none', alignItems: 'center', padding: '0 14px 10px',
-                    borderBottom: '1px solid rgba(0,0,0,0.06)', marginBottom: 6,
+                    display: 'none', alignItems: 'center', padding: '0 14px 12px',
+                    borderBottom: '1px solid rgba(0,0,0,0.06)', marginBottom: 8,
                   }}>
-                    <span style={{ width: 70, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', flexShrink: 0 }}>Date</span>
-                    <span style={{ flex: 1.2, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', minWidth: 0 }}>Friend</span>
-                    <span style={{ flex: 1, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', minWidth: 0 }}>Category</span>
-                    <span style={{ width: 110, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', textAlign: 'center', flexShrink: 0 }}>Status</span>
-                    <span style={{ width: 90, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', textAlign: 'right', flexShrink: 0 }}>Amount</span>
+                    {/* Spacer for icon column */}
+                    <div style={{ width: 36, flexShrink: 0, marginRight: 16 }} />
+                    <span style={{ width: 80, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', flexShrink: 0 }}>Date</span>
+                    <span style={{ flex: 1.5, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', minWidth: 0, paddingLeft: 4 }}>Friend</span>
+                    <span style={{ flex: 1.2, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', minWidth: 0, paddingLeft: 4 }}>Category</span>
+                    <span style={{ width: 130, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', textAlign: 'center', flexShrink: 0 }}>Status</span>
+                    <span style={{ width: 100, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', textAlign: 'right', flexShrink: 0 }}>Amount</span>
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
@@ -555,22 +959,22 @@ export default function RecentActivityPage() {
                                 border: '1px solid rgba(0,0,0,0.06)',
                               }}>
                                 <StatusIcon size={13} style={{ color: statusCfg.color }} />
-                                <span style={{ fontSize: 11, fontWeight: 600, color: statusCfg.color, textTransform: 'capitalize' }}>{status}</span>
+                                <span style={{ fontSize: 11, fontWeight: 600, color: statusCfg.color, textTransform: 'capitalize' }}>{status?.replace(/_/g, ' ')}</span>
                               </div>
                             )}
                           </div>
 
                           {/* Desktop layout — shown on large screens */}
-                          <span className="activity-desktop-date" style={{ display: 'none', width: 70, fontSize: 12, fontWeight: 500, color: '#787776', flexShrink: 0 }}>
+                          <span className="activity-desktop-date" style={{ display: 'none', width: 80, fontSize: 12, fontWeight: 500, color: '#787776', flexShrink: 0 }}>
                             {dateDisplay}
                           </span>
-                          <div className="activity-desktop-friend" style={{ display: 'none', flex: 1.2, minWidth: 0, alignItems: 'center', gap: 8 }}>
+                          <div className="activity-desktop-friend" style={{ display: 'none', flex: 1.5, minWidth: 0, alignItems: 'center', gap: 8, paddingLeft: 4 }}>
                             <span style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{friendName}</span>
                           </div>
-                          <div className="activity-desktop-category" style={{ display: 'none', flex: 1, minWidth: 0, alignItems: 'center', gap: 6 }}>
+                          <div className="activity-desktop-category" style={{ display: 'none', flex: 1.2, minWidth: 0, alignItems: 'center', gap: 6, paddingLeft: 4 }}>
                             <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918' }}>{catDisplay.label}</span>
                           </div>
-                          <div className="activity-desktop-status" style={{ display: 'none', width: 110, justifyContent: 'center', flexShrink: 0 }}>
+                          <div className="activity-desktop-status" style={{ display: 'none', width: 130, justifyContent: 'center', flexShrink: 0 }}>
                             {statusCfg && StatusIcon && (
                               <div style={{
                                 display: 'inline-flex', alignItems: 'center', gap: 5, padding: '4px 10px',
@@ -578,11 +982,11 @@ export default function RecentActivityPage() {
                                 border: '1px solid rgba(0,0,0,0.06)',
                               }}>
                                 <StatusIcon size={12} style={{ color: statusCfg.color }} />
-                                <span style={{ fontSize: 11, fontWeight: 600, color: statusCfg.color, textTransform: 'capitalize' }}>{status}</span>
+                                <span style={{ fontSize: 11, fontWeight: 600, color: statusCfg.color, textTransform: 'capitalize' }}>{status?.replace(/_/g, ' ')}</span>
                               </div>
                             )}
                           </div>
-                          <span className="activity-desktop-amount" style={{ display: 'none', width: 90, fontSize: 13, fontWeight: 600, color: '#1A1918', textAlign: 'right', flexShrink: 0 }}>
+                          <span className="activity-desktop-amount" style={{ display: 'none', width: 100, fontSize: 13, fontWeight: 600, color: '#1A1918', textAlign: 'right', flexShrink: 0 }}>
                             {amount}
                           </span>
                         </div>
@@ -599,7 +1003,7 @@ export default function RecentActivityPage() {
             @media (min-width: 900px) {
               .activity-table-header { display: flex !important; }
               .activity-row { gap: 0 !important; }
-              .activity-row > div:first-child { margin-right: 12px; }
+              .activity-row > div:first-child { margin-right: 16px; }
               .activity-mobile-content { display: none !important; }
               .activity-mobile-status { display: none !important; }
               .activity-desktop-date { display: block !important; }

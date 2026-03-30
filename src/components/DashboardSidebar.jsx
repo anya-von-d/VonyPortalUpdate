@@ -214,6 +214,18 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
           Loan Documents
         </Link>
       </nav>
+      {/* User profile at bottom */}
+      <div style={{ padding: '16px 20px', borderTop: '1px solid rgba(0,0,0,0.06)' }}>
+        <Link to={createPageUrl("Profile")} style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
+          <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#678AFB', color: 'white', fontWeight: 600, fontSize: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            {avatarInitial}
+          </div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.full_name || 'User'}</div>
+            <div style={{ fontSize: 11, color: '#787776' }}>View profile</div>
+          </div>
+        </Link>
+      </div>
     </aside>
   );
 }
