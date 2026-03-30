@@ -5,6 +5,7 @@ import { Payment, Loan, PublicProfile, LoanAgreement, Friendship } from "@/entit
 import { useAuth } from "@/lib/AuthContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import DashboardSidebar from "@/components/DashboardSidebar";
 import {
   CheckCircle,
   XCircle,
@@ -44,6 +45,17 @@ const PAYMENT_METHOD_ICONS = {
   bank: { icon: CreditCard, color: 'text-slate-500', label: 'Bank Transfer' },
   other: { icon: DollarSign, color: 'text-gray-500', label: 'Other' },
 };
+
+const STAR_CIRCLES = [
+  {cx:82,cy:45,o:0.7},{cx:195,cy:112,o:0.5},{cx:310,cy:28,o:0.8},{cx:420,cy:198,o:0.4},
+  {cx:530,cy:67,o:0.65},{cx:640,cy:245,o:0.55},{cx:755,cy:88,o:0.75},{cx:860,cy:156,o:0.45},
+  {cx:970,cy:34,o:0.7},{cx:1085,cy:201,o:0.6},{cx:1190,cy:78,o:0.5},{cx:1300,cy:267,o:0.7},
+  {cx:1410,cy:45,o:0.55},{cx:1520,cy:134,o:0.65},{cx:48,cy:189,o:0.4},{cx:158,cy:278,o:0.6},
+  {cx:268,cy:156,o:0.5},{cx:378,cy:89,o:0.7},{cx:488,cy:234,o:0.45},{cx:598,cy:145,o:0.6},
+  {cx:708,cy:312,o:0.35},{cx:818,cy:56,o:0.75},{cx:928,cy:223,o:0.5},{cx:1038,cy:98,o:0.65},
+  {cx:1148,cy:289,o:0.4},{cx:1258,cy:167,o:0.7},{cx:1368,cy:234,o:0.55},{cx:1478,cy:78,o:0.6},
+  {cx:1560,cy:256,o:0.45},{cx:125,cy:312,o:0.5},{cx:345,cy:267,o:0.6},{cx:565,cy:34,o:0.75},
+];
 
 export default function Requests() {
   const { user: authUser, userProfile } = useAuth();
@@ -472,392 +484,395 @@ export default function Requests() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen" style={{ backgroundColor: '#CDE7F8' }}>
-        <div className="px-4 pt-8 pb-8 sm:px-8 md:px-24 md:pt-12 lg:px-36">
-          <div className="max-w-4xl mx-auto flex items-center justify-center py-20">
-            <div className="w-8 h-8 border-2 border-[#4C7FC4] border-t-transparent rounded-full animate-spin" />
-          </div>
+      <div style={{ minHeight: '100vh', background: '#F7F7F7', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ width: 32, height: 32, border: '2px solid #678AFB', borderTopColor: 'transparent', borderRadius: '50%', margin: '0 auto 16px' }} className="animate-spin" />
+          <p style={{ fontSize: 14, color: '#787776', fontFamily: "'DM Sans', sans-serif" }}>Loading notifications...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#CDE7F8' }}>
-      <div className="px-4 pt-8 pb-8 sm:px-8 md:px-24 md:pt-12 lg:px-36">
-        <div className="max-w-4xl mx-auto space-y-5">
-          {/* Header */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#213B75] tracking-tight font-sans">
-              Notifications
-            </h1>
-          </motion.div>
+    <div className="home-with-sidebar" style={{ minHeight: '100vh', background: '#F7F7F7', paddingLeft: 240, fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5 }}>
+      <DashboardSidebar activePage="Requests" user={user} />
+      <div style={{ position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 520, background: 'linear-gradient(180deg, #527DFF 0%, #5580FF 5%, #678AFB 13%, #7792F4 22%, #8C9BEE 32%, #A19EEB 42%, #A79DEA 50%, #BB98E8 58%, #C89CE6 65%, #D4A0E4 72%, #DDA5E2 76%, #F0D8EA 80%, #F7F7F7 84%)', zIndex: 0 }} />
+        <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: 320, zIndex: 1, opacity: 0.6 }} viewBox="0 0 1617 329" fill="none">
+          <defs><radialGradient id="reqStarGlow"><stop offset="0%" stopColor="#EAF9F3"/><stop offset="100%" stopColor="#9FEBFB"/></radialGradient></defs>
+          {STAR_CIRCLES.map((s, i) => <circle key={i} cx={s.cx} cy={s.cy} r="1.75" fill="url(#reqStarGlow)" opacity={s.o}/>)}
+        </svg>
+        <div className="twinkle-star" /><div className="twinkle-star" /><div className="twinkle-star" /><div className="twinkle-star" /><div className="twinkle-star" />
 
-          {/* Reminders Box */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.05 }}
-          >
-            <div className="rounded-xl px-4 py-4 shadow-sm bg-white">
-              <p className="text-sm font-bold text-[#213B75] mb-3 tracking-tight font-sans">
-                Reminders
-              </p>
+        <div style={{ position: 'relative', zIndex: 10, maxWidth: 1080, margin: '0 auto', padding: '0 28px' }}>
+          {/* Hero */}
+          <div style={{ paddingTop: 80, paddingBottom: 20, textAlign: 'center' }}>
+            <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '3.2rem', fontWeight: 600, letterSpacing: '-0.02em', lineHeight: 1.1, color: 'white', margin: 0 }}>Notifications</h1>
+          </div>
 
-              {reminders.length === 0 ? (
-                <div className="text-center py-6">
-                  <Bell className="w-10 h-10 mx-auto mb-2 text-[#CDE7F8]" />
-                  <p className="text-[#4C7FC4] text-sm font-sans">No reminders right now</p>
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  {reminders.map((reminder, index) => {
-                    const isOverdue = reminder.type.startsWith('overdue');
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 20, paddingBottom: 60 }}>
+            {/* Reminders Box */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.05 }}
+            >
+              <div className="glass-card" style={{ padding: '20px 24px' }}>
+                <p style={{ fontSize: 15, fontWeight: 600, color: '#0D0D0C', letterSpacing: '-0.02em', marginBottom: 12 }}>
+                  Reminders
+                </p>
+
+                {reminders.length === 0 ? (
+                  <div style={{ textAlign: 'center', padding: '24px 0' }}>
+                    <Bell style={{ width: 40, height: 40, margin: '0 auto 8px', color: '#C7C6C4' }} />
+                    <p style={{ color: '#787776', fontSize: 14 }}>No reminders right now</p>
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {reminders.map((reminder, index) => {
+                      const isOverdue = reminder.type.startsWith('overdue');
+                      return (
+                        <motion.div
+                          key={reminder.id}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.05 }}
+                          style={{ padding: 12, borderRadius: 8, background: isOverdue ? 'rgba(232,114,110,0.06)' : 'rgba(103,138,251,0.06)' }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <p style={{ fontSize: 14, fontWeight: 600, color: isOverdue ? '#E8726E' : '#1A1918' }}>
+                                {reminder.title}
+                              </p>
+                              <p style={{ fontSize: 12, marginTop: 2, color: isOverdue ? '#E8726E' : '#787776' }}>
+                                {reminder.subtitle}
+                              </p>
+                            </div>
+                            <button
+                              onClick={() => {
+                                setSelectedLoanForPayment(reminder.loan);
+                                setShowPaymentModal(true);
+                              }}
+                              style={{ flexShrink: 0, padding: '6px 12px', borderRadius: 8, fontSize: 12, fontWeight: 600, border: 'none', cursor: 'pointer', whiteSpace: 'nowrap', background: isOverdue ? '#E8726E' : '#678AFB', color: 'white' }}
+                            >
+                              Record Payment
+                            </button>
+                          </div>
+                        </motion.div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </motion.div>
+
+            {/* Tab Navigation */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.07 }}
+            >
+              <div style={{ display: 'flex', gap: 8, overflowX: 'auto', padding: '4px 0' }}>
+                {tabs.map(tab => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    style={{
+                      padding: '6px 14px',
+                      borderRadius: 8,
+                      fontSize: 12,
+                      fontWeight: 600,
+                      border: 'none',
+                      cursor: 'pointer',
+                      whiteSpace: 'nowrap',
+                      transition: 'all 0.15s',
+                      background: activeTab === tab.id ? '#678AFB' : 'rgba(0,0,0,0.04)',
+                      color: activeTab === tab.id ? 'white' : '#787776',
+                    }}
+                  >
+                    <span className="hidden sm:inline">{tab.label}</span>
+                    <span className="sm:hidden">{tab.id === 'all' ? 'All' : tab.label.split(' ')[0]}</span>
+                    {tab.count > 0 && (
+                      <span style={{ marginLeft: 6, padding: '2px 6px', borderRadius: 9999, fontSize: 10, background: activeTab === tab.id ? 'rgba(255,255,255,0.2)' : 'white' }}>
+                        {tab.count}
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Requests Box */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+            >
+              <div className="glass-card" style={{ padding: '20px 24px' }}>
+                <p style={{ fontSize: 15, fontWeight: 600, color: '#0D0D0C', letterSpacing: '-0.02em', marginBottom: 12 }}>
+                  Requests
+                </p>
+
+                {(() => {
+                  // Build a unified list of all requests with timestamps for sorting
+                  const allItems = [];
+
+                  // Friend Requests
+                  if (activeTab === 'all' || activeTab === 'friends') {
+                    friendRequestsReceived.forEach(request => {
+                      const senderProfile = profiles.find(p => p.user_id === request.user_id);
+                      allItems.push({
+                        type: 'friend',
+                        id: `friend-${request.id}`,
+                        timestamp: new Date(request.created_at || 0),
+                        data: request,
+                        senderProfile,
+                      });
+                    });
+                  }
+
+                  // Loan Offers Received
+                  if (activeTab === 'all' || activeTab === 'offers') {
+                    loanOffersReceived.forEach(offer => {
+                      const lender = getUserById(offer.lender_id);
+                      allItems.push({
+                        type: 'offer_received',
+                        id: `offer-recv-${offer.id}`,
+                        timestamp: new Date(offer.created_at || 0),
+                        data: offer,
+                        otherProfile: lender,
+                      });
+                    });
+
+                    // Loan Offers Sent
+                    loanOffersSent.forEach(offer => {
+                      const borrower = getUserById(offer.borrower_id);
+                      allItems.push({
+                        type: 'offer_sent',
+                        id: `offer-sent-${offer.id}`,
+                        timestamp: new Date(offer.created_at || 0),
+                        data: offer,
+                        otherProfile: borrower,
+                      });
+                    });
+                  }
+
+                  // Payment Confirmations Needed
+                  if (activeTab === 'all' || activeTab === 'payments') {
+                    paymentsToConfirm.forEach(payment => {
+                      const methodInfo = getPaymentMethodInfo(payment.payment_method);
+                      const otherName = getOtherPartyName(payment);
+                      allItems.push({
+                        type: 'payment_confirm',
+                        id: `pmt-confirm-${payment.id}`,
+                        timestamp: new Date(payment.created_at || payment.payment_date || 0),
+                        data: payment,
+                        methodInfo,
+                        otherName,
+                      });
+                    });
+
+                    // Payments Awaiting Confirmation from Others
+                    paymentsAwaitingConfirmation.forEach(payment => {
+                      const methodInfo = getPaymentMethodInfo(payment.payment_method);
+                      const otherName = getOtherPartyName(payment, true);
+                      allItems.push({
+                        type: 'payment_awaiting',
+                        id: `pmt-await-${payment.id}`,
+                        timestamp: new Date(payment.created_at || payment.payment_date || 0),
+                        data: payment,
+                        methodInfo,
+                        otherName,
+                      });
+                    });
+                  }
+
+                  // Term Change Requests
+                  if (activeTab === 'all' || activeTab === 'terms') {
+                    termChangeRequests.forEach(loan => {
+                      allItems.push({
+                        type: 'term_change',
+                        id: `term-${loan.id}`,
+                        timestamp: new Date(loan.updated_at || loan.created_at || 0),
+                        data: loan,
+                        otherName: getLoanOtherParty(loan),
+                      });
+                    });
+                  }
+
+                  // Sort oldest to most recent
+                  allItems.sort((a, b) => a.timestamp - b.timestamp);
+
+                  if (allItems.length === 0) {
                     return (
-                      <motion.div
-                        key={reminder.id}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.05 }}
-                        className={`p-3 rounded-lg ${isOverdue ? 'bg-red-50' : 'bg-[#CDE7F8]'}`}
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="flex-1 min-w-0">
-                            <p className={`text-sm font-semibold font-sans ${isOverdue ? 'text-red-700' : 'text-[#213B75]'}`}>
-                              {reminder.title}
-                            </p>
-                            <p className={`text-xs font-sans mt-0.5 ${isOverdue ? 'text-red-500' : 'text-[#4C7FC4]'}`}>
-                              {reminder.subtitle}
-                            </p>
-                          </div>
-                          <button
-                            onClick={() => {
-                              setSelectedLoanForPayment(reminder.loan);
-                              setShowPaymentModal(true);
-                            }}
-                            className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold font-sans transition-colors whitespace-nowrap ${
-                              isOverdue
-                                ? 'bg-red-600 text-white hover:bg-red-700'
-                                : 'bg-[#213B75] text-white hover:bg-[#1a3060]'
-                            }`}
-                          >
-                            Record Payment
-                          </button>
-                        </div>
-                      </motion.div>
+                      <div style={{ textAlign: 'center', padding: '32px 0' }}>
+                        <CheckCircle style={{ width: 40, height: 40, margin: '0 auto 8px', color: '#C7C6C4' }} />
+                        <p style={{ color: '#1A1918', fontWeight: 600, marginBottom: 4 }}>All caught up!</p>
+                        <p style={{ color: '#787776', fontSize: 14 }}>You have no pending requests to review.</p>
+                      </div>
                     );
-                  })}
-                </div>
-              )}
-            </div>
-          </motion.div>
+                  }
 
-          {/* Tab Navigation — between Reminders and Requests */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.07 }}
-          >
-            <div className="flex gap-2 overflow-x-auto py-1">
-              {tabs.map(tab => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold font-sans transition-all whitespace-nowrap ${
-                    activeTab === tab.id
-                      ? 'bg-[#213B75] text-white'
-                      : 'bg-[#CDE7F8] text-[#4C7FC4] hover:bg-[#b8daf3]'
-                  }`}
-                >
-                  <span className="hidden sm:inline">{tab.label}</span>
-                  <span className="sm:hidden">{tab.id === 'all' ? 'All' : tab.label.split(' ')[0]}</span>
-                  {tab.count > 0 && (
-                    <span className={`ml-1.5 px-1.5 py-0.5 rounded-full text-[10px] ${
-                      activeTab === tab.id ? 'bg-white/20' : 'bg-white'
-                    }`}>
-                      {tab.count}
-                    </span>
-                  )}
-                </button>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* Requests Box — all request types combined, sorted oldest to newest */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-          >
-            <div className="rounded-xl px-4 py-4 shadow-sm bg-white">
-              <p className="text-sm font-bold text-[#213B75] mb-3 tracking-tight font-sans">
-                Requests
-              </p>
-
-              {(() => {
-                // Build a unified list of all requests with timestamps for sorting
-                const allItems = [];
-
-                // Friend Requests
-                if (activeTab === 'all' || activeTab === 'friends') {
-                  friendRequestsReceived.forEach(request => {
-                    const senderProfile = profiles.find(p => p.user_id === request.user_id);
-                    allItems.push({
-                      type: 'friend',
-                      id: `friend-${request.id}`,
-                      timestamp: new Date(request.created_at || 0),
-                      data: request,
-                      senderProfile,
-                    });
-                  });
-                }
-
-                // Loan Offers Received
-                if (activeTab === 'all' || activeTab === 'offers') {
-                  loanOffersReceived.forEach(offer => {
-                    const lender = getUserById(offer.lender_id);
-                    allItems.push({
-                      type: 'offer_received',
-                      id: `offer-recv-${offer.id}`,
-                      timestamp: new Date(offer.created_at || 0),
-                      data: offer,
-                      otherProfile: lender,
-                    });
-                  });
-
-                  // Loan Offers Sent
-                  loanOffersSent.forEach(offer => {
-                    const borrower = getUserById(offer.borrower_id);
-                    allItems.push({
-                      type: 'offer_sent',
-                      id: `offer-sent-${offer.id}`,
-                      timestamp: new Date(offer.created_at || 0),
-                      data: offer,
-                      otherProfile: borrower,
-                    });
-                  });
-                }
-
-                // Payment Confirmations Needed
-                if (activeTab === 'all' || activeTab === 'payments') {
-                  paymentsToConfirm.forEach(payment => {
-                    const methodInfo = getPaymentMethodInfo(payment.payment_method);
-                    const otherName = getOtherPartyName(payment);
-                    allItems.push({
-                      type: 'payment_confirm',
-                      id: `pmt-confirm-${payment.id}`,
-                      timestamp: new Date(payment.created_at || payment.payment_date || 0),
-                      data: payment,
-                      methodInfo,
-                      otherName,
-                    });
-                  });
-
-                  // Payments Awaiting Confirmation from Others
-                  paymentsAwaitingConfirmation.forEach(payment => {
-                    const methodInfo = getPaymentMethodInfo(payment.payment_method);
-                    const otherName = getOtherPartyName(payment, true);
-                    allItems.push({
-                      type: 'payment_awaiting',
-                      id: `pmt-await-${payment.id}`,
-                      timestamp: new Date(payment.created_at || payment.payment_date || 0),
-                      data: payment,
-                      methodInfo,
-                      otherName,
-                    });
-                  });
-                }
-
-                // Term Change Requests
-                if (activeTab === 'all' || activeTab === 'terms') {
-                  termChangeRequests.forEach(loan => {
-                    allItems.push({
-                      type: 'term_change',
-                      id: `term-${loan.id}`,
-                      timestamp: new Date(loan.updated_at || loan.created_at || 0),
-                      data: loan,
-                      otherName: getLoanOtherParty(loan),
-                    });
-                  });
-                }
-
-                // Sort oldest to most recent
-                allItems.sort((a, b) => a.timestamp - b.timestamp);
-
-                if (allItems.length === 0) {
                   return (
-                    <div className="text-center py-8">
-                      <CheckCircle className="w-10 h-10 mx-auto mb-2 text-[#CDE7F8]" />
-                      <p className="text-[#213B75] font-semibold font-sans mb-1">All caught up!</p>
-                      <p className="text-[#4C7FC4] text-sm font-sans">You have no pending requests to review.</p>
-                    </div>
-                  );
-                }
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                      {allItems.map((item, index) => (
+                        <motion.div
+                          key={item.id}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.03 }}
+                          style={{ padding: 12, borderRadius: 8, background: 'rgba(0,0,0,0.03)' }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              {/* Friend Request */}
+                              {item.type === 'friend' && (
+                                <p style={{ fontSize: 14, fontWeight: 600, color: '#1A1918' }}>
+                                  @{item.senderProfile?.username || 'unknown'} sent you a friend request
+                                </p>
+                              )}
 
-                return (
-                  <div className="space-y-2">
-                    {allItems.map((item, index) => (
-                      <motion.div
-                        key={item.id}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.03 }}
-                        className="p-3 rounded-lg bg-[#CDE7F8]"
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="flex-1 min-w-0">
-                            {/* Friend Request */}
-                            {item.type === 'friend' && (
-                              <p className="text-sm font-semibold text-[#213B75] font-sans">
-                                @{item.senderProfile?.username || 'unknown'} sent you a friend request
-                              </p>
-                            )}
+                              {/* Loan Offer Received */}
+                              {item.type === 'offer_received' && (
+                                <p style={{ fontSize: 14, fontWeight: 600, color: '#1A1918' }}>
+                                  @{item.otherProfile?.username || 'unknown'} sent you a loan offer
+                                </p>
+                              )}
 
-                            {/* Loan Offer Received */}
-                            {item.type === 'offer_received' && (
-                              <p className="text-sm font-semibold text-[#213B75] font-sans">
-                                @{item.otherProfile?.username || 'unknown'} sent you a loan offer
-                              </p>
-                            )}
+                              {/* Loan Offer Sent */}
+                              {item.type === 'offer_sent' && (
+                                <p style={{ fontSize: 14, fontWeight: 600, color: '#1A1918' }}>
+                                  You sent @{item.otherProfile?.username || 'unknown'} a loan offer
+                                </p>
+                              )}
 
-                            {/* Loan Offer Sent */}
-                            {item.type === 'offer_sent' && (
-                              <p className="text-sm font-semibold text-[#213B75] font-sans">
-                                You sent @{item.otherProfile?.username || 'unknown'} a loan offer
-                              </p>
-                            )}
+                              {/* Payment Confirmation Needed */}
+                              {item.type === 'payment_confirm' && (
+                                <p style={{ fontSize: 14, fontWeight: 600, color: '#1A1918' }}>
+                                  Confirm payment of ${item.data.amount?.toFixed(2)} from @{item.otherName} via {item.methodInfo.label}
+                                </p>
+                              )}
 
-                            {/* Payment Confirmation Needed */}
-                            {item.type === 'payment_confirm' && (
-                              <p className="text-sm font-semibold text-[#213B75] font-sans">
-                                Confirm payment of ${item.data.amount?.toFixed(2)} from @{item.otherName} via {item.methodInfo.label}
-                              </p>
-                            )}
+                              {/* Payment Awaiting Confirmation */}
+                              {item.type === 'payment_awaiting' && (
+                                <p style={{ fontSize: 14, fontWeight: 600, color: '#1A1918' }}>
+                                  Confirm payment of ${item.data.amount?.toFixed(2)} to @{item.otherName} via {item.methodInfo.label}
+                                </p>
+                              )}
 
-                            {/* Payment Awaiting Confirmation */}
-                            {item.type === 'payment_awaiting' && (
-                              <p className="text-sm font-semibold text-[#213B75] font-sans">
-                                Confirm payment of ${item.data.amount?.toFixed(2)} to @{item.otherName} via {item.methodInfo.label}
-                              </p>
-                            )}
+                              {/* Term Change Request */}
+                              {item.type === 'term_change' && (
+                                <p style={{ fontSize: 14, fontWeight: 600, color: '#1A1918' }}>
+                                  @{item.otherName} sent you a loan change request
+                                </p>
+                              )}
+                            </div>
 
-                            {/* Term Change Request */}
-                            {item.type === 'term_change' && (
-                              <p className="text-sm font-semibold text-[#213B75] font-sans">
-                                @{item.otherName} sent you a loan change request
-                              </p>
-                            )}
-                          </div>
-
-                          {/* Action Buttons */}
-                          <div className="flex-shrink-0">
-                            {/* Friend Request → Go to Friends page */}
-                            {item.type === 'friend' && (
-                              <Link
-                                to={createPageUrl("Friends")}
-                                className="bg-[#213B75] rounded-lg px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#1a3060] transition-colors font-sans inline-block"
-                              >
-                                View Friends
-                              </Link>
-                            )}
-
-                            {/* Loan Offer Received → View Offer (opens signature modal) */}
-                            {item.type === 'offer_received' && (
-                              <button
-                                onClick={() => {
-                                  setSelectedOffer(item.data);
-                                  setShowSignatureModal(true);
-                                }}
-                                disabled={processingId === item.data.id}
-                                className="bg-[#213B75] rounded-lg px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#1a3060] transition-colors disabled:opacity-50 font-sans"
-                              >
-                                View Offer
-                              </button>
-                            )}
-
-                            {/* Loan Offer Sent → Cancel + View */}
-                            {item.type === 'offer_sent' && (
-                              <div className="flex items-center gap-2">
-                                <button
-                                  onClick={() => setConfirmingDeleteOffer(item.data)}
-                                  disabled={processingId === item.data.id}
-                                  className="bg-white rounded-lg px-3 py-1.5 text-xs font-semibold text-red-500 hover:bg-red-50 transition-colors disabled:opacity-50 font-sans"
+                            {/* Action Buttons */}
+                            <div style={{ flexShrink: 0 }}>
+                              {/* Friend Request */}
+                              {item.type === 'friend' && (
+                                <Link
+                                  to={createPageUrl("Friends")}
+                                  style={{ background: '#678AFB', color: 'white', borderRadius: 8, padding: '6px 12px', fontSize: 11, fontWeight: 600, textDecoration: 'none', display: 'inline-block' }}
                                 >
-                                  Cancel
-                                </button>
+                                  View Friends
+                                </Link>
+                              )}
+
+                              {/* Loan Offer Received */}
+                              {item.type === 'offer_received' && (
                                 <button
                                   onClick={() => {
                                     setSelectedOffer(item.data);
                                     setShowSignatureModal(true);
                                   }}
-                                  className="bg-[#213B75] rounded-lg px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#1a3060] transition-colors font-sans"
+                                  disabled={processingId === item.data.id}
+                                  style={{ background: '#678AFB', color: 'white', borderRadius: 8, padding: '6px 12px', fontSize: 11, fontWeight: 600, border: 'none', cursor: 'pointer', opacity: processingId === item.data.id ? 0.5 : 1 }}
                                 >
                                   View Offer
                                 </button>
-                              </div>
-                            )}
+                              )}
 
-                            {/* Payment Confirmation → View Payment (opens popup) */}
-                            {item.type === 'payment_confirm' && (
-                              <button
-                                onClick={() => setViewingPayment({ payment: item.data, direction: 'confirm' })}
-                                disabled={processingId === item.data.id}
-                                className="bg-[#213B75] rounded-lg px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#1a3060] transition-colors disabled:opacity-50 font-sans"
-                              >
-                                View Payment
-                              </button>
-                            )}
+                              {/* Loan Offer Sent */}
+                              {item.type === 'offer_sent' && (
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                  <button
+                                    onClick={() => setConfirmingDeleteOffer(item.data)}
+                                    disabled={processingId === item.data.id}
+                                    style={{ background: 'rgba(0,0,0,0.05)', color: '#E8726E', borderRadius: 8, padding: '6px 12px', fontSize: 11, fontWeight: 600, border: 'none', cursor: 'pointer', opacity: processingId === item.data.id ? 0.5 : 1 }}
+                                  >
+                                    Cancel
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      setSelectedOffer(item.data);
+                                      setShowSignatureModal(true);
+                                    }}
+                                    style={{ background: '#678AFB', color: 'white', borderRadius: 8, padding: '6px 12px', fontSize: 11, fontWeight: 600, border: 'none', cursor: 'pointer' }}
+                                  >
+                                    View Offer
+                                  </button>
+                                </div>
+                              )}
 
-                            {/* Payment Awaiting → View Payment (opens popup) */}
-                            {item.type === 'payment_awaiting' && (
-                              <button
-                                onClick={() => setViewingPayment({ payment: item.data, direction: 'awaiting' })}
-                                disabled={processingId === item.data.id}
-                                className="bg-[#213B75] rounded-lg px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#1a3060] transition-colors disabled:opacity-50 font-sans"
-                              >
-                                View Payment
-                              </button>
-                            )}
+                              {/* Payment Confirmation */}
+                              {item.type === 'payment_confirm' && (
+                                <button
+                                  onClick={() => setViewingPayment({ payment: item.data, direction: 'confirm' })}
+                                  disabled={processingId === item.data.id}
+                                  style={{ background: '#678AFB', color: 'white', borderRadius: 8, padding: '6px 12px', fontSize: 11, fontWeight: 600, border: 'none', cursor: 'pointer', opacity: processingId === item.data.id ? 0.5 : 1 }}
+                                >
+                                  View Payment
+                                </button>
+                              )}
 
-                            {/* Term Change → View Request */}
-                            {item.type === 'term_change' && (
-                              <button
-                                onClick={() => {
-                                  // Scroll to or expand the term change details inline
-                                  // For now, approve/reject in a simple popup-like expand
-                                  setViewingPayment({ termChange: item.data, direction: 'term' });
-                                }}
-                                disabled={processingId === item.data.id}
-                                className="bg-[#213B75] rounded-lg px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#1a3060] transition-colors disabled:opacity-50 font-sans"
-                              >
-                                View Request
-                              </button>
-                            )}
+                              {/* Payment Awaiting */}
+                              {item.type === 'payment_awaiting' && (
+                                <button
+                                  onClick={() => setViewingPayment({ payment: item.data, direction: 'awaiting' })}
+                                  disabled={processingId === item.data.id}
+                                  style={{ background: '#678AFB', color: 'white', borderRadius: 8, padding: '6px 12px', fontSize: 11, fontWeight: 600, border: 'none', cursor: 'pointer', opacity: processingId === item.data.id ? 0.5 : 1 }}
+                                >
+                                  View Payment
+                                </button>
+                              )}
+
+                              {/* Term Change */}
+                              {item.type === 'term_change' && (
+                                <button
+                                  onClick={() => {
+                                    setViewingPayment({ termChange: item.data, direction: 'term' });
+                                  }}
+                                  disabled={processingId === item.data.id}
+                                  style={{ background: '#678AFB', color: 'white', borderRadius: 8, padding: '6px 12px', fontSize: 11, fontWeight: 600, border: 'none', cursor: 'pointer', opacity: processingId === item.data.id ? 0.5 : 1 }}
+                                >
+                                  View Request
+                                </button>
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      </motion.div>
-                    ))}
-                  </div>
-                );
-              })()}
-            </div>
-          </motion.div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  );
+                })()}
+              </div>
+            </motion.div>
 
-          {/* Info Note */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className="text-center"
-          >
-            <p className="text-xs text-[#4C7FC4] flex items-center justify-center gap-1.5 font-sans">
-              <AlertCircle className="w-4 h-4" />
-              Requests require action from both parties to take effect
-            </p>
-          </motion.div>
+            {/* Info Note */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              style={{ textAlign: 'center' }}
+            >
+              <p style={{ fontSize: 12, color: '#787776', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+                <AlertCircle style={{ width: 16, height: 16 }} />
+                Requests require action from both parties to take effect
+              </p>
+            </motion.div>
+          </div>
         </div>
       </div>
 
@@ -882,16 +897,16 @@ export default function Requests() {
                 <div className="p-2 bg-red-100 rounded-full">
                   <AlertTriangle className="w-5 h-5 text-red-600" />
                 </div>
-                <h3 className="font-semibold text-lg text-[#213B75] font-sans">Deny Payment?</h3>
+                <h3 style={{ fontWeight: 600, fontSize: 18, color: '#1A1918' }}>Deny Payment?</h3>
               </div>
-              <p className="text-sm text-[#4C7FC4] mb-6 font-sans">
+              <p style={{ fontSize: 14, color: '#787776', marginBottom: 24 }}>
                 Are you sure you want to deny this payment of ${confirmingDeny.amount?.toFixed(2)}? This action cannot be undone.
               </p>
               <div className="flex gap-3">
-                <button onClick={() => setConfirmingDeny(null)} className="flex-1 px-4 py-2 rounded-lg bg-[#CDE7F8] text-[#213B75] text-sm font-semibold font-sans">
+                <button onClick={() => setConfirmingDeny(null)} style={{ flex: 1, padding: '8px 16px', borderRadius: 8, background: 'rgba(0,0,0,0.05)', color: '#1A1918', fontSize: 14, fontWeight: 600, border: 'none', cursor: 'pointer' }}>
                   Cancel
                 </button>
-                <button onClick={handleDenyPayment} className="flex-1 px-4 py-2 rounded-lg bg-red-600 text-white text-sm font-semibold font-sans hover:bg-red-700">
+                <button onClick={handleDenyPayment} style={{ flex: 1, padding: '8px 16px', borderRadius: 8, background: '#dc2626', color: 'white', fontSize: 14, fontWeight: 600, border: 'none', cursor: 'pointer' }}>
                   Deny Payment
                 </button>
               </div>
@@ -920,16 +935,16 @@ export default function Requests() {
                 <div className="p-2 bg-amber-100 rounded-full">
                   <AlertTriangle className="w-5 h-5 text-amber-600" />
                 </div>
-                <h3 className="font-semibold text-lg text-[#213B75] font-sans">Cancel Payment?</h3>
+                <h3 style={{ fontWeight: 600, fontSize: 18, color: '#1A1918' }}>Cancel Payment?</h3>
               </div>
-              <p className="text-sm text-[#4C7FC4] mb-6 font-sans">
+              <p style={{ fontSize: 14, color: '#787776', marginBottom: 24 }}>
                 Are you sure you want to cancel this payment of ${confirmingCancel.amount?.toFixed(2)}? This will remove the payment record.
               </p>
               <div className="flex gap-3">
-                <button onClick={() => setConfirmingCancel(null)} className="flex-1 px-4 py-2 rounded-lg bg-[#CDE7F8] text-[#213B75] text-sm font-semibold font-sans">
+                <button onClick={() => setConfirmingCancel(null)} style={{ flex: 1, padding: '8px 16px', borderRadius: 8, background: 'rgba(0,0,0,0.05)', color: '#1A1918', fontSize: 14, fontWeight: 600, border: 'none', cursor: 'pointer' }}>
                   Keep
                 </button>
-                <button onClick={handleCancelPayment} className="flex-1 px-4 py-2 rounded-lg bg-amber-600 text-white text-sm font-semibold font-sans hover:bg-amber-700">
+                <button onClick={handleCancelPayment} style={{ flex: 1, padding: '8px 16px', borderRadius: 8, background: '#d97706', color: 'white', fontSize: 14, fontWeight: 600, border: 'none', cursor: 'pointer' }}>
                   Cancel Payment
                 </button>
               </div>
@@ -986,9 +1001,9 @@ export default function Requests() {
                 const otherName = getOtherPartyName(payment);
                 return (
                   <>
-                    <h3 className="font-semibold text-lg text-[#213B75] font-sans mb-1">Confirm Payment</h3>
-                    <p className="text-sm text-[#4C7FC4] font-sans mb-4">
-                      @{otherName} recorded a payment of <span className="font-bold text-[#213B75]">${payment.amount?.toFixed(2)}</span> via {methodInfo.label} on {format(new Date(payment.payment_date), 'MMM d, yyyy')}.
+                    <h3 style={{ fontWeight: 600, fontSize: 18, color: '#1A1918', marginBottom: 4 }}>Confirm Payment</h3>
+                    <p style={{ fontSize: 14, color: '#787776', marginBottom: 16 }}>
+                      @{otherName} recorded a payment of <span style={{ fontWeight: 700, color: '#1A1918' }}>${payment.amount?.toFixed(2)}</span> via {methodInfo.label} on {format(new Date(payment.payment_date), 'MMM d, yyyy')}.
                     </p>
                     <div className="flex gap-3">
                       <button
@@ -996,7 +1011,7 @@ export default function Requests() {
                           setConfirmingDeny(payment);
                           setViewingPayment(null);
                         }}
-                        className="flex-1 px-4 py-2 rounded-lg bg-[#CDE7F8] text-red-500 text-sm font-semibold font-sans hover:bg-red-50"
+                        style={{ flex: 1, padding: '8px 16px', borderRadius: 8, background: 'rgba(0,0,0,0.05)', color: '#E8726E', fontSize: 14, fontWeight: 600, border: 'none', cursor: 'pointer' }}
                       >
                         Deny
                       </button>
@@ -1006,7 +1021,7 @@ export default function Requests() {
                           setViewingPayment(null);
                         }}
                         disabled={processingId === payment.id}
-                        className="flex-1 px-4 py-2 rounded-lg bg-[#213B75] text-white text-sm font-semibold font-sans hover:bg-[#1a3060] disabled:opacity-50"
+                        style={{ flex: 1, padding: '8px 16px', borderRadius: 8, background: '#678AFB', color: 'white', fontSize: 14, fontWeight: 600, border: 'none', cursor: 'pointer', opacity: processingId === payment.id ? 0.5 : 1 }}
                       >
                         Confirm
                       </button>
@@ -1022,24 +1037,24 @@ export default function Requests() {
                 const otherName = getOtherPartyName(payment, true);
                 return (
                   <>
-                    <h3 className="font-semibold text-lg text-[#213B75] font-sans mb-1">Payment Details</h3>
-                    <p className="text-sm text-[#4C7FC4] font-sans mb-2">
-                      You recorded a payment of <span className="font-bold text-[#213B75]">${payment.amount?.toFixed(2)}</span> to @{otherName} via {methodInfo.label}.
+                    <h3 style={{ fontWeight: 600, fontSize: 18, color: '#1A1918', marginBottom: 4 }}>Payment Details</h3>
+                    <p style={{ fontSize: 14, color: '#787776', marginBottom: 8 }}>
+                      You recorded a payment of <span style={{ fontWeight: 700, color: '#1A1918' }}>${payment.amount?.toFixed(2)}</span> to @{otherName} via {methodInfo.label}.
                     </p>
-                    <p className="text-xs text-[#4C7FC4] font-sans mb-4">Waiting for @{otherName} to confirm.</p>
+                    <p style={{ fontSize: 12, color: '#787776', marginBottom: 16 }}>Waiting for @{otherName} to confirm.</p>
                     <div className="flex gap-3">
                       <button
                         onClick={() => {
                           setConfirmingCancel(payment);
                           setViewingPayment(null);
                         }}
-                        className="flex-1 px-4 py-2 rounded-lg bg-[#CDE7F8] text-red-500 text-sm font-semibold font-sans hover:bg-red-50"
+                        style={{ flex: 1, padding: '8px 16px', borderRadius: 8, background: 'rgba(0,0,0,0.05)', color: '#E8726E', fontSize: 14, fontWeight: 600, border: 'none', cursor: 'pointer' }}
                       >
                         Cancel Payment
                       </button>
                       <button
                         onClick={() => setViewingPayment(null)}
-                        className="flex-1 px-4 py-2 rounded-lg bg-[#213B75] text-white text-sm font-semibold font-sans hover:bg-[#1a3060]"
+                        style={{ flex: 1, padding: '8px 16px', borderRadius: 8, background: '#678AFB', color: 'white', fontSize: 14, fontWeight: 600, border: 'none', cursor: 'pointer' }}
                       >
                         Close
                       </button>
@@ -1054,14 +1069,14 @@ export default function Requests() {
                 const otherName = getLoanOtherParty(loan);
                 return (
                   <>
-                    <h3 className="font-semibold text-lg text-[#213B75] font-sans mb-1">Loan Change Request</h3>
-                    <p className="text-sm text-[#4C7FC4] font-sans mb-2">
+                    <h3 style={{ fontWeight: 600, fontSize: 18, color: '#1A1918', marginBottom: 4 }}>Loan Change Request</h3>
+                    <p style={{ fontSize: 14, color: '#787776', marginBottom: 8 }}>
                       @{otherName} wants to modify the terms of your ${loan.amount?.toLocaleString()} loan{loan.purpose ? ` for ${loan.purpose}` : ''}.
                     </p>
                     {loan.contract_modification_notes && (
-                      <div className="bg-[#CDE7F8] rounded-lg p-2.5 mb-4">
-                        <p className="text-xs font-medium text-[#4C7FC4] mb-0.5 font-sans">Proposed changes:</p>
-                        <p className="text-sm text-[#213B75] font-sans">{loan.contract_modification_notes}</p>
+                      <div style={{ background: 'rgba(103,138,251,0.08)', borderRadius: 8, padding: 10, marginBottom: 16 }}>
+                        <p style={{ fontSize: 12, fontWeight: 500, color: '#787776', marginBottom: 2 }}>Proposed changes:</p>
+                        <p style={{ fontSize: 14, color: '#1A1918' }}>{loan.contract_modification_notes}</p>
                       </div>
                     )}
                     <div className="flex gap-3">
@@ -1071,7 +1086,7 @@ export default function Requests() {
                           setViewingPayment(null);
                         }}
                         disabled={processingId === loan.id}
-                        className="flex-1 px-4 py-2 rounded-lg bg-[#CDE7F8] text-red-500 text-sm font-semibold font-sans hover:bg-red-50 disabled:opacity-50"
+                        style={{ flex: 1, padding: '8px 16px', borderRadius: 8, background: 'rgba(0,0,0,0.05)', color: '#E8726E', fontSize: 14, fontWeight: 600, border: 'none', cursor: 'pointer', opacity: processingId === loan.id ? 0.5 : 1 }}
                       >
                         Reject
                       </button>
@@ -1081,7 +1096,7 @@ export default function Requests() {
                           setViewingPayment(null);
                         }}
                         disabled={processingId === loan.id}
-                        className="flex-1 px-4 py-2 rounded-lg bg-[#213B75] text-white text-sm font-semibold font-sans hover:bg-[#1a3060] disabled:opacity-50"
+                        style={{ flex: 1, padding: '8px 16px', borderRadius: 8, background: '#678AFB', color: 'white', fontSize: 14, fontWeight: 600, border: 'none', cursor: 'pointer', opacity: processingId === loan.id ? 0.5 : 1 }}
                       >
                         Approve
                       </button>

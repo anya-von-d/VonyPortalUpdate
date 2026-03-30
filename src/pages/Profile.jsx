@@ -19,12 +19,25 @@ import {
   Image,
   Trash2,
   Landmark,
-  Clock
+  Clock,
+  User as UserIcon
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import PaymentMethodsConnect from "@/components/profile/PaymentMethodsConnect";
+import DashboardSidebar from "@/components/DashboardSidebar";
+
+const STAR_CIRCLES = [
+  {cx:82,cy:45,o:0.7},{cx:195,cy:112,o:0.5},{cx:310,cy:28,o:0.8},{cx:420,cy:198,o:0.4},
+  {cx:530,cy:67,o:0.65},{cx:640,cy:245,o:0.55},{cx:755,cy:88,o:0.75},{cx:860,cy:156,o:0.45},
+  {cx:970,cy:34,o:0.7},{cx:1085,cy:201,o:0.6},{cx:1190,cy:78,o:0.5},{cx:1300,cy:267,o:0.7},
+  {cx:1410,cy:45,o:0.55},{cx:1520,cy:134,o:0.65},{cx:48,cy:189,o:0.4},{cx:158,cy:278,o:0.6},
+  {cx:268,cy:156,o:0.5},{cx:378,cy:89,o:0.7},{cx:488,cy:234,o:0.45},{cx:598,cy:145,o:0.6},
+  {cx:708,cy:312,o:0.35},{cx:818,cy:56,o:0.75},{cx:928,cy:223,o:0.5},{cx:1038,cy:98,o:0.65},
+  {cx:1148,cy:289,o:0.4},{cx:1258,cy:167,o:0.7},{cx:1368,cy:234,o:0.55},{cx:1478,cy:78,o:0.6},
+  {cx:1560,cy:256,o:0.45},{cx:125,cy:312,o:0.5},{cx:345,cy:267,o:0.6},{cx:565,cy:34,o:0.75},
+];
 
 // Helper function to sync public profile, moved here to adhere to file structure rules
 const syncPublicProfile = async (userData) => {
@@ -155,7 +168,7 @@ export default function Profile() {
       ...prev,
       [field]: value
     }));
-    
+
     // Check username availability when username changes
     if (field === 'username') {
       // Clear previous timeout if any
@@ -179,10 +192,10 @@ export default function Profile() {
         const { file_url } = await UploadFile({ file, userId: user?.id });
         setFormData(prev => ({...prev, profile_picture_url: file_url }));
         setUser(prev => ({...prev, profile_picture_url: file_url }));
-        
+
         // Save the profile picture to the database immediately
         await User.updateMyUserData({ profile_picture_url: file_url });
-        
+
         // Sync to public profile
         await syncPublicProfile({ ...user, profile_picture_url: file_url });
       } catch (error) {
@@ -200,10 +213,10 @@ export default function Profile() {
     try {
       setFormData(prev => ({...prev, profile_picture_url: '' }));
       setUser(prev => ({...prev, profile_picture_url: '' }));
-      
+
       // Save to database
       await User.updateMyUserData({ profile_picture_url: '' });
-      
+
       // Sync to public profile
       await syncPublicProfile({ ...user, profile_picture_url: '' });
     } catch (error) {
@@ -259,12 +272,10 @@ export default function Profile() {
   // Loading state
   if (isLoading) {
     return (
-      <div className="min-h-screen p-6 flex items-center justify-center" style={{background: `linear-gradient(to bottom right, rgb(var(--theme-bg-from)), rgb(var(--theme-bg-to)))`}}>
-        <div className="bg-[#DBFFEB] rounded-2xl p-8">
-          <div className="text-center">
-            <div className="w-8 h-8 border-2 border-green-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-slate-600">Loading profile...</p>
-          </div>
+      <div style={{ minHeight: '100vh', background: '#F7F7F7', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ width: 32, height: 32, border: '2px solid #678AFB', borderTopColor: 'transparent', borderRadius: '50%', margin: '0 auto 16px' }} className="animate-spin" />
+          <p style={{ fontSize: 14, color: '#787776', fontFamily: "'DM Sans', sans-serif" }}>Loading profile...</p>
         </div>
       </div>
     );
@@ -273,15 +284,15 @@ export default function Profile() {
   // Error state for initial load failure
   if (error && !user) {
     return (
-      <div className="min-h-screen p-6 flex items-center justify-center" style={{background: `linear-gradient(to bottom right, rgb(var(--theme-bg-from)), rgb(var(--theme-bg-to)))`}}>
-        <div className="bg-[#DBFFEB] rounded-2xl p-8 max-w-md">
-          <div className="text-center">
+      <div style={{ minHeight: '100vh', background: '#F7F7F7', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="glass-card" style={{ padding: 32, maxWidth: 400 }}>
+          <div style={{ textAlign: 'center' }}>
             <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <XCircle className="w-8 h-8 text-red-600" />
             </div>
-            <h3 className="text-lg font-semibold text-slate-800 mb-2">Connection Error</h3>
-            <p className="text-slate-600 mb-4">{error}</p>
-            <Button onClick={loadUserData} className="bg-[#00A86B] hover:bg-[#0D9B76] text-white">
+            <h3 style={{ fontSize: 18, fontWeight: 600, color: '#0D0D0C', marginBottom: 8 }}>Connection Error</h3>
+            <p style={{ color: '#787776', marginBottom: 16 }}>{error}</p>
+            <Button onClick={loadUserData} className="text-white hover:opacity-90" style={{ background: '#678AFB' }}>
               Try Again
             </Button>
           </div>
@@ -293,346 +304,357 @@ export default function Profile() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen p-3 md:p-6 overflow-x-hidden w-full max-w-full" style={{background: `linear-gradient(to bottom right, rgb(var(--theme-bg-from)), rgb(var(--theme-bg-to)))`}}>
-      <div className="max-w-4xl mx-auto space-y-7 overflow-hidden w-full">
-        {/* Error Alert */}
-        {error && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-red-50 border border-red-200 rounded-lg p-4"
-          >
-            <div className="flex items-center gap-2">
-              <XCircle className="w-5 h-5 text-red-600" />
-              <p className="text-red-800">{error}</p>
-            </div>
-          </motion.div>
-        )}
+    <div className="home-with-sidebar" style={{ minHeight: '100vh', background: '#F7F7F7', paddingLeft: 240, fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5 }}>
+      <DashboardSidebar activePage="Profile" user={user} />
+      <div style={{ position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 520, background: 'linear-gradient(180deg, #527DFF 0%, #5580FF 5%, #678AFB 13%, #7792F4 22%, #8C9BEE 32%, #A19EEB 42%, #A79DEA 50%, #BB98E8 58%, #C89CE6 65%, #D4A0E4 72%, #DDA5E2 76%, #F0D8EA 80%, #F7F7F7 84%)', zIndex: 0 }} />
+        <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: 320, zIndex: 1, opacity: 0.6 }} viewBox="0 0 1617 329" fill="none">
+          <defs><radialGradient id="profStarGlow"><stop offset="0%" stopColor="#EAF9F3"/><stop offset="100%" stopColor="#9FEBFB"/></radialGradient></defs>
+          {STAR_CIRCLES.map((s, i) => <circle key={i} cx={s.cx} cy={s.cy} r="1.75" fill="url(#profStarGlow)" opacity={s.o}/>)}
+        </svg>
+        <div className="twinkle-star" /><div className="twinkle-star" /><div className="twinkle-star" /><div className="twinkle-star" /><div className="twinkle-star" />
 
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="py-5"
-        >
-          <div className="flex flex-col items-center">
-          <div className="relative inline-block group">
-            <img
-              src={formData.profile_picture_url || `https://ui-avatars.com/api/?name=${encodeURIComponent((user.full_name || 'User').charAt(0))}&background=22c55e&color=fff&size=128`}
-              alt="Profile"
-              className="w-24 h-24 md:w-32 md:h-32 rounded-full mx-auto object-cover border-4 border-white shadow-lg"
-            />
-            <button
-              onClick={() => setShowPhotoMenu(!showPhotoMenu)}
-              className="absolute inset-0 w-full h-full bg-black/50 rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity"
-              disabled={isSaving}
-            >
-              <Camera className="w-8 h-8"/>
-            </button>
-            <input 
-              type="file" 
-              ref={fileInputRef} 
-              onChange={handleProfilePictureChange}
-              className="hidden" 
-              accept="image/*"
-            />
-            <input 
-              type="file" 
-              ref={cameraInputRef} 
-              onChange={handleProfilePictureChange}
-              className="hidden" 
-              accept="image/*"
-              capture="environment"
-            />
-            
-            {showPhotoMenu && (
+        <div style={{ position: 'relative', zIndex: 10, maxWidth: 900, margin: '0 auto', padding: '0 28px' }}>
+          {/* Hero - Profile Photo + Name */}
+          <div style={{ paddingTop: 80, paddingBottom: 30, textAlign: 'center' }}>
+            {/* Error Alert */}
+            {error && (
               <motion.div
-                ref={photoMenuRef}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="absolute top-full mt-2 left-1/2 -translate-x-1/2 bg-white rounded-lg shadow-lg border border-slate-200 overflow-hidden z-10"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-red-50 border border-red-200 rounded-lg p-4"
+                style={{ marginBottom: 20, textAlign: 'left' }}
               >
-                <button
-                  onClick={() => fileInputRef.current?.click()}
-                  className="flex items-center gap-3 px-4 py-3 w-full hover:bg-slate-50 transition-colors text-left"
-                >
-                  <Image className="w-5 h-5 text-slate-600" />
-                  <span className="text-sm font-medium text-slate-700">Choose from Library</span>
-                </button>
-                <button
-                  onClick={() => cameraInputRef.current?.click()}
-                  className="flex items-center gap-3 px-4 py-3 w-full hover:bg-slate-50 transition-colors text-left border-t border-slate-100"
-                >
-                  <Camera className="w-5 h-5 text-slate-600" />
-                  <span className="text-sm font-medium text-slate-700">Take Photo</span>
-                </button>
-                {formData.profile_picture_url && (
-                  <button
-                    onClick={handleRemovePhoto}
-                    className="flex items-center gap-3 px-4 py-3 w-full hover:bg-red-50 transition-colors text-left border-t border-slate-100"
-                  >
-                    <Trash2 className="w-5 h-5 text-red-600" />
-                    <span className="text-sm font-medium text-red-600">Remove Profile Photo</span>
-                  </button>
-                )}
+                <div className="flex items-center gap-2">
+                  <XCircle className="w-5 h-5 text-red-600" />
+                  <p className="text-red-800">{error}</p>
+                </div>
               </motion.div>
             )}
-          </div>
-          <h1 className="text-2xl md:text-4xl font-bold text-slate-800 mt-4 px-2 break-words">
-            {formData.full_name || user.full_name}
-          </h1>
-          <p className="text-base md:text-lg text-slate-600">
-            Member since {user.created_at ? new Date(user.created_at).getFullYear() : new Date().getFullYear()}
-          </p>
-          <Button
-            onClick={() => setShowPhotoMenu(!showPhotoMenu)}
-            disabled={isSaving}
-            className="mt-4 bg-[#00A86B] hover:bg-[#0D9B76] text-white font-semibold"
-          >
-            Edit Profile Photo
-          </Button>
-          </div>
-        </motion.div>
 
-        {/* Coming Soon Modal */}
-        <Dialog open={showComingSoonModal} onOpenChange={setShowComingSoonModal}>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2 text-xl">
-                <Clock className="w-6 h-6 text-green-600" />
-                Feature Coming Soon
-              </DialogTitle>
-            </DialogHeader>
-            <div className="py-4">
-              <p className="text-slate-600">
-                Bank account connections via Plaid & Dwolla are coming soon! This feature will enable secure bank transfers directly through Vony.
-              </p>
-              <p className="text-sm text-slate-500 mt-3">
-                In the meantime, you can use Venmo, Cash App, PayPal, or Zelle for payments.
-              </p>
-            </div>
-            <Button
-              onClick={() => setShowComingSoonModal(false)}
-              className="w-full bg-green-600 hover:bg-green-700"
-            >
-              Got it!
-            </Button>
-          </DialogContent>
-        </Dialog>
+            <div className="relative inline-block group">
+              <img
+                src={formData.profile_picture_url || `https://ui-avatars.com/api/?name=${encodeURIComponent((user.full_name || 'User').charAt(0))}&background=22c55e&color=fff&size=128`}
+                alt="Profile"
+                className="w-24 h-24 md:w-32 md:h-32 rounded-full mx-auto object-cover border-4 border-white/80 shadow-lg"
+              />
+              <button
+                onClick={() => setShowPhotoMenu(!showPhotoMenu)}
+                className="absolute inset-0 w-full h-full bg-black/50 rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                disabled={isSaving}
+              >
+                <Camera className="w-8 h-8"/>
+              </button>
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleProfilePictureChange}
+                className="hidden"
+                accept="image/*"
+              />
+              <input
+                type="file"
+                ref={cameraInputRef}
+                onChange={handleProfilePictureChange}
+                className="hidden"
+                accept="image/*"
+                capture="environment"
+              />
 
-        <div className="grid lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8 w-full">
-          {/* Profile Info */}
-          <div className="lg:col-span-2 space-y-4 md:space-y-6 min-w-0 w-full">
-            {/* Personal Information - First */}
-            <div className="bg-[#DBFFEB] rounded-2xl p-5 w-full">
-              <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
-                Personal Information
-              </p>
-
-              {/* Inner mint box with fields */}
-              <div className="bg-[#96FFD0] rounded-xl p-4 space-y-4">
-                <div className="grid md:grid-cols-2 gap-3 md:gap-4">
-                  <div className="space-y-1">
-                    <Label htmlFor="full_name" className="text-xs font-medium text-slate-600">
-                      Full Name
-                    </Label>
-                    <Input
-                      id="full_name"
-                      value={formData.full_name}
-                      disabled
-                      placeholder="Enter your full name"
-                      className="bg-white/70"
-                    />
-                  </div>
-
-                  <div className="space-y-1">
-                    <Label className="text-xs font-medium text-slate-600">
-                      Email
-                    </Label>
-                    <Input
-                      value={user.email || 'Not provided'}
-                      disabled
-                      className="bg-white/70"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-1">
-                  <Label htmlFor="username" className="text-xs font-medium text-slate-600">
-                    Username
-                  </Label>
-                  <Input
-                    id="username"
-                    value={formData.username}
-                    onChange={(e) => handleInputChange('username', e.target.value)}
-                    disabled={!isEditing || isSaving}
-                    placeholder="Choose a unique username"
-                    className={!isEditing ? 'bg-white/70' : usernameError ? 'border-red-300 bg-white' : 'bg-white'}
-                    required
-                  />
-                  {isCheckingUsername && (
-                    <p className="text-xs text-blue-600">Checking availability...</p>
-                  )}
-                  {usernameError && (
-                    <p className="text-xs text-red-600">{usernameError}</p>
-                  )}
-                  {isEditing && !usernameError && formData.username && formData.username !== user.username && !isCheckingUsername && (
-                    <p className="text-xs text-green-600">Username is available!</p>
-                  )}
-                </div>
-
-                <div className="grid md:grid-cols-2 gap-3 md:gap-4">
-                  <div className="space-y-1">
-                    <Label htmlFor="phone" className="text-xs font-medium text-slate-600">
-                      Phone Number
-                    </Label>
-                    <Input
-                      id="phone"
-                      value={formData.phone}
-                      onChange={(e) => handleInputChange('phone', e.target.value)}
-                      disabled={!isEditing || isSaving}
-                      placeholder="Enter your phone number"
-                      className={!isEditing ? 'bg-white/70' : 'bg-white'}
-                    />
-                  </div>
-
-                  <div className="space-y-1">
-                    <Label htmlFor="location" className="text-xs font-medium text-slate-600">
-                      Location
-                    </Label>
-                    <Input
-                      id="location"
-                      value={formData.location}
-                      onChange={(e) => handleInputChange('location', e.target.value)}
-                      disabled={!isEditing || isSaving}
-                      placeholder="City, State"
-                      className={!isEditing ? 'bg-white/70' : 'bg-white'}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Edit button below mint box, right-aligned, inside outer box */}
-              <div className="flex justify-end mt-4">
-                {isEditing ? (
-                  <div className="flex gap-3">
-                    <Button
-                      variant="outline"
-                      onClick={() => {
-                        setIsEditing(false);
-                        setFormData({
-                          full_name: user?.full_name || '',
-                          username: user?.username || '',
-                          phone: user?.phone || '',
-                          location: user?.location || '',
-                          profile_picture_url: user?.profile_picture_url || '',
-                          theme_preference: user?.theme_preference || 'morning'
-                        });
-                        setUsernameError(null);
-                      }}
-                      className="bg-white hover:bg-slate-50"
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      onClick={handleSave}
-                      disabled={isSaving || usernameError || isCheckingUsername}
-                      className="bg-[#00A86B] hover:bg-[#0D9B76] text-white font-semibold"
-                    >
-                      {isSaving ? 'Saving...' : 'Save Changes'}
-                    </Button>
-                  </div>
-                ) : (
-                  <Button
-                    onClick={() => setIsEditing(true)}
-                    className="bg-[#00A86B] hover:bg-[#0D9B76] text-white font-semibold"
-                  >
-                    Edit Personal Information
-                  </Button>
-                )}
-              </div>
-            </div>
-
-            {/* Payment Methods - Second */}
-            <PaymentMethodsConnect />
-          </div>
-
-          {/* Stats & Verification */}
-          <div className="space-y-4 md:space-y-6 min-w-0 w-full">
-            {/* Bank Account Connection */}
-            <div className="bg-[#DBFFEB] rounded-2xl p-5 w-full">
-              <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
-                Bank Account
-              </p>
-              <div className="space-y-4">
-                <p className="text-sm text-slate-600">
-                  Securely connect your bank account using Plaid & Dwolla to enable bank transfers.
-                </p>
-                <Button
-                  className="w-full bg-[#00A86B] hover:bg-[#0D9B76] text-white"
-                  onClick={() => setShowComingSoonModal(true)}
+              {showPhotoMenu && (
+                <motion.div
+                  ref={photoMenuRef}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="absolute top-full mt-2 left-1/2 -translate-x-1/2 bg-white rounded-lg shadow-lg border border-slate-200 overflow-hidden z-10"
                 >
-                  <Landmark className="w-4 h-4 mr-2" />
-                  Connect Bank Account
-                </Button>
-                <p className="text-xs text-slate-500 text-center">
-                  Powered by Plaid & Dwolla - Bank grade security
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    className="flex items-center gap-3 px-4 py-3 w-full hover:bg-slate-50 transition-colors text-left"
+                  >
+                    <Image className="w-5 h-5 text-slate-600" />
+                    <span className="text-sm font-medium text-slate-700">Choose from Library</span>
+                  </button>
+                  <button
+                    onClick={() => cameraInputRef.current?.click()}
+                    className="flex items-center gap-3 px-4 py-3 w-full hover:bg-slate-50 transition-colors text-left border-t border-slate-100"
+                  >
+                    <Camera className="w-5 h-5 text-slate-600" />
+                    <span className="text-sm font-medium text-slate-700">Take Photo</span>
+                  </button>
+                  {formData.profile_picture_url && (
+                    <button
+                      onClick={handleRemovePhoto}
+                      className="flex items-center gap-3 px-4 py-3 w-full hover:bg-red-50 transition-colors text-left border-t border-slate-100"
+                    >
+                      <Trash2 className="w-5 h-5 text-red-600" />
+                      <span className="text-sm font-medium text-red-600">Remove Profile Photo</span>
+                    </button>
+                  )}
+                </motion.div>
+              )}
+            </div>
+            <h1 style={{ color: 'white', fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '2.4rem', fontWeight: 600, marginTop: 16 }}>
+              {formData.full_name || user.full_name}
+            </h1>
+            <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: 13 }}>
+              Member since {user.created_at ? new Date(user.created_at).getFullYear() : new Date().getFullYear()}
+            </p>
+            <button
+              onClick={() => setShowPhotoMenu(!showPhotoMenu)}
+              disabled={isSaving}
+              style={{ background: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(10px)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', borderRadius: 10, padding: '8px 20px', fontSize: 13, fontWeight: 600, cursor: 'pointer', marginTop: 16 }}
+            >
+              Edit Profile Photo
+            </button>
+          </div>
+
+          {/* Coming Soon Modal */}
+          <Dialog open={showComingSoonModal} onOpenChange={setShowComingSoonModal}>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2 text-xl">
+                  <Clock className="w-6 h-6" style={{ color: '#678AFB' }} />
+                  Feature Coming Soon
+                </DialogTitle>
+              </DialogHeader>
+              <div className="py-4">
+                <p style={{ color: '#787776' }}>
+                  Bank account connections via Plaid & Dwolla are coming soon! This feature will enable secure bank transfers directly through Vony.
+                </p>
+                <p className="text-sm mt-3" style={{ color: '#787776' }}>
+                  In the meantime, you can use Venmo, Cash App, PayPal, or Zelle for payments.
                 </p>
               </div>
-            </div>
+              <Button
+                onClick={() => setShowComingSoonModal(false)}
+                className="w-full text-white hover:opacity-90"
+                style={{ background: '#678AFB' }}
+              >
+                Got it!
+              </Button>
+            </DialogContent>
+          </Dialog>
 
-            {/* Verification Status */}
-            <div className="bg-[#DBFFEB] rounded-2xl p-5 w-full">
-              <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
-                Verification
-              </p>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">Email Verified</span>
-                  <Badge className="bg-green-100 text-green-800 border-green-200">
-                    <CheckCircle className="w-3 h-3 mr-1" />
-                    Verified
-                  </Badge>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">Phone Verified</span>
-                  <Badge className="bg-gray-100 text-gray-800 border-gray-200">
-                    <XCircle className="w-3 h-3 mr-1" />
-                    Not Verified
-                  </Badge>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">Profile Complete</span>
-                  <Badge className={user.full_name && user.username ?
-                    "bg-green-100 text-green-800 border-green-200" :
-                    "bg-gray-100 text-gray-800 border-gray-200"
-                  }>
-                    {user.full_name && user.username ? (
-                      <>
-                        <CheckCircle className="w-3 h-3 mr-1" />
-                        Complete
-                      </>
-                    ) : (
-                      <>
-                        <XCircle className="w-3 h-3 mr-1" />
-                        Incomplete
-                      </>
+          {/* Page Content */}
+          <div className="grid lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8 w-full" style={{ paddingBottom: 40 }}>
+            {/* Profile Info */}
+            <div className="lg:col-span-2 space-y-4 md:space-y-6 min-w-0 w-full">
+              {/* Personal Information - First */}
+              <div className="glass-card" style={{ padding: '24px 26px' }}>
+                <p style={{ fontSize: 15, fontWeight: 600, color: '#0D0D0C', letterSpacing: '-0.02em', marginBottom: 16 }}>
+                  Personal Information
+                </p>
+
+                {/* Inner box with fields */}
+                <div className="space-y-4" style={{ background: 'rgba(103,138,251,0.06)', borderRadius: 12, padding: 16 }}>
+                  <div className="grid md:grid-cols-2 gap-3 md:gap-4">
+                    <div className="space-y-1">
+                      <Label htmlFor="full_name" className="text-xs font-medium" style={{ color: '#787776' }}>
+                        Full Name
+                      </Label>
+                      <Input
+                        id="full_name"
+                        value={formData.full_name}
+                        disabled
+                        placeholder="Enter your full name"
+                        style={{ background: 'rgba(0,0,0,0.03)' }}
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <Label className="text-xs font-medium" style={{ color: '#787776' }}>
+                        Email
+                      </Label>
+                      <Input
+                        value={user.email || 'Not provided'}
+                        disabled
+                        style={{ background: 'rgba(0,0,0,0.03)' }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-1">
+                    <Label htmlFor="username" className="text-xs font-medium" style={{ color: '#787776' }}>
+                      Username
+                    </Label>
+                    <Input
+                      id="username"
+                      value={formData.username}
+                      onChange={(e) => handleInputChange('username', e.target.value)}
+                      disabled={!isEditing || isSaving}
+                      placeholder="Choose a unique username"
+                      className={usernameError ? 'border-red-300' : ''}
+                      style={!isEditing ? { background: 'rgba(0,0,0,0.03)' } : {}}
+                      required
+                    />
+                    {isCheckingUsername && (
+                      <p className="text-xs text-blue-600">Checking availability...</p>
                     )}
-                  </Badge>
+                    {usernameError && (
+                      <p className="text-xs text-red-600">{usernameError}</p>
+                    )}
+                    {isEditing && !usernameError && formData.username && formData.username !== user.username && !isCheckingUsername && (
+                      <p className="text-xs text-green-600">Username is available!</p>
+                    )}
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-3 md:gap-4">
+                    <div className="space-y-1">
+                      <Label htmlFor="phone" className="text-xs font-medium" style={{ color: '#787776' }}>
+                        Phone Number
+                      </Label>
+                      <Input
+                        id="phone"
+                        value={formData.phone}
+                        onChange={(e) => handleInputChange('phone', e.target.value)}
+                        disabled={!isEditing || isSaving}
+                        placeholder="Enter your phone number"
+                        style={!isEditing ? { background: 'rgba(0,0,0,0.03)' } : {}}
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <Label htmlFor="location" className="text-xs font-medium" style={{ color: '#787776' }}>
+                        Location
+                      </Label>
+                      <Input
+                        id="location"
+                        value={formData.location}
+                        onChange={(e) => handleInputChange('location', e.target.value)}
+                        disabled={!isEditing || isSaving}
+                        placeholder="City, State"
+                        style={!isEditing ? { background: 'rgba(0,0,0,0.03)' } : {}}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Edit button below inner box, right-aligned */}
+                <div className="flex justify-end mt-4">
+                  {isEditing ? (
+                    <div className="flex gap-3">
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          setIsEditing(false);
+                          setFormData({
+                            full_name: user?.full_name || '',
+                            username: user?.username || '',
+                            phone: user?.phone || '',
+                            location: user?.location || '',
+                            profile_picture_url: user?.profile_picture_url || '',
+                            theme_preference: user?.theme_preference || 'morning'
+                          });
+                          setUsernameError(null);
+                        }}
+                        className="bg-white hover:bg-slate-50"
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        onClick={handleSave}
+                        disabled={isSaving || usernameError || isCheckingUsername}
+                        className="text-white font-semibold hover:opacity-90"
+                        style={{ background: '#678AFB' }}
+                      >
+                        {isSaving ? 'Saving...' : 'Save Changes'}
+                      </Button>
+                    </div>
+                  ) : (
+                    <Button
+                      onClick={() => setIsEditing(true)}
+                      className="text-white font-semibold hover:opacity-90"
+                      style={{ background: '#678AFB' }}
+                    >
+                      Edit Personal Information
+                    </Button>
+                  )}
                 </div>
               </div>
+
+              {/* Payment Methods - Second */}
+              <PaymentMethodsConnect />
             </div>
 
+            {/* Stats & Verification */}
+            <div className="space-y-4 md:space-y-6 min-w-0 w-full">
+              {/* Bank Account Connection */}
+              <div className="glass-card" style={{ padding: '24px 26px' }}>
+                <p style={{ fontSize: 15, fontWeight: 600, color: '#0D0D0C', letterSpacing: '-0.02em', marginBottom: 16 }}>
+                  Bank Account
+                </p>
+                <div className="space-y-4">
+                  <p className="text-sm" style={{ color: '#787776' }}>
+                    Securely connect your bank account using Plaid & Dwolla to enable bank transfers.
+                  </p>
+                  <Button
+                    className="w-full text-white hover:opacity-90"
+                    style={{ background: '#678AFB' }}
+                    onClick={() => setShowComingSoonModal(true)}
+                  >
+                    <Landmark className="w-4 h-4 mr-2" />
+                    Connect Bank Account
+                  </Button>
+                  <p className="text-xs text-center" style={{ color: '#787776' }}>
+                    Powered by Plaid & Dwolla - Bank grade security
+                  </p>
+                </div>
+              </div>
+
+              {/* Verification Status */}
+              <div className="glass-card" style={{ padding: '24px 26px' }}>
+                <p style={{ fontSize: 15, fontWeight: 600, color: '#0D0D0C', letterSpacing: '-0.02em', marginBottom: 16 }}>
+                  Verification
+                </p>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">Email Verified</span>
+                    <Badge className="bg-green-100 text-green-800 border-green-200">
+                      <CheckCircle className="w-3 h-3 mr-1" />
+                      Verified
+                    </Badge>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">Phone Verified</span>
+                    <Badge className="bg-gray-100 text-gray-800 border-gray-200">
+                      <XCircle className="w-3 h-3 mr-1" />
+                      Not Verified
+                    </Badge>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">Profile Complete</span>
+                    <Badge className={user.full_name && user.username ?
+                      "bg-green-100 text-green-800 border-green-200" :
+                      "bg-gray-100 text-gray-800 border-gray-200"
+                    }>
+                      {user.full_name && user.username ? (
+                        <>
+                          <CheckCircle className="w-3 h-3 mr-1" />
+                          Complete
+                        </>
+                      ) : (
+                        <>
+                          <XCircle className="w-3 h-3 mr-1" />
+                          Incomplete
+                        </>
+                      )}
+                    </Badge>
+                  </div>
+                </div>
+              </div>
+
+            </div>
           </div>
-        </div>
 
-        <div className="mt-8 flex justify-center">
-            <Button variant="ghost" onClick={handleLogout} className="text-slate-600 hover:text-red-500">
-                <LogOut className="w-4 h-4 mr-2" />
-                Log Out
+          <div style={{ marginTop: 32, display: 'flex', justifyContent: 'center', paddingBottom: 40 }}>
+            <Button variant="ghost" onClick={handleLogout} className="hover:text-red-500" style={{ color: '#787776' }}>
+              <LogOut className="w-4 h-4 mr-2" />
+              Log Out
             </Button>
-        </div>
+          </div>
 
+        </div>
       </div>
     </div>
   );
