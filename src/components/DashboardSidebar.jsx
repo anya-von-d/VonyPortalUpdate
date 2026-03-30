@@ -192,10 +192,10 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={ic('Upcoming')} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>
           Upcoming
         </Link>
-        {/* Your Loans */}
+        {/* Lending & Borrowing */}
         <Link to={createPageUrl("YourLoans")} style={linkStyle('YourLoans')}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={ic('YourLoans')} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" /><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" /></svg>
-          Your Loans
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={ic('YourLoans')} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" /><polyline points="17 6 23 6 23 12" /></svg>
+          Lending & Borrowing
         </Link>
         <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', margin: '8px 14px' }} />
         {/* Friends */}
