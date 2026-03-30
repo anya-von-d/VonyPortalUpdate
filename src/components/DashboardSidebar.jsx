@@ -1,8 +1,72 @@
-import { Link } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import { Loan, Payment, Friendship } from "@/entities/all";
+import { useAuth } from "@/lib/AuthContext";
 
 export default function DashboardSidebar({ activePage = "Dashboard", user }) {
   const avatarInitial = (user?.full_name || 'U').charAt(0).toUpperCase();
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const [notifCount, setNotifCount] = useState(0);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const settingsRef = useRef(null);
+
+  useEffect(() => {
+    if (user?.id) fetchNotifCount();
+  }, [user?.id]);
+
+  const fetchNotifCount = async () => {
+    try {
+      const [payments, loans, friendships] = await Promise.all([
+        Payment.list().catch(() => []),
+        Loan.list().catch(() => []),
+        Friendship.list().catch(() => [])
+      ]);
+      const userLoans = loans.filter(l => l.lender_id === user.id || l.borrower_id === user.id);
+      const userLoanIds = userLoans.map(l => l.id);
+
+      const paymentsToConfirm = payments.filter(p =>
+        p.status === 'pending_confirmation' && userLoanIds.includes(p.loan_id) && p.recorded_by !== user.id
+      );
+      const termChanges = loans.filter(l =>
+        userLoanIds.includes(l.id) && l.status === 'pending_borrower_approval' && l.borrower_id === user.id
+      );
+      const extensions = loans.filter(l =>
+        userLoanIds.includes(l.id) && l.extension_requested && l.extension_requested_by !== user.id
+      );
+      const offersReceived = loans.filter(l =>
+        l.borrower_id === user.id && l.status === 'pending'
+      );
+      const friendRequests = friendships.filter(f =>
+        f.friend_id === user.id && f.status === 'pending'
+      );
+
+      setNotifCount(
+        paymentsToConfirm.length + termChanges.length + extensions.length +
+        offersReceived.length + friendRequests.length
+      );
+    } catch (e) {
+      console.error("Error fetching notification count:", e);
+    }
+  };
+
+  // Close settings dropdown on outside click
+  useEffect(() => {
+    const handleClick = (e) => {
+      if (settingsRef.current && !settingsRef.current.contains(e.target)) {
+        setSettingsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
+
+  const handleLogout = () => {
+    setSettingsOpen(false);
+    logout();
+  };
 
   const isActive = (page) => activePage === page;
   const linkStyle = (page) => ({
@@ -22,8 +86,90 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
       zIndex: 52, display: 'flex', flexDirection: 'column',
       fontFamily: "'DM Sans', sans-serif", overflowY: 'auto',
     }}>
-      <div style={{ padding: '22px 24px 32px' }}>
+      <div style={{ padding: '22px 24px 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Link to="/" style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 400, fontStyle: 'italic', fontSize: '1.5rem', letterSpacing: '-0.02em', color: '#1A1918', textDecoration: 'none' }}>Vony</Link>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          {/* Bell icon with notification count */}
+          <Link to={createPageUrl("Requests")} style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', width: 32, height: 32, borderRadius: 8, background: activePage === 'Requests' ? 'rgba(103,138,251,0.1)' : 'transparent', transition: 'background 0.15s', textDecoration: 'none' }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={activePage === 'Requests' ? '#678AFB' : '#5C5B5A'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+            </svg>
+            {notifCount > 0 && (
+              <span style={{
+                position: 'absolute', top: 2, right: 2,
+                background: '#E8726E', color: 'white',
+                fontSize: 9, fontWeight: 700,
+                minWidth: 16, height: 16, borderRadius: 8,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                padding: '0 4px', lineHeight: 1,
+              }}>
+                {notifCount > 99 ? '99+' : notifCount}
+              </span>
+            )}
+          </Link>
+          {/* Settings gear icon with dropdown */}
+          <div ref={settingsRef} style={{ position: 'relative' }}>
+            <button
+              onClick={() => setSettingsOpen(!settingsOpen)}
+              style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                width: 32, height: 32, borderRadius: 8, border: 'none', cursor: 'pointer',
+                background: settingsOpen ? 'rgba(103,138,251,0.1)' : 'transparent',
+                transition: 'background 0.15s',
+              }}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={settingsOpen ? '#678AFB' : '#5C5B5A'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="3" />
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+              </svg>
+            </button>
+            {settingsOpen && (
+              <div style={{
+                position: 'absolute', top: '100%', right: 0, marginTop: 6,
+                background: 'white', borderRadius: 10, boxShadow: '0 4px 20px rgba(0,0,0,0.12)',
+                border: '1px solid rgba(0,0,0,0.06)', minWidth: 160, overflow: 'hidden', zIndex: 100,
+              }}>
+                <Link
+                  to={createPageUrl("Profile")}
+                  onClick={() => setSettingsOpen(false)}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px',
+                    textDecoration: 'none', fontSize: 13, color: '#1A1918', fontWeight: 500,
+                    transition: 'background 0.12s',
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.04)'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5C5B5A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                  </svg>
+                  Profile
+                </Link>
+                <div style={{ height: 1, background: 'rgba(0,0,0,0.06)' }} />
+                <button
+                  onClick={handleLogout}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px',
+                    width: '100%', border: 'none', background: 'transparent', cursor: 'pointer',
+                    fontSize: 13, color: '#E8726E', fontWeight: 500, fontFamily: "'DM Sans', sans-serif",
+                    transition: 'background 0.12s',
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.04)'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E8726E" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                    <polyline points="16 17 21 12 16 7" />
+                    <line x1="21" y1="12" x2="9" y2="12" />
+                  </svg>
+                  Log Out
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
       <nav style={{ flex: 1, padding: '0 12px', display: 'flex', flexDirection: 'column', gap: 2 }}>
         {/* Dashboard */}
@@ -67,24 +213,7 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={ic('LoanAgreements')} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" /></svg>
           Loan Documents
         </Link>
-        {/* Notifications */}
-        <Link to={createPageUrl("Requests")} style={linkStyle('Requests')}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={ic('Requests')} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 0 1-3.46 0" /></svg>
-          Notifications
-        </Link>
       </nav>
-      {/* User profile at bottom */}
-      <div style={{ padding: '16px 20px', borderTop: '1px solid rgba(0,0,0,0.06)' }}>
-        <Link to={createPageUrl("Profile")} style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
-          <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#678AFB', color: 'white', fontWeight: 600, fontSize: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            {avatarInitial}
-          </div>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.full_name || 'User'}</div>
-            <div style={{ fontSize: 11, color: '#787776' }}>View profile</div>
-          </div>
-        </Link>
-      </div>
     </aside>
   );
 }
