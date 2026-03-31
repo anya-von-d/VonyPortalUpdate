@@ -793,6 +793,53 @@ export default function Home() {
                 </div>
               </div>
 
+              {/* 7-Day Strip */}
+              <div className="glass-card" style={{ overflow: 'hidden' }}>
+                <div style={{ padding: '18px 26px 18px' }}>
+                  {(() => {
+                    const strip = [];
+                    for (let i = 0; i < 7; i++) strip.push(addDays(today, i));
+                    return (
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 0 }}>
+                        {strip.map((day, i) => {
+                          const isToday = i === 0;
+                          const dayPayments = allPaymentEvents.filter(e => isSameDay(e.date, day));
+                          const hasPayment = dayPayments.length > 0;
+                          const totalAmt = dayPayments.reduce((s, e) => s + e.remainingAmount, 0);
+                          const isIncoming = dayPayments.length > 0 && dayPayments.every(e => e.isLender);
+                          const isOutgoing = dayPayments.length > 0 && dayPayments.every(e => !e.isLender);
+                          const dotColor = isIncoming ? '#678AFB' : isOutgoing ? '#A79DEA' : '#678AFB';
+                          return (
+                            <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, padding: '2px 0', borderLeft: i > 0 ? '1px solid rgba(0,0,0,0.04)' : 'none' }}>
+                              <div style={{ fontSize: 10, fontWeight: 500, color: isToday ? '#E8726E' : '#787776' }}>
+                                {isToday ? 'Today' : format(day, 'EEE')}
+                              </div>
+                              <div style={{ fontSize: 18, fontWeight: 600, color: isToday ? '#E8726E' : '#1A1918', lineHeight: 1.2 }}>
+                                {format(day, 'd')}
+                              </div>
+                              <div style={{ height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                {hasPayment && (
+                                  <div style={{ width: 22, height: 22, borderRadius: '50%', background: `${dotColor}18`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                    <div style={{ width: 8, height: 8, borderRadius: '50%', background: dotColor }} />
+                                  </div>
+                                )}
+                              </div>
+                              <div style={{ height: 16, display: 'flex', alignItems: 'center' }}>
+                                {hasPayment && (
+                                  <div style={{ fontSize: 10, fontWeight: 600, color: dotColor, background: `${dotColor}10`, padding: '2px 6px', borderRadius: 4 }}>
+                                    {formatMoney(totalAmt)}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    );
+                  })()}
+                </div>
+              </div>
+
               {/* Mini Calendar */}
               <div className="glass-card" style={{ overflow: 'hidden' }}>
                 <div style={{ padding: '22px 26px 0' }}>
