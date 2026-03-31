@@ -191,7 +191,7 @@ function WeekStrip({ allPaymentEvents, today, formatMoney }) {
         </button>
       </div>
       <div
-        style={{ padding: '14px 26px 18px' }}
+        style={{ padding: '10px 26px 0' }}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
@@ -205,31 +205,28 @@ function WeekStrip({ allPaymentEvents, today, formatMoney }) {
             const isOutgoing = dayPayments.length > 0 && dayPayments.every(e => !e.isLender);
             const dotColor = isIncoming ? '#678AFB' : isOutgoing ? '#A79DEA' : '#678AFB';
             return (
-              <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, padding: '2px 0', borderLeft: i > 0 ? '1px solid rgba(0,0,0,0.04)' : 'none' }}>
-                <div style={{ fontSize: 10, fontWeight: 500, color: isToday ? '#E8726E' : '#787776' }}>
+              <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, padding: '2px 0', borderLeft: i > 0 ? '1px solid rgba(0,0,0,0.04)' : 'none' }}>
+                <div style={{ fontSize: 9, fontWeight: 500, color: isToday ? '#E8726E' : '#787776' }}>
                   {isToday ? 'Today' : format(day, 'EEE')}
                 </div>
-                <div style={{ fontSize: 18, fontWeight: 600, color: isToday ? '#E8726E' : '#1A1918', lineHeight: 1.2 }}>
+                <div style={{ fontSize: 15, fontWeight: 600, color: isToday ? '#E8726E' : '#1A1918', lineHeight: 1.2 }}>
                   {format(day, 'd')}
                 </div>
-                <div style={{ height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  {hasPayment && (
-                    <div style={{ width: 22, height: 22, borderRadius: '50%', background: `${dotColor}18`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <div style={{ width: 8, height: 8, borderRadius: '50%', background: dotColor }} />
-                    </div>
-                  )}
-                </div>
-                <div style={{ height: 16, display: 'flex', alignItems: 'center' }}>
-                  {hasPayment && (
-                    <div style={{ fontSize: 10, fontWeight: 600, color: dotColor, background: `${dotColor}10`, padding: '2px 6px', borderRadius: 4 }}>
-                      {formatMoney(totalAmt)}
-                    </div>
-                  )}
-                </div>
+                {hasPayment ? (
+                  <div style={{ fontSize: 9, fontWeight: 600, color: dotColor, background: `${dotColor}10`, padding: '1px 5px', borderRadius: 3, marginTop: 1 }}>
+                    {formatMoney(totalAmt)}
+                  </div>
+                ) : (
+                  <div style={{ height: 15 }} />
+                )}
               </div>
             );
           })}
         </div>
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'center', gap: 14, padding: '6px 26px 12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 9, color: '#787776' }}><div style={{ width: 6, height: 6, borderRadius: '50%', background: '#678AFB' }} /> Owed to you</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 9, color: '#787776' }}><div style={{ width: 6, height: 6, borderRadius: '50%', background: '#A79DEA' }} /> You owe</div>
       </div>
     </div>
   );
