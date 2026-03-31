@@ -891,36 +891,28 @@ export default function Home() {
                 <div style={{ padding: '22px 26px 0' }}>
                   <div style={{ fontSize: 15, fontWeight: 600, color: '#0D0D0C', letterSpacing: '-0.02em', fontFamily: "'DM Sans', sans-serif" }}>Loan progress</div>
                 </div>
-                <div style={{ padding: '14px 26px 20px' }}>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0 }}>
-                    <div style={{ textAlign: 'center', padding: '0 12px' }}>
-                      <div style={{ fontSize: 11, color: '#787776', marginBottom: 8 }}>Lending</div>
-                      <div style={{ position: 'relative', width: 100, height: 100, margin: '0 auto' }}>
-                        <svg viewBox="0 0 100 100" style={{ transform: 'rotate(-90deg)', width: 100, height: 100 }}>
-                          <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(103,138,251,0.15)" strokeWidth="7" />
-                          <circle cx="50" cy="50" r="42" fill="none" stroke="#678AFB" strokeWidth="7" strokeLinecap="round" strokeDasharray={2 * Math.PI * 42} strokeDashoffset={2 * Math.PI * 42 * (1 - percentRepaid / 100)} style={{ transition: 'stroke-dashoffset 1s cubic-bezier(0.4, 0, 0.2, 1)' }} />
-                        </svg>
-                        <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                          <div style={{ fontSize: 15, fontWeight: 700, color: '#292827', letterSpacing: '-0.03em', lineHeight: 1 }}>{percentRepaid}%</div>
-                          <div style={{ fontSize: 8, color: '#787776', marginTop: 3, whiteSpace: 'nowrap', lineHeight: 1 }}>{formatMoney(totalRepaid)} of {formatMoney(totalLentAmount)}</div>
-                          <div style={{ fontSize: 8, color: '#787776', marginTop: 1, lineHeight: 1 }}>repaid</div>
-                        </div>
-                      </div>
+                <div style={{ padding: '18px 26px 22px', display: 'flex', flexDirection: 'column', gap: 18 }}>
+                  {/* Lending */}
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 8 }}>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1918' }}>Lending</div>
+                      <div style={{ fontSize: 12, color: '#787776' }}>{percentRepaid}%</div>
                     </div>
-                    <div style={{ textAlign: 'center', padding: '0 12px' }}>
-                      <div style={{ fontSize: 11, color: '#787776', marginBottom: 8 }}>Borrowing</div>
-                      <div style={{ position: 'relative', width: 100, height: 100, margin: '0 auto' }}>
-                        <svg viewBox="0 0 100 100" style={{ transform: 'rotate(-90deg)', width: 100, height: 100 }}>
-                          <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(167,157,234,0.15)" strokeWidth="7" />
-                          <circle cx="50" cy="50" r="42" fill="none" stroke="#A79DEA" strokeWidth="7" strokeLinecap="round" strokeDasharray={2 * Math.PI * 42} strokeDashoffset={2 * Math.PI * 42 * (1 - percentPaid / 100)} style={{ transition: 'stroke-dashoffset 1s cubic-bezier(0.4, 0, 0.2, 1)' }} />
-                        </svg>
-                        <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                          <div style={{ fontSize: 15, fontWeight: 700, color: '#292827', letterSpacing: '-0.03em', lineHeight: 1 }}>{percentPaid}%</div>
-                          <div style={{ fontSize: 8, color: '#787776', marginTop: 3, whiteSpace: 'nowrap', lineHeight: 1 }}>{formatMoney(totalPaidBack)} of {formatMoney(totalBorrowedAmount)}</div>
-                          <div style={{ fontSize: 8, color: '#787776', marginTop: 1, lineHeight: 1 }}>paid back</div>
-                        </div>
-                      </div>
+                    <div style={{ width: '100%', height: 8, borderRadius: 4, background: 'rgba(103,138,251,0.15)', overflow: 'hidden' }}>
+                      <div style={{ height: '100%', borderRadius: 4, background: '#678AFB', width: `${percentRepaid}%`, transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)' }} />
                     </div>
+                    <div style={{ fontSize: 11, color: '#787776', marginTop: 6 }}>{formatMoney(totalRepaid)} of {formatMoney(totalLentAmount)} repaid</div>
+                  </div>
+                  {/* Borrowing */}
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 8 }}>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1918' }}>Borrowing</div>
+                      <div style={{ fontSize: 12, color: '#787776' }}>{percentPaid}%</div>
+                    </div>
+                    <div style={{ width: '100%', height: 8, borderRadius: 4, background: 'rgba(167,157,234,0.15)', overflow: 'hidden' }}>
+                      <div style={{ height: '100%', borderRadius: 4, background: '#A79DEA', width: `${percentPaid}%`, transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)' }} />
+                    </div>
+                    <div style={{ fontSize: 11, color: '#787776', marginTop: 6 }}>{formatMoney(totalPaidBack)} of {formatMoney(totalBorrowedAmount)} paid back</div>
                   </div>
                 </div>
               </div>
