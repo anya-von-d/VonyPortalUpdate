@@ -388,7 +388,7 @@ export default function Home() {
     .filter(loan => loan && loan.borrower_id === user.id && loan.status === 'active' && loan.next_payment_date)
     .map(loan => {
       const otherUser = safeAllProfiles.find(p => p.user_id === loan.lender_id);
-      return { ...loan, date: new Date(loan.next_payment_date), username: otherUser?.username || 'user' };
+      return { ...loan, date: new Date(loan.next_payment_date), username: otherUser?.username || 'user', firstName: otherUser?.full_name?.split(' ')[0] || otherUser?.username || 'user' };
     })
     .sort((a, b) => a.date - b.date)[0];
 
@@ -396,7 +396,7 @@ export default function Home() {
     .filter(loan => loan && loan.lender_id === user.id && loan.status === 'active' && loan.next_payment_date)
     .map(loan => {
       const otherUser = safeAllProfiles.find(p => p.user_id === loan.borrower_id);
-      return { ...loan, date: new Date(loan.next_payment_date), username: otherUser?.username || 'user' };
+      return { ...loan, date: new Date(loan.next_payment_date), username: otherUser?.username || 'user', firstName: otherUser?.full_name?.split(' ')[0] || otherUser?.username || 'user' };
     })
     .sort((a, b) => a.date - b.date)[0];
 
@@ -438,7 +438,7 @@ export default function Home() {
         .reduce((sum, p) => sum + (p.amount || 0), 0);
       const originalAmount = loan.payment_amount || 0;
       const remainingAmount = Math.max(0, originalAmount - paidThisPeriod);
-      return { loan, date: nextPayDate, days, originalAmount, remainingAmount, username: otherProfile?.username || 'user', isLender, loanId: loan.id, purpose: loan.purpose || '' };
+      return { loan, date: nextPayDate, days, originalAmount, remainingAmount, username: otherProfile?.username || 'user', firstName: otherProfile?.full_name?.split(' ')[0] || otherProfile?.username || 'user', isLender, loanId: loan.id, purpose: loan.purpose || '' };
     })
     .filter(e => e.remainingAmount > 0)
     .sort((a, b) => a.date - b.date);
@@ -538,7 +538,7 @@ export default function Home() {
       const isLender = loan.lender_id === user.id;
       const otherUserId = isLender ? loan.borrower_id : loan.lender_id;
       const otherProfile = safeAllProfiles.find(pr => pr.user_id === otherUserId);
-      const username = `@${otherProfile?.username || 'user'}`;
+      const name = otherProfile?.full_name?.split(' ')[0] || otherProfile?.username || 'user';
       const amount = `$${(loan.amount || 0).toLocaleString()}`;
       const reason = loan.purpose || 'Reason';
       let description = '';
@@ -546,23 +546,23 @@ export default function Home() {
       let color = '#678AFB';
 
       if (loan.status === 'pending' || !loan.status) {
-        description = isLender ? `Sent ${amount} loan offer to ${username} for ${reason}` : `Received ${amount} loan offer from ${username} for ${reason}`;
+        description = isLender ? `Sent ${amount} loan offer to ${name} for ${reason}` : `Received ${amount} loan offer from ${name} for ${reason}`;
         icon = isLender ? 'send' : 'receive';
         color = isLender ? '#A79DEA' : '#678AFB';
       } else if (loan.status === 'active') {
-        description = isLender ? `${username} accepted your ${amount} loan for ${reason}` : `You accepted ${amount} loan from ${username} for ${reason}`;
+        description = isLender ? `${name} accepted your ${amount} loan for ${reason}` : `You accepted ${amount} loan from ${name} for ${reason}`;
         icon = 'check'; color = '#678AFB';
       } else if (loan.status === 'declined') {
-        description = isLender ? `${username} declined your ${amount} loan for ${reason}` : `You declined ${amount} loan from ${username} for ${reason}`;
+        description = isLender ? `${name} declined your ${amount} loan for ${reason}` : `You declined ${amount} loan from ${name} for ${reason}`;
         icon = 'x'; color = '#E8726E';
       } else if (loan.status === 'cancelled') {
-        description = isLender ? `You cancelled ${amount} loan offer to ${username}` : `${username} cancelled their ${amount} loan offer`;
+        description = isLender ? `You cancelled ${amount} loan offer to ${name}` : `${name} cancelled their ${amount} loan offer`;
         icon = 'x'; color = '#E8726E';
       } else if (loan.status === 'completed') {
-        description = isLender ? `${username} fully repaid your ${amount} loan` : `You fully repaid ${amount} loan to ${username}`;
+        description = isLender ? `${name} fully repaid your ${amount} loan` : `You fully repaid ${amount} loan to ${name}`;
         icon = 'check'; color = '#678AFB';
       } else {
-        description = isLender ? `${amount} loan to ${username}` : `${amount} loan from ${username}`;
+        description = isLender ? `${amount} loan to ${name}` : `${amount} loan from ${name}`;
       }
 
       items.push({
@@ -580,10 +580,10 @@ export default function Home() {
       const otherUserId = isBorrower ? loan.lender_id : loan.borrower_id;
       const otherProfile = safeAllProfiles.find(pr => pr.user_id === otherUserId);
       const amount = `$${(p.amount || 0).toLocaleString()}`;
-      const username = `@${otherProfile?.username || 'user'}`;
+      const name = otherProfile?.full_name?.split(' ')[0] || otherProfile?.username || 'user';
       items.push({
         type: 'payment', date: new Date(p.payment_date || p.created_at),
-        description: isBorrower ? `You made a ${amount} payment to ${username}` : `Received ${amount} payment from ${username}`,
+        description: isBorrower ? `You made a ${amount} payment to ${name}` : `Received ${amount} payment from ${name}`,
         detail: format(new Date(p.payment_date || p.created_at), 'MMM d') + (loan.purpose ? ` · ${loan.purpose}` : ''),
         icon: isBorrower ? 'send' : 'receive',
         color: isBorrower ? '#A79DEA' : '#678AFB',
@@ -604,10 +604,10 @@ export default function Home() {
       const d = new Date(loan.next_payment_date);
       const days = daysUntilDate(d);
       const borrowerProfile = safeAllProfiles.find(p => p.user_id === loan.borrower_id);
-      const uname = borrowerProfile?.username || 'user';
+      const bName = borrowerProfile?.full_name?.split(' ')[0] || borrowerProfile?.username || 'user';
       if (days >= 0 && days <= 7) {
         notifs.push({
-          title: `@${uname}'s next payment is in ${days} day${days !== 1 ? 's' : ''}`,
+          title: `${bName}'s next payment is in ${days} day${days !== 1 ? 's' : ''}`,
           description: `They've repaid ${formatMoney(loan.amount_paid || 0)} of ${formatMoney(loan.total_amount || loan.amount || 0)} so far. We've sent both of you a notification as a reminder.`
         });
       }
@@ -616,10 +616,10 @@ export default function Home() {
     // Overdue payments you owe
     overdueYouOwe.forEach(loan => {
       const lenderProfile = safeAllProfiles.find(p => p.user_id === loan.lender_id);
-      const uname = lenderProfile?.username || 'user';
+      const lName = lenderProfile?.full_name?.split(' ')[0] || lenderProfile?.username || 'user';
       const days = Math.abs(daysUntilDate(loan.next_payment_date));
       notifs.push({
-        title: `You have a payment due to @${uname}`,
+        title: `You have a payment due to ${lName}`,
         description: `This one was due ${days} day${days !== 1 ? 's' : ''} ago. If you've already paid, make sure to record the payment so it's up to date.`,
         action: { label: 'Record Payment', onClick: () => { window.location.href = createPageUrl("RecordPayment"); } }
       });
@@ -628,10 +628,10 @@ export default function Home() {
     // Overdue from borrowers
     myLoans.filter(l => l && l.lender_id === user.id && l.status === 'active' && l.next_payment_date && new Date(l.next_payment_date) < today).forEach(loan => {
       const borrowerProfile = safeAllProfiles.find(p => p.user_id === loan.borrower_id);
-      const uname = borrowerProfile?.username || 'user';
+      const bName = borrowerProfile?.full_name?.split(' ')[0] || borrowerProfile?.username || 'user';
       const days = Math.abs(daysUntilDate(loan.next_payment_date));
       notifs.push({
-        title: `@${uname}'s payment is overdue`,
+        title: `${bName}'s payment is overdue`,
         description: `Their payment of ${formatMoney(loan.payment_amount || 0)} was due ${days} day${days !== 1 ? 's' : ''} ago. If they've paid, make sure to record it.`,
         action: { label: 'Record Payment', onClick: () => { window.location.href = createPageUrl("RecordPayment"); } }
       });
@@ -666,7 +666,7 @@ export default function Home() {
   const overdueReminders = overdueYouOwe.map(loan => {
     const lenderProfile = safeAllProfiles.find(p => p.user_id === loan.lender_id);
     const days = Math.abs(daysUntilDate(loan.next_payment_date));
-    return { loan, days, username: lenderProfile?.username || 'user', amount: loan.payment_amount || 0 };
+    return { loan, days, username: lenderProfile?.username || 'user', firstName: lenderProfile?.full_name?.split(' ')[0] || lenderProfile?.username || 'user', amount: loan.payment_amount || 0 };
   }).sort((a, b) => b.days - a.days);
 
   const alertTotal = overdueReminders.length;
@@ -729,7 +729,7 @@ export default function Home() {
                 <div key={i} style={{ minWidth: '100%', padding: '14px 28px', display: 'flex', alignItems: 'center', gap: 12 }}>
                   <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#E8726E', flexShrink: 0 }} />
                   <div style={{ flex: 1, fontSize: 13, color: '#787776', lineHeight: 1.5 }}>
-                    <strong style={{ color: '#1A1918', fontWeight: 600 }}>Just a reminder</strong> you have a {formatMoney(item.amount)} payment to @{item.username} that was due {item.days} day{item.days !== 1 ? 's' : ''} ago. If you've already paid, make sure to record the payment so it's up to date.
+                    <strong style={{ color: '#1A1918', fontWeight: 600 }}>Just a reminder</strong> you have a {formatMoney(item.amount)} payment to {item.firstName} that was due {item.days} day{item.days !== 1 ? 's' : ''} ago. If you've already paid, make sure to record the payment so it's up to date.
                   </div>
                   <Link to={createPageUrl("RecordPayment")} style={{
                     padding: '7px 18px', borderRadius: 20, background: '#678AFB', color: 'white',
@@ -779,7 +779,7 @@ export default function Home() {
                         {format(nextBorrowerPayment.date, 'MMM d')}
                       </div>
                       <div style={{ fontSize: 12, color: '#787776', marginTop: 6 }}>
-                        {formatMoney(nextBorrowerPayment.payment_amount || 0)} to @{nextBorrowerPayment.username}
+                        {formatMoney(nextBorrowerPayment.payment_amount || 0)} to {nextBorrowerPayment.firstName}
                       </div>
                     </>
                   ) : (
@@ -800,7 +800,7 @@ export default function Home() {
                         {format(nextLenderPayment.date, 'MMM d')}
                       </div>
                       <div style={{ fontSize: 12, color: '#787776', marginTop: 6 }}>
-                        {formatMoney(nextLenderPayment.payment_amount || 0)} from @{nextLenderPayment.username}
+                        {formatMoney(nextLenderPayment.payment_amount || 0)} from {nextLenderPayment.firstName}
                       </div>
                     </>
                   ) : (
@@ -859,7 +859,7 @@ export default function Home() {
                             </div>
                             <div style={{ flex: 1, minWidth: 0 }}>
                               <div style={{ fontSize: 13, fontWeight: 500, color: '#1A1918' }}>
-                                {event.isLender ? `@${event.username} pays you` : `Pay @${event.username}`}
+                                {event.isLender ? `${event.firstName} pays you` : `Pay ${event.firstName}`}
                               </div>
                               {event.purpose && <div style={{ fontSize: 11, color: '#787776', marginTop: 1 }}>{event.purpose}</div>}
                             </div>
@@ -900,7 +900,7 @@ export default function Home() {
                     <div key={loan.id} style={{ padding: '13px 26px', display: 'flex', alignItems: 'flex-start', gap: 16, paddingTop: idx === 0 ? 18 : 13 }}>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', marginBottom: 8 }}>
-                          {isLender ? `You lent @${otherProfile?.username || 'user'} ${formatMoney(totalAmt)}` : `@${otherProfile?.username || 'user'} lent you ${formatMoney(totalAmt)}`}
+                          {isLender ? `You lent ${otherProfile?.full_name?.split(' ')[0] || otherProfile?.username || 'user'} ${formatMoney(totalAmt)}` : `${otherProfile?.full_name?.split(' ')[0] || otherProfile?.username || 'user'} lent you ${formatMoney(totalAmt)}`}
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                           <div style={{ flex: 1, height: 6, borderRadius: 3, overflow: 'hidden', background: isLender ? 'rgba(103,138,251,0.15)' : 'rgba(167,157,234,0.15)' }}>
