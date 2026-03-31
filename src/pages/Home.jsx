@@ -6,7 +6,7 @@ import { useAuth } from "@/lib/AuthContext";
 
 
 import { motion, AnimatePresence } from "framer-motion";
-import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addMonths, addDays, isBefore, isAfter, isSameMonth, isSameDay, differenceInDays } from "date-fns";
+import { format, startOfMonth, endOfMonth, addMonths, addDays, isBefore, isAfter, isSameDay, differenceInDays } from "date-fns";
 import { formatMoney } from "@/components/utils/formatMoney";
 import { toLocalDate, getLocalToday, daysUntil as daysUntilDate } from "@/components/utils/dateUtils";
 
@@ -150,6 +150,90 @@ const syncPublicProfile = async (userData) => {
     console.error("Failed to sync public profile:", error);
   }
 };
+
+function WeekStrip({ allPaymentEvents, today, formatMoney }) {
+  const [weekOffset, setWeekOffset] = useState(0);
+  const touchStartX = useRef(null);
+
+  const weekStart = addDays(today, weekOffset * 7);
+  const strip = [];
+  for (let i = 0; i < 7; i++) strip.push(addDays(weekStart, i));
+
+  const handleTouchStart = (e) => { touchStartX.current = e.touches[0].clientX; };
+  const handleTouchEnd = (e) => {
+    if (touchStartX.current === null) return;
+    const diff = e.changedTouches[0].clientX - touchStartX.current;
+    if (Math.abs(diff) > 40) {
+      setWeekOffset(prev => diff > 0 ? prev - 1 : prev + 1);
+    }
+    touchStartX.current = null;
+  };
+
+  const showingCurrentWeek = weekOffset === 0;
+  const monthLabel = format(strip[0], 'MMM yyyy') === format(strip[6], 'MMM yyyy')
+    ? format(strip[0], 'MMMM yyyy')
+    : `${format(strip[0], 'MMM')} – ${format(strip[6], 'MMM yyyy')}`;
+
+  return (
+    <div className="glass-card" style={{ overflow: 'hidden', userSelect: 'none' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 26px 0' }}>
+        <button onClick={() => setWeekOffset(w => w - 1)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, color: '#787776', display: 'flex', alignItems: 'center' }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polyline points="15 18 9 12 15 6" /></svg>
+        </button>
+        <div style={{ fontSize: 12, fontWeight: 600, color: '#0D0D0C', letterSpacing: '-0.01em' }}>
+          {monthLabel}
+          {!showingCurrentWeek && (
+            <button onClick={() => setWeekOffset(0)} style={{ marginLeft: 8, background: 'none', border: 'none', cursor: 'pointer', fontSize: 10, color: '#678AFB', fontWeight: 600, fontFamily: "'DM Sans', sans-serif" }}>Today</button>
+          )}
+        </div>
+        <button onClick={() => setWeekOffset(w => w + 1)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, color: '#787776', display: 'flex', alignItems: 'center' }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polyline points="9 18 15 12 9 6" /></svg>
+        </button>
+      </div>
+      <div
+        style={{ padding: '14px 26px 18px' }}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+      >
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 0 }}>
+          {strip.map((day, i) => {
+            const isToday = isSameDay(day, new Date());
+            const dayPayments = allPaymentEvents.filter(e => isSameDay(e.date, day));
+            const hasPayment = dayPayments.length > 0;
+            const totalAmt = dayPayments.reduce((s, e) => s + e.remainingAmount, 0);
+            const isIncoming = dayPayments.length > 0 && dayPayments.every(e => e.isLender);
+            const isOutgoing = dayPayments.length > 0 && dayPayments.every(e => !e.isLender);
+            const dotColor = isIncoming ? '#678AFB' : isOutgoing ? '#A79DEA' : '#678AFB';
+            return (
+              <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, padding: '2px 0', borderLeft: i > 0 ? '1px solid rgba(0,0,0,0.04)' : 'none' }}>
+                <div style={{ fontSize: 10, fontWeight: 500, color: isToday ? '#E8726E' : '#787776' }}>
+                  {isToday ? 'Today' : format(day, 'EEE')}
+                </div>
+                <div style={{ fontSize: 18, fontWeight: 600, color: isToday ? '#E8726E' : '#1A1918', lineHeight: 1.2 }}>
+                  {format(day, 'd')}
+                </div>
+                <div style={{ height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  {hasPayment && (
+                    <div style={{ width: 22, height: 22, borderRadius: '50%', background: `${dotColor}18`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <div style={{ width: 8, height: 8, borderRadius: '50%', background: dotColor }} />
+                    </div>
+                  )}
+                </div>
+                <div style={{ height: 16, display: 'flex', alignItems: 'center' }}>
+                  {hasPayment && (
+                    <div style={{ fontSize: 10, fontWeight: 600, color: dotColor, background: `${dotColor}10`, padding: '2px 6px', borderRadius: 4 }}>
+                      {formatMoney(totalAmt)}
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function Home() {
   const { user: authUser, userProfile, isLoadingAuth, navigateToLogin } = useAuth();
@@ -793,165 +877,37 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* 7-Day Strip */}
-              <div className="glass-card" style={{ overflow: 'hidden' }}>
-                <div style={{ padding: '18px 26px 18px' }}>
-                  {(() => {
-                    const strip = [];
-                    for (let i = 0; i < 7; i++) strip.push(addDays(today, i));
-                    return (
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 0 }}>
-                        {strip.map((day, i) => {
-                          const isToday = i === 0;
-                          const dayPayments = allPaymentEvents.filter(e => isSameDay(e.date, day));
-                          const hasPayment = dayPayments.length > 0;
-                          const totalAmt = dayPayments.reduce((s, e) => s + e.remainingAmount, 0);
-                          const isIncoming = dayPayments.length > 0 && dayPayments.every(e => e.isLender);
-                          const isOutgoing = dayPayments.length > 0 && dayPayments.every(e => !e.isLender);
-                          const dotColor = isIncoming ? '#678AFB' : isOutgoing ? '#A79DEA' : '#678AFB';
-                          return (
-                            <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, padding: '2px 0', borderLeft: i > 0 ? '1px solid rgba(0,0,0,0.04)' : 'none' }}>
-                              <div style={{ fontSize: 10, fontWeight: 500, color: isToday ? '#E8726E' : '#787776' }}>
-                                {isToday ? 'Today' : format(day, 'EEE')}
-                              </div>
-                              <div style={{ fontSize: 18, fontWeight: 600, color: isToday ? '#E8726E' : '#1A1918', lineHeight: 1.2 }}>
-                                {format(day, 'd')}
-                              </div>
-                              <div style={{ height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                {hasPayment && (
-                                  <div style={{ width: 22, height: 22, borderRadius: '50%', background: `${dotColor}18`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                    <div style={{ width: 8, height: 8, borderRadius: '50%', background: dotColor }} />
-                                  </div>
-                                )}
-                              </div>
-                              <div style={{ height: 16, display: 'flex', alignItems: 'center' }}>
-                                {hasPayment && (
-                                  <div style={{ fontSize: 10, fontWeight: 600, color: dotColor, background: `${dotColor}10`, padding: '2px 6px', borderRadius: 4 }}>
-                                    {formatMoney(totalAmt)}
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    );
-                  })()}
-                </div>
-              </div>
+              {/* Scrollable Week Strip */}
+              <WeekStrip allPaymentEvents={allPaymentEvents} today={today} formatMoney={formatMoney} />
 
-              {/* Mini Calendar */}
-              <div className="glass-card" style={{ overflow: 'hidden' }}>
-                <div style={{ padding: '22px 26px 0' }}>
-                  <div style={{ fontSize: 15, fontWeight: 600, color: '#0D0D0C', letterSpacing: '-0.02em', fontFamily: "'DM Sans', sans-serif" }}>{format(today, 'MMMM yyyy')}</div>
-                </div>
-                <div style={{ padding: '14px 26px 20px' }}>
-                  {(() => {
-                    const monthStart = startOfMonth(today);
-                    const monthEnd = endOfMonth(today);
-                    const calStart = startOfWeek(monthStart);
-                    const calEnd = endOfWeek(monthEnd);
-                    const days = [];
-                    let d = calStart;
-                    while (d <= calEnd) { days.push(new Date(d)); d = addDays(d, 1); }
-
-                    const paymentDates = allPaymentEvents.map(e => ({
-                      date: e.date,
-                      isLender: e.isLender,
-                    }));
-
-                    return (
-                      <div>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 0, marginBottom: 4 }}>
-                          {['S','M','T','W','T','F','S'].map((d, i) => (
-                            <div key={i} style={{ textAlign: 'center', fontSize: 10, fontWeight: 600, color: '#787776', padding: '6px 0' }}>{d}</div>
-                          ))}
-                        </div>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 1 }}>
-                          {days.map((day, i) => {
-                            const inMonth = isSameMonth(day, today);
-                            const isToday = isSameDay(day, new Date());
-                            const matchingPayment = paymentDates.find(pd => isSameDay(pd.date, day));
-                            return (
-                              <div key={i} style={{
-                                textAlign: 'center', padding: '5px 2px', borderRadius: 6, fontSize: 11, position: 'relative',
-                                color: !inMonth ? '#C7C6C4' : isToday ? 'white' : '#1A1918',
-                                fontWeight: isToday ? 700 : 400,
-                                background: isToday ? '#678AFB' : matchingPayment ? (matchingPayment.isLender ? 'rgba(103,138,251,0.1)' : 'rgba(167,157,234,0.1)') : 'transparent',
-                              }}>
-                                {format(day, 'd')}
-                                {matchingPayment && !isToday && (
-                                  <div style={{ width: 4, height: 4, borderRadius: '50%', background: matchingPayment.isLender ? '#678AFB' : '#A79DEA', margin: '1px auto 0' }} />
-                                )}
-                              </div>
-                            );
-                          })}
-                        </div>
-                        <div style={{ display: 'flex', justifyContent: 'center', gap: 16, marginTop: 10, paddingTop: 8, borderTop: '1px solid rgba(0,0,0,0.04)' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 10, color: '#787776' }}><div style={{ width: 6, height: 6, borderRadius: '50%', background: '#678AFB' }} /> Incoming</div>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 10, color: '#787776' }}><div style={{ width: 6, height: 6, borderRadius: '50%', background: '#A79DEA' }} /> Due</div>
-                        </div>
-                      </div>
-                    );
-                  })()}
-                </div>
-              </div>
-
-              {/* Loan Progress — Butterfly Chart */}
+              {/* Loan Progress */}
               <div className="glass-card" style={{ overflow: 'hidden' }}>
                 <div style={{ padding: '22px 26px 0' }}>
                   <div style={{ fontSize: 15, fontWeight: 600, color: '#0D0D0C', letterSpacing: '-0.02em', fontFamily: "'DM Sans', sans-serif" }}>Loan progress</div>
                 </div>
-                <div style={{ padding: '18px 26px 22px' }}>
-                  {(() => {
-                    const maxAmount = Math.max(totalLentAmount, totalBorrowedAmount, 1);
-                    const lendW = totalLentAmount > 0 ? Math.max((totalLentAmount / maxAmount) * 100, 8) : 0;
-                    const borrowW = totalBorrowedAmount > 0 ? Math.max((totalBorrowedAmount / maxAmount) * 100, 8) : 0;
-                    return (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-                        {/* Labels */}
-                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.06em', fontFamily: "'IBM Plex Mono', monospace" }}>
-                          <span>Lending</span>
-                          <span>Borrowing</span>
-                        </div>
-                        {/* Butterfly bars */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 0, height: 32 }}>
-                          {/* Left wing — Lending (grows right from left) */}
-                          <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end', height: '100%' }}>
-                            <div style={{ width: `${lendW}%`, height: '100%', borderRadius: '6px 0 0 6px', background: 'linear-gradient(90deg, rgba(103,138,251,0.2), #678AFB)', position: 'relative', minWidth: lendW > 0 ? 4 : 0, transition: 'width 0.8s cubic-bezier(0.4, 0, 0.2, 1)' }}>
-                              {totalLentAmount > 0 && lendW > 30 && (
-                                <span style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', fontSize: 11, fontWeight: 600, color: 'white' }}>{percentRepaid}%</span>
-                              )}
-                              {/* Repaid portion overlay */}
-                              <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: `${percentRepaid}%`, borderRadius: '6px 0 0 6px', background: 'rgba(255,255,255,0.25)', transition: 'width 0.8s cubic-bezier(0.4, 0, 0.2, 1)' }} />
-                            </div>
-                          </div>
-                          {/* Center divider */}
-                          <div style={{ width: 2, height: '100%', background: 'rgba(0,0,0,0.08)', flexShrink: 0 }} />
-                          {/* Right wing — Borrowing (grows left from right) */}
-                          <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-start', height: '100%' }}>
-                            <div style={{ width: `${borrowW}%`, height: '100%', borderRadius: '0 6px 6px 0', background: 'linear-gradient(90deg, #A79DEA, rgba(167,157,234,0.2))', position: 'relative', minWidth: borrowW > 0 ? 4 : 0, transition: 'width 0.8s cubic-bezier(0.4, 0, 0.2, 1)' }}>
-                              {totalBorrowedAmount > 0 && borrowW > 30 && (
-                                <span style={{ position: 'absolute', left: 8, top: '50%', transform: 'translateY(-50%)', fontSize: 11, fontWeight: 600, color: 'white' }}>{percentPaid}%</span>
-                              )}
-                              <div style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: `${percentPaid}%`, borderRadius: '0 6px 6px 0', background: 'rgba(255,255,255,0.25)', transition: 'width 0.8s cubic-bezier(0.4, 0, 0.2, 1)' }} />
-                            </div>
-                          </div>
-                        </div>
-                        {/* Amounts */}
-                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                          <div>
-                            <div style={{ fontSize: 13, fontWeight: 600, color: '#678AFB' }}>{formatMoney(totalLentAmount)}</div>
-                            <div style={{ fontSize: 10, color: '#787776', marginTop: 2 }}>{formatMoney(totalRepaid)} repaid</div>
-                          </div>
-                          <div style={{ textAlign: 'right' }}>
-                            <div style={{ fontSize: 13, fontWeight: 600, color: '#A79DEA' }}>{formatMoney(totalBorrowedAmount)}</div>
-                            <div style={{ fontSize: 10, color: '#787776', marginTop: 2 }}>{formatMoney(totalPaidBack)} paid back</div>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })()}
+                <div style={{ padding: '18px 26px 22px', display: 'flex', flexDirection: 'column', gap: 18 }}>
+                  {/* Lending */}
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 8 }}>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1918' }}>Lending</div>
+                      <div style={{ fontSize: 12, color: '#787776' }}>{percentRepaid}%</div>
+                    </div>
+                    <div style={{ width: '100%', height: 8, borderRadius: 4, background: 'rgba(103,138,251,0.15)', overflow: 'hidden' }}>
+                      <div style={{ height: '100%', borderRadius: 4, background: '#678AFB', width: `${percentRepaid}%`, transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)' }} />
+                    </div>
+                    <div style={{ fontSize: 11, color: '#787776', marginTop: 6 }}>{formatMoney(totalRepaid)} of {formatMoney(totalLentAmount)} repaid</div>
+                  </div>
+                  {/* Borrowing */}
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 8 }}>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1918' }}>Borrowing</div>
+                      <div style={{ fontSize: 12, color: '#787776' }}>{percentPaid}%</div>
+                    </div>
+                    <div style={{ width: '100%', height: 8, borderRadius: 4, background: 'rgba(167,157,234,0.15)', overflow: 'hidden' }}>
+                      <div style={{ height: '100%', borderRadius: 4, background: '#A79DEA', width: `${percentPaid}%`, transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)' }} />
+                    </div>
+                    <div style={{ fontSize: 11, color: '#787776', marginTop: 6 }}>{formatMoney(totalPaidBack)} of {formatMoney(totalBorrowedAmount)} paid back</div>
+                  </div>
                 </div>
               </div>
             </div>
