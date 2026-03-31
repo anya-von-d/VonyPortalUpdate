@@ -845,15 +845,15 @@ export default function Home() {
                   <div style={{ fontSize: 15, fontWeight: 600, color: '#0D0D0C', letterSpacing: '-0.02em', fontFamily: "'DM Sans', sans-serif" }}>Upcoming payments</div>
                   <Link to={createPageUrl("YourLoans")} style={{ fontSize: 12, fontWeight: 500, color: '#A79DEA', textDecoration: 'none' }}>Full schedule</Link>
                 </div>
-                <div style={{ padding: '18px 26px 26px' }}>
+                <div style={{ padding: '18px 26px 26px', minHeight: 200 }}>
                   {combinedPaymentEvents.length === 0 ? (
-                    <div style={{ textAlign: 'center', padding: '20px 0', color: '#787776', fontSize: 13 }}>No upcoming payments</div>
+                    <div style={{ textAlign: 'center', padding: '40px 0', color: '#787776', fontSize: 13 }}>No upcoming payments</div>
                   ) : (
                     <div>
-                      {combinedPaymentEvents.slice(0, 4).map((event, idx) => {
+                      {combinedPaymentEvents.slice(0, 5).map((event, idx) => {
                         const isOverdue = event.days < 0;
                         return (
-                          <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 0', borderBottom: idx < combinedPaymentEvents.slice(0, 4).length - 1 ? 'none' : 'none' }}>
+                          <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 0' }}>
                             <div style={{ fontSize: 11, fontWeight: 600, color: isOverdue ? '#E8726E' : '#787776', minWidth: 44, flexShrink: 0 }}>
                               {isOverdue ? `${Math.abs(event.days)}d late` : format(event.date, 'MMM d')}
                             </div>
