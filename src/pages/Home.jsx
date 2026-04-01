@@ -678,7 +678,7 @@ export default function Home() {
       <DashboardSidebar activePage="Dashboard" user={user} />
 
       {/* ── Content box with galaxy background ── */}
-      <div style={{ position: 'relative', margin: '12px 12px 12px 0', borderRadius: 20, overflow: 'hidden', minHeight: 'calc(100vh - 24px)' }}>
+      <div style={{ position: 'relative', margin: '20px 12px 12px 0', borderRadius: 20, overflow: 'hidden', minHeight: 'calc(100vh - 32px)' }}>
 
         {/* Galaxy gradient background inside the box */}
         <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', bottom: 0, overflow: 'hidden', zIndex: 0, pointerEvents: 'none' }}>

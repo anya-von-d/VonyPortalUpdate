@@ -1413,7 +1413,7 @@ export default function Lending({ initialTab }) {
 
         <DashboardSidebar activePage={initialTab === 'create' ? 'CreateOffer' : 'Lending'} user={currentUser} />
 
-        <div style={{ position: 'relative', margin: '12px 12px 12px 0', borderRadius: 20, overflow: 'hidden', minHeight: 'calc(100vh - 24px)' }}>
+        <div style={{ position: 'relative', margin: '20px 12px 12px 0', borderRadius: 20, overflow: 'hidden', minHeight: 'calc(100vh - 32px)' }}>
           {/* Galaxy gradient background */}
           <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', bottom: 0, overflow: 'hidden', zIndex: 0, pointerEvents: 'none' }}>
             <div style={{
@@ -2449,27 +2449,29 @@ export default function Lending({ initialTab }) {
 
                   {/* Borrower Payment Box - Only for Loan type, always visible */}
                   {loanType === 'scheduled' && (
-                    <div className="bg-[#678AFB]/10 rounded-2xl p-4">
-                      <p className="text-xs text-slate-500 text-center">
-                        {isUserBorrower ? (
-                          'You will pay'
-                        ) : formData.borrower_username ? (
-                          <>
-                            {(() => {
-                              const selectedUser = users.find(u => u.username === formData.borrower_username);
-                              return selectedUser?.full_name || `@${formData.borrower_username}`;
-                            })()} will pay
-                          </>
-                        ) : (
-                          'Borrower will pay'
-                        )}
-                      </p>
-                      <p className="text-2xl font-bold text-black text-center my-1">
-                        {formData.amount && details.monthlyPayment > 0 ? `$${details.monthlyPayment.toFixed(2)}` : '$0.00'}
-                      </p>
-                      <p className="text-xs text-slate-500 text-center">
-                        {formData.payment_frequency || '_'} after interest
-                      </p>
+                    <div className="glass-carousel-frame" style={{ padding: 6 }}>
+                      <div className="galaxy-slide" style={{ padding: '24px 20px', borderRadius: 20, textAlign: 'center' }}>
+                        <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)', marginBottom: 4 }}>
+                          {isUserBorrower ? (
+                            'You will pay'
+                          ) : formData.borrower_username ? (
+                            <>
+                              {(() => {
+                                const selectedUser = users.find(u => u.username === formData.borrower_username);
+                                return selectedUser?.full_name || `@${formData.borrower_username}`;
+                              })()} will pay
+                            </>
+                          ) : (
+                            'Borrower will pay'
+                          )}
+                        </p>
+                        <p style={{ fontSize: 28, fontWeight: 700, color: 'white', margin: '4px 0' }}>
+                          {formData.amount && details.monthlyPayment > 0 ? `$${details.monthlyPayment.toFixed(2)}` : '$0.00'}
+                        </p>
+                        <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)' }}>
+                          {formData.payment_frequency || '_'} after interest
+                        </p>
+                      </div>
                     </div>
                   )}
 

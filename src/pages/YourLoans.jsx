@@ -1251,7 +1251,7 @@ export default function YourLoans() {
       <div className="home-with-sidebar" style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 240, background: '#F5F4F0' }}>
         <DashboardSidebar activePage="YourLoans" user={user} />
 
-        <div style={{ position: 'relative', margin: '12px 12px 12px 0', borderRadius: 20, overflow: 'hidden', minHeight: 'calc(100vh - 24px)' }}>
+        <div style={{ position: 'relative', margin: '20px 12px 12px 0', borderRadius: 20, overflow: 'hidden', minHeight: 'calc(100vh - 32px)' }}>
           {/* Gradient background */}
           <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', bottom: 0, overflow: 'hidden', zIndex: 0, pointerEvents: 'none' }}>
             <div style={{
