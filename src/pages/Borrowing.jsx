@@ -879,7 +879,7 @@ export default function Borrowing() {
           <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 28px' }}>
             {/* Hero */}
             <div style={{ paddingTop: 80, paddingBottom: 20, textAlign: 'center' }}>
-              <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '3.2rem', fontWeight: 600, letterSpacing: '-0.02em', lineHeight: 1.1, color: 'white', margin: 0 }}>Borrowing</h1>
+              <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '3.2rem', fontWeight: 600, letterSpacing: '-0.02em', lineHeight: 1.1, color: 'white', margin: 0 }}>Lending & Borrowing</h1>
             </div>
 
             {/* Glass tab selector */}
@@ -922,63 +922,63 @@ export default function Borrowing() {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }} className="borrowing-grid">
               {/* Left Column */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                {/* Loan Progress */}
-                <div className="glass-card">
+                {/* Total Active Borrowing */}
+                <div className="glass-card" style={{ overflow: 'hidden' }}>
                   <div style={{ padding: '20px 26px 0' }}>
-                    <span style={{ fontSize: 15, fontWeight: 600, color: '#0D0D0C', letterSpacing: '-0.02em' }}>Loan Progress</span>
+                    <span style={{ fontSize: 15, fontWeight: 600, color: '#0D0D0C', letterSpacing: '-0.02em' }}>Total Active Borrowing</span>
                   </div>
-                  <div style={{ padding: '14px 26px 26px' }}>
+                  <div style={{ padding: '14px 26px 20px', display: 'flex', flexDirection: 'column', gap: 18 }}>
+                    {activeLoans.length === 0 ? (
+                      <p style={{ fontSize: 13, color: '#787776' }}>No active loans</p>
+                    ) : (() => {
+                      const totalAll = activeLoans.reduce((s, l) => s + (l.total_amount || l.amount || 0), 0);
+                      const paidAll = activeLoans.reduce((s, l) => s + (l.amount_paid || 0), 0);
+                      const pctAll = totalAll > 0 ? Math.round((paidAll / totalAll) * 100) : 0;
+                      return (
+                        <div>
+                          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 8 }}>
+                            <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1918' }}>Borrowing</div>
+                            <div style={{ fontSize: 12, color: '#787776' }}>{pctAll}%</div>
+                          </div>
+                          <div style={{ width: '100%', height: 8, borderRadius: 4, background: 'rgba(167,157,234,0.15)', overflow: 'hidden' }}>
+                            <div style={{ height: '100%', borderRadius: 4, background: '#A79DEA', width: `${pctAll}%`, transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)' }} />
+                          </div>
+                          <div style={{ fontSize: 11, color: '#787776', marginTop: 6 }}>{formatMoney(paidAll)} of {formatMoney(totalAll)} paid back</div>
+                        </div>
+                      );
+                    })()}
+                  </div>
+                </div>
+
+                {/* Your Borrowing */}
+                <div className="glass-card" style={{ overflow: 'hidden' }}>
+                  <div style={{ padding: '20px 26px 0' }}>
+                    <span style={{ fontSize: 15, fontWeight: 600, color: '#0D0D0C', letterSpacing: '-0.02em' }}>Your Borrowing</span>
+                  </div>
+                  <div style={{ padding: '14px 26px 20px', display: 'flex', flexDirection: 'column', gap: 16 }}>
                     {activeLoans.length === 0 ? (
                       <p style={{ fontSize: 13, color: '#787776' }}>No active loans to track</p>
                     ) : (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                        {(() => {
-                          const totalAll = activeLoans.reduce((s, l) => s + (l.total_amount || l.amount || 0), 0);
-                          const paidAll = activeLoans.reduce((s, l) => s + (l.amount_paid || 0), 0);
-                          const pctAll = totalAll > 0 ? Math.round((paidAll / totalAll) * 100) : 0;
-                          return (
-                            <div style={{ marginBottom: 12 }}>
-                              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                                <span style={{ fontSize: 11, fontWeight: 500, color: '#787776' }}>Total Amount Loaned</span>
-                                <span style={{ fontSize: 11, fontWeight: 700, color: '#1A1918' }}>{formatMoney(paidAll)} / {formatMoney(totalAll)}</span>
+                      activeLoans.slice(0, 5).map(loan => {
+                        const lender = publicProfiles.find(p => p.user_id === loan.lender_id);
+                        const loanTotalOwed = loan.total_amount || loan.amount || 0;
+                        const amountPaid = loan.amount_paid || 0;
+                        const percentPaid = loanTotalOwed > 0 ? Math.round((amountPaid / loanTotalOwed) * 100) : 0;
+                        return (
+                          <div key={loan.id}>
+                            <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 8 }}>
+                              <div style={{ fontSize: 13, fontWeight: 500, color: '#1A1918' }}>
+                                {lender?.full_name || 'User'}{loan.purpose ? <span style={{ fontSize: 12, color: '#787776', fontWeight: 400 }}> · {loan.purpose}</span> : ''}
                               </div>
-                              <div style={{ width: '100%', height: 20, background: '#F0F0EE', borderRadius: 6, overflow: 'hidden' }}>
-                                <div style={{ height: '100%', borderRadius: 6, width: `${Math.max(pctAll, 2)}%`, background: '#678AFB', transition: 'width 0.5s', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: 8 }}>
-                                  {paidAll > 0 && <span style={{ fontSize: 10, fontWeight: 700, color: 'white' }}>{pctAll}%</span>}
-                                </div>
-                              </div>
+                              <div style={{ fontSize: 12, color: '#787776', flexShrink: 0, marginLeft: 8 }}>{percentPaid}%</div>
                             </div>
-                          );
-                        })()}
-                        <div style={{ height: 1, background: 'rgba(0,0,0,0.06)' }} />
-                        {activeLoans.slice(0, 5).map(loan => {
-                          const lender = publicProfiles.find(p => p.user_id === loan.lender_id);
-                          const loanTotalOwed = loan.total_amount || loan.amount || 0;
-                          const amountPaid = loan.amount_paid || 0;
-                          const percentPaid = loanTotalOwed > 0 ? Math.round((amountPaid / loanTotalOwed) * 100) : 0;
-                          return (
-                            <div key={loan.id} style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                  <div style={{ width: 24, height: 24, borderRadius: '50%', background: 'rgba(103,138,251,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                    <span style={{ fontSize: 11, fontWeight: 500, color: '#678AFB' }}>{lender?.full_name?.charAt(0) || '?'}</span>
-                                  </div>
-                                  <span style={{ fontSize: 11, fontWeight: 500, color: '#1A1918' }}>{lender?.full_name || 'User'}</span>
-                                  <span style={{ fontSize: 10, color: '#787776' }}>· {loan.purpose || 'Reason'}</span>
-                                </div>
-                                <span style={{ fontSize: 11, fontWeight: 700, color: '#1A1918' }}>{percentPaid}%</span>
-                              </div>
-                              <div style={{ width: '100%', height: 20, background: '#F0F0EE', borderRadius: 6, overflow: 'hidden' }}>
-                                <div style={{ height: '100%', borderRadius: 6, width: `${Math.max(percentPaid, 2)}%`, background: '#678AFB', transition: 'width 0.5s' }} />
-                              </div>
-                              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: '#787776' }}>
-                                <span>${amountPaid.toLocaleString()} paid {loan.next_payment_date && <span>· Next on {format(new Date(loan.next_payment_date), 'MMM d')}</span>}</span>
-                                <span>${loanTotalOwed.toLocaleString()} total</span>
-                              </div>
+                            <div style={{ width: '100%', height: 8, borderRadius: 4, background: 'rgba(167,157,234,0.15)', overflow: 'hidden' }}>
+                              <div style={{ height: '100%', borderRadius: 4, background: '#A79DEA', width: `${percentPaid}%`, transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)' }} />
                             </div>
-                          );
-                        })}
-                      </div>
+                            <div style={{ fontSize: 11, color: '#787776', marginTop: 6 }}>{formatMoney(amountPaid)} of {formatMoney(loanTotalOwed)} paid back</div>
+                          </div>
+                        );
+                      })
                     )}
                   </div>
                 </div>

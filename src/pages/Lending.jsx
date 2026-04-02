@@ -1444,7 +1444,7 @@ export default function Lending({ initialTab }) {
           {/* Header */}
           <div style={{ paddingTop: 80, paddingBottom: 20, textAlign: 'center' }}>
             <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '3.2rem', fontWeight: 600, letterSpacing: '-0.02em', lineHeight: 1.1, color: 'white', margin: 0 }}>
-              {initialTab === 'create' ? 'Create Loan' : 'Lending'}
+              {initialTab === 'create' ? 'Create Loan' : 'Lending & Borrowing'}
             </h1>
           </div>
 
@@ -1589,59 +1589,75 @@ export default function Lending({ initialTab }) {
                     )}
                   </div>
 
-                  {/* Individual Loan Progress - Right */}
-                  <div className="glass-card rounded-2xl p-5 border-0">
-                    <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
-                      Individual Loan Progress
-                    </p>
-                    {activeLoans.length === 0 ? (
-                      <p className="text-slate-500 text-sm">No active loans to track</p>
-                    ) : (
-                      <div className="space-y-4">
-                        {activeLoans.slice(0, 5).map(loan => {
-                          const borrower = publicProfiles.find(p => p.user_id === loan.borrower_id);
-                          const totalOwed = loan.total_amount || loan.amount || 0;
-                          const amountPaid = loan.amount_paid || 0;
-                          const percentPaid = totalOwed > 0 ? Math.round((amountPaid / totalOwed) * 100) : 0;
-
-                          return (
-                            <div key={loan.id} className="space-y-1">
-                              <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                  <div className="w-6 h-6 rounded-full bg-[#678AFB]/20 flex items-center justify-center">
-                                    <span className="text-xs font-medium text-[#678AFB]">
-                                      {borrower?.full_name?.charAt(0) || '?'}
-                                    </span>
-                                  </div>
-                                  <span className="text-sm font-medium text-slate-700">{borrower?.full_name || 'User'}</span>
-                                    <span className="text-xs text-slate-400 truncate max-w-[100px]">· {loan.purpose || 'Reason'}</span>
-                                </div>
-                                <span className="text-xs text-slate-500">{percentPaid}%</span>
-                              </div>
-                              <div className="relative h-3 bg-white rounded-full overflow-hidden">
-                                <div
-                                  className="absolute top-0 left-0 h-full bg-[#678AFB] rounded-full transition-all duration-500"
-                                  style={{ width: `${percentPaid}%` }}
-                                />
-                              </div>
-                              <div className="flex justify-between text-xs text-slate-500">
-                                <span>${amountPaid.toLocaleString()} paid</span>
-                                <span>${totalOwed.toLocaleString()} total</span>
-                              </div>
+                  {/* Total Active Lending */}
+                  <div className="glass-card rounded-2xl border-0" style={{ overflow: 'hidden' }}>
+                    <div style={{ padding: '20px 22px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <span style={{ fontSize: 15, fontWeight: 600, color: '#0D0D0C', letterSpacing: '-0.02em', fontFamily: "'DM Sans', sans-serif" }}>Total Active Lending</span>
+                    </div>
+                    <div style={{ padding: '14px 22px 20px', display: 'flex', flexDirection: 'column', gap: 18 }}>
+                      {activeLoans.length === 0 ? (
+                        <p style={{ fontSize: 13, color: '#787776' }}>No active loans</p>
+                      ) : (() => {
+                        const totalAll = activeLoans.reduce((s, l) => s + (l.total_amount || l.amount || 0), 0);
+                        const paidAll = activeLoans.reduce((s, l) => s + (l.amount_paid || 0), 0);
+                        const pctAll = totalAll > 0 ? Math.round((paidAll / totalAll) * 100) : 0;
+                        return (
+                          <div>
+                            <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 8 }}>
+                              <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1918' }}>Lending</div>
+                              <div style={{ fontSize: 12, color: '#787776' }}>{pctAll}%</div>
                             </div>
-                          );
-                        })}
-                        {activeLoans.length > 5 && (
-                          <Button
-                            variant="ghost"
-                            className="w-full text-[#678AFB] hover:bg-transparent"
-                            onClick={() => setActiveSection('active')}
-                          >
-                            View all {activeLoans.length} loans
-                          </Button>
-                        )}
-                      </div>
-                    )}
+                            <div style={{ width: '100%', height: 8, borderRadius: 4, background: 'rgba(103,138,251,0.15)', overflow: 'hidden' }}>
+                              <div style={{ height: '100%', borderRadius: 4, background: '#678AFB', width: `${pctAll}%`, transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)' }} />
+                            </div>
+                            <div style={{ fontSize: 11, color: '#787776', marginTop: 6 }}>{formatMoney(paidAll)} of {formatMoney(totalAll)} repaid</div>
+                          </div>
+                        );
+                      })()}
+                    </div>
+                  </div>
+
+                  {/* Your Lending */}
+                  <div className="glass-card rounded-2xl border-0" style={{ overflow: 'hidden' }}>
+                    <div style={{ padding: '20px 22px 0' }}>
+                      <span style={{ fontSize: 15, fontWeight: 600, color: '#0D0D0C', letterSpacing: '-0.02em', fontFamily: "'DM Sans', sans-serif" }}>Your Lending</span>
+                    </div>
+                    <div style={{ padding: '14px 22px 20px', display: 'flex', flexDirection: 'column', gap: 16 }}>
+                      {activeLoans.length === 0 ? (
+                        <p style={{ fontSize: 13, color: '#787776' }}>No active loans to track</p>
+                      ) : (
+                        <>
+                          {activeLoans.slice(0, 5).map(loan => {
+                            const borrower = publicProfiles.find(p => p.user_id === loan.borrower_id);
+                            const totalOwed = loan.total_amount || loan.amount || 0;
+                            const amountPaid = loan.amount_paid || 0;
+                            const percentPaid = totalOwed > 0 ? Math.round((amountPaid / totalOwed) * 100) : 0;
+                            return (
+                              <div key={loan.id}>
+                                <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 8 }}>
+                                  <div style={{ fontSize: 13, fontWeight: 500, color: '#1A1918' }}>
+                                    {borrower?.full_name || 'User'}{loan.purpose ? <span style={{ fontSize: 12, color: '#787776', fontWeight: 400 }}> · {loan.purpose}</span> : ''}
+                                  </div>
+                                  <div style={{ fontSize: 12, color: '#787776', flexShrink: 0, marginLeft: 8 }}>{percentPaid}%</div>
+                                </div>
+                                <div style={{ width: '100%', height: 8, borderRadius: 4, background: 'rgba(103,138,251,0.15)', overflow: 'hidden' }}>
+                                  <div style={{ height: '100%', borderRadius: 4, background: '#678AFB', width: `${percentPaid}%`, transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)' }} />
+                                </div>
+                                <div style={{ fontSize: 11, color: '#787776', marginTop: 6 }}>{formatMoney(amountPaid)} of {formatMoney(totalOwed)} repaid</div>
+                              </div>
+                            );
+                          })}
+                          {activeLoans.length > 5 && (
+                            <button
+                              style={{ width: '100%', padding: '8px 0', fontSize: 13, color: '#678AFB', background: 'transparent', border: 'none', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}
+                              onClick={() => setActiveSection('active')}
+                            >
+                              View all {activeLoans.length} loans
+                            </button>
+                          )}
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
 

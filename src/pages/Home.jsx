@@ -887,30 +887,32 @@ export default function Home() {
               {myLoans.filter(l => l && l.status === 'active').length === 0 ? (
                 <div style={{ padding: '20px 26px', textAlign: 'center', color: '#787776', fontSize: 13 }}>No active loans</div>
               ) : (
-                myLoans.filter(l => l && l.status === 'active').slice(0, 4).map((loan, idx) => {
-                  const isLender = loan.lender_id === user.id;
-                  const otherUserId = isLender ? loan.borrower_id : loan.lender_id;
-                  const otherProfile = safeAllProfiles.find(p => p.user_id === otherUserId);
-                  const totalAmt = loan.total_amount || loan.amount || 0;
-                  const amountPaid = loan.amount_paid || 0;
-                  const remaining = totalAmt - amountPaid;
-                  const pct = totalAmt > 0 ? Math.round((amountPaid / totalAmt) * 100) : 0;
-                  return (
-                    <div key={loan.id} style={{ padding: '13px 26px', display: 'flex', alignItems: 'flex-start', gap: 16, paddingTop: idx === 0 ? 18 : 13 }}>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', marginBottom: 8 }}>
-                          {isLender ? `You lent ${otherProfile?.full_name?.split(' ')[0] || otherProfile?.username || 'user'} ${formatMoney(totalAmt)}` : `${otherProfile?.full_name?.split(' ')[0] || otherProfile?.username || 'user'} lent you ${formatMoney(totalAmt)}`}
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                          <div style={{ flex: 1, height: 6, borderRadius: 3, overflow: 'hidden', background: isLender ? 'rgba(103,138,251,0.15)' : 'rgba(167,157,234,0.15)' }}>
-                            <div style={{ height: '100%', borderRadius: 3, width: `${pct}%`, background: isLender ? '#678AFB' : '#A79DEA' }} />
+                <div style={{ padding: '14px 26px 22px', display: 'flex', flexDirection: 'column', gap: 16 }}>
+                  {myLoans.filter(l => l && l.status === 'active').slice(0, 4).map((loan, idx) => {
+                    const isLender = loan.lender_id === user.id;
+                    const otherUserId = isLender ? loan.borrower_id : loan.lender_id;
+                    const otherProfile = safeAllProfiles.find(p => p.user_id === otherUserId);
+                    const totalAmt = loan.total_amount || loan.amount || 0;
+                    const amountPaid = loan.amount_paid || 0;
+                    const remaining = totalAmt - amountPaid;
+                    const pct = totalAmt > 0 ? Math.round((amountPaid / totalAmt) * 100) : 0;
+                    const firstName = otherProfile?.full_name?.split(' ')[0] || otherProfile?.username || 'user';
+                    return (
+                      <div key={loan.id}>
+                        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 8 }}>
+                          <div style={{ fontSize: 13, fontWeight: 500, color: '#1A1918' }}>
+                            {isLender ? `You lent ${firstName} ${formatMoney(totalAmt)}` : `${firstName} lent you ${formatMoney(totalAmt)}`}
                           </div>
-                          <div style={{ fontSize: 11, fontWeight: 500, color: '#787776', flexShrink: 0 }}>{formatMoney(amountPaid)} repaid &amp; {formatMoney(remaining)} remaining</div>
+                          <div style={{ fontSize: 12, color: '#787776', flexShrink: 0, marginLeft: 8 }}>{pct}%</div>
                         </div>
+                        <div style={{ width: '100%', height: 8, borderRadius: 4, background: isLender ? 'rgba(103,138,251,0.15)' : 'rgba(167,157,234,0.15)', overflow: 'hidden' }}>
+                          <div style={{ height: '100%', borderRadius: 4, width: `${pct}%`, background: isLender ? '#678AFB' : '#A79DEA', transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)' }} />
+                        </div>
+                        <div style={{ fontSize: 11, color: '#787776', marginTop: 6 }}>{formatMoney(amountPaid)} of {formatMoney(totalAmt)} {isLender ? 'repaid' : 'paid back'}</div>
                       </div>
-                    </div>
-                  );
-                })
+                    );
+                  })}
+                </div>
               )}
             </div>
 
@@ -972,8 +974,9 @@ export default function Home() {
 
               {/* Loan Progress */}
               <div className="glass-card" style={{ overflow: 'hidden' }}>
-                <div style={{ padding: '22px 26px 0' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '22px 26px 0' }}>
                   <div style={{ fontSize: 15, fontWeight: 600, color: '#0D0D0C', letterSpacing: '-0.02em', fontFamily: "'DM Sans', sans-serif" }}>Loan progress</div>
+                  <Link to={createPageUrl("Lending")} style={{ fontSize: 12, fontWeight: 500, color: '#A79DEA', textDecoration: 'none' }}>Manage</Link>
                 </div>
                 <div style={{ padding: '18px 26px 22px', display: 'flex', flexDirection: 'column', gap: 18 }}>
                   <div>
