@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Loan, Payment, User, PublicProfile, Friendship } from "@/entities/all";
-import { Activity, ArrowUpRight, ArrowDownRight, Send, Check, X, Ban, ChevronDown, Clock, CheckCircle, XCircle, AlertCircle, Search, Download } from "lucide-react";
+import { Activity, ArrowUpRight, ArrowDownRight, Send, Check, X, Ban, ChevronDown, Clock, Search, Download } from "lucide-react";
 import { format, subDays, subMonths, subYears } from "date-fns";
 import DashboardSidebar from "@/components/DashboardSidebar";
 
@@ -15,29 +15,17 @@ const STAR_CIRCLES = [
   {cx:1560,cy:256,o:0.45},{cx:125,cy:312,o:0.5},{cx:345,cy:267,o:0.6},{cx:565,cy:34,o:0.75},
 ];
 
-const STATUS_ICON_MAP = {
-  pending: { icon: Clock, color: '#787776' },
-  pending_confirmation: { icon: Clock, color: '#787776' },
-  pending_borrower_approval: { icon: Clock, color: '#787776' },
-  active: { icon: CheckCircle, color: '#678AFB' },
-  completed: { icon: CheckCircle, color: '#678AFB' },
-  confirmed: { icon: CheckCircle, color: '#678AFB' },
-  defaulted: { icon: AlertCircle, color: '#E8726E' },
-  cancelled: { icon: XCircle, color: '#E8726E' },
-  declined: { icon: XCircle, color: '#E8726E' },
-  rejected: { icon: XCircle, color: '#E8726E' },
-};
 
 const CATEGORY_OPTIONS = [
-  { id: 'sent_offer', label: 'Sent Loan Offer' },
-  { id: 'received_offer', label: 'Received Loan Offer' },
-  { id: 'loan_accepted', label: 'Loan Accepted' },
-  { id: 'loan_declined', label: 'Loan Declined' },
-  { id: 'loan_cancelled', label: 'Loan Cancelled' },
-  { id: 'loan_completed', label: 'Loan Completed' },
-  { id: 'loan_defaulted', label: 'Loan Defaulted' },
-  { id: 'payment_sent', label: 'Payment Sent' },
-  { id: 'payment_received', label: 'Payment Received' },
+  { id: 'sent_offer', label: 'You sent a loan offer to' },
+  { id: 'received_offer', label: 'You received a loan offer from' },
+  { id: 'loan_accepted', label: 'You accepted a loan offer from' },
+  { id: 'loan_declined', label: 'Your loan offer was declined by' },
+  { id: 'loan_cancelled', label: 'Loan cancelled with' },
+  { id: 'loan_completed', label: 'Loan fully repaid with' },
+  { id: 'loan_defaulted', label: 'Loan defaulted with' },
+  { id: 'payment_sent', label: 'You sent a payment to' },
+  { id: 'payment_received', label: 'You received a payment from' },
 ];
 
 const DATE_OPTIONS = [
@@ -50,17 +38,6 @@ const DATE_OPTIONS = [
   { id: 'older', label: 'Older' },
 ];
 
-const STATUS_OPTIONS = [
-  { id: 'pending', label: 'Pending' },
-  { id: 'pending_confirmation', label: 'Awaiting Confirmation' },
-  { id: 'active', label: 'Active' },
-  { id: 'confirmed', label: 'Confirmed' },
-  { id: 'completed', label: 'Completed' },
-  { id: 'declined', label: 'Declined' },
-  { id: 'cancelled', label: 'Cancelled' },
-  { id: 'defaulted', label: 'Defaulted' },
-  { id: 'rejected', label: 'Rejected' },
-];
 
 const AMOUNT_MODES = [
   { id: 'all', label: 'All amounts' },
@@ -482,7 +459,6 @@ export default function RecentActivityPage() {
   const [dateFilter, setDateFilter] = useState('all');
   const [categoryFilter, setCategoryFilter] = useState([]);
   const [friendFilter, setFriendFilter] = useState([]);
-  const [statusFilter, setStatusFilter] = useState([]);
   const [amountMode, setAmountMode] = useState('all');
   const [amountVal1, setAmountVal1] = useState('');
   const [amountVal2, setAmountVal2] = useState('');
@@ -666,14 +642,6 @@ export default function RecentActivityPage() {
     filtered = filtered.filter(a => categoryFilter.includes(a._category));
   }
 
-  // Status filter
-  if (statusFilter.length > 0) {
-    filtered = filtered.filter(a => {
-      const s = a.status || '';
-      return statusFilter.includes(s);
-    });
-  }
-
   // Amount filter
   if (amountMode !== 'all' && amountApplied) {
     const v1 = parseFloat(amountVal1) || 0;
@@ -694,24 +662,24 @@ export default function RecentActivityPage() {
   else if (sortBy === 'amount_desc') filtered.sort((a, b) => (b.amount || 0) - (a.amount || 0));
   else if (sortBy === 'amount_asc') filtered.sort((a, b) => (a.amount || 0) - (b.amount || 0));
 
-  const hasAnyFilter = dateFilter !== 'all' || categoryFilter.length > 0 || friendFilter.length > 0 || statusFilter.length > 0 || (amountMode !== 'all' && amountApplied) || searchQuery.trim() !== '';
+  const hasAnyFilter = dateFilter !== 'all' || categoryFilter.length > 0 || friendFilter.length > 0 || (amountMode !== 'all' && amountApplied) || searchQuery.trim() !== '';
   const clearFilters = () => {
     setDateFilter('all'); setCategoryFilter([]); setFriendFilter([]);
-    setStatusFilter([]); setAmountMode('all'); setAmountVal1(''); setAmountVal2('');
+    setAmountMode('all'); setAmountVal1(''); setAmountVal2('');
     setAmountApplied(false); setSearchQuery('');
   };
 
   /* ── Category display config ──────────────────────────────── */
   const CATEGORY_DISPLAY = {
-    sent_offer: { label: 'You offered', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> },
-    received_offer: { label: 'Offered to you', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polyline points="7 13 12 18 17 13"/><line x1="12" y1="18" x2="12" y2="6"/></svg> },
-    loan_accepted: { label: 'Accepted', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg> },
-    loan_declined: { label: 'Declined', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> },
-    loan_cancelled: { label: 'Cancelled', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg> },
-    loan_completed: { label: 'Fully repaid', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> },
-    loan_defaulted: { label: 'Defaulted', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> },
-    payment_sent: { label: 'You paid', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> },
-    payment_received: { label: 'Paid to you', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> },
+    sent_offer: { label: 'You sent a loan offer to' },
+    received_offer: { label: 'You received a loan offer from' },
+    loan_accepted: { label: 'You accepted a loan offer from' },
+    loan_declined: { label: 'Your loan offer was declined by' },
+    loan_cancelled: { label: 'Loan cancelled with' },
+    loan_completed: { label: 'Loan fully repaid with' },
+    loan_defaulted: { label: 'Loan defaulted with' },
+    payment_sent: { label: 'You sent a payment to' },
+    payment_received: { label: 'You received a payment from' },
   };
 
   /* ── Format date for table display ──────────────────────────── */
@@ -869,11 +837,10 @@ export default function RecentActivityPage() {
           <div className="glass-card" style={{ padding: '16px 22px', marginBottom: 20, overflow: 'visible', position: 'relative', zIndex: 20 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
               <SingleSelectDropdown options={DATE_OPTIONS} selected={dateFilter} onChange={setDateFilter} />
+              <MultiSelectDropdown label="All Categories" options={CATEGORY_OPTIONS} selected={categoryFilter} onChange={setCategoryFilter} />
               {friendOptions.length > 0 && (
                 <MultiSelectDropdown label="All Friends" options={friendOptions} selected={friendFilter} onChange={setFriendFilter} />
               )}
-              <MultiSelectDropdown label="All Categories" options={CATEGORY_OPTIONS} selected={categoryFilter} onChange={setCategoryFilter} />
-              <MultiSelectDropdown label="All Statuses" options={STATUS_OPTIONS} selected={statusFilter} onChange={setStatusFilter} />
               <AmountFilterDropdown
                 amountMode={amountMode}
                 setAmountMode={setAmountMode}
@@ -922,17 +889,14 @@ export default function RecentActivityPage() {
                     {/* Spacer for icon column */}
                     <div style={{ width: 36, flexShrink: 0, marginRight: 16 }} />
                     <span style={{ width: 80, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', flexShrink: 0 }}>Date</span>
-                    <span style={{ flex: 1.5, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', minWidth: 0, paddingLeft: 4 }}>Friend</span>
-                    <span style={{ flex: 1.2, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', minWidth: 0, paddingLeft: 4 }}>Category</span>
-                    <span style={{ width: 130, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', textAlign: 'center', flexShrink: 0 }}>Status</span>
+                    <span style={{ flex: 1.8, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', minWidth: 0, paddingLeft: 4 }}>Category</span>
+                    <span style={{ flex: 1.2, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', minWidth: 0, paddingLeft: 4 }}>Friend</span>
                     <span style={{ width: 100, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', textAlign: 'right', flexShrink: 0 }}>Amount</span>
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                     {filtered.map((activity, index) => {
                       const { title, description, icon: Icon, status, friendName, amount, category } = getActivityInfo(activity);
-                      const statusCfg = status && STATUS_ICON_MAP[status];
-                      const StatusIcon = statusCfg?.icon;
                       const catDisplay = CATEGORY_DISPLAY[category] || CATEGORY_DISPLAY.sent_offer;
                       const dateDisplay = formatActivityDate(activity.date);
 
@@ -955,14 +919,16 @@ export default function RecentActivityPage() {
                             </p>
                           </div>
                           <div className="activity-mobile-status">
-                            {statusCfg && StatusIcon && (
-                              <div style={{
-                                display: 'flex', alignItems: 'center', gap: 5, padding: '5px 12px',
-                                borderRadius: 10, background: 'white', flexShrink: 0,
-                                border: '1px solid rgba(0,0,0,0.06)',
-                              }}>
-                                <StatusIcon size={13} style={{ color: statusCfg.color }} />
-                                <span style={{ fontSize: 11, fontWeight: 600, color: statusCfg.color, textTransform: 'capitalize' }}>{status?.replace(/_/g, ' ')}</span>
+                            {(status === 'pending_confirmation' && activity.type === 'payment') && (
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '4px 10px', borderRadius: 8, background: 'white', flexShrink: 0, border: '1px solid rgba(0,0,0,0.06)' }}>
+                                <Clock size={12} style={{ color: '#787776' }} />
+                                <span style={{ fontSize: 11, fontWeight: 600, color: '#787776', whiteSpace: 'nowrap' }}>Pending confirmation</span>
+                              </div>
+                            )}
+                            {(status === 'pending' && activity.type === 'loan' && (activity.status === 'pending' || activity.status === 'pending_borrower_approval')) && (
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '4px 10px', borderRadius: 8, background: 'white', flexShrink: 0, border: '1px solid rgba(0,0,0,0.06)' }}>
+                                <Clock size={12} style={{ color: '#787776' }} />
+                                <span style={{ fontSize: 11, fontWeight: 600, color: '#787776', whiteSpace: 'nowrap' }}>Pending approval</span>
                               </div>
                             )}
                           </div>
@@ -971,23 +937,23 @@ export default function RecentActivityPage() {
                           <span className="activity-desktop-date" style={{ display: 'none', width: 80, fontSize: 12, fontWeight: 500, color: '#787776', flexShrink: 0 }}>
                             {dateDisplay}
                           </span>
-                          <div className="activity-desktop-friend" style={{ display: 'none', flex: 1.5, minWidth: 0, alignItems: 'center', gap: 8, paddingLeft: 4 }}>
-                            <span style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{friendName}</span>
-                          </div>
-                          <div className="activity-desktop-category" style={{ display: 'none', flex: 1.2, minWidth: 0, alignItems: 'center', gap: 6, paddingLeft: 4 }}>
+                          <div className="activity-desktop-category" style={{ display: 'none', flex: 1.8, minWidth: 0, alignItems: 'center', gap: 6, paddingLeft: 4 }}>
                             <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918' }}>{catDisplay.label}</span>
-                          </div>
-                          <div className="activity-desktop-status" style={{ display: 'none', width: 130, justifyContent: 'center', flexShrink: 0 }}>
-                            {statusCfg && StatusIcon && (
-                              <div style={{
-                                display: 'inline-flex', alignItems: 'center', gap: 5, padding: '4px 10px',
-                                borderRadius: 8, background: 'white',
-                                border: '1px solid rgba(0,0,0,0.06)',
-                              }}>
-                                <StatusIcon size={12} style={{ color: statusCfg.color }} />
-                                <span style={{ fontSize: 11, fontWeight: 600, color: statusCfg.color, textTransform: 'capitalize' }}>{status?.replace(/_/g, ' ')}</span>
+                            {(status === 'pending_confirmation' && activity.type === 'payment') && (
+                              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 8px', borderRadius: 6, background: 'white', border: '1px solid rgba(0,0,0,0.06)', marginLeft: 4 }}>
+                                <Clock size={11} style={{ color: '#787776' }} />
+                                <span style={{ fontSize: 10, fontWeight: 600, color: '#787776', whiteSpace: 'nowrap' }}>Pending confirmation</span>
                               </div>
                             )}
+                            {(status === 'pending' && activity.type === 'loan' && (activity.status === 'pending' || activity.status === 'pending_borrower_approval')) && (
+                              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 8px', borderRadius: 6, background: 'white', border: '1px solid rgba(0,0,0,0.06)', marginLeft: 4 }}>
+                                <Clock size={11} style={{ color: '#787776' }} />
+                                <span style={{ fontSize: 10, fontWeight: 600, color: '#787776', whiteSpace: 'nowrap' }}>Pending approval</span>
+                              </div>
+                            )}
+                          </div>
+                          <div className="activity-desktop-friend" style={{ display: 'none', flex: 1.2, minWidth: 0, alignItems: 'center', gap: 8, paddingLeft: 4 }}>
+                            <span style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{friendName}</span>
                           </div>
                           <span className="activity-desktop-amount" style={{ display: 'none', width: 100, fontSize: 13, fontWeight: 600, color: '#1A1918', textAlign: 'right', flexShrink: 0 }}>
                             {amount}
@@ -1010,9 +976,8 @@ export default function RecentActivityPage() {
               .activity-mobile-content { display: none !important; }
               .activity-mobile-status { display: none !important; }
               .activity-desktop-date { display: block !important; }
-              .activity-desktop-friend { display: flex !important; }
               .activity-desktop-category { display: flex !important; }
-              .activity-desktop-status { display: flex !important; }
+              .activity-desktop-friend { display: flex !important; }
               .activity-desktop-amount { display: block !important; }
             }
           `}</style>

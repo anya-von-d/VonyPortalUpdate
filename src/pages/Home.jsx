@@ -131,7 +131,7 @@ const syncPublicProfile = async (userData) => {
   if (!userData || !userData.id || !userData.username || !userData.full_name) return;
   try {
     const existingProfiles = await PublicProfile.filter({ user_id: { eq: userData.id } });
-    const defaultAvatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent((userData.full_name || 'User').charAt(0))}&background=22c55e&color=fff&size=128`;
+    const defaultAvatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent((userData.full_name || 'User').charAt(0))}&background=678AFB&color=fff&size=128`;
     const publicProfileData = {
       user_id: userData.id,
       username: userData.username,
@@ -606,8 +606,8 @@ export default function Home() {
       const bName = borrowerProfile?.full_name?.split(' ')[0] || borrowerProfile?.username || 'user';
       if (days >= 0 && days <= 7) {
         notifs.push({
-          title: `${bName}'s next payment is in ${days} day${days !== 1 ? 's' : ''}`,
-          description: `They've repaid ${formatMoney(loan.amount_paid || 0)} of ${formatMoney(loan.total_amount || loan.amount || 0)} so far. We've sent both of you a notification as a reminder.`
+          title: `${bName}'s next payment is coming up`,
+          description: `We've sent both of you a reminder. Make sure to record the payment when it's made.`
         });
       }
     });
@@ -618,8 +618,8 @@ export default function Home() {
       const lName = lenderProfile?.full_name?.split(' ')[0] || lenderProfile?.username || 'user';
       const days = Math.abs(daysUntilDate(loan.next_payment_date));
       notifs.push({
-        title: `You have a payment due to ${lName}`,
-        description: `This one was due ${days} day${days !== 1 ? 's' : ''} ago. If you've already paid, make sure to record the payment so it's up to date.`,
+        title: `You have a payment to ${lName} that is overdue`,
+        description: `If you've already paid, make sure to record the payment so it's up to date.`,
         action: { label: 'Record Payment', onClick: () => { window.location.href = createPageUrl("RecordPayment"); } }
       });
     });
@@ -631,7 +631,7 @@ export default function Home() {
       const days = Math.abs(daysUntilDate(loan.next_payment_date));
       notifs.push({
         title: `${bName}'s payment is overdue`,
-        description: `Their payment of ${formatMoney(loan.payment_amount || 0)} was due ${days} day${days !== 1 ? 's' : ''} ago. If they've paid, make sure to record it.`,
+        description: `If they've already paid, make sure to record it so your dashboard stays up to date.`,
         action: { label: 'Record Payment', onClick: () => { window.location.href = createPageUrl("RecordPayment"); } }
       });
     });
@@ -722,13 +722,13 @@ export default function Home() {
 
         {/* Hero alert (overdue) — carousel if multiple */}
         {overdueReminders.length > 0 && (
-          <div className="glass-hero-alert" style={{ maxWidth: 1080, margin: '0 auto', overflow: 'hidden', position: 'relative' }}>
+          <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 28px' }}><div className="glass-hero-alert" style={{ overflow: 'hidden', position: 'relative' }}>
             <div style={{ display: 'flex', transition: 'transform 0.45s cubic-bezier(0.4, 0, 0.2, 1)', transform: `translateX(-${alertSlide * 100}%)` }}>
               {overdueReminders.map((item, i) => (
                 <div key={i} style={{ minWidth: '100%', padding: '14px 28px', display: 'flex', alignItems: 'center', gap: 12 }}>
                   <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#E8726E', flexShrink: 0 }} />
                   <div style={{ flex: 1, fontSize: 13, color: '#787776', lineHeight: 1.5 }}>
-                    <strong style={{ color: '#1A1918', fontWeight: 600 }}>Just a reminder</strong> you have a {formatMoney(item.amount)} payment to {item.firstName} that was due {item.days} day{item.days !== 1 ? 's' : ''} ago. If you've already paid, make sure to record the payment so it's up to date.
+                    <strong style={{ color: '#1A1918', fontWeight: 600 }}>Just a reminder</strong> you have a payment to {item.firstName} that is overdue. If you've already paid, make sure to record the payment so it's up to date.
                   </div>
                   <Link to={createPageUrl("RecordPayment")} style={{
                     padding: '7px 18px', borderRadius: 20, background: '#678AFB', color: 'white',
@@ -750,7 +750,7 @@ export default function Home() {
                 ))}
               </div>
             )}
-          </div>
+          </div></div>
         )}
       </div>
 

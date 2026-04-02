@@ -275,7 +275,7 @@ export default function LoanAgreements() {
     doc.setFontSize(11);
     doc.setFont(undefined, 'normal');
     let yPos = 105;
-    const promiseText = `FOR VALUE RECEIVED, the undersigned Borrower, ${borrowerInfo.full_name}, promises to pay to the order of ${lenderInfo.full_name}, hereinafter referred to as "Lender", the principal sum of ${formatMoney(agreement.amount)}, together with interest at the rate of ${agreement.interest_rate}% per annum.`;
+    const promiseText = `${lenderInfo.full_name} agrees to lend ${borrowerInfo.full_name} ${formatMoney(agreement.amount)}${agreement.purpose ? ` for ${agreement.purpose}` : ''}, with ${agreement.interest_rate}% interest. ${borrowerInfo.full_name} agrees to pay back ${formatMoney(agreement.total_amount)} in ${agreement.payment_frequency} payments of ${formatMoney(agreement.payment_amount)} over ${agreement.repayment_period} ${agreement.repayment_unit || 'months'}.`;
     const promiseLines = doc.splitTextToSize(promiseText, 170);
     doc.text(promiseLines, 20, yPos);
     yPos += promiseLines.length * 6 + 10;
@@ -550,10 +550,7 @@ export default function LoanAgreements() {
         </div>
 
         <p style={{ fontSize: 13, lineHeight: 1.7, color: '#1A1918' }}>
-          FOR VALUE RECEIVED, the undersigned Borrower, <strong>{borrowerInfo.full_name}</strong>,
-          promises to pay to the order of <strong>{lenderInfo.full_name}</strong>,
-          the principal sum of <strong>{formatMoney(agreement.amount)}</strong>,
-          together with interest at the rate of <strong>{agreement.interest_rate}%</strong> per annum.
+          <strong>{lenderInfo.full_name}</strong> agrees to lend <strong>{borrowerInfo.full_name}</strong> <strong>{formatMoney(agreement.amount)}</strong>{agreement.purpose ? <> for <strong>{agreement.purpose}</strong></> : ''}, with <strong>{agreement.interest_rate}%</strong> interest. <strong>{borrowerInfo.full_name}</strong> agrees to pay back <strong>{formatMoney(agreement.total_amount)}</strong> in <strong>{agreement.payment_frequency}</strong> payments of <strong>{formatMoney(agreement.payment_amount)}</strong> over <strong>{agreement.repayment_period} {agreement.repayment_unit || 'months'}</strong>.
         </p>
 
         <div style={{ background: 'rgba(0,0,0,0.03)', borderRadius: 16, padding: 16 }}>

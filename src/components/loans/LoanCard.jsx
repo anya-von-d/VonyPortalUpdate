@@ -61,7 +61,7 @@ export default function LoanCard({ loan, type, onMakePayment, onDetails }) {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <img
-                src={otherUser?.profile_picture_url || `https://ui-avatars.com/api/?name=${encodeURIComponent((otherUser?.full_name || 'User').charAt(0))}&background=22c55e&color=fff&size=128`}
+                src={otherUser?.profile_picture_url || `https://ui-avatars.com/api/?name=${encodeURIComponent((otherUser?.full_name || 'User').charAt(0))}&background=678AFB&color=fff&size=128`}
                 alt={otherUser?.full_name}
                 className="w-10 h-10 rounded-full object-cover"
               />

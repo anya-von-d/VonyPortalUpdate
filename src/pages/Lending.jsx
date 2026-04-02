@@ -367,9 +367,12 @@ export default function Lending({ initialTab }) {
         dueDate = addMonths(new Date(), parseInt(formData.repayment_period) || 1);
       }
 
+      const borrowerName = isCurrentUserTheLender ? (otherProfile.full_name || otherUsername) : (currentUser.full_name || currentUserProfile?.username || 'Borrower');
+
       const loanData = {
         lender_id: lenderId,
         borrower_id: borrowerId,
+        borrowerName,
         amount: parseFloat(formData.amount),
         interest_rate: loanType === 'flexible' ? 0 : parseFloat(formData.interest_rate) || 0,
         repayment_period: loanType === 'flexible' ? 0 : parseInt(formData.repayment_period) || 0,
@@ -885,7 +888,7 @@ export default function Lending({ initialTab }) {
     doc.setFontSize(11);
     doc.setFont(undefined, 'normal');
     let yPos = 105;
-    const promiseText = `FOR VALUE RECEIVED, the undersigned Borrower, ${borrowerInfo.full_name}, promises to pay to the order of ${lenderInfo.full_name}, hereinafter referred to as "Lender", the principal sum of ${formatMoney(agreement.amount)}, together with interest at the rate of ${agreement.interest_rate}% per annum.`;
+    const promiseText = `${lenderInfo.full_name} agrees to lend ${borrowerInfo.full_name} ${formatMoney(agreement.amount)}${agreement.purpose ? ` for ${agreement.purpose}` : ''}, with ${agreement.interest_rate}% interest. ${borrowerInfo.full_name} agrees to pay back ${formatMoney(agreement.total_amount)} in ${agreement.payment_frequency} payments of ${formatMoney(agreement.payment_amount)} over ${agreement.repayment_period} ${agreement.repayment_unit || 'months'}.`;
     const promiseLines = doc.splitTextToSize(promiseText, 170);
     doc.text(promiseLines, 20, yPos);
     yPos += promiseLines.length * 6 + 10;
@@ -1088,10 +1091,7 @@ export default function Lending({ initialTab }) {
 
         <div className="glass-card rounded-2xl p-4">
           <p className="text-sm text-slate-700 leading-relaxed">
-            FOR VALUE RECEIVED, the undersigned Borrower, <span className="font-semibold">{borrowerInfo.full_name}</span>,
-            promises to pay to the order of <span className="font-semibold">{lenderInfo.full_name}</span>,
-            the principal sum of <span className="font-semibold">{formatMoney(agreement.amount)}</span>,
-            together with interest at the rate of <span className="font-semibold">{agreement.interest_rate}%</span> per annum.
+            <span className="font-semibold">{lenderInfo.full_name}</span> agrees to lend <span className="font-semibold">{borrowerInfo.full_name}</span> <span className="font-semibold">{formatMoney(agreement.amount)}</span>{agreement.purpose ? <> for <span className="font-semibold">{agreement.purpose}</span></> : ''}, with <span className="font-semibold">{agreement.interest_rate}%</span> interest. <span className="font-semibold">{borrowerInfo.full_name}</span> agrees to pay back <span className="font-semibold">{formatMoney(agreement.total_amount)}</span> in <span className="font-semibold">{agreement.payment_frequency}</span> payments of <span className="font-semibold">{formatMoney(agreement.payment_amount)}</span> over <span className="font-semibold">{agreement.repayment_period} {agreement.repayment_unit || 'months'}</span>.
           </p>
         </div>
 
@@ -1321,7 +1321,7 @@ export default function Lending({ initialTab }) {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex items-center gap-3">
               <img
-                src={lenderInfo.profile_picture_url || `https://ui-avatars.com/api/?name=${encodeURIComponent((lenderInfo.full_name || 'L').charAt(0))}&background=22c55e&color=fff&size=64`}
+                src={lenderInfo.profile_picture_url || `https://ui-avatars.com/api/?name=${encodeURIComponent((lenderInfo.full_name || 'L').charAt(0))}&background=678AFB&color=fff&size=64`}
                 alt={lenderInfo.full_name}
                 className="w-10 h-10 rounded-full"
               />
@@ -1332,7 +1332,7 @@ export default function Lending({ initialTab }) {
             </div>
             <div className="flex items-center gap-3">
               <img
-                src={borrowerInfo.profile_picture_url || `https://ui-avatars.com/api/?name=${encodeURIComponent((borrowerInfo.full_name || 'B').charAt(0))}&background=22c55e&color=fff&size=64`}
+                src={borrowerInfo.profile_picture_url || `https://ui-avatars.com/api/?name=${encodeURIComponent((borrowerInfo.full_name || 'B').charAt(0))}&background=678AFB&color=fff&size=64`}
                 alt={borrowerInfo.full_name}
                 className="w-10 h-10 rounded-full"
               />

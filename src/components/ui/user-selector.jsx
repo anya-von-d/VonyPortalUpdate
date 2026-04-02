@@ -99,11 +99,11 @@ export function UserSelector({ users = [], value, onSelect, placeholder = "Choos
                     >
                       {/* Profile Picture */}
                       <img
-                        src={user.profile_picture_url || user.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.full_name || 'User')}&background=DBFFEB&color=0A1A10&size=32`}
+                        src={user.profile_picture_url || user.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.full_name || 'User')}&background=678AFB&color=fff&size=32`}
                         alt={user.full_name || 'User'}
                         className="w-9 h-9 rounded-full flex-shrink-0"
                         onError={(e) => {
-                          e.target.src = `https://ui-avatars.com/api/?name=User&background=DBFFEB&color=0A1A10&size=32`;
+                          e.target.src = `https://ui-avatars.com/api/?name=User&background=678AFB&color=fff&size=32`;
                         }}
                       />
 

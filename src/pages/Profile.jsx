@@ -46,7 +46,7 @@ const syncPublicProfile = async (userData) => {
   }
   try {
     const existingProfiles = await PublicProfile.filter({ user_id: { eq: userData.id } });
-    const defaultAvatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent((userData.full_name || 'User').charAt(0))}&background=22c55e&color=fff&size=128`;
+    const defaultAvatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent((userData.full_name || 'User').charAt(0))}&background=678AFB&color=fff&size=128`;
     const publicProfileData = {
       user_id: userData.id,
       username: userData.username,
@@ -338,7 +338,7 @@ export default function Profile() {
 
             <div className="relative inline-block group">
               <img
-                src={formData.profile_picture_url || `https://ui-avatars.com/api/?name=${encodeURIComponent((user.full_name || 'User').charAt(0))}&background=22c55e&color=fff&size=128`}
+                src={formData.profile_picture_url || `https://ui-avatars.com/api/?name=${encodeURIComponent((user.full_name || 'User').charAt(0))}&background=678AFB&color=fff&size=128`}
                 alt="Profile"
                 className="w-24 h-24 md:w-32 md:h-32 rounded-full mx-auto object-cover border-4 border-white/80 shadow-lg"
               />

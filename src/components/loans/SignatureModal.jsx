@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { FileText, AlertCircle, DollarSign, Percent, Calendar, CreditCard, CheckCircle, PenLine, Shield, Lock, Clock } from "lucide-react";
+import { FileText, AlertCircle, CheckCircle, PenLine } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { formatMoney } from "@/components/utils/formatMoney";
 import { AnimatedCheckmark, SuccessAnimation, ConfettiBurst } from "@/components/ui/animations";
@@ -81,7 +81,7 @@ export default function SignatureModal({ isOpen, onClose, onSign, loanDetails, u
   if (isSuccess) {
     return (
       <Dialog open={isOpen} onOpenChange={() => {}}>
-        <DialogContent className="max-w-lg p-0 gap-0 border-0 bg-[#DBEEE3] rounded-2xl overflow-hidden">
+        <DialogContent className="max-w-lg p-0 gap-0 border-0 bg-white rounded-2xl overflow-hidden">
           <div className="relative p-6">
             <SuccessAnimation
               show={true}
@@ -96,115 +96,57 @@ export default function SignatureModal({ isOpen, onClose, onSign, loanDetails, u
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto p-0 gap-0 border-0 bg-[#DBEEE3] rounded-2xl">
-        {/* Header */}
-        <div className="p-5 pb-3">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 bg-[#DBFFEB] rounded-full flex items-center justify-center">
-              <FileText className="w-5 h-5 text-[#00A86B]" />
-            </div>
-            <div>
-              <h2 className="text-xl font-bold text-slate-800">Loan Agreement</h2>
-              <p className="text-xs text-slate-500">
-                Review the terms and sign to {signingAs === 'Lender' ? 'create this loan offer' : 'accept this loan'}
-              </p>
-            </div>
+      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto p-0 gap-0 border-0 bg-white rounded-2xl">
+        <div className="p-6 space-y-5">
+          {/* Header — promissory note style */}
+          <div className="text-center pb-3">
+            <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-400 mb-1">Agreement</p>
+            <h2 className="text-2xl font-bold text-slate-800">Loan Agreement</h2>
+            <p className="text-xs text-slate-400 mt-1">
+              Review the terms and sign to {signingAs === 'Lender' ? 'create this loan offer' : 'accept this loan'}
+            </p>
           </div>
 
-          {/* Trust Badges */}
-          <div className="flex items-center justify-center gap-5 mt-3">
-            <div className="flex items-center gap-1.5 text-xs text-slate-500">
-              <Shield className="w-3.5 h-3.5 text-[#00A86B]" />
-              <span>Secure</span>
-            </div>
-            <div className="flex items-center gap-1.5 text-xs text-slate-500">
-              <Lock className="w-3.5 h-3.5 text-[#00A86B]" />
-              <span>Encrypted</span>
-            </div>
-            <div className="flex items-center gap-1.5 text-xs text-slate-500">
-              <Clock className="w-3.5 h-3.5 text-[#00A86B]" />
-              <span>Time-stamped</span>
-            </div>
+          {/* Principal Amount */}
+          <div className="bg-[#A79DEA]/10 rounded-2xl p-5 text-center">
+            <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-1">Principal Amount</p>
+            <p className="text-3xl font-bold text-slate-800">{formatMoney(loanDetails.amount)}</p>
           </div>
-        </div>
 
-        <div className="px-5 pb-5 space-y-4">
-          {/* Terms at a Glance */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-[#DBFFEB] rounded-2xl p-4"
-          >
-            <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-3">Terms at a Glance</p>
+          {/* Loan paragraph */}
+          <div className="glass-card rounded-2xl p-4">
+            <p className="text-sm text-slate-700 leading-relaxed">
+              <span className="font-semibold">{userFullName}</span> agrees to lend <span className="font-semibold">{loanDetails.borrowerName || 'Borrower'}</span> <span className="font-semibold">{formatMoney(loanDetails.amount)}</span>{loanDetails.purpose ? <> for <span className="font-semibold">{loanDetails.purpose}</span></> : ''}, with <span className="font-semibold">{loanDetails.interest_rate}%</span> interest. <span className="font-semibold">{loanDetails.borrowerName || 'Borrower'}</span> agrees to pay back <span className="font-semibold">{formatMoney(loanDetails.total_amount)}</span> in <span className="font-semibold">{loanDetails.payment_frequency}</span> payments of <span className="font-semibold">{formatMoney(loanDetails.payment_amount)}</span> over <span className="font-semibold">{loanDetails.repayment_period} {loanDetails.repayment_unit || 'months'}</span>.
+            </p>
+          </div>
 
-            {loanDetails.purpose && (
-              <div className="mb-3 pb-3 border-b border-white/50">
-                <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-400 mb-1">Purpose</p>
-                <p className="text-slate-800 font-medium">{loanDetails.purpose}</p>
+          {/* Terms of Repayment */}
+          <div className="glass-card rounded-2xl p-4 space-y-3">
+            <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500">Terms of Repayment</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="bg-[#678AFB]/8 rounded-xl p-3">
+                <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-0.5">Total Due</p>
+                <p className="font-bold text-slate-800">{formatMoney(loanDetails.total_amount)}</p>
               </div>
-            )}
-
-            <div className="grid grid-cols-2 gap-3">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.1 }}
-                className="bg-[#AAFFA3] rounded-xl p-3"
-              >
-                <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-0.5">Amount</p>
-                <p className="text-xl font-bold text-slate-800">{formatMoney(loanDetails.amount)}</p>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.15 }}
-                className="bg-[#30FFA8] rounded-xl p-3"
-              >
+              <div className="bg-[#678AFB]/12 rounded-xl p-3">
                 <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-0.5">Interest</p>
-                <p className="text-xl font-bold text-slate-800">{loanDetails.interest_rate}%</p>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.2 }}
-                className="bg-[#96FFD0] rounded-xl p-3"
-              >
-                <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-0.5">Term</p>
-                <p className="text-xl font-bold text-slate-800">{loanDetails.repayment_period} <span className="text-sm font-normal text-slate-500">{loanDetails.repayment_unit || 'months'}</span></p>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.25 }}
-                className="bg-[#6EE8A2] rounded-xl p-3"
-              >
+                <p className="font-bold text-slate-800">{loanDetails.interest_rate}%</p>
+              </div>
+              <div className="bg-[#A79DEA]/8 rounded-xl p-3">
                 <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-0.5">Payment</p>
-                <p className="text-xl font-bold text-slate-800">{formatMoney(loanDetails.payment_amount)}</p>
+                <p className="font-bold text-slate-800">{formatMoney(loanDetails.payment_amount)}</p>
                 <p className="text-xs text-slate-500 capitalize">{loanDetails.payment_frequency}</p>
-              </motion.div>
+              </div>
+              <div className="bg-[#678AFB]/8 rounded-xl p-3">
+                <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-0.5">Term</p>
+                <p className="font-bold text-slate-800">{loanDetails.repayment_period} {loanDetails.repayment_unit || 'months'}</p>
+              </div>
             </div>
-
-            {/* Total Summary */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              className="mt-3 pt-3 border-t border-white/50 flex justify-between items-center"
-            >
-              <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500">Total Due</span>
-              <span className="text-2xl font-bold text-[#00A86B]">{formatMoney(loanDetails.total_amount)}</span>
-            </motion.div>
-          </motion.div>
+          </div>
 
           {/* What You're Agreeing To - Checklist */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className={`bg-[#DBFFEB] rounded-2xl p-4 space-y-3 transition-colors ${
+          <div
+            className={`glass-card rounded-2xl p-4 space-y-3 transition-colors ${
               showChecklistError && !allItemsChecked
                 ? 'ring-2 ring-red-400'
                 : ''
@@ -213,26 +155,23 @@ export default function SignatureModal({ isOpen, onClose, onSign, loanDetails, u
             <p className={`text-[10px] font-mono uppercase tracking-[0.2em] flex items-center gap-2 ${
               showChecklistError && !allItemsChecked ? 'text-red-600' : 'text-slate-500'
             }`}>
-              <CheckCircle className={`w-3.5 h-3.5 ${showChecklistError && !allItemsChecked ? 'text-red-500' : 'text-[#00A86B]'}`} />
+              <CheckCircle className={`w-3.5 h-3.5 ${showChecklistError && !allItemsChecked ? 'text-red-500' : 'text-[#678AFB]'}`} />
               What you're agreeing to
             </p>
             <div className="space-y-2">
               {AGREEMENT_CHECKLIST.map((item, index) => (
-                <motion.label
+                <label
                   key={item.id}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.3 + index * 0.1 }}
-                  className="flex items-start gap-3 p-2 rounded-xl hover:bg-white/40 cursor-pointer transition-colors group"
+                  className="flex items-start gap-3 p-2 rounded-xl hover:bg-[#678AFB]/5 cursor-pointer transition-colors group"
                 >
                   <div
                     onClick={() => handleCheckItem(item.id)}
                     className={`w-5 h-5 rounded-md flex items-center justify-center transition-all cursor-pointer flex-shrink-0 mt-0.5 ${
                       checkedItems.includes(item.id)
-                        ? 'bg-[#00A86B]'
+                        ? 'bg-[#678AFB]'
                         : showChecklistError && !checkedItems.includes(item.id)
                         ? 'bg-red-100'
-                        : 'bg-white group-hover:bg-[#AAFFA3]'
+                        : 'bg-[#678AFB]/10 group-hover:bg-[#678AFB]/20'
                     }`}
                   >
                     <AnimatePresence>
@@ -256,34 +195,24 @@ export default function SignatureModal({ isOpen, onClose, onSign, loanDetails, u
                   }`}>
                     {item.text}
                   </span>
-                </motion.label>
+                </label>
               ))}
             </div>
-          </motion.div>
+          </div>
 
-          {/* Agreement Notice */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
-            className="bg-[#DBFFEB] rounded-xl p-4"
-          >
+          {/* By signing below */}
+          <div className="glass-card rounded-2xl p-4">
             <p className="text-sm text-slate-700 leading-relaxed">
               By signing below, you acknowledge and agree to the loan terms stated above as the{' '}
-              <span className="font-semibold text-[#00A86B]">{signingAs}</span>.
+              <span className="font-semibold text-[#678AFB]">{signingAs}</span>.
               You commit to fulfilling all obligations outlined in this agreement.
             </p>
-          </motion.div>
+          </div>
 
           {/* Signature Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            className="space-y-3"
-          >
+          <div className="space-y-3">
             <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 flex items-center gap-2">
-              <PenLine className="w-3.5 h-3.5 text-[#00A86B]" />
+              <PenLine className="w-3.5 h-3.5 text-[#678AFB]" />
               Type your full name to sign
             </p>
             <div className="relative">
@@ -295,9 +224,9 @@ export default function SignatureModal({ isOpen, onClose, onSign, loanDetails, u
                   setError("");
                 }}
                 placeholder={userFullName}
-                className={`text-lg h-14 font-serif italic rounded-xl bg-white border-0 transition-all ${
+                className={`text-lg h-14 font-serif italic rounded-xl bg-white transition-all ${
                   signature && isSignatureValid
-                    ? 'ring-2 ring-[#00A86B]/40 bg-[#DBFFEB]/30'
+                    ? 'ring-2 ring-[#678AFB]/40 bg-[#678AFB]/5'
                     : signature && !isSignatureValid
                     ? 'ring-1 ring-amber-300'
                     : ''
@@ -309,7 +238,7 @@ export default function SignatureModal({ isOpen, onClose, onSign, loanDetails, u
                   animate={{ scale: 1 }}
                   className="absolute right-3 top-1/2 -translate-y-1/2"
                 >
-                  <CheckCircle className="w-6 h-6 text-[#00A86B]" />
+                  <CheckCircle className="w-6 h-6 text-[#678AFB]" />
                 </motion.div>
               )}
             </div>
@@ -327,18 +256,13 @@ export default function SignatureModal({ isOpen, onClose, onSign, loanDetails, u
                 {error}
               </motion.div>
             )}
-          </motion.div>
+          </div>
 
           {/* Action Buttons */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.6 }}
-            className="flex gap-3 pt-1"
-          >
+          <div className="flex gap-3 pt-1">
             <Button
               onClick={onClose}
-              className="flex-1 h-12 text-base bg-white hover:bg-white/80 text-slate-700 border-0 rounded-xl"
+              className="flex-1 h-12 text-base bg-slate-100 hover:bg-slate-200 text-slate-700 border-0 rounded-xl"
               disabled={isSigning}
             >
               Cancel
@@ -346,7 +270,7 @@ export default function SignatureModal({ isOpen, onClose, onSign, loanDetails, u
             <motion.div className="flex-1" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
               <Button
                 onClick={handleSign}
-                className="w-full h-12 text-base bg-[#00A86B] hover:bg-[#0D9B76] text-white rounded-xl transition-all"
+                className="w-full h-12 text-base bg-[#678AFB] hover:bg-[#5a7be6] text-white rounded-xl transition-all"
                 disabled={isSigning || !isSignatureValid || !allItemsChecked}
               >
                 {isSigning ? (
@@ -362,7 +286,7 @@ export default function SignatureModal({ isOpen, onClose, onSign, loanDetails, u
                 )}
               </Button>
             </motion.div>
-          </motion.div>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

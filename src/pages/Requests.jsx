@@ -76,7 +76,7 @@ export default function Requests() {
   const [confirmingDeny, setConfirmingDeny] = useState(null);
   const [confirmingCancel, setConfirmingCancel] = useState(null);
   const [confirmingDeleteOffer, setConfirmingDeleteOffer] = useState(null);
-  const [activeTab, setActiveTab] = useState('all');
+
   const [showSignatureModal, setShowSignatureModal] = useState(false);
   const [selectedOffer, setSelectedOffer] = useState(null);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
@@ -183,7 +183,7 @@ export default function Requests() {
       const isBorrower = loan.borrower_id === user.id;
       const otherUserId = isBorrower ? loan.lender_id : loan.borrower_id;
       const otherProfile = profiles.find(p => p.user_id === otherUserId);
-      const otherUsername = otherProfile?.username || 'unknown';
+      const otherName = otherProfile?.full_name || otherProfile?.username || 'Unknown';
       const paymentDate = toLocalDate(loan.next_payment_date);
 
       // Calculate remaining amount considering completed payments
@@ -204,33 +204,33 @@ export default function Requests() {
             id: `reminder-owe-${loan.id}`,
             type: 'overdue_owe',
             loan,
-            title: `Your payment to @${otherUsername} is ${Math.abs(daysUntil)} day${Math.abs(daysUntil) !== 1 ? 's' : ''} late`,
-            subtitle: `Payment of $${paymentAmount.toFixed(2)} to @${otherUsername} was due on ${format(paymentDate, 'MMM d, yyyy')}`,
+            title: `Your payment to ${otherName} is overdue`,
+            subtitle: `If you've already paid, make sure to record it.`,
             daysUntil,
             paymentAmount,
-            otherUsername,
+            otherName,
           });
         } else if (daysUntil === 0) {
           reminders.push({
             id: `reminder-owe-${loan.id}`,
             type: 'due_today_owe',
             loan,
-            title: `You have a payment due today`,
-            subtitle: `Payment of $${paymentAmount.toFixed(2)} to @${otherUsername} due on ${format(paymentDate, 'MMM d, yyyy')}`,
+            title: `You have a payment due today to ${otherName}`,
+            subtitle: `Make sure to record the payment once it's made.`,
             daysUntil,
             paymentAmount,
-            otherUsername,
+            otherName,
           });
         } else {
           reminders.push({
             id: `reminder-owe-${loan.id}`,
             type: 'upcoming_owe',
             loan,
-            title: `You have a payment due in ${daysUntil} day${daysUntil !== 1 ? 's' : ''}`,
-            subtitle: `Payment of $${paymentAmount.toFixed(2)} to @${otherUsername} due on ${format(paymentDate, 'MMM d, yyyy')}`,
+            title: `You have an upcoming payment to ${otherName}`,
+            subtitle: `Make sure to record the payment once it's made.`,
             daysUntil,
             paymentAmount,
-            otherUsername,
+            otherName,
           });
         }
       } else {
@@ -240,33 +240,33 @@ export default function Requests() {
             id: `reminder-receive-${loan.id}`,
             type: 'overdue_receive',
             loan,
-            title: `Your payment from @${otherUsername} is ${Math.abs(daysUntil)} day${Math.abs(daysUntil) !== 1 ? 's' : ''} late`,
-            subtitle: `Payment of $${paymentAmount.toFixed(2)} from @${otherUsername} was due on ${format(paymentDate, 'MMM d, yyyy')}`,
+            title: `${otherName}'s payment to you is overdue`,
+            subtitle: `If they've already paid, make sure to record it.`,
             daysUntil,
             paymentAmount,
-            otherUsername,
+            otherName,
           });
         } else if (daysUntil === 0) {
           reminders.push({
             id: `reminder-receive-${loan.id}`,
             type: 'due_today_receive',
             loan,
-            title: `You are due to receive a payment today`,
-            subtitle: `Payment of $${paymentAmount.toFixed(2)} from @${otherUsername} due on ${format(paymentDate, 'MMM d, yyyy')}`,
+            title: `You are due to receive a payment from ${otherName} today`,
+            subtitle: `Make sure to record the payment once it's received.`,
             daysUntil,
             paymentAmount,
-            otherUsername,
+            otherName,
           });
         } else {
           reminders.push({
             id: `reminder-receive-${loan.id}`,
             type: 'upcoming_receive',
             loan,
-            title: `You are due to receive a payment in ${daysUntil} day${daysUntil !== 1 ? 's' : ''}`,
-            subtitle: `Payment of $${paymentAmount.toFixed(2)} from @${otherUsername} due on ${format(paymentDate, 'MMM d, yyyy')}`,
+            title: `You are due to receive a payment from ${otherName}`,
+            subtitle: `Make sure to record the payment once it's received.`,
             daysUntil,
             paymentAmount,
-            otherUsername,
+            otherName,
           });
         }
       }
@@ -436,13 +436,13 @@ export default function Requests() {
       otherUserId = payment.recorded_by || (loan.lender_id === user.id ? loan.borrower_id : loan.lender_id);
     }
     const profile = profiles.find(p => p.user_id === otherUserId);
-    return profile?.username || profile?.full_name || 'Unknown';
+    return profile?.full_name || profile?.username || 'Unknown';
   };
 
   const getLoanOtherParty = (loan) => {
     const otherUserId = loan.lender_id === user.id ? loan.borrower_id : loan.lender_id;
     const profile = profiles.find(p => p.user_id === otherUserId);
-    return profile?.username || profile?.full_name || 'Unknown';
+    return profile?.full_name || profile?.username || 'Unknown';
   };
 
   const getPaymentMethodInfo = (method) => {
@@ -471,15 +471,6 @@ export default function Requests() {
     setProcessingId(null);
   };
 
-  const totalRequests = paymentsToConfirm.length + termChangeRequests.length + loanOffersReceived.length + friendRequestsReceived.length;
-
-  const tabs = [
-    { id: 'all', label: 'View All Requests', count: totalRequests },
-    { id: 'friends', label: 'Friend Requests', count: friendRequestsReceived.length },
-    { id: 'offers', label: 'Loan Offers', count: loanOffersReceived.length },
-    { id: 'payments', label: 'Payments', count: paymentsToConfirm.length },
-    { id: 'terms', label: 'Loan Changes', count: termChangeRequests.length },
-  ];
 
   if (isLoading) {
     return (
@@ -510,293 +501,241 @@ export default function Requests() {
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20, paddingBottom: 60 }}>
-            {/* Reminders Box */}
+            {/* All Notifications */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.05 }}
             >
               <div className="glass-card" style={{ padding: '20px 24px' }}>
-                <p style={{ fontSize: 15, fontWeight: 600, color: '#0D0D0C', letterSpacing: '-0.02em', marginBottom: 12 }}>
-                  Reminders
-                </p>
-
-                {reminders.length === 0 ? (
-                  <div style={{ textAlign: 'center', padding: '24px 0' }}>
-                    <Bell style={{ width: 40, height: 40, margin: '0 auto 8px', color: '#C7C6C4' }} />
-                    <p style={{ color: '#787776', fontSize: 14 }}>No reminders right now</p>
-                  </div>
-                ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    {reminders.map((reminder, index) => {
-                      const isOverdue = reminder.type.startsWith('overdue');
-                      return (
-                        <motion.div
-                          key={reminder.id}
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: index * 0.05 }}
-                          style={{ padding: 12, borderRadius: 8, background: isOverdue ? 'rgba(232,114,110,0.06)' : 'rgba(103,138,251,0.06)' }}
-                        >
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                            <div style={{ flex: 1, minWidth: 0 }}>
-                              <p style={{ fontSize: 14, fontWeight: 600, color: isOverdue ? '#E8726E' : '#1A1918' }}>
-                                {reminder.title}
-                              </p>
-                              <p style={{ fontSize: 12, marginTop: 2, color: isOverdue ? '#E8726E' : '#787776' }}>
-                                {reminder.subtitle}
-                              </p>
-                            </div>
-                            <button
-                              onClick={() => {
-                                setSelectedLoanForPayment(reminder.loan);
-                                setShowPaymentModal(true);
-                              }}
-                              style={{ flexShrink: 0, padding: '6px 12px', borderRadius: 8, fontSize: 12, fontWeight: 600, border: 'none', cursor: 'pointer', whiteSpace: 'nowrap', background: isOverdue ? '#E8726E' : '#678AFB', color: 'white' }}
-                            >
-                              Record Payment
-                            </button>
-                          </div>
-                        </motion.div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            </motion.div>
-
-            {/* Tab Navigation */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.07 }}
-            >
-              <div style={{ display: 'flex', gap: 8, overflowX: 'auto', padding: '4px 0' }}>
-                {tabs.map(tab => (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    style={{
-                      padding: '6px 14px',
-                      borderRadius: 8,
-                      fontSize: 12,
-                      fontWeight: 600,
-                      border: 'none',
-                      cursor: 'pointer',
-                      whiteSpace: 'nowrap',
-                      transition: 'all 0.15s',
-                      background: activeTab === tab.id ? '#678AFB' : 'rgba(0,0,0,0.04)',
-                      color: activeTab === tab.id ? 'white' : '#787776',
-                    }}
-                  >
-                    <span className="hidden sm:inline">{tab.label}</span>
-                    <span className="sm:hidden">{tab.id === 'all' ? 'All' : tab.label.split(' ')[0]}</span>
-                    {tab.count > 0 && (
-                      <span style={{ marginLeft: 6, padding: '2px 6px', borderRadius: 9999, fontSize: 10, background: activeTab === tab.id ? 'rgba(255,255,255,0.2)' : 'white' }}>
-                        {tab.count}
-                      </span>
-                    )}
-                  </button>
-                ))}
-              </div>
-            </motion.div>
-
-            {/* Requests Box */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-            >
-              <div className="glass-card" style={{ padding: '20px 24px' }}>
-                <p style={{ fontSize: 15, fontWeight: 600, color: '#0D0D0C', letterSpacing: '-0.02em', marginBottom: 12 }}>
-                  Requests
-                </p>
-
                 {(() => {
-                  // Build a unified list of all requests with timestamps for sorting
+                  // Build unified list - reminders first, then requests
                   const allItems = [];
 
-                  // Friend Requests
-                  if (activeTab === 'all' || activeTab === 'friends') {
-                    friendRequestsReceived.forEach(request => {
-                      const senderProfile = profiles.find(p => p.user_id === request.user_id);
-                      allItems.push({
-                        type: 'friend',
-                        id: `friend-${request.id}`,
-                        timestamp: new Date(request.created_at || 0),
-                        data: request,
-                        senderProfile,
-                      });
+                  // Add reminders first (always at top)
+                  reminders.forEach((reminder, index) => {
+                    allItems.push({
+                      type: 'reminder',
+                      id: reminder.id,
+                      timestamp: new Date(0), // Ensure reminders sort to top
+                      sortOrder: -1000 + index,
+                      data: reminder,
                     });
-                  }
+                  });
+
+                  // Friend Requests
+                  friendRequestsReceived.forEach(request => {
+                    const senderProfile = profiles.find(p => p.user_id === request.user_id);
+                    allItems.push({
+                      type: 'friend',
+                      id: `friend-${request.id}`,
+                      timestamp: new Date(request.created_at || 0),
+                      sortOrder: 0,
+                      data: request,
+                      senderProfile,
+                    });
+                  });
 
                   // Loan Offers Received
-                  if (activeTab === 'all' || activeTab === 'offers') {
-                    loanOffersReceived.forEach(offer => {
-                      const lender = getUserById(offer.lender_id);
-                      allItems.push({
-                        type: 'offer_received',
-                        id: `offer-recv-${offer.id}`,
-                        timestamp: new Date(offer.created_at || 0),
-                        data: offer,
-                        otherProfile: lender,
-                      });
+                  loanOffersReceived.forEach(offer => {
+                    const lender = getUserById(offer.lender_id);
+                    allItems.push({
+                      type: 'offer_received',
+                      id: `offer-recv-${offer.id}`,
+                      timestamp: new Date(offer.created_at || 0),
+                      sortOrder: 0,
+                      data: offer,
+                      otherProfile: lender,
                     });
-                  }
+                  });
 
-                  // Payment Confirmations Needed
-                  if (activeTab === 'all' || activeTab === 'payments') {
-                    paymentsToConfirm.forEach(payment => {
-                      const methodInfo = getPaymentMethodInfo(payment.payment_method);
-                      const otherName = getOtherPartyName(payment);
-                      allItems.push({
-                        type: 'payment_confirm',
-                        id: `pmt-confirm-${payment.id}`,
-                        timestamp: new Date(payment.created_at || payment.payment_date || 0),
-                        data: payment,
-                        methodInfo,
-                        otherName,
-                      });
+                  // Payment Confirmations
+                  paymentsToConfirm.forEach(payment => {
+                    const methodInfo = getPaymentMethodInfo(payment.payment_method);
+                    const otherName = getOtherPartyName(payment);
+                    allItems.push({
+                      type: 'payment_confirm',
+                      id: `pmt-confirm-${payment.id}`,
+                      timestamp: new Date(payment.created_at || payment.payment_date || 0),
+                      sortOrder: 0,
+                      data: payment,
+                      methodInfo,
+                      otherName,
                     });
-                  }
+                  });
 
-                  // Term Change Requests
-                  if (activeTab === 'all' || activeTab === 'terms') {
-                    termChangeRequests.forEach(loan => {
-                      allItems.push({
-                        type: 'term_change',
-                        id: `term-${loan.id}`,
-                        timestamp: new Date(loan.updated_at || loan.created_at || 0),
-                        data: loan,
-                        otherName: getLoanOtherParty(loan),
-                      });
+                  // Term Changes
+                  termChangeRequests.forEach(loan => {
+                    allItems.push({
+                      type: 'term_change',
+                      id: `term-${loan.id}`,
+                      timestamp: new Date(loan.updated_at || loan.created_at || 0),
+                      sortOrder: 0,
+                      data: loan,
+                      otherName: getLoanOtherParty(loan),
                     });
-                  }
+                  });
 
-                  // Sort oldest to most recent
-                  allItems.sort((a, b) => a.timestamp - b.timestamp);
+                  // Sort: reminders first (sortOrder -1000), then requests by most recent first
+                  allItems.sort((a, b) => {
+                    if (a.sortOrder !== b.sortOrder) return a.sortOrder - b.sortOrder;
+                    return b.timestamp - a.timestamp;
+                  });
 
                   if (allItems.length === 0) {
                     return (
                       <div style={{ textAlign: 'center', padding: '32px 0' }}>
                         <CheckCircle style={{ width: 40, height: 40, margin: '0 auto 8px', color: '#C7C6C4' }} />
                         <p style={{ color: '#1A1918', fontWeight: 600, marginBottom: 4 }}>All caught up!</p>
-                        <p style={{ color: '#787776', fontSize: 14 }}>You have no pending requests to review.</p>
+                        <p style={{ color: '#787776', fontSize: 14 }}>You have no notifications.</p>
                       </div>
                     );
                   }
 
                   return (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                      {allItems.map((item, index) => (
-                        <motion.div
-                          key={item.id}
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: index * 0.03 }}
-                          style={{ padding: 12, borderRadius: 8, background: 'rgba(0,0,0,0.03)' }}
-                        >
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                            <div style={{ flex: 1, minWidth: 0 }}>
-                              {/* Friend Request */}
-                              {item.type === 'friend' && (
-                                <p style={{ fontSize: 14, fontWeight: 600, color: '#1A1918' }}>
-                                  @{item.senderProfile?.username || 'unknown'} sent you a friend request
-                                </p>
-                              )}
-
-                              {/* Loan Offer Received */}
-                              {item.type === 'offer_received' && (
-                                <p style={{ fontSize: 14, fontWeight: 600, color: '#1A1918' }}>
-                                  @{item.otherProfile?.username || 'unknown'} sent you a loan offer
-                                </p>
-                              )}
-
-                              {/* Payment Confirmation Needed */}
-                              {item.type === 'payment_confirm' && (
-                                <p style={{ fontSize: 14, fontWeight: 600, color: '#1A1918' }}>
-                                  Confirm payment of ${item.data.amount?.toFixed(2)} from @{item.otherName} via {item.methodInfo.label}
-                                </p>
-                              )}
-
-                              {/* Term Change Request */}
-                              {item.type === 'term_change' && (
-                                <p style={{ fontSize: 14, fontWeight: 600, color: '#1A1918' }}>
-                                  @{item.otherName} sent you a loan change request
-                                </p>
-                              )}
-                            </div>
-
-                            {/* Action Buttons */}
-                            <div style={{ flexShrink: 0 }}>
-                              {/* Friend Request */}
-                              {item.type === 'friend' && (
-                                <Link
-                                  to={createPageUrl("Friends")}
-                                  style={{ background: '#678AFB', color: 'white', borderRadius: 8, padding: '6px 12px', fontSize: 11, fontWeight: 600, textDecoration: 'none', display: 'inline-block' }}
-                                >
-                                  View Friends
-                                </Link>
-                              )}
-
-                              {/* Loan Offer Received */}
-                              {item.type === 'offer_received' && (
+                      {allItems.map((item, index) => {
+                        // Reminder items
+                        if (item.type === 'reminder') {
+                          const reminder = item.data;
+                          const isOverdue = reminder.type.startsWith('overdue');
+                          return (
+                            <motion.div
+                              key={item.id}
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ delay: index * 0.03 }}
+                              style={{ padding: 12, borderRadius: 8, background: isOverdue ? 'rgba(232,114,110,0.06)' : 'rgba(103,138,251,0.06)' }}
+                            >
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                                <div style={{ flex: 1, minWidth: 0 }}>
+                                  <p style={{ fontSize: 14, fontWeight: 600, color: isOverdue ? '#E8726E' : '#1A1918' }}>
+                                    {reminder.title}
+                                  </p>
+                                  <p style={{ fontSize: 12, marginTop: 2, color: isOverdue ? '#E8726E' : '#787776' }}>
+                                    {reminder.subtitle}
+                                  </p>
+                                </div>
                                 <button
                                   onClick={() => {
-                                    setSelectedOffer(item.data);
-                                    setShowSignatureModal(true);
+                                    setSelectedLoanForPayment(reminder.loan);
+                                    setShowPaymentModal(true);
                                   }}
-                                  disabled={processingId === item.data.id}
-                                  style={{ background: '#678AFB', color: 'white', borderRadius: 8, padding: '6px 12px', fontSize: 11, fontWeight: 600, border: 'none', cursor: 'pointer', opacity: processingId === item.data.id ? 0.5 : 1 }}
+                                  style={{ flexShrink: 0, padding: '6px 12px', borderRadius: 8, fontSize: 12, fontWeight: 600, border: 'none', cursor: 'pointer', whiteSpace: 'nowrap', background: isOverdue ? '#E8726E' : '#678AFB', color: 'white' }}
                                 >
-                                  View Offer
+                                  Record Payment
                                 </button>
-                              )}
+                              </div>
+                            </motion.div>
+                          );
+                        }
 
-                              {/* Payment Confirmation */}
-                              {item.type === 'payment_confirm' && (
-                                <button
-                                  onClick={() => setViewingPayment({ payment: item.data, direction: 'confirm' })}
-                                  disabled={processingId === item.data.id}
-                                  style={{ background: '#678AFB', color: 'white', borderRadius: 8, padding: '6px 12px', fontSize: 11, fontWeight: 600, border: 'none', cursor: 'pointer', opacity: processingId === item.data.id ? 0.5 : 1 }}
-                                >
-                                  View Payment
-                                </button>
-                              )}
+                        // Request items
+                        return (
+                          <motion.div
+                            key={item.id}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: index * 0.03 }}
+                            style={{ padding: 12, borderRadius: 8, background: 'rgba(0,0,0,0.03)' }}
+                          >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                              <div style={{ flex: 1, minWidth: 0 }}>
+                                {/* Friend Request */}
+                                {item.type === 'friend' && (
+                                  <>
+                                    <p style={{ fontSize: 14, fontWeight: 600, color: '#1A1918' }}>
+                                      {item.senderProfile?.full_name || item.senderProfile?.username || 'Unknown'} sent you a friend request
+                                    </p>
+                                    <p style={{ fontSize: 11, color: '#787776', marginTop: 2 }}>
+                                      {item.timestamp ? format(item.timestamp, 'MMM d, yyyy') : ''}
+                                    </p>
+                                  </>
+                                )}
 
-                              {/* Term Change */}
-                              {item.type === 'term_change' && (
-                                <button
-                                  onClick={() => {
-                                    setViewingPayment({ termChange: item.data, direction: 'term' });
-                                  }}
-                                  disabled={processingId === item.data.id}
-                                  style={{ background: '#678AFB', color: 'white', borderRadius: 8, padding: '6px 12px', fontSize: 11, fontWeight: 600, border: 'none', cursor: 'pointer', opacity: processingId === item.data.id ? 0.5 : 1 }}
-                                >
-                                  View Request
-                                </button>
-                              )}
+                                {/* Loan Offer Received */}
+                                {item.type === 'offer_received' && (
+                                  <>
+                                    <p style={{ fontSize: 14, fontWeight: 600, color: '#1A1918' }}>
+                                      {item.otherProfile?.full_name || item.otherProfile?.username || 'Unknown'} sent you a loan offer{item.data.purpose ? ` for ${item.data.purpose}` : ''}
+                                    </p>
+                                    <p style={{ fontSize: 11, color: '#787776', marginTop: 2 }}>
+                                      {item.timestamp ? format(item.timestamp, 'MMM d, yyyy') : ''}
+                                    </p>
+                                  </>
+                                )}
+
+                                {/* Payment Confirmation */}
+                                {item.type === 'payment_confirm' && (
+                                  <>
+                                    <p style={{ fontSize: 14, fontWeight: 600, color: '#1A1918' }}>
+                                      Confirm payment from {item.otherName}
+                                    </p>
+                                    <p style={{ fontSize: 11, color: '#787776', marginTop: 2 }}>
+                                      {item.timestamp ? format(item.timestamp, 'MMM d, yyyy') : ''}
+                                    </p>
+                                  </>
+                                )}
+
+                                {/* Term Change */}
+                                {item.type === 'term_change' && (
+                                  <>
+                                    <p style={{ fontSize: 14, fontWeight: 600, color: '#1A1918' }}>
+                                      {item.otherName} sent you a loan change request
+                                    </p>
+                                    <p style={{ fontSize: 11, color: '#787776', marginTop: 2 }}>
+                                      {item.timestamp ? format(item.timestamp, 'MMM d, yyyy') : ''}
+                                    </p>
+                                  </>
+                                )}
+                              </div>
+
+                              {/* Action Buttons */}
+                              <div style={{ flexShrink: 0 }}>
+                                {item.type === 'friend' && (
+                                  <Link
+                                    to={createPageUrl("Friends")}
+                                    style={{ background: '#678AFB', color: 'white', borderRadius: 8, padding: '6px 12px', fontSize: 11, fontWeight: 600, textDecoration: 'none', display: 'inline-block' }}
+                                  >
+                                    View Friends
+                                  </Link>
+                                )}
+                                {item.type === 'offer_received' && (
+                                  <button
+                                    onClick={() => { setSelectedOffer(item.data); setShowSignatureModal(true); }}
+                                    disabled={processingId === item.data.id}
+                                    style={{ background: '#678AFB', color: 'white', borderRadius: 8, padding: '6px 12px', fontSize: 11, fontWeight: 600, border: 'none', cursor: 'pointer', opacity: processingId === item.data.id ? 0.5 : 1 }}
+                                  >
+                                    View Offer
+                                  </button>
+                                )}
+                                {item.type === 'payment_confirm' && (
+                                  <button
+                                    onClick={() => setViewingPayment({ payment: item.data, direction: 'confirm' })}
+                                    disabled={processingId === item.data.id}
+                                    style={{ background: '#678AFB', color: 'white', borderRadius: 8, padding: '6px 12px', fontSize: 11, fontWeight: 600, border: 'none', cursor: 'pointer', opacity: processingId === item.data.id ? 0.5 : 1 }}
+                                  >
+                                    View Payment
+                                  </button>
+                                )}
+                                {item.type === 'term_change' && (
+                                  <button
+                                    onClick={() => { setViewingPayment({ termChange: item.data, direction: 'term' }); }}
+                                    disabled={processingId === item.data.id}
+                                    style={{ background: '#678AFB', color: 'white', borderRadius: 8, padding: '6px 12px', fontSize: 11, fontWeight: 600, border: 'none', cursor: 'pointer', opacity: processingId === item.data.id ? 0.5 : 1 }}
+                                  >
+                                    View Request
+                                  </button>
+                                )}
+                              </div>
                             </div>
-                          </div>
-                        </motion.div>
-                      ))}
+                          </motion.div>
+                        );
+                      })}
                     </div>
                   );
                 })()}
               </div>
-            </motion.div>
-
-            {/* Info Note */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              style={{ textAlign: 'center' }}
-            >
-              <p style={{ fontSize: 12, color: '#787776', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
-                <AlertCircle style={{ width: 16, height: 16 }} />
-                Requests require action from both parties to take effect
-              </p>
             </motion.div>
           </div>
         </div>

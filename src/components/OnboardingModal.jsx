@@ -105,7 +105,7 @@ export default function OnboardingModal({ user, onComplete }) {
         user_id: user.id,
         username: formData.username.trim().toLowerCase(),
         full_name: formData.full_name.trim(),
-        profile_picture_url: user?.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(formData.full_name.trim())}&background=22c55e&color=fff&size=128`
+        profile_picture_url: user?.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(formData.full_name.trim())}&background=678AFB&color=fff&size=128`
       };
 
       // Check if public profile exists

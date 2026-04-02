@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Loan, Payment, User, LoanAgreement, PublicProfile, Friendship, VenmoConnection, PayPalConnection } from "@/entities/all";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -568,10 +569,7 @@ export default function Borrowing() {
 
         <div className="space-y-3 text-sm">
           <p className="leading-relaxed">
-            FOR VALUE RECEIVED, the undersigned Borrower, <span className="font-semibold">{borrowerInfo.full_name}</span>,
-            promises to pay to the order of <span className="font-semibold">{lenderInfo.full_name}</span>,
-            the principal sum of <span className="font-semibold">{formatMoney(agreement.amount)}</span>,
-            together with interest at the rate of <span className="font-semibold">{agreement.interest_rate}%</span> per annum.
+            <span className="font-semibold">{lenderInfo.full_name}</span> agrees to lend <span className="font-semibold">{borrowerInfo.full_name}</span> <span className="font-semibold">{formatMoney(agreement.amount)}</span>{agreement.purpose ? <> for <span className="font-semibold">{agreement.purpose}</span></> : ''}, with <span className="font-semibold">{agreement.interest_rate}%</span> interest. <span className="font-semibold">{borrowerInfo.full_name}</span> agrees to pay back <span className="font-semibold">{formatMoney(agreement.total_amount)}</span> in <span className="font-semibold">{agreement.payment_frequency}</span> payments of <span className="font-semibold">{formatMoney(agreement.payment_amount)}</span> over <span className="font-semibold">{agreement.repayment_period} {agreement.repayment_unit || 'months'}</span>.
           </p>
         </div>
 
@@ -770,7 +768,7 @@ export default function Borrowing() {
           <div className="grid grid-cols-2 gap-4">
             <div className="flex items-center gap-3">
               <img
-                src={lenderInfo.profile_picture_url || `https://ui-avatars.com/api/?name=${encodeURIComponent((lenderInfo.full_name || 'L').charAt(0))}&background=22c55e&color=fff&size=64`}
+                src={lenderInfo.profile_picture_url || `https://ui-avatars.com/api/?name=${encodeURIComponent((lenderInfo.full_name || 'L').charAt(0))}&background=678AFB&color=fff&size=64`}
                 alt={lenderInfo.full_name}
                 className="w-10 h-10 rounded-full"
               />
@@ -781,7 +779,7 @@ export default function Borrowing() {
             </div>
             <div className="flex items-center gap-3">
               <img
-                src={borrowerInfo.profile_picture_url || `https://ui-avatars.com/api/?name=${encodeURIComponent((borrowerInfo.full_name || 'B').charAt(0))}&background=22c55e&color=fff&size=64`}
+                src={borrowerInfo.profile_picture_url || `https://ui-avatars.com/api/?name=${encodeURIComponent((borrowerInfo.full_name || 'B').charAt(0))}&background=678AFB&color=fff&size=64`}
                 alt={borrowerInfo.full_name}
                 className="w-10 h-10 rounded-full"
               />
@@ -1085,31 +1083,27 @@ export default function Borrowing() {
                     return daysUntilDate(loan.next_payment_date) < 0;
                   });
                   if (overdueLoans.length === 0) return null;
-                  return overdueLoans.map(loan => {
-                    const lender = getUserById(loan.lender_id);
-                    const daysOverdue = Math.abs(daysUntilDate(loan.next_payment_date));
-                    const agreement = loanAgreements.find(a => a.loan_id === loan.id);
-                    const analysis = analyzeLoanPayments(loan, allPayments, agreement);
-                    const overdueAmount = analysis ? analysis.nextPaymentAmount : (loan.payment_amount || 0);
-                    return (
-                      <div key={`overdue-${loan.id}`} style={{ borderRadius: 16, padding: '14px 20px', background: '#E8726E' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-                          <AlertCircle style={{ width: 16, height: 16, color: 'white' }} />
-                          <p style={{ fontSize: 14, fontWeight: 700, color: 'white', margin: 0 }}>Overdue Payment</p>
-                        </div>
-                        <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.9)', marginBottom: 8 }}>
-                          Your payment to <span style={{ fontWeight: 700, color: 'white' }}>{lender?.full_name || 'User'}</span> is overdue by {daysOverdue} {daysOverdue === 1 ? 'day' : 'days'}. If you made a payment, make sure to record it.
-                        </p>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                          <p style={{ fontSize: 18, fontWeight: 700, color: 'white', margin: 0 }}>{formatMoney(overdueAmount)}</p>
-                          <Button type="button" onClick={handleMakePayment}
-                            className="h-7 px-3 rounded-md text-xs font-semibold border-0 bg-white text-red-600 hover:bg-white/90">
-                            Record Payment
-                          </Button>
-                        </div>
-                      </div>
-                    );
-                  });
+                  return (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                      {overdueLoans.map(loan => {
+                        const lender = getUserById(loan.lender_id);
+                        const firstName = lender?.full_name?.split(' ')[0] || lender?.username || 'User';
+                        return (
+                          <div key={`overdue-${loan.id}`} className="glass-hero-alert" style={{ padding: '14px 20px', display: 'flex', alignItems: 'center', gap: 12 }}>
+                            <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#E8726E', flexShrink: 0 }} />
+                            <div style={{ flex: 1, fontSize: 13, color: '#787776', lineHeight: 1.5 }}>
+                              <strong style={{ color: '#1A1918', fontWeight: 600 }}>Just a reminder</strong> you have a payment to {firstName} that is overdue. If you've already paid, make sure to record the payment so it's up to date.
+                            </div>
+                            <Link to={createPageUrl("RecordPayment")} style={{
+                              padding: '7px 18px', borderRadius: 20, background: '#678AFB', color: 'white',
+                              fontSize: 12, fontWeight: 600, textDecoration: 'none', whiteSpace: 'nowrap',
+                              fontFamily: "'DM Sans', sans-serif", transition: 'background 0.15s'
+                            }}>Record Payment</Link>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
                 })()}
 
                 {/* Loans Ranked By */}
@@ -1231,7 +1225,7 @@ export default function Borrowing() {
                         }
                       }
 
-                      const chartHeight = 140;
+                      const chartHeight = 110;
                       const maxChartVal = Math.max(plannedPaymentAmount, ...chartData.map(d => d.amount), 1);
 
                       return (
@@ -1376,14 +1370,14 @@ export default function Borrowing() {
                                   <div style={{ position: 'relative' }}>
                                     <div style={{ display: 'flex', alignItems: 'flex-end', gap: 2, height: chartHeight }}>
                                       <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', paddingRight: 6, flexShrink: 0, height: '100%' }}>
-                                        <p style={{ fontSize: 9, color: '#787776', fontFamily: 'monospace', margin: 0 }}>${maxChartVal.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
-                                        <p style={{ fontSize: 9, color: '#787776', fontFamily: 'monospace', margin: 0 }}>${Math.round(maxChartVal / 2).toLocaleString()}</p>
-                                        <p style={{ fontSize: 9, color: '#787776', fontFamily: 'monospace', margin: 0 }}>$0</p>
+                                        <p style={{ fontSize: 10, color: '#787776', margin: 0 }}>${maxChartVal.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+                                        <p style={{ fontSize: 10, color: '#787776', margin: 0 }}>${Math.round(maxChartVal / 2).toLocaleString()}</p>
+                                        <p style={{ fontSize: 10, color: '#787776', margin: 0 }}>$0</p>
                                       </div>
                                       <div style={{ flex: 1, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', position: 'relative', height: '100%' }}>
                                         {plannedPaymentAmount > 0 && (
                                           <div style={{ position: 'absolute', left: 0, right: 0, borderTop: '2px dashed rgba(103,138,251,0.3)', zIndex: 10, bottom: `${(plannedPaymentAmount / maxChartVal) * 100}%` }}>
-                                            <span style={{ position: 'absolute', top: -14, right: 0, fontSize: 8, fontWeight: 600, color: '#787776', fontFamily: 'monospace', background: 'rgba(255,255,255,0.88)', padding: '0 4px' }}>${plannedPaymentAmount.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
+                                            <span style={{ position: 'absolute', top: -14, right: 0, fontSize: 10, fontWeight: 600, color: '#787776', background: 'rgba(255,255,255,0.88)', padding: '0 4px' }}>${plannedPaymentAmount.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
                                           </div>
                                         )}
                                         {chartData.map((d, i) => {
@@ -1394,17 +1388,17 @@ export default function Borrowing() {
                                           const isPendingOnly = d.hasPendingOnly;
                                           const isInProgress = d.isInProgress;
                                           return (
-                                            <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1, maxWidth: 40 }}>
+                                            <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>
                                               <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
                                                 {isInProgress && !isFullPmt ? (
-                                                  <div style={{ position: 'relative', height: Math.max(scheduledBarHeight, 4), width: '70%', minWidth: 8 }}>
-                                                    <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '100%', borderRadius: '2px 2px 0 0', background: 'rgba(103,138,251,0.1)', border: '1px dashed rgba(103,138,251,0.3)' }} />
-                                                    <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: Math.max(barHeight, 4), borderRadius: '2px 2px 0 0', background: 'rgba(103,138,251,0.6)' }} />
+                                                  <div style={{ position: 'relative', height: Math.max(scheduledBarHeight, 4), width: 14 }}>
+                                                    <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '100%', borderRadius: '4px 4px 0 0', background: 'rgba(103,138,251,0.1)', border: '1px dashed rgba(103,138,251,0.3)' }} />
+                                                    <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: Math.max(barHeight, 4), borderRadius: '4px 4px 0 0', background: 'rgba(103,138,251,0.6)' }} />
                                                   </div>
                                                 ) : (
                                                   <div style={{
-                                                    borderRadius: '2px 2px 0 0', transition: 'all 0.3s',
-                                                    height: Math.max(barHeight, d.amount > 0 ? 4 : 2), width: '70%', minWidth: 8,
+                                                    borderRadius: '4px 4px 0 0', transition: 'all 0.3s',
+                                                    height: Math.max(barHeight, d.amount > 0 ? 4 : 2), width: 14,
                                                     background: d.isProjected ? 'rgba(103,138,251,0.15)' : d.isMissed ? 'rgba(232,114,110,0.3)' : d.amount === 0 ? '#E5E4E2' : isPendingOnly ? 'rgba(245,158,11,0.4)' : isFullPmt ? '#678AFB' : isPartialPmt ? 'rgba(245,158,11,0.6)' : 'rgba(103,138,251,0.6)',
                                                     border: d.isProjected ? '1px dashed rgba(103,138,251,0.3)' : d.isMissed ? '1px dashed rgba(232,114,110,0.5)' : isPendingOnly ? '1px dashed rgba(245,158,11,0.6)' : 'none',
                                                   }}
@@ -1412,7 +1406,7 @@ export default function Borrowing() {
                                                   />
                                                 )}
                                               </div>
-                                              <p style={{ fontSize: 8, marginTop: 4, lineHeight: 1, margin: 0, color: isInProgress ? '#678AFB' : d.isProjected ? '#C7C6C4' : d.isMissed ? '#E8726E' : isPendingOnly ? 'rgba(245,158,11,0.6)' : '#787776' }}>{d.label}</p>
+                                              <p style={{ fontSize: 10, marginTop: 4, lineHeight: 1, margin: 0, color: isInProgress ? '#678AFB' : d.isProjected ? '#C7C6C4' : d.isMissed ? '#E8726E' : isPendingOnly ? 'rgba(245,158,11,0.6)' : '#787776' }}>{d.label}</p>
                                             </div>
                                           );
                                         })}

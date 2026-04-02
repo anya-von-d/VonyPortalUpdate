@@ -37,6 +37,13 @@ function MiniCalendar({ today, paymentDates }) {
 
   return (
     <div>
+      {/* Month at top */}
+      <div style={{ textAlign: 'center', marginBottom: 12 }}>
+        <span style={{ fontSize: 15, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em' }}>
+          {format(today, 'MMMM yyyy')}
+        </span>
+      </div>
+
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 0, marginBottom: 6 }}>
         {['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d => (
           <div key={d} style={{ textAlign: 'center', fontSize: 11, fontWeight: 600, color: '#787776', padding: '8px 0' }}>{d}</div>
@@ -62,6 +69,16 @@ function MiniCalendar({ today, paymentDates }) {
             </div>
           );
         })}
+      </div>
+
+      {/* Key at bottom */}
+      <div style={{ display: 'flex', justifyContent: 'center', gap: 20, marginTop: 14, paddingTop: 12, borderTop: '1px solid rgba(0,0,0,0.06)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: '#787776' }}>
+          <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#4CAF50' }} /> Owed to you
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: '#787776' }}>
+          <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#678AFB' }} /> You owe
+        </div>
       </div>
     </div>
   );
@@ -264,48 +281,71 @@ export default function Upcoming() {
 
   const avatarInitial = (user.full_name || 'U').charAt(0).toUpperCase();
 
+  // Format due date for display
+  const formatDueDate = (date) => {
+    return format(date, "do MMMM 'at' h:mmaaa");
+  };
+
   // ── Payment list item component ──
-  const PaymentRow = ({ event, showBorder = true }) => (
-    <div style={{
-      display: 'flex', alignItems: 'center', gap: 16, padding: '16px 0',
-      borderBottom: showBorder ? '1px solid rgba(0,0,0,0.04)' : 'none',
-    }}>
+  const PaymentRow = ({ event, showBorder = true }) => {
+    const isOverdue = event.days < 0;
+    const daysAbs = Math.abs(event.days);
+
+    return (
       <div style={{
-        width: 40, height: 40, borderRadius: '50%', flexShrink: 0,
-        background: event.isLender ? 'rgba(103,138,251,0.12)' : 'rgba(167,157,234,0.12)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontSize: 14, fontWeight: 600, color: event.isLender ? '#678AFB' : '#A79DEA',
+        display: 'flex', alignItems: 'center', gap: 16, padding: '16px 0',
+        borderBottom: showBorder ? '1px solid rgba(0,0,0,0.04)' : 'none',
       }}>
-        {event.initial}
-      </div>
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontSize: 14, fontWeight: 500, color: '#1A1918' }}>
-          {event.isLender ? `${event.fullName || event.username} pays you` : `Pay ${event.fullName || event.username}`}
+        {/* Days box instead of profile image */}
+        <div style={{
+          width: 48, height: 48, borderRadius: 12, flexShrink: 0,
+          background: isOverdue ? 'rgba(232,114,110,0.1)' : event.isLender ? 'rgba(103,138,251,0.08)' : 'rgba(167,157,234,0.08)',
+          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+          border: isOverdue ? '1px solid rgba(232,114,110,0.2)' : '1px solid rgba(0,0,0,0.04)',
+        }}>
+          <span style={{
+            fontSize: 16, fontWeight: 700, lineHeight: 1.1,
+            color: isOverdue ? '#E8726E' : '#1A1918',
+          }}>
+            {isOverdue ? `-${daysAbs}` : daysAbs}
+          </span>
+          <span style={{
+            fontSize: 9, fontWeight: 600, color: isOverdue ? '#E8726E' : '#787776',
+            textTransform: 'uppercase', letterSpacing: '0.02em',
+          }}>
+            {daysAbs === 1 ? 'day' : 'days'}
+          </span>
         </div>
-        <div style={{ fontSize: 12, color: '#787776', marginTop: 2 }}>
-          {event.days < 0
-            ? `${Math.abs(event.days)} day${Math.abs(event.days) !== 1 ? 's' : ''} overdue`
-            : event.days === 0
-              ? 'today'
-              : `in ${event.days} day${event.days !== 1 ? 's' : ''}`}
-          {event.purpose ? ` \u00b7 ${event.purpose}` : ''}
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontSize: 14, fontWeight: 500, color: '#1A1918' }}>
+            {event.isLender
+              ? `Receive payment from ${event.fullName || event.username}`
+              : `Send payment to ${event.fullName || event.username}`}
+          </div>
+          <div style={{ fontSize: 12, color: isOverdue ? '#E8726E' : '#787776', marginTop: 2 }}>
+            {isOverdue
+              ? `Due ${format(event.date, "do MMMM")}`
+              : event.days === 0
+                ? 'Due today'
+                : `Due ${format(event.date, "do MMMM 'at' h:mmaaa")}`}
+          </div>
         </div>
+        <div style={{
+          fontSize: 15, fontWeight: 600, flexShrink: 0,
+          color: event.isLender ? '#4CAF50' : '#1A1918',
+        }}>
+          {event.isLender ? '+' : ''}{formatMoney(event.amount)}
+        </div>
+        <button style={{
+          width: 28, height: 28, borderRadius: '50%', border: 'none',
+          background: 'transparent', cursor: 'pointer', display: 'flex',
+          alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+        }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C7C6C4" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="5" r="1" /><circle cx="12" cy="12" r="1" /><circle cx="12" cy="19" r="1" /></svg>
+        </button>
       </div>
-      <div style={{
-        fontSize: 15, fontWeight: 600, flexShrink: 0,
-        color: event.isLender ? '#4CAF50' : '#1A1918',
-      }}>
-        {event.isLender ? '+' : ''}{formatMoney(event.amount)}
-      </div>
-      <button style={{
-        width: 28, height: 28, borderRadius: '50%', border: 'none',
-        background: 'transparent', cursor: 'pointer', display: 'flex',
-        alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-      }}>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C7C6C4" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="5" r="1" /><circle cx="12" cy="12" r="1" /><circle cx="12" cy="19" r="1" /></svg>
-      </button>
-    </div>
-  );
+    );
+  };
 
   return (
     <div className="home-with-sidebar" style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 240, background: '#F5F4F0' }}>
@@ -395,13 +435,7 @@ export default function Upcoming() {
                     {next7Count} payment{next7Count !== 1 ? 's' : ''} for {formatMoney(next7Total)}
                   </div>
                 </div>
-                {/* Table header */}
-                <div style={{ display: 'flex', alignItems: 'center', padding: '16px 28px 0', gap: 16 }}>
-                  <div style={{ flex: 1, fontSize: 11, fontWeight: 600, color: '#C7C6C4', textTransform: 'uppercase', letterSpacing: '0.04em', paddingLeft: 56 }}>Name / Frequency</div>
-                  <div style={{ fontSize: 11, fontWeight: 600, color: '#C7C6C4', textTransform: 'uppercase', letterSpacing: '0.04em', width: 100, textAlign: 'right' }}>Amount</div>
-                  <div style={{ width: 28 }} />
-                </div>
-                <div style={{ padding: '0 28px 20px' }}>
+                <div style={{ padding: '4px 28px 20px' }}>
                   {next7Days.length === 0 ? (
                     <div style={{ textAlign: 'center', padding: '32px 0', color: '#787776', fontSize: 13 }}>No payments in the next 7 days</div>
                   ) : (
@@ -420,12 +454,7 @@ export default function Upcoming() {
                     {laterCount} payment{laterCount !== 1 ? 's' : ''} for {formatMoney(laterTotal)}
                   </div>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', padding: '16px 28px 0', gap: 16 }}>
-                  <div style={{ flex: 1, fontSize: 11, fontWeight: 600, color: '#C7C6C4', textTransform: 'uppercase', letterSpacing: '0.04em', paddingLeft: 56 }}>Name / Frequency</div>
-                  <div style={{ fontSize: 11, fontWeight: 600, color: '#C7C6C4', textTransform: 'uppercase', letterSpacing: '0.04em', width: 100, textAlign: 'right' }}>Amount</div>
-                  <div style={{ width: 28 }} />
-                </div>
-                <div style={{ padding: '0 28px 20px' }}>
+                <div style={{ padding: '4px 28px 20px' }}>
                   {comingLater.length === 0 ? (
                     <div style={{ textAlign: 'center', padding: '32px 0', color: '#787776', fontSize: 13 }}>No payments coming up</div>
                   ) : (
@@ -437,7 +466,7 @@ export default function Upcoming() {
               </div>
             </div>
 
-            {/* Right column: Mini calendar + Tip */}
+            {/* Right column: Mini calendar */}
             <div>
               <div className="glass-card" style={{ padding: '20px 22px' }}>
                 <MiniCalendar today={today} paymentDates={miniCalPaymentDates} />
@@ -549,10 +578,10 @@ export default function Upcoming() {
             {/* Legend */}
             <div style={{ display: 'flex', justifyContent: 'center', gap: 24, marginTop: 20, paddingTop: 16, borderTop: '1px solid rgba(0,0,0,0.06)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: '#787776' }}>
-                <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#4CAF50' }} /> Incoming (owed to you)
+                <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#4CAF50' }} /> Owed to you
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: '#787776' }}>
-                <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#678AFB' }} /> Outgoing (you owe)
+                <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#678AFB' }} /> You owe
               </div>
             </div>
           </div>

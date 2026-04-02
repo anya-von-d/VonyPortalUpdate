@@ -113,7 +113,7 @@ export default function MyLoanOffers({ offers, users, currentUser, onDelete, onS
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-3">
                           <img
-                            src={otherParty?.profile_picture_url || `https://ui-avatars.com/api/?name=${otherParty?.full_name || 'User'}&background=4f46e5&color=fff`}
+                            src={otherParty?.profile_picture_url || `https://ui-avatars.com/api/?name=${otherParty?.full_name || 'User'}&background=678AFB&color=fff`}
                             alt={otherParty?.full_name || 'User'}
                             className="w-10 h-10 rounded-full"
                           />
