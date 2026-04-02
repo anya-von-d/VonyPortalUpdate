@@ -381,14 +381,16 @@ export default function Upcoming() {
               fontFamily: "'DM Sans', sans-serif", transition: 'all 0.15s',
               fontWeight: activeTab === 'summary' ? 600 : 500,
               color: activeTab === 'summary' ? '#1A1918' : '#787776',
-              background: activeTab === 'summary' ? 'rgba(0,0,0,0.06)' : 'transparent',
+              background: activeTab === 'summary' ? 'rgba(255,255,255,0.85)' : 'transparent',
+              boxShadow: activeTab === 'summary' ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
             }}>Summary</button>
             <button onClick={() => setActiveTab('calendar')} style={{
               padding: '7px 20px', borderRadius: 50, fontSize: 13, border: 'none', cursor: 'pointer',
               fontFamily: "'DM Sans', sans-serif", transition: 'all 0.15s',
               fontWeight: activeTab === 'calendar' ? 600 : 500,
               color: activeTab === 'calendar' ? '#1A1918' : '#787776',
-              background: activeTab === 'calendar' ? 'rgba(0,0,0,0.06)' : 'transparent',
+              background: activeTab === 'calendar' ? 'rgba(255,255,255,0.85)' : 'transparent',
+              boxShadow: activeTab === 'calendar' ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
             }}>Calendar</button>
           </div>
         </div>

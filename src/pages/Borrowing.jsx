@@ -880,7 +880,7 @@ export default function Borrowing() {
             {/* Glass tab selector */}
             <div className="glass-nav" style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 16, padding: '6px 24px', height: 48, margin: '0 auto 36px', maxWidth: 420, zIndex: 10 }}>
               {[{key:'summary',label:'Summary'},{key:'details',label:'Individual Loan Details'}].map(tab => (
-                <button key={tab.key} onClick={() => setActiveTab(tab.key)} style={{ flex: 1, padding: '6px 16px', borderRadius: 10, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: activeTab === tab.key ? 600 : 500, color: activeTab === tab.key ? '#1A1918' : '#787776', background: activeTab === tab.key ? 'rgba(0,0,0,0.06)' : 'transparent', transition: 'all 0.2s', fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap' }}>
+                <button key={tab.key} onClick={() => setActiveTab(tab.key)} style={{ flex: 1, padding: '6px 16px', borderRadius: 10, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: activeTab === tab.key ? 600 : 500, color: activeTab === tab.key ? '#1A1918' : '#787776', background: activeTab === tab.key ? 'rgba(255,255,255,0.85)' : 'transparent', boxShadow: activeTab === tab.key ? '0 1px 4px rgba(0,0,0,0.08)' : 'none', transition: 'all 0.2s', fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap' }}>
                   {tab.label}
                 </button>
               ))}
