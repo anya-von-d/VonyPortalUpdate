@@ -248,11 +248,11 @@ export default function Friends() {
   /* ── Loading state ──────────────────────────────────────────── */
   if (isLoading && !user) {
     return (
-      <div className="home-with-sidebar" style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 240, background: '#EDECE9' }}>
+      <div className="home-with-sidebar" style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 240, background: '#F5F4F0' }}>
         <DashboardSidebar activePage="Friends" user={user} />
         <div style={{ position: 'relative', margin: '20px 12px 12px 0', borderRadius: 24, overflow: 'hidden', minHeight: 'calc(100vh - 32px)', border: '6px solid rgba(255,255,255,0.8)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', boxShadow: 'rgba(0,0,0,0.03) 0px 0.6px 2.3px -0.42px, rgba(0,0,0,0.04) 0px 2.3px 8.7px -0.83px, rgba(0,0,0,0.08) 0px 10px 38px -1.25px' }}>
           <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', bottom: 0, overflow: 'hidden', zIndex: 0, pointerEvents: 'none' }}>
-            <div style={{ position: 'absolute', top: 0, left: '-10%', width: '120%', height: '100%', zIndex: 0, background: '#F5F4F0' }} />
+            <div style={{ position: 'absolute', top: 0, left: '-10%', width: '120%', height: '100%', zIndex: 0, background: '#EBF0F8' }} />
           </div>
           <div style={{ position: 'relative', zIndex: 2, maxWidth: 1080, margin: '0 auto', padding: '0 28px' }}>
             <div style={{ paddingTop: 80, paddingBottom: 20, textAlign: 'center' }}>
@@ -274,7 +274,7 @@ export default function Friends() {
      RENDER
      ══════════════════════════════════════════════════════════ */
   return (
-    <div className="home-with-sidebar" style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 240, background: '#EDECE9' }}>
+    <div className="home-with-sidebar" style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 240, background: '#F5F4F0' }}>
       <DashboardSidebar activePage="Friends" user={user} />
 
       {/* ── Content box with galaxy background ── */}
@@ -284,7 +284,7 @@ export default function Friends() {
         <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', bottom: 0, overflow: 'hidden', zIndex: 0, pointerEvents: 'none' }}>
           <div style={{
             position: 'absolute', top: 0, left: '-10%', width: '120%', height: '100%', zIndex: 0,
-            background: '#F5F4F0'
+            background: '#EBF0F8'
           }} />
         </div>
 

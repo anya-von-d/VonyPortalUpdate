@@ -321,7 +321,7 @@ export default function Home() {
   // Loading state
   if (isLoading) {
     return (
-      <div style={{ minHeight: '100vh', background: '#EDECE9', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ minHeight: '100vh', background: '#F5F4F0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{ width: 32, height: 32, border: '2px solid #678AFB', borderTopColor: 'transparent', borderRadius: '50%', margin: '0 auto 16px' }} className="animate-spin" />
           <p style={{ fontSize: 14, color: '#787776', fontFamily: "'DM Sans', sans-serif" }}>Loading dashboard...</p>
@@ -333,7 +333,7 @@ export default function Home() {
   // Not logged in state
   if (!user && !isLoading) {
     return (
-      <div style={{ minHeight: '100vh', background: '#EDECE9', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+      <div style={{ minHeight: '100vh', background: '#F5F4F0', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} style={{ maxWidth: 400, width: '100%' }}>
           <div className="glass-card" style={{ padding: 32, textAlign: 'center' }}>
             <div style={{ width: 96, height: 96, margin: '0 auto 24px', borderRadius: '50%', overflow: 'hidden', background: 'white', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
@@ -672,7 +672,7 @@ export default function Home() {
   overdueCountRef.current = alertTotal;
 
   return (
-    <div className="home-with-sidebar" style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 240, background: '#EDECE9' }}>
+    <div className="home-with-sidebar" style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 240, background: '#F5F4F0' }}>
 
       <DashboardSidebar activePage="Dashboard" user={user} />
 
@@ -683,7 +683,7 @@ export default function Home() {
         <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', bottom: 0, overflow: 'hidden', zIndex: 0, pointerEvents: 'none' }}>
           <div style={{
             position: 'absolute', top: 0, left: '-10%', width: '120%', height: '100%', zIndex: 0,
-            background: '#F5F4F0'
+            background: '#EBF0F8'
           }} />
         </div>
 
