@@ -319,7 +319,7 @@ export default function RecordPayment() {
           <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', bottom: 0, overflow: 'hidden', zIndex: 0, pointerEvents: 'none' }}>
             <div style={{
               position: 'absolute', top: 0, left: '-10%', width: '120%', height: '100%', zIndex: 0,
-              background: '#EBF0F8'
+              background: '#7792F4'
             }} />
           </div>
           <div style={{ position: 'relative', zIndex: 2, maxWidth: 1080, margin: '0 auto', padding: '0 28px' }}>
@@ -396,7 +396,7 @@ export default function RecordPayment() {
           <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', bottom: 0, overflow: 'hidden', zIndex: 0, pointerEvents: 'none' }}>
             <div style={{
               position: 'absolute', top: 0, left: '-10%', width: '120%', height: '100%', zIndex: 0,
-              background: '#EBF0F8'
+              background: '#7792F4'
             }} />
           </div>
 
