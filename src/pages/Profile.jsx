@@ -309,14 +309,9 @@ export default function Profile() {
         <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', bottom: 0, overflow: 'hidden', zIndex: 0, pointerEvents: 'none' }}>
           <div style={{
             position: 'absolute', top: 0, left: '-10%', width: '120%', height: '100%', zIndex: 0,
-            background: 'linear-gradient(180deg, #5881FE 0%, #6688F8 20%, #7490F5 40%, #8296F0 60%, #8C9AEC 80%, #9196EC 100%)'
+            background: '#F7F5F2'
           }} />
         </div>
-        <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: 320, zIndex: 1, opacity: 0.6 }} viewBox="0 0 1617 329" fill="none">
-          <defs><radialGradient id="profStarGlow"><stop offset="0%" stopColor="#EAF9F3"/><stop offset="100%" stopColor="#9FEBFB"/></radialGradient></defs>
-          {STAR_CIRCLES.map((s, i) => <circle key={i} cx={s.cx} cy={s.cy} r="1.75" fill="url(#profStarGlow)" opacity={s.o}/>)}
-        </svg>
-        <div className="twinkle-star" /><div className="twinkle-star" /><div className="twinkle-star" /><div className="twinkle-star" /><div className="twinkle-star" />
 
         <div style={{ position: 'relative', zIndex: 2, maxWidth: 900, margin: '0 auto', padding: '0 28px' }}>
           {/* Hero - Profile Photo + Name */}
@@ -398,16 +393,16 @@ export default function Profile() {
                 </motion.div>
               )}
             </div>
-            <h1 style={{ color: 'white', fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '2.4rem', fontWeight: 600, marginTop: 16 }}>
+            <h1 style={{ color: '#1A1918', fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '2.4rem', fontWeight: 600, marginTop: 16 }}>
               {formData.full_name || user.full_name}
             </h1>
-            <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: 13 }}>
+            <p style={{ color: '#787776', fontSize: 13 }}>
               Member since {user.created_at ? new Date(user.created_at).getFullYear() : new Date().getFullYear()}
             </p>
             <button
               onClick={() => setShowPhotoMenu(!showPhotoMenu)}
               disabled={isSaving}
-              style={{ background: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(10px)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', borderRadius: 10, padding: '8px 20px', fontSize: 13, fontWeight: 600, cursor: 'pointer', marginTop: 16 }}
+              style={{ background: 'rgba(0,0,0,0.05)', backdropFilter: 'blur(10px)', color: '#1A1918', border: '1px solid rgba(0,0,0,0.1)', borderRadius: 10, padding: '8px 20px', fontSize: 13, fontWeight: 600, cursor: 'pointer', marginTop: 16 }}
             >
               Edit Profile Photo
             </button>

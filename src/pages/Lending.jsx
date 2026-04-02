@@ -367,11 +367,13 @@ export default function Lending({ initialTab }) {
         dueDate = addMonths(new Date(), parseInt(formData.repayment_period) || 1);
       }
 
+      const lenderName = isCurrentUserTheLender ? (currentUser.full_name || currentUserProfile?.username || 'Lender') : (otherProfile.full_name || otherUsername);
       const borrowerName = isCurrentUserTheLender ? (otherProfile.full_name || otherUsername) : (currentUser.full_name || currentUserProfile?.username || 'Borrower');
 
       const loanData = {
         lender_id: lenderId,
         borrower_id: borrowerId,
+        lenderName,
         borrowerName,
         amount: parseFloat(formData.amount),
         interest_rate: loanType === 'flexible' ? 0 : parseFloat(formData.interest_rate) || 0,
@@ -400,7 +402,7 @@ export default function Lending({ initialTab }) {
     setIsSubmitting(true);
     try {
       // Strip fields that aren't columns in loans table
-      const { repayment_unit, borrowerName, ...loanPayload } = pendingLoanData;
+      const { repayment_unit, borrowerName, lenderName, ...loanPayload } = pendingLoanData;
       const createdLoan = await Loan.create(loanPayload);
 
       await LoanAgreement.create({
@@ -1417,32 +1419,14 @@ export default function Lending({ initialTab }) {
           <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', bottom: 0, overflow: 'hidden', zIndex: 0, pointerEvents: 'none' }}>
             <div style={{
               position: 'absolute', top: 0, left: '-10%', width: '120%', height: '100%', zIndex: 0,
-              background: 'linear-gradient(180deg, #5881FE 0%, #6688F8 20%, #7490F5 40%, #8296F0 60%, #8C9AEC 80%, #9196EC 100%)'
+              background: '#F7F5F2'
             }} />
-            <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: 420, zIndex: 1, overflow: 'hidden' }}>
-              <svg width="100%" height="100%" viewBox="0 0 1617 329" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                  <radialGradient id="starGlowLending">
-                    <stop offset="0%" stopColor="#EAF9F3"/>
-                    <stop offset="100%" stopColor="#9FEBFB"/>
-                  </radialGradient>
-                </defs>
-                {STAR_CIRCLES.map((s, i) => (
-                  <circle key={i} cx={s.cx} cy={s.cy} r="1.75" fill="url(#starGlowLending)" opacity={s.o}/>
-                ))}
-              </svg>
-            </div>
-            <div className="twinkle-star" />
-            <div className="twinkle-star" />
-            <div className="twinkle-star" />
-            <div className="twinkle-star" />
-            <div className="twinkle-star" />
           </div>
 
           <div style={{ position: 'relative', zIndex: 2, maxWidth: 1080, margin: '0 auto', padding: '0 28px' }}>
           {/* Header */}
           <div style={{ paddingTop: 80, paddingBottom: 20, textAlign: 'center' }}>
-            <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '3.2rem', fontWeight: 600, letterSpacing: '-0.02em', lineHeight: 1.1, color: 'white', margin: 0 }}>
+            <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '3.2rem', fontWeight: 600, letterSpacing: '-0.02em', lineHeight: 1.1, color: '#1A1918', margin: 0 }}>
               {initialTab === 'create' ? 'Create Loan' : 'Lending & Borrowing'}
             </h1>
           </div>

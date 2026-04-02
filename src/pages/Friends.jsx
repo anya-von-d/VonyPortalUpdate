@@ -252,11 +252,11 @@ export default function Friends() {
         <DashboardSidebar activePage="Friends" user={user} />
         <div style={{ position: 'relative', margin: '20px 12px 12px 0', borderRadius: 20, overflow: 'hidden', minHeight: 'calc(100vh - 32px)' }}>
           <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', bottom: 0, overflow: 'hidden', zIndex: 0, pointerEvents: 'none' }}>
-            <div style={{ position: 'absolute', top: 0, left: '-10%', width: '120%', height: '100%', zIndex: 0, background: 'linear-gradient(180deg, #5881FE 0%, #6688F8 20%, #7490F5 40%, #8296F0 60%, #8C9AEC 80%, #9196EC 100%)' }} />
+            <div style={{ position: 'absolute', top: 0, left: '-10%', width: '120%', height: '100%', zIndex: 0, background: '#F7F5F2' }} />
           </div>
           <div style={{ position: 'relative', zIndex: 2, maxWidth: 1080, margin: '0 auto', padding: '0 28px' }}>
             <div style={{ paddingTop: 80, paddingBottom: 20, textAlign: 'center' }}>
-              <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '3.2rem', fontWeight: 600, letterSpacing: '-0.02em', lineHeight: 1.1, color: 'white', margin: 0 }}>Friends</h1>
+              <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '3.2rem', fontWeight: 600, letterSpacing: '-0.02em', lineHeight: 1.1, color: '#1A1918', margin: 0 }}>Friends</h1>
             </div>
           </div>
           <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 28px 64px', position: 'relative', zIndex: 2 }}>
@@ -280,39 +280,19 @@ export default function Friends() {
       {/* ── Content box with galaxy background ── */}
       <div style={{ position: 'relative', margin: '20px 12px 12px 0', borderRadius: 20, overflow: 'hidden', minHeight: 'calc(100vh - 32px)' }}>
 
-        {/* Galaxy gradient background inside the box */}
+        {/* Background */}
         <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', bottom: 0, overflow: 'hidden', zIndex: 0, pointerEvents: 'none' }}>
           <div style={{
             position: 'absolute', top: 0, left: '-10%', width: '120%', height: '100%', zIndex: 0,
-            background: 'linear-gradient(180deg, #5881FE 0%, #6688F8 20%, #7490F5 40%, #8296F0 60%, #8C9AEC 80%, #9196EC 100%)'
+            background: '#F7F5F2'
           }} />
-          {/* Static star field */}
-          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: 420, zIndex: 1, overflow: 'hidden' }}>
-            <svg width="100%" height="100%" viewBox="0 0 1617 329" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <radialGradient id="frStarGlow">
-                  <stop offset="0%" stopColor="#EAF9F3"/>
-                  <stop offset="100%" stopColor="#9FEBFB"/>
-                </radialGradient>
-              </defs>
-              {STAR_CIRCLES.map((s, i) => (
-                <circle key={i} cx={s.cx} cy={s.cy} r="1.75" fill="url(#frStarGlow)" opacity={s.o}/>
-              ))}
-            </svg>
-          </div>
-          {/* Twinkling stars */}
-          <div className="twinkle-star" />
-          <div className="twinkle-star" />
-          <div className="twinkle-star" />
-          <div className="twinkle-star" />
-          <div className="twinkle-star" />
         </div>
 
       {/* ── Hero ── */}
       <div style={{ background: 'transparent', position: 'relative', zIndex: 2 }}>
         <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 28px' }}>
           <div style={{ paddingTop: 80, paddingBottom: 20, textAlign: 'center' }}>
-            <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '3.2rem', fontWeight: 600, letterSpacing: '-0.02em', lineHeight: 1.1, color: 'white', margin: 0 }}>
+            <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '3.2rem', fontWeight: 600, letterSpacing: '-0.02em', lineHeight: 1.1, color: '#1A1918', margin: 0 }}>
               Friends
             </h1>
           </div>

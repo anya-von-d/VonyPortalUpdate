@@ -210,7 +210,7 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
       <div className="mobile-header" style={{
         display: 'none', /* shown via CSS at <=900px */
         position: 'fixed', top: 0, left: 0, right: 0, height: 56,
-        background: '#F5F4F0', zIndex: 53,
+        background: '#F3F1EF', zIndex: 53,
         alignItems: 'center', justifyContent: 'space-between',
         padding: '0 16px',
         fontFamily: "'DM Sans', sans-serif",
@@ -267,7 +267,7 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
         >
           <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.3)' }} onClick={() => setMobileMenuOpen(false)} />
           <div style={{
-            position: 'relative', width: 260, background: '#F5F4F0',
+            position: 'relative', width: 260, background: '#F3F1EF',
             paddingTop: 64, display: 'flex', flexDirection: 'column',
             overflowY: 'auto', boxShadow: '4px 0 20px rgba(0,0,0,0.1)',
           }}>
@@ -292,7 +292,7 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
       {/* ── Desktop sidebar ── */}
       <aside className="home-sidebar" style={{
         position: 'fixed', left: 0, top: 0, bottom: 0, width: 240,
-        background: '#F5F4F0',
+        background: '#F3F1EF',
         zIndex: 52, display: 'flex', flexDirection: 'column',
         fontFamily: "'DM Sans', sans-serif", overflowY: 'auto',
       }}>

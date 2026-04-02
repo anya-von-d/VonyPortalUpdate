@@ -683,38 +683,18 @@ export default function Home() {
         <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', bottom: 0, overflow: 'hidden', zIndex: 0, pointerEvents: 'none' }}>
           <div style={{
             position: 'absolute', top: 0, left: '-10%', width: '120%', height: '100%', zIndex: 0,
-            background: 'linear-gradient(180deg, #5881FE 0%, #6688F8 20%, #7490F5 40%, #8296F0 60%, #8C9AEC 80%, #9196EC 100%)'
+            background: '#F7F5F2'
           }} />
-          {/* Static star field */}
-          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: 420, zIndex: 1, overflow: 'hidden' }}>
-            <svg width="100%" height="100%" viewBox="0 0 1617 329" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <radialGradient id="starGlow">
-                  <stop offset="0%" stopColor="#EAF9F3"/>
-                  <stop offset="100%" stopColor="#9FEBFB"/>
-                </radialGradient>
-              </defs>
-              {STAR_CIRCLES.map((s, i) => (
-                <circle key={i} cx={s.cx} cy={s.cy} r="1.75" fill="url(#starGlow)" opacity={s.o}/>
-              ))}
-            </svg>
-          </div>
-          {/* Twinkling stars */}
-          <div className="twinkle-star" />
-          <div className="twinkle-star" />
-          <div className="twinkle-star" />
-          <div className="twinkle-star" />
-          <div className="twinkle-star" />
         </div>
 
       {/* ── Hero ── */}
       <div style={{ background: 'transparent', position: 'relative', zIndex: 2 }}>
         <div style={{ maxWidth: 1080, margin: '0 auto', padding: '80px 28px 56px', display: 'flex', alignItems: 'flex-end', justifyContent: 'center', textAlign: 'center' }}>
           <div>
-            <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '3.8rem', fontWeight: 600, color: '#FFFFFF', letterSpacing: '-0.02em', lineHeight: 1.1 }}>
-              {greeting}, <em style={{ fontStyle: 'italic', fontWeight: 600, color: 'rgba(255,255,255,0.9)' }}>{firstName}</em>
+            <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '3.8rem', fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', lineHeight: 1.1 }}>
+              {greeting}, <em style={{ fontStyle: 'italic', fontWeight: 600, color: '#1A1918' }}>{firstName}</em>
             </h1>
-            <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.55)', marginTop: 14, fontWeight: 400, letterSpacing: '-0.01em' }}>
+            <p style={{ fontSize: 15, color: '#787776', marginTop: 14, fontWeight: 400, letterSpacing: '-0.01em' }}>
               Here's how your loans are looking today
             </p>
           </div>
