@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { LoanAgreement, User, PublicProfile, Loan, Payment } from "@/entities/all";
-import { FileText, CheckCircle, Download, ChevronDown, ChevronRight, X, Calendar, DollarSign, Percent, Clock } from "lucide-react";
+import { FileText, CheckCircle, Download, ChevronDown, ChevronRight, X, Calendar, DollarSign, Percent, Clock, Search } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format, addMonths, addWeeks, addDays } from "date-fns";
 import { jsPDF } from "jspdf";
@@ -102,6 +102,7 @@ export default function LoanAgreements() {
   const [popupAgreement, setPopupAgreement] = useState(null);
   const [activeInfoTooltip, setActiveInfoTooltip] = useState(null);
   const [expandedId, setExpandedId] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     loadData();
@@ -274,7 +275,7 @@ export default function LoanAgreements() {
     doc.setFontSize(11);
     doc.setFont(undefined, 'normal');
     let yPos = 105;
-    const promiseText = `FOR VALUE RECEIVED, the undersigned Borrower, ${borrowerInfo.full_name} (@${borrowerInfo.username}), promises to pay to the order of ${lenderInfo.full_name} (@${lenderInfo.username}), hereinafter referred to as "Lender", the principal sum of ${formatMoney(agreement.amount)}, together with interest at the rate of ${agreement.interest_rate}% per annum.`;
+    const promiseText = `FOR VALUE RECEIVED, the undersigned Borrower, ${borrowerInfo.full_name}, promises to pay to the order of ${lenderInfo.full_name}, hereinafter referred to as "Lender", the principal sum of ${formatMoney(agreement.amount)}, together with interest at the rate of ${agreement.interest_rate}% per annum.`;
     const promiseLines = doc.splitTextToSize(promiseText, 170);
     doc.text(promiseLines, 20, yPos);
     yPos += promiseLines.length * 6 + 10;
@@ -463,8 +464,8 @@ export default function LoanAgreements() {
     setPopupAgreement(null);
   };
 
-  const hasAnyFilter = roleFilter !== 'all' || statusFilter !== 'all';
-  const clearFilters = () => { setRoleFilter('all'); setStatusFilter('all'); };
+  const hasAnyFilter = roleFilter !== 'all' || statusFilter !== 'all' || searchQuery.trim() !== '';
+  const clearFilters = () => { setRoleFilter('all'); setStatusFilter('all'); setSearchQuery(''); };
 
   /* ── Loading state ──────────────────────────────────────────── */
   if (isLoading || !user) {
@@ -517,6 +518,20 @@ export default function LoanAgreements() {
     });
   }
 
+  if (searchQuery.trim()) {
+    const q = searchQuery.trim().toLowerCase();
+    filteredAgreements = filteredAgreements.filter(agreement => {
+      const isLender = agreement.lender_id === user?.id;
+      const otherPartyId = isLender ? agreement.borrower_id : agreement.lender_id;
+      const otherParty = getUserById(otherPartyId);
+      const friendName = (otherParty?.full_name || otherParty?.username || '').toLowerCase();
+      const categoryLabel = isLender ? 'borrowed from you' : 'lent to you';
+      const amount = `$${(agreement.total_amount || 0).toLocaleString()}`;
+      const loanStatus = getLoanStatus(agreement.loan_id);
+      return friendName.includes(q) || categoryLabel.includes(q) || amount.includes(q) || loanStatus.includes(q);
+    });
+  }
+
   /* ── Popup Components ───────────────────────────────────────── */
   const PromissoryNotePopup = ({ agreement }) => {
     const lenderInfo = getUserById(agreement.lender_id);
@@ -535,8 +550,8 @@ export default function LoanAgreements() {
         </div>
 
         <p style={{ fontSize: 13, lineHeight: 1.7, color: '#1A1918' }}>
-          FOR VALUE RECEIVED, the undersigned Borrower, <strong>{borrowerInfo.full_name}</strong> (@{borrowerInfo.username}),
-          promises to pay to the order of <strong>{lenderInfo.full_name}</strong> (@{lenderInfo.username}),
+          FOR VALUE RECEIVED, the undersigned Borrower, <strong>{borrowerInfo.full_name}</strong>,
+          promises to pay to the order of <strong>{lenderInfo.full_name}</strong>,
           the principal sum of <strong>{formatMoney(agreement.amount)}</strong>,
           together with interest at the rate of <strong>{agreement.interest_rate}%</strong> per annum.
         </p>
@@ -859,6 +874,23 @@ export default function LoanAgreements() {
             {/* ── Filter Bar ─────────────────────────────────────── */}
             <div className="glass-card" style={{ padding: '16px 22px', marginBottom: 20, overflow: 'visible', position: 'relative', zIndex: 20 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                <div style={{
+                  flex: 1, display: 'flex', alignItems: 'center', gap: 10,
+                  padding: '0 16px', background: 'white', borderRadius: 22,
+                  border: '1px solid rgba(0,0,0,0.08)', height: 42, minWidth: 180,
+                }}>
+                  <Search size={16} style={{ color: '#787776', flexShrink: 0 }} />
+                  <input
+                    type="text"
+                    placeholder="Search..."
+                    value={searchQuery}
+                    onChange={e => setSearchQuery(e.target.value)}
+                    style={{
+                      flex: 1, border: 'none', outline: 'none', fontSize: 14,
+                      fontFamily: "'DM Sans', sans-serif", color: '#1A1918', background: 'transparent',
+                    }}
+                  />
+                </div>
                 <SingleSelectDropdown options={ROLE_OPTIONS} selected={roleFilter} onChange={setRoleFilter} />
                 <SingleSelectDropdown options={STATUS_OPTIONS} selected={statusFilter} onChange={setStatusFilter} />
                 <button
@@ -901,7 +933,6 @@ export default function LoanAgreements() {
                       display: 'none', alignItems: 'center', padding: '0 14px 12px',
                       borderBottom: '1px solid rgba(0,0,0,0.06)', marginBottom: 8,
                     }}>
-                      <div style={{ width: 36, flexShrink: 0, marginRight: 16 }} />
                       <span style={{ width: 80, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', flexShrink: 0 }}>Date</span>
                       <span style={{ flex: 1.5, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', minWidth: 0, paddingLeft: 4 }}>Friend</span>
                       <span style={{ flex: 1.2, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', minWidth: 0, paddingLeft: 4 }}>Category</span>
@@ -918,7 +949,7 @@ export default function LoanAgreements() {
                         const loanStatus = getLoanStatus(agreement.loan_id);
                         const badgeStyle = getStatusBadgeStyle(loanStatus);
                         const isExpanded = expandedId === agreement.id;
-                        const categoryLabel = isLender ? 'Lent to You' : 'Borrowed from You';
+                        const categoryLabel = isLender ? 'Borrowed from you' : 'Lent to you';
                         const dateDisplay = agreement.created_at ? format(new Date(agreement.created_at), 'M/dd') : '';
                         const dateYear = agreement.created_at ? new Date(agreement.created_at).getFullYear() : null;
                         const dateFormatted = dateYear && dateYear < new Date().getFullYear()
@@ -935,15 +966,6 @@ export default function LoanAgreements() {
                                 background: 'rgba(0,0,0,0.03)', transition: 'background 0.15s', cursor: 'pointer',
                               }}
                             >
-                              {/* Category icon */}
-                              <div style={{
-                                width: 36, height: 36, borderRadius: '50%', background: 'rgba(103,138,251,0.1)',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-                                color: '#678AFB',
-                              }}>
-                                <FileText size={16} />
-                              </div>
-
                               {/* Mobile layout */}
                               <div className="la-mobile-content" style={{ flex: 1, minWidth: 0 }}>
                                 <p style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -999,7 +1021,7 @@ export default function LoanAgreements() {
                             {/* Expanded document buttons */}
                             {isExpanded && (
                               <div style={{
-                                padding: '16px 14px 16px 64px',
+                                padding: '16px 14px',
                                 background: 'rgba(0,0,0,0.02)', borderRadius: '0 0 12px 12px',
                                 borderTop: '1px solid rgba(0,0,0,0.04)',
                                 display: 'flex', gap: 8, flexWrap: 'wrap',
