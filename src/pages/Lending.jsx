@@ -412,7 +412,6 @@ export default function Lending({ initialTab }) {
         amount: pendingLoanData.amount,
         interest_rate: pendingLoanData.interest_rate,
         repayment_period: pendingLoanData.repayment_period,
-        repayment_unit: formData.repayment_unit,
         payment_frequency: pendingLoanData.payment_frequency,
         purpose: pendingLoanData.purpose || '',
         due_date: pendingLoanData.due_date,
