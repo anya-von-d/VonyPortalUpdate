@@ -238,14 +238,20 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
       {/* Desktop top bar — My Profile aligned to content right edge */}
       <div className="home-sidebar" style={{
         position: 'fixed', top: 0, left: 200, right: 0, height: 56,
-        background: '#05ACEC',
-        boxShadow: '0 6px 24px rgba(5,172,236,0.3)',
+        background: 'white',
+        boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
         zIndex: 58,
         display: 'flex', alignItems: 'center',
         fontFamily: "'DM Sans', sans-serif",
       }}>
-        <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 28px', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-          <Link to={createPageUrl("Profile")} style={{ display: 'flex', alignItems: 'center', height: 32, padding: '0 12px', borderRadius: 6, background: 'rgba(255,255,255,0.22)', textDecoration: 'none', fontSize: 12, fontWeight: 600, color: 'white', flexShrink: 0 }}>
+        <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 28px', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          {activePage === 'Dashboard' && (
+            <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '2.2rem', fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', lineHeight: 1 }}>
+              {(() => { const h = new Date().getHours(); const g = h >= 5 && h < 12 ? 'Good morning' : h >= 12 && h < 18 ? 'Good afternoon' : 'Good night'; const fn = user?.full_name?.split(' ')[0] || ''; return <>{g}{fn ? <>, <em style={{ fontStyle: 'italic' }}>{fn}</em></> : ''}</>; })()}
+            </span>
+          )}
+          {activePage !== 'Dashboard' && <span />}
+          <Link to={createPageUrl("Profile")} style={{ display: 'flex', alignItems: 'center', height: 32, padding: '0 12px', borderRadius: 6, background: '#DCF7FD', textDecoration: 'none', fontSize: 12, fontWeight: 600, color: ic, flexShrink: 0 }}>
             My Profile
           </Link>
         </div>
