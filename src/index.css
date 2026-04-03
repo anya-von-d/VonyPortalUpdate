@@ -153,7 +153,7 @@ input[type="date"] {
   content: '';
   position: absolute;
   inset: 0;
-  border-radius: 20px;
+  border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.4);
   box-shadow:
     rgba(255, 255, 255, 0.5) 0px 0px 80px inset,
