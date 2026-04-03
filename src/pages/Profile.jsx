@@ -273,7 +273,7 @@ export default function Profile() {
     return (
       <div style={{ minHeight: '100vh', background: '#F5F4F0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ width: 32, height: 32, border: '2px solid #678AFB', borderTopColor: 'transparent', borderRadius: '50%', margin: '0 auto 16px' }} className="animate-spin" />
+          <div style={{ width: 32, height: 32, border: '2px solid #82F0B9', borderTopColor: 'transparent', borderRadius: '50%', margin: '0 auto 16px' }} className="animate-spin" />
           <p style={{ fontSize: 14, color: '#787776', fontFamily: "'DM Sans', sans-serif" }}>Loading profile...</p>
         </div>
       </div>
@@ -291,7 +291,7 @@ export default function Profile() {
             </div>
             <h3 style={{ fontSize: 18, fontWeight: 600, color: '#0D0D0C', marginBottom: 8 }}>Connection Error</h3>
             <p style={{ color: '#787776', marginBottom: 16 }}>{error}</p>
-            <Button onClick={loadUserData} className="text-white hover:opacity-90" style={{ background: '#678AFB' }}>
+            <Button onClick={loadUserData} className="text-white hover:opacity-90" style={{ background: '#82F0B9' }}>
               Try Again
             </Button>
           </div>
@@ -406,7 +406,7 @@ export default function Profile() {
             <DialogContent className="sm:max-w-md">
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2 text-xl">
-                  <Clock className="w-6 h-6" style={{ color: '#678AFB' }} />
+                  <Clock className="w-6 h-6" style={{ color: '#82F0B9' }} />
                   Feature Coming Soon
                 </DialogTitle>
               </DialogHeader>
@@ -421,7 +421,7 @@ export default function Profile() {
               <Button
                 onClick={() => setShowComingSoonModal(false)}
                 className="w-full text-white hover:opacity-90"
-                style={{ background: '#678AFB' }}
+                style={{ background: '#82F0B9' }}
               >
                 Got it!
               </Button>
@@ -439,7 +439,7 @@ export default function Profile() {
                 </p>
 
                 {/* Inner box with fields */}
-                <div className="space-y-4" style={{ background: 'rgba(103,138,251,0.06)', borderRadius: 12, padding: 16 }}>
+                <div className="space-y-4" style={{ background: 'rgba(130,240,185,0.06)', borderRadius: 12, padding: 16 }}>
                   <div className="grid md:grid-cols-2 gap-3 md:gap-4">
                     <div className="space-y-1">
                       <Label htmlFor="full_name" className="text-xs font-medium" style={{ color: '#787776' }}>
@@ -548,7 +548,7 @@ export default function Profile() {
                         onClick={handleSave}
                         disabled={isSaving || usernameError || isCheckingUsername}
                         className="text-white font-semibold hover:opacity-90"
-                        style={{ background: '#678AFB' }}
+                        style={{ background: '#82F0B9' }}
                       >
                         {isSaving ? 'Saving...' : 'Save Changes'}
                       </Button>
@@ -557,7 +557,7 @@ export default function Profile() {
                     <Button
                       onClick={() => setIsEditing(true)}
                       className="text-white font-semibold hover:opacity-90"
-                      style={{ background: '#678AFB' }}
+                      style={{ background: '#82F0B9' }}
                     >
                       Edit Personal Information
                     </Button>
@@ -579,7 +579,7 @@ export default function Profile() {
                   </p>
                   <Button
                     className="w-full text-white hover:opacity-90"
-                    style={{ background: '#678AFB' }}
+                    style={{ background: '#82F0B9' }}
                     onClick={() => setShowComingSoonModal(true)}
                   >
                     <Landmark className="w-4 h-4 mr-2" />

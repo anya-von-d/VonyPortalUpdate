@@ -26,7 +26,7 @@ const products = [
     tagline: "Premium",
     description: "Detailed loan analytics, priority support, and higher lending limits for power users.",
     highlights: ["Advanced repayment insights", "Priority dispute resolution", "Up to $25k lending limit"],
-    color: '#A79DEA',
+    color: '#03ACEA',
   },
   {
     icon: BarChart3,
@@ -34,7 +34,7 @@ const products = [
     tagline: "Track Record",
     description: "Build a verified lending history on Vony that shows you're trustworthy with money.",
     highlights: ["Verified lending score", "Shareable trust profile", "Repayment history export"],
-    color: '#678AFB',
+    color: '#82F0B9',
   },
   {
     icon: Zap,
@@ -42,7 +42,7 @@ const products = [
     tagline: "Speed",
     description: "Send and receive loan payments instantly instead of waiting for bank transfers.",
     highlights: ["Real-time payments", "No transfer delays", "Works with any bank"],
-    color: '#A79DEA',
+    color: '#03ACEA',
   },
   {
     icon: FileCheck,
@@ -50,7 +50,7 @@ const products = [
     tagline: "AI-Powered",
     description: "Auto-generated loan agreements tailored to your terms, ready to sign and share.",
     highlights: ["Custom clauses", "Digital signatures", "Legal templates"],
-    color: '#678AFB',
+    color: '#82F0B9',
   },
   {
     icon: Users,
@@ -58,7 +58,7 @@ const products = [
     tagline: "Community",
     description: "Pool money with friends for shared goals — trips, gifts, or emergency funds.",
     highlights: ["Transparent contributions", "Automatic splits", "Group dashboard"],
-    color: '#A79DEA',
+    color: '#03ACEA',
   },
   {
     icon: Shield,
@@ -66,7 +66,7 @@ const products = [
     tagline: "Safety Net",
     description: "Optional coverage that protects lenders if a borrower misses payments.",
     highlights: ["Missed payment coverage", "Flexible plans", "Automated claims"],
-    color: '#678AFB',
+    color: '#82F0B9',
   },
 ];
 
@@ -76,42 +76,42 @@ const guides = [
     title: "Setting Fair Interest Rates",
     description: "What's reasonable when lending to friends? Learn how to set rates that are fair to both sides without making things awkward.",
     readTime: "4 min read",
-    color: '#678AFB',
+    color: '#82F0B9',
   },
   {
     icon: FileCheck,
     title: "Writing a Loan Agreement That Works",
     description: "The key terms every peer loan should include — amount, schedule, what happens if things change — and how to bring it up naturally.",
     readTime: "5 min read",
-    color: '#A79DEA',
+    color: '#03ACEA',
   },
   {
     icon: Heart,
     title: "When a Friend Can't Pay You Back",
     description: "How to have the conversation, renegotiate terms, and protect the relationship when repayment stalls.",
     readTime: "6 min read",
-    color: '#678AFB',
+    color: '#82F0B9',
   },
   {
     icon: Receipt,
     title: "Tax Implications of Peer Lending",
     description: "What the IRS expects when you lend or borrow over $10k, how gift rules apply, and when interest income matters.",
     readTime: "5 min read",
-    color: '#A79DEA',
+    color: '#03ACEA',
   },
   {
     icon: Brain,
     title: "The Psychology of Lending to Friends",
     description: "Why money changes relationships, how to set boundaries without guilt, and when it's okay to say no.",
     readTime: "4 min read",
-    color: '#678AFB',
+    color: '#82F0B9',
   },
   {
     icon: Landmark,
     title: "Building Your Lending Track Record",
     description: "How consistent, on-time payments and responsible lending on Vony build trust with your network over time.",
     readTime: "3 min read",
-    color: '#A79DEA',
+    color: '#03ACEA',
   },
 ];
 

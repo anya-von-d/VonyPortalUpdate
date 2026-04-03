@@ -51,7 +51,7 @@ function SingleSelectDropdown({ options, selected, onChange }) {
         onClick={() => setOpen(!open)}
         style={{
           display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 10,
-          border: '1px solid rgba(0,0,0,0.08)', background: selected !== 'all' ? 'rgba(103,138,251,0.08)' : 'white',
+          border: '1px solid rgba(0,0,0,0.08)', background: selected !== 'all' ? 'rgba(130,240,185,0.08)' : 'white',
           fontSize: 13, fontWeight: 500, color: '#1A1918', cursor: 'pointer',
           fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap', transition: 'background 0.15s',
         }}
@@ -72,7 +72,7 @@ function SingleSelectDropdown({ options, selected, onChange }) {
               style={{
                 display: 'block', width: '100%', textAlign: 'left', padding: '8px 10px', borderRadius: 8,
                 border: 'none', cursor: 'pointer', fontSize: 13, color: '#1A1918',
-                background: selected === opt.id ? 'rgba(103,138,251,0.08)' : 'transparent',
+                background: selected === opt.id ? 'rgba(130,240,185,0.08)' : 'transparent',
                 fontWeight: selected === opt.id ? 600 : 400, fontFamily: "'DM Sans', sans-serif",
                 transition: 'background 0.1s',
               }}
@@ -158,8 +158,8 @@ export default function LoanAgreements() {
 
   const getStatusBadgeStyle = (status) => {
     switch(status) {
-      case 'active': return { background: 'rgba(103,138,251,0.1)', color: '#678AFB', border: '1px solid rgba(103,138,251,0.2)' };
-      case 'completed': return { background: 'rgba(103,138,251,0.1)', color: '#678AFB', border: '1px solid rgba(103,138,251,0.2)' };
+      case 'active': return { background: 'rgba(130,240,185,0.1)', color: '#82F0B9', border: '1px solid rgba(130,240,185,0.2)' };
+      case 'completed': return { background: 'rgba(130,240,185,0.1)', color: '#82F0B9', border: '1px solid rgba(130,240,185,0.2)' };
       case 'cancelled': return { background: 'rgba(232,114,110,0.08)', color: '#E8726E', border: '1px solid rgba(232,114,110,0.2)' };
       default: return { background: 'rgba(120,119,118,0.08)', color: '#787776', border: '1px solid rgba(120,119,118,0.15)' };
     }
@@ -479,7 +479,7 @@ export default function LoanAgreements() {
           </div>
           <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 28px 64px', position: 'relative', zIndex: 2 }}>
             <div className="glass-card" style={{ padding: 40, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-              <div style={{ width: 32, height: 32, border: '2px solid #678AFB', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite', marginBottom: 12 }} />
+              <div style={{ width: 32, height: 32, border: '2px solid #82F0B9', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite', marginBottom: 12 }} />
               <p style={{ fontSize: 13, color: '#787776' }}>{isLoading ? 'Loading documents...' : 'Please log in to view documents'}</p>
             </div>
           </div>
@@ -536,7 +536,7 @@ export default function LoanAgreements() {
           <p style={{ fontSize: 12, color: '#787776', marginTop: 4 }}>Document ID: {agreement.id}</p>
         </div>
 
-        <div style={{ background: 'rgba(103,138,251,0.1)', borderRadius: 16, padding: 16 }}>
+        <div style={{ background: 'rgba(130,240,185,0.1)', borderRadius: 16, padding: 16 }}>
           <p style={{ fontSize: 12, color: '#787776', marginBottom: 4 }}>Principal Amount</p>
           <p style={{ fontSize: 28, fontWeight: 700, color: '#1A1918', margin: 0 }}>{formatMoney(agreement.amount)}</p>
         </div>
@@ -572,7 +572,7 @@ export default function LoanAgreements() {
           onClick={() => downloadPromissoryNote(agreement)}
           style={{
             width: '100%', padding: '12px 0', borderRadius: 12, border: 'none',
-            background: '#678AFB', color: 'white', fontSize: 13, fontWeight: 600,
+            background: '#82F0B9', color: 'white', fontSize: 13, fontWeight: 600,
             cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
             fontFamily: "'DM Sans', sans-serif",
           }}
@@ -597,15 +597,15 @@ export default function LoanAgreements() {
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
-          <div style={{ background: 'rgba(103,138,251,0.08)', borderRadius: 16, padding: 12, textAlign: 'center' }}>
+          <div style={{ background: 'rgba(130,240,185,0.08)', borderRadius: 16, padding: 12, textAlign: 'center' }}>
             <p style={{ fontSize: 11, color: '#787776', margin: 0 }}>Principal</p>
             <p style={{ fontSize: 18, fontWeight: 700, color: '#1A1918', margin: '4px 0 0' }}>{formatMoney(agreement.amount)}</p>
           </div>
-          <div style={{ background: 'rgba(167,157,234,0.1)', borderRadius: 16, padding: 12, textAlign: 'center' }}>
+          <div style={{ background: 'rgba(3,172,234,0.1)', borderRadius: 16, padding: 12, textAlign: 'center' }}>
             <p style={{ fontSize: 11, color: '#787776', margin: 0 }}>Interest</p>
             <p style={{ fontSize: 18, fontWeight: 700, color: '#1A1918', margin: '4px 0 0' }}>{formatMoney((agreement.total_amount || 0) - (agreement.amount || 0))}</p>
           </div>
-          <div style={{ background: 'rgba(103,138,251,0.12)', borderRadius: 16, padding: 12, textAlign: 'center' }}>
+          <div style={{ background: 'rgba(130,240,185,0.12)', borderRadius: 16, padding: 12, textAlign: 'center' }}>
             <p style={{ fontSize: 11, color: '#787776', margin: 0 }}>Total</p>
             <p style={{ fontSize: 18, fontWeight: 700, color: '#1A1918', margin: '4px 0 0' }}>{formatMoney(agreement.total_amount)}</p>
           </div>
@@ -627,9 +627,9 @@ export default function LoanAgreements() {
             </thead>
             <tbody>
               {schedule.map((row, index) => (
-                <tr key={row.number} style={{ background: index < paidPayments ? 'rgba(103,138,251,0.05)' : 'transparent', borderTop: '1px solid rgba(0,0,0,0.04)' }}>
+                <tr key={row.number} style={{ background: index < paidPayments ? 'rgba(130,240,185,0.05)' : 'transparent', borderTop: '1px solid rgba(0,0,0,0.04)' }}>
                   <td style={{ padding: '6px 8px', color: '#787776' }}>
-                    {index < paidPayments && <CheckCircle size={12} style={{ color: '#678AFB', marginRight: 4, verticalAlign: 'middle' }} />}
+                    {index < paidPayments && <CheckCircle size={12} style={{ color: '#82F0B9', marginRight: 4, verticalAlign: 'middle' }} />}
                     {row.number}
                   </td>
                   <td style={{ padding: '6px 8px', color: '#1A1918' }}>{format(row.date, 'MMM d, yyyy')}</td>
@@ -649,7 +649,7 @@ export default function LoanAgreements() {
           onClick={() => downloadAmortizationSchedule(agreement)}
           style={{
             width: '100%', padding: '12px 0', borderRadius: 12, border: 'none',
-            background: '#678AFB', color: 'white', fontSize: 13, fontWeight: 600,
+            background: '#82F0B9', color: 'white', fontSize: 13, fontWeight: 600,
             cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
             fontFamily: "'DM Sans', sans-serif",
           }}
@@ -679,13 +679,13 @@ export default function LoanAgreements() {
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-          <div style={{ background: 'rgba(103,138,251,0.08)', borderRadius: 16, padding: 16 }}>
+          <div style={{ background: 'rgba(130,240,185,0.08)', borderRadius: 16, padding: 16 }}>
             <p style={{ fontSize: 11, color: '#787776', marginBottom: 4 }}>Loan Amount</p>
             <p style={{ fontSize: 24, fontWeight: 700, color: '#1A1918', margin: 0 }}>{formatMoney(agreement.amount)}</p>
           </div>
-          <div style={{ background: 'rgba(167,157,234,0.1)', borderRadius: 16, padding: 16 }}>
+          <div style={{ background: 'rgba(3,172,234,0.1)', borderRadius: 16, padding: 16 }}>
             <p style={{ fontSize: 11, color: '#787776', marginBottom: 4 }}>Total Due</p>
-            <p style={{ fontSize: 24, fontWeight: 700, color: '#678AFB', margin: 0 }}>{formatMoney(agreement.total_amount)}</p>
+            <p style={{ fontSize: 24, fontWeight: 700, color: '#82F0B9', margin: 0 }}>{formatMoney(agreement.total_amount)}</p>
           </div>
         </div>
 
@@ -700,7 +700,7 @@ export default function LoanAgreements() {
             <div style={{ width: '100%', background: 'white', borderRadius: 999, height: 8 }}>
               <div
                 style={{
-                  background: '#678AFB', height: 8, borderRadius: 999, transition: 'width 0.3s',
+                  background: '#82F0B9', height: 8, borderRadius: 999, transition: 'width 0.3s',
                   width: `${Math.min(100, ((loan.amount_paid || 0) / agreement.total_amount) * 100)}%`,
                 }}
               />
@@ -782,8 +782,8 @@ export default function LoanAgreements() {
   };
 
   const colors = [
-    'rgba(103,138,251,0.08)', 'rgba(167,157,234,0.08)', 'rgba(103,138,251,0.06)',
-    'rgba(167,157,234,0.06)', 'rgba(103,138,251,0.1)', 'rgba(167,157,234,0.1)',
+    'rgba(130,240,185,0.08)', 'rgba(3,172,234,0.08)', 'rgba(130,240,185,0.06)',
+    'rgba(3,172,234,0.06)', 'rgba(130,240,185,0.1)', 'rgba(3,172,234,0.1)',
   ];
 
   /* ══════════════════════════════════════════════════════════
@@ -810,8 +810,8 @@ export default function LoanAgreements() {
             >
               <div style={{ position: 'sticky', top: 0, background: 'white', borderBottom: '1px solid rgba(0,0,0,0.06)', padding: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderRadius: '20px 20px 0 0' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(103,138,251,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <FileText size={16} style={{ color: '#678AFB' }} />
+                  <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(130,240,185,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <FileText size={16} style={{ color: '#82F0B9' }} />
                   </div>
                   <span style={{ fontWeight: 500, color: '#1A1918' }}>
                     {activePopup === 'promissory' && 'Promissory Note'}
@@ -975,7 +975,7 @@ export default function LoanAgreements() {
                                 </span>
                               </div>
                               <div className="la-desktop-category" style={{ display: 'none', flex: 1.2, minWidth: 0, alignItems: 'center', gap: 6, paddingLeft: 4 }}>
-                                <span style={{ fontSize: 12, fontWeight: 500, color: isLender ? '#678AFB' : '#A79DEA' }}>{categoryLabel}</span>
+                                <span style={{ fontSize: 12, fontWeight: 500, color: isLender ? '#82F0B9' : '#03ACEA' }}>{categoryLabel}</span>
                               </div>
                               <div className="la-desktop-status" style={{ display: 'none', width: 130, justifyContent: 'center', flexShrink: 0 }}>
                                 <span style={{
@@ -1014,10 +1014,10 @@ export default function LoanAgreements() {
                                     cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6,
                                     fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap', transition: 'background 0.15s',
                                   }}
-                                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(103,138,251,0.06)'}
+                                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(130,240,185,0.06)'}
                                   onMouseLeave={e => e.currentTarget.style.background = 'white'}
                                 >
-                                  <FileText size={14} style={{ color: '#678AFB' }} />
+                                  <FileText size={14} style={{ color: '#82F0B9' }} />
                                   Promissory Note
                                   <div
                                     style={{ position: 'relative' }}
@@ -1025,8 +1025,8 @@ export default function LoanAgreements() {
                                     onMouseLeave={() => setActiveInfoTooltip(null)}
                                     onClick={(e) => e.stopPropagation()}
                                   >
-                                    <div style={{ width: 16, height: 16, borderRadius: '50%', background: 'rgba(103,138,251,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'help' }}>
-                                      <span style={{ fontSize: 10, fontWeight: 700, color: '#678AFB' }}>i</span>
+                                    <div style={{ width: 16, height: 16, borderRadius: '50%', background: 'rgba(130,240,185,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'help' }}>
+                                      <span style={{ fontSize: 10, fontWeight: 700, color: '#82F0B9' }}>i</span>
                                     </div>
                                     {activeInfoTooltip === `promissory-${agreement.id}` && (
                                       <div style={{ position: 'absolute', left: 24, top: 0, zIndex: 50, width: 224, background: '#1A1918', color: 'white', fontSize: 11, borderRadius: 10, padding: 12, boxShadow: '0 8px 24px rgba(0,0,0,0.15)', whiteSpace: 'normal' }}>
@@ -1043,10 +1043,10 @@ export default function LoanAgreements() {
                                     cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6,
                                     fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap', transition: 'background 0.15s',
                                   }}
-                                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(103,138,251,0.06)'}
+                                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(130,240,185,0.06)'}
                                   onMouseLeave={e => e.currentTarget.style.background = 'white'}
                                 >
-                                  <FileText size={14} style={{ color: '#A79DEA' }} />
+                                  <FileText size={14} style={{ color: '#03ACEA' }} />
                                   Amortization Schedule
                                   <div
                                     style={{ position: 'relative' }}
@@ -1054,8 +1054,8 @@ export default function LoanAgreements() {
                                     onMouseLeave={() => setActiveInfoTooltip(null)}
                                     onClick={(e) => e.stopPropagation()}
                                   >
-                                    <div style={{ width: 16, height: 16, borderRadius: '50%', background: 'rgba(103,138,251,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'help' }}>
-                                      <span style={{ fontSize: 10, fontWeight: 700, color: '#678AFB' }}>i</span>
+                                    <div style={{ width: 16, height: 16, borderRadius: '50%', background: 'rgba(130,240,185,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'help' }}>
+                                      <span style={{ fontSize: 10, fontWeight: 700, color: '#82F0B9' }}>i</span>
                                     </div>
                                     {activeInfoTooltip === `amortization-${agreement.id}` && (
                                       <div style={{ position: 'absolute', left: 24, top: 0, zIndex: 50, width: 224, background: '#1A1918', color: 'white', fontSize: 11, borderRadius: 10, padding: 12, boxShadow: '0 8px 24px rgba(0,0,0,0.15)', whiteSpace: 'normal' }}>

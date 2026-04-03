@@ -82,7 +82,7 @@ function MultiSelectDropdown({ label, options, selected, onChange }) {
         onClick={() => setOpen(!open)}
         style={{
           display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 10,
-          border: '1px solid rgba(0,0,0,0.08)', background: selected.length > 0 ? 'rgba(103,138,251,0.08)' : 'white',
+          border: '1px solid rgba(0,0,0,0.08)', background: selected.length > 0 ? 'rgba(130,240,185,0.08)' : 'white',
           fontSize: 13, fontWeight: 500, color: '#1A1918', cursor: 'pointer',
           fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap', transition: 'background 0.15s',
         }}
@@ -109,7 +109,7 @@ function MultiSelectDropdown({ label, options, selected, onChange }) {
             >
               <div style={{
                 width: 18, height: 18, borderRadius: 5, border: selected.includes(opt.id) ? 'none' : '1.5px solid rgba(0,0,0,0.2)',
-                background: selected.includes(opt.id) ? '#678AFB' : 'white', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                background: selected.includes(opt.id) ? '#82F0B9' : 'white', display: 'flex', alignItems: 'center', justifyContent: 'center',
                 transition: 'all 0.15s', flexShrink: 0,
               }}>
                 {selected.includes(opt.id) && (
@@ -144,7 +144,7 @@ function SingleSelectDropdown({ options, selected, onChange }) {
         onClick={() => setOpen(!open)}
         style={{
           display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 10,
-          border: '1px solid rgba(0,0,0,0.08)', background: selected !== 'all' ? 'rgba(103,138,251,0.08)' : 'white',
+          border: '1px solid rgba(0,0,0,0.08)', background: selected !== 'all' ? 'rgba(130,240,185,0.08)' : 'white',
           fontSize: 13, fontWeight: 500, color: '#1A1918', cursor: 'pointer',
           fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap', transition: 'background 0.15s',
         }}
@@ -165,7 +165,7 @@ function SingleSelectDropdown({ options, selected, onChange }) {
               style={{
                 display: 'block', width: '100%', textAlign: 'left', padding: '8px 10px', borderRadius: 8,
                 border: 'none', cursor: 'pointer', fontSize: 13, color: '#1A1918',
-                background: selected === opt.id ? 'rgba(103,138,251,0.08)' : 'transparent',
+                background: selected === opt.id ? 'rgba(130,240,185,0.08)' : 'transparent',
                 fontWeight: selected === opt.id ? 600 : 400, fontFamily: "'DM Sans', sans-serif",
                 transition: 'background 0.1s',
               }}
@@ -214,7 +214,7 @@ function AmountFilterDropdown({ amountMode, setAmountMode, amountVal1, setAmount
         onClick={() => setOpen(!open)}
         style={{
           display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 10,
-          border: '1px solid rgba(0,0,0,0.08)', background: isFiltered ? 'rgba(103,138,251,0.08)' : 'white',
+          border: '1px solid rgba(0,0,0,0.08)', background: isFiltered ? 'rgba(130,240,185,0.08)' : 'white',
           fontSize: 13, fontWeight: 500, color: '#1A1918', cursor: 'pointer',
           fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap', transition: 'background 0.15s',
         }}
@@ -272,7 +272,7 @@ function AmountFilterDropdown({ amountMode, setAmountMode, amountVal1, setAmount
                           width: 70, padding: '8px 10px', borderRadius: 8, border: '1px solid rgba(0,0,0,0.1)',
                           fontSize: 14, fontFamily: "'DM Sans', sans-serif", outline: 'none',
                         }}
-                        onFocus={e => e.target.style.borderColor = '#678AFB'}
+                        onFocus={e => e.target.style.borderColor = '#82F0B9'}
                         onBlur={e => e.target.style.borderColor = 'rgba(0,0,0,0.1)'}
                       />
                     </div>
@@ -288,7 +288,7 @@ function AmountFilterDropdown({ amountMode, setAmountMode, amountVal1, setAmount
                           width: 70, padding: '8px 10px', borderRadius: 8, border: '1px solid rgba(0,0,0,0.1)',
                           fontSize: 14, fontFamily: "'DM Sans', sans-serif", outline: 'none',
                         }}
-                        onFocus={e => e.target.style.borderColor = '#678AFB'}
+                        onFocus={e => e.target.style.borderColor = '#82F0B9'}
                         onBlur={e => e.target.style.borderColor = 'rgba(0,0,0,0.1)'}
                       />
                     </div>
@@ -305,7 +305,7 @@ function AmountFilterDropdown({ amountMode, setAmountMode, amountVal1, setAmount
                         width: 100, padding: '8px 10px', borderRadius: 8, border: '1px solid rgba(0,0,0,0.1)',
                         fontSize: 14, fontFamily: "'DM Sans', sans-serif", outline: 'none',
                       }}
-                      onFocus={e => e.target.style.borderColor = '#678AFB'}
+                      onFocus={e => e.target.style.borderColor = '#82F0B9'}
                       onBlur={e => e.target.style.borderColor = 'rgba(0,0,0,0.1)'}
                     />
                   </div>
@@ -369,7 +369,7 @@ function SortDropdown({ sortBy, onChange }) {
               style={{
                 display: 'block', width: '100%', textAlign: 'left', padding: '8px 10px', borderRadius: 8,
                 border: 'none', cursor: 'pointer', fontSize: 13, color: '#1A1918',
-                background: sortBy === opt.id ? 'rgba(103,138,251,0.08)' : 'transparent',
+                background: sortBy === opt.id ? 'rgba(130,240,185,0.08)' : 'transparent',
                 fontWeight: sortBy === opt.id ? 600 : 400, fontFamily: "'DM Sans', sans-serif",
                 transition: 'background 0.1s',
               }}
@@ -520,7 +520,7 @@ export default function RecentActivityPage() {
           </div>
           <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 28px 64px', position: 'relative', zIndex: 2 }}>
             <div className="glass-card" style={{ padding: 40, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-              <div style={{ width: 32, height: 32, border: '2px solid #678AFB', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite', marginBottom: 12 }} />
+              <div style={{ width: 32, height: 32, border: '2px solid #82F0B9', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite', marginBottom: 12 }} />
               <p style={{ fontSize: 13, color: '#787776' }}>{isLoading ? 'Loading activity...' : 'Please log in to view activity'}</p>
             </div>
           </div>

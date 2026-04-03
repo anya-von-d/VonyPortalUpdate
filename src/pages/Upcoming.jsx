@@ -60,11 +60,11 @@ function MiniCalendar({ today, paymentDates }) {
               textAlign: 'center', padding: '6px 2px', borderRadius: 8, fontSize: 12, position: 'relative',
               color: !inMonth ? '#C7C6C4' : isToday ? 'white' : '#1A1918',
               fontWeight: isToday ? 700 : 400,
-              background: isToday ? '#678AFB' : hasPmt && pmtType === 'incoming' ? 'rgba(106,212,120,0.12)' : hasPmt ? 'rgba(103,138,251,0.08)' : 'transparent',
+              background: isToday ? '#82F0B9' : hasPmt && pmtType === 'incoming' ? 'rgba(106,212,120,0.12)' : hasPmt ? 'rgba(130,240,185,0.08)' : 'transparent',
             }}>
               {format(day, 'd')}
               {hasPmt && !isToday && (
-                <div style={{ width: 4, height: 4, borderRadius: '50%', background: pmtType === 'incoming' ? '#4CAF50' : '#678AFB', margin: '2px auto 0' }} />
+                <div style={{ width: 4, height: 4, borderRadius: '50%', background: pmtType === 'incoming' ? '#4CAF50' : '#82F0B9', margin: '2px auto 0' }} />
               )}
             </div>
           );
@@ -77,7 +77,7 @@ function MiniCalendar({ today, paymentDates }) {
           <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#4CAF50' }} /> Owed to you
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: '#787776' }}>
-          <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#678AFB' }} /> You owe
+          <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#82F0B9' }} /> You owe
         </div>
       </div>
     </div>
@@ -133,7 +133,7 @@ export default function Upcoming() {
     return (
       <div style={{ minHeight: '100vh', background: '#F5F4F0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ width: 32, height: 32, border: '2px solid #678AFB', borderTopColor: 'transparent', borderRadius: '50%', margin: '0 auto 16px' }} className="animate-spin" />
+          <div style={{ width: 32, height: 32, border: '2px solid #82F0B9', borderTopColor: 'transparent', borderRadius: '50%', margin: '0 auto 16px' }} className="animate-spin" />
           <p style={{ fontSize: 14, color: '#787776', fontFamily: "'DM Sans', sans-serif" }}>Loading upcoming...</p>
         </div>
       </div>
@@ -153,7 +153,7 @@ export default function Upcoming() {
           </p>
           <button onClick={navigateToLogin} style={{
             width: '100%', padding: '12px 24px', fontSize: 16, fontWeight: 600,
-            background: '#678AFB', color: 'white', border: 'none', borderRadius: 12,
+            background: '#82F0B9', color: 'white', border: 'none', borderRadius: 12,
             cursor: 'pointer', fontFamily: "'DM Sans', sans-serif"
           }}>Sign In</button>
         </div>
@@ -299,7 +299,7 @@ export default function Upcoming() {
         {/* Days box instead of profile image */}
         <div style={{
           width: 48, height: 48, borderRadius: 12, flexShrink: 0,
-          background: isOverdue ? 'rgba(232,114,110,0.1)' : event.isLender ? 'rgba(103,138,251,0.08)' : 'rgba(167,157,234,0.08)',
+          background: isOverdue ? 'rgba(232,114,110,0.1)' : event.isLender ? 'rgba(130,240,185,0.08)' : 'rgba(3,172,234,0.08)',
           display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
           border: isOverdue ? '1px solid rgba(232,114,110,0.2)' : '1px solid rgba(0,0,0,0.04)',
         }}>
@@ -501,16 +501,16 @@ export default function Upcoming() {
                 const hasOutgoing = dayEvents.some(e => !e.isLender);
 
                 let cellBg = 'transparent';
-                if (hasIncoming && hasOutgoing) cellBg = 'rgba(103,138,251,0.06)';
+                if (hasIncoming && hasOutgoing) cellBg = 'rgba(130,240,185,0.06)';
                 else if (hasIncoming) cellBg = 'rgba(106,212,120,0.08)';
-                else if (hasOutgoing) cellBg = 'rgba(103,138,251,0.06)';
+                else if (hasOutgoing) cellBg = 'rgba(130,240,185,0.06)';
 
                 return (
                   <div key={i} style={{
                     minHeight: 100, padding: '8px 10px', borderRadius: 10,
                     background: inMonth ? cellBg : 'transparent',
                     opacity: inMonth ? 1 : 0.3,
-                    border: isToday ? '2px solid #678AFB' : '1px solid transparent',
+                    border: isToday ? '2px solid #82F0B9' : '1px solid transparent',
                   }}>
                     {/* Date number */}
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
@@ -519,7 +519,7 @@ export default function Upcoming() {
                         width: isToday ? 26 : 'auto', height: isToday ? 26 : 'auto',
                         borderRadius: '50%', fontSize: 12, fontWeight: isToday ? 700 : 500,
                         color: isToday ? 'white' : inMonth ? '#1A1918' : '#C7C6C4',
-                        background: isToday ? '#678AFB' : 'transparent',
+                        background: isToday ? '#82F0B9' : 'transparent',
                       }}>
                         {format(day, 'd')}
                       </span>
@@ -531,7 +531,7 @@ export default function Upcoming() {
                           </span>
                         )}
                         {dayEvents.filter(e => !e.isLender).length > 0 && (
-                          <span style={{ fontSize: 11, fontWeight: 600, color: '#678AFB' }}>
+                          <span style={{ fontSize: 11, fontWeight: 600, color: '#82F0B9' }}>
                             {formatMoney(dayEvents.filter(e => !e.isLender).reduce((s, e) => s + e.amount, 0))}
                           </span>
                         )}
@@ -544,7 +544,7 @@ export default function Upcoming() {
                           <div key={j} style={{
                             width: 24, height: 24, borderRadius: '50%', fontSize: 10, fontWeight: 600,
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            background: ev.isLender ? '#4CAF50' : '#678AFB', color: 'white',
+                            background: ev.isLender ? '#4CAF50' : '#82F0B9', color: 'white',
                           }}>
                             {ev.initial}
                           </div>
@@ -569,7 +569,7 @@ export default function Upcoming() {
                 <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#4CAF50' }} /> Owed to you
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: '#787776' }}>
-                <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#678AFB' }} /> You owe
+                <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#82F0B9' }} /> You owe
               </div>
             </div>
           </div>

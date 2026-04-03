@@ -517,8 +517,8 @@ export default function YourLoans() {
         {nextPaymentLoan && nextPaymentDays !== null && (
           <div className="glass-hero-alert" style={{ padding: '14px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <div style={{ width: 32, height: 32, borderRadius: '50%', background: nextPaymentDays < 0 ? 'rgba(232,114,110,0.1)' : 'rgba(103,138,251,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Clock style={{ width: 16, height: 16, color: nextPaymentDays < 0 ? '#E8726E' : '#678AFB' }} />
+              <div style={{ width: 32, height: 32, borderRadius: '50%', background: nextPaymentDays < 0 ? 'rgba(232,114,110,0.1)' : 'rgba(130,240,185,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Clock style={{ width: 16, height: 16, color: nextPaymentDays < 0 ? '#E8726E' : '#82F0B9' }} />
               </div>
               <p style={{ fontSize: 13, color: '#1A1918', margin: 0 }}>
                 {isLending ? (
@@ -566,7 +566,7 @@ export default function YourLoans() {
                             <span style={{ fontSize: 11, fontWeight: 700, color: '#1A1918' }}>{formatMoney(paidAll)} / {formatMoney(totalAll)}</span>
                           </div>
                           <div style={{ width: '100%', height: 20, background: '#F0F0EE', borderRadius: 6, overflow: 'hidden' }}>
-                            <div style={{ height: '100%', borderRadius: 6, width: `${Math.max(pctAll, 2)}%`, background: '#678AFB', transition: 'width 0.5s', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: 8 }}>
+                            <div style={{ height: '100%', borderRadius: 6, width: `${Math.max(pctAll, 2)}%`, background: '#82F0B9', transition: 'width 0.5s', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: 8 }}>
                               {paidAll > 0 && <span style={{ fontSize: 10, fontWeight: 700, color: 'white' }}>{pctAll}%</span>}
                             </div>
                           </div>
@@ -583,8 +583,8 @@ export default function YourLoans() {
                         <div key={loan.id} style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                              <div style={{ width: 24, height: 24, borderRadius: '50%', background: 'rgba(103,138,251,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                <span style={{ fontSize: 11, fontWeight: 500, color: '#678AFB' }}>{otherParty?.full_name?.charAt(0) || '?'}</span>
+                              <div style={{ width: 24, height: 24, borderRadius: '50%', background: 'rgba(130,240,185,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <span style={{ fontSize: 11, fontWeight: 500, color: '#82F0B9' }}>{otherParty?.full_name?.charAt(0) || '?'}</span>
                               </div>
                               <span style={{ fontSize: 11, fontWeight: 500, color: '#1A1918' }}>{otherParty?.full_name || 'User'}</span>
                               <span style={{ fontSize: 10, color: '#787776' }}>· {loan.purpose || 'Reason'}</span>
@@ -592,7 +592,7 @@ export default function YourLoans() {
                             <span style={{ fontSize: 11, fontWeight: 700, color: '#1A1918' }}>{percentPaid}%</span>
                           </div>
                           <div style={{ width: '100%', height: 20, background: '#F0F0EE', borderRadius: 6, overflow: 'hidden' }}>
-                            <div style={{ height: '100%', borderRadius: 6, width: `${Math.max(percentPaid, 2)}%`, background: '#678AFB', transition: 'width 0.5s' }} />
+                            <div style={{ height: '100%', borderRadius: 6, width: `${Math.max(percentPaid, 2)}%`, background: '#82F0B9', transition: 'width 0.5s' }} />
                           </div>
                           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: '#787776' }}>
                             <span>${amountPaid.toLocaleString()} {isLending ? 'received' : 'paid'} {loan.next_payment_date && <span>· Next on {format(new Date(loan.next_payment_date), 'MMM d')}</span>}</span>
@@ -638,7 +638,7 @@ export default function YourLoans() {
                           const displayDays = isOverdue ? `-${Math.abs(loan.days)}` : loan.days;
                           return (
                             <div key={loan.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 0', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
-                              <div style={{ flexShrink: 0, width: 40, height: 40, borderRadius: '50%', background: isOverdue ? '#E8726E' : '#678AFB', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                              <div style={{ flexShrink: 0, width: 40, height: 40, borderRadius: '50%', background: isOverdue ? '#E8726E' : '#82F0B9', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                 <p style={{ fontSize: 10, fontWeight: 700, color: 'white', textAlign: 'center', lineHeight: 1.2, margin: 0 }}>
                                   {displayDays}
                                   <span style={{ display: 'block', fontSize: 7, fontWeight: 500 }}>{Math.abs(loan.days) === 1 ? 'day' : 'days'}</span>
@@ -720,7 +720,7 @@ export default function YourLoans() {
                           }
                         </div>
                         <Link to={createPageUrl("RecordPayment")} style={{
-                          padding: '7px 18px', borderRadius: 20, background: '#678AFB', color: 'white',
+                          padding: '7px 18px', borderRadius: 20, background: '#82F0B9', color: 'white',
                           fontSize: 12, fontWeight: 600, textDecoration: 'none', whiteSpace: 'nowrap',
                           fontFamily: "'DM Sans', sans-serif", transition: 'background 0.15s'
                         }}>Record Payment</Link>
@@ -737,7 +737,7 @@ export default function YourLoans() {
                 <div style={{ padding: '14px 16px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <span style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.07em', textTransform: 'uppercase' }}>Loans Ranked By</span>
                   <Select value={rankingFilter} onValueChange={setRankingFilter}>
-                    <SelectTrigger className="w-auto h-7 px-2 border-0 text-xs font-medium rounded-lg" style={{ background: 'rgba(103,138,251,0.1)', color: '#678AFB' }}><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="w-auto h-7 px-2 border-0 text-xs font-medium rounded-lg" style={{ background: 'rgba(130,240,185,0.1)', color: '#82F0B9' }}><SelectValue /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="highest_interest">Highest Interest</SelectItem>
                       <SelectItem value="highest_payment">Highest Payment</SelectItem>
@@ -758,7 +758,7 @@ export default function YourLoans() {
                       const rankValue = rankingFilter === 'highest_interest' ? `${loan.interest_rate || 0}%` : rankingFilter === 'highest_payment' ? `$${(loan.payment_amount || 0).toLocaleString()}` : loan.next_payment_date ? format(new Date(loan.next_payment_date), 'MMM d') : 'N/A';
                       return (
                         <div key={loan.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 0', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
-                          <div style={{ flexShrink: 0, width: 28, height: 28, borderRadius: '50%', background: 'rgba(103,138,251,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><span style={{ fontSize: 12, fontWeight: 700, color: '#678AFB' }}>{idx + 1}</span></div>
+                          <div style={{ flexShrink: 0, width: 28, height: 28, borderRadius: '50%', background: 'rgba(130,240,185,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><span style={{ fontSize: 12, fontWeight: 700, color: '#82F0B9' }}>{idx + 1}</span></div>
                           <div style={{ flex: 1, minWidth: 0 }}><p style={{ fontSize: 11, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', margin: 0 }}>{otherParty?.full_name || 'User'} · {loan.purpose || 'Loan'}</p></div>
                           <span style={{ fontSize: 11, fontWeight: 700, color: '#1A1918', flexShrink: 0 }}>{rankValue}</span>
                         </div>
@@ -823,7 +823,7 @@ export default function YourLoans() {
           <div style={{ padding: '14px 16px 0' }}><span style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.07em', textTransform: 'uppercase' }}>Select a Loan to Learn More</span></div>
           <div style={{ padding: '10px 16px 16px' }}>
             <div style={{ position: 'relative' }}>
-              <select value={manageLoanSelected?.id || ''} onChange={(e) => { const selected = allManageableLoans.find(l => l.id === e.target.value); if (selected) setManageLoanSelected(selected); }} style={{ width: '100%', appearance: 'none', borderRadius: 10, padding: '8px 12px', fontSize: 12, fontWeight: 600, color: '#1A1918', background: 'rgba(103,138,251,0.08)', cursor: 'pointer', border: '1px solid rgba(103,138,251,0.2)', outline: 'none', fontFamily: "'DM Sans', sans-serif" }}>
+              <select value={manageLoanSelected?.id || ''} onChange={(e) => { const selected = allManageableLoans.find(l => l.id === e.target.value); if (selected) setManageLoanSelected(selected); }} style={{ width: '100%', appearance: 'none', borderRadius: 10, padding: '8px 12px', fontSize: 12, fontWeight: 600, color: '#1A1918', background: 'rgba(130,240,185,0.08)', cursor: 'pointer', border: '1px solid rgba(130,240,185,0.2)', outline: 'none', fontFamily: "'DM Sans', sans-serif" }}>
                 {allManageableLoans.map((loan) => {
                   const isLend = loan.lender_id === user?.id;
                   const otherParty = publicProfiles.find(p => p.user_id === (isLend ? loan.borrower_id : loan.lender_id));
@@ -831,7 +831,7 @@ export default function YourLoans() {
                   return (<option key={loan.id} value={loan.id}>{roleLabel} {otherParty?.full_name || 'User'} — ${loan.amount?.toLocaleString()}{loan.status === 'cancelled' ? ' · Cancelled' : ''}</option>);
                 })}
               </select>
-              <div style={{ pointerEvents: 'none', position: 'absolute', top: 0, bottom: 0, right: 10, display: 'flex', alignItems: 'center' }}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#678AFB" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+              <div style={{ pointerEvents: 'none', position: 'absolute', top: 0, bottom: 0, right: 10, display: 'flex', alignItems: 'center' }}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#82F0B9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
             </div>
           </div>
         </div>
@@ -878,8 +878,8 @@ export default function YourLoans() {
                     <div style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
                         <circle cx={dCx} cy={dCy} r={(outerR + innerR) / 2} fill="none" stroke="#E5E4E2" strokeWidth={outerR - innerR} />
-                        {paidPct > 0 && paidPct < 100 && (<path d={`M ${dCx} ${dCy - outerR} A ${outerR} ${outerR} 0 ${largeArc} 1 ${paidEndXo} ${paidEndYo} L ${paidEndXi} ${paidEndYi} A ${innerR} ${innerR} 0 ${largeArc} 0 ${dCx} ${dCy - innerR} Z`} fill="#678AFB" />)}
-                        {paidPct >= 100 && (<circle cx={dCx} cy={dCy} r={(outerR + innerR) / 2} fill="none" stroke="#678AFB" strokeWidth={outerR - innerR} />)}
+                        {paidPct > 0 && paidPct < 100 && (<path d={`M ${dCx} ${dCy - outerR} A ${outerR} ${outerR} 0 ${largeArc} 1 ${paidEndXo} ${paidEndYo} L ${paidEndXi} ${paidEndYi} A ${innerR} ${innerR} 0 ${largeArc} 0 ${dCx} ${dCy - innerR} Z`} fill="#82F0B9" />)}
+                        {paidPct >= 100 && (<circle cx={dCx} cy={dCy} r={(outerR + innerR) / 2} fill="none" stroke="#82F0B9" strokeWidth={outerR - innerR} />)}
                         <text x={dCx} y={dCy - 5} textAnchor="middle" dominantBaseline="middle" style={{ fontSize: 15, fontWeight: 700, fill: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>{Math.round(paidPct)}%</text>
                         <text x={dCx} y={dCy + 10} textAnchor="middle" dominantBaseline="middle" style={{ fontSize: 8, fontWeight: 500, fill: '#787776', fontFamily: "'DM Sans', sans-serif" }}>repaid</text>
                       </svg>
@@ -899,7 +899,7 @@ export default function YourLoans() {
                       <p style={{ fontSize: 10, color: '#787776', fontWeight: 500, marginBottom: 4 }}>Amount</p>
                       <p style={{ fontSize: 13, fontWeight: 700, color: '#1A1918', margin: 0 }}>${nextPmtAmt.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                       <p style={{ fontSize: 10, color: '#787776' }}>{isLending ? `from ${otherPartyUsername}` : `to ${otherPartyUsername}`}</p>
-                      <Link to={createPageUrl("RecordPayment")} style={{ display: 'inline-block', marginTop: 12, padding: '8px 18px', borderRadius: 12, background: '#678AFB', color: 'white', fontSize: 12, fontWeight: 600, textDecoration: 'none', fontFamily: "'DM Sans', sans-serif" }}>Record Payment</Link>
+                      <Link to={createPageUrl("RecordPayment")} style={{ display: 'inline-block', marginTop: 12, padding: '8px 18px', borderRadius: 12, background: '#82F0B9', color: 'white', fontSize: 12, fontWeight: 600, textDecoration: 'none', fontFamily: "'DM Sans', sans-serif" }}>Record Payment</Link>
                     </div>
                   </div>
                 </div>
@@ -924,7 +924,7 @@ export default function YourLoans() {
                     </div>
                     <div style={{ flex: 1, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', position: 'relative', height: '100%' }}>
                       {plannedPaymentAmount > 0 && (
-                        <div style={{ position: 'absolute', left: 0, right: 0, borderTop: '2px dashed rgba(103,138,251,0.3)', zIndex: 10, bottom: `${(plannedPaymentAmount / maxChartVal) * 100}%` }}>
+                        <div style={{ position: 'absolute', left: 0, right: 0, borderTop: '2px dashed rgba(130,240,185,0.3)', zIndex: 10, bottom: `${(plannedPaymentAmount / maxChartVal) * 100}%` }}>
                           <span style={{ position: 'absolute', top: -14, right: 0, fontSize: 10, fontWeight: 600, color: '#787776', background: 'rgba(255,255,255,0.88)', padding: '0 4px' }}>${plannedPaymentAmount.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
                         </div>
                       )}
@@ -940,30 +940,30 @@ export default function YourLoans() {
                             <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
                               {isInProgress && !isFullPmt ? (
                                 <div style={{ position: 'relative', height: Math.max(scheduledBarHeight, 4), width: 14 }}>
-                                  <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '100%', borderRadius: '4px 4px 0 0', background: 'rgba(103,138,251,0.1)', border: '1px dashed rgba(103,138,251,0.3)' }} />
-                                  <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: Math.max(barHeight, 4), borderRadius: '4px 4px 0 0', background: 'rgba(103,138,251,0.6)' }} />
+                                  <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '100%', borderRadius: '4px 4px 0 0', background: 'rgba(130,240,185,0.1)', border: '1px dashed rgba(130,240,185,0.3)' }} />
+                                  <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: Math.max(barHeight, 4), borderRadius: '4px 4px 0 0', background: 'rgba(130,240,185,0.6)' }} />
                                 </div>
                               ) : (
                                 <div style={{
                                   borderRadius: '4px 4px 0 0', transition: 'all 0.3s',
                                   height: Math.max(barHeight, d.amount > 0 ? 4 : 2), width: 14,
-                                  background: d.isProjected ? 'rgba(103,138,251,0.15)' : d.isMissed ? 'rgba(232,114,110,0.3)' : d.amount === 0 ? '#E5E4E2' : isPendingOnly ? 'rgba(245,158,11,0.4)' : isFullPmt ? '#678AFB' : isPartialPmt ? 'rgba(245,158,11,0.6)' : 'rgba(103,138,251,0.6)',
-                                  border: d.isProjected ? '1px dashed rgba(103,138,251,0.3)' : d.isMissed ? '1px dashed rgba(232,114,110,0.5)' : isPendingOnly ? '1px dashed rgba(245,158,11,0.6)' : 'none',
+                                  background: d.isProjected ? 'rgba(130,240,185,0.15)' : d.isMissed ? 'rgba(232,114,110,0.3)' : d.amount === 0 ? '#E5E4E2' : isPendingOnly ? 'rgba(245,158,11,0.4)' : isFullPmt ? '#82F0B9' : isPartialPmt ? 'rgba(245,158,11,0.6)' : 'rgba(130,240,185,0.6)',
+                                  border: d.isProjected ? '1px dashed rgba(130,240,185,0.3)' : d.isMissed ? '1px dashed rgba(232,114,110,0.5)' : isPendingOnly ? '1px dashed rgba(245,158,11,0.6)' : 'none',
                                 }} title={`${d.label}: $${d.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}${d.isProjected ? ' (projected)' : d.isMissed ? ' (missed)' : isPendingOnly ? ' (pending)' : isPartialPmt ? ' (partial)' : ''}`} />
                               )}
                             </div>
-                            <p style={{ fontSize: 10, marginTop: 4, lineHeight: 1, margin: 0, color: isInProgress ? '#678AFB' : d.isProjected ? '#C7C6C4' : d.isMissed ? '#E8726E' : isPendingOnly ? 'rgba(245,158,11,0.6)' : '#787776' }}>{d.label}</p>
+                            <p style={{ fontSize: 10, marginTop: 4, lineHeight: 1, margin: 0, color: isInProgress ? '#82F0B9' : d.isProjected ? '#C7C6C4' : d.isMissed ? '#E8726E' : isPendingOnly ? 'rgba(245,158,11,0.6)' : '#787776' }}>{d.label}</p>
                           </div>
                         );
                       })}
                     </div>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 8, paddingTop: 8, borderTop: '1px solid rgba(0,0,0,0.06)', flexWrap: 'wrap' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: '#678AFB' }} /><span style={{ fontSize: 9, color: '#787776' }}>Completed</span></div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: 'linear-gradient(to top, rgba(103,138,251,0.6) 50%, rgba(103,138,251,0.1) 50%)' }} /><span style={{ fontSize: 9, color: '#678AFB' }}>In Progress</span></div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: '#82F0B9' }} /><span style={{ fontSize: 9, color: '#787776' }}>Completed</span></div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: 'linear-gradient(to top, rgba(130,240,185,0.6) 50%, rgba(130,240,185,0.1) 50%)' }} /><span style={{ fontSize: 9, color: '#82F0B9' }}>In Progress</span></div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: 'rgba(245,158,11,0.4)', border: '1px dashed rgba(245,158,11,0.6)' }} /><span style={{ fontSize: 9, color: 'rgba(245,158,11,0.8)' }}>Pending</span></div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: 'rgba(103,138,251,0.15)', border: '1px dashed rgba(103,138,251,0.3)' }} /><span style={{ fontSize: 9, color: '#C7C6C4' }}>Projected</span></div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><div style={{ width: 16, height: 0, borderTop: '2px dashed rgba(103,138,251,0.3)' }} /><span style={{ fontSize: 9, color: '#787776' }}>Plan</span></div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: 'rgba(130,240,185,0.15)', border: '1px dashed rgba(130,240,185,0.3)' }} /><span style={{ fontSize: 9, color: '#C7C6C4' }}>Projected</span></div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><div style={{ width: 16, height: 0, borderTop: '2px dashed rgba(130,240,185,0.3)' }} /><span style={{ fontSize: 9, color: '#787776' }}>Plan</span></div>
                   </div>
                 </div>
               )}
@@ -1004,17 +1004,17 @@ export default function YourLoans() {
                 if (manageLoanSelected.status === 'completed') activities.push({ timestamp: new Date(), type: 'completion', description: 'Loan repaid in full' });
                 activities.sort((a, b) => a.timestamp - b.timestamp);
                 const getIcon = (type) => {
-                  const strokeColor = type === 'cancellation' ? '#E8726E' : '#678AFB';
+                  const strokeColor = type === 'cancellation' ? '#E8726E' : '#82F0B9';
                   const paths = { created: 'M12 4v16m8-8H4', signature: 'M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z', payment: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1', cancellation: 'M6 18L18 6M6 6l12 12', completion: 'M5 13l4 4L19 7' };
                   return <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke={strokeColor} strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d={paths[type] || ''} /></svg>;
                 };
-                const getDotColor = (type) => type === 'cancellation' ? 'bg-red-50 border-[#E8726E]' : 'bg-blue-50 border-[#678AFB]';
+                const getDotColor = (type) => type === 'cancellation' ? 'bg-red-50 border-[#E8726E]' : 'bg-blue-50 border-[#82F0B9]';
                 if (activities.length === 0) return <p style={{ fontSize: 11, color: '#C7C6C4' }}>No activity recorded yet.</p>;
                 return (
                   <div className="space-y-0 max-h-[200px] overflow-y-auto" style={{ scrollbarWidth: 'thin' }}>
                     {activities.map((activity, idx) => (
                       <div key={idx} className="flex items-start gap-2.5 relative">
-                        {idx < activities.length - 1 && <div className="absolute left-[11px] top-[22px] w-[1px]" style={{ height: 'calc(100% - 6px)', background: 'rgba(103,138,251,0.2)' }} />}
+                        {idx < activities.length - 1 && <div className="absolute left-[11px] top-[22px] w-[1px]" style={{ height: 'calc(100% - 6px)', background: 'rgba(130,240,185,0.2)' }} />}
                         <div className={`w-[23px] h-[23px] rounded-full border-[1.5px] ${getDotColor(activity.type)} flex items-center justify-center flex-shrink-0 z-10 mt-1`}>{getIcon(activity.type)}</div>
                         <div className="flex-1 min-w-0 pb-3">
                           <div className="flex items-center gap-2 flex-wrap">
@@ -1069,15 +1069,15 @@ export default function YourLoans() {
                 {/* Document Icons */}
                 <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center', gap: 20, padding: '4px 0' }}>
                   <button onClick={() => { const agreement = loanAgreements.find(a => a.loan_id === manageLoanSelected.id); if (agreement) openDocPopup('promissory', agreement); }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, cursor: 'pointer', background: 'none', border: 'none' }}>
-                    <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(103,138,251,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#678AFB" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg></div>
+                    <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(130,240,185,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#82F0B9" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg></div>
                     <p style={{ fontSize: 10, fontWeight: 600, color: '#1A1918', textAlign: 'center', lineHeight: 1.3 }}>Promissory<br/>Note</p>
                   </button>
                   <button onClick={() => { const agreement = loanAgreements.find(a => a.loan_id === manageLoanSelected.id); if (agreement) openDocPopup('amortization', agreement); }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, cursor: 'pointer', background: 'none', border: 'none' }}>
-                    <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(103,138,251,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#678AFB" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></div>
+                    <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(130,240,185,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#82F0B9" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></div>
                     <p style={{ fontSize: 10, fontWeight: 600, color: '#1A1918', textAlign: 'center', lineHeight: 1.3 }}>Amortization<br/>Schedule</p>
                   </button>
                   <button onClick={() => { const agreement = loanAgreements.find(a => a.loan_id === manageLoanSelected.id); if (agreement) openDocPopup('summary', agreement); }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, cursor: 'pointer', background: 'none', border: 'none' }}>
-                    <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(103,138,251,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#678AFB" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></div>
+                    <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(130,240,185,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#82F0B9" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></div>
                     <p style={{ fontSize: 10, fontWeight: 600, color: '#1A1918', textAlign: 'center', lineHeight: 1.3 }}>Loan<br/>Summary</p>
                   </button>
                 </div>
@@ -1131,13 +1131,13 @@ export default function YourLoans() {
                       return { number: pr.period, date: pr.date, amount: scheduledAmount, paidAmount, paidPercentage, status };
                     }) : [];
                     const statusConfig = {
-                      completed: { label: 'Completed', bg: 'rgba(103,138,251,0.1)', text: '#678AFB', ringColor: '#678AFB', fillColor: '#678AFB' },
-                      in_progress: { label: 'In Progress', bg: 'rgba(103,138,251,0.1)', text: '#678AFB', ringColor: '#678AFB', fillColor: '#678AFB' },
+                      completed: { label: 'Completed', bg: 'rgba(130,240,185,0.1)', text: '#82F0B9', ringColor: '#82F0B9', fillColor: '#82F0B9' },
+                      in_progress: { label: 'In Progress', bg: 'rgba(130,240,185,0.1)', text: '#82F0B9', ringColor: '#82F0B9', fillColor: '#82F0B9' },
                       partial: { label: 'Partial', bg: 'rgba(245,158,11,0.1)', text: '#F59E0B', ringColor: '#F59E0B', fillColor: '#F59E0B' },
                       pending: { label: 'Pending', bg: 'rgba(245,158,11,0.1)', text: '#F59E0B', ringColor: '#F59E0B', fillColor: '#F59E0B' },
                       missed: { label: 'Missed', bg: 'rgba(232,114,110,0.1)', text: '#E8726E', ringColor: '#E8726E', fillColor: '#E8726E' },
-                      record: { label: 'Record Payment', bg: '#678AFB', text: 'white', ringColor: '#678AFB', fillColor: '#678AFB' },
-                      upcoming: { label: 'Upcoming', bg: 'rgba(0,0,0,0.03)', text: '#787776', ringColor: 'rgba(103,138,251,0.3)', fillColor: 'rgba(103,138,251,0.3)' },
+                      record: { label: 'Record Payment', bg: '#82F0B9', text: 'white', ringColor: '#82F0B9', fillColor: '#82F0B9' },
+                      upcoming: { label: 'Upcoming', bg: 'rgba(0,0,0,0.03)', text: '#787776', ringColor: 'rgba(130,240,185,0.3)', fillColor: 'rgba(130,240,185,0.3)' },
                     };
                     const PieCircle = ({ percentage, ringColor, fillColor, number, size = 32 }) => {
                       const r = (size / 2) - 2; const pcx = size / 2; const pcy = size / 2;
@@ -1190,7 +1190,7 @@ export default function YourLoans() {
     return (
       <div style={{ minHeight: '100vh', background: '#F5F4F0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ width: 32, height: 32, border: '2px solid #678AFB', borderTopColor: 'transparent', borderRadius: '50%', margin: '0 auto 16px' }} className="animate-spin" />
+          <div style={{ width: 32, height: 32, border: '2px solid #82F0B9', borderTopColor: 'transparent', borderRadius: '50%', margin: '0 auto 16px' }} className="animate-spin" />
           <p style={{ fontSize: 14, color: '#787776', fontFamily: "'DM Sans', sans-serif" }}>Loading your loans...</p>
         </div>
       </div>
@@ -1206,7 +1206,7 @@ export default function YourLoans() {
             <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} onClick={(e) => e.stopPropagation()} className="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl">
               <div className="sticky top-0 bg-white border-b border-slate-100 p-4 flex justify-between items-center">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: 'rgba(103,138,251,0.1)' }}><FileText className="w-4 h-4" style={{ color: '#678AFB' }} /></div>
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: 'rgba(130,240,185,0.1)' }}><FileText className="w-4 h-4" style={{ color: '#82F0B9' }} /></div>
                   <span className="font-medium text-slate-800">
                     {activeDocPopup === 'promissory' && 'Promissory Note'}
                     {activeDocPopup === 'amortization' && 'Amortization Schedule'}
@@ -1277,7 +1277,7 @@ export default function YourLoans() {
             </AlertDialogHeader>
           </div>
           <div className="px-6 pb-6 flex flex-col sm:flex-row gap-3">
-            <AlertDialogCancel className="flex-1 rounded-xl border-0 font-semibold text-white text-[14px] h-12 hover:opacity-90 transition-all" style={{ backgroundColor: '#678AFB' }}>Keep Loan</AlertDialogCancel>
+            <AlertDialogCancel className="flex-1 rounded-xl border-0 font-semibold text-white text-[14px] h-12 hover:opacity-90 transition-all" style={{ backgroundColor: '#82F0B9' }}>Keep Loan</AlertDialogCancel>
             <AlertDialogAction onClick={confirmCancelLoan} className="flex-1 rounded-xl border-0 font-semibold text-white text-[14px] h-12 hover:opacity-90 transition-all" style={{ backgroundColor: '#E8726E' }}>Request Loan Cancellation</AlertDialogAction>
           </div>
         </AlertDialogContent>

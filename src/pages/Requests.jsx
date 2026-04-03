@@ -476,7 +476,7 @@ export default function Requests() {
     return (
       <div style={{ minHeight: '100vh', background: '#F5F4F0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ width: 32, height: 32, border: '2px solid #678AFB', borderTopColor: 'transparent', borderRadius: '50%', margin: '0 auto 16px' }} className="animate-spin" />
+          <div style={{ width: 32, height: 32, border: '2px solid #82F0B9', borderTopColor: 'transparent', borderRadius: '50%', margin: '0 auto 16px' }} className="animate-spin" />
           <p style={{ fontSize: 14, color: '#787776', fontFamily: "'DM Sans', sans-serif" }}>Loading notifications...</p>
         </div>
       </div>
@@ -598,7 +598,7 @@ export default function Requests() {
                               initial={{ opacity: 0, y: 10 }}
                               animate={{ opacity: 1, y: 0 }}
                               transition={{ delay: index * 0.03 }}
-                              style={{ padding: 12, borderRadius: 8, background: isOverdue ? 'rgba(232,114,110,0.06)' : 'rgba(103,138,251,0.06)' }}
+                              style={{ padding: 12, borderRadius: 8, background: isOverdue ? 'rgba(232,114,110,0.06)' : 'rgba(130,240,185,0.06)' }}
                             >
                               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                                 <div style={{ flex: 1, minWidth: 0 }}>
@@ -614,7 +614,7 @@ export default function Requests() {
                                     setSelectedLoanForPayment(reminder.loan);
                                     setShowPaymentModal(true);
                                   }}
-                                  style={{ flexShrink: 0, padding: '6px 12px', borderRadius: 8, fontSize: 12, fontWeight: 600, border: 'none', cursor: 'pointer', whiteSpace: 'nowrap', background: isOverdue ? '#E8726E' : '#678AFB', color: 'white' }}
+                                  style={{ flexShrink: 0, padding: '6px 12px', borderRadius: 8, fontSize: 12, fontWeight: 600, border: 'none', cursor: 'pointer', whiteSpace: 'nowrap', background: isOverdue ? '#E8726E' : '#82F0B9', color: 'white' }}
                                 >
                                   Record Payment
                                 </button>
@@ -688,7 +688,7 @@ export default function Requests() {
                                 {item.type === 'friend' && (
                                   <Link
                                     to={createPageUrl("Friends")}
-                                    style={{ background: '#678AFB', color: 'white', borderRadius: 8, padding: '6px 12px', fontSize: 11, fontWeight: 600, textDecoration: 'none', display: 'inline-block' }}
+                                    style={{ background: '#82F0B9', color: 'white', borderRadius: 8, padding: '6px 12px', fontSize: 11, fontWeight: 600, textDecoration: 'none', display: 'inline-block' }}
                                   >
                                     View Friends
                                   </Link>
@@ -697,7 +697,7 @@ export default function Requests() {
                                   <button
                                     onClick={() => { setSelectedOffer(item.data); setShowSignatureModal(true); }}
                                     disabled={processingId === item.data.id}
-                                    style={{ background: '#678AFB', color: 'white', borderRadius: 8, padding: '6px 12px', fontSize: 11, fontWeight: 600, border: 'none', cursor: 'pointer', opacity: processingId === item.data.id ? 0.5 : 1 }}
+                                    style={{ background: '#82F0B9', color: 'white', borderRadius: 8, padding: '6px 12px', fontSize: 11, fontWeight: 600, border: 'none', cursor: 'pointer', opacity: processingId === item.data.id ? 0.5 : 1 }}
                                   >
                                     View Offer
                                   </button>
@@ -706,7 +706,7 @@ export default function Requests() {
                                   <button
                                     onClick={() => setViewingPayment({ payment: item.data, direction: 'confirm' })}
                                     disabled={processingId === item.data.id}
-                                    style={{ background: '#678AFB', color: 'white', borderRadius: 8, padding: '6px 12px', fontSize: 11, fontWeight: 600, border: 'none', cursor: 'pointer', opacity: processingId === item.data.id ? 0.5 : 1 }}
+                                    style={{ background: '#82F0B9', color: 'white', borderRadius: 8, padding: '6px 12px', fontSize: 11, fontWeight: 600, border: 'none', cursor: 'pointer', opacity: processingId === item.data.id ? 0.5 : 1 }}
                                   >
                                     View Payment
                                   </button>
@@ -715,7 +715,7 @@ export default function Requests() {
                                   <button
                                     onClick={() => { setViewingPayment({ termChange: item.data, direction: 'term' }); }}
                                     disabled={processingId === item.data.id}
-                                    style={{ background: '#678AFB', color: 'white', borderRadius: 8, padding: '6px 12px', fontSize: 11, fontWeight: 600, border: 'none', cursor: 'pointer', opacity: processingId === item.data.id ? 0.5 : 1 }}
+                                    style={{ background: '#82F0B9', color: 'white', borderRadius: 8, padding: '6px 12px', fontSize: 11, fontWeight: 600, border: 'none', cursor: 'pointer', opacity: processingId === item.data.id ? 0.5 : 1 }}
                                   >
                                     View Request
                                   </button>
@@ -886,7 +886,7 @@ export default function Requests() {
                           setViewingPayment(null);
                         }}
                         disabled={processingId === payment.id}
-                        style={{ flex: 1, padding: '8px 16px', borderRadius: 8, background: '#678AFB', color: 'white', fontSize: 14, fontWeight: 600, border: 'none', cursor: 'pointer', opacity: processingId === payment.id ? 0.5 : 1 }}
+                        style={{ flex: 1, padding: '8px 16px', borderRadius: 8, background: '#82F0B9', color: 'white', fontSize: 14, fontWeight: 600, border: 'none', cursor: 'pointer', opacity: processingId === payment.id ? 0.5 : 1 }}
                       >
                         Confirm
                       </button>
@@ -919,7 +919,7 @@ export default function Requests() {
                       </button>
                       <button
                         onClick={() => setViewingPayment(null)}
-                        style={{ flex: 1, padding: '8px 16px', borderRadius: 8, background: '#678AFB', color: 'white', fontSize: 14, fontWeight: 600, border: 'none', cursor: 'pointer' }}
+                        style={{ flex: 1, padding: '8px 16px', borderRadius: 8, background: '#82F0B9', color: 'white', fontSize: 14, fontWeight: 600, border: 'none', cursor: 'pointer' }}
                       >
                         Close
                       </button>
@@ -939,7 +939,7 @@ export default function Requests() {
                       @{otherName} wants to modify the terms of your ${loan.amount?.toLocaleString()} loan{loan.purpose ? ` for ${loan.purpose}` : ''}.
                     </p>
                     {loan.contract_modification_notes && (
-                      <div style={{ background: 'rgba(103,138,251,0.08)', borderRadius: 8, padding: 10, marginBottom: 16 }}>
+                      <div style={{ background: 'rgba(130,240,185,0.08)', borderRadius: 8, padding: 10, marginBottom: 16 }}>
                         <p style={{ fontSize: 12, fontWeight: 500, color: '#787776', marginBottom: 2 }}>Proposed changes:</p>
                         <p style={{ fontSize: 14, color: '#1A1918' }}>{loan.contract_modification_notes}</p>
                       </div>
@@ -961,7 +961,7 @@ export default function Requests() {
                           setViewingPayment(null);
                         }}
                         disabled={processingId === loan.id}
-                        style={{ flex: 1, padding: '8px 16px', borderRadius: 8, background: '#678AFB', color: 'white', fontSize: 14, fontWeight: 600, border: 'none', cursor: 'pointer', opacity: processingId === loan.id ? 0.5 : 1 }}
+                        style={{ flex: 1, padding: '8px 16px', borderRadius: 8, background: '#82F0B9', color: 'white', fontSize: 14, fontWeight: 600, border: 'none', cursor: 'pointer', opacity: processingId === loan.id ? 0.5 : 1 }}
                       >
                         Approve
                       </button>

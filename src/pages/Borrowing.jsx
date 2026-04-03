@@ -807,7 +807,7 @@ export default function Borrowing() {
     return (
       <div style={{ minHeight: '100vh', background: '#F5F4F0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ width: 32, height: 32, border: '2px solid #678AFB', borderTopColor: 'transparent', borderRadius: '50%', margin: '0 auto 16px' }} className="animate-spin" />
+          <div style={{ width: 32, height: 32, border: '2px solid #82F0B9', borderTopColor: 'transparent', borderRadius: '50%', margin: '0 auto 16px' }} className="animate-spin" />
           <p style={{ fontSize: 14, color: '#787776', fontFamily: "'DM Sans', sans-serif" }}>Loading borrowing...</p>
         </div>
       </div>
@@ -835,8 +835,8 @@ export default function Borrowing() {
             >
               <div className="sticky top-0 bg-white border-b border-slate-100 p-4 flex justify-between items-center">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: 'rgba(103,138,251,0.1)' }}>
-                    <FileText className="w-4 h-4" style={{ color: '#678AFB' }} />
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: 'rgba(130,240,185,0.1)' }}>
+                    <FileText className="w-4 h-4" style={{ color: '#82F0B9' }} />
                   </div>
                   <span className="font-medium text-slate-800">
                     {activeDocPopup === 'promissory' && 'Promissory Note'}
@@ -887,8 +887,8 @@ export default function Borrowing() {
           {nextPaymentLoan && nextPaymentDays !== null && (
             <div className="glass-hero-alert" style={{ padding: '14px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <div style={{ width: 32, height: 32, borderRadius: '50%', background: nextPaymentDays < 0 ? 'rgba(232,114,110,0.1)' : 'rgba(103,138,251,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Clock style={{ width: 16, height: 16, color: nextPaymentDays < 0 ? '#E8726E' : '#678AFB' }} />
+                <div style={{ width: 32, height: 32, borderRadius: '50%', background: nextPaymentDays < 0 ? 'rgba(232,114,110,0.1)' : 'rgba(130,240,185,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Clock style={{ width: 16, height: 16, color: nextPaymentDays < 0 ? '#E8726E' : '#82F0B9' }} />
                 </div>
                 <p style={{ fontSize: 13, color: '#1A1918', margin: 0 }}>
                   {nextPaymentDays > 0
@@ -928,8 +928,8 @@ export default function Borrowing() {
                             <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1918' }}>Borrowing</div>
                             <div style={{ fontSize: 12, color: '#787776' }}>{pctAll}%</div>
                           </div>
-                          <div style={{ width: '100%', height: 8, borderRadius: 4, background: 'rgba(167,157,234,0.15)', overflow: 'hidden' }}>
-                            <div style={{ height: '100%', borderRadius: 4, background: '#A79DEA', width: `${pctAll}%`, transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)' }} />
+                          <div style={{ width: '100%', height: 8, borderRadius: 4, background: 'rgba(3,172,234,0.15)', overflow: 'hidden' }}>
+                            <div style={{ height: '100%', borderRadius: 4, background: '#03ACEA', width: `${pctAll}%`, transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)' }} />
                           </div>
                           <div style={{ fontSize: 11, color: '#787776', marginTop: 6 }}>{formatMoney(paidAll)} of {formatMoney(totalAll)} paid back</div>
                         </div>
@@ -960,8 +960,8 @@ export default function Borrowing() {
                               </div>
                               <div style={{ fontSize: 12, color: '#787776', flexShrink: 0, marginLeft: 8 }}>{percentPaid}%</div>
                             </div>
-                            <div style={{ width: '100%', height: 8, borderRadius: 4, background: 'rgba(167,157,234,0.15)', overflow: 'hidden' }}>
-                              <div style={{ height: '100%', borderRadius: 4, background: '#A79DEA', width: `${percentPaid}%`, transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)' }} />
+                            <div style={{ width: '100%', height: 8, borderRadius: 4, background: 'rgba(3,172,234,0.15)', overflow: 'hidden' }}>
+                              <div style={{ height: '100%', borderRadius: 4, background: '#03ACEA', width: `${percentPaid}%`, transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)' }} />
                             </div>
                             <div style={{ fontSize: 11, color: '#787776', marginTop: 6 }}>{formatMoney(amountPaid)} of {formatMoney(loanTotalOwed)} paid back</div>
                           </div>
@@ -1005,7 +1005,7 @@ export default function Borrowing() {
                               const displayDays = isOverdue ? `-${Math.abs(loan.days)}` : loan.days;
                               return (
                                 <div key={loan.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: 10, borderRadius: 10, background: 'rgba(0,0,0,0.03)' }}>
-                                  <div style={{ flexShrink: 0, width: 40, height: 40, borderRadius: '50%', background: isOverdue ? '#E8726E' : '#678AFB', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                  <div style={{ flexShrink: 0, width: 40, height: 40, borderRadius: '50%', background: isOverdue ? '#E8726E' : '#82F0B9', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                     <p style={{ fontSize: 10, fontWeight: 700, color: 'white', textAlign: 'center', lineHeight: 1.2, margin: 0 }}>
                                       {displayDays}
                                       <span style={{ display: 'block', fontSize: 7, fontWeight: 500 }}>{Math.abs(loan.days) === 1 ? 'day' : 'days'}</span>
@@ -1083,7 +1083,7 @@ export default function Borrowing() {
                               <strong style={{ color: '#1A1918', fontWeight: 600 }}>Just a reminder</strong> you have a payment to {firstName} that is overdue. If you've already paid, make sure to record the payment so it's up to date.
                             </div>
                             <Link to={createPageUrl("RecordPayment")} style={{
-                              padding: '7px 18px', borderRadius: 20, background: '#678AFB', color: 'white',
+                              padding: '7px 18px', borderRadius: 20, background: '#82F0B9', color: 'white',
                               fontSize: 12, fontWeight: 600, textDecoration: 'none', whiteSpace: 'nowrap',
                               fontFamily: "'DM Sans', sans-serif", transition: 'background 0.15s'
                             }}>Record Payment</Link>
@@ -1100,7 +1100,7 @@ export default function Borrowing() {
                     <div style={{ padding: '14px 16px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       <span style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.07em', textTransform: 'uppercase' }}>Loans Ranked By</span>
                       <Select value={rankingFilter} onValueChange={setRankingFilter}>
-                        <SelectTrigger className="w-auto h-7 px-2 border-0 text-xs font-medium rounded-lg" style={{ background: 'rgba(103,138,251,0.1)', color: '#678AFB' }}>
+                        <SelectTrigger className="w-auto h-7 px-2 border-0 text-xs font-medium rounded-lg" style={{ background: 'rgba(130,240,185,0.1)', color: '#82F0B9' }}>
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -1131,8 +1131,8 @@ export default function Borrowing() {
                               : loan.next_payment_date ? format(new Date(loan.next_payment_date), 'MMM d') : 'N/A';
                           return (
                             <div key={loan.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: 10, borderRadius: 10, background: 'rgba(0,0,0,0.03)' }}>
-                              <div style={{ flexShrink: 0, width: 28, height: 28, borderRadius: '50%', background: 'rgba(103,138,251,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                <span style={{ fontSize: 12, fontWeight: 700, color: '#678AFB' }}>{idx + 1}</span>
+                              <div style={{ flexShrink: 0, width: 28, height: 28, borderRadius: '50%', background: 'rgba(130,240,185,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <span style={{ fontSize: 12, fontWeight: 700, color: '#82F0B9' }}>{idx + 1}</span>
                               </div>
                               <div style={{ flex: 1, minWidth: 0 }}>
                                 <p style={{ fontSize: 11, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', margin: 0 }}>
@@ -1228,7 +1228,7 @@ export default function Borrowing() {
                                 <select
                                   value={manageLoanSelected?.id || ''}
                                   onChange={(e) => { const selected = manageableLoans.find(l => l.id === e.target.value); if (selected) setManageLoanSelected(selected); }}
-                                  style={{ width: '100%', appearance: 'none', borderRadius: 10, padding: '8px 12px', fontSize: 12, fontWeight: 600, color: '#1A1918', background: 'rgba(103,138,251,0.08)', cursor: 'pointer', border: '1px solid rgba(103,138,251,0.2)', outline: 'none', fontFamily: "'DM Sans', sans-serif" }}
+                                  style={{ width: '100%', appearance: 'none', borderRadius: 10, padding: '8px 12px', fontSize: 12, fontWeight: 600, color: '#1A1918', background: 'rgba(130,240,185,0.08)', cursor: 'pointer', border: '1px solid rgba(130,240,185,0.2)', outline: 'none', fontFamily: "'DM Sans', sans-serif" }}
                                 >
                                   {manageableLoans.map((loan) => {
                                     const lender = publicProfiles.find(p => p.user_id === loan.lender_id);
@@ -1236,7 +1236,7 @@ export default function Borrowing() {
                                   })}
                                 </select>
                                 <div style={{ pointerEvents: 'none', position: 'absolute', top: 0, bottom: 0, right: 10, display: 'flex', alignItems: 'center' }}>
-                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#678AFB" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#82F0B9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                                 </div>
                               </div>
                             </div>
@@ -1289,9 +1289,9 @@ export default function Borrowing() {
                                         <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
                                           <circle cx={dCx} cy={dCy} r={(outerR + innerR) / 2} fill="none" stroke="#E5E4E2" strokeWidth={outerR - innerR} />
                                           {paidPct > 0 && paidPct < 100 && (
-                                            <path d={`M ${dCx} ${dCy - outerR} A ${outerR} ${outerR} 0 ${largeArc} 1 ${paidEndXo} ${paidEndYo} L ${paidEndXi} ${paidEndYi} A ${innerR} ${innerR} 0 ${largeArc} 0 ${dCx} ${dCy - innerR} Z`} fill="#678AFB" />
+                                            <path d={`M ${dCx} ${dCy - outerR} A ${outerR} ${outerR} 0 ${largeArc} 1 ${paidEndXo} ${paidEndYo} L ${paidEndXi} ${paidEndYi} A ${innerR} ${innerR} 0 ${largeArc} 0 ${dCx} ${dCy - innerR} Z`} fill="#82F0B9" />
                                           )}
-                                          {paidPct >= 100 && (<circle cx={dCx} cy={dCy} r={(outerR + innerR) / 2} fill="none" stroke="#678AFB" strokeWidth={outerR - innerR} />)}
+                                          {paidPct >= 100 && (<circle cx={dCx} cy={dCy} r={(outerR + innerR) / 2} fill="none" stroke="#82F0B9" strokeWidth={outerR - innerR} />)}
                                           <text x={dCx} y={dCy - 5} textAnchor="middle" dominantBaseline="middle" style={{ fontSize: 15, fontWeight: 700, fill: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>{Math.round(paidPct)}%</text>
                                           <text x={dCx} y={dCy + 10} textAnchor="middle" dominantBaseline="middle" style={{ fontSize: 8, fontWeight: 500, fill: '#787776', fontFamily: "'DM Sans', sans-serif" }}>repaid</text>
                                         </svg>
@@ -1321,20 +1321,20 @@ export default function Borrowing() {
                               {manageLoanSelected && manageLoanSelected.status !== 'cancelled' && (
                                 <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center', gap: 20, padding: '4px 0' }}>
                                   <button onClick={() => handleMakePayment(manageLoanSelected)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, cursor: 'pointer', background: 'none', border: 'none' }}>
-                                    <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(103,138,251,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#678AFB" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                                    <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(130,240,185,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#82F0B9" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
                                     </div>
                                     <p style={{ fontSize: 10, fontWeight: 600, color: '#1A1918', textAlign: 'center', lineHeight: 1.3 }}>Record<br/>Payment</p>
                                   </button>
                                   <button onClick={() => handleEditLoan(manageLoanSelected)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, cursor: 'pointer', background: 'none', border: 'none' }}>
-                                    <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(103,138,251,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#678AFB" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                    <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(130,240,185,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#82F0B9" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                                     </div>
                                     <p style={{ fontSize: 10, fontWeight: 600, color: '#1A1918', textAlign: 'center', lineHeight: 1.3 }}>Request<br/>Loan Edit</p>
                                   </button>
                                   <button onClick={() => handleCancelLoan(manageLoanSelected)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, cursor: 'pointer', background: 'none', border: 'none' }}>
-                                    <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(103,138,251,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#678AFB" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                                    <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(130,240,185,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#82F0B9" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
                                     </div>
                                     <p style={{ fontSize: 10, fontWeight: 600, color: '#1A1918', textAlign: 'center', lineHeight: 1.3 }}>Request<br/>Cancellation</p>
                                   </button>
@@ -1364,7 +1364,7 @@ export default function Borrowing() {
                                       </div>
                                       <div style={{ flex: 1, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', position: 'relative', height: '100%' }}>
                                         {plannedPaymentAmount > 0 && (
-                                          <div style={{ position: 'absolute', left: 0, right: 0, borderTop: '2px dashed rgba(103,138,251,0.3)', zIndex: 10, bottom: `${(plannedPaymentAmount / maxChartVal) * 100}%` }}>
+                                          <div style={{ position: 'absolute', left: 0, right: 0, borderTop: '2px dashed rgba(130,240,185,0.3)', zIndex: 10, bottom: `${(plannedPaymentAmount / maxChartVal) * 100}%` }}>
                                             <span style={{ position: 'absolute', top: -14, right: 0, fontSize: 10, fontWeight: 600, color: '#787776', background: 'rgba(255,255,255,0.88)', padding: '0 4px' }}>${plannedPaymentAmount.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
                                           </div>
                                         )}
@@ -1380,21 +1380,21 @@ export default function Borrowing() {
                                               <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
                                                 {isInProgress && !isFullPmt ? (
                                                   <div style={{ position: 'relative', height: Math.max(scheduledBarHeight, 4), width: 14 }}>
-                                                    <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '100%', borderRadius: '4px 4px 0 0', background: 'rgba(103,138,251,0.1)', border: '1px dashed rgba(103,138,251,0.3)' }} />
-                                                    <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: Math.max(barHeight, 4), borderRadius: '4px 4px 0 0', background: 'rgba(103,138,251,0.6)' }} />
+                                                    <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '100%', borderRadius: '4px 4px 0 0', background: 'rgba(130,240,185,0.1)', border: '1px dashed rgba(130,240,185,0.3)' }} />
+                                                    <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: Math.max(barHeight, 4), borderRadius: '4px 4px 0 0', background: 'rgba(130,240,185,0.6)' }} />
                                                   </div>
                                                 ) : (
                                                   <div style={{
                                                     borderRadius: '4px 4px 0 0', transition: 'all 0.3s',
                                                     height: Math.max(barHeight, d.amount > 0 ? 4 : 2), width: 14,
-                                                    background: d.isProjected ? 'rgba(103,138,251,0.15)' : d.isMissed ? 'rgba(232,114,110,0.3)' : d.amount === 0 ? '#E5E4E2' : isPendingOnly ? 'rgba(245,158,11,0.4)' : isFullPmt ? '#678AFB' : isPartialPmt ? 'rgba(245,158,11,0.6)' : 'rgba(103,138,251,0.6)',
-                                                    border: d.isProjected ? '1px dashed rgba(103,138,251,0.3)' : d.isMissed ? '1px dashed rgba(232,114,110,0.5)' : isPendingOnly ? '1px dashed rgba(245,158,11,0.6)' : 'none',
+                                                    background: d.isProjected ? 'rgba(130,240,185,0.15)' : d.isMissed ? 'rgba(232,114,110,0.3)' : d.amount === 0 ? '#E5E4E2' : isPendingOnly ? 'rgba(245,158,11,0.4)' : isFullPmt ? '#82F0B9' : isPartialPmt ? 'rgba(245,158,11,0.6)' : 'rgba(130,240,185,0.6)',
+                                                    border: d.isProjected ? '1px dashed rgba(130,240,185,0.3)' : d.isMissed ? '1px dashed rgba(232,114,110,0.5)' : isPendingOnly ? '1px dashed rgba(245,158,11,0.6)' : 'none',
                                                   }}
                                                   title={`${d.label}: $${d.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}${d.isProjected ? ' (projected)' : d.isMissed ? ' (missed)' : isPendingOnly ? ' (pending)' : isPartialPmt ? ' (partial)' : ''}`}
                                                   />
                                                 )}
                                               </div>
-                                              <p style={{ fontSize: 10, marginTop: 4, lineHeight: 1, margin: 0, color: isInProgress ? '#678AFB' : d.isProjected ? '#C7C6C4' : d.isMissed ? '#E8726E' : isPendingOnly ? 'rgba(245,158,11,0.6)' : '#787776' }}>{d.label}</p>
+                                              <p style={{ fontSize: 10, marginTop: 4, lineHeight: 1, margin: 0, color: isInProgress ? '#82F0B9' : d.isProjected ? '#C7C6C4' : d.isMissed ? '#E8726E' : isPendingOnly ? 'rgba(245,158,11,0.6)' : '#787776' }}>{d.label}</p>
                                             </div>
                                           );
                                         })}
@@ -1402,11 +1402,11 @@ export default function Borrowing() {
                                     </div>
                                     {/* Legend */}
                                     <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 8, paddingTop: 8, borderTop: '1px solid rgba(0,0,0,0.06)', flexWrap: 'wrap' }}>
-                                      <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: '#678AFB' }} /><span style={{ fontSize: 9, color: '#787776' }}>Completed</span></div>
-                                      <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: 'linear-gradient(to top, rgba(103,138,251,0.6) 50%, rgba(103,138,251,0.1) 50%)' }} /><span style={{ fontSize: 9, color: '#678AFB' }}>In Progress</span></div>
+                                      <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: '#82F0B9' }} /><span style={{ fontSize: 9, color: '#787776' }}>Completed</span></div>
+                                      <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: 'linear-gradient(to top, rgba(130,240,185,0.6) 50%, rgba(130,240,185,0.1) 50%)' }} /><span style={{ fontSize: 9, color: '#82F0B9' }}>In Progress</span></div>
                                       <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: 'rgba(245,158,11,0.4)', border: '1px dashed rgba(245,158,11,0.6)' }} /><span style={{ fontSize: 9, color: 'rgba(245,158,11,0.8)' }}>Pending</span></div>
-                                      <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: 'rgba(103,138,251,0.15)', border: '1px dashed rgba(103,138,251,0.3)' }} /><span style={{ fontSize: 9, color: '#C7C6C4' }}>Projected</span></div>
-                                      <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><div style={{ width: 16, height: 0, borderTop: '2px dashed rgba(103,138,251,0.3)' }} /><span style={{ fontSize: 9, color: '#787776' }}>Plan</span></div>
+                                      <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: 'rgba(130,240,185,0.15)', border: '1px dashed rgba(130,240,185,0.3)' }} /><span style={{ fontSize: 9, color: '#C7C6C4' }}>Projected</span></div>
+                                      <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><div style={{ width: 16, height: 0, borderTop: '2px dashed rgba(130,240,185,0.3)' }} /><span style={{ fontSize: 9, color: '#787776' }}>Plan</span></div>
                                     </div>
                                   </div>
                                 )}
@@ -1460,20 +1460,20 @@ export default function Borrowing() {
                                   {/* Document Icons */}
                                   <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center', gap: 20, padding: '4px 0' }}>
                                     <button onClick={() => { const agreement = loanAgreements.find(a => a.loan_id === manageLoanSelected.id); if (agreement) openDocPopup('promissory', agreement); }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, cursor: 'pointer', background: 'none', border: 'none' }}>
-                                      <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(103,138,251,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#678AFB" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                                      <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(130,240,185,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#82F0B9" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
                                       </div>
                                       <p style={{ fontSize: 10, fontWeight: 600, color: '#1A1918', textAlign: 'center', lineHeight: 1.3 }}>Promissory<br/>Note</p>
                                     </button>
                                     <button onClick={() => { const agreement = loanAgreements.find(a => a.loan_id === manageLoanSelected.id); if (agreement) openDocPopup('amortization', agreement); }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, cursor: 'pointer', background: 'none', border: 'none' }}>
-                                      <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(103,138,251,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#678AFB" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                                      <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(130,240,185,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#82F0B9" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
                                       </div>
                                       <p style={{ fontSize: 10, fontWeight: 600, color: '#1A1918', textAlign: 'center', lineHeight: 1.3 }}>Amortization<br/>Schedule</p>
                                     </button>
                                     <button onClick={() => { const agreement = loanAgreements.find(a => a.loan_id === manageLoanSelected.id); if (agreement) openDocPopup('summary', agreement); }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, cursor: 'pointer', background: 'none', border: 'none' }}>
-                                      <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(103,138,251,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#678AFB" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                                      <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(130,240,185,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#82F0B9" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
                                       </div>
                                       <p style={{ fontSize: 10, fontWeight: 600, color: '#1A1918', textAlign: 'center', lineHeight: 1.3 }}>Loan<br/>Summary</p>
                                     </button>
@@ -1540,13 +1540,13 @@ export default function Borrowing() {
                                         return { number: pr.period, date: pr.date, amount: scheduledAmount, paidAmount, paidPercentage, status, isFullPayment: pr.isFullPayment, deficit: pr.deficit };
                                       }) : [];
                                       const statusConfig = {
-                                        completed: { label: 'Completed', bg: 'rgba(103,138,251,0.1)', text: '#678AFB', ringColor: '#678AFB', fillColor: '#678AFB' },
-                                        in_progress: { label: 'In Progress', bg: 'rgba(103,138,251,0.1)', text: '#678AFB', ringColor: '#678AFB', fillColor: '#678AFB' },
+                                        completed: { label: 'Completed', bg: 'rgba(130,240,185,0.1)', text: '#82F0B9', ringColor: '#82F0B9', fillColor: '#82F0B9' },
+                                        in_progress: { label: 'In Progress', bg: 'rgba(130,240,185,0.1)', text: '#82F0B9', ringColor: '#82F0B9', fillColor: '#82F0B9' },
                                         partial: { label: 'Partial', bg: 'rgba(245,158,11,0.1)', text: '#F59E0B', ringColor: '#F59E0B', fillColor: '#F59E0B' },
                                         pending: { label: 'Pending', bg: 'rgba(245,158,11,0.1)', text: '#F59E0B', ringColor: '#F59E0B', fillColor: '#F59E0B' },
                                         missed: { label: 'Missed', bg: 'rgba(232,114,110,0.1)', text: '#E8726E', ringColor: '#E8726E', fillColor: '#E8726E' },
-                                        record: { label: 'Record Payment', bg: '#678AFB', text: 'white', ringColor: '#678AFB', fillColor: '#678AFB' },
-                                        upcoming: { label: 'Upcoming', bg: 'rgba(0,0,0,0.03)', text: '#787776', ringColor: 'rgba(103,138,251,0.3)', fillColor: 'rgba(103,138,251,0.3)' },
+                                        record: { label: 'Record Payment', bg: '#82F0B9', text: 'white', ringColor: '#82F0B9', fillColor: '#82F0B9' },
+                                        upcoming: { label: 'Upcoming', bg: 'rgba(0,0,0,0.03)', text: '#787776', ringColor: 'rgba(130,240,185,0.3)', fillColor: 'rgba(130,240,185,0.3)' },
                                       };
                                       const PieCircle = ({ percentage, ringColor, fillColor, number, size = 32 }) => {
                                         const r = (size / 2) - 2; const pcx = size / 2; const pcy = size / 2;
@@ -1674,7 +1674,7 @@ export default function Borrowing() {
                                       activities.sort((a, b) => a.timestamp - b.timestamp);
 
                                       const getIcon = (type) => {
-                                        const strokeColor = type === 'cancellation' ? '#E8726E' : '#678AFB';
+                                        const strokeColor = type === 'cancellation' ? '#E8726E' : '#82F0B9';
                                         switch (type) {
                                           case 'created':
                                             return (
@@ -1714,7 +1714,7 @@ export default function Borrowing() {
                                       const getDotColor = (type) => {
                                         switch (type) {
                                           case 'cancellation': return 'bg-red-50 border-[#E8726E]';
-                                          default: return 'bg-blue-50 border-[#678AFB]';
+                                          default: return 'bg-blue-50 border-[#82F0B9]';
                                         }
                                       };
 
@@ -1730,7 +1730,7 @@ export default function Borrowing() {
                                             <div key={idx} className="flex items-start gap-2.5 relative">
                                               {/* Timeline line */}
                                               {idx < activities.length - 1 && (
-                                                <div className="absolute left-[11px] top-[22px] w-[1px]" style={{ height: 'calc(100% - 6px)', background: 'rgba(103,138,251,0.2)' }} />
+                                                <div className="absolute left-[11px] top-[22px] w-[1px]" style={{ height: 'calc(100% - 6px)', background: 'rgba(130,240,185,0.2)' }} />
                                               )}
                                               {/* Icon dot */}
                                               <div className={`w-[23px] h-[23px] rounded-full border-[1.5px] ${getDotColor(activity.type)} flex items-center justify-center flex-shrink-0 z-10 mt-1`}>
@@ -1828,7 +1828,7 @@ export default function Borrowing() {
             </AlertDialogHeader>
           </div>
           <div className="px-6 pb-6 flex flex-col sm:flex-row gap-3">
-            <AlertDialogCancel className="flex-1 rounded-xl border-0 font-semibold text-white text-[14px] h-12 hover:opacity-90 transition-all" style={{ backgroundColor: '#678AFB' }}>
+            <AlertDialogCancel className="flex-1 rounded-xl border-0 font-semibold text-white text-[14px] h-12 hover:opacity-90 transition-all" style={{ backgroundColor: '#82F0B9' }}>
               Keep Loan
             </AlertDialogCancel>
             <AlertDialogAction onClick={confirmCancelLoan} className="flex-1 rounded-xl border-0 font-semibold text-white text-[14px] h-12 hover:opacity-90 transition-all" style={{ backgroundColor: '#E8726E' }}>

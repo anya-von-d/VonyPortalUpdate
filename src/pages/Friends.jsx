@@ -257,7 +257,7 @@ export default function Friends() {
           </div>
           <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 28px 64px', position: 'relative', zIndex: 2 }}>
             <div className="glass-card" style={{ padding: 40, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-              <div style={{ width: 32, height: 32, border: '2px solid #678AFB', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite', marginBottom: 12 }} />
+              <div style={{ width: 32, height: 32, border: '2px solid #82F0B9', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite', marginBottom: 12 }} />
               <p style={{ fontSize: 13, color: '#787776' }}>Loading friends...</p>
             </div>
           </div>
@@ -300,7 +300,7 @@ export default function Friends() {
               <div style={{ padding: '10px 16px 16px' }}>
                 {isLoading ? (
                   <div style={{ display: 'flex', justifyContent: 'center', padding: '32px 0' }}>
-                    <div style={{ width: 32, height: 32, border: '2px solid #678AFB', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+                    <div style={{ width: 32, height: 32, border: '2px solid #82F0B9', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
                   </div>
                 ) : sortedFriends.length === 0 ? (
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 0', color: '#C7C6C4' }}>
@@ -326,7 +326,7 @@ export default function Friends() {
                           <img
                             src={friendProfile.profile_picture_url || friendProfile.avatar_url || defaultAvatarUrl(friendProfile.full_name)}
                             alt={friendProfile.full_name || 'Friend'}
-                            style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover', flexShrink: 0, background: 'rgba(103,138,251,0.1)' }}
+                            style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover', flexShrink: 0, background: 'rgba(130,240,185,0.1)' }}
                           />
 
                           {/* Name */}
@@ -403,7 +403,7 @@ export default function Friends() {
                         fontSize: 13, color: '#1A1918', fontFamily: "'DM Sans', sans-serif",
                         outline: 'none', transition: 'border-color 0.15s',
                       }}
-                      onFocus={(e) => e.target.style.borderColor = 'rgba(103,138,251,0.4)'}
+                      onFocus={(e) => e.target.style.borderColor = 'rgba(130,240,185,0.4)'}
                       onBlur={(e) => e.target.style.borderColor = 'rgba(0,0,0,0.08)'}
                     />
                     {searchQuery && (
@@ -440,7 +440,7 @@ export default function Friends() {
                                 <img
                                   src={profile.profile_picture_url || profile.avatar_url || defaultAvatarUrl(profile.full_name)}
                                   alt={profile.full_name || 'User'}
-                                  style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover', flexShrink: 0, background: 'rgba(103,138,251,0.1)' }}
+                                  style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover', flexShrink: 0, background: 'rgba(130,240,185,0.1)' }}
                                 />
                                 <div style={{ flex: 1, minWidth: 0 }}>
                                   <p style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -456,7 +456,7 @@ export default function Friends() {
                                     disabled={processingId === receivedRequest.id}
                                     style={{
                                       padding: '6px 12px', borderRadius: 10, border: 'none',
-                                      background: '#678AFB', fontSize: 11, fontWeight: 600,
+                                      background: '#82F0B9', fontSize: 11, fontWeight: 600,
                                       color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6,
                                       fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap',
                                       opacity: processingId === receivedRequest.id ? 0.5 : 1,
@@ -498,7 +498,7 @@ export default function Friends() {
                                     disabled={processingId === profile.user_id}
                                     style={{
                                       padding: '6px 12px', borderRadius: 10, border: 'none',
-                                      background: '#678AFB', fontSize: 11, fontWeight: 600,
+                                      background: '#82F0B9', fontSize: 11, fontWeight: 600,
                                       color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6,
                                       fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap',
                                       opacity: processingId === profile.user_id ? 0.5 : 1,
@@ -552,7 +552,7 @@ export default function Friends() {
                             <img
                               src={profile.profile_picture_url || profile.avatar_url || defaultAvatarUrl(profile.full_name)}
                               alt={profile.full_name || 'User'}
-                              style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover', flexShrink: 0, background: 'rgba(103,138,251,0.1)' }}
+                              style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover', flexShrink: 0, background: 'rgba(130,240,185,0.1)' }}
                             />
                             <div style={{ flex: 1, minWidth: 0 }}>
                               <p style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -566,7 +566,7 @@ export default function Friends() {
                                 disabled={processingId === request.id}
                                 style={{
                                   padding: '6px 12px', borderRadius: 10, border: 'none',
-                                  background: '#678AFB', fontSize: 11, fontWeight: 600,
+                                  background: '#82F0B9', fontSize: 11, fontWeight: 600,
                                   color: 'white', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
                                   opacity: processingId === request.id ? 0.5 : 1,
                                 }}
