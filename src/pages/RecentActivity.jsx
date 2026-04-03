@@ -511,7 +511,7 @@ export default function RecentActivityPage() {
   /* ── Loading / unauthenticated states ─────────────────────── */
   if (isLoading || !user) {
     return (
-      <div style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 240, paddingTop: 68, background: '#F5F4F0' }}>
+      <div style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 240, paddingTop: 90, background: '#F5F4F0' }}>
         <DashboardSidebar activePage="RecentActivity" user={user} />
           <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 28px 64px', position: 'relative', zIndex: 2 }}>
             <div className="glass-card" style={{ padding: 40, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
@@ -768,19 +768,11 @@ export default function RecentActivityPage() {
      ══════════════════════════════════════════════════════════ */
   return (
     <>
-      <div style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 240, paddingTop: 68, background: '#F5F4F0' }}>
+      <div style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 240, paddingTop: 90, background: '#F5F4F0' }}>
         <DashboardSidebar activePage="RecentActivity" user={user} />
 
           {/* Gradient background */}
 
-          {/* Hero title */}
-          <div style={{ position: 'relative', zIndex: 2, maxWidth: 1080, margin: '0 auto', padding: '0 28px' }}>
-            <div style={{ paddingTop: 80, paddingBottom: 20, textAlign: 'center' }}>
-              <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '3.2rem', fontWeight: 600, letterSpacing: '-0.02em', lineHeight: 1.1, color: '#1A1918', margin: 0 }}>
-                Recent Activity
-              </h1>
-            </div>
-          </div>
 
           {/* Page content */}
           <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 28px 64px', position: 'relative', zIndex: 2 }}>

@@ -5,9 +5,9 @@ import { Loan, Payment, Friendship } from "@/entities/all";
 import { useAuth } from "@/lib/AuthContext";
 
 const PAGE_TITLES = {
-  YourLoans: 'Your Loans', Upcoming: 'Upcoming', Borrowing: 'Lending & Borrowing',
-  Lending: 'Lending & Borrowing', CreateOffer: 'Create Loan', Friends: 'Friends',
-  RecentActivity: 'Recent Activity', LoanAgreements: 'Loan Documents',
+  Dashboard: 'Home', YourLoans: 'Your Loans', Upcoming: 'Upcoming',
+  Borrowing: 'Lending & Borrowing', Lending: 'Lending & Borrowing', CreateOffer: 'Create Loan',
+  Friends: 'Friends', RecentActivity: 'Recent Activity', LoanAgreements: 'Loan Documents',
   RecordPayment: 'Record Payment', Requests: 'Notifications', ComingSoon: 'Coming Soon',
 };
 
@@ -293,35 +293,31 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs 
 
       {/* ── White top bar (main content area only) ── */}
       <div className="home-sidebar" style={{
-        position: 'fixed', top: 0, left: 240, right: 0, height: tabs ? 100 : 52,
+        position: 'fixed', top: 0, left: 240, right: 0, height: 52,
         background: 'white', zIndex: 58,
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        padding: '0 28px',
       }}>
-        {/* Title row */}
-        <div style={{ height: 52, display: 'flex', alignItems: 'center', padding: '0 28px' }}>
-          <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '1.6rem', fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', lineHeight: 1 }}>
-            {activePage === 'Dashboard'
-              ? (() => { const h = new Date().getHours(); const g = h >= 5 && h < 12 ? 'Good morning' : h >= 12 && h < 18 ? 'Good afternoon' : 'Good night'; const fn = user?.full_name?.split(' ')[0] || ''; return `${g}${fn ? `, ${fn}` : ''}`; })()
-              : PAGE_TITLES[activePage] || ''}
-          </span>
-        </div>
-        {/* Tab row */}
+        {/* Title — DM Sans matching nav labels */}
+        <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 600, color: '#1A1918' }}>
+          {PAGE_TITLES[activePage] || ''}
+        </span>
+        {/* Tabs on same row, right side */}
         {tabs && (
-          <div style={{ height: 48, display: 'flex', alignItems: 'center', padding: '0 28px', borderTop: '1px solid rgba(0,0,0,0.05)' }}>
-            <div style={{ display: 'inline-flex', gap: 2, background: 'rgba(0,0,0,0.05)', borderRadius: 10, padding: 3 }}>
-              {tabs.map(tab => (
-                <button key={tab.key} onClick={() => onTabChange?.(tab.key)} style={{
-                  padding: '5px 16px', borderRadius: 8, border: 'none', cursor: 'pointer',
-                  fontSize: 13, fontFamily: "'DM Sans', sans-serif",
-                  fontWeight: activeTab === tab.key ? 600 : 500,
-                  color: activeTab === tab.key ? '#1A1918' : '#787776',
-                  background: activeTab === tab.key ? 'white' : 'transparent',
-                  boxShadow: activeTab === tab.key ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
-                  transition: 'all 0.15s', whiteSpace: 'nowrap',
-                }}>
-                  {tab.label}
-                </button>
-              ))}
-            </div>
+          <div style={{ display: 'inline-flex', gap: 2, background: 'rgba(0,0,0,0.05)', borderRadius: 10, padding: 3 }}>
+            {tabs.map(tab => (
+              <button key={tab.key} onClick={() => onTabChange?.(tab.key)} style={{
+                padding: '5px 14px', borderRadius: 8, border: 'none', cursor: 'pointer',
+                fontSize: 13, fontFamily: "'DM Sans', sans-serif",
+                fontWeight: activeTab === tab.key ? 600 : 500,
+                color: activeTab === tab.key ? '#1A1918' : '#787776',
+                background: activeTab === tab.key ? 'white' : 'transparent',
+                boxShadow: activeTab === tab.key ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
+                transition: 'all 0.15s', whiteSpace: 'nowrap',
+              }}>
+                {tab.label}
+              </button>
+            ))}
           </div>
         )}
       </div>
