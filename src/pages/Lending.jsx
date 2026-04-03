@@ -1496,12 +1496,7 @@ export default function Lending({ initialTab }) {
           {/* Galaxy gradient background */}
 
           <div style={{ position: 'relative', zIndex: 2, maxWidth: 1080, margin: '0 auto', padding: '0 28px' }}>
-          {/* Header */}
-          <div style={{ paddingTop: 80, paddingBottom: 20, textAlign: 'center' }}>
-            <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '3.2rem', fontWeight: 600, letterSpacing: '-0.02em', lineHeight: 1.1, color: '#1A1918', margin: 0 }}>
-              {initialTab === 'create' ? 'Create Loan' : 'Lending & Borrowing'}
-            </h1>
-          </div>
+          <div style={{ paddingTop: 24 }} />
 
           {/* Tab Navigation — hidden when accessed as standalone Create Loan page */}
           {!initialTab && (

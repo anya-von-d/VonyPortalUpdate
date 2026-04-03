@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Loan, Payment, User, LoanAgreement, PublicProfile, Friendship } from "@/entities/all";
 import { Badge } from "@/components/ui/badge";
@@ -36,7 +36,8 @@ const STAR_CIRCLES = [
 export default function YourLoans() {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('lending');
+  const [searchParams] = useSearchParams();
+  const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'lending');
   const [allLoans, setAllLoans] = useState([]);
   const [allPayments, setAllPayments] = useState([]);
   const [publicProfiles, setPublicProfiles] = useState([]);
@@ -1222,14 +1223,14 @@ export default function YourLoans() {
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
               }}>
                 <h1 style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 18, fontWeight: 700, color: '#1A1918', margin: 0 }}>
-                  Lending &amp; Borrowing
+                  My Loans
                 </h1>
                 <span style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.07em', textTransform: 'uppercase' }}>
                   Your Loans
                 </span>
               </div>
               {/* Tab bar — centered */}
-              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
+              <div className="mobile-tab-bar" style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
                 <div style={{ display: 'inline-flex', gap: 2, background: 'rgba(0,0,0,0.05)', borderRadius: 10, padding: 3 }}>
                   {[{key:'lending',label:'Lending'},{key:'borrowing',label:'Borrowing'},{key:'details',label:'Individual Loan Details'}].map(tab => (
                     <button key={tab.key} onClick={() => setActiveTab(tab.key)} style={{

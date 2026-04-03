@@ -130,7 +130,7 @@ export default function ComingSoon() {
           <div style={{ maxWidth: 1080, margin: '0 auto', padding: '24px 40px 64px' }}>
 
             {/* Tab bar — centered */}
-            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
+            <div className="mobile-tab-bar" style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
               <div style={{ display: 'inline-flex', gap: 2, background: 'rgba(0,0,0,0.05)', borderRadius: 10, padding: 3 }}>
                 {[{key:'shop',label:'Shop'},{key:'learn',label:'Learn'}].map(tab => (
                   <button key={tab.key} onClick={() => setActiveTab(tab.key)} style={{

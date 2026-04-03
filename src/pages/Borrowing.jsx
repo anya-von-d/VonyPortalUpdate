@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Loan, Payment, User, LoanAgreement, PublicProfile, Friendship, VenmoConnection, PayPalConnection } from "@/entities/all";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -54,7 +54,8 @@ export default function Borrowing() {
   const [loanToCancel, setLoanToCancel] = useState(null);
   const [publicProfiles, setPublicProfiles] = useState([]);
   const [activeSection, setActiveSection] = useState('overview');
-  const [activeTab, setActiveTab] = useState('summary');
+  const [searchParams] = useSearchParams();
+  const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'summary');
   const [showSignModal, setShowSignModal] = useState(false);
   const [selectedOffer, setSelectedOffer] = useState(null);
   const [manageLoanSelected, setManageLoanSelected] = useState(null);
@@ -867,7 +868,7 @@ export default function Borrowing() {
         <div style={{ maxWidth: 1080, margin: '0 auto', padding: '24px 40px 64px' }}>
 
           {/* Tab bar — centered */}
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
+          <div className="mobile-tab-bar" style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
             <div style={{ display: 'inline-flex', gap: 2, background: 'rgba(0,0,0,0.05)', borderRadius: 10, padding: 3 }}>
               {[{key:'summary',label:'Summary'},{key:'details',label:'Individual Loan Details'}].map(tab => (
                 <button key={tab.key} onClick={() => setActiveTab(tab.key)} style={{

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Loan, Payment, PublicProfile } from "@/entities/all";
 import { useAuth } from "@/lib/AuthContext";
@@ -86,7 +86,8 @@ function MiniCalendar({ today, paymentDates }) {
 
 export default function Upcoming() {
   const { user: authUser, userProfile, isLoadingAuth, navigateToLogin } = useAuth();
-  const [activeTab, setActiveTab] = useState('summary');
+  const [searchParams] = useSearchParams();
+  const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'summary');
   const [loans, setLoans] = useState([]);
   const [payments, setPayments] = useState([]);
   const [publicProfiles, setPublicProfiles] = useState([]);
@@ -356,7 +357,7 @@ export default function Upcoming() {
         <div style={{ maxWidth: 1080, margin: '0 auto', padding: '24px 40px 64px', position: 'relative', zIndex: 2 }}>
 
           {/* Tab bar — centered */}
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
+          <div className="mobile-tab-bar" style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
             <div style={{ display: 'inline-flex', gap: 2, background: 'rgba(0,0,0,0.05)', borderRadius: 10, padding: 3 }}>
               {[{key:'summary',label:'Summary'},{key:'calendar',label:'Calendar'}].map(tab => (
                 <button key={tab.key} onClick={() => setActiveTab(tab.key)} style={{
