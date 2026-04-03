@@ -284,6 +284,25 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
         </div>
       )}
 
+      {/* ── White top bar (main content area only) ── */}
+      <div className="home-sidebar" style={{
+        position: 'fixed', top: 0, left: 240, right: 0, height: 52,
+        background: 'white', zIndex: 58,
+        display: 'flex', alignItems: 'center',
+        padding: '0 28px',
+      }}>
+        {activePage === 'Dashboard' && (
+          <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '1.6rem', fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', lineHeight: 1 }}>
+            {(() => {
+              const h = new Date().getHours();
+              const g = h >= 5 && h < 12 ? 'Good morning' : h >= 12 && h < 18 ? 'Good afternoon' : 'Good night';
+              const fn = user?.full_name?.split(' ')[0] || '';
+              return `${g}${fn ? `, ${fn}` : ''}`;
+            })()}
+          </span>
+        )}
+      </div>
+
       {/* ── Desktop sidebar ── */}
       <aside className="home-sidebar" style={{
         position: 'fixed', left: 0, top: 0, bottom: 0, width: 240,
