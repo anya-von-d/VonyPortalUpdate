@@ -1204,7 +1204,7 @@ export default function YourLoans() {
         )}
       </AnimatePresence>
 
-      <div className="home-with-sidebar" style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 208, paddingRight: 24, paddingTop: 76, background: '#F5F4F0' }}>
+      <div className="home-with-sidebar" style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 208, paddingRight: 24, paddingTop: 132, background: '#F5F4F0' }}>
         <DashboardSidebar activePage="YourLoans" user={user} tabs={[{key:'lending',label:'Lending'},{key:'borrowing',label:'Borrowing'},{key:'details',label:'Individual Loan Details'}]} activeTab={activeTab} onTabChange={setActiveTab} />
 
           {/* Hero + page content */}
@@ -1212,39 +1212,6 @@ export default function YourLoans() {
 
             {/* Page content */}
             <div style={{ maxWidth: 1080, margin: '0 auto', padding: '24px 40px 64px' }}>
-              {/* Glass page title */}
-              <div style={{
-                background: 'rgba(255,255,255,0.88)',
-                backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
-                borderRadius: 16,
-                border: '1px solid rgba(255,255,255,0.80)',
-                boxShadow: '0 2px 20px rgba(0,0,0,0.07), 0 1px 4px rgba(0,0,0,0.04)',
-                padding: '14px 22px', marginBottom: 16,
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-              }}>
-                <h1 style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 18, fontWeight: 700, color: '#1A1918', margin: 0 }}>
-                  My Loans
-                </h1>
-                <span style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.07em', textTransform: 'uppercase' }}>
-                  Your Loans
-                </span>
-              </div>
-              {/* Tab bar — centered */}
-              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
-                <div style={{ display: 'inline-flex', gap: 2, background: 'rgba(0,0,0,0.05)', borderRadius: 10, padding: 3 }}>
-                  {[{key:'lending',label:'Lending'},{key:'borrowing',label:'Borrowing'},{key:'details',label:'Individual Loan Details'}].map(tab => (
-                    <button key={tab.key} onClick={() => setActiveTab(tab.key)} style={{
-                      padding: '6px 16px', borderRadius: 8, border: 'none', cursor: 'pointer',
-                      fontSize: 13, fontFamily: "'DM Sans', sans-serif",
-                      fontWeight: activeTab === tab.key ? 600 : 500,
-                      color: activeTab === tab.key ? '#1A1918' : '#787776',
-                      background: activeTab === tab.key ? 'white' : 'transparent',
-                      boxShadow: activeTab === tab.key ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
-                      transition: 'all 0.15s', whiteSpace: 'nowrap',
-                    }}>{tab.label}</button>
-                  ))}
-                </div>
-              </div>
               {/* Overdue notification bars — shown above all tabs, across both lending + borrowing */}
               {(() => {
                 const allOverdue = [

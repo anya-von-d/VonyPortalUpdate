@@ -5,7 +5,7 @@ import { Loan, Payment, Friendship } from "@/entities/all";
 import { useAuth } from "@/lib/AuthContext";
 
 /* ── Main component ──────────────────────────────────────────── */
-export default function DashboardSidebar({ activePage = "Dashboard", user }) {
+export default function DashboardSidebar({ activePage = "Dashboard", user, tabs, activeTab, onTabChange }) {
   const avatarInitial = (user?.full_name || 'U').charAt(0).toUpperCase();
   const { logout } = useAuth();
   const firstName = user?.full_name?.split(' ')[0] || '';
@@ -58,6 +58,22 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
     background: active(...pages) ? 'rgba(0,0,0,0.06)' : 'transparent',
     border: 'none', cursor: 'pointer',
   });
+
+  const PAGE_TITLES = {
+    Dashboard: 'Home',
+    CreateOffer: 'Create Loan',
+    RecordPayment: 'Record Payment',
+    Upcoming: 'Upcoming',
+    YourLoans: 'My Loans',
+    Borrowing: 'My Loans',
+    Lending: 'My Loans',
+    Friends: 'Friends',
+    RecentActivity: 'Activity',
+    LoanAgreements: 'Documents',
+    ComingSoon: 'Shop & Learn',
+    Profile: 'Profile',
+    Requests: 'Requests',
+  };
 
   /* ── Nav icons (14px) ── */
   const icons = {
@@ -152,6 +168,34 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
               )}
             </Link>
           </div>
+        </div>
+      </div>
+
+      {/* ══════ PAGE TITLE ROW ══════ */}
+      <div style={{ position: 'fixed', top: 76, left: 208, right: 0, paddingRight: 24, zIndex: 99, pointerEvents: 'none' }}>
+        <div style={{ maxWidth: 1080, margin: '0 auto', paddingLeft: 40, display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 48, pointerEvents: 'auto' }}>
+          <h1 style={{
+            fontFamily: "'Cormorant Garamond', Georgia, serif",
+            fontSize: 30, fontWeight: 400, fontStyle: 'italic',
+            color: '#1A1918', margin: 0, letterSpacing: '-0.01em', lineHeight: 1,
+          }}>
+            {PAGE_TITLES[activePage] || activePage}
+          </h1>
+          {tabs && tabs.length > 0 && onTabChange && (
+            <div style={{ display: 'inline-flex', gap: 2, background: 'rgba(0,0,0,0.05)', borderRadius: 10, padding: 3 }}>
+              {tabs.map(tab => (
+                <button key={tab.key} onClick={() => onTabChange(tab.key)} style={{
+                  padding: '6px 16px', borderRadius: 8, border: 'none', cursor: 'pointer',
+                  fontSize: 13, fontFamily: "'DM Sans', sans-serif",
+                  fontWeight: activeTab === tab.key ? 600 : 500,
+                  color: activeTab === tab.key ? '#1A1918' : '#787776',
+                  background: activeTab === tab.key ? 'white' : 'transparent',
+                  boxShadow: activeTab === tab.key ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
+                  transition: 'all 0.15s', whiteSpace: 'nowrap',
+                }}>{tab.label}</button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 

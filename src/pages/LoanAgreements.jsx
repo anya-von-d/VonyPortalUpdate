@@ -482,7 +482,7 @@ export default function LoanAgreements() {
   /* ── Loading state ──────────────────────────────────────────── */
   if (isLoading || !user) {
     return (
-      <div className="home-with-sidebar" style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 208, paddingRight: 24, paddingTop: 76, background: '#F5F4F0' }}>
+      <div className="home-with-sidebar" style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 208, paddingRight: 24, paddingTop: 132, background: '#F5F4F0' }}>
         <DashboardSidebar activePage="LoanAgreements" user={user} />
           <div style={{ maxWidth: 1080, margin: '0 auto', padding: '24px 40px 64px', position: 'relative', zIndex: 2 }}>
             <div className="glass-card" style={{ padding: 40, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
@@ -909,7 +909,7 @@ export default function LoanAgreements() {
         )}
       </AnimatePresence>
 
-      <div className="home-with-sidebar" style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 208, paddingRight: 24, paddingTop: 76, background: '#F5F4F0' }}>
+      <div className="home-with-sidebar" style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 208, paddingRight: 24, paddingTop: 132, background: '#F5F4F0' }}>
         <DashboardSidebar activePage="LoanAgreements" user={user} />
 
         {/* Rounded content box */}
