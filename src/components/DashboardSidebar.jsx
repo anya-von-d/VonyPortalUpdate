@@ -233,34 +233,16 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
     </div>
   );
 
-  const hour = new Date().getHours();
-  const greeting = hour >= 5 && hour < 12 ? 'Good morning' : hour >= 12 && hour < 18 ? 'Good afternoon' : 'Good night';
-  const firstName = user?.full_name?.split(' ')[0] || '';
-  const pageTitle = activePage === 'Dashboard'
-    ? `${greeting}${firstName ? `, ${firstName}` : ''}`
-    : activePage === 'CreateOffer' ? 'Create Loan'
-    : activePage === 'RecordPayment' ? 'Record Payment'
-    : activePage === 'YourLoans' ? 'Lending & Borrowing'
-    : activePage === 'LoanAgreements' ? 'Loan Documents'
-    : activePage === 'RecentActivity' ? 'Recent Activity'
-    : activePage;
-
   return (
     <>
-      {/* Desktop white top bar — main content area */}
+      {/* Desktop top bar — background colour, no content, shadow underneath */}
       <div className="home-sidebar" style={{
         position: 'fixed', top: 0, left: 200, right: 0, height: 56,
-        background: 'white',
-        borderBottom: '1px solid rgba(0,0,0,0.06)',
+        background: '#F5F4F0',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
         zIndex: 58,
-        display: 'flex', alignItems: 'center',
-        padding: '0 28px',
-        fontFamily: "'DM Sans', sans-serif",
-      }}>
-        <span style={{ fontSize: 15, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em' }}>
-          {pageTitle}
-        </span>
-      </div>
+        pointerEvents: 'none',
+      }} />
 
       {/* ── Mobile top bar ── */}
       <div className="mobile-header" style={{

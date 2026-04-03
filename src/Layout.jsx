@@ -105,7 +105,7 @@ export default function Layout({ children }) {
         <div style={{
           position: 'fixed', top: 0, left: 197, bottom: 0, width: 46,
           background: 'linear-gradient(to right, #03ACEA 0%, #03ACEA 3px, rgba(245,244,240,0) 46px)',
-          pointerEvents: 'none', zIndex: 51,
+          pointerEvents: 'none', zIndex: 59,
         }} />
       )}
 
