@@ -103,16 +103,16 @@ export default function Layout({ children }) {
       {/* Gradient — vertical, sidebar right edge, full height */}
       {isDashboardStyle && (
         <div style={{
-          position: 'fixed', top: 0, left: 197, bottom: 0, width: 46,
-          background: 'linear-gradient(to right, #03ACEA 0%, #03ACEA 3px, rgba(245,244,240,0) 46px)',
+          position: 'fixed', top: 0, left: 199, bottom: 0, width: 22,
+          background: 'linear-gradient(to right, #03ACEA 0%, #03ACEA 1px, rgba(245,244,240,0) 22px)',
           pointerEvents: 'none', zIndex: 57,
         }} />
       )}
       {/* Gradient — horizontal at very top of screen, fades down */}
       {isDashboardStyle && (
         <div style={{
-          position: 'fixed', top: 0, left: 200, right: 0, height: 40,
-          background: 'linear-gradient(to bottom, #03ACEA 0%, #03ACEA 3px, rgba(245,244,240,0) 40px)',
+          position: 'fixed', top: 0, left: 200, right: 0, height: 22,
+          background: 'linear-gradient(to bottom, #03ACEA 0%, #03ACEA 1px, rgba(245,244,240,0) 22px)',
           pointerEvents: 'none', zIndex: 57,
         }} />
       )}
