@@ -85,7 +85,7 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
     display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px', borderRadius: 10,
     textDecoration: 'none', fontSize: 14, transition: 'background 0.15s',
     color: '#1A1918',
-    background: isActive(page) ? 'rgba(1,173,233,0.07)' : 'transparent',
+    background: isActive(page) ? '#D9D6D1' : 'transparent',
     fontWeight: isActive(page) ? 600 : 450,
   });
   const ic = () => '#01ADE9';
@@ -94,7 +94,7 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
   const iconBox = (svg) => (
     <div style={{
       width: 30, height: 30, borderRadius: 7,
-      background: '#C8EFFB',
+      background: '#DCF7FD',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       flexShrink: 0,
     }}>
@@ -252,7 +252,7 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
       <div className="mobile-header" style={{
         display: 'none', /* shown via CSS at <=900px */
         position: 'fixed', top: 0, left: 0, right: 0, height: 56,
-        background: '#F5F4F0', zIndex: 53,
+        background: '#E8E6E2', zIndex: 53,
         alignItems: 'center', justifyContent: 'space-between',
         padding: '0 16px',
         fontFamily: "'DM Sans', sans-serif",
@@ -309,7 +309,7 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
         >
           <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.3)' }} onClick={() => setMobileMenuOpen(false)} />
           <div style={{
-            position: 'relative', width: 260, background: '#F5F4F0',
+            position: 'relative', width: 260, background: '#E8E6E2',
             paddingTop: 64, display: 'flex', flexDirection: 'column',
             overflowY: 'auto', boxShadow: '4px 0 20px rgba(0,0,0,0.1)',
           }}>
@@ -334,7 +334,7 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
       {/* ── Desktop sidebar ── */}
       <aside className="home-sidebar" style={{
         position: 'fixed', left: 0, top: 56, bottom: 0, width: 240,
-        background: '#F5F4F0',
+        background: '#E8E6E2',
         zIndex: 52, display: 'flex', flexDirection: 'column',
         fontFamily: "'DM Sans', sans-serif", overflowY: 'auto',
       }}>
