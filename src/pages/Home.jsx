@@ -677,7 +677,7 @@ export default function Home() {
       <DashboardSidebar activePage="Dashboard" user={user} />
 
       {/* ── Content box with galaxy background ── */}
-      <div style={{ position: 'relative', margin: '20px 12px 12px 0', borderRadius: 24, overflow: 'hidden', minHeight: 'calc(100vh - 32px)', border: '6px solid rgba(255,255,255,0.8)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', boxShadow: 'rgba(0,0,0,0.03) 0px 0.6px 2.3px -0.42px, rgba(0,0,0,0.04) 0px 2.3px 8.7px -0.83px, rgba(0,0,0,0.08) 0px 10px 38px -1.25px, inset 0 0 0 1px rgba(255,255,255,0.5), inset 0 0 30px rgba(255,255,255,0.6), inset 0 0 50px rgba(255,255,255,0.3)' }}>
+      <div className="content-box-glow" style={{ position: 'relative', margin: '20px 12px 12px 0', borderRadius: 24, overflow: 'hidden', minHeight: 'calc(100vh - 32px)', border: '6px solid rgba(255,255,255,0.8)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', boxShadow: 'rgba(0,0,0,0.03) 0px 0.6px 2.3px -0.42px, rgba(0,0,0,0.04) 0px 2.3px 8.7px -0.83px, rgba(0,0,0,0.08) 0px 10px 38px -1.25px' }}>
 
         {/* Galaxy gradient background inside the box */}
         <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', bottom: 0, overflow: 'hidden', zIndex: 0, pointerEvents: 'none' }}>
