@@ -85,7 +85,7 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
     display: 'flex', alignItems: 'center', gap: 12, padding: '9px 14px', borderRadius: 10,
     textDecoration: 'none', fontSize: 13, transition: 'background 0.15s',
     color: '#1A1918',
-    background: isActive(page) ? '#D9D6D1' : 'transparent',
+    background: isActive(page) ? '#E3E0DC' : 'transparent',
     fontWeight: isActive(page) ? 600 : 450,
   });
   const ic = '#01ADE9';
@@ -205,7 +205,7 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
             ...linkStyle('Settings'),
             width: '100%', border: 'none', cursor: 'pointer',
             fontFamily: "'DM Sans', sans-serif", textAlign: 'left',
-            background: settingsOpen ? '#D9D6D1' : 'transparent',
+            background: settingsOpen ? '#E3E0DC' : 'transparent',
           }}
         >
           {iconBox(<svg width="13" height="13" viewBox="0 0 24 24" fill={ic}><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>)}
@@ -250,7 +250,7 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
       <div className="mobile-header" style={{
         display: 'none', /* shown via CSS at <=900px */
         position: 'fixed', top: 0, left: 0, right: 0, height: 56,
-        background: '#E8E6E2', zIndex: 53,
+        background: '#EDEAE7', zIndex: 53,
         alignItems: 'center', justifyContent: 'space-between',
         padding: '0 16px',
         fontFamily: "'DM Sans', sans-serif",
@@ -284,7 +284,7 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
         >
           <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.3)' }} onClick={() => setMobileMenuOpen(false)} />
           <div style={{
-            position: 'relative', width: 260, background: '#E8E6E2',
+            position: 'relative', width: 260, background: '#EDEAE7',
             paddingTop: 64, display: 'flex', flexDirection: 'column',
             overflowY: 'auto', boxShadow: '4px 0 20px rgba(0,0,0,0.1)',
           }}>
@@ -299,7 +299,8 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
       {/* ── Desktop sidebar ── */}
       <aside className="home-sidebar" style={{
         position: 'fixed', left: 0, top: 56, bottom: 0, width: 240,
-        background: '#E8E6E2',
+        background: '#EDEAE7',
+        borderRight: '1px solid rgba(0,0,0,0.08)',
         zIndex: 52, display: 'flex', flexDirection: 'column',
         fontFamily: "'DM Sans', sans-serif", overflowY: 'auto',
       }}>

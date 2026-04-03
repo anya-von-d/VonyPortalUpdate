@@ -733,10 +733,7 @@ export default function Home() {
                   {/* Message */}
                   <div>
                     <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1918' }}>
-                      {notifCount > 0 ? `You have ${notifCount} new notification${notifCount === 1 ? '' : 's'}` : "You're all caught up"}
-                    </div>
-                    <div style={{ fontSize: 11, color: '#787776', marginTop: 2 }}>
-                      {notifCount > 0 ? 'Tap view to see what needs your attention' : 'No pending actions right now'}
+                      {notifCount > 0 ? 'You have new notifications' : "You're all caught up"}
                     </div>
                   </div>
                 </div>

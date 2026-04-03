@@ -99,7 +99,7 @@ export default function Layout({ children }) {
   const isDashboardStyle = isHomePage || location.pathname === '/Upcoming' || location.pathname === '/upcoming' || location.pathname === '/Borrowing' || location.pathname === '/borrowing' || location.pathname === '/RecentActivity' || location.pathname === '/recentactivity' || location.pathname === '/Lending' || location.pathname === '/lending' || location.pathname === '/CreateOffer' || location.pathname === '/createoffer' || location.pathname === '/LoanAgreements' || location.pathname === '/loanagreements' || location.pathname === '/Friends' || location.pathname === '/friends' || location.pathname === '/RecordPayment' || location.pathname === '/recordpayment' || location.pathname === '/YourLoans' || location.pathname === '/yourloans' || location.pathname === '/Requests' || location.pathname === '/requests' || location.pathname === '/Profile' || location.pathname === '/profile' || location.pathname === '/ComingSoon' || location.pathname === '/comingsoon';
 
   return (
-    <div className="min-h-screen flex flex-col w-full safe-area-inset-top safe-area-inset-bottom" style={isDashboardStyle ? { background: '#F5F4F0' } : { background: `linear-gradient(to bottom right, rgb(var(--theme-bg-from)), rgb(var(--theme-bg-to)))` }}>
+    <div className="min-h-screen flex flex-col w-full safe-area-inset-top safe-area-inset-bottom" style={isDashboardStyle ? { background: 'linear-gradient(to bottom, #05ACEC 0px, #F5F4F0 220px)' } : { background: `linear-gradient(to bottom right, rgb(var(--theme-bg-from)), rgb(var(--theme-bg-to)))` }}>
       {/* TopNav handles its own fixed positioning and mobile menu — hidden on dashboard-style pages */}
       {user && !isDashboardStyle && <TopNav location={location} />}
 
