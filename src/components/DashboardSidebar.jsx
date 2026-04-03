@@ -104,10 +104,10 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
 
   const navLinks = (
     <>
-      {/* Dashboard — 4 filled squares */}
+      {/* Home — filled house */}
       <Link to="/" onClick={() => setMobileMenuOpen(false)} style={linkStyle('Dashboard')}>
-        {iconBox(<svg width="16" height="16" viewBox="0 0 24 24" fill={ic}><path d="M3 3h7v7H3V3zm11 0h7v7h-7V3zM3 14h7v7H3v-7zm11 0h7v7h-7v-7z"/></svg>)}
-        Dashboard
+        {iconBox(<svg width="16" height="16" viewBox="0 0 24 24" fill={ic}><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>)}
+        Home
       </Link>
       {/* Create Loan — filled plus circle */}
       <Link to={createPageUrl("CreateOffer")} onClick={() => setMobileMenuOpen(false)} style={linkStyle('CreateOffer')}>
@@ -246,7 +246,7 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
       }}>
         <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 28px', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           {activePage === 'Dashboard' && (
-            <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '2.2rem', fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', lineHeight: 1 }}>
+            <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '1.6rem', fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', lineHeight: 1 }}>
               {(() => { const h = new Date().getHours(); const g = h >= 5 && h < 12 ? 'Good morning' : h >= 12 && h < 18 ? 'Good afternoon' : 'Good night'; const fn = user?.full_name?.split(' ')[0] || ''; return <>{g}{fn ? <>, <em style={{ fontStyle: 'italic' }}>{fn}</em></> : ''}</>; })()}
             </span>
           )}
