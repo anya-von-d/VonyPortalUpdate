@@ -1,12 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Loan, Payment, Friendship, PublicProfile } from "@/entities/all";
+import { Loan, Payment, Friendship } from "@/entities/all";
 import { useAuth } from "@/lib/AuthContext";
-import { format, differenceInDays } from "date-fns";
-
-/* ── Shared text styles ──────────────────────────────────────── */
-const itemText = { fontSize: 12.5, fontWeight: 500, color: '#1A1918', margin: 0, lineHeight: 1.45 };
 
 /* ── Main component ──────────────────────────────────────────── */
 export default function DashboardSidebar({ activePage = "Dashboard", user }) {
@@ -15,7 +11,6 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
   const firstName = user?.full_name?.split(' ')[0] || '';
 
   const [notifCount, setNotifCount] = useState(0);
-  const [openDropdown, setOpenDropdown] = useState(null);
   const navRef = useRef(null);
 
   useEffect(() => { if (user?.id) fetchData(); }, [user?.id]);
@@ -32,25 +27,16 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
       const paymentsToConfirm = payments.filter(p =>
         p.status === 'pending_confirmation' && userLoanIds.includes(p.loan_id) && p.recorded_by !== user.id
       );
-      const offersReceived  = loans.filter(l => l.borrower_id === user.id && l.status === 'pending');
-      const friendRequests  = friendships.filter(f => f.friend_id === user.id && f.status === 'pending');
+      const offersReceived = loans.filter(l => l.borrower_id === user.id && l.status === 'pending');
+      const friendRequests = friendships.filter(f => f.friend_id === user.id && f.status === 'pending');
       setNotifCount(paymentsToConfirm.length + offersReceived.length + friendRequests.length);
     } catch (e) { console.error("Sidebar data error:", e); }
   };
 
-  /* ── Close nav dropdown on outside click ── */
-  useEffect(() => {
-    const h = (e) => {
-      if (navRef.current && !navRef.current.contains(e.target)) setOpenDropdown(null);
-    };
-    document.addEventListener('mousedown', h);
-    return () => document.removeEventListener('mousedown', h);
-  }, []);
-
-  const handleLogout = () => { setOpenDropdown(null); logout(); };
+  const handleLogout = () => logout();
   const active = (...pages) => pages.includes(activePage);
 
-  /* ── Left nav link style ── */
+  /* ── Nav link style ── */
   const navLinkStyle = (...pages) => ({
     display: 'flex', alignItems: 'center', gap: 10,
     padding: '9px 16px', borderRadius: 10, textDecoration: 'none',
@@ -61,35 +47,16 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
     background: active(...pages) ? 'rgba(0,0,0,0.06)' : 'transparent',
   });
 
-  const toggleDropdown = (key) => setOpenDropdown(openDropdown === key ? null : key);
-
-  const navBtnStyle = (key, ...pages) => ({
-    display: 'flex', alignItems: 'center', gap: 10, width: '100%',
-    padding: '9px 16px', borderRadius: 10, border: 'none', cursor: 'pointer',
+  /* ── Bottom item style (same shade as nav links) ── */
+  const bottomItemStyle = (...pages) => ({
+    display: 'flex', alignItems: 'center', gap: 10,
+    padding: '9px 16px', borderRadius: 10, textDecoration: 'none',
     fontSize: 13, fontFamily: "'DM Sans', sans-serif",
-    whiteSpace: 'nowrap', transition: 'background 0.15s',
-    color: (active(...pages) || openDropdown === key) ? '#1A1918' : '#5C5B5A',
-    fontWeight: (active(...pages) || openDropdown === key) ? 600 : 500,
+    whiteSpace: 'nowrap', transition: 'background 0.15s', width: '100%',
+    color: active(...pages) ? '#1A1918' : '#5C5B5A',
+    fontWeight: active(...pages) ? 600 : 500,
     background: active(...pages) ? 'rgba(0,0,0,0.06)' : 'transparent',
-    justifyContent: 'space-between',
-  });
-
-  const chevron = (isOpen) => (
-    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      strokeWidth="2.5" strokeLinecap="round"
-      style={{ transform: isOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s', opacity: 0.4, flexShrink: 0 }}>
-      <polyline points="6 9 12 15 18 9" />
-    </svg>
-  );
-
-  const subLinkStyle = (page) => ({
-    display: 'flex', alignItems: 'center', gap: 8,
-    padding: '7px 16px 7px 42px', borderRadius: 8, textDecoration: 'none',
-    fontSize: 12.5, fontFamily: "'DM Sans', sans-serif",
-    color: activePage === page ? '#1A1918' : '#9B9A98',
-    fontWeight: activePage === page ? 600 : 500,
-    background: activePage === page ? 'rgba(0,0,0,0.04)' : 'transparent',
-    transition: 'background 0.12s',
+    border: 'none', cursor: 'pointer',
   });
 
   /* ── Nav icons (14px) ── */
@@ -104,7 +71,7 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
     docs:     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>,
     settings: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>,
     help:     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>,
-    logout:   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#E8726E" strokeWidth="1.8" strokeLinecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>,
+    logout:   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>,
   };
 
   return (
@@ -114,55 +81,77 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
       `}</style>
 
       {/* ══════ FLOATING TOP BAR ══════ */}
-      <div style={{
-        position: 'fixed', top: 12, left: 216, right: 16, height: 52, zIndex: 100,
-      }}>
-        <div style={{
-          width: '100%', height: '100%',
-          background: 'rgba(255,255,255,0.92)',
-          backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)',
-          borderRadius: 16, border: '1px solid rgba(255,255,255,0.80)',
-          boxShadow: '0 4px 28px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04)',
-          display: 'flex', alignItems: 'center', padding: '0 16px',
-          fontFamily: "'DM Sans', sans-serif", boxSizing: 'border-box',
-        }}>
-          {/* Vony logo — far left */}
-          <Link to="/" style={{
-            fontFamily: "'Playfair Display', Georgia, serif",
-            fontWeight: 400, fontStyle: 'italic', fontSize: '1.25rem',
-            letterSpacing: '-0.02em', color: '#1A1918', textDecoration: 'none', flexShrink: 0,
-          }}>Vony</Link>
+      <div style={{ position: 'fixed', top: 12, left: 208, right: 0, paddingRight: 24, zIndex: 100, pointerEvents: 'none' }}>
+        <div style={{ maxWidth: 1080, margin: '0 auto', height: 52, pointerEvents: 'auto' }}>
+          <div style={{
+            width: '100%', height: '100%',
+            background: 'rgba(255,255,255,0.93)',
+            backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)',
+            borderRadius: 16, border: '1px solid rgba(255,255,255,0.80)',
+            boxShadow: '0 4px 28px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04)',
+            display: 'flex', alignItems: 'center', padding: '0 18px',
+            fontFamily: "'DM Sans', sans-serif", boxSizing: 'border-box',
+          }}>
+            {/* Vony logo — far left */}
+            <Link to="/" style={{
+              fontFamily: "'Playfair Display', Georgia, serif",
+              fontWeight: 400, fontStyle: 'italic', fontSize: '1.25rem',
+              letterSpacing: '-0.02em', color: '#1A1918', textDecoration: 'none', flexShrink: 0,
+            }}>Vony</Link>
 
-          <div style={{ flex: 1 }} />
+            <div style={{ flex: 1 }} />
 
-          {/* Bell — notifications */}
-          <Link to={createPageUrl("Requests")} style={{ textDecoration: 'none', display: 'inline-flex', position: 'relative', marginRight: 14 }}>
-            <svg width="17" height="17" viewBox="0 0 24 24" fill={active('Requests') ? '#1A1918' : '#9B9A98'}>
-              <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
-            </svg>
-            {notifCount > 0 && (
+            {/* Bell — light yellow circle, darker yellow icon */}
+            <Link to={createPageUrl("Requests")} style={{ textDecoration: 'none', display: 'inline-flex', position: 'relative', marginRight: 10 }}>
               <div style={{
-                position: 'absolute', top: -4, right: -6,
-                background: '#E8726E', color: 'white', fontSize: 8, fontWeight: 700,
-                minWidth: 14, height: 14, borderRadius: 7,
-                display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 3px',
-              }}>{notifCount > 99 ? '99+' : notifCount}</div>
-            )}
-          </Link>
+                width: 34, height: 34, borderRadius: '50%',
+                background: '#FEF3C7',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="#D97706">
+                  <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+                </svg>
+              </div>
+              {notifCount > 0 && (
+                <div style={{
+                  position: 'absolute', top: 0, right: 0,
+                  background: '#E8726E', color: 'white', fontSize: 8, fontWeight: 700,
+                  minWidth: 14, height: 14, borderRadius: 7,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 3px',
+                }}>{notifCount > 99 ? '99+' : notifCount}</div>
+              )}
+            </Link>
 
-          {/* Profile — far right */}
-          <Link to={createPageUrl("Profile")} style={{ textDecoration: 'none', flexShrink: 0 }}>
-            <div style={{
-              width: 32, height: 32, borderRadius: '50%', background: '#03ACEA',
-              overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center',
-              outline: active('Profile') ? '2px solid #82F0B9' : 'none', outlineOffset: 2,
-            }}>
-              {user?.profile_picture_url
-                ? <img src={user.profile_picture_url} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                : <span style={{ fontSize: 13, fontWeight: 700, color: 'white' }}>{avatarInitial}</span>
-              }
-            </div>
-          </Link>
+            {/* Profile — blue rounded rectangle with light-blue icon + name */}
+            <Link to={createPageUrl("Profile")} style={{ textDecoration: 'none', flexShrink: 0 }}>
+              {user?.profile_picture_url ? (
+                /* Has photo — show photo + name in blue pill */
+                <div style={{
+                  display: 'flex', alignItems: 'center', gap: 8,
+                  background: '#03ACEA', borderRadius: 10, padding: '5px 12px 5px 5px',
+                  outline: active('Profile') ? '2px solid #82F0B9' : 'none', outlineOffset: 2,
+                }}>
+                  <div style={{ width: 26, height: 26, borderRadius: 7, overflow: 'hidden', flexShrink: 0 }}>
+                    <img src={user.profile_picture_url} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  </div>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: 'white', whiteSpace: 'nowrap' }}>{firstName || 'Profile'}</span>
+                </div>
+              ) : (
+                /* Default avatar — blue pill with light-blue person icon + name */
+                <div style={{
+                  display: 'flex', alignItems: 'center', gap: 8,
+                  background: '#03ACEA', borderRadius: 10, padding: '5px 12px 5px 8px',
+                  outline: active('Profile') ? '2px solid #82F0B9' : 'none', outlineOffset: 2,
+                }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="1.8" strokeLinecap="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                  </svg>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: 'white', whiteSpace: 'nowrap' }}>{firstName || 'Profile'}</span>
+                </div>
+              )}
+            </Link>
+          </div>
         </div>
       </div>
 
@@ -174,14 +163,9 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
         fontFamily: "'DM Sans', sans-serif",
         overflowY: 'auto', overflowX: 'hidden',
       }}>
-        {/* Logo */}
-        <div style={{ padding: '20px 20px 16px', flexShrink: 0 }}>
-          <Link to="/" style={{
-            fontFamily: "'Playfair Display', Georgia, serif",
-            fontWeight: 400, fontStyle: 'italic', fontSize: '1.35rem',
-            letterSpacing: '-0.02em', color: '#1A1918', textDecoration: 'none',
-          }}>Vony</Link>
-        </div>
+
+        {/* Top padding where logo used to be — replaced by just space */}
+        <div style={{ height: 24, flexShrink: 0 }} />
 
         {/* Nav links */}
         <div style={{ flex: 1, padding: '0 8px', display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -189,83 +173,32 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
           <Link to={createPageUrl("CreateOffer")} style={navLinkStyle('CreateOffer')}>{icons.create} Create Loan</Link>
           <Link to={createPageUrl("RecordPayment")} style={navLinkStyle('RecordPayment')}>{icons.record} Record Payment</Link>
           <Link to={createPageUrl("Upcoming")} style={navLinkStyle('Upcoming')}>{icons.upcoming} Upcoming</Link>
-
-          {/* My Loans inline dropdown */}
-          <div>
-            <button style={navBtnStyle('loans', 'YourLoans', 'Borrowing', 'Lending')} onClick={() => toggleDropdown('loans')}>
-              <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>{icons.loans} My Loans</span>
-              {chevron(openDropdown === 'loans')}
-            </button>
-            {openDropdown === 'loans' && (
-              <div style={{ padding: '2px 0 4px' }}>
-                <Link to={{ pathname: createPageUrl("YourLoans"), search: '?tab=lending' }} onClick={() => setOpenDropdown(null)} style={subLinkStyle('YourLoans')}>Lending</Link>
-                <Link to={{ pathname: createPageUrl("YourLoans"), search: '?tab=borrowing' }} onClick={() => setOpenDropdown(null)} style={subLinkStyle('YourLoans')}>Borrowing</Link>
-                <Link to={{ pathname: createPageUrl("YourLoans"), search: '?tab=details' }} onClick={() => setOpenDropdown(null)} style={subLinkStyle('YourLoans')}>Loan Details</Link>
-              </div>
-            )}
-          </div>
-
+          <Link to={createPageUrl("YourLoans")} style={navLinkStyle('YourLoans', 'Borrowing', 'Lending')}>{icons.loans} My Loans</Link>
           <Link to={createPageUrl("Friends")} style={navLinkStyle('Friends')}>{icons.friends} Friends</Link>
           <Link to={createPageUrl("RecentActivity")} style={navLinkStyle('RecentActivity')}>{icons.activity} Activity</Link>
           <Link to={createPageUrl("LoanAgreements")} style={navLinkStyle('LoanAgreements')}>{icons.docs} Documents</Link>
         </div>
 
-        {/* Bottom section: profile, logout, help, settings */}
-        <div style={{ padding: '0 8px', flexShrink: 0 }}>
-
-          {/* Profile */}
-          <Link to={createPageUrl("Profile")} style={{
-            display: 'flex', alignItems: 'center', gap: 10,
-            padding: '9px 8px', borderRadius: 10, textDecoration: 'none',
-            background: active('Profile') ? 'rgba(0,0,0,0.06)' : 'transparent',
-            transition: 'background 0.15s', marginBottom: 2,
-          }}>
-            <div style={{
-              width: 30, height: 30, borderRadius: '50%', background: '#03ACEA',
-              overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-            }}>
-              {user?.profile_picture_url
-                ? <img src={user.profile_picture_url} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                : <span style={{ fontSize: 12, fontWeight: 700, color: 'white' }}>{avatarInitial}</span>
-              }
-            </div>
-            <span style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              {firstName || 'Profile'}
-            </span>
-          </Link>
-
-          {/* Log out */}
-          <button onClick={handleLogout} style={{
-            display: 'flex', alignItems: 'center', gap: 10,
-            padding: '9px 16px', borderRadius: 10, border: 'none',
-            background: 'transparent', cursor: 'pointer', fontSize: 13,
-            fontFamily: "'DM Sans', sans-serif", color: '#E8726E', fontWeight: 500,
-            transition: 'background 0.12s', width: '100%', marginBottom: 6,
-          }}
-          onMouseEnter={e => e.currentTarget.style.background = 'rgba(232,114,110,0.06)'}
-          onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-            {icons.logout} Log Out
-          </button>
-
-          {/* Divider */}
+        {/* Bottom section: Help & Support, Settings, Log Out */}
+        <div style={{ padding: '0 8px 16px', flexShrink: 0 }}>
           <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', margin: '0 8px 6px' }} />
 
-          {/* Help & Support — no link for now */}
-          <div style={{
-            display: 'flex', alignItems: 'center', gap: 10,
-            padding: '9px 16px', borderRadius: 10,
-            fontSize: 13, fontFamily: "'DM Sans', sans-serif",
-            color: '#9B9A98', fontWeight: 500, cursor: 'default',
-          }}>
+          {/* Help & Support — no link */}
+          <div style={{ ...bottomItemStyle(), cursor: 'default', color: '#9B9A98' }}>
             {icons.help} Help & Support
           </div>
 
           {/* Settings */}
-          <Link to={createPageUrl("ComingSoon")} style={{
-            ...navLinkStyle('ComingSoon'),
-            marginBottom: 16,
-          }}>{icons.settings} Settings</Link>
+          <Link to={createPageUrl("ComingSoon")} style={bottomItemStyle('ComingSoon')}>
+            {icons.settings} Settings
+          </Link>
 
+          {/* Log Out — same shade as Settings */}
+          <button onClick={handleLogout} style={{ ...bottomItemStyle(), cursor: 'pointer' }}
+            onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.06)'}
+            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+            {icons.logout} Log Out
+          </button>
         </div>
       </nav>
     </>
