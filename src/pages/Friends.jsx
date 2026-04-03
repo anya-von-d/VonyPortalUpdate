@@ -306,7 +306,6 @@ export default function Friends() {
                           key={friendship.id}
                           style={{
                             display: 'flex', alignItems: 'center', gap: 12, padding: '13px 0',
-                            borderBottom: index < sortedFriends.length - 1 ? '1px solid rgba(0,0,0,0.05)' : 'none',
                           }}
                         >
                           {/* Avatar */}
@@ -421,7 +420,6 @@ export default function Friends() {
                                 key={profile.user_id}
                                 style={{
                                   display: 'flex', alignItems: 'center', gap: 12, padding: '13px 0',
-                                  borderBottom: '1px solid rgba(0,0,0,0.05)',
                                 }}
                               >
                                 <img

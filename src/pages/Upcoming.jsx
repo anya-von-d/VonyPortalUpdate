@@ -295,7 +295,6 @@ export default function Upcoming() {
     return (
       <div style={{
         display: 'flex', alignItems: 'center', gap: 12, padding: '12px 0',
-        borderBottom: showBorder ? '1px solid rgba(0,0,0,0.05)' : 'none',
       }}>
         {/* Days box instead of profile image */}
         <div style={{

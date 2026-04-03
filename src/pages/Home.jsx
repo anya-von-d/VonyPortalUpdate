@@ -823,9 +823,9 @@ export default function Home() {
                         const isOverdue = event.days < 0;
                         const daysLabel = isOverdue ? `${Math.abs(event.days)}d late` : `${event.days}d`;
                         return (
-                          <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 0', borderBottom: idx < Math.min(combinedPaymentEvents.length, 5) - 1 ? '1px solid rgba(0,0,0,0.05)' : 'none' }}>
+                          <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 0' }}>
                             {/* Days label — left column */}
-                            <div style={{ fontSize: 10, fontWeight: 600, color: isOverdue ? '#E8726E' : '#787776', letterSpacing: '0.02em', flexShrink: 0, minWidth: 38, textAlign: 'right' }}>
+                            <div style={{ fontSize: 10, fontWeight: 600, color: isOverdue ? '#E8726E' : '#787776', letterSpacing: '0.02em', flexShrink: 0, minWidth: 46, textAlign: 'center' }}>
                               {daysLabel}
                             </div>
                             {/* Main info — middle */}

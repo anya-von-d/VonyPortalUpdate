@@ -650,7 +650,7 @@ export default function YourLoans() {
                       const otherParty = publicProfiles.find(p => p.user_id === loan.lender_id);
                       const rankValue = rankingFilter === 'highest_interest' ? `${loan.interest_rate || 0}%` : rankingFilter === 'highest_payment' ? `$${(loan.payment_amount || 0).toLocaleString()}` : loan.next_payment_date ? format(new Date(loan.next_payment_date), 'MMM d') : 'N/A';
                       return (
-                        <div key={loan.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 0', borderBottom: idx < Math.min(sorted.length, 5) - 1 ? '1px solid rgba(0,0,0,0.05)' : 'none' }}>
+                        <div key={loan.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 0' }}>
                           <div style={{ flexShrink: 0, width: 28, height: 28, borderRadius: '50%', background: accentLight, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><span style={{ fontSize: 12, fontWeight: 700, color: accentColor }}>{idx + 1}</span></div>
                           <div style={{ flex: 1, minWidth: 0 }}><p style={{ fontSize: 11, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', margin: 0 }}>{otherParty?.full_name || 'User'} · {loan.purpose || 'Loan'}</p></div>
                           <span style={{ fontSize: 11, fontWeight: 700, color: '#1A1918', flexShrink: 0 }}>{rankValue}</span>
@@ -786,7 +786,7 @@ export default function YourLoans() {
                         {combinedLoans.map((loan, idx) => {
                           const isOverdue = loan.days < 0;
                           return (
-                            <div key={loan.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 0', borderBottom: idx < combinedLoans.length - 1 ? '1px solid rgba(0,0,0,0.05)' : 'none' }}>
+                            <div key={loan.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 0' }}>
                               {/* Profile avatar */}
                               <div style={{ flexShrink: 0, width: 36, height: 36, borderRadius: '50%', overflow: 'hidden', background: accentLight, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                 {loan.otherPartyPic ? (
@@ -846,7 +846,7 @@ export default function YourLoans() {
                         {combinedLoans.map((loan, idx) => {
                           const isOverdue = loan.days < 0;
                           return (
-                            <div key={loan.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 0', borderBottom: idx < combinedLoans.length - 1 ? '1px solid rgba(0,0,0,0.05)' : 'none' }}>
+                            <div key={loan.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 0' }}>
                               <div style={{ flexShrink: 0, width: 36, height: 36, borderRadius: '50%', overflow: 'hidden', background: accentLight, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                 {loan.otherPartyPic ? (
                                   <img src={loan.otherPartyPic} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />

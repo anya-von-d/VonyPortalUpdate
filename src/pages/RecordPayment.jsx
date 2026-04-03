@@ -383,18 +383,17 @@ export default function RecordPayment() {
           <div style={{ flex: 1, minWidth: 0, paddingRight: 24, maxWidth: 1080, margin: '0 auto', padding: '24px 40px 64px', position: 'relative', zIndex: 2 }}>
 
           {/* Two-column layout */}
-          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 16, alignItems: 'start' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 16, alignItems: 'start' }}>
 
-            {/* ── Left Column ──────────────────────────────────── */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            {/* ── Left Column (form — visually right after swap) ── */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16, order: 2 }}>
 
               {/* Record Payment Form */}
               <div className="glass-card" style={{ padding: '26px', overflow: 'visible' }}>
                 {currentStep === 0 && !selectedLoan && (
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '48px 0', color: '#C7C6C4' }}>
-                    <DollarSign size={36} style={{ opacity: 0.3, marginBottom: 12 }} />
                     <p style={{ fontSize: 15, fontWeight: 500, color: '#787776', margin: 0 }}>Select a loan to get started</p>
-                    <p style={{ fontSize: 12, color: '#C7C6C4', margin: '4px 0 0' }}>Choose from your active loans on the right</p>
+                    <p style={{ fontSize: 12, color: '#C7C6C4', margin: '4px 0 0' }}>Choose from your active loans on the left</p>
                   </div>
                 )}
 
@@ -489,7 +488,7 @@ export default function RecordPayment() {
 
                 {currentStep === 2 && selectedLoan && (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-                    <div style={{ textAlign: 'center', paddingBottom: 16, borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
+                    <div style={{ textAlign: 'center', paddingBottom: 16 }}>
                       <h3 style={{ fontSize: 18, fontWeight: 600, color: '#1A1918', margin: 0 }}>Confirm Payment</h3>
                     </div>
 
@@ -579,8 +578,8 @@ export default function RecordPayment() {
 
             </div>
 
-            {/* ── Right Column: Select Your Loan ────────────── */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            {/* ── Right Column: Select Your Loan (visually left after swap) ── */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16, order: 1 }}>
             <div className="glass-card" style={{ overflow: 'visible' }}>
               {/* Title row with Clear Filters */}
               <div style={{ padding: '20px 22px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -601,7 +600,7 @@ export default function RecordPayment() {
               </div>
 
               {/* Loan List */}
-              <div style={{ padding: '12px 22px 22px', maxHeight: 420, overflowY: 'auto' }}>
+              <div style={{ padding: '12px 22px 22px', maxHeight: 185, overflowY: 'auto' }}>
                 {filteredLoans.length === 0 ? (
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '32px 0', color: '#C7C6C4' }}>
                     <FileText size={28} style={{ opacity: 0.3, marginBottom: 8 }} />
@@ -617,7 +616,6 @@ export default function RecordPayment() {
                         <button key={loan.id} onClick={() => handleSelectLoan(loan)} style={{
                           display: 'block', width: '100%', textAlign: 'left', padding: '13px 0',
                           background: isSelected ? 'rgba(1,173,233,0.05)' : 'transparent',
-                          borderBottom: '1px solid rgba(0,0,0,0.05)',
                           cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", transition: 'all 0.15s',
                         }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -692,7 +690,6 @@ export default function RecordPayment() {
                     return (
                       <div key={payment.id} style={{
                         display: 'flex', alignItems: 'center', gap: 12, padding: '13px 0',
-                        borderBottom: '1px solid rgba(0,0,0,0.05)',
                       }}>
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <p style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', margin: 0 }}>
@@ -739,7 +736,6 @@ export default function RecordPayment() {
                     return (
                       <div key={payment.id} style={{
                         display: 'flex', alignItems: 'center', gap: 12, padding: '13px 0',
-                        borderBottom: '1px solid rgba(0,0,0,0.05)',
                       }}>
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <p style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', margin: 0 }}>
