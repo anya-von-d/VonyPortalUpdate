@@ -690,14 +690,6 @@ export default function Home() {
 
       <DashboardSidebar activePage="Dashboard" user={user} />
 
-      {/* ── Title ── */}
-      <div style={{ padding: '16px 28px 8px', textAlign: 'center' }}>
-        <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '2.8rem', fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', lineHeight: 1.1, margin: 0 }}>
-          {greeting}, <em style={{ fontStyle: 'italic', fontWeight: 600, color: '#1A1918' }}>{firstName}</em>
-        </h1>
-      </div>
-
-
       {/* ── Main page content ── */}
       <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 28px 64px', position: 'relative', zIndex: 1 }}>
 

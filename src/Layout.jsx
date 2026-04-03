@@ -108,14 +108,6 @@ export default function Layout({ children }) {
           pointerEvents: 'none', zIndex: 51,
         }} />
       )}
-      {/* Solid background top strip + blue gradient below — main content area */}
-      {isDashboardStyle && (
-        <div style={{
-          position: 'fixed', top: 0, left: 200, right: 0, height: 90,
-          background: 'linear-gradient(to bottom, #F5F4F0 0%, #F5F4F0 42px, #03ACEA 52px, rgba(245,244,240,0) 90px)',
-          pointerEvents: 'none', zIndex: 51,
-        }} />
-      )}
 
       {/* TopNav handles its own fixed positioning and mobile menu — hidden on dashboard-style pages */}
       {user && !isDashboardStyle && <TopNav location={location} />}
