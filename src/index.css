@@ -154,10 +154,10 @@ input[type="date"] {
   position: absolute;
   inset: 0;
   border-radius: 12px;
-  border: 1px solid rgba(101, 135, 249, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.5);
   box-shadow:
-    rgba(101, 135, 249, 0.6) 0px 0px 20px inset,
-    rgba(101, 135, 249, 0.25) 0px 0px 40px inset;
+    rgba(255, 255, 255, 0.6) 0px 0px 20px inset,
+    rgba(255, 255, 255, 0.25) 0px 0px 40px inset;
   pointer-events: none;
   z-index: 3;
 }

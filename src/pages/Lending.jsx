@@ -1410,7 +1410,7 @@ export default function Lending({ initialTab }) {
         signingAs="Lender"
       />
 
-      <div className="home-with-sidebar" style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 240, background: '#F5F4F0' }}>
+      <div className="home-with-sidebar" style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 240, background: '#6587F9' }}>
 
         <DashboardSidebar activePage={initialTab === 'create' ? 'CreateOffer' : 'Lending'} user={currentUser} />
 
@@ -1419,7 +1419,7 @@ export default function Lending({ initialTab }) {
           <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', bottom: 0, overflow: 'hidden', borderRadius: 12, zIndex: 0, pointerEvents: 'none' }}>
             <div style={{
               position: 'absolute', top: 0, left: '-10%', width: '120%', height: '100%', zIndex: 0,
-              background: '#F5F4F0'
+              background: '#6587F9'
             }} />
           </div>
 
