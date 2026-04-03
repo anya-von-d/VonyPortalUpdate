@@ -348,7 +348,7 @@ export default function Upcoming() {
   };
 
   return (
-    <div className="home-with-sidebar" style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 240, paddingTop: 106, background: '#F5F4F0' }}>
+    <div className="home-with-sidebar" style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingTop: 76, background: '#F5F4F0' }}>
 
       <DashboardSidebar activePage="Upcoming" user={user} tabs={[{key:'summary',label:'Summary'},{key:'calendar',label:'Calendar'}]} activeTab={activeTab} onTabChange={setActiveTab} />
 
