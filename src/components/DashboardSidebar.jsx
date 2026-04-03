@@ -84,17 +84,17 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
   const linkStyle = (page) => ({
     display: 'flex', alignItems: 'center', gap: 12, padding: '9px 14px', borderRadius: 10,
     textDecoration: 'none', fontSize: 13, transition: 'background 0.15s',
-    color: 'white',
-    background: isActive(page) ? 'rgba(0,0,0,0.15)' : 'transparent',
+    color: '#1A1918',
+    background: isActive(page) ? '#E3E0DC' : 'transparent',
     fontWeight: isActive(page) ? 600 : 450,
   });
-  const ic = 'white';
+  const ic = '#01ADE9';
 
-  // Compact rounded icon box — white tint on blue sidebar
+  // Compact rounded icon box — filled icons in light cyan tint
   const iconBox = (svg) => (
     <div style={{
       width: 24, height: 24, borderRadius: 6,
-      background: 'rgba(255,255,255,0.2)',
+      background: '#DCF7FD',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       flexShrink: 0,
     }}>
@@ -196,7 +196,7 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
 
   // Footer items rendered inside the sidebar (Settings → Notifications → Profile, top→bottom)
   const sidebarFooter = (
-    <div style={{ padding: '8px 12px 12px', borderTop: '1px solid rgba(255,255,255,0.2)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+    <div style={{ padding: '8px 12px 12px', borderTop: '1px solid rgba(0,0,0,0.07)', display: 'flex', flexDirection: 'column', gap: 2 }}>
       {/* Settings */}
       <div ref={settingsRef} style={{ position: 'relative' }}>
         <button
@@ -205,7 +205,7 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
             ...linkStyle('Settings'),
             width: '100%', border: 'none', cursor: 'pointer',
             fontFamily: "'DM Sans', sans-serif", textAlign: 'left',
-            background: settingsOpen ? 'rgba(0,0,0,0.15)' : 'transparent',
+            background: settingsOpen ? '#E3E0DC' : 'transparent',
           }}
         >
           {iconBox(<svg width="13" height="13" viewBox="0 0 24 24" fill={ic}><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>)}
@@ -246,7 +246,7 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
       <div className="mobile-header" style={{
         display: 'none', /* shown via CSS at <=900px */
         position: 'fixed', top: 0, left: 0, right: 0, height: 56,
-        background: '#05ACEC', zIndex: 53,
+        background: '#EDEAE7', zIndex: 53,
         alignItems: 'center', justifyContent: 'space-between',
         padding: '0 16px',
         fontFamily: "'DM Sans', sans-serif",
@@ -280,7 +280,7 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
         >
           <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.3)' }} onClick={() => setMobileMenuOpen(false)} />
           <div style={{
-            position: 'relative', width: 260, background: '#05ACEC',
+            position: 'relative', width: 260, background: '#EDEAE7',
             paddingTop: 64, display: 'flex', flexDirection: 'column',
             overflowY: 'auto', boxShadow: '4px 0 20px rgba(0,0,0,0.1)',
           }}>
@@ -295,13 +295,13 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
       {/* ── Desktop sidebar ── */}
       <aside className="home-sidebar" style={{
         position: 'fixed', left: 0, top: 0, bottom: 0, width: 220,
-        background: '#05ACEC',
+        background: '#EDEAE7',
         zIndex: 52, display: 'flex', flexDirection: 'column',
         fontFamily: "'DM Sans', sans-serif", overflowY: 'auto',
       }}>
         {/* Logo */}
         <div style={{ padding: '18px 16px 10px', flexShrink: 0 }}>
-          <Link to="/" style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 400, fontStyle: 'italic', fontSize: '1.5rem', letterSpacing: '-0.02em', color: 'white', textDecoration: 'none' }}>Vony</Link>
+          <Link to="/" style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 400, fontStyle: 'italic', fontSize: '1.5rem', letterSpacing: '-0.02em', color: '#1A1918', textDecoration: 'none' }}>Vony</Link>
         </div>
         <nav style={{ flex: 1, padding: '4px 12px 4px', display: 'flex', flexDirection: 'column', gap: 2 }}>
           {navLinks}
