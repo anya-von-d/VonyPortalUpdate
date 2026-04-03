@@ -859,7 +859,7 @@ export default function Borrowing() {
         )}
       </AnimatePresence>
 
-      <div className="home-with-sidebar" style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 272, paddingTop: 76, background: '#F5F4F0' }}>
+      <div className="home-with-sidebar" style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 208, paddingRight: 268, paddingTop: 24, background: '#F5F4F0' }}>
         <DashboardSidebar activePage="Borrowing" user={user} tabs={[{key:'summary',label:'Summary'},{key:'details',label:'Individual Loan Details'}]} activeTab={activeTab} onTabChange={setActiveTab} />
 
           <div style={{ position: 'relative', zIndex: 2 }}>

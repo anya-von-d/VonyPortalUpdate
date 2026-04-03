@@ -511,7 +511,7 @@ export default function RecentActivityPage() {
   /* ── Loading / unauthenticated states ─────────────────────── */
   if (isLoading || !user) {
     return (
-      <div style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 272, paddingTop: 76, background: '#F5F4F0' }}>
+      <div style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 208, paddingRight: 268, paddingTop: 24, background: '#F5F4F0' }}>
         <DashboardSidebar activePage="RecentActivity" user={user} />
           <div style={{ maxWidth: 1080, margin: '0 auto', padding: '24px 40px 64px', position: 'relative', zIndex: 2 }}>
             <div className="glass-card" style={{ padding: 40, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
@@ -768,7 +768,7 @@ export default function RecentActivityPage() {
      ══════════════════════════════════════════════════════════ */
   return (
     <>
-      <div style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 272, paddingTop: 76, background: '#F5F4F0' }}>
+      <div style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 208, paddingRight: 268, paddingTop: 24, background: '#F5F4F0' }}>
         <DashboardSidebar activePage="RecentActivity" user={user} />
 
           {/* Gradient background */}
