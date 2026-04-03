@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Loan, Payment, Friendship, PublicProfile } from "@/entities/all";
 import { useAuth } from "@/lib/AuthContext";
-import { format } from "date-fns";
+import { format, differenceInDays } from "date-fns";
 
 /* ── Accordion section ──────────────────────────────────────── */
 function AccordionSection({ title, open, onToggle, badge, children }) {
@@ -44,6 +44,23 @@ function AccordionSection({ title, open, onToggle, badge, children }) {
   );
 }
 
+/* ── Mini avatar ────────────────────────────────────────────── */
+function MiniAvatar({ photoUrl, name, size = 26 }) {
+  const initial = (name || 'U').charAt(0).toUpperCase();
+  return (
+    <div style={{
+      width: size, height: size, borderRadius: '50%', background: '#1A1918',
+      flexShrink: 0, overflow: 'hidden',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+    }}>
+      {photoUrl
+        ? <img src={photoUrl} alt={name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        : <span style={{ fontSize: size * 0.42, fontWeight: 700, color: 'white' }}>{initial}</span>
+      }
+    </div>
+  );
+}
+
 /* ── Main component ─────────────────────────────────────────── */
 export default function DashboardSidebar({ activePage = "Dashboard", user }) {
   const avatarInitial = (user?.full_name || 'U').charAt(0).toUpperCase();
@@ -56,10 +73,7 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
   const [friends, setFriends] = useState([]);
   const [pendingItems, setPendingItems] = useState([]);
 
-  /* Nav dropdown state */
   const [openDropdown, setOpenDropdown] = useState(null);
-
-  /* Sidebar accordion state */
   const [upcomingOpen, setUpcomingOpen] = useState(true);
   const [friendsOpen, setFriendsOpen] = useState(true);
   const [pendingOpen, setPendingOpen] = useState(true);
@@ -83,12 +97,11 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
       const userLoanIds = userLoans.map(l => l.id);
       const today = new Date();
 
-      const getName = (userId) => {
-        const p = profiles.find(pr => pr.user_id === userId);
-        return p?.full_name?.split(' ')[0] || 'Someone';
-      };
+      const getProfile = (userId) => profiles.find(pr => pr.user_id === userId);
+      const getName = (userId) => getProfile(userId)?.full_name?.split(' ')[0] || 'Someone';
+      const getPhoto = (userId) => getProfile(userId)?.profile_picture_url || null;
 
-      /* ── Notifications (actionable by current user) ── */
+      /* ── Notifications ── */
       const paymentsToConfirm = payments.filter(p =>
         p.status === 'pending_confirmation' && userLoanIds.includes(p.loan_id) && p.recorded_by !== user.id
       );
@@ -103,21 +116,29 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
           id: l.id,
           text: `${getName(l.lender_id)} sent you a loan offer`,
           date: l.created_at,
+          senderPhoto: getPhoto(l.lender_id),
+          senderName: getName(l.lender_id),
         })),
         ...paymentsToConfirm.map(p => ({
           id: p.id,
           text: `Confirm payment from ${getName(p.recorded_by)}`,
           date: p.created_at,
+          senderPhoto: getPhoto(p.recorded_by),
+          senderName: getName(p.recorded_by),
         })),
         ...friendRequests.map(f => ({
           id: f.id,
           text: `${getName(f.user_id)} sent you a friend request`,
           date: f.created_at,
+          senderPhoto: getPhoto(f.user_id),
+          senderName: getName(f.user_id),
         })),
         ...termChanges.map(l => ({
           id: l.id,
           text: `${getName(l.lender_id)} updated loan terms`,
           date: l.updated_at,
+          senderPhoto: getPhoto(l.lender_id),
+          senderName: getName(l.lender_id),
         })),
       ];
       setNotifCount(notifItems.length);
@@ -125,16 +146,21 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
 
       /* ── Upcoming ── */
       const upcoming = userLoans
-        .filter(l => l.status === 'active' && l.next_payment_date && new Date(l.next_payment_date) >= today)
+        .filter(l => l.status === 'active' && l.next_payment_date)
         .sort((a, b) => new Date(a.next_payment_date) - new Date(b.next_payment_date))
         .slice(0, 5)
-        .map(l => ({
-          id: l.id,
-          amount: l.payment_amount || 0,
-          date: l.next_payment_date,
-          name: getName(l.lender_id === user.id ? l.borrower_id : l.lender_id),
-          isLender: l.lender_id === user.id,
-        }));
+        .map(l => {
+          const dueDate = new Date(l.next_payment_date);
+          const daysLeft = differenceInDays(dueDate, today);
+          return {
+            id: l.id,
+            amount: l.payment_amount || 0,
+            date: l.next_payment_date,
+            name: getName(l.lender_id === user.id ? l.borrower_id : l.lender_id),
+            isLender: l.lender_id === user.id,
+            daysLeft,
+          };
+        });
       setUpcomingPayments(upcoming);
 
       /* ── Friends ── */
@@ -149,7 +175,7 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
         .filter(Boolean);
       setFriends(friendProfiles);
 
-      /* ── Pending (waiting for others to act) ── */
+      /* ── Pending (waiting for others) ── */
       const myRecordedPending = payments.filter(p =>
         p.recorded_by === user.id && p.status === 'pending_confirmation'
       );
@@ -159,11 +185,7 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
         ...myRecordedPending.map(p => {
           const loan = userLoans.find(l => l.id === p.loan_id);
           const otherId = loan ? (loan.lender_id === user.id ? loan.borrower_id : loan.lender_id) : null;
-          return {
-            id: p.id,
-            text: `Waiting for ${otherId ? getName(otherId) : 'them'} to confirm payment`,
-            date: p.created_at,
-          };
+          return { id: p.id, text: `Waiting for ${otherId ? getName(otherId) : 'them'} to confirm payment`, date: p.created_at };
         }),
         ...myOffersOut.map(l => ({
           id: l.id,
@@ -181,17 +203,13 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
   /* ── Close nav dropdown on outside click ── */
   useEffect(() => {
     const h = (e) => {
-      if (dropdownWrapRef.current && !dropdownWrapRef.current.contains(e.target)) {
-        setOpenDropdown(null);
-      }
+      if (dropdownWrapRef.current && !dropdownWrapRef.current.contains(e.target)) setOpenDropdown(null);
     };
     document.addEventListener('mousedown', h);
     return () => document.removeEventListener('mousedown', h);
   }, []);
 
   const handleLogout = () => { setOpenDropdown(null); logout(); };
-
-  /* ── Active page helpers ── */
   const active = (...pages) => pages.includes(activePage);
 
   const navLinkStyle = (...pages) => ({
@@ -224,10 +242,8 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
 
   const dropdownPanel = (alignRight = false) => ({
     position: 'absolute', top: 'calc(100% + 6px)',
-    left: alignRight ? 'auto' : 0,
-    right: alignRight ? 0 : 'auto',
-    minWidth: 180,
-    background: 'white', borderRadius: 12,
+    left: alignRight ? 'auto' : 0, right: alignRight ? 0 : 'auto',
+    minWidth: 180, background: 'white', borderRadius: 12,
     border: '1px solid rgba(0,0,0,0.07)',
     boxShadow: '0 8px 28px rgba(0,0,0,0.10)',
     padding: 5, zIndex: 200,
@@ -238,9 +254,8 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
       to={search ? { pathname: createPageUrl(page), search } : createPageUrl(page)}
       onClick={() => setOpenDropdown(null)}
       style={{
-        display: 'flex', alignItems: 'center',
-        padding: '8px 12px', borderRadius: 8, textDecoration: 'none',
-        fontSize: 13, fontFamily: "'DM Sans', sans-serif",
+        display: 'flex', alignItems: 'center', padding: '8px 12px', borderRadius: 8,
+        textDecoration: 'none', fontSize: 13, fontFamily: "'DM Sans', sans-serif",
         color: activePage === page ? '#1A1918' : '#5C5B5A',
         fontWeight: activePage === page ? 600 : 500,
         background: activePage === page ? 'rgba(0,0,0,0.05)' : 'transparent',
@@ -260,30 +275,20 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
 
   return (
     <>
-      {/* ── Mobile tab bar responsive CSS ── */}
       <style>{`
-        @media (min-width: 900px) {
-          .mobile-tab-bar { display: none !important; }
-        }
+        @media (min-width: 900px) { .mobile-tab-bar { display: none !important; } }
       `}</style>
 
-      {/* ══════════════════════════════════════════════════════════
-          FLOATING GLASS PILL NAV
-          ══════════════════════════════════════════════════════════ */}
-      <div ref={dropdownWrapRef} style={{
-        position: 'fixed', top: 8, left: 268, right: 8, height: 52, zIndex: 100,
-      }}>
+      {/* ══════ NAV PILL ══════ */}
+      <div ref={dropdownWrapRef} style={{ position: 'fixed', top: 8, left: 268, right: 8, height: 52, zIndex: 100 }}>
         <nav style={{
           width: '100%', height: '100%',
           background: 'rgba(255,255,255,0.90)',
           backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)',
-          borderRadius: 16,
-          border: '1px solid rgba(255,255,255,0.80)',
+          borderRadius: 16, border: '1px solid rgba(255,255,255,0.80)',
           boxShadow: '0 4px 28px rgba(0,0,0,0.09), 0 1px 4px rgba(0,0,0,0.05)',
-          display: 'flex', alignItems: 'center',
-          padding: '0 16px', gap: 2,
-          fontFamily: "'DM Sans', sans-serif",
-          overflow: 'visible', boxSizing: 'border-box',
+          display: 'flex', alignItems: 'center', padding: '0 16px', gap: 2,
+          fontFamily: "'DM Sans', sans-serif", overflow: 'visible', boxSizing: 'border-box',
         }}>
           <Link to="/" style={{
             fontFamily: "'Playfair Display', Georgia, serif",
@@ -299,7 +304,6 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
           <Link to={createPageUrl("RecordPayment")} style={navLinkStyle('RecordPayment')}>Record Payment</Link>
           <div style={{ flex: 1 }} />
 
-          {/* Upcoming dropdown */}
           <div style={{ position: 'relative', flexShrink: 0 }}>
             <button style={dropdownBtnStyle('upcoming', 'Upcoming')}
               onClick={() => setOpenDropdown(openDropdown === 'upcoming' ? null : 'upcoming')}>
@@ -315,7 +319,6 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
 
           <div style={{ flex: 1 }} />
 
-          {/* My Loans dropdown */}
           <div style={{ position: 'relative', flexShrink: 0 }}>
             <button style={dropdownBtnStyle('loans', 'YourLoans', 'Borrowing', 'Lending')}
               onClick={() => setOpenDropdown(openDropdown === 'loans' ? null : 'loans')}>
@@ -334,7 +337,6 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
           <Link to={createPageUrl("Friends")} style={navLinkStyle('Friends')}>Friends</Link>
           <div style={{ flex: 1 }} />
 
-          {/* More dropdown */}
           <div style={{ position: 'relative', flexShrink: 0 }}>
             <button style={dropdownBtnStyle('more', 'RecentActivity', 'LoanAgreements', 'ComingSoon')}
               onClick={() => setOpenDropdown(openDropdown === 'more' ? null : 'more')}>
@@ -369,76 +371,64 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
         </nav>
       </div>
 
-      {/* ══════════════════════════════════════════════════════════
-          WHITE INFO SIDEBAR
-          ══════════════════════════════════════════════════════════ */}
+      {/* ══════ WHITE SIDEBAR ══════ */}
       <aside style={{
         position: 'fixed', left: 0, top: 0, bottom: 0, width: 260,
-        background: 'white',
-        borderRight: '1px solid rgba(0,0,0,0.06)',
-        boxShadow: '4px 0 24px rgba(0,0,0,0.03)',
-        zIndex: 80,
+        background: 'white', borderRight: '1px solid rgba(0,0,0,0.06)',
+        boxShadow: '4px 0 24px rgba(0,0,0,0.03)', zIndex: 80,
         display: 'flex', flexDirection: 'column',
-        overflowY: 'auto', overflowX: 'hidden',
-        fontFamily: "'DM Sans', sans-serif",
+        overflowY: 'auto', overflowX: 'hidden', fontFamily: "'DM Sans', sans-serif",
       }}>
 
         {/* ── Header ── */}
-        <div style={{ position: 'relative', padding: '16px 16px 18px', borderBottom: '1px solid rgba(0,0,0,0.05)', flexShrink: 0 }}>
+        <div style={{ padding: '14px 16px 18px', borderBottom: '1px solid rgba(0,0,0,0.05)', flexShrink: 0 }}>
 
-          {/* Notifications bell — top right, no box */}
-          <Link to={createPageUrl("Requests")} style={{
-            position: 'absolute', top: 14, right: 14,
-            textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-          }}>
-            <div style={{ position: 'relative' }}>
+          {/* Row 1: bell icon only, top right */}
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 14 }}>
+            <Link to={createPageUrl("Requests")} style={{ textDecoration: 'none', display: 'inline-flex', position: 'relative' }}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill={active('Requests') ? '#1A1918' : '#9B9A98'}>
                 <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
               </svg>
               {notifCount > 0 && (
                 <div style={{
-                  position: 'absolute', top: -4, right: -5,
-                  background: '#E8726E', color: 'white',
-                  fontSize: 8, fontWeight: 700, minWidth: 14, height: 14, borderRadius: 7,
+                  position: 'absolute', top: -4, right: -6,
+                  background: '#E8726E', color: 'white', fontSize: 8, fontWeight: 700,
+                  minWidth: 14, height: 14, borderRadius: 7,
                   display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 3px',
                 }}>{notifCount > 99 ? '99+' : notifCount}</div>
               )}
-            </div>
-          </Link>
+            </Link>
+          </div>
 
-          {/* Profile photo — centered, large, clickable */}
-          <Link to={createPageUrl("Profile")} style={{
-            display: 'flex', justifyContent: 'center', marginBottom: 10, textDecoration: 'none',
-          }}>
-            <div style={{
-              width: 68, height: 68, borderRadius: '50%', background: '#1A1918',
-              overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center',
-              outline: active('Profile') ? '3px solid #82F0B9' : '3px solid rgba(0,0,0,0.06)',
-              outlineOffset: 2,
-              transition: 'outline 0.15s',
+          {/* Row 2: profile photo (left) + first name (right) */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 11, marginBottom: 12 }}>
+            <Link to={createPageUrl("Profile")} style={{ textDecoration: 'none', flexShrink: 0 }}>
+              <div style={{
+                width: 54, height: 54, borderRadius: '50%', background: '#1A1918',
+                overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                outline: active('Profile') ? '3px solid #82F0B9' : '2px solid rgba(0,0,0,0.07)',
+                outlineOffset: 2,
+              }}>
+                {user?.profile_picture_url
+                  ? <img src={user.profile_picture_url} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  : <span style={{ fontSize: 20, fontWeight: 700, color: 'white' }}>{avatarInitial}</span>
+                }
+              </div>
+            </Link>
+            <p style={{
+              fontSize: 16, fontWeight: 700, color: '#1A1918', margin: 0,
+              overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
             }}>
-              {user?.profile_picture_url
-                ? <img src={user.profile_picture_url} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                : <span style={{ fontSize: 24, fontWeight: 700, color: 'white' }}>{avatarInitial}</span>
-              }
-            </div>
-          </Link>
+              {firstName || 'there'}
+            </p>
+          </div>
 
-          {/* Name — centered */}
-          <p style={{
-            textAlign: 'center', fontSize: 15, fontWeight: 700, color: '#1A1918',
-            margin: '0 0 10px', lineHeight: 1.2,
-          }}>
-            {user?.full_name || firstName || 'there'}
-          </p>
-
-          {/* My Profile button */}
+          {/* Row 3: My Profile button */}
           <Link to={createPageUrl("Profile")} style={{
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             padding: '7px 14px', borderRadius: 10,
             background: active('Profile') ? '#1A1918' : 'rgba(0,0,0,0.05)',
-            textDecoration: 'none',
-            fontSize: 12, fontWeight: 600,
+            textDecoration: 'none', fontSize: 12, fontWeight: 600,
             color: active('Profile') ? 'white' : '#1A1918',
             transition: 'background 0.15s',
           }}
@@ -449,9 +439,8 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
           </Link>
         </div>
 
-        {/* ── Notifications — flat list, no accordion ── */}
+        {/* ── Notifications — flat list, sender photo on right ── */}
         <div style={{ borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
-          {/* Section title */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '11px 16px 8px' }}>
             <span style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.07em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: 7 }}>
               Notifications
@@ -470,30 +459,30 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
             )}
           </div>
 
-          {/* Items — no boxes, just text + date */}
           <div style={{ padding: '0 16px 12px' }}>
             {notifications.length === 0
               ? <p style={{ fontSize: 12, color: '#C7C6C4', margin: 0 }}>No new notifications</p>
               : notifications.map((n, i) => (
                 <Link key={n.id || i} to={createPageUrl("Requests")} style={{
-                  display: 'block', textDecoration: 'none',
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10,
+                  textDecoration: 'none',
                   paddingBottom: i < notifications.length - 1 ? 10 : 0,
                   marginBottom: i < notifications.length - 1 ? 10 : 0,
                   borderBottom: i < notifications.length - 1 ? '1px solid rgba(0,0,0,0.04)' : 'none',
                 }}>
-                  <p style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', margin: 0, lineHeight: 1.4 }}>{n.text}</p>
-                  {n.date && (
-                    <p style={{ fontSize: 10, color: '#9B9A98', margin: '2px 0 0' }}>
-                      {formatDate(n.date)}
-                    </p>
-                  )}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', margin: 0, lineHeight: 1.4 }}>{n.text}</p>
+                    {n.date && <p style={{ fontSize: 10, color: '#9B9A98', margin: '2px 0 0' }}>{formatDate(n.date)}</p>}
+                  </div>
+                  {/* Sender photo — right side */}
+                  <MiniAvatar photoUrl={n.senderPhoto} name={n.senderName} size={26} />
                 </Link>
               ))
             }
           </div>
         </div>
 
-        {/* ── Upcoming accordion ── */}
+        {/* ── Upcoming — no boxes, days-left number ── */}
         <AccordionSection
           title="Upcoming"
           open={upcomingOpen}
@@ -502,79 +491,67 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
         >
           {upcomingPayments.length === 0
             ? <p style={{ fontSize: 12, color: '#C7C6C4', margin: 0 }}>No upcoming payments</p>
-            : upcomingPayments.map(p => (
-              <div key={p.id} style={{
-                display: 'flex', alignItems: 'flex-start', gap: 9,
-                padding: '7px 8px', borderRadius: 9, marginBottom: 4,
-                background: 'rgba(130,240,185,0.05)',
-                border: '1px solid rgba(130,240,185,0.16)',
-              }}>
-                <div style={{
-                  width: 26, height: 26, borderRadius: 7,
-                  background: 'rgba(130,240,185,0.22)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+            : upcomingPayments.map((p, i) => {
+              const overdue = p.daysLeft < 0;
+              const daysColor = overdue ? '#E8726E' : p.daysLeft <= 3 ? '#F5A623' : '#2DBD75';
+              return (
+                <div key={p.id} style={{
+                  display: 'flex', alignItems: 'flex-start', gap: 10,
+                  paddingBottom: i < upcomingPayments.length - 1 ? 10 : 0,
+                  marginBottom: i < upcomingPayments.length - 1 ? 10 : 0,
+                  borderBottom: i < upcomingPayments.length - 1 ? '1px solid rgba(0,0,0,0.04)' : 'none',
                 }}>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="#2DBD75">
-                    <path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/>
-                  </svg>
-                </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', margin: 0 }}>
-                    ${p.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                  </p>
-                  <p style={{ fontSize: 11, color: '#787776', margin: '1px 0 0' }}>
-                    {p.isLender ? `From ${p.name}` : `To ${p.name}`}
-                  </p>
-                  {p.date && (
-                    <p style={{ fontSize: 10, color: '#9B9A98', margin: '2px 0 0' }}>
-                      {formatDate(p.date)}
+                  {/* Days remaining badge */}
+                  <div style={{
+                    minWidth: 32, textAlign: 'center', flexShrink: 0, paddingTop: 1,
+                  }}>
+                    <span style={{ fontSize: 13, fontWeight: 700, color: daysColor, fontFamily: "'IBM Plex Mono', monospace" }}>
+                      {p.daysLeft > 0 ? `+${p.daysLeft}` : p.daysLeft}
+                    </span>
+                    <p style={{ fontSize: 9, color: '#C7C6C4', margin: '1px 0 0', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                      {Math.abs(p.daysLeft) === 1 ? 'day' : 'days'}
                     </p>
-                  )}
+                  </div>
+
+                  {/* Amount + who + date */}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      ${p.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} · {p.isLender ? `from ${p.name}` : `to ${p.name}`}
+                    </p>
+                    {p.date && <p style={{ fontSize: 10, color: '#9B9A98', margin: '2px 0 0' }}>{formatDate(p.date)}</p>}
+                  </div>
                 </div>
-              </div>
-            ))
+              );
+            })
           }
         </AccordionSection>
 
-        {/* ── Friends accordion ── */}
+        {/* ── Friends ── */}
         <AccordionSection
           title="Friends"
           open={friendsOpen}
           onToggle={() => setFriendsOpen(v => !v)}
           badge={0}
         >
-          {friends.length === 0
-            ? <p style={{ fontSize: 12, color: '#C7C6C4', margin: '0 0 10px' }}>No friends added yet</p>
-            : (
-              <div style={{ marginBottom: 10 }}>
-                {friends.map((friend, i) => {
-                  const initial = (friend.full_name || 'U').charAt(0).toUpperCase();
-                  return (
-                    <div key={friend.user_id || i} style={{
-                      display: 'flex', alignItems: 'center', gap: 9,
-                      padding: '5px 4px', borderRadius: 8, marginBottom: 2,
-                    }}>
-                      <div style={{
-                        width: 30, height: 30, borderRadius: '50%', background: '#1A1918',
-                        flexShrink: 0, overflow: 'hidden',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      }}>
-                        {friend.profile_picture_url
-                          ? <img src={friend.profile_picture_url} alt={friend.full_name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                          : <span style={{ fontSize: 12, fontWeight: 700, color: 'white' }}>{initial}</span>
-                        }
-                      </div>
-                      <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        {friend.full_name}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            )
-          }
+          {friends.length > 0 && (
+            <div style={{ marginBottom: 10 }}>
+              {friends.map((friend, i) => (
+                <div key={friend.user_id || i} style={{
+                  display: 'flex', alignItems: 'center', gap: 8,
+                  padding: '4px 2px', borderRadius: 6, marginBottom: 2,
+                }}>
+                  <MiniAvatar photoUrl={friend.profile_picture_url} name={friend.full_name} size={22} />
+                  <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {friend.full_name}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+          {friends.length === 0 && (
+            <p style={{ fontSize: 12, color: '#C7C6C4', margin: '0 0 10px' }}>No friends added yet</p>
+          )}
 
-          {/* Action buttons */}
           <div style={{ display: 'flex', gap: 6 }}>
             <Link to={createPageUrl("Friends")} style={{
               flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -602,7 +579,7 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
           </div>
         </AccordionSection>
 
-        {/* ── Pending accordion ── */}
+        {/* ── Pending — plain text, no boxes ── */}
         <AccordionSection
           title="Pending"
           open={pendingOpen}
@@ -613,18 +590,14 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
             ? <p style={{ fontSize: 12, color: '#C7C6C4', margin: 0 }}>Nothing pending right now</p>
             : pendingItems.map((item, i) => (
               <div key={item.id || i} style={{
-                padding: '6px 8px', borderRadius: 8, marginBottom: 4,
-                background: 'rgba(0,0,0,0.025)',
-                border: '1px solid rgba(0,0,0,0.05)',
+                paddingBottom: i < pendingItems.length - 1 ? 9 : 0,
+                marginBottom: i < pendingItems.length - 1 ? 9 : 0,
+                borderBottom: i < pendingItems.length - 1 ? '1px solid rgba(0,0,0,0.04)' : 'none',
               }}>
-                <p style={{ fontSize: 11, fontWeight: 500, color: '#5C5B5A', margin: 0, lineHeight: 1.4 }}>
+                <p style={{ fontSize: 12, fontWeight: 500, color: '#787776', margin: 0, lineHeight: 1.4 }}>
                   {item.text}
                 </p>
-                {item.date && (
-                  <p style={{ fontSize: 10, color: '#C7C6C4', margin: '2px 0 0' }}>
-                    {formatDate(item.date)}
-                  </p>
-                )}
+                {item.date && <p style={{ fontSize: 10, color: '#C7C6C4', margin: '2px 0 0' }}>{formatDate(item.date)}</p>}
               </div>
             ))
           }
