@@ -689,14 +689,11 @@ export default function Home() {
 
       {/* ── Hero ── */}
       <div style={{ background: 'transparent', position: 'relative', zIndex: 2 }}>
-        <div style={{ maxWidth: 1080, margin: '0 auto', padding: '80px 28px 56px', display: 'flex', alignItems: 'flex-end', justifyContent: 'center', textAlign: 'center' }}>
+        <div style={{ maxWidth: 1080, margin: '0 auto', padding: '56px 28px 56px', display: 'flex', alignItems: 'flex-end', justifyContent: 'center', textAlign: 'center' }}>
           <div>
-            <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '3.8rem', fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', lineHeight: 1.1 }}>
-              {greeting}, <em style={{ fontStyle: 'italic', fontWeight: 600, color: '#1A1918' }}>{firstName}</em>
+            <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '3.8rem', fontWeight: 600, color: 'white', letterSpacing: '-0.02em', lineHeight: 1.1 }}>
+              {greeting}, <em style={{ fontStyle: 'italic', fontWeight: 600, color: 'rgba(255,255,255,0.9)' }}>{firstName}</em>
             </h1>
-            <p style={{ fontSize: 15, color: '#787776', marginTop: 14, fontWeight: 400, letterSpacing: '-0.01em' }}>
-              Here's how your loans are looking today
-            </p>
           </div>
         </div>
 
