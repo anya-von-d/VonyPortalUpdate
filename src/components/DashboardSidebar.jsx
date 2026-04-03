@@ -21,13 +21,6 @@ function AccordionSection({ title, open, onToggle, badge, children }) {
       >
         <span style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
           {title}
-          {badge > 0 && (
-            <span style={{
-              background: '#E8726E', color: 'white', fontSize: 9, fontWeight: 700,
-              minWidth: 16, height: 16, borderRadius: 8,
-              display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px',
-            }}>{badge}</span>
-          )}
         </span>
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#C7C6C4"
           strokeWidth="2.5" strokeLinecap="round"
@@ -49,13 +42,13 @@ function MiniAvatar({ photoUrl, name, size = 26 }) {
   const initial = (name || 'U').charAt(0).toUpperCase();
   return (
     <div style={{
-      width: size, height: size, borderRadius: '50%', background: '#E8E7E4',
+      width: size, height: size, borderRadius: '50%', background: '#03ACEA',
       flexShrink: 0, overflow: 'hidden',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
     }}>
       {photoUrl
         ? <img src={photoUrl} alt={name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-        : <span style={{ fontSize: size * 0.42, fontWeight: 600, color: '#787776' }}>{initial}</span>
+        : <span style={{ fontSize: size * 0.42, fontWeight: 600, color: 'white' }}>{initial}</span>
       }
     </div>
   );
@@ -78,6 +71,7 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
   const [pendingItems, setPendingItems]  = useState([]);
 
   const [openDropdown, setOpenDropdown] = useState(null);
+  const [notifOpen, setNotifOpen]       = useState(true);
   const [upcomingOpen, setUpcomingOpen] = useState(true);
   const [friendsOpen, setFriendsOpen]   = useState(true);
   const [pendingOpen, setPendingOpen]   = useState(true);
@@ -372,7 +366,7 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
           {/* Bell icon — top right, own row */}
           <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 12 }}>
             <Link to={createPageUrl("Requests")} style={{ textDecoration: 'none', display: 'inline-flex', position: 'relative' }}>
-              <svg width="17" height="17" viewBox="0 0 24 24" fill={active('Requests') ? '#1A1918' : '#9B9A98'}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill={active('Requests') ? '#1A1918' : '#9B9A98'}>
                 <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
               </svg>
               {notifCount > 0 && (
@@ -390,7 +384,7 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
           <div style={{ display: 'flex', alignItems: 'center', gap: 11 }}>
             <Link to={createPageUrl("Profile")} style={{ textDecoration: 'none', flexShrink: 0 }}>
               <div style={{
-                width: 52, height: 52, borderRadius: '50%', background: '#1A1918',
+                width: 52, height: 52, borderRadius: '50%', background: '#03ACEA',
                 overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center',
                 outline: active('Profile') ? '2px solid #82F0B9' : 'none', outlineOffset: 2,
               }}>
@@ -424,37 +418,29 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
         </div>
 
         {/* ── Notifications ── */}
-        <div style={{ padding: '16px 16px 14px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-            <span style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.07em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: 7 }}>
-              Notifications
-              {notifCount > 0 && (
-                <span style={{ background: '#E8726E', color: 'white', fontSize: 9, fontWeight: 700, minWidth: 16, height: 16, borderRadius: 8, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px' }}>{notifCount}</span>
-              )}
-            </span>
-            {notifCount > 0 && (
-              <Link to={createPageUrl("Requests")} style={{ fontSize: 10, color: '#03ACEA', textDecoration: 'none', fontWeight: 600 }}>See all</Link>
-            )}
-          </div>
-
+        <AccordionSection title="Notifications" open={notifOpen} onToggle={() => setNotifOpen(v => !v)} badge={0}>
           {notifications.length === 0
             ? <p style={{ ...itemText, color: '#C7C6C4' }}>No new notifications</p>
-            : notifications.map((n, i) => (
-              <Link key={n.id || i} to={createPageUrl("Requests")} style={{
-                display: 'flex', alignItems: 'flex-start', gap: 9,
-                textDecoration: 'none',
-                marginBottom: i < notifications.length - 1 ? 12 : 0,
-              }}>
-                {/* Sender photo — LEFT */}
-                <MiniAvatar photoUrl={n.senderPhoto} name={n.senderName} size={26} />
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={itemText}>{n.text}</p>
-                  {n.date && <p style={itemSub}>{fmtDate(n.date)}</p>}
-                </div>
-              </Link>
-            ))
+            : <>
+                {notifications.map((n, i) => (
+                  <Link key={n.id || i} to={createPageUrl("Requests")} style={{
+                    display: 'flex', alignItems: 'flex-start', gap: 9,
+                    textDecoration: 'none',
+                    marginBottom: i < notifications.length - 1 ? 10 : 0,
+                  }}>
+                    <MiniAvatar photoUrl={n.senderPhoto} name={n.senderName} size={24} />
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <p style={itemText}>{n.text}</p>
+                      {n.date && <p style={itemSub}>{fmtDate(n.date)}</p>}
+                    </div>
+                  </Link>
+                ))}
+                {notifCount > 0 && (
+                  <Link to={createPageUrl("Requests")} style={{ fontSize: 10, color: '#03ACEA', textDecoration: 'none', fontWeight: 600, display: 'block', marginTop: 8 }}>See all</Link>
+                )}
+              </>
           }
-        </div>
+        </AccordionSection>
 
         {/* ── Upcoming ── */}
         <AccordionSection title="Upcoming" open={upcomingOpen} onToggle={() => setUpcomingOpen(v => !v)} badge={upcomingPayments.length}>
@@ -467,7 +453,7 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
               return (
                 <div key={p.id} style={{
                   display: 'flex', alignItems: 'flex-start', gap: 10,
-                  marginBottom: i < upcomingPayments.length - 1 ? 12 : 0,
+                  marginBottom: i < upcomingPayments.length - 1 ? 5 : 0,
                 }}>
                   {/* Days remaining — no + sign, negative when overdue */}
                   <div style={{ minWidth: 28, textAlign: 'center', flexShrink: 0, paddingTop: 1 }}>
@@ -480,7 +466,7 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <p style={itemText}>
-                      ${p.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} · {p.isLender ? `from ${p.name}` : `to ${p.name}`}
+                      {p.isLender ? `${p.name} pays you $${p.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : `Pay ${p.name} $${p.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
                     </p>
                     {p.date && <p style={itemSub}>{fmtDate(p.date)}</p>}
                   </div>
@@ -509,21 +495,21 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
             )
           }
 
-          <div style={{ display: 'flex', gap: 6, marginTop: friends.length ? 0 : 4 }}>
+          <div style={{ display: 'flex', gap: 5, marginTop: friends.length ? 0 : 4 }}>
             <Link to={createPageUrl("Friends")} style={{
               flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
-              padding: '7px 6px', borderRadius: 9, textDecoration: 'none',
+              padding: '4px 5px', borderRadius: 7, textDecoration: 'none',
               background: 'rgba(3,172,234,0.08)', border: '1px solid rgba(3,172,234,0.14)',
-              fontSize: 11, fontWeight: 600, color: '#03ACEA', transition: 'background 0.12s',
+              fontSize: 10, fontWeight: 600, color: '#03ACEA', transition: 'background 0.12s',
             }}
             onMouseEnter={e => e.currentTarget.style.background = 'rgba(3,172,234,0.14)'}
             onMouseLeave={e => e.currentTarget.style.background = 'rgba(3,172,234,0.08)'}
             >Find More Friends</Link>
             <button style={{
               flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
-              padding: '7px 6px', borderRadius: 9, border: '1px solid rgba(0,0,0,0.08)',
+              padding: '4px 5px', borderRadius: 7, border: '1px solid rgba(0,0,0,0.08)',
               background: 'rgba(0,0,0,0.03)', cursor: 'pointer',
-              fontSize: 11, fontWeight: 600, color: '#5C5B5A',
+              fontSize: 10, fontWeight: 600, color: '#5C5B5A',
               fontFamily: "'DM Sans', sans-serif", transition: 'background 0.12s',
             }}
             onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.07)'}
