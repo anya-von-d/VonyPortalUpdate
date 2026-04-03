@@ -103,8 +103,8 @@ export default function Layout({ children }) {
       {/* Top gradient bar — fixed overlay on dashboard pages */}
       {isDashboardStyle && (
         <div style={{
-          position: 'fixed', top: 0, left: 0, right: 0, height: 80,
-          background: 'linear-gradient(to bottom, #03ACEA 0%, #03ACEA 8px, rgba(245,244,240,0) 100%)',
+          position: 'fixed', top: 0, left: 0, right: 0, height: 50,
+          background: 'linear-gradient(to bottom, #03ACEA 0%, #03ACEA 30px, rgba(245,244,240,0) 50px)',
           pointerEvents: 'none', zIndex: 51,
         }} />
       )}
