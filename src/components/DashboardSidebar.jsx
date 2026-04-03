@@ -209,28 +209,28 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
       {/* ── Desktop top bar ── */}
       <div className="home-sidebar" style={{
         position: 'fixed', top: 0, left: 0, right: 0, height: 56,
-        background: '#6587F9', zIndex: 60,
+        background: 'transparent', zIndex: 60,
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         padding: '0 20px 0 24px',
         fontFamily: "'DM Sans', sans-serif",
       }}>
-        <Link to="/" style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 400, fontStyle: 'italic', fontSize: '1.5rem', letterSpacing: '-0.02em', color: 'white', textDecoration: 'none' }}>Vony</Link>
+        <Link to="/" style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 400, fontStyle: 'italic', fontSize: '1.5rem', letterSpacing: '-0.02em', color: '#1A1918', textDecoration: 'none' }}>Vony</Link>
         <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
           <div ref={settingsRef} style={{ position: 'relative' }}>
-            <button onClick={() => setSettingsOpen(!settingsOpen)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 36, height: 36, borderRadius: 8, border: 'none', cursor: 'pointer', background: settingsOpen ? 'rgba(255,255,255,0.15)' : 'transparent', transition: 'background 0.15s' }}>
-              {gearIcon('white')}
+            <button onClick={() => setSettingsOpen(!settingsOpen)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 36, height: 36, borderRadius: 8, border: 'none', cursor: 'pointer', background: settingsOpen ? 'rgba(103,138,251,0.1)' : 'transparent', transition: 'background 0.15s' }}>
+              {gearIcon(settingsOpen ? '#678AFB' : '#5C5B5A')}
             </button>
             {settingsOpen && settingsDropdown}
           </div>
-          <Link to={createPageUrl("Requests")} style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', width: 36, height: 36, borderRadius: 8, background: activePage === 'Requests' ? 'rgba(255,255,255,0.15)' : 'transparent', transition: 'background 0.15s', textDecoration: 'none' }}>
-            {bellIcon('white')}
+          <Link to={createPageUrl("Requests")} style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', width: 36, height: 36, borderRadius: 8, background: activePage === 'Requests' ? 'rgba(103,138,251,0.1)' : 'transparent', transition: 'background 0.15s', textDecoration: 'none' }}>
+            {bellIcon(activePage === 'Requests' ? '#678AFB' : '#5C5B5A')}
             {notifCount > 0 && (
               <span style={{ position: 'absolute', top: 4, right: 4, background: '#E8726E', color: 'white', fontSize: 8, fontWeight: 700, minWidth: 14, height: 14, borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 3px', lineHeight: 1 }}>
                 {notifCount > 99 ? '99+' : notifCount}
               </span>
             )}
           </Link>
-          <Link to={createPageUrl("Profile")} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 34, height: 34, borderRadius: '50%', background: 'rgba(255,255,255,0.25)', color: 'white', fontWeight: 700, fontSize: 13, textDecoration: 'none', flexShrink: 0 }}>
+          <Link to={createPageUrl("Profile")} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 34, height: 34, borderRadius: '50%', background: '#678AFB', color: 'white', fontWeight: 700, fontSize: 13, textDecoration: 'none', flexShrink: 0 }}>
             {avatarInitial}
           </Link>
         </div>

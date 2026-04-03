@@ -676,25 +676,14 @@ export default function Home() {
 
       <DashboardSidebar activePage="Dashboard" user={user} />
 
-      {/* ── Title above content box ── */}
-      <div style={{ padding: '16px 20px 8px 20px' }}>
+      {/* ── Title ── */}
+      <div style={{ padding: '16px 28px 8px', textAlign: 'center' }}>
         <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '2.8rem', fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', lineHeight: 1.1, margin: 0 }}>
           {greeting}, <em style={{ fontStyle: 'italic', fontWeight: 600, color: '#1A1918' }}>{firstName}</em>
         </h1>
       </div>
 
-      {/* ── Content box with galaxy background ── */}
-      <div className="content-box-glow" style={{ position: 'relative', background: '#6587F9', margin: '8px 12px 12px 12px', borderRadius: 24, minHeight: 'calc(100vh - 80px)', border: '12px solid rgba(255,255,255,1)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', boxShadow: 'rgba(0,0,0,0.03) 0px 0.6px 2.3px -0.42px, rgba(0,0,0,0.04) 0px 2.3px 8.7px -0.83px, rgba(0,0,0,0.08) 0px 10px 38px -1.25px' }}>
-
-        {/* Galaxy gradient background inside the box */}
-        <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', bottom: 0, overflow: 'hidden', borderRadius: 12, zIndex: 0, pointerEvents: 'none' }}>
-          <div style={{
-            position: 'absolute', top: 0, left: '-10%', width: '120%', height: '100%', zIndex: 0,
-            background: '#6587F9'
-          }} />
-        </div>
-
-      {/* ── Hero alert (overdue) only ── */}
+      {/* ── Hero alert (overdue) ── */}
       <div style={{ background: 'transparent', position: 'relative', zIndex: 2 }}>
 
         {/* Hero alert (overdue) — carousel if multiple */}
@@ -1021,8 +1010,6 @@ export default function Home() {
         <LoanCarousel notifications={carouselNotifications} />
 
       </div>
-
-      </div>{/* end content box */}
 
       {/* ── Footer ── */}
       <div style={{ padding: '20px 28px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
