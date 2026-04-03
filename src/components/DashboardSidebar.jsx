@@ -219,17 +219,39 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
     logout: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#E8726E" strokeWidth="1.8" strokeLinecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>,
   };
 
+  const pageTitles = {
+    Dashboard: 'Home', CreateOffer: 'Create Loan', RecordPayment: 'Record Payment',
+    Upcoming: 'Upcoming', YourLoans: 'My Loans', Borrowing: 'Borrowing',
+    Lending: 'Lending', Friends: 'Friends', RecentActivity: 'Activity',
+    LoanAgreements: 'Documents', ComingSoon: 'Settings', Profile: 'Profile',
+    Requests: 'Requests',
+  };
+  const pageTitle = pageTitles[activePage] || activePage;
+
+  const TOP_BAR_H = 52;
+
   return (
     <>
       <style>{`
         @media (min-width: 900px) { .mobile-tab-bar { display: none !important; } }
       `}</style>
 
+      {/* ══════ BLUE TOP BAR ══════ */}
+      <div style={{
+        position: 'fixed', top: 0, left: 0, right: 0, height: TOP_BAR_H,
+        background: '#03ACEA', zIndex: 110,
+        display: 'flex', alignItems: 'center', padding: '0 28px',
+      }}>
+        <span style={{
+          fontFamily: "'DM Sans', sans-serif",
+          fontSize: 18, fontWeight: 700, color: 'white', letterSpacing: '-0.01em',
+        }}>{pageTitle}</span>
+      </div>
+
       {/* ══════ LEFT NAV SIDEBAR ══════ */}
       <nav ref={navRef} style={{
-        position: 'fixed', left: 0, top: 0, bottom: 0, width: 200,
+        position: 'fixed', left: 0, top: TOP_BAR_H, bottom: 0, width: 200,
         background: 'white', zIndex: 100,
-        boxShadow: '2px 0 20px rgba(0,0,0,0.04)',
         display: 'flex', flexDirection: 'column',
         fontFamily: "'DM Sans', sans-serif",
         overflowY: 'auto', overflowX: 'hidden',
@@ -325,9 +347,8 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
 
       {/* ══════ RIGHT INFO SIDEBAR ══════ */}
       <aside style={{
-        position: 'fixed', right: 0, top: 0, bottom: 0, width: 260,
+        position: 'fixed', right: 0, top: TOP_BAR_H, bottom: 0, width: 260,
         background: 'white', zIndex: 80,
-        boxShadow: '-4px 0 24px rgba(0,0,0,0.04)',
         display: 'flex', flexDirection: 'column',
         overflowY: 'auto', overflowX: 'hidden',
         fontFamily: "'DM Sans', sans-serif",
