@@ -32,6 +32,16 @@ const STATUS_OPTIONS = [
   { id: 'cancelled', label: 'Cancelled' },
 ];
 
+const DATE_OPTIONS = [
+  { id: 'all', label: 'All Dates' },
+  { id: '7d', label: 'Last 7 Days' },
+  { id: '30d', label: 'Last 30 Days' },
+  { id: '3m', label: 'Last 3 Months' },
+  { id: '6m', label: 'Last 6 Months' },
+  { id: '1y', label: 'Last Year' },
+  { id: 'older', label: 'Older' },
+];
+
 /* ── Single-select dropdown ────────────────────────────────── */
 function SingleSelectDropdown({ options, selected, onChange }) {
   const [open, setOpen] = useState(false);
@@ -98,6 +108,8 @@ export default function LoanAgreements() {
   const [selectedAgreement, setSelectedAgreement] = useState(null);
   const [roleFilter, setRoleFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [dateFilter, setDateFilter] = useState('all');
+  const [friendFilter, setFriendFilter] = useState('all');
   const [activePopup, setActivePopup] = useState(null);
   const [popupAgreement, setPopupAgreement] = useState(null);
   const [activeInfoTooltip, setActiveInfoTooltip] = useState(null);
@@ -464,15 +476,15 @@ export default function LoanAgreements() {
     setPopupAgreement(null);
   };
 
-  const hasAnyFilter = roleFilter !== 'all' || statusFilter !== 'all' || searchQuery.trim() !== '';
-  const clearFilters = () => { setRoleFilter('all'); setStatusFilter('all'); setSearchQuery(''); };
+  const hasAnyFilter = roleFilter !== 'all' || statusFilter !== 'all' || dateFilter !== 'all' || friendFilter !== 'all' || searchQuery.trim() !== '';
+  const clearFilters = () => { setRoleFilter('all'); setStatusFilter('all'); setDateFilter('all'); setFriendFilter('all'); setSearchQuery(''); };
 
   /* ── Loading state ──────────────────────────────────────────── */
   if (isLoading || !user) {
     return (
-      <div className="home-with-sidebar" style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 240, paddingTop: 90, background: '#F5F4F0' }}>
+      <div className="home-with-sidebar" style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 240, paddingTop: 106, background: '#F5F4F0' }}>
         <DashboardSidebar activePage="LoanAgreements" user={user} />
-          <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 28px 64px', position: 'relative', zIndex: 2 }}>
+          <div style={{ maxWidth: 1080, margin: '0 auto', padding: '24px 40px 64px', position: 'relative', zIndex: 2 }}>
             <div className="glass-card" style={{ padding: 40, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
               <div style={{ width: 32, height: 32, border: '2px solid #82F0B9', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite', marginBottom: 12 }} />
               <p style={{ fontSize: 13, color: '#787776' }}>{isLoading ? 'Loading documents...' : 'Please log in to view documents'}</p>
@@ -505,6 +517,30 @@ export default function LoanAgreements() {
     });
   }
 
+  if (dateFilter !== 'all') {
+    const now = new Date();
+    filteredAgreements = filteredAgreements.filter(agreement => {
+      const d = new Date(agreement.created_at);
+      const diffMs = now - d;
+      const diffDays = diffMs / (1000 * 60 * 60 * 24);
+      if (dateFilter === '7d') return diffDays <= 7;
+      if (dateFilter === '30d') return diffDays <= 30;
+      if (dateFilter === '3m') return diffDays <= 91;
+      if (dateFilter === '6m') return diffDays <= 182;
+      if (dateFilter === '1y') return diffDays <= 365;
+      if (dateFilter === 'older') return diffDays > 365;
+      return true;
+    });
+  }
+
+  if (friendFilter !== 'all') {
+    filteredAgreements = filteredAgreements.filter(agreement => {
+      const isLender = agreement.lender_id === user?.id;
+      const otherPartyId = isLender ? agreement.borrower_id : agreement.lender_id;
+      return otherPartyId === friendFilter;
+    });
+  }
+
   if (searchQuery.trim()) {
     const q = searchQuery.trim().toLowerCase();
     filteredAgreements = filteredAgreements.filter(agreement => {
@@ -518,6 +554,19 @@ export default function LoanAgreements() {
       return friendName.includes(q) || categoryLabel.includes(q) || amount.includes(q) || loanStatus.includes(q);
     });
   }
+
+  // Build friend options from all agreements
+  const friendOptions = [{ id: 'all', label: 'All Friends' }];
+  const seenIds = new Set();
+  agreements.forEach(agreement => {
+    const isLender = agreement.lender_id === user?.id;
+    const otherPartyId = isLender ? agreement.borrower_id : agreement.lender_id;
+    if (!seenIds.has(otherPartyId)) {
+      seenIds.add(otherPartyId);
+      const profile = getUserById(otherPartyId);
+      friendOptions.push({ id: otherPartyId, label: profile?.full_name || profile?.username || 'Unknown' });
+    }
+  });
 
   /* ── Popup Components ───────────────────────────────────────── */
   const PromissoryNotePopup = ({ agreement }) => {
@@ -772,6 +821,37 @@ export default function LoanAgreements() {
             <p style={{ color: '#1A1918', margin: 0 }}>{agreement.purpose}</p>
           </div>
         )}
+
+        {/* Links to other documents */}
+        <div style={{ borderTop: '1px solid rgba(0,0,0,0.06)', paddingTop: 16 }}>
+          <p style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.07em', textTransform: 'uppercase', marginBottom: 12 }}>Documents</p>
+          <div style={{ display: 'flex', gap: 10 }}>
+            <button
+              onClick={() => setActivePopup('promissory')}
+              style={{
+                flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                padding: '10px 16px', borderRadius: 12, border: '1px solid rgba(130,240,185,0.3)',
+                background: 'rgba(130,240,185,0.06)', cursor: 'pointer',
+                fontSize: 13, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif",
+              }}
+            >
+              <FileText size={14} style={{ color: '#82F0B9' }} />
+              Promissory Note
+            </button>
+            <button
+              onClick={() => setActivePopup('amortization')}
+              style={{
+                flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                padding: '10px 16px', borderRadius: 12, border: '1px solid rgba(3,172,234,0.3)',
+                background: 'rgba(3,172,234,0.06)', cursor: 'pointer',
+                fontSize: 13, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif",
+              }}
+            >
+              <FileText size={14} style={{ color: '#03ACEA' }} />
+              Amortization Schedule
+            </button>
+          </div>
+        </div>
       </div>
     );
   };
@@ -829,7 +909,7 @@ export default function LoanAgreements() {
         )}
       </AnimatePresence>
 
-      <div className="home-with-sidebar" style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 240, paddingTop: 90, background: '#F5F4F0' }}>
+      <div className="home-with-sidebar" style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 240, paddingTop: 106, background: '#F5F4F0' }}>
         <DashboardSidebar activePage="LoanAgreements" user={user} />
 
         {/* Rounded content box */}
@@ -838,30 +918,38 @@ export default function LoanAgreements() {
 
 
           {/* Page content */}
-          <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 28px 64px', position: 'relative', zIndex: 2 }}>
+          <div style={{ maxWidth: 1080, margin: '0 auto', padding: '24px 40px 64px', position: 'relative', zIndex: 2 }}>
+
+            {/* ── Search Row ─────────────────────────────────────── */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+              <div style={{
+                flex: 1, display: 'flex', alignItems: 'center', gap: 10,
+                padding: '0 16px', background: 'white', borderRadius: 22,
+                border: '1px solid rgba(0,0,0,0.08)', height: 42,
+              }}>
+                <Search size={16} style={{ color: '#787776', flexShrink: 0 }} />
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  style={{
+                    flex: 1, border: 'none', outline: 'none', fontSize: 14,
+                    fontFamily: "'DM Sans', sans-serif", color: '#1A1918', background: 'transparent',
+                  }}
+                />
+              </div>
+            </div>
 
             {/* ── Filter Bar ─────────────────────────────────────── */}
             <div className="glass-card" style={{ padding: '16px 22px', marginBottom: 20, overflow: 'visible', position: 'relative', zIndex: 20 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-                <div style={{
-                  flex: 1, display: 'flex', alignItems: 'center', gap: 10,
-                  padding: '0 16px', background: 'white', borderRadius: 22,
-                  border: '1px solid rgba(0,0,0,0.08)', height: 42, minWidth: 180,
-                }}>
-                  <Search size={16} style={{ color: '#787776', flexShrink: 0 }} />
-                  <input
-                    type="text"
-                    placeholder="Search..."
-                    value={searchQuery}
-                    onChange={e => setSearchQuery(e.target.value)}
-                    style={{
-                      flex: 1, border: 'none', outline: 'none', fontSize: 14,
-                      fontFamily: "'DM Sans', sans-serif", color: '#1A1918', background: 'transparent',
-                    }}
-                  />
-                </div>
+                <SingleSelectDropdown options={DATE_OPTIONS} selected={dateFilter} onChange={setDateFilter} />
                 <SingleSelectDropdown options={ROLE_OPTIONS} selected={roleFilter} onChange={setRoleFilter} />
                 <SingleSelectDropdown options={STATUS_OPTIONS} selected={statusFilter} onChange={setStatusFilter} />
+                {friendOptions.length > 1 && (
+                  <SingleSelectDropdown options={friendOptions} selected={friendFilter} onChange={setFriendFilter} />
+                )}
                 <button
                   onClick={clearFilters}
                   style={{

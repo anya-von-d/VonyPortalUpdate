@@ -511,9 +511,9 @@ export default function RecentActivityPage() {
   /* ── Loading / unauthenticated states ─────────────────────── */
   if (isLoading || !user) {
     return (
-      <div style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 240, paddingTop: 90, background: '#F5F4F0' }}>
+      <div style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 240, paddingTop: 106, background: '#F5F4F0' }}>
         <DashboardSidebar activePage="RecentActivity" user={user} />
-          <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 28px 64px', position: 'relative', zIndex: 2 }}>
+          <div style={{ maxWidth: 1080, margin: '0 auto', padding: '24px 40px 64px', position: 'relative', zIndex: 2 }}>
             <div className="glass-card" style={{ padding: 40, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
               <div style={{ width: 32, height: 32, border: '2px solid #82F0B9', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite', marginBottom: 12 }} />
               <p style={{ fontSize: 13, color: '#787776' }}>{isLoading ? 'Loading activity...' : 'Please log in to view activity'}</p>
@@ -768,14 +768,14 @@ export default function RecentActivityPage() {
      ══════════════════════════════════════════════════════════ */
   return (
     <>
-      <div style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 240, paddingTop: 90, background: '#F5F4F0' }}>
+      <div style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 240, paddingTop: 106, background: '#F5F4F0' }}>
         <DashboardSidebar activePage="RecentActivity" user={user} />
 
           {/* Gradient background */}
 
 
           {/* Page content */}
-          <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 28px 64px', position: 'relative', zIndex: 2 }}>
+          <div style={{ maxWidth: 1080, margin: '0 auto', padding: '24px 40px 64px', position: 'relative', zIndex: 2 }}>
 
           {/* ── Search Bar + Sort + Export ───────────────────────── */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
@@ -858,11 +858,9 @@ export default function RecentActivityPage() {
                     display: 'none', alignItems: 'center', padding: '0 14px 12px',
                     borderBottom: '1px solid rgba(0,0,0,0.06)', marginBottom: 8,
                   }}>
-                    {/* Spacer for icon column */}
-                    <div style={{ width: 36, flexShrink: 0, marginRight: 16 }} />
                     <span style={{ width: 80, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', flexShrink: 0 }}>Date</span>
-                    <span style={{ flex: 1.8, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', minWidth: 0, paddingLeft: 4 }}>Category</span>
-                    <span style={{ flex: 1.2, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', minWidth: 0, paddingLeft: 4 }}>Friend</span>
+                    <span style={{ flex: 1, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', minWidth: 0, paddingLeft: 4 }}>Category</span>
+                    <span style={{ width: 180, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', flexShrink: 0, paddingLeft: 12 }}>Status</span>
                     <span style={{ width: 100, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', textAlign: 'right', flexShrink: 0 }}>Amount</span>
                   </div>
 
@@ -909,23 +907,22 @@ export default function RecentActivityPage() {
                           <span className="activity-desktop-date" style={{ display: 'none', width: 80, fontSize: 12, fontWeight: 500, color: '#787776', flexShrink: 0 }}>
                             {dateDisplay}
                           </span>
-                          <div className="activity-desktop-category" style={{ display: 'none', flex: 1.8, minWidth: 0, alignItems: 'center', gap: 6, paddingLeft: 4 }}>
-                            <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918' }}>{catDisplay.label}</span>
+                          <div className="activity-desktop-category" style={{ display: 'none', flex: 1, minWidth: 0, alignItems: 'center', paddingLeft: 4 }}>
+                            <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{title}</span>
+                          </div>
+                          <div className="activity-desktop-status" style={{ display: 'none', width: 180, flexShrink: 0, alignItems: 'center', paddingLeft: 12 }}>
                             {(status === 'pending_confirmation' && activity.type === 'payment') && (
-                              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 8px', borderRadius: 6, background: 'white', border: '1px solid rgba(0,0,0,0.06)', marginLeft: 4 }}>
+                              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 8px', borderRadius: 6, background: 'white', border: '1px solid rgba(0,0,0,0.06)' }}>
                                 <Clock size={11} style={{ color: '#787776' }} />
                                 <span style={{ fontSize: 10, fontWeight: 600, color: '#787776', whiteSpace: 'nowrap' }}>Pending confirmation</span>
                               </div>
                             )}
                             {(status === 'pending' && activity.type === 'loan' && (activity.status === 'pending' || activity.status === 'pending_borrower_approval')) && (
-                              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 8px', borderRadius: 6, background: 'white', border: '1px solid rgba(0,0,0,0.06)', marginLeft: 4 }}>
+                              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 8px', borderRadius: 6, background: 'white', border: '1px solid rgba(0,0,0,0.06)' }}>
                                 <Clock size={11} style={{ color: '#787776' }} />
                                 <span style={{ fontSize: 10, fontWeight: 600, color: '#787776', whiteSpace: 'nowrap' }}>Pending approval</span>
                               </div>
                             )}
-                          </div>
-                          <div className="activity-desktop-friend" style={{ display: 'none', flex: 1.2, minWidth: 0, alignItems: 'center', gap: 8, paddingLeft: 4 }}>
-                            <span style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{friendName}</span>
                           </div>
                           <span className="activity-desktop-amount" style={{ display: 'none', width: 100, fontSize: 13, fontWeight: 600, color: '#1A1918', textAlign: 'right', flexShrink: 0 }}>
                             {amount}
@@ -949,7 +946,7 @@ export default function RecentActivityPage() {
               .activity-mobile-status { display: none !important; }
               .activity-desktop-date { display: block !important; }
               .activity-desktop-category { display: flex !important; }
-              .activity-desktop-friend { display: flex !important; }
+              .activity-desktop-status { display: flex !important; }
               .activity-desktop-amount { display: block !important; }
             }
           `}</style>

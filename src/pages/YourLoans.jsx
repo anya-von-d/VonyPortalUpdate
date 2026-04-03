@@ -554,57 +554,60 @@ export default function YourLoans() {
                 {activeLoans.length === 0 ? (
                   <p style={{ fontSize: 13, color: '#787776' }}>No active loans to track</p>
                 ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                    {(() => {
-                      const totalAll = activeLoans.reduce((s, l) => s + (l.total_amount || l.amount || 0), 0);
-                      const paidAll = activeLoans.reduce((s, l) => s + (l.amount_paid || 0), 0);
-                      const pctAll = totalAll > 0 ? Math.round((paidAll / totalAll) * 100) : 0;
-                      return (
-                        <div style={{ marginBottom: 12 }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                            <span style={{ fontSize: 11, fontWeight: 500, color: '#787776' }}>{isLending ? 'Total Repayment Progress' : 'Total Amount Loaned'}</span>
-                            <span style={{ fontSize: 11, fontWeight: 700, color: '#1A1918' }}>{formatMoney(paidAll)} / {formatMoney(totalAll)}</span>
+                  (() => {
+                    const totalAll = activeLoans.reduce((s, l) => s + (l.total_amount || l.amount || 0), 0);
+                    const paidAll = activeLoans.reduce((s, l) => s + (l.amount_paid || 0), 0);
+                    const pctAll = totalAll > 0 ? Math.round((paidAll / totalAll) * 100) : 0;
+                    return (
+                      <div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                          <div style={{ flex: 1, height: 6, background: '#F0F0EE', borderRadius: 999, overflow: 'hidden' }}>
+                            <div style={{ height: '100%', borderRadius: 999, width: `${Math.max(pctAll, 2)}%`, background: '#82F0B9', transition: 'width 0.5s' }} />
                           </div>
-                          <div style={{ width: '100%', height: 20, background: '#F0F0EE', borderRadius: 6, overflow: 'hidden' }}>
-                            <div style={{ height: '100%', borderRadius: 6, width: `${Math.max(pctAll, 2)}%`, background: '#82F0B9', transition: 'width 0.5s', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: 8 }}>
-                              {paidAll > 0 && <span style={{ fontSize: 10, fontWeight: 700, color: 'white' }}>{pctAll}%</span>}
-                            </div>
-                          </div>
+                          <span style={{ fontSize: 11, fontWeight: 700, color: '#1A1918', minWidth: 32, textAlign: 'right' }}>{pctAll}%</span>
                         </div>
-                      );
-                    })()}
-                    <div style={{ height: 1, background: 'rgba(0,0,0,0.06)' }} />
-                    {activeLoans.slice(0, 5).map(loan => {
-                      const otherParty = publicProfiles.find(p => p.user_id === (isLending ? loan.borrower_id : loan.lender_id));
-                      const loanTotalOwed = loan.total_amount || loan.amount || 0;
-                      const amountPaid = loan.amount_paid || 0;
-                      const percentPaid = loanTotalOwed > 0 ? Math.round((amountPaid / loanTotalOwed) * 100) : 0;
-                      return (
-                        <div key={loan.id} style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                              <div style={{ width: 24, height: 24, borderRadius: '50%', background: 'rgba(130,240,185,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                <span style={{ fontSize: 11, fontWeight: 500, color: '#82F0B9' }}>{otherParty?.full_name?.charAt(0) || '?'}</span>
-                              </div>
-                              <span style={{ fontSize: 11, fontWeight: 500, color: '#1A1918' }}>{otherParty?.full_name || 'User'}</span>
-                              <span style={{ fontSize: 10, color: '#787776' }}>· {loan.purpose || 'Reason'}</span>
-                            </div>
-                            <span style={{ fontSize: 11, fontWeight: 700, color: '#1A1918' }}>{percentPaid}%</span>
-                          </div>
-                          <div style={{ width: '100%', height: 20, background: '#F0F0EE', borderRadius: 6, overflow: 'hidden' }}>
-                            <div style={{ height: '100%', borderRadius: 6, width: `${Math.max(percentPaid, 2)}%`, background: '#82F0B9', transition: 'width 0.5s' }} />
-                          </div>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: '#787776' }}>
-                            <span>${amountPaid.toLocaleString()} {isLending ? 'received' : 'paid'} {loan.next_payment_date && <span>· Next on {format(new Date(loan.next_payment_date), 'MMM d')}</span>}</span>
-                            <span>${loanTotalOwed.toLocaleString()} total</span>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
+                        <p style={{ fontSize: 12, color: '#787776', margin: '6px 0 0' }}>{formatMoney(paidAll)} of {formatMoney(totalAll)} {isLending ? 'repaid' : 'paid back'}</p>
+                      </div>
+                    );
+                  })()
                 )}
               </div>
             </div>
+
+            {/* Your Active Loans */}
+            {activeLoans.length > 0 && (
+              <div className="glass-card">
+                <div style={{ padding: '14px 16px 0' }}>
+                  <span style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.07em', textTransform: 'uppercase' }}>Your Active Loans</span>
+                </div>
+                <div style={{ padding: '10px 16px 16px', display: 'flex', flexDirection: 'column', gap: 14 }}>
+                  {activeLoans.slice(0, 5).map(loan => {
+                    const otherParty = publicProfiles.find(p => p.user_id === (isLending ? loan.borrower_id : loan.lender_id));
+                    const loanTotalOwed = loan.total_amount || loan.amount || 0;
+                    const amountPaid = loan.amount_paid || 0;
+                    const percentPaid = loanTotalOwed > 0 ? Math.round((amountPaid / loanTotalOwed) * 100) : 0;
+                    return (
+                      <div key={loan.id}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                          <div style={{ width: 22, height: 22, borderRadius: '50%', background: 'rgba(130,240,185,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                            <span style={{ fontSize: 10, fontWeight: 600, color: '#82F0B9' }}>{otherParty?.full_name?.charAt(0) || '?'}</span>
+                          </div>
+                          <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918' }}>{otherParty?.full_name || 'User'}</span>
+                          <span style={{ fontSize: 11, color: '#9B9A98' }}>· {loan.purpose || 'Loan'}</span>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                          <div style={{ flex: 1, height: 6, background: '#F0F0EE', borderRadius: 999, overflow: 'hidden' }}>
+                            <div style={{ height: '100%', borderRadius: 999, width: `${Math.max(percentPaid, 2)}%`, background: '#82F0B9', transition: 'width 0.5s' }} />
+                          </div>
+                          <span style={{ fontSize: 11, fontWeight: 700, color: '#1A1918', minWidth: 32, textAlign: 'right' }}>{percentPaid}%</span>
+                        </div>
+                        <p style={{ fontSize: 11, color: '#787776', margin: '5px 0 0' }}>{formatMoney(amountPaid)} of {formatMoney(loanTotalOwed)} {isLending ? 'repaid' : 'paid back'}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             {/* Upcoming Payments */}
             {(() => {
@@ -663,73 +666,48 @@ export default function YourLoans() {
 
           {/* Right Column */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            {/* Next Payment Box */}
-            <div className="glass-card">
+            {/* Next payment due */}
+            <div className={isLending ? 'glass-card' : 'galaxy-border-card'}>
               <div style={{ padding: '14px 16px 0' }}>
-                <span style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.07em', textTransform: 'uppercase' }}>Next Payment</span>
+                <div style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.07em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>Next payment due</div>
               </div>
               <div style={{ padding: '10px 16px 16px' }}>
-                {nextPaymentLoan ? (
-                  <div style={{ borderTop: '1px solid rgba(0,0,0,0.06)', paddingTop: 8, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                    <div>
-                      <p style={{ fontSize: 11, color: '#787776', marginBottom: 2 }}>Next Payment Date</p>
-                      <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
-                        <p style={{ fontSize: 15, fontWeight: 700, color: '#1A1918', margin: 0 }}>{format(new Date(nextPaymentLoan.next_payment_date), 'EEE, MMM d')}</p>
-                        {nextPaymentDays !== null && (
-                          <p style={{ fontSize: 11, color: '#787776', margin: 0 }}>{nextPaymentDays > 0 ? `${nextPaymentDays}d away` : nextPaymentDays === 0 ? 'Due today' : `${Math.abs(nextPaymentDays)}d overdue`}</p>
-                        )}
-                      </div>
+                {!isLending && nextPaymentLoan ? (
+                  <>
+                    <div style={{ fontSize: '1.3rem', fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', lineHeight: 1 }}>
+                      {format(new Date(nextPaymentLoan.next_payment_date), 'MMM d')}
                     </div>
-                    <div>
-                      <p style={{ fontSize: 11, color: '#787776', marginBottom: 2 }}>{isLending ? 'Expected Amount' : 'Next Payment Amount'}</p>
-                      <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
-                        <p style={{ fontSize: 15, fontWeight: 700, color: '#1A1918', margin: 0 }}>{formatMoney(nextPaymentAmount)}</p>
-                        <p style={{ fontSize: 11, color: '#787776', margin: 0 }}>{isLending ? `from ${otherPartyUsername}` : `to ${otherPartyUsername}`}</p>
-                      </div>
+                    <div style={{ fontSize: 12, color: '#787776', marginTop: 6 }}>
+                      {formatMoney(nextPaymentAmount)} to {otherPartyUsername}
                     </div>
-                  </div>
+                  </>
                 ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px 0', color: '#787776' }}>
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ opacity: 0.4, marginBottom: 6 }}><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                    <p style={{ fontSize: 12 }}>No upcoming payments</p>
-                  </div>
+                  <div style={{ fontSize: 13, color: '#787776' }}>No upcoming payments to send</div>
                 )}
               </div>
             </div>
 
-            {/* Overdue Payment Boxes */}
-            {(() => {
-              const overdueLoans = activeLoans.filter(loan => {
-                if (!loan.next_payment_date) return false;
-                return daysUntilDate(loan.next_payment_date) < 0;
-              });
-              if (overdueLoans.length === 0) return null;
-              return (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  {overdueLoans.map(loan => {
-                    const otherParty = getUserById(isLending ? loan.borrower_id : loan.lender_id);
-                    const firstName = otherParty?.full_name?.split(' ')[0] || otherParty?.username || 'User';
-                    return (
-                      <div key={`overdue-${loan.id}`} className="glass-hero-alert" style={{ padding: '14px 20px', display: 'flex', alignItems: 'center', gap: 12 }}>
-                        <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#E8726E', flexShrink: 0 }} />
-                        <div style={{ flex: 1, fontSize: 13, color: '#787776', lineHeight: 1.5 }}>
-                          <strong style={{ color: '#1A1918', fontWeight: 600 }}>Just a reminder</strong>
-                          {isLending
-                            ? ` ${firstName} has an overdue payment. If they've already paid, make sure to record it so your dashboard stays up to date.`
-                            : ` you have a payment to ${firstName} that is overdue. If you've already paid, make sure to record the payment so it's up to date.`
-                          }
-                        </div>
-                        <Link to={createPageUrl("RecordPayment")} style={{
-                          padding: '7px 18px', borderRadius: 20, background: '#82F0B9', color: 'white',
-                          fontSize: 12, fontWeight: 600, textDecoration: 'none', whiteSpace: 'nowrap',
-                          fontFamily: "'DM Sans', sans-serif", transition: 'background 0.15s'
-                        }}>Record Payment</Link>
-                      </div>
-                    );
-                  })}
-                </div>
-              );
-            })()}
+            {/* Next payment incoming */}
+            <div className={isLending ? 'galaxy-border-card' : 'glass-card'}>
+              <div style={{ padding: '14px 16px 0' }}>
+                <div style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.07em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>Next payment incoming</div>
+              </div>
+              <div style={{ padding: '10px 16px 16px' }}>
+                {isLending && nextPaymentLoan ? (
+                  <>
+                    <div style={{ fontSize: '1.3rem', fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', lineHeight: 1 }}>
+                      {format(new Date(nextPaymentLoan.next_payment_date), 'MMM d')}
+                    </div>
+                    <div style={{ fontSize: 12, color: '#787776', marginTop: 6 }}>
+                      {formatMoney(nextPaymentAmount)} from {otherPartyUsername}
+                    </div>
+                  </>
+                ) : (
+                  <div style={{ fontSize: 13, color: '#787776' }}>No incoming payments expected</div>
+                )}
+              </div>
+            </div>
+
 
             {/* Loans Ranked By */}
             {activeLoans.length > 0 && (
@@ -1225,14 +1203,64 @@ export default function YourLoans() {
         )}
       </AnimatePresence>
 
-      <div className="home-with-sidebar" style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 240, paddingTop: 90, background: '#F5F4F0' }}>
+      <div className="home-with-sidebar" style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 240, paddingTop: 106, background: '#F5F4F0' }}>
         <DashboardSidebar activePage="YourLoans" user={user} tabs={[{key:'lending',label:'Lending'},{key:'borrowing',label:'Borrowing'},{key:'details',label:'Individual Loan Details'}]} activeTab={activeTab} onTabChange={setActiveTab} />
 
           {/* Hero + page content */}
           <div style={{ position: 'relative', zIndex: 2 }}>
 
             {/* Page content */}
-            <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 28px 64px' }}>
+            <div style={{ maxWidth: 1080, margin: '0 auto', padding: '24px 40px 64px' }}>
+              {/* Tab bar — centered */}
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
+                <div style={{ display: 'inline-flex', gap: 2, background: 'rgba(0,0,0,0.05)', borderRadius: 10, padding: 3 }}>
+                  {[{key:'lending',label:'Lending'},{key:'borrowing',label:'Borrowing'},{key:'details',label:'Individual Loan Details'}].map(tab => (
+                    <button key={tab.key} onClick={() => setActiveTab(tab.key)} style={{
+                      padding: '6px 16px', borderRadius: 8, border: 'none', cursor: 'pointer',
+                      fontSize: 13, fontFamily: "'DM Sans', sans-serif",
+                      fontWeight: activeTab === tab.key ? 600 : 500,
+                      color: activeTab === tab.key ? '#1A1918' : '#787776',
+                      background: activeTab === tab.key ? 'white' : 'transparent',
+                      boxShadow: activeTab === tab.key ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
+                      transition: 'all 0.15s', whiteSpace: 'nowrap',
+                    }}>{tab.label}</button>
+                  ))}
+                </div>
+              </div>
+              {/* Overdue notification bars — shown above all tabs, across both lending + borrowing */}
+              {(() => {
+                const allOverdue = [
+                  ...activeLendingLoans.filter(l => l.next_payment_date && daysUntilDate(l.next_payment_date) < 0).map(l => ({ ...l, role: 'lending' })),
+                  ...activeBorrowingLoans.filter(l => l.next_payment_date && daysUntilDate(l.next_payment_date) < 0).map(l => ({ ...l, role: 'borrowing' })),
+                ];
+                if (allOverdue.length === 0) return null;
+                return (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 20 }}>
+                    {allOverdue.map(loan => {
+                      const isLen = loan.role === 'lending';
+                      const otherParty = getUserById(isLen ? loan.borrower_id : loan.lender_id);
+                      const firstName = otherParty?.full_name?.split(' ')[0] || otherParty?.username || 'User';
+                      return (
+                        <div key={`overdue-top-${loan.id}`} className="glass-hero-alert" style={{ padding: '14px 20px', display: 'flex', alignItems: 'center', gap: 12 }}>
+                          <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#E8726E', flexShrink: 0 }} />
+                          <div style={{ flex: 1, fontSize: 13, color: '#787776', lineHeight: 1.5 }}>
+                            {isLen
+                              ? <><strong style={{ color: '#1A1918', fontWeight: 600 }}>{firstName}</strong>{` has an overdue payment. If they've already paid, make sure to record it so your dashboard stays up to date.`}</>
+                              : <>{`You have a payment to `}<strong style={{ color: '#1A1918', fontWeight: 600 }}>{firstName}</strong>{` that is overdue. If you've already paid, make sure to record the payment so it's up to date.`}</>
+                            }
+                          </div>
+                          <Link to={createPageUrl("RecordPayment")} style={{
+                            padding: '7px 18px', borderRadius: 20, background: '#E8726E', color: 'white',
+                            fontSize: 12, fontWeight: 600, textDecoration: 'none', whiteSpace: 'nowrap',
+                            fontFamily: "'DM Sans', sans-serif",
+                          }}>Record Payment</Link>
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })()}
+
               {activeTab === 'lending' && renderSummaryTab('lending')}
               {activeTab === 'borrowing' && renderSummaryTab('borrowing')}
               {activeTab === 'details' && renderDetailsTab()}

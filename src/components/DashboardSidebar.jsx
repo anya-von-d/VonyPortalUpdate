@@ -299,27 +299,27 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs 
         padding: '0 28px',
       }}>
         {/* Title — DM Sans matching nav labels */}
-        <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 600, color: '#1A1918' }}>
+        <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 15, fontWeight: 600, color: '#1A1918' }}>
           {PAGE_TITLES[activePage] || ''}
         </span>
-        {/* Tabs on same row, right side */}
-        {tabs && (
-          <div style={{ display: 'inline-flex', gap: 2, background: 'rgba(0,0,0,0.05)', borderRadius: 10, padding: 3 }}>
-            {tabs.map(tab => (
-              <button key={tab.key} onClick={() => onTabChange?.(tab.key)} style={{
-                padding: '5px 14px', borderRadius: 8, border: 'none', cursor: 'pointer',
-                fontSize: 13, fontFamily: "'DM Sans', sans-serif",
-                fontWeight: activeTab === tab.key ? 600 : 500,
-                color: activeTab === tab.key ? '#1A1918' : '#787776',
-                background: activeTab === tab.key ? 'white' : 'transparent',
-                boxShadow: activeTab === tab.key ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
-                transition: 'all 0.15s', whiteSpace: 'nowrap',
-              }}>
-                {tab.label}
-              </button>
-            ))}
-          </div>
-        )}
+        {/* Right side: notifications + profile */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <Link to={createPageUrl("Requests")} style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', width: 34, height: 34, borderRadius: 10, background: 'rgba(0,0,0,0.03)', textDecoration: 'none', flexShrink: 0 }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#787776"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+            {notifCount > 0 && (
+              <div style={{ position: 'absolute', top: -3, right: -3, background: '#E8726E', color: 'white', fontSize: 9, fontWeight: 700, minWidth: 15, height: 15, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 3px', lineHeight: 1 }}>
+                {notifCount > 99 ? '99+' : notifCount}
+              </div>
+            )}
+          </Link>
+          <Link to={createPageUrl("Profile")} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 32, height: 32, borderRadius: '50%', background: '#1A1918', textDecoration: 'none', flexShrink: 0, overflow: 'hidden' }}>
+            {user?.profile_picture_url ? (
+              <img src={user.profile_picture_url} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            ) : (
+              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 700, color: 'white' }}>{avatarInitial}</span>
+            )}
+          </Link>
+        </div>
       </div>
 
       {/* ── Desktop sidebar ── */}

@@ -92,6 +92,7 @@ export default function Lending({ initialTab }) {
   const [quickPayToPerson, setQuickPayToPerson] = useState('');
   const [allUserLoans, setAllUserLoans] = useState([]);
   const [currentUserProfile, setCurrentUserProfile] = useState(null);
+  const [showLoanSentModal, setShowLoanSentModal] = useState(false);
 
   // Typing animation for purpose placeholder
   const [purposePlaceholder, setPurposePlaceholder] = useState('');
@@ -292,9 +293,53 @@ export default function Lending({ initialTab }) {
     return list;
   }, [currentUserProfile, users]);
 
-  // Filter out the person selected in the other dropdown
-  const lenderUsers = usersWithSelf.filter(u => u.username !== formData.borrower_username);
-  const borrowerUsers = usersWithSelf.filter(u => u.username !== formData.lender_username);
+  // All users appear in both dropdowns — selection logic handles swapping
+  const lenderUsers = usersWithSelf;
+  const borrowerUsers = usersWithSelf;
+
+  const selfUsername = currentUserProfile?.username || '';
+
+  const handleLenderSelect = (username) => {
+    let newBorrower = formData.borrower_username;
+
+    // If selected person is already the borrower → swap: they become lender, clear borrower
+    if (username === newBorrower) {
+      newBorrower = '';
+    }
+
+    // If the previous lender was the current user and we're now replacing them → auto-set user as borrower
+    if (formData.lender_username === selfUsername && username !== selfUsername) {
+      newBorrower = selfUsername;
+    }
+
+    // If selected person is not self and borrower is still empty → auto-fill self as borrower
+    if (username !== selfUsername && !newBorrower) {
+      newBorrower = selfUsername;
+    }
+
+    setFormData(prev => ({ ...prev, lender_username: username, borrower_username: newBorrower }));
+  };
+
+  const handleBorrowerSelect = (username) => {
+    let newLender = formData.lender_username;
+
+    // If selected person is already the lender → swap: they become borrower, clear lender
+    if (username === newLender) {
+      newLender = '';
+    }
+
+    // If the previous borrower was the current user and we're now replacing them → auto-set user as lender
+    if (formData.borrower_username === selfUsername && username !== selfUsername) {
+      newLender = selfUsername;
+    }
+
+    // If selected person is not self and lender is still empty → auto-fill self as lender
+    if (username !== selfUsername && !newLender) {
+      newLender = selfUsername;
+    }
+
+    setFormData(prev => ({ ...prev, lender_username: newLender, borrower_username: username }));
+  };
 
   const findUserByUsername = async (username) => {
     if (!username) return null;
@@ -434,8 +479,8 @@ export default function Lending({ initialTab }) {
         payment_frequency: 'monthly',
         purpose: ''
       });
+      setShowLoanSentModal(true);
       await loadData();
-      setActiveSection('offers');
     } catch (error) {
       console.error("Error creating loan and agreement:", error);
       alert(`Error: ${error.message || "Please try again."}`);
@@ -725,7 +770,7 @@ export default function Lending({ initialTab }) {
               if (val === quickPayToPerson) setQuickPayToPerson('');
             }}
           >
-            <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex">
+            <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex border border-input rounded-md">
               <SelectValue placeholder="select person" />
             </SelectTrigger>
             <SelectContent>
@@ -744,7 +789,7 @@ export default function Lending({ initialTab }) {
               if (val === quickPayFromPerson) setQuickPayFromPerson('');
             }}
           >
-            <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex">
+            <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex border border-input rounded-md">
               <SelectValue placeholder="select person" />
             </SelectTrigger>
             <SelectContent>
@@ -1355,6 +1400,40 @@ export default function Lending({ initialTab }) {
 
   return (
     <>
+      {/* Loan Sent Modal */}
+      <AnimatePresence>
+        {showLoanSentModal && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}
+          >
+            <motion.div
+              initial={{ scale: 0.92, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.92, opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 320, damping: 28 }}
+              style={{ background: 'white', borderRadius: 24, maxWidth: 400, width: '100%', padding: '40px 32px 32px', boxShadow: '0 24px 64px rgba(0,0,0,0.14)', textAlign: 'center', fontFamily: "'DM Sans', sans-serif" }}
+            >
+              <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'rgba(130,240,185,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+                <CheckCircle size={32} style={{ color: '#82F0B9' }} />
+              </div>
+              <h3 style={{ fontSize: 22, fontWeight: 700, color: '#1A1918', margin: '0 0 8px', letterSpacing: '-0.02em' }}>Loan Sent!</h3>
+              <p style={{ fontSize: 14, color: '#787776', margin: '0 0 28px', lineHeight: 1.6 }}>
+                Your loan has been created and sent. The other party will need to sign to make it active.
+              </p>
+              <button
+                onClick={() => setShowLoanSentModal(false)}
+                style={{
+                  width: '100%', padding: '13px 0', borderRadius: 14, border: 'none',
+                  background: '#82F0B9', color: 'white', fontSize: 15, fontWeight: 600,
+                  cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.01em',
+                }}
+              >
+                Done
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Document Popup Modal */}
       <AnimatePresence>
         {activeDocPopup && docPopupAgreement && (
@@ -1901,11 +1980,11 @@ export default function Lending({ initialTab }) {
               >
                 {/* Form */}
                 <div className="lg:col-span-2">
-                  <div className="bg-white rounded-2xl p-5 border-0">
-                    <div className="mb-5">
-                      <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                  <div className="glass-card" style={{ overflow: 'visible', padding: '14px 16px 20px' }}>
+                    <div style={{ marginBottom: 16 }}>
+                      <span style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.07em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>
                         {loanType === 'flexible' ? 'Create Quick Payment Request' : (isUserBorrower ? 'Request a Loan' : 'Create Loan Offer')}
-                      </p>
+                      </span>
                     </div>
                       <form onSubmit={handleSubmit} className="space-y-5">
                         {/* No Friends Banner */}
@@ -1944,7 +2023,7 @@ export default function Lending({ initialTab }) {
                             <UserSelector
                               users={lenderUsers}
                               value={formData.lender_username}
-                              onSelect={(username) => handleInputChange('lender_username', username)}
+                              onSelect={handleLenderSelect}
                               placeholder="Choose a person..."
                               showAddFriends={true}
                               onAddFriends={() => navigate(createPageUrl('Friends') + '?tab=add')}
@@ -1963,7 +2042,7 @@ export default function Lending({ initialTab }) {
                             <UserSelector
                               users={borrowerUsers}
                               value={formData.borrower_username}
-                              onSelect={(username) => handleInputChange('borrower_username', username)}
+                              onSelect={handleBorrowerSelect}
                               placeholder="Choose a person..."
                               showAddFriends={true}
                               onAddFriends={() => navigate(createPageUrl('Friends') + '?tab=add')}
@@ -2053,7 +2132,7 @@ export default function Lending({ initialTab }) {
                                     value={formData.repeating_frequency}
                                     onValueChange={(value) => handleInputChange('repeating_frequency', value)}
                                   >
-                                    <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex">
+                                    <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex border border-input rounded-md">
                                       <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -2067,7 +2146,7 @@ export default function Lending({ initialTab }) {
                                       value={formData.repeating_day_of_week}
                                       onValueChange={(value) => handleInputChange('repeating_day_of_week', value)}
                                     >
-                                      <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex">
+                                      <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex border border-input rounded-md">
                                         <SelectValue />
                                       </SelectTrigger>
                                       <SelectContent>
@@ -2085,7 +2164,7 @@ export default function Lending({ initialTab }) {
                                       value={formData.repeating_day_of_month}
                                       onValueChange={(value) => handleInputChange('repeating_day_of_month', value)}
                                     >
-                                      <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex">
+                                      <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex border border-input rounded-md">
                                         <SelectValue />
                                       </SelectTrigger>
                                       <SelectContent>
@@ -2102,13 +2181,13 @@ export default function Lending({ initialTab }) {
                                     type="time"
                                     value={formData.repeating_time}
                                     onChange={(e) => handleInputChange('repeating_time', e.target.value)}
-                                    className="w-auto h-8 px-3 bg-white inline-flex"
+                                    className="w-auto h-8 px-3 bg-white inline-flex border border-input rounded-md"
                                   />{' '}
                                   <Select
                                     value={formData.repeating_timezone}
                                     onValueChange={(value) => handleInputChange('repeating_timezone', value)}
                                   >
-                                    <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex">
+                                    <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex border border-input rounded-md">
                                       <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -2126,7 +2205,7 @@ export default function Lending({ initialTab }) {
                                     value={formData.repeating_start_date}
                                     onChange={(e) => handleInputChange('repeating_start_date', e.target.value)}
                                     min={format(new Date(), 'yyyy-MM-dd')}
-                                    className="w-auto h-8 px-3 bg-white inline-flex"
+                                    className="w-auto h-8 px-3 bg-white inline-flex border border-input rounded-md"
                                   />{' '}
                                   and ending after{' '}
                                   <Input
@@ -2202,7 +2281,7 @@ export default function Lending({ initialTab }) {
                                 value={formData.lender_send_funds_date}
                                 onChange={(e) => handleInputChange('lender_send_funds_date', e.target.value)}
                                 min={format(new Date(), 'yyyy-MM-dd')}
-                                className="w-auto h-8 px-3 bg-white inline-flex"
+                                className="w-auto h-8 px-3 bg-white inline-flex border border-input rounded-md"
                               />{' '}
                               at an interest rate of{' '}
                               <Input
@@ -2230,7 +2309,7 @@ export default function Lending({ initialTab }) {
                                 value={formData.repayment_unit}
                                 onValueChange={(value) => handleInputChange('repayment_unit', value)}
                               >
-                                <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex">
+                                <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex border border-input rounded-md">
                                   <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -2243,7 +2322,7 @@ export default function Lending({ initialTab }) {
                                 value={formData.payment_frequency}
                                 onValueChange={(value) => handleInputChange('payment_frequency', value)}
                               >
-                                <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex">
+                                <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex border border-input rounded-md">
                                   <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -2262,7 +2341,7 @@ export default function Lending({ initialTab }) {
                                   value={formData.loan_day_of_week}
                                   onValueChange={(value) => handleInputChange('loan_day_of_week', value)}
                                 >
-                                  <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex">
+                                  <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex border border-input rounded-md">
                                     <SelectValue />
                                   </SelectTrigger>
                                   <SelectContent>
@@ -2280,7 +2359,7 @@ export default function Lending({ initialTab }) {
                                   value={formData.loan_day_of_month}
                                   onValueChange={(value) => handleInputChange('loan_day_of_month', value)}
                                 >
-                                  <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex">
+                                  <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex border border-input rounded-md">
                                     <SelectValue />
                                   </SelectTrigger>
                                   <SelectContent>
@@ -2297,13 +2376,13 @@ export default function Lending({ initialTab }) {
                                 type="time"
                                 value={formData.loan_time}
                                 onChange={(e) => handleInputChange('loan_time', e.target.value)}
-                                className="w-auto h-8 px-3 bg-white inline-flex"
+                                className="w-auto h-8 px-3 bg-white inline-flex border border-input rounded-md"
                               />{' '}
                               <Select
                                 value={formData.loan_timezone}
                                 onValueChange={(value) => handleInputChange('loan_timezone', value)}
                               >
-                                <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex">
+                                <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex border border-input rounded-md">
                                   <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -2341,7 +2420,7 @@ export default function Lending({ initialTab }) {
                                       value={formData.first_payment_date}
                                       onChange={(e) => handleInputChange('first_payment_date', e.target.value)}
                                       min={format(new Date(), 'yyyy-MM-dd')}
-                                      className="w-auto h-8 px-3 bg-white inline-flex"
+                                      className="w-auto h-8 px-3 bg-white inline-flex border border-input rounded-md"
                                     />{' '}
                                     and the last payment due on{' '}
                                     <span className="font-bold text-[#82F0B9]">
@@ -2398,7 +2477,7 @@ export default function Lending({ initialTab }) {
                 {/* Summary Sidebar */}
                 <div className="space-y-4">
                   {/* Loan Type Toggle - Always First */}
-                  <div className="glass-card rounded-2xl p-4 border-0">
+                  <div className="glass-card" style={{ padding: '14px 16px' }}>
                     <div className="flex items-center justify-center gap-3">
                       <span className={`text-xs font-medium ${loanType === 'scheduled' ? 'text-[#82F0B9]' : 'text-slate-400'}`}>
                         Loan
@@ -2464,10 +2543,10 @@ export default function Lending({ initialTab }) {
                   )}
 
                   {/* Loan Summary - Always Last */}
-                  <div className="glass-card rounded-2xl p-5 sticky top-6">
-                    <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
-                      Loan Summary
-                    </p>
+                  <div className="glass-card" style={{ padding: '14px 16px 16px', position: 'sticky', top: 6 }}>
+                    <div style={{ marginBottom: 14 }}>
+                      <span style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.07em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>Loan Summary</span>
+                    </div>
                     <div className="space-y-3">
                       <div className="pb-2 border-b border-[#82F0B9]/20 flex items-baseline gap-1">
                         <span className="text-slate-600 text-sm flex-shrink-0">For:</span>
@@ -2529,8 +2608,6 @@ export default function Lending({ initialTab }) {
                   </p>
                 </div>
 
-                {/* Quick Record Payment - only show when there are active loans */}
-                {renderRecordPaymentBox('lg:col-span-3')}
               </motion.div>
             )}
 

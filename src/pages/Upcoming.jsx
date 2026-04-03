@@ -293,45 +293,45 @@ export default function Upcoming() {
 
     return (
       <div style={{
-        display: 'flex', alignItems: 'center', gap: 16, padding: '16px 0',
-        borderBottom: showBorder ? '1px solid rgba(0,0,0,0.04)' : 'none',
+        display: 'flex', alignItems: 'center', gap: 12, padding: '12px 0',
+        borderBottom: showBorder ? '1px solid rgba(0,0,0,0.05)' : 'none',
       }}>
         {/* Days box instead of profile image */}
         <div style={{
-          width: 48, height: 48, borderRadius: 12, flexShrink: 0,
+          width: 40, height: 40, borderRadius: 10, flexShrink: 0,
           background: isOverdue ? 'rgba(232,114,110,0.1)' : event.isLender ? 'rgba(130,240,185,0.08)' : 'rgba(3,172,234,0.08)',
           display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
           border: isOverdue ? '1px solid rgba(232,114,110,0.2)' : '1px solid rgba(0,0,0,0.04)',
         }}>
           <span style={{
-            fontSize: 16, fontWeight: 700, lineHeight: 1.1,
+            fontSize: 13, fontWeight: 700, lineHeight: 1.1,
             color: isOverdue ? '#E8726E' : '#1A1918',
           }}>
             {isOverdue ? `-${daysAbs}` : daysAbs}
           </span>
           <span style={{
-            fontSize: 9, fontWeight: 600, color: isOverdue ? '#E8726E' : '#787776',
+            fontSize: 8, fontWeight: 600, color: isOverdue ? '#E8726E' : '#787776',
             textTransform: 'uppercase', letterSpacing: '0.02em',
           }}>
             {daysAbs === 1 ? 'day' : 'days'}
           </span>
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 14, fontWeight: 500, color: '#1A1918' }}>
+          <div style={{ fontSize: 13, fontWeight: 500, color: '#1A1918' }}>
             {event.isLender
               ? `Receive payment from ${event.fullName || event.username}`
               : `Send payment to ${event.fullName || event.username}`}
           </div>
-          <div style={{ fontSize: 12, color: isOverdue ? '#E8726E' : '#787776', marginTop: 2 }}>
+          <div style={{ fontSize: 11, color: isOverdue ? '#E8726E' : '#787776', marginTop: 2 }}>
             {isOverdue
               ? `Due ${format(event.date, "do MMMM")}`
               : event.days === 0
                 ? 'Due today'
-                : `Due ${format(event.date, "do MMMM 'at' h:mmaaa")}`}
+                : `Due ${format(event.date, "do MMMM")}`}
           </div>
         </div>
         <div style={{
-          fontSize: 15, fontWeight: 600, flexShrink: 0,
+          fontSize: 13, fontWeight: 600, flexShrink: 0,
           color: event.isLender ? '#4CAF50' : '#1A1918',
         }}>
           {event.isLender ? '+' : ''}{formatMoney(event.amount)}
@@ -348,12 +348,29 @@ export default function Upcoming() {
   };
 
   return (
-    <div className="home-with-sidebar" style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 240, paddingTop: 90, background: '#F5F4F0' }}>
+    <div className="home-with-sidebar" style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 240, paddingTop: 106, background: '#F5F4F0' }}>
 
       <DashboardSidebar activePage="Upcoming" user={user} tabs={[{key:'summary',label:'Summary'},{key:'calendar',label:'Calendar'}]} activeTab={activeTab} onTabChange={setActiveTab} />
 
         {/* ── Content ── */}
-        <div style={{ maxWidth: 1080, margin: '0 auto', padding: '32px 28px 64px', position: 'relative', zIndex: 2 }}>
+        <div style={{ maxWidth: 1080, margin: '0 auto', padding: '24px 40px 64px', position: 'relative', zIndex: 2 }}>
+
+          {/* Tab bar — centered */}
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
+            <div style={{ display: 'inline-flex', gap: 2, background: 'rgba(0,0,0,0.05)', borderRadius: 10, padding: 3 }}>
+              {[{key:'summary',label:'Summary'},{key:'calendar',label:'Calendar'}].map(tab => (
+                <button key={tab.key} onClick={() => setActiveTab(tab.key)} style={{
+                  padding: '6px 16px', borderRadius: 8, border: 'none', cursor: 'pointer',
+                  fontSize: 13, fontFamily: "'DM Sans', sans-serif",
+                  fontWeight: activeTab === tab.key ? 600 : 500,
+                  color: activeTab === tab.key ? '#1A1918' : '#787776',
+                  background: activeTab === tab.key ? 'white' : 'transparent',
+                  boxShadow: activeTab === tab.key ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
+                  transition: 'all 0.15s', whiteSpace: 'nowrap',
+                }}>{tab.label}</button>
+              ))}
+            </div>
+          </div>
 
         {activeTab === 'summary' ? (
           /* ════════ SUMMARY VIEW ════════ */
@@ -363,14 +380,14 @@ export default function Upcoming() {
             <div>
               {/* Overdue section */}
               {overdue.length > 0 && (
-                <div className="glass-card" style={{ overflow: 'hidden', marginBottom: 16 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 28px 0' }}>
-                    <div style={{ fontSize: 12, fontWeight: 700, color: '#E8726E', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Overdue</div>
-                    <div style={{ fontSize: 13, color: '#E8726E', fontWeight: 500 }}>
-                      {overdue.length} payment{overdue.length !== 1 ? 's' : ''} for {formatMoney(overdue.reduce((s, e) => s + e.amount, 0))}
-                    </div>
+                <div className="glass-card" style={{ marginBottom: 12 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px 0' }}>
+                    <span style={{ fontSize: 11, fontWeight: 600, color: '#E8726E', letterSpacing: '0.07em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>Overdue</span>
+                    <span style={{ fontSize: 11, color: '#E8726E', fontWeight: 500, fontFamily: "'DM Sans', sans-serif" }}>
+                      {overdue.length} payment{overdue.length !== 1 ? 's' : ''} · {formatMoney(overdue.reduce((s, e) => s + e.amount, 0))}
+                    </span>
                   </div>
-                  <div style={{ padding: '4px 28px 20px' }}>
+                  <div style={{ padding: '6px 16px 14px' }}>
                     {overdue.map((event, idx) => (
                       <PaymentRow key={event.loanId + '-ov'} event={event} showBorder={idx < overdue.length - 1} />
                     ))}
@@ -379,16 +396,16 @@ export default function Upcoming() {
               )}
 
               {/* Next 7 Days */}
-              <div className="glass-card" style={{ overflow: 'hidden' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 28px 0' }}>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Next 7 Days</div>
-                  <div style={{ fontSize: 13, color: '#787776', fontWeight: 500 }}>
-                    {next7Count} payment{next7Count !== 1 ? 's' : ''} for {formatMoney(next7Total)}
-                  </div>
+              <div className="glass-card">
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px 0' }}>
+                  <span style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.07em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>Next 7 Days</span>
+                  <span style={{ fontSize: 11, color: '#9B9A98', fontWeight: 500, fontFamily: "'DM Sans', sans-serif" }}>
+                    {next7Count} payment{next7Count !== 1 ? 's' : ''} · {formatMoney(next7Total)}
+                  </span>
                 </div>
-                <div style={{ padding: '4px 28px 20px' }}>
+                <div style={{ padding: '6px 16px 14px' }}>
                   {next7Days.length === 0 ? (
-                    <div style={{ textAlign: 'center', padding: '32px 0', color: '#787776', fontSize: 13 }}>No payments in the next 7 days</div>
+                    <div style={{ textAlign: 'center', padding: '24px 0', color: '#787776', fontSize: 13 }}>No payments in the next 7 days</div>
                   ) : (
                     next7Days.map((event, idx) => (
                       <PaymentRow key={event.loanId + '-7'} event={event} showBorder={idx < next7Days.length - 1} />
@@ -398,16 +415,16 @@ export default function Upcoming() {
               </div>
 
               {/* Coming Later */}
-              <div className="glass-card" style={{ overflow: 'hidden', marginTop: 16 }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 28px 0' }}>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Coming Later</div>
-                  <div style={{ fontSize: 13, color: '#787776', fontWeight: 500 }}>
-                    {laterCount} payment{laterCount !== 1 ? 's' : ''} for {formatMoney(laterTotal)}
-                  </div>
+              <div className="glass-card" style={{ marginTop: 12 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px 0' }}>
+                  <span style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.07em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>Coming Later</span>
+                  <span style={{ fontSize: 11, color: '#9B9A98', fontWeight: 500, fontFamily: "'DM Sans', sans-serif" }}>
+                    {laterCount} payment{laterCount !== 1 ? 's' : ''} · {formatMoney(laterTotal)}
+                  </span>
                 </div>
-                <div style={{ padding: '4px 28px 20px' }}>
+                <div style={{ padding: '6px 16px 14px' }}>
                   {comingLater.length === 0 ? (
-                    <div style={{ textAlign: 'center', padding: '32px 0', color: '#787776', fontSize: 13 }}>No payments coming up</div>
+                    <div style={{ textAlign: 'center', padding: '24px 0', color: '#787776', fontSize: 13 }}>No payments coming up</div>
                   ) : (
                     comingLater.map((event, idx) => (
                       <PaymentRow key={event.loanId + '-later'} event={event} showBorder={idx < comingLater.length - 1} />
@@ -419,7 +436,7 @@ export default function Upcoming() {
 
             {/* Right column: Mini calendar */}
             <div>
-              <div className="glass-card" style={{ padding: '20px 22px' }}>
+              <div className="glass-card" style={{ padding: '14px 16px' }}>
                 <MiniCalendar today={today} paymentDates={miniCalPaymentDates} />
               </div>
             </div>

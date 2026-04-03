@@ -858,13 +858,30 @@ export default function Borrowing() {
         )}
       </AnimatePresence>
 
-      <div className="home-with-sidebar" style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 240, paddingTop: 90, background: '#F5F4F0' }}>
+      <div className="home-with-sidebar" style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 240, paddingTop: 106, background: '#F5F4F0' }}>
         <DashboardSidebar activePage="Borrowing" user={user} tabs={[{key:'summary',label:'Summary'},{key:'details',label:'Individual Loan Details'}]} activeTab={activeTab} onTabChange={setActiveTab} />
 
           <div style={{ position: 'relative', zIndex: 2 }}>
 
         {/* Page content */}
-        <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 28px 64px' }}>
+        <div style={{ maxWidth: 1080, margin: '0 auto', padding: '24px 40px 64px' }}>
+
+          {/* Tab bar — centered */}
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
+            <div style={{ display: 'inline-flex', gap: 2, background: 'rgba(0,0,0,0.05)', borderRadius: 10, padding: 3 }}>
+              {[{key:'summary',label:'Summary'},{key:'details',label:'Individual Loan Details'}].map(tab => (
+                <button key={tab.key} onClick={() => setActiveTab(tab.key)} style={{
+                  padding: '6px 16px', borderRadius: 8, border: 'none', cursor: 'pointer',
+                  fontSize: 13, fontFamily: "'DM Sans', sans-serif",
+                  fontWeight: activeTab === tab.key ? 600 : 500,
+                  color: activeTab === tab.key ? '#1A1918' : '#787776',
+                  background: activeTab === tab.key ? 'white' : 'transparent',
+                  boxShadow: activeTab === tab.key ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
+                  transition: 'all 0.15s', whiteSpace: 'nowrap',
+                }}>{tab.label}</button>
+              ))}
+            </div>
+          </div>
 
           {/* Next Payment Alert Banner */}
           {nextPaymentLoan && nextPaymentDays !== null && (

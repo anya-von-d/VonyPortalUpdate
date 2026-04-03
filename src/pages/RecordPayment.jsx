@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import {
   DollarSign, CheckCircle, CreditCard, Banknote, Smartphone, ChevronDown,
-  AlertCircle, ArrowRight, ArrowLeft, Check, X, Clock, FileText
+  AlertCircle, ArrowRight, ArrowLeft, X, Clock, FileText
 } from "lucide-react";
 import { format, addMonths } from "date-fns";
 import { motion, AnimatePresence } from "framer-motion";
@@ -204,8 +204,7 @@ export default function RecordPayment() {
   /* ── Loan selection ──────────────────────────────────────── */
   const handleSelectLoan = (loan) => {
     setSelectedLoan(loan);
-    const suggested = getSuggestedPayment(loan);
-    setAmount(suggested > 0 ? suggested.toFixed(2) : '');
+    setAmount('');
     setPaymentMethod('');
     setPaymentDate(format(new Date(), 'yyyy-MM-dd'));
     setError('');
@@ -313,9 +312,9 @@ export default function RecordPayment() {
   /* ── Loading state ──────────────────────────────────────── */
   if (isLoading && !user) {
     return (
-      <div style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 240, paddingTop: 90, background: '#F5F4F0' }}>
+      <div style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 240, paddingTop: 106, background: '#F5F4F0' }}>
         <DashboardSidebar activePage="RecordPayment" user={user} />
-          <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 28px 64px', position: 'relative', zIndex: 2 }}>
+          <div style={{ maxWidth: 1080, margin: '0 auto', padding: '24px 40px 64px', position: 'relative', zIndex: 2 }}>
             <div className="glass-card" style={{ padding: 40, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <div style={{ width: 32, height: 32, border: '2px solid #82F0B9', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite', marginBottom: 12 }} />
               <p style={{ fontSize: 13, color: '#787776' }}>Loading...</p>
@@ -332,8 +331,6 @@ export default function RecordPayment() {
         </div>
     );
   }
-
-  const stepLabels = ['Select Loan', 'Enter Details', 'Confirm Payment'];
 
   /* ══════════════════════════════════════════════════════════
      RENDER
@@ -375,7 +372,7 @@ export default function RecordPayment() {
         )}
       </AnimatePresence>
 
-      <div style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 240, paddingTop: 90, background: '#F5F4F0' }}>
+      <div style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 240, paddingTop: 106, background: '#F5F4F0' }}>
         <DashboardSidebar activePage="RecordPayment" user={user} />
 
           {/* Gradient background */}
@@ -383,36 +380,13 @@ export default function RecordPayment() {
           {/* Hero */}
 
           {/* Page content */}
-          <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 28px 64px', position: 'relative', zIndex: 2 }}>
+          <div style={{ maxWidth: 1080, margin: '0 auto', padding: '24px 40px 64px', position: 'relative', zIndex: 2 }}>
 
           {/* Two-column layout */}
           <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 16, alignItems: 'start' }}>
 
             {/* ── Left Column ──────────────────────────────────── */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-
-              {/* Progress Bar */}
-              <div className="glass-card" style={{ padding: '12px 16px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0 }}>
-                  {stepLabels.map((label, i) => (
-                    <React.Fragment key={i}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <div style={{
-                          width: 28, height: 28, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          background: currentStep > i ? '#82F0B9' : currentStep === i ? '#82F0B9' : 'rgba(0,0,0,0.08)',
-                          color: currentStep >= i ? 'white' : '#787776', fontSize: 12, fontWeight: 600, transition: 'all 0.3s',
-                        }}>
-                          {currentStep > i ? <Check size={14} /> : i + 1}
-                        </div>
-                        <span style={{ fontSize: 12, fontWeight: currentStep === i ? 600 : 400, color: currentStep >= i ? '#1A1918' : '#787776', whiteSpace: 'nowrap' }}>{label}</span>
-                      </div>
-                      {i < stepLabels.length - 1 && (
-                        <div style={{ width: 40, height: 2, background: currentStep > i ? '#82F0B9' : 'rgba(0,0,0,0.08)', margin: '0 12px', transition: 'background 0.3s' }} />
-                      )}
-                    </React.Fragment>
-                  ))}
-                </div>
-              </div>
 
               {/* Record Payment Form */}
               <div className="glass-card" style={{ padding: '26px', overflow: 'visible' }}>
@@ -428,8 +402,12 @@ export default function RecordPayment() {
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
                     {/* Loan sentence */}
                     <div style={{ background: 'rgba(130,240,185,0.06)', borderRadius: 14, padding: 16 }}>
-                      <p style={{ fontSize: 15, fontWeight: 500, color: '#1A1918', margin: 0 }}>
-                        {nameOrYouCapitalized(isUserLender(selectedLoan) ? selectedLoan.borrower_id : user?.id)} paid {nameOrYou(isUserLender(selectedLoan) ? user?.id : selectedLoan.lender_id)} <strong>${amount || '___'}</strong> for {selectedLoan.purpose || 'this loan'}
+                      <p style={{ fontSize: 15, fontWeight: 500, color: '#1A1918', margin: 0, lineHeight: 1.6 }}>
+                        {nameOrYouCapitalized(isUserLender(selectedLoan) ? selectedLoan.borrower_id : user?.id)} paid {nameOrYou(isUserLender(selectedLoan) ? user?.id : selectedLoan.lender_id)}{' '}
+                        {amount && parseFloat(amount) > 0
+                          ? <strong>${parseFloat(amount).toFixed(2)}</strong>
+                          : <span style={{ color: '#03ACEA', borderBottom: '2px solid #03ACEA', paddingBottom: 1, fontWeight: 600, letterSpacing: '0.04em' }}>$__</span>
+                        }{' '}for {selectedLoan.purpose || 'this loan'}
                       </p>
                     </div>
 
@@ -599,46 +577,27 @@ export default function RecordPayment() {
                 )}
               </div>
 
-              {/* Recommended Payment */}
-              {selectedLoan && currentStep <= 1 && (
-                <div className="glass-card" style={{ padding: '14px 16px' }}>
-                  <span style={{ fontSize: 13, fontWeight: 600, color: '#0D0D0C', letterSpacing: '-0.02em' }}>Recommended Payment</span>
-                  <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <div>
-                      <p style={{ fontSize: 22, fontWeight: 700, color: '#82F0B9', margin: 0 }}>${getSuggestedPayment(selectedLoan).toFixed(2)}</p>
-                      {selectedLoan.next_payment_date && (
-                        <p style={{ fontSize: 11, color: '#787776', margin: '4px 0 0' }}>Due {format(new Date(selectedLoan.next_payment_date + 'T12:00:00'), 'MMM d, yyyy')}</p>
-                      )}
-                    </div>
-                    <button onClick={() => { setAmount(getSuggestedPayment(selectedLoan).toFixed(2)); }} style={{
-                      padding: '8px 16px', borderRadius: 10, border: 'none',
-                      background: 'rgba(130,240,185,0.08)', fontSize: 12, fontWeight: 600,
-                      color: '#82F0B9', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
-                    }}>
-                      Use Recommended
-                    </button>
-                  </div>
-                </div>
-              )}
             </div>
 
             {/* ── Right Column: Select Your Loan ────────────── */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <div className="glass-card" style={{ overflow: 'visible' }}>
-              <div style={{ padding: '20px 22px 0' }}>
+              {/* Title row with Clear Filters */}
+              <div style={{ padding: '20px 22px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <span style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.07em', textTransform: 'uppercase' }}>Select Your Loan</span>
-              </div>
-
-              {/* Filters */}
-              <div style={{ padding: '12px 22px 0', display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center', overflow: 'visible', position: 'relative', zIndex: 20 }}>
-                <SingleSelectDropdown options={ROLE_OPTIONS} selected={roleFilter} onChange={setRoleFilter} />
-                <SingleSelectDropdown options={friendOptions} selected={friendFilter} onChange={setFriendFilter} />
                 <button onClick={clearFilters} style={{
-                  marginLeft: 'auto', padding: '6px 10px', borderRadius: 8, border: 'none',
+                  padding: '4px 10px', borderRadius: 8, border: 'none',
                   background: 'transparent', fontSize: 11, fontWeight: 500,
                   color: hasAnyFilter ? '#E8726E' : '#C7C6C4',
                   cursor: hasAnyFilter ? 'pointer' : 'default',
                   fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap',
                 }}>Clear Filters</button>
+              </div>
+
+              {/* Filters */}
+              <div style={{ padding: '10px 22px 0', display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center', overflow: 'visible', position: 'relative', zIndex: 20 }}>
+                <SingleSelectDropdown options={ROLE_OPTIONS} selected={roleFilter} onChange={setRoleFilter} />
+                <SingleSelectDropdown options={friendOptions} selected={friendFilter} onChange={setFriendFilter} />
               </div>
 
               {/* Loan List */}
@@ -687,6 +646,29 @@ export default function RecordPayment() {
                   </div>
                 )}
               </div>
+            </div>
+
+              {/* Recommended Payment */}
+              {selectedLoan && currentStep <= 1 && (
+                <div className="glass-card" style={{ padding: '14px 16px' }}>
+                  <span style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.07em', textTransform: 'uppercase' }}>Recommended Payment</span>
+                  <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div>
+                      <p style={{ fontSize: 22, fontWeight: 700, color: '#82F0B9', margin: 0 }}>${getSuggestedPayment(selectedLoan).toFixed(2)}</p>
+                      {selectedLoan.next_payment_date && (
+                        <p style={{ fontSize: 11, color: '#787776', margin: '4px 0 0' }}>Due {format(new Date(selectedLoan.next_payment_date + 'T12:00:00'), 'MMM d, yyyy')}</p>
+                      )}
+                    </div>
+                    <button onClick={() => { setAmount(getSuggestedPayment(selectedLoan).toFixed(2)); }} style={{
+                      padding: '8px 16px', borderRadius: 10, border: 'none',
+                      background: 'rgba(130,240,185,0.08)', fontSize: 12, fontWeight: 600,
+                      color: '#82F0B9', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
+                    }}>
+                      Use Recommended
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
