@@ -683,7 +683,7 @@ export default function Home() {
         <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', bottom: 0, overflow: 'hidden', borderRadius: 12, zIndex: 0, pointerEvents: 'none' }}>
           <div style={{
             position: 'absolute', top: 0, left: '-10%', width: '120%', height: '100%', zIndex: 0,
-            background: '#6587F9'
+            background: '#F5F4F0'
           }} />
         </div>
 
@@ -691,8 +691,8 @@ export default function Home() {
       <div style={{ background: 'transparent', position: 'relative', zIndex: 2 }}>
         <div style={{ maxWidth: 1080, margin: '0 auto', padding: '56px 28px 56px', display: 'flex', alignItems: 'flex-end', justifyContent: 'center', textAlign: 'center' }}>
           <div>
-            <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '3.8rem', fontWeight: 600, color: 'white', letterSpacing: '-0.02em', lineHeight: 1.1 }}>
-              {greeting}, <em style={{ fontStyle: 'italic', fontWeight: 600, color: 'rgba(255,255,255,0.9)' }}>{firstName}</em>
+            <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '3.8rem', fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', lineHeight: 1.1 }}>
+              {greeting}, <em style={{ fontStyle: 'italic', fontWeight: 600, color: '#678AFB' }}>{firstName}</em>
             </h1>
           </div>
         </div>

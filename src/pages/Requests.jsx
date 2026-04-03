@@ -490,7 +490,7 @@ export default function Requests() {
         <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', bottom: 0, overflow: 'hidden', borderRadius: 12, zIndex: 0, pointerEvents: 'none' }}>
           <div style={{
             position: 'absolute', top: 0, left: '-10%', width: '120%', height: '100%', zIndex: 0,
-            background: '#6587F9'
+            background: '#F5F4F0'
           }} />
         </div>
 
