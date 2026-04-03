@@ -103,11 +103,11 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
       `}</style>
 
       {/* ══════ SIDEBAR BACKGROUND (fixed, always fills left 200px) ══════ */}
-      <div style={{ position: 'fixed', left: 0, top: 0, width: 200, height: '100vh', background: '#F1EADE', zIndex: 88 }} />
+      <div style={{ position: 'fixed', left: 0, top: 0, width: 200, height: '100vh', background: '#FFFAF3', zIndex: 88 }} />
 
-      {/* ══════ FLOATING TOP BAR ══════ */}
-      <div style={{ position: 'fixed', top: 18, left: 208, right: 0, paddingRight: 24, zIndex: 100, pointerEvents: 'none' }}>
-        <div style={{ maxWidth: 1080, margin: '0 auto', height: 52, pointerEvents: 'auto' }}>
+      {/* ══════ FLOATING TOP BAR (full width, spans sidebar + content) ══════ */}
+      <div style={{ position: 'fixed', top: 18, left: 8, right: 8, zIndex: 100, pointerEvents: 'none' }}>
+        <div style={{ height: 52, pointerEvents: 'auto' }}>
           <div style={{
             width: '100%', height: '100%',
             background: 'rgba(255,255,255,0.93)',
@@ -181,6 +181,7 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
       </div>
 
       {/* ══════ PAGE TITLE ROW ══════ */}
+
       <div style={{ position: 'fixed', top: 76, left: 208, right: 0, paddingRight: 24, zIndex: 99, pointerEvents: 'none' }}>
         <div style={{ maxWidth: 1080, margin: '0 auto', paddingLeft: 40, display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 48, pointerEvents: 'auto' }}>
           <h1 style={{
