@@ -348,46 +348,9 @@ export default function Upcoming() {
   };
 
   return (
-    <div className="home-with-sidebar" style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 240, paddingTop: 68, background: '#F5F4F0' }}>
+    <div className="home-with-sidebar" style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 240, paddingTop: 116, background: '#F5F4F0' }}>
 
-      <DashboardSidebar activePage="Upcoming" user={user} />
-
-      {/* ── Rounded content box ── */}
-
-        {/* ── Galaxy gradient background ── */}
-
-        {/* ── Page header ── */}
-        <div style={{ position: 'relative', zIndex: 2 }}>
-        <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 28px', textAlign: 'center' }}>
-          <div style={{ paddingTop: 80, paddingBottom: 20, textAlign: 'center' }}>
-            <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '3.2rem', fontWeight: 600, letterSpacing: '-0.02em', lineHeight: 1.1, color: '#1A1918', margin: 0 }}>
-              Upcoming
-            </h1>
-          </div>
-        </div>
-
-        {/* ── Glass tab selector ── */}
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 28 }}>
-          <div className="glass-nav" style={{ position: 'relative', background: 'transparent', borderRadius: 16, padding: '6px 8px', display: 'flex', alignItems: 'center', gap: 2, height: 48 }}>
-            <button onClick={() => setActiveTab('summary')} style={{
-              padding: '7px 20px', borderRadius: 50, fontSize: 13, border: 'none', cursor: 'pointer',
-              fontFamily: "'DM Sans', sans-serif", transition: 'all 0.15s',
-              fontWeight: activeTab === 'summary' ? 600 : 500,
-              color: activeTab === 'summary' ? '#1A1918' : '#787776',
-              background: activeTab === 'summary' ? 'rgba(255,255,255,0.85)' : 'transparent',
-              boxShadow: activeTab === 'summary' ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
-            }}>Summary</button>
-            <button onClick={() => setActiveTab('calendar')} style={{
-              padding: '7px 20px', borderRadius: 50, fontSize: 13, border: 'none', cursor: 'pointer',
-              fontFamily: "'DM Sans', sans-serif", transition: 'all 0.15s',
-              fontWeight: activeTab === 'calendar' ? 600 : 500,
-              color: activeTab === 'calendar' ? '#1A1918' : '#787776',
-              background: activeTab === 'calendar' ? 'rgba(255,255,255,0.85)' : 'transparent',
-              boxShadow: activeTab === 'calendar' ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
-            }}>Calendar</button>
-          </div>
-        </div>
-        </div>
+      <DashboardSidebar activePage="Upcoming" user={user} tabs={[{key:'summary',label:'Summary'},{key:'calendar',label:'Calendar'}]} activeTab={activeTab} onTabChange={setActiveTab} />
 
         {/* ── Content ── */}
         <div style={{ maxWidth: 1080, margin: '0 auto', padding: '32px 28px 64px', position: 'relative', zIndex: 2 }}>

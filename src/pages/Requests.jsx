@@ -488,11 +488,6 @@ export default function Requests() {
       <DashboardSidebar activePage="Requests" user={user} />
 
         <div style={{ position: 'relative', zIndex: 2, maxWidth: 1080, margin: '0 auto', padding: '0 28px' }}>
-          {/* Hero */}
-          <div style={{ paddingTop: 80, paddingBottom: 20, textAlign: 'center' }}>
-            <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '3.2rem', fontWeight: 600, letterSpacing: '-0.02em', lineHeight: 1.1, color: '#1A1918', margin: 0 }}>Notifications</h1>
-          </div>
-
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20, paddingBottom: 60 }}>
             {/* All Notifications */}
             <motion.div

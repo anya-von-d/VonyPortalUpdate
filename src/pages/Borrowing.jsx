@@ -858,27 +858,10 @@ export default function Borrowing() {
         )}
       </AnimatePresence>
 
-      <div className="home-with-sidebar" style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 240, paddingTop: 68, background: '#F5F4F0' }}>
-        <DashboardSidebar activePage="Borrowing" user={user} />
-
-          {/* Galaxy gradient background */}
+      <div className="home-with-sidebar" style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 240, paddingTop: 116, background: '#F5F4F0' }}>
+        <DashboardSidebar activePage="Borrowing" user={user} tabs={[{key:'summary',label:'Summary'},{key:'details',label:'Individual Loan Details'}]} activeTab={activeTab} onTabChange={setActiveTab} />
 
           <div style={{ position: 'relative', zIndex: 2 }}>
-          <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 28px' }}>
-            {/* Hero */}
-            <div style={{ paddingTop: 80, paddingBottom: 20, textAlign: 'center' }}>
-              <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '3.2rem', fontWeight: 600, letterSpacing: '-0.02em', lineHeight: 1.1, color: '#1A1918', margin: 0 }}>Lending & Borrowing</h1>
-            </div>
-
-            {/* Glass tab selector */}
-            <div className="glass-nav" style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 16, padding: '6px 24px', height: 48, margin: '0 auto 36px', maxWidth: 420, zIndex: 10 }}>
-              {[{key:'summary',label:'Summary'},{key:'details',label:'Individual Loan Details'}].map(tab => (
-                <button key={tab.key} onClick={() => setActiveTab(tab.key)} style={{ flex: 1, padding: '6px 16px', borderRadius: 10, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: activeTab === tab.key ? 600 : 500, color: activeTab === tab.key ? '#1A1918' : '#787776', background: activeTab === tab.key ? 'rgba(255,255,255,0.85)' : 'transparent', boxShadow: activeTab === tab.key ? '0 1px 4px rgba(0,0,0,0.08)' : 'none', transition: 'all 0.2s', fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap' }}>
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-          </div>
 
         {/* Page content */}
         <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 28px 64px' }}>
