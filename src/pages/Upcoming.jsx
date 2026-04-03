@@ -300,7 +300,7 @@ export default function Upcoming() {
         {/* Days box instead of profile image */}
         <div style={{
           width: 40, height: 40, borderRadius: 10, flexShrink: 0,
-          background: isOverdue ? 'rgba(232,114,110,0.1)' : event.isLender ? 'rgba(130,240,185,0.08)' : 'rgba(3,172,234,0.08)',
+          background: isOverdue ? 'rgba(232,114,110,0.1)' : event.isLender ? 'rgba(130,240,185,0.08)' : 'rgba(37,99,235,0.08)',
           display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
           border: isOverdue ? '1px solid rgba(232,114,110,0.2)' : '1px solid rgba(0,0,0,0.04)',
         }}>
@@ -349,12 +349,12 @@ export default function Upcoming() {
   };
 
   return (
-    <div className="home-with-sidebar" style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 208, paddingRight: 24, paddingTop: 132, background: '#F5F4F0' }}>
+    <div className="home-with-sidebar" style={{ minHeight: '100vh', display: 'flex', alignItems: 'flex-start', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingTop: 132, background: '#F5F4F0' }}>
 
       <DashboardSidebar activePage="Upcoming" user={user} tabs={[{key:'summary',label:'Summary'},{key:'calendar',label:'Calendar'}]} activeTab={activeTab} onTabChange={setActiveTab} />
 
         {/* ── Content ── */}
-        <div style={{ maxWidth: 1080, margin: '0 auto', padding: '24px 40px 64px', position: 'relative', zIndex: 2 }}>
+        <div style={{ flex: 1, minWidth: 0, paddingRight: 24, maxWidth: 1080, margin: '0 auto', padding: '24px 40px 64px', position: 'relative', zIndex: 2 }}>
 
         {activeTab === 'summary' ? (
           /* ════════ SUMMARY VIEW ════════ */

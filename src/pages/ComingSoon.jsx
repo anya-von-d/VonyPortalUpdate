@@ -26,7 +26,7 @@ const products = [
     tagline: "Premium",
     description: "Detailed loan analytics, priority support, and higher lending limits for power users.",
     highlights: ["Advanced repayment insights", "Priority dispute resolution", "Up to $25k lending limit"],
-    color: '#03ACEA',
+    color: '#2563EB',
   },
   {
     icon: BarChart3,
@@ -42,7 +42,7 @@ const products = [
     tagline: "Speed",
     description: "Send and receive loan payments instantly instead of waiting for bank transfers.",
     highlights: ["Real-time payments", "No transfer delays", "Works with any bank"],
-    color: '#03ACEA',
+    color: '#2563EB',
   },
   {
     icon: FileCheck,
@@ -58,7 +58,7 @@ const products = [
     tagline: "Community",
     description: "Pool money with friends for shared goals — trips, gifts, or emergency funds.",
     highlights: ["Transparent contributions", "Automatic splits", "Group dashboard"],
-    color: '#03ACEA',
+    color: '#2563EB',
   },
   {
     icon: Shield,
@@ -83,7 +83,7 @@ const guides = [
     title: "Writing a Loan Agreement That Works",
     description: "The key terms every peer loan should include — amount, schedule, what happens if things change — and how to bring it up naturally.",
     readTime: "5 min read",
-    color: '#03ACEA',
+    color: '#2563EB',
   },
   {
     icon: Heart,
@@ -97,7 +97,7 @@ const guides = [
     title: "Tax Implications of Peer Lending",
     description: "What the IRS expects when you lend or borrow over $10k, how gift rules apply, and when interest income matters.",
     readTime: "5 min read",
-    color: '#03ACEA',
+    color: '#2563EB',
   },
   {
     icon: Brain,
@@ -111,7 +111,7 @@ const guides = [
     title: "Building Your Lending Track Record",
     description: "How consistent, on-time payments and responsible lending on Vony build trust with your network over time.",
     readTime: "3 min read",
-    color: '#03ACEA',
+    color: '#2563EB',
   },
 ];
 
@@ -121,10 +121,10 @@ export default function ComingSoon() {
   const [activeTab, setActiveTab] = useState('shop');
 
   return (
-    <div className="home-with-sidebar" style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 208, paddingRight: 24, paddingTop: 132, background: '#F5F4F0' }}>
+    <div className="home-with-sidebar" style={{ minHeight: '100vh', display: 'flex', alignItems: 'flex-start', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingTop: 132, background: '#F5F4F0' }}>
       <DashboardSidebar activePage="ComingSoon" user={user} tabs={[{key:'shop',label:'Shop'},{key:'learn',label:'Learn'}]} activeTab={activeTab} onTabChange={setActiveTab} />
 
-        <div style={{ background: 'transparent', position: 'relative', zIndex: 2 }}>
+        <div style={{ flex: 1, minWidth: 0, paddingRight: 24, background: 'transparent', position: 'relative', zIndex: 2 }}>
 
           {/* Page content */}
           <div style={{ maxWidth: 1080, margin: '0 auto', padding: '24px 40px 64px' }}>

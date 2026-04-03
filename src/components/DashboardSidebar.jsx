@@ -75,6 +75,12 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
     Requests: 'Requests',
   };
 
+  const hour = new Date().getHours();
+  const timeGreeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good night';
+  const pageTitle = activePage === 'Dashboard'
+    ? (firstName ? `${timeGreeting}, ${firstName}` : timeGreeting)
+    : (PAGE_TITLES[activePage] || activePage);
+
   /* ── Nav icons (14px) ── */
   const icons = {
     home:     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>,
@@ -95,6 +101,9 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
       <style>{`
         @media (min-width: 900px) { .mobile-tab-bar { display: none !important; } }
       `}</style>
+
+      {/* ══════ SIDEBAR BACKGROUND (fixed, always fills left 200px) ══════ */}
+      <div style={{ position: 'fixed', left: 0, top: 0, width: 200, height: '100vh', background: '#F1EADE', zIndex: 88 }} />
 
       {/* ══════ FLOATING TOP BAR ══════ */}
       <div style={{ position: 'fixed', top: 12, left: 208, right: 0, paddingRight: 24, zIndex: 100, pointerEvents: 'none' }}>
@@ -144,8 +153,8 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
                 /* Has photo — show photo + name in blue pill */
                 <div style={{
                   display: 'flex', alignItems: 'center', gap: 8,
-                  background: '#03ACEA', borderRadius: 10, padding: '5px 12px 5px 5px',
-                  outline: active('Profile') ? '2px solid #82F0B9' : 'none', outlineOffset: 2,
+                  background: '#2563EB', borderRadius: 10, padding: '5px 12px 5px 5px',
+                  outline: active('Profile') ? '2px solid #2563EB' : 'none', outlineOffset: 2,
                 }}>
                   <div style={{ width: 26, height: 26, borderRadius: 7, overflow: 'hidden', flexShrink: 0 }}>
                     <img src={user.profile_picture_url} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -156,8 +165,8 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
                 /* Default avatar — blue pill with light-blue person icon + name */
                 <div style={{
                   display: 'flex', alignItems: 'center', gap: 8,
-                  background: '#03ACEA', borderRadius: 10, padding: '5px 12px 5px 8px',
-                  outline: active('Profile') ? '2px solid #82F0B9' : 'none', outlineOffset: 2,
+                  background: '#2563EB', borderRadius: 10, padding: '5px 12px 5px 8px',
+                  outline: active('Profile') ? '2px solid #2563EB' : 'none', outlineOffset: 2,
                 }}>
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="1.8" strokeLinecap="round">
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
@@ -176,10 +185,10 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
         <div style={{ maxWidth: 1080, margin: '0 auto', paddingLeft: 40, display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 48, pointerEvents: 'auto' }}>
           <h1 style={{
             fontFamily: "'Cormorant Garamond', Georgia, serif",
-            fontSize: 30, fontWeight: 400, fontStyle: 'italic',
+            fontSize: 34, fontWeight: 600, fontStyle: 'italic',
             color: '#1A1918', margin: 0, letterSpacing: '-0.01em', lineHeight: 1,
           }}>
-            {PAGE_TITLES[activePage] || activePage}
+            {pageTitle}
           </h1>
           {tabs && tabs.length > 0 && onTabChange && (
             <div style={{ display: 'inline-flex', gap: 2, background: 'rgba(0,0,0,0.05)', borderRadius: 10, padding: 3 }}>
@@ -201,18 +210,15 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
 
       {/* ══════ LEFT NAV SIDEBAR ══════ */}
       <nav ref={navRef} style={{
-        position: 'fixed', left: 0, top: 0, bottom: 0, width: 200,
-        background: 'white', zIndex: 90,
+        position: 'sticky', top: 132, width: 200, flexShrink: 0, alignSelf: 'flex-start',
+        maxHeight: 'calc(100vh - 132px)', background: 'transparent', zIndex: 89,
         display: 'flex', flexDirection: 'column',
         fontFamily: "'DM Sans', sans-serif",
         overflowY: 'auto', overflowX: 'hidden',
       }}>
 
-        {/* Top padding where logo used to be — replaced by just space */}
-        <div style={{ height: 24, flexShrink: 0 }} />
-
         {/* Nav links */}
-        <div style={{ flex: 1, padding: '0 8px', display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <div style={{ flex: 1, padding: '16px 8px 0', display: 'flex', flexDirection: 'column', gap: 2 }}>
           <Link to="/" style={navLinkStyle('Dashboard')}>{icons.home} Home</Link>
           <Link to={createPageUrl("CreateOffer")} style={navLinkStyle('CreateOffer')}>{icons.create} Create Loan</Link>
           <Link to={createPageUrl("RecordPayment")} style={navLinkStyle('RecordPayment')}>{icons.record} Record Payment</Link>

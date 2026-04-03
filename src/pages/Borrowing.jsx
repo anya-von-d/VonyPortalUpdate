@@ -859,10 +859,10 @@ export default function Borrowing() {
         )}
       </AnimatePresence>
 
-      <div className="home-with-sidebar" style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 208, paddingRight: 24, paddingTop: 132, background: '#F5F4F0' }}>
+      <div className="home-with-sidebar" style={{ minHeight: '100vh', display: 'flex', alignItems: 'flex-start', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingTop: 132, background: '#F5F4F0' }}>
         <DashboardSidebar activePage="Borrowing" user={user} tabs={[{key:'summary',label:'Summary'},{key:'details',label:'Individual Loan Details'}]} activeTab={activeTab} onTabChange={setActiveTab} />
 
-          <div style={{ position: 'relative', zIndex: 2 }}>
+          <div style={{ flex: 1, minWidth: 0, paddingRight: 24, position: 'relative', zIndex: 2 }}>
 
         {/* Page content */}
         <div style={{ maxWidth: 1080, margin: '0 auto', padding: '24px 40px 64px' }}>
@@ -929,8 +929,8 @@ export default function Borrowing() {
                             <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1918' }}>Borrowing</div>
                             <div style={{ fontSize: 12, color: '#787776' }}>{pctAll}%</div>
                           </div>
-                          <div style={{ width: '100%', height: 8, borderRadius: 4, background: 'rgba(3,172,234,0.15)', overflow: 'hidden' }}>
-                            <div style={{ height: '100%', borderRadius: 4, background: '#03ACEA', width: `${pctAll}%`, transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)' }} />
+                          <div style={{ width: '100%', height: 8, borderRadius: 4, background: 'rgba(37,99,235,0.15)', overflow: 'hidden' }}>
+                            <div style={{ height: '100%', borderRadius: 4, background: '#2563EB', width: `${pctAll}%`, transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)' }} />
                           </div>
                           <div style={{ fontSize: 11, color: '#787776', marginTop: 6 }}>{formatMoney(paidAll)} of {formatMoney(totalAll)} paid back</div>
                         </div>
@@ -961,8 +961,8 @@ export default function Borrowing() {
                               </div>
                               <div style={{ fontSize: 12, color: '#787776', flexShrink: 0, marginLeft: 8 }}>{percentPaid}%</div>
                             </div>
-                            <div style={{ width: '100%', height: 8, borderRadius: 4, background: 'rgba(3,172,234,0.15)', overflow: 'hidden' }}>
-                              <div style={{ height: '100%', borderRadius: 4, background: '#03ACEA', width: `${percentPaid}%`, transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)' }} />
+                            <div style={{ width: '100%', height: 8, borderRadius: 4, background: 'rgba(37,99,235,0.15)', overflow: 'hidden' }}>
+                              <div style={{ height: '100%', borderRadius: 4, background: '#2563EB', width: `${percentPaid}%`, transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)' }} />
                             </div>
                             <div style={{ fontSize: 11, color: '#787776', marginTop: 6 }}>{formatMoney(amountPaid)} of {formatMoney(loanTotalOwed)} paid back</div>
                           </div>

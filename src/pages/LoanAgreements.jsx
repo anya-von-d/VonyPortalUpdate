@@ -482,9 +482,9 @@ export default function LoanAgreements() {
   /* ── Loading state ──────────────────────────────────────────── */
   if (isLoading || !user) {
     return (
-      <div className="home-with-sidebar" style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 208, paddingRight: 24, paddingTop: 132, background: '#F5F4F0' }}>
+      <div className="home-with-sidebar" style={{ minHeight: '100vh', display: 'flex', alignItems: 'flex-start', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingTop: 132, background: '#F5F4F0' }}>
         <DashboardSidebar activePage="LoanAgreements" user={user} />
-          <div style={{ maxWidth: 1080, margin: '0 auto', padding: '24px 40px 64px', position: 'relative', zIndex: 2 }}>
+          <div style={{ flex: 1, minWidth: 0, paddingRight: 24, maxWidth: 1080, margin: '0 auto', padding: '24px 40px 64px', position: 'relative', zIndex: 2 }}>
             <div className="glass-card" style={{ padding: 40, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
               <div style={{ width: 32, height: 32, border: '2px solid #82F0B9', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite', marginBottom: 12 }} />
               <p style={{ fontSize: 13, color: '#787776' }}>{isLoading ? 'Loading documents...' : 'Please log in to view documents'}</p>
@@ -645,7 +645,7 @@ export default function LoanAgreements() {
             <p style={{ fontSize: 11, color: '#787776', margin: 0 }}>Principal</p>
             <p style={{ fontSize: 18, fontWeight: 700, color: '#1A1918', margin: '4px 0 0' }}>{formatMoney(agreement.amount)}</p>
           </div>
-          <div style={{ background: 'rgba(3,172,234,0.1)', borderRadius: 16, padding: 12, textAlign: 'center' }}>
+          <div style={{ background: 'rgba(37,99,235,0.1)', borderRadius: 16, padding: 12, textAlign: 'center' }}>
             <p style={{ fontSize: 11, color: '#787776', margin: 0 }}>Interest</p>
             <p style={{ fontSize: 18, fontWeight: 700, color: '#1A1918', margin: '4px 0 0' }}>{formatMoney((agreement.total_amount || 0) - (agreement.amount || 0))}</p>
           </div>
@@ -727,7 +727,7 @@ export default function LoanAgreements() {
             <p style={{ fontSize: 11, color: '#787776', marginBottom: 4 }}>Loan Amount</p>
             <p style={{ fontSize: 24, fontWeight: 700, color: '#1A1918', margin: 0 }}>{formatMoney(agreement.amount)}</p>
           </div>
-          <div style={{ background: 'rgba(3,172,234,0.1)', borderRadius: 16, padding: 16 }}>
+          <div style={{ background: 'rgba(37,99,235,0.1)', borderRadius: 16, padding: 16 }}>
             <p style={{ fontSize: 11, color: '#787776', marginBottom: 4 }}>Total Due</p>
             <p style={{ fontSize: 24, fontWeight: 700, color: '#82F0B9', margin: 0 }}>{formatMoney(agreement.total_amount)}</p>
           </div>
@@ -842,12 +842,12 @@ export default function LoanAgreements() {
               onClick={() => setActivePopup('amortization')}
               style={{
                 flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                padding: '10px 16px', borderRadius: 12, border: '1px solid rgba(3,172,234,0.3)',
-                background: 'rgba(3,172,234,0.06)', cursor: 'pointer',
+                padding: '10px 16px', borderRadius: 12, border: '1px solid rgba(37,99,235,0.3)',
+                background: 'rgba(37,99,235,0.06)', cursor: 'pointer',
                 fontSize: 13, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif",
               }}
             >
-              <FileText size={14} style={{ color: '#03ACEA' }} />
+              <FileText size={14} style={{ color: '#2563EB' }} />
               Amortization Schedule
             </button>
           </div>
@@ -857,8 +857,8 @@ export default function LoanAgreements() {
   };
 
   const colors = [
-    'rgba(130,240,185,0.08)', 'rgba(3,172,234,0.08)', 'rgba(130,240,185,0.06)',
-    'rgba(3,172,234,0.06)', 'rgba(130,240,185,0.1)', 'rgba(3,172,234,0.1)',
+    'rgba(130,240,185,0.08)', 'rgba(37,99,235,0.08)', 'rgba(130,240,185,0.06)',
+    'rgba(37,99,235,0.06)', 'rgba(130,240,185,0.1)', 'rgba(37,99,235,0.1)',
   ];
 
   /* ══════════════════════════════════════════════════════════
@@ -909,7 +909,7 @@ export default function LoanAgreements() {
         )}
       </AnimatePresence>
 
-      <div className="home-with-sidebar" style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 208, paddingRight: 24, paddingTop: 132, background: '#F5F4F0' }}>
+      <div className="home-with-sidebar" style={{ minHeight: '100vh', display: 'flex', alignItems: 'flex-start', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingTop: 132, background: '#F5F4F0' }}>
         <DashboardSidebar activePage="LoanAgreements" user={user} />
 
         {/* Rounded content box */}
@@ -918,7 +918,7 @@ export default function LoanAgreements() {
 
 
           {/* Page content */}
-          <div style={{ maxWidth: 1080, margin: '0 auto', padding: '24px 40px 64px', position: 'relative', zIndex: 2 }}>
+          <div style={{ flex: 1, minWidth: 0, paddingRight: 24, maxWidth: 1080, margin: '0 auto', padding: '24px 40px 64px', position: 'relative', zIndex: 2 }}>
 
             {/* ── Search Row ─────────────────────────────────────── */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
@@ -1050,7 +1050,7 @@ export default function LoanAgreements() {
                                 </span>
                               </div>
                               <div className="la-desktop-category" style={{ display: 'none', flex: 1.2, minWidth: 0, alignItems: 'center', gap: 6, paddingLeft: 4 }}>
-                                <span style={{ fontSize: 12, fontWeight: 500, color: isLender ? '#82F0B9' : '#03ACEA' }}>{categoryLabel}</span>
+                                <span style={{ fontSize: 12, fontWeight: 500, color: isLender ? '#82F0B9' : '#2563EB' }}>{categoryLabel}</span>
                               </div>
                               <div className="la-desktop-status" style={{ display: 'none', width: 130, justifyContent: 'center', flexShrink: 0 }}>
                                 <span style={{
@@ -1121,7 +1121,7 @@ export default function LoanAgreements() {
                                   onMouseEnter={e => e.currentTarget.style.background = 'rgba(130,240,185,0.06)'}
                                   onMouseLeave={e => e.currentTarget.style.background = 'white'}
                                 >
-                                  <FileText size={14} style={{ color: '#03ACEA' }} />
+                                  <FileText size={14} style={{ color: '#2563EB' }} />
                                   Amortization Schedule
                                   <div
                                     style={{ position: 'relative' }}

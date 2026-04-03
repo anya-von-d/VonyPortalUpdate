@@ -27,7 +27,7 @@ input[type="date"] {
 @layer base {
   html {
     scroll-behavior: smooth;
-    background-color: #F5F4F0;
+    background-color: #FFFAF3;
     background-image: url('/images/tile.jpeg');
     background-repeat: repeat;
     background-size: 50px 50px;

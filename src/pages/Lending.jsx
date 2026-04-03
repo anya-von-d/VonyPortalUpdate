@@ -745,7 +745,7 @@ export default function Lending({ initialTab }) {
     const canSubmit = quickPayAmount && (quickPayFromPerson || quickPayToPerson);
 
     return (
-      <div className={`bg-[#03ACEA]/10 rounded-2xl p-5 border-0 ${extraClassName}`}>
+      <div className={`bg-[#2563EB]/10 rounded-2xl p-5 border-0 ${extraClassName}`}>
         <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
           Record Payment
         </p>
@@ -759,7 +759,7 @@ export default function Lending({ initialTab }) {
             placeholder=""
             value={quickPayAmount}
             onChange={(e) => setQuickPayAmount(e.target.value)}
-            className="w-24 h-8 px-3 bg-white inline-flex"
+            className="w-24 h-8 px-3 bg-white/80 inline-flex border-0 shadow-none"
             style={{ MozAppearance: 'textfield' }}
           />
           <span>from</span>
@@ -770,7 +770,7 @@ export default function Lending({ initialTab }) {
               if (val === quickPayToPerson) setQuickPayToPerson('');
             }}
           >
-            <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex border border-input rounded-md">
+            <SelectTrigger className="w-auto h-8 px-3 bg-white/80 inline-flex border-0 shadow-none rounded-md">
               <SelectValue placeholder="select person" />
             </SelectTrigger>
             <SelectContent>
@@ -789,7 +789,7 @@ export default function Lending({ initialTab }) {
               if (val === quickPayFromPerson) setQuickPayFromPerson('');
             }}
           >
-            <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex border border-input rounded-md">
+            <SelectTrigger className="w-auto h-8 px-3 bg-white/80 inline-flex border-0 shadow-none rounded-md">
               <SelectValue placeholder="select person" />
             </SelectTrigger>
             <SelectContent>
@@ -1130,7 +1130,7 @@ export default function Lending({ initialTab }) {
           <p className="text-xs text-slate-400 mt-1">ID: {agreement.id}</p>
         </div>
 
-        <div className="bg-[#03ACEA]/10 rounded-2xl p-5 text-center">
+        <div className="bg-[#2563EB]/10 rounded-2xl p-5 text-center">
           <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-1">Principal Amount</p>
           <p className="text-3xl font-bold text-slate-800">{formatMoney(agreement.amount)}</p>
         </div>
@@ -1152,7 +1152,7 @@ export default function Lending({ initialTab }) {
               <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-0.5">Interest</p>
               <p className="font-bold text-slate-800">{agreement.interest_rate}%</p>
             </div>
-            <div className="bg-[#03ACEA]/8 rounded-xl p-3">
+            <div className="bg-[#2563EB]/8 rounded-xl p-3">
               <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-0.5">Payment</p>
               <p className="font-bold text-slate-800">{formatMoney(agreement.payment_amount)}</p>
               <p className="text-xs text-slate-500 capitalize">{agreement.payment_frequency}</p>
@@ -1215,7 +1215,7 @@ export default function Lending({ initialTab }) {
             <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-0.5">Interest</p>
             <p className="text-lg font-bold text-slate-800">{formatMoney((agreement.total_amount || 0) - (agreement.amount || 0))}</p>
           </div>
-          <div className="bg-[#03ACEA]/10 rounded-2xl p-3 text-center">
+          <div className="bg-[#2563EB]/10 rounded-2xl p-3 text-center">
             <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-0.5">Total</p>
             <p className="text-lg font-bold text-slate-800">{formatMoney(agreement.total_amount)}</p>
           </div>
@@ -1300,7 +1300,7 @@ export default function Lending({ initialTab }) {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="bg-[#03ACEA]/8 rounded-xl p-4">
+          <div className="bg-[#2563EB]/8 rounded-xl p-4">
             <p className="text-xs text-slate-600 mb-1">Loan Amount</p>
             <p className="text-2xl font-bold text-slate-800">{formatMoney(agreement.amount)}</p>
           </div>
@@ -1489,13 +1489,13 @@ export default function Lending({ initialTab }) {
         signingAs="Lender"
       />
 
-      <div className="home-with-sidebar" style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 208, paddingRight: 24, paddingTop: 132, background: '#F5F4F0' }}>
+      <div className="home-with-sidebar" style={{ minHeight: '100vh', display: 'flex', alignItems: 'flex-start', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingTop: 132, background: '#F5F4F0' }}>
 
         <DashboardSidebar activePage={initialTab === 'create' ? 'CreateOffer' : 'Lending'} user={currentUser} />
 
           {/* Galaxy gradient background */}
 
-          <div style={{ position: 'relative', zIndex: 2, maxWidth: 1080, margin: '0 auto', padding: '0 28px' }}>
+          <div style={{ flex: 1, minWidth: 0, paddingRight: 24, position: 'relative', zIndex: 2, maxWidth: 1080, margin: '0 auto', padding: '0 28px' }}>
           <div style={{ paddingTop: 24 }} />
 
           {/* Tab Navigation — hidden when accessed as standalone Create Loan page */}
@@ -1616,7 +1616,7 @@ export default function Lending({ initialTab }) {
                           .slice(0, 3)
                           .map((loan, index) => {
                             const borrower = publicProfiles.find(p => p.user_id === loan.borrower_id);
-                            const bgColors = ['rgba(130,240,185,0.06)', 'rgba(130,240,185,0.1)', 'rgba(3,172,234,0.08)', 'rgba(130,240,185,0.08)', 'rgba(130,240,185,0.12)', 'rgba(3,172,234,0.06)'];
+                            const bgColors = ['rgba(130,240,185,0.06)', 'rgba(130,240,185,0.1)', 'rgba(37,99,235,0.08)', 'rgba(130,240,185,0.08)', 'rgba(130,240,185,0.12)', 'rgba(37,99,235,0.06)'];
                             return (
                               <div key={loan.id} className="flex items-center justify-between p-3 rounded-xl" style={{ backgroundColor: bgColors[index % 6] }}>
                                 <div>
@@ -1794,8 +1794,8 @@ export default function Lending({ initialTab }) {
                                     setSelectedMonth(monthDate);
                                     setShowMonthDropdown(false);
                                   }}
-                                  className={`w-full px-4 py-2 text-left text-sm hover:bg-[#03ACEA]/10 transition-colors ${
-                                    isSameMonth(monthDate, selectedMonth) ? 'bg-[#03ACEA]/10 font-medium text-[#82F0B9]' : 'text-slate-700'
+                                  className={`w-full px-4 py-2 text-left text-sm hover:bg-[#2563EB]/10 transition-colors ${
+                                    isSameMonth(monthDate, selectedMonth) ? 'bg-[#2563EB]/10 font-medium text-[#82F0B9]' : 'text-slate-700'
                                   }`}
                                 >
                                   {format(monthDate, 'MMMM')}
@@ -1868,7 +1868,7 @@ export default function Lending({ initialTab }) {
                         );
                       }
 
-                      const colors = ['rgba(130,240,185,0.06)', 'rgba(130,240,185,0.1)', 'rgba(3,172,234,0.08)', 'rgba(130,240,185,0.08)', 'rgba(130,240,185,0.12)', 'rgba(3,172,234,0.06)'];
+                      const colors = ['rgba(130,240,185,0.06)', 'rgba(130,240,185,0.1)', 'rgba(37,99,235,0.08)', 'rgba(130,240,185,0.08)', 'rgba(130,240,185,0.12)', 'rgba(37,99,235,0.06)'];
 
                       return events.map((event, index) => (
                         <div
@@ -1945,7 +1945,7 @@ export default function Lending({ initialTab }) {
                       </div>
 
                       {/* Friends Lent To */}
-                      <div className="rounded-xl p-4 flex items-center gap-3" style={{ backgroundColor: 'rgba(3,172,234,0.08)' }}>
+                      <div className="rounded-xl p-4 flex items-center gap-3" style={{ backgroundColor: 'rgba(37,99,235,0.08)' }}>
                         <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center flex-shrink-0">
                           <UserIcon className="w-4 h-4 text-[#1A1918]" />
                         </div>
@@ -2064,7 +2064,7 @@ export default function Lending({ initialTab }) {
                                   value={formData.amount}
                                   onChange={(e) => handleInputChange('amount', e.target.value)}
                                   required
-                                  className="pl-7"
+                                  className="pl-7 border-0 shadow-none bg-white/80"
                                 />
                               </div>
                             </div>
@@ -2079,6 +2079,7 @@ export default function Lending({ initialTab }) {
                                 value={formData.purpose}
                                 onChange={(e) => handleInputChange('purpose', e.target.value)}
                                 maxLength={100}
+                                className="border-0 shadow-none bg-white/80"
                               />
                             </div>
                           </div>
@@ -2127,7 +2128,7 @@ export default function Lending({ initialTab }) {
                                     value={formData.repeating_frequency}
                                     onValueChange={(value) => handleInputChange('repeating_frequency', value)}
                                   >
-                                    <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex border border-input rounded-md">
+                                    <SelectTrigger className="w-auto h-8 px-3 bg-white/80 inline-flex border-0 shadow-none rounded-md">
                                       <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -2141,7 +2142,7 @@ export default function Lending({ initialTab }) {
                                       value={formData.repeating_day_of_week}
                                       onValueChange={(value) => handleInputChange('repeating_day_of_week', value)}
                                     >
-                                      <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex border border-input rounded-md">
+                                      <SelectTrigger className="w-auto h-8 px-3 bg-white/80 inline-flex border-0 shadow-none rounded-md">
                                         <SelectValue />
                                       </SelectTrigger>
                                       <SelectContent>
@@ -2159,7 +2160,7 @@ export default function Lending({ initialTab }) {
                                       value={formData.repeating_day_of_month}
                                       onValueChange={(value) => handleInputChange('repeating_day_of_month', value)}
                                     >
-                                      <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex border border-input rounded-md">
+                                      <SelectTrigger className="w-auto h-8 px-3 bg-white/80 inline-flex border-0 shadow-none rounded-md">
                                         <SelectValue />
                                       </SelectTrigger>
                                       <SelectContent>
@@ -2176,13 +2177,13 @@ export default function Lending({ initialTab }) {
                                     type="time"
                                     value={formData.repeating_time}
                                     onChange={(e) => handleInputChange('repeating_time', e.target.value)}
-                                    className="w-auto h-8 px-3 bg-white inline-flex border border-input rounded-md"
+                                    className="w-auto h-8 px-3 bg-white/80 inline-flex border-0 shadow-none rounded-md"
                                   />{' '}
                                   <Select
                                     value={formData.repeating_timezone}
                                     onValueChange={(value) => handleInputChange('repeating_timezone', value)}
                                   >
-                                    <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex border border-input rounded-md">
+                                    <SelectTrigger className="w-auto h-8 px-3 bg-white/80 inline-flex border-0 shadow-none rounded-md">
                                       <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -2200,7 +2201,7 @@ export default function Lending({ initialTab }) {
                                     value={formData.repeating_start_date}
                                     onChange={(e) => handleInputChange('repeating_start_date', e.target.value)}
                                     min={format(new Date(), 'yyyy-MM-dd')}
-                                    className="w-auto h-8 px-3 bg-white inline-flex border border-input rounded-md"
+                                    className="w-auto h-8 px-3 bg-white/80 inline-flex border-0 shadow-none rounded-md"
                                   />{' '}
                                   and ending after{' '}
                                   <Input
@@ -2276,7 +2277,7 @@ export default function Lending({ initialTab }) {
                                 value={formData.lender_send_funds_date}
                                 onChange={(e) => handleInputChange('lender_send_funds_date', e.target.value)}
                                 min={format(new Date(), 'yyyy-MM-dd')}
-                                className="w-auto h-8 px-3 bg-white inline-flex border border-input rounded-md"
+                                className="w-auto h-8 px-3 bg-white/80 inline-flex border-0 shadow-none rounded-md"
                               />{' '}
                               at an interest rate of{' '}
                               <Input
@@ -2304,7 +2305,7 @@ export default function Lending({ initialTab }) {
                                 value={formData.repayment_unit}
                                 onValueChange={(value) => handleInputChange('repayment_unit', value)}
                               >
-                                <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex border border-input rounded-md">
+                                <SelectTrigger className="w-auto h-8 px-3 bg-white/80 inline-flex border-0 shadow-none rounded-md">
                                   <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -2317,7 +2318,7 @@ export default function Lending({ initialTab }) {
                                 value={formData.payment_frequency}
                                 onValueChange={(value) => handleInputChange('payment_frequency', value)}
                               >
-                                <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex border border-input rounded-md">
+                                <SelectTrigger className="w-auto h-8 px-3 bg-white/80 inline-flex border-0 shadow-none rounded-md">
                                   <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -2336,7 +2337,7 @@ export default function Lending({ initialTab }) {
                                   value={formData.loan_day_of_week}
                                   onValueChange={(value) => handleInputChange('loan_day_of_week', value)}
                                 >
-                                  <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex border border-input rounded-md">
+                                  <SelectTrigger className="w-auto h-8 px-3 bg-white/80 inline-flex border-0 shadow-none rounded-md">
                                     <SelectValue />
                                   </SelectTrigger>
                                   <SelectContent>
@@ -2354,7 +2355,7 @@ export default function Lending({ initialTab }) {
                                   value={formData.loan_day_of_month}
                                   onValueChange={(value) => handleInputChange('loan_day_of_month', value)}
                                 >
-                                  <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex border border-input rounded-md">
+                                  <SelectTrigger className="w-auto h-8 px-3 bg-white/80 inline-flex border-0 shadow-none rounded-md">
                                     <SelectValue />
                                   </SelectTrigger>
                                   <SelectContent>
@@ -2371,13 +2372,13 @@ export default function Lending({ initialTab }) {
                                 type="time"
                                 value={formData.loan_time}
                                 onChange={(e) => handleInputChange('loan_time', e.target.value)}
-                                className="w-auto h-8 px-3 bg-white inline-flex border border-input rounded-md"
+                                className="w-auto h-8 px-3 bg-white/80 inline-flex border-0 shadow-none rounded-md"
                               />{' '}
                               <Select
                                 value={formData.loan_timezone}
                                 onValueChange={(value) => handleInputChange('loan_timezone', value)}
                               >
-                                <SelectTrigger className="w-auto h-8 px-3 bg-white inline-flex border border-input rounded-md">
+                                <SelectTrigger className="w-auto h-8 px-3 bg-white/80 inline-flex border-0 shadow-none rounded-md">
                                   <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -2415,7 +2416,7 @@ export default function Lending({ initialTab }) {
                                       value={formData.first_payment_date}
                                       onChange={(e) => handleInputChange('first_payment_date', e.target.value)}
                                       min={format(new Date(), 'yyyy-MM-dd')}
-                                      className="w-auto h-8 px-3 bg-white inline-flex border border-input rounded-md"
+                                      className="w-auto h-8 px-3 bg-white/80 inline-flex border-0 shadow-none rounded-md"
                                     />{' '}
                                     and the last payment due on{' '}
                                     <span className="font-bold text-[#82F0B9]">
@@ -2728,13 +2729,13 @@ export default function Lending({ initialTab }) {
                                   {manageLoanSelected.interest_rate || 0}%
                                 </p>
                               </div>
-                              <div className="bg-[#03ACEA]/8 rounded-xl p-4">
+                              <div className="bg-[#2563EB]/8 rounded-xl p-4">
                                 <p className="text-[10px] text-slate-600 uppercase tracking-wide font-medium mb-1" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>Term</p>
                                 <p className="text-xl font-bold text-slate-800">
                                   {manageLoanSelected.repayment_period || 0} {manageLoanSelected.repayment_unit || 'months'}
                                 </p>
                               </div>
-                              <div className="bg-[#03ACEA]/8 rounded-xl p-4">
+                              <div className="bg-[#2563EB]/8 rounded-xl p-4">
                                 <p className="text-[10px] text-slate-600 uppercase tracking-wide font-medium mb-1" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>Payment</p>
                                 <p className="text-xl font-bold text-slate-800">
                                   ${(manageLoanSelected.payment_amount || 0).toLocaleString()}
@@ -2959,7 +2960,7 @@ export default function Lending({ initialTab }) {
                                     {/* Amortization Schedule */}
                                     <button
                                       onClick={() => openDocPopup('amortization', agreement)}
-                                      className="bg-[#03ACEA]/8 rounded-xl p-3 md:p-4 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-3"
+                                      className="bg-[#2563EB]/8 rounded-xl p-3 md:p-4 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-3"
                                     >
                                       <div className="w-9 h-9 rounded-full bg-[#82F0B9]/10 flex items-center justify-center flex-shrink-0">
                                         <BarChart3 className="w-4 h-4 text-[#1A1918]" />
@@ -3021,7 +3022,7 @@ export default function Lending({ initialTab }) {
                               </button>
                               <button
                                 onClick={() => handleCancelLoan(manageLoanSelected)}
-                                className="bg-[#03ACEA]/8 rounded-xl p-3 md:p-4 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-3 flex-1"
+                                className="bg-[#2563EB]/8 rounded-xl p-3 md:p-4 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-3 flex-1"
                               >
                                 <div className="w-9 h-9 rounded-full bg-[#82F0B9]/10 flex items-center justify-center flex-shrink-0">
                                   <X className="w-4 h-4 text-[#1A1918]" />

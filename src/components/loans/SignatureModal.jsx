@@ -108,7 +108,7 @@ export default function SignatureModal({ isOpen, onClose, onSign, loanDetails, u
           </div>
 
           {/* Principal Amount */}
-          <div className="bg-[#03ACEA]/10 rounded-2xl p-5 text-center">
+          <div className="bg-[#2563EB]/10 rounded-2xl p-5 text-center">
             <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-1">Principal Amount</p>
             <p className="text-3xl font-bold text-slate-800">{formatMoney(loanDetails.amount)}</p>
           </div>
@@ -132,7 +132,7 @@ export default function SignatureModal({ isOpen, onClose, onSign, loanDetails, u
                 <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-0.5">Interest</p>
                 <p className="font-bold text-slate-800">{loanDetails.interest_rate}%</p>
               </div>
-              <div className="bg-[#03ACEA]/8 rounded-xl p-3">
+              <div className="bg-[#2563EB]/8 rounded-xl p-3">
                 <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-0.5">Payment</p>
                 <p className="font-bold text-slate-800">{formatMoney(loanDetails.payment_amount)}</p>
                 <p className="text-xs text-slate-500 capitalize">{loanDetails.payment_frequency}</p>

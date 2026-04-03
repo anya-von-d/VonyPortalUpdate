@@ -244,8 +244,8 @@ export default function RecordPayment() {
       setCurrentStep(3);
 
       // Fire confetti
-      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#82F0B9', '#03ACEA', '#7792F4', '#BB98E8'] });
-      setTimeout(() => confetti({ particleCount: 50, spread: 100, origin: { y: 0.5 }, colors: ['#82F0B9', '#03ACEA'] }), 300);
+      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#82F0B9', '#2563EB', '#7792F4', '#BB98E8'] });
+      setTimeout(() => confetti({ particleCount: 50, spread: 100, origin: { y: 0.5 }, colors: ['#82F0B9', '#2563EB'] }), 300);
 
       setTimeout(() => loadData(), 2000);
     } catch (err) {
@@ -312,9 +312,9 @@ export default function RecordPayment() {
   /* ── Loading state ──────────────────────────────────────── */
   if (isLoading && !user) {
     return (
-      <div className="home-with-sidebar" style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 208, paddingRight: 24, paddingTop: 132, background: '#F5F4F0' }}>
+      <div className="home-with-sidebar" style={{ minHeight: '100vh', display: 'flex', alignItems: 'flex-start', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingTop: 132, background: '#F5F4F0' }}>
         <DashboardSidebar activePage="RecordPayment" user={user} />
-          <div style={{ maxWidth: 1080, margin: '0 auto', padding: '24px 40px 64px', position: 'relative', zIndex: 2 }}>
+          <div style={{ flex: 1, minWidth: 0, paddingRight: 24, maxWidth: 1080, margin: '0 auto', padding: '24px 40px 64px', position: 'relative', zIndex: 2 }}>
             <div className="glass-card" style={{ padding: 40, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <div style={{ width: 32, height: 32, border: '2px solid #82F0B9', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite', marginBottom: 12 }} />
               <p style={{ fontSize: 13, color: '#787776' }}>Loading...</p>
@@ -372,7 +372,7 @@ export default function RecordPayment() {
         )}
       </AnimatePresence>
 
-      <div className="home-with-sidebar" style={{ minHeight: '100vh', position: 'relative', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingLeft: 208, paddingRight: 24, paddingTop: 132, background: '#F5F4F0' }}>
+      <div className="home-with-sidebar" style={{ minHeight: '100vh', display: 'flex', alignItems: 'flex-start', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingTop: 132, background: '#F5F4F0' }}>
         <DashboardSidebar activePage="RecordPayment" user={user} />
 
           {/* Gradient background */}
@@ -380,7 +380,7 @@ export default function RecordPayment() {
           {/* Hero */}
 
           {/* Page content */}
-          <div style={{ maxWidth: 1080, margin: '0 auto', padding: '24px 40px 64px', position: 'relative', zIndex: 2 }}>
+          <div style={{ flex: 1, minWidth: 0, paddingRight: 24, maxWidth: 1080, margin: '0 auto', padding: '24px 40px 64px', position: 'relative', zIndex: 2 }}>
 
           {/* Two-column layout */}
           <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 16, alignItems: 'start' }}>
@@ -406,7 +406,7 @@ export default function RecordPayment() {
                         {nameOrYouCapitalized(isUserLender(selectedLoan) ? selectedLoan.borrower_id : user?.id)} paid {nameOrYou(isUserLender(selectedLoan) ? user?.id : selectedLoan.lender_id)}{' '}
                         {amount && parseFloat(amount) > 0
                           ? <strong>${parseFloat(amount).toFixed(2)}</strong>
-                          : <span style={{ color: '#03ACEA', borderBottom: '2px solid #03ACEA', paddingBottom: 1, fontWeight: 600, letterSpacing: '0.04em' }}>$__</span>
+                          : <span style={{ color: '#2563EB', borderBottom: '2px solid #2563EB', paddingBottom: 1, fontWeight: 600, letterSpacing: '0.04em' }}>$__</span>
                         }{' '}for {selectedLoan.purpose || 'this loan'}
                       </p>
                     </div>
@@ -498,7 +498,7 @@ export default function RecordPayment() {
                         <p style={{ fontSize: 11, color: '#787776', margin: 0 }}>Amount</p>
                         <p style={{ fontSize: 20, fontWeight: 700, color: '#1A1918', margin: '4px 0 0' }}>${parseFloat(amount).toFixed(2)}</p>
                       </div>
-                      <div style={{ background: 'rgba(3,172,234,0.08)', borderRadius: 12, padding: 14 }}>
+                      <div style={{ background: 'rgba(37,99,235,0.08)', borderRadius: 12, padding: 14 }}>
                         <p style={{ fontSize: 11, color: '#787776', margin: 0 }}>Method</p>
                         <p style={{ fontSize: 15, fontWeight: 600, color: '#1A1918', margin: '4px 0 0' }}>{PAYMENT_METHODS.find(m => m.id === paymentMethod)?.label}</p>
                       </div>
@@ -506,7 +506,7 @@ export default function RecordPayment() {
                         <p style={{ fontSize: 11, color: '#787776', margin: 0 }}>Date</p>
                         <p style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', margin: '4px 0 0' }}>{format(new Date(paymentDate + 'T12:00:00'), 'MMM d, yyyy')}</p>
                       </div>
-                      <div style={{ background: 'rgba(3,172,234,0.08)', borderRadius: 12, padding: 14 }}>
+                      <div style={{ background: 'rgba(37,99,235,0.08)', borderRadius: 12, padding: 14 }}>
                         <p style={{ fontSize: 11, color: '#787776', margin: 0 }}>To</p>
                         <p style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', margin: '4px 0 0' }}>
                           {nameOrYouCapitalized(isUserLender(selectedLoan) ? selectedLoan.borrower_id : selectedLoan.lender_id)}
