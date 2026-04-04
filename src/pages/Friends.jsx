@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import DashboardSidebar from "@/components/DashboardSidebar";
+import confetti from "canvas-confetti";
 
 const STAR_CIRCLES = [
   {cx:82,cy:45,o:0.7},{cx:195,cy:112,o:0.5},{cx:310,cy:28,o:0.8},{cx:420,cy:198,o:0.4},
@@ -130,6 +131,14 @@ export default function Friends() {
       await Friendship.update(friendshipId, { status: 'accepted' });
       await loadFriendsData();
       setSearchQuery('');
+      // 🎉 Celebrate the new friendship!
+      confetti({
+        particleCount: 80,
+        spread: 70,
+        origin: { y: 0.5 },
+        colors: ['#03ACEA', '#7C3AED', '#82F0B9', '#ffffff'],
+        zIndex: 9999,
+      });
     } catch (error) {
       console.error("Error accepting friend request:", error);
     }
@@ -280,7 +289,7 @@ export default function Friends() {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
 
             {/* Left Column: Your Friends */}
-            <div className="glass-card" style={{ overflow: 'hidden' }}>
+            <div className="glass-card" style={{ overflow: 'hidden', minHeight: 'calc(100vh - 220px)' }}>
               <div style={{ padding: '14px 16px 0' }}>
                 <span style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.07em', textTransform: 'uppercase' }}>Your Friends</span>
               </div>
@@ -370,7 +379,7 @@ export default function Friends() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 
               {/* Search for Friends */}
-              <div className="glass-card" style={{ overflow: 'hidden' }}>
+              <div className="glass-card" style={{ overflow: 'hidden', minHeight: 'calc(100vh - 220px)' }}>
                 <div style={{ padding: '14px 16px 0' }}>
                   <span style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.07em', textTransform: 'uppercase' }}>Search for Friends</span>
                 </div>

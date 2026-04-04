@@ -6,6 +6,7 @@ import TopNav from "@/components/TopNav";
 import Footer from "@/components/Footer";
 import { StatusBar, Style } from '@capacitor/status-bar';
 import { Keyboard } from '@capacitor/keyboard';
+import { motion, AnimatePresence } from "framer-motion";
 
 // Check if running as native app
 const isNativeApp = () => {
@@ -106,7 +107,18 @@ export default function Layout({ children }) {
 
       {/* Main content container */}
       <main className="flex-1">
-        {children}
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.18, ease: "easeOut" }}
+            style={{ minHeight: '100%' }}
+          >
+            {children}
+          </motion.div>
+        </AnimatePresence>
       </main>
 
       {/* Footer — hidden on dashboard-style pages (they render their own) */}

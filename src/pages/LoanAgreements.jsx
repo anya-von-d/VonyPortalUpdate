@@ -20,9 +20,17 @@ const STAR_CIRCLES = [
 ];
 
 const ROLE_OPTIONS = [
-  { id: 'all', label: 'All Roles' },
+  { id: 'all', label: 'All Categories' },
   { id: 'lender', label: 'You are the Lender' },
   { id: 'borrower', label: 'You are the Borrower' },
+];
+
+const AMOUNT_MODES = [
+  { id: 'all', label: 'All amounts' },
+  { id: 'exactly', label: 'Exactly' },
+  { id: 'between', label: 'Between' },
+  { id: 'greater', label: 'Greater than' },
+  { id: 'less', label: 'Less than' },
 ];
 
 const STATUS_OPTIONS = [
@@ -98,6 +106,108 @@ function SingleSelectDropdown({ options, selected, onChange }) {
   );
 }
 
+/* ── Amount filter dropdown ─────────────────────────────────── */
+function AmountFilterDropdown({ amountMode, setAmountMode, amountVal1, setAmountVal1, amountVal2, setAmountVal2 }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  const isFiltered = amountMode !== 'all';
+  const displayLabel = amountMode === 'all' ? 'All Amounts'
+    : amountMode === 'exactly' ? (amountVal1 ? `Exactly $${amountVal1}` : 'Exactly')
+    : amountMode === 'between' ? (amountVal1 && amountVal2 ? `$${amountVal1} – $${amountVal2}` : 'Between')
+    : amountMode === 'greater' ? (amountVal1 ? `> $${amountVal1}` : 'Greater than')
+    : amountMode === 'less' ? (amountVal1 ? `< $${amountVal1}` : 'Less than')
+    : 'All Amounts';
+
+  const modeDescriptions = {
+    all: '',
+    exactly: 'Search for an exact loan amount.',
+    between: 'Search for loans between two amounts.',
+    greater: 'Search for loans above a certain amount.',
+    less: 'Search for loans below a certain amount.',
+  };
+
+  const inputStyle = {
+    width: 80, padding: '8px 10px', borderRadius: 8, border: '1px solid rgba(0,0,0,0.1)',
+    fontSize: 14, fontFamily: "'DM Sans', sans-serif", outline: 'none',
+  };
+
+  return (
+    <div ref={ref} style={{ position: 'relative' }}>
+      <button onClick={() => setOpen(!open)} style={{
+        display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 10,
+        border: '1px solid rgba(0,0,0,0.08)', background: isFiltered ? 'rgba(130,240,185,0.08)' : 'white',
+        fontSize: 13, fontWeight: 500, color: '#1A1918', cursor: 'pointer',
+        fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap', transition: 'background 0.15s',
+      }}>
+        {displayLabel}
+        <ChevronDown size={14} style={{ opacity: 0.5, transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+      </button>
+      {open && (
+        <div style={{
+          position: 'absolute', top: 'calc(100% + 6px)', left: 0, minWidth: 360,
+          background: 'white', borderRadius: 12, border: '1px solid rgba(0,0,0,0.08)',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.08)', zIndex: 50, display: 'flex', overflow: 'hidden',
+        }}>
+          {/* Left: mode list */}
+          <div style={{ borderRight: '1px solid rgba(0,0,0,0.06)', padding: '8px 0', minWidth: 140 }}>
+            {AMOUNT_MODES.map(mode => (
+              <button key={mode.id} onClick={() => { setAmountMode(mode.id); if (mode.id === 'all') { setAmountVal1(''); setAmountVal2(''); } }} style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                width: '100%', textAlign: 'left', padding: '10px 16px', border: 'none', cursor: 'pointer',
+                fontSize: 13, color: '#1A1918', fontFamily: "'DM Sans', sans-serif",
+                background: amountMode === mode.id ? 'rgba(0,0,0,0.03)' : 'transparent',
+                fontWeight: amountMode === mode.id ? 600 : 400, transition: 'background 0.1s',
+              }}
+                onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.03)'}
+                onMouseLeave={e => { if (amountMode !== mode.id) e.currentTarget.style.background = 'transparent'; }}
+              >
+                {mode.label}
+                {amountMode === mode.id && (
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1A1918" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+                )}
+              </button>
+            ))}
+          </div>
+          {/* Right: inputs */}
+          <div style={{ flex: 1, padding: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {amountMode === 'all' ? (
+              <p style={{ fontSize: 13, color: '#787776', margin: 0 }}>Showing loans of any amount.</p>
+            ) : (
+              <>
+                <p style={{ fontSize: 13, color: '#787776', margin: 0 }}>{modeDescriptions[amountMode]}</p>
+                {amountMode === 'between' ? (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ fontSize: 14, color: '#787776', fontWeight: 500 }}>$</span>
+                    <input type="number" placeholder="0" value={amountVal1} onChange={e => setAmountVal1(e.target.value)} style={inputStyle}
+                      onFocus={e => e.target.style.borderColor = '#82F0B9'} onBlur={e => e.target.style.borderColor = 'rgba(0,0,0,0.1)'} />
+                    <span style={{ fontSize: 13, color: '#787776' }}>›</span>
+                    <span style={{ fontSize: 14, color: '#787776', fontWeight: 500 }}>$</span>
+                    <input type="number" placeholder="0" value={amountVal2} onChange={e => setAmountVal2(e.target.value)} style={inputStyle}
+                      onFocus={e => e.target.style.borderColor = '#82F0B9'} onBlur={e => e.target.style.borderColor = 'rgba(0,0,0,0.1)'} />
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <span style={{ fontSize: 14, color: '#787776', fontWeight: 500 }}>$</span>
+                    <input type="number" placeholder="0" value={amountVal1} onChange={e => setAmountVal1(e.target.value)} style={{ ...inputStyle, width: 100 }}
+                      onFocus={e => e.target.style.borderColor = '#82F0B9'} onBlur={e => e.target.style.borderColor = 'rgba(0,0,0,0.1)'} />
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function LoanAgreements() {
   const [agreements, setAgreements] = useState([]);
   const [user, setUser] = useState(null);
@@ -110,6 +220,9 @@ export default function LoanAgreements() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [dateFilter, setDateFilter] = useState('all');
   const [friendFilter, setFriendFilter] = useState('all');
+  const [amountMode, setAmountMode] = useState('all');
+  const [amountVal1, setAmountVal1] = useState('');
+  const [amountVal2, setAmountVal2] = useState('');
   const [activePopup, setActivePopup] = useState(null);
   const [popupAgreement, setPopupAgreement] = useState(null);
   const [activeInfoTooltip, setActiveInfoTooltip] = useState(null);
@@ -476,8 +589,8 @@ export default function LoanAgreements() {
     setPopupAgreement(null);
   };
 
-  const hasAnyFilter = roleFilter !== 'all' || statusFilter !== 'all' || dateFilter !== 'all' || friendFilter !== 'all' || searchQuery.trim() !== '';
-  const clearFilters = () => { setRoleFilter('all'); setStatusFilter('all'); setDateFilter('all'); setFriendFilter('all'); setSearchQuery(''); };
+  const hasAnyFilter = roleFilter !== 'all' || statusFilter !== 'all' || dateFilter !== 'all' || friendFilter !== 'all' || amountMode !== 'all' || searchQuery.trim() !== '';
+  const clearFilters = () => { setRoleFilter('all'); setStatusFilter('all'); setDateFilter('all'); setFriendFilter('all'); setAmountMode('all'); setAmountVal1(''); setAmountVal2(''); setSearchQuery(''); };
 
   /* ── Loading state ──────────────────────────────────────────── */
   if (isLoading || !user) {
@@ -538,6 +651,19 @@ export default function LoanAgreements() {
       const isLender = agreement.lender_id === user?.id;
       const otherPartyId = isLender ? agreement.borrower_id : agreement.lender_id;
       return otherPartyId === friendFilter;
+    });
+  }
+
+  if (amountMode !== 'all') {
+    filteredAgreements = filteredAgreements.filter(agreement => {
+      const amt = agreement.total_amount || 0;
+      const v1 = parseFloat(amountVal1) || 0;
+      const v2 = parseFloat(amountVal2) || 0;
+      if (amountMode === 'exactly') return amountVal1 && Math.abs(amt - v1) < 0.01;
+      if (amountMode === 'between') return amountVal1 && amountVal2 && amt >= Math.min(v1, v2) && amt <= Math.max(v1, v2);
+      if (amountMode === 'greater') return amountVal1 && amt > v1;
+      if (amountMode === 'less') return amountVal1 && amt < v1;
+      return true;
     });
   }
 
@@ -945,11 +1071,12 @@ export default function LoanAgreements() {
             <div className="glass-card" style={{ padding: '16px 22px', marginBottom: 20, overflow: 'visible', position: 'relative', zIndex: 20 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
                 <SingleSelectDropdown options={DATE_OPTIONS} selected={dateFilter} onChange={setDateFilter} />
-                <SingleSelectDropdown options={ROLE_OPTIONS} selected={roleFilter} onChange={setRoleFilter} />
-                <SingleSelectDropdown options={STATUS_OPTIONS} selected={statusFilter} onChange={setStatusFilter} />
                 {friendOptions.length > 1 && (
                   <SingleSelectDropdown options={friendOptions} selected={friendFilter} onChange={setFriendFilter} />
                 )}
+                <SingleSelectDropdown options={ROLE_OPTIONS} selected={roleFilter} onChange={setRoleFilter} />
+                <SingleSelectDropdown options={STATUS_OPTIONS} selected={statusFilter} onChange={setStatusFilter} />
+                <AmountFilterDropdown amountMode={amountMode} setAmountMode={setAmountMode} amountVal1={amountVal1} setAmountVal1={setAmountVal1} amountVal2={amountVal2} setAmountVal2={setAmountVal2} />
                 <button
                   onClick={clearFilters}
                   style={{
@@ -985,17 +1112,17 @@ export default function LoanAgreements() {
                   </div>
                 ) : (
                   <>
-                    {/* Desktop table header */}
-                    <div className="la-table-header" style={{
-                      display: 'none', alignItems: 'center', padding: '0 14px 12px',
-                      borderBottom: '1px solid rgba(0,0,0,0.06)', marginBottom: 8,
+                    {/* Table header */}
+                    <div style={{
+                      display: 'flex', alignItems: 'center', gap: 12, padding: '0 0 12px',
+                      borderBottom: '1px solid rgba(0,0,0,0.06)', marginBottom: 4,
                     }}>
-                      <span style={{ width: 80, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', flexShrink: 0 }}>Date</span>
-                      <span style={{ flex: 1.5, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', minWidth: 0, paddingLeft: 4 }}>Friend</span>
-                      <span style={{ flex: 1.2, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', minWidth: 0, paddingLeft: 4 }}>Category</span>
-                      <span style={{ width: 130, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', textAlign: 'center', flexShrink: 0 }}>Status</span>
+                      <span style={{ width: 72, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', flexShrink: 0 }}>Date</span>
+                      <span style={{ flex: 1.5, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', minWidth: 0 }}>Friend</span>
+                      <span style={{ flex: 1.2, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', minWidth: 0 }}>Category</span>
+                      <span style={{ width: 110, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', textAlign: 'center', flexShrink: 0 }}>Status</span>
                       <span style={{ width: 100, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', textAlign: 'right', flexShrink: 0 }}>Amount</span>
-                      <div style={{ width: 32, flexShrink: 0 }} />
+                      <div style={{ width: 28, flexShrink: 0 }} />
                     </div>
 
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -1018,41 +1145,26 @@ export default function LoanAgreements() {
                             <div
                               onClick={() => setExpandedId(isExpanded ? null : agreement.id)}
                               style={{
-                                display: 'flex', alignItems: 'center', gap: 12, padding: '12px 0',
+                                display: 'flex', alignItems: 'center', gap: 12, padding: '16px 0',
                                 transition: 'background 0.15s', cursor: 'pointer',
                               }}
                             >
-                              {/* Mobile layout */}
-                              <div className="la-mobile-content" style={{ flex: 1, minWidth: 0 }}>
-                                <p style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                  {categoryLabel} · {otherParty.full_name} · {formatMoney(agreement.total_amount)}
-                                </p>
-                                <p style={{ fontSize: 11, color: '#787776', margin: '2px 0 0' }}>
-                                  {agreement.created_at ? format(new Date(agreement.created_at), 'MMM d, yyyy') : ''} · {loanStatus}
-                                </p>
-                              </div>
-                              <div className="la-mobile-status">
-                                <span style={{
-                                  ...badgeStyle, padding: '4px 10px', borderRadius: 8, fontSize: 11, fontWeight: 600,
-                                  textTransform: 'capitalize', whiteSpace: 'nowrap',
-                                }}>
-                                  {loanStatus}
-                                </span>
-                              </div>
-
-                              {/* Desktop layout */}
-                              <span className="la-desktop-date" style={{ display: 'none', width: 80, fontSize: 12, fontWeight: 500, color: '#787776', flexShrink: 0 }}>
+                              {/* Date */}
+                              <span style={{ width: 72, fontSize: 12, fontWeight: 500, color: '#787776', flexShrink: 0 }}>
                                 {dateFormatted}
                               </span>
-                              <div className="la-desktop-friend" style={{ display: 'none', flex: 1.5, minWidth: 0, alignItems: 'center', gap: 8, paddingLeft: 4 }}>
+                              {/* Friend */}
+                              <div style={{ display: 'flex', flex: 1.5, minWidth: 0, alignItems: 'center' }}>
                                 <span style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                   {otherParty.full_name}
                                 </span>
                               </div>
-                              <div className="la-desktop-category" style={{ display: 'none', flex: 1.2, minWidth: 0, alignItems: 'center', gap: 6, paddingLeft: 4 }}>
-                                <span style={{ fontSize: 12, fontWeight: 500, color: isLender ? '#82F0B9' : '#2563EB' }}>{categoryLabel}</span>
+                              {/* Category */}
+                              <div style={{ display: 'flex', flex: 1.2, minWidth: 0, alignItems: 'center' }}>
+                                <span style={{ fontSize: 12, fontWeight: 500, color: isLender ? '#22c55e' : '#2563EB' }}>{categoryLabel}</span>
                               </div>
-                              <div className="la-desktop-status" style={{ display: 'none', width: 130, justifyContent: 'center', flexShrink: 0 }}>
+                              {/* Status */}
+                              <div style={{ display: 'flex', width: 110, justifyContent: 'center', flexShrink: 0 }}>
                                 <span style={{
                                   ...badgeStyle, display: 'inline-flex', alignItems: 'center', padding: '4px 10px', borderRadius: 8,
                                   fontSize: 11, fontWeight: 600, textTransform: 'capitalize',
@@ -1060,7 +1172,8 @@ export default function LoanAgreements() {
                                   {loanStatus}
                                 </span>
                               </div>
-                              <span className="la-desktop-amount" style={{ display: 'none', width: 100, fontSize: 13, fontWeight: 600, color: '#1A1918', textAlign: 'right', flexShrink: 0 }}>
+                              {/* Amount */}
+                              <span style={{ width: 100, fontSize: 13, fontWeight: 600, color: '#1A1918', textAlign: 'right', flexShrink: 0 }}>
                                 {formatMoney(agreement.total_amount)}
                               </span>
 

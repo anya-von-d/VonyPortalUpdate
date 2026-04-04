@@ -70,6 +70,15 @@ input[type="date"] {
     rgba(0, 0, 0, 0.03) 36px 51px 38px 0px,
     rgba(0, 0, 0, 0.06) 16px 23px 28px 0px,
     rgba(0, 0, 0, 0.06) 4px 6px 15px 0px;
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+.glass-card:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    rgba(0, 0, 0, 0.02) 64px 91px 45px 0px,
+    rgba(0, 0, 0, 0.05) 36px 51px 38px 0px,
+    rgba(0, 0, 0, 0.09) 16px 23px 28px 0px,
+    rgba(0, 0, 0, 0.10) 4px 12px 24px 0px;
 }
 
 .glass-nav::before {
@@ -129,6 +138,15 @@ input[type="date"] {
     rgba(0, 0, 0, 0.03) 36px 51px 38px 0px,
     rgba(0, 0, 0, 0.06) 16px 23px 28px 0px,
     rgba(0, 0, 0, 0.06) 4px 6px 15px 0px;
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+.galaxy-border-card:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    rgba(0, 0, 0, 0.02) 64px 91px 45px 0px,
+    rgba(0, 0, 0, 0.05) 36px 51px 38px 0px,
+    rgba(0, 0, 0, 0.09) 16px 23px 28px 0px,
+    rgba(0, 0, 0, 0.10) 4px 12px 24px 0px;
 }
 
 .galaxy-border-card::after {
@@ -144,9 +162,84 @@ input[type="date"] {
 }
 
 .galaxy-slide {
-  background: #7792F4;
+  background: linear-gradient(135deg, #03ACEA 0%, #7C3AED 100%);
   border-radius: 20px;
   position: relative;
+}
+
+/* ===== GRADIENT CTA BUTTON ===== */
+.btn-gradient {
+  background: linear-gradient(135deg, #03ACEA 0%, #7C3AED 100%);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+.btn-gradient:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(3, 172, 234, 0.35), 0 2px 8px rgba(124, 58, 237, 0.2);
+  opacity: 0.95;
+}
+.btn-gradient:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* ===== GRADIENT BORDER WRAPPER ===== */
+/* Wrap any glass-card in this to get a 1px gradient border */
+.gradient-border-wrapper {
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(3, 172, 234, 0.55) 0%, rgba(124, 58, 237, 0.45) 100%);
+  border-radius: 17px;
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+.gradient-border-wrapper:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(3, 172, 234, 0.15), 0 4px 12px rgba(124, 58, 237, 0.12);
+}
+/* Reset border on glass-card inside wrapper so the gradient border shows */
+.gradient-border-wrapper > .glass-card {
+  border-color: transparent;
+  border-radius: 16px;
+}
+
+/* ===== GLOW BLOB WRAPPERS ===== */
+.glow-wrapper {
+  position: relative;
+  isolation: isolate;
+}
+
+.glow-blue::before {
+  content: '';
+  position: absolute;
+  inset: -28px;
+  background: radial-gradient(ellipse at 50% 50%, rgba(3, 172, 234, 0.28) 0%, transparent 65%);
+  filter: blur(22px);
+  z-index: -1;
+  pointer-events: none;
+  border-radius: 50%;
+}
+
+.glow-purple::before {
+  content: '';
+  position: absolute;
+  inset: -28px;
+  background: radial-gradient(ellipse at 50% 50%, rgba(124, 58, 237, 0.22) 0%, transparent 65%);
+  filter: blur(22px);
+  z-index: -1;
+  pointer-events: none;
+  border-radius: 50%;
+}
+
+.glow-blue-purple::before {
+  content: '';
+  position: absolute;
+  inset: -28px;
+  background: radial-gradient(ellipse at 30% 50%, rgba(3, 172, 234, 0.20) 0%, rgba(124, 58, 237, 0.18) 60%, transparent 80%);
+  filter: blur(22px);
+  z-index: -1;
+  pointer-events: none;
+  border-radius: 50%;
 }
 
 .content-box-glow {

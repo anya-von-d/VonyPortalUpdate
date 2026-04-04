@@ -2512,24 +2512,30 @@ export default function Lending({ initialTab }) {
 
                   {/* Borrower Payment Box - Only for Loan type, always visible */}
                   {loanType === 'scheduled' && (
-                    <div className="glass-card" style={{ padding: '14px 16px', textAlign: 'center' }}>
-                      <div style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.07em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif", marginBottom: 10 }}>
-                        {isUserBorrower ? (
-                          'Your payment'
-                        ) : formData.borrower_username ? (
-                          (() => {
-                            const selectedUser = users.find(u => u.username === formData.borrower_username);
-                            return `${selectedUser?.full_name || formData.borrower_username}'s payment`;
-                          })()
-                        ) : (
-                          'Borrower payment'
-                        )}
+                    <div className="glass-card">
+                      <div style={{ padding: '14px 16px 0' }}>
+                        <div style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.07em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>
+                          {isUserBorrower ? (
+                            'Your payment'
+                          ) : formData.borrower_username ? (
+                            (() => {
+                              const selectedUser = users.find(u => u.username === formData.borrower_username);
+                              return `${selectedUser?.full_name || formData.borrower_username}'s payment`;
+                            })()
+                          ) : (
+                            'Borrower payment'
+                          )}
+                        </div>
                       </div>
-                      <div style={{ fontSize: 28, fontWeight: 700, color: '#1A1918', margin: '4px 0', letterSpacing: '-0.02em' }}>
-                        {formData.amount && details.monthlyPayment > 0 ? `$${details.monthlyPayment.toFixed(2)}` : '$0.00'}
-                      </div>
-                      <div style={{ fontSize: 12, color: '#787776', marginTop: 4 }}>
-                        {formData.payment_frequency || '_'} after interest
+                      <div style={{ padding: '10px 16px 12px' }}>
+                        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 8 }}>
+                          <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', lineHeight: 1 }}>
+                            {formData.amount && details.monthlyPayment > 0 ? `$${details.monthlyPayment.toFixed(2)}` : '$0.00'}
+                          </div>
+                        </div>
+                        <div style={{ fontSize: 12, color: '#787776', marginTop: 6 }}>
+                          {formData.payment_frequency || '_'} after interest
+                        </div>
                       </div>
                     </div>
                   )}

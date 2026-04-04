@@ -11,6 +11,7 @@ import { format, addMonths } from "date-fns";
 import { motion, AnimatePresence } from "framer-motion";
 import DashboardSidebar from "@/components/DashboardSidebar";
 import confetti from "canvas-confetti";
+import { AnimatedCheckmark } from "@/components/ui/animations";
 
 const STAR_CIRCLES = [
   {cx:82,cy:45,o:0.7},{cx:195,cy:112,o:0.5},{cx:310,cy:28,o:0.8},{cx:420,cy:198,o:0.4},
@@ -126,6 +127,35 @@ export default function RecordPayment() {
   const [confirmingDeny, setConfirmingDeny] = useState(null);
 
   useEffect(() => { if (user?.id) loadData(); }, [user?.id]);
+
+  // 🎉 Confetti when payment is successfully recorded
+  useEffect(() => {
+    if (isSuccess) {
+      confetti({
+        particleCount: 100,
+        spread: 80,
+        origin: { y: 0.55 },
+        colors: ['#03ACEA', '#7C3AED', '#82F0B9', '#ffffff', '#35B276'],
+        zIndex: 9999,
+      });
+      setTimeout(() => {
+        confetti({
+          particleCount: 50,
+          spread: 60,
+          origin: { x: 0.2, y: 0.6 },
+          colors: ['#03ACEA', '#7C3AED'],
+          zIndex: 9999,
+        });
+        confetti({
+          particleCount: 50,
+          spread: 60,
+          origin: { x: 0.8, y: 0.6 },
+          colors: ['#82F0B9', '#35B276'],
+          zIndex: 9999,
+        });
+      }, 250);
+    }
+  }, [isSuccess]);
 
   const loadData = async () => {
     setIsLoading(true);
@@ -391,7 +421,7 @@ export default function RecordPayment() {
               {/* Record Payment Form */}
               <div className="glass-card" style={{ padding: '26px', overflow: 'visible' }}>
                 {currentStep === 0 && !selectedLoan && (
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '48px 0', color: '#C7C6C4' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 0', color: '#C7C6C4' }}>
                     <p style={{ fontSize: 15, fontWeight: 500, color: '#787776', margin: 0 }}>Select a loan to get started</p>
                     <p style={{ fontSize: 12, color: '#C7C6C4', margin: '4px 0 0' }}>Choose from your active loans on the left</p>
                   </div>
@@ -440,16 +470,24 @@ export default function RecordPayment() {
                           const Icon = method.icon;
                           const isSelected = paymentMethod === method.id;
                           return (
-                            <button key={method.id} onClick={() => { setPaymentMethod(method.id); setError(''); }} style={{
-                              display: 'flex', alignItems: 'center', gap: 8, padding: '10px 12px', borderRadius: 12,
-                              border: isSelected ? '2px solid #82F0B9' : '1px solid rgba(0,0,0,0.08)',
-                              background: isSelected ? 'rgba(130,240,185,0.06)' : 'white',
-                              cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", fontSize: 12, fontWeight: 500, color: '#1A1918',
-                              transition: 'all 0.15s',
-                            }}>
-                              <Icon size={16} style={{ color: isSelected ? '#82F0B9' : method.color }} />
+                            <motion.button
+                              key={method.id}
+                              onClick={() => { setPaymentMethod(method.id); setError(''); }}
+                              whileHover={{ scale: 1.03, y: -1 }}
+                              whileTap={{ scale: 0.94 }}
+                              animate={isSelected ? { scale: [1, 1.08, 1] } : { scale: 1 }}
+                              transition={{ type: 'spring', stiffness: 420, damping: 18 }}
+                              style={{
+                                display: 'flex', alignItems: 'center', gap: 8, padding: '10px 12px', borderRadius: 12,
+                                border: isSelected ? '2px solid #82F0B9' : '1px solid rgba(0,0,0,0.08)',
+                                background: isSelected ? 'rgba(130,240,185,0.1)' : 'white',
+                                cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", fontSize: 12, fontWeight: 500, color: '#1A1918',
+                                boxShadow: isSelected ? '0 0 0 3px rgba(130,240,185,0.2)' : 'none',
+                              }}
+                            >
+                              <Icon size={16} style={{ color: isSelected ? '#35B276' : method.color }} />
                               {method.label}
-                            </button>
+                            </motion.button>
                           );
                         })}
                       </div>
@@ -552,27 +590,53 @@ export default function RecordPayment() {
                 )}
 
                 {currentStep === 3 && isSuccess && (
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '32px 0', gap: 16 }}>
-                    <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'rgba(130,240,185,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <CheckCircle size={32} style={{ color: '#82F0B9' }} />
-                    </div>
-                    <h3 style={{ fontSize: 20, fontWeight: 600, color: '#1A1918', margin: 0 }}>Payment Recorded!</h3>
-                    <p style={{ fontSize: 13, color: '#787776', margin: 0, textAlign: 'center' }}>
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 22 }}
+                    style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '32px 0', gap: 16 }}
+                  >
+                    <AnimatedCheckmark size="xl" delay={0.1} />
+                    <motion.h3
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.35 }}
+                      style={{ fontSize: 22, fontWeight: 700, color: '#1A1918', margin: 0 }}
+                    >
+                      Payment Recorded! 🎉
+                    </motion.h3>
+                    <motion.p
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.45 }}
+                      style={{ fontSize: 13, color: '#787776', margin: 0, textAlign: 'center' }}
+                    >
                       Your payment of ${parseFloat(amount).toFixed(2)} has been sent for confirmation
-                    </p>
+                    </motion.p>
                     {transactionId && (
-                      <div style={{ background: 'rgba(0,0,0,0.03)', borderRadius: 10, padding: '8px 16px' }}>
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.55 }}
+                        style={{ background: 'rgba(0,0,0,0.03)', borderRadius: 10, padding: '8px 16px' }}
+                      >
                         <span style={{ fontSize: 11, color: '#787776' }}>Ref: </span>
                         <span style={{ fontSize: 11, fontWeight: 600, color: '#1A1918', fontFamily: 'monospace' }}>{transactionId}</span>
-                      </div>
+                      </motion.div>
                     )}
-                    <button onClick={() => { setSelectedLoan(null); setCurrentStep(0); setAmount(''); setPaymentMethod(''); setIsSuccess(false); setTransactionId(''); }} style={{
+                    <motion.button
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.6 }}
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.97 }}
+                      onClick={() => { setSelectedLoan(null); setCurrentStep(0); setAmount(''); setPaymentMethod(''); setIsSuccess(false); setTransactionId(''); }} style={{
                       marginTop: 8, padding: '10px 24px', borderRadius: 12, border: 'none',
-                      background: '#82F0B9', color: 'white', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
+                      background: 'linear-gradient(135deg, #03ACEA, #7C3AED)', color: 'white', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
                     }}>
                       Record Another Payment
-                    </button>
-                  </div>
+                    </motion.button>
+                  </motion.div>
                 )}
               </div>
 
@@ -600,7 +664,7 @@ export default function RecordPayment() {
               </div>
 
               {/* Loan List */}
-              <div style={{ padding: '12px 22px 22px', maxHeight: 185, overflowY: 'auto' }}>
+              <div style={{ padding: '12px 22px 22px', maxHeight: 310, overflowY: 'auto' }}>
                 {filteredLoans.length === 0 ? (
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '32px 0', color: '#C7C6C4' }}>
                     <FileText size={28} style={{ opacity: 0.3, marginBottom: 8 }} />
@@ -620,13 +684,13 @@ export default function RecordPayment() {
                         }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                             <div style={{
-                              width: 36, height: 36, borderRadius: '50%', background: 'rgba(130,240,185,0.1)',
+                              width: 28, height: 28, borderRadius: '50%', background: 'rgba(130,240,185,0.1)',
                               display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden',
                             }}>
                               {other.profile_picture_url ? (
                                 <img src={other.profile_picture_url} alt="" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
                               ) : (
-                                <span style={{ fontSize: 14, fontWeight: 600, color: '#82F0B9' }}>{(other.full_name || '?').charAt(0).toUpperCase()}</span>
+                                <span style={{ fontSize: 12, fontWeight: 600, color: '#82F0B9' }}>{(other.full_name || '?').charAt(0).toUpperCase()}</span>
                               )}
                             </div>
                             <div style={{ flex: 1, minWidth: 0 }}>
@@ -687,16 +751,19 @@ export default function RecordPayment() {
                     if (!loan) return null;
                     const recorder = getUserById(payment.recorded_by);
                     const otherId = loan.lender_id === payment.recorded_by ? loan.borrower_id : loan.lender_id;
+                    const recorderPic = recorder.profile_picture_url || `https://ui-avatars.com/api/?name=${encodeURIComponent((recorder.full_name || recorder.username || 'U').charAt(0))}&background=678AFB&color=fff&size=64`;
+                    const methodLabel = PAYMENT_METHODS.find(m => m.id === payment.payment_method)?.label || payment.payment_method || '';
                     return (
                       <div key={payment.id} style={{
                         display: 'flex', alignItems: 'center', gap: 12, padding: '13px 0',
                       }}>
+                        <img src={recorderPic} alt="" style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover', flexShrink: 0, background: 'rgba(103,138,251,0.1)' }} />
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <p style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', margin: 0 }}>
-                            {nameOrYouCapitalized(payment.recorded_by)} paid {nameOrYou(otherId)} ${payment.amount?.toFixed(2)}
+                            {nameOrYouCapitalized(payment.recorded_by)} paid {nameOrYou(otherId)} ${payment.amount?.toFixed(2)} for {loan.purpose || 'this loan'}{methodLabel ? ` using ${methodLabel}` : ''}
                           </p>
                           <p style={{ fontSize: 11, color: '#787776', margin: '2px 0 0' }}>
-                            {payment.payment_date ? format(new Date(payment.payment_date + 'T12:00:00'), 'MMM d, yyyy') : 'No date'}
+                            {payment.payment_date ? format(new Date(payment.payment_date + 'T12:00:00'), 'MMM d') : 'No date'}
                           </p>
                         </div>
                         <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
@@ -733,16 +800,20 @@ export default function RecordPayment() {
                     const loan = getPaymentLoan(payment);
                     if (!loan) return null;
                     const otherId = loan.lender_id === user?.id ? loan.borrower_id : loan.lender_id;
+                    const otherParty = getUserById(otherId);
+                    const otherPic = otherParty.profile_picture_url || `https://ui-avatars.com/api/?name=${encodeURIComponent((otherParty.full_name || otherParty.username || 'U').charAt(0))}&background=678AFB&color=fff&size=64`;
+                    const methodLabel = PAYMENT_METHODS.find(m => m.id === payment.payment_method)?.label || payment.payment_method || '';
                     return (
                       <div key={payment.id} style={{
                         display: 'flex', alignItems: 'center', gap: 12, padding: '13px 0',
                       }}>
+                        <img src={otherPic} alt="" style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover', flexShrink: 0, background: 'rgba(103,138,251,0.1)' }} />
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <p style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', margin: 0 }}>
-                            {nameOrYouCapitalized(user?.id)} paid {nameOrYou(otherId)} ${payment.amount?.toFixed(2)}
+                            {nameOrYouCapitalized(user?.id)} paid {nameOrYou(otherId)} ${payment.amount?.toFixed(2)} for {loan.purpose || 'this loan'}{methodLabel ? ` using ${methodLabel}` : ''}
                           </p>
                           <p style={{ fontSize: 11, color: '#787776', margin: '2px 0 0' }}>
-                            {payment.payment_date ? format(new Date(payment.payment_date + 'T12:00:00'), 'MMM d, yyyy') : 'No date'}
+                            {payment.payment_date ? format(new Date(payment.payment_date + 'T12:00:00'), 'MMM d') : 'No date'}
                           </p>
                         </div>
                         <span style={{

@@ -291,58 +291,34 @@ export default function Upcoming() {
   const PaymentRow = ({ event, showBorder = true }) => {
     const isOverdue = event.days < 0;
     const daysAbs = Math.abs(event.days);
+    const daysLabel = isOverdue ? `${daysAbs}d late` : event.days === 0 ? 'today' : `${event.days}d`;
+    const firstName = (event.fullName || event.username || 'User').split(' ')[0];
+    const purpose = event.purpose || '';
 
     return (
-      <div style={{
-        display: 'flex', alignItems: 'center', gap: 12, padding: '12px 0',
-      }}>
-        {/* Days box instead of profile image */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 0' }}>
+        {/* Days label */}
         <div style={{
-          width: 40, height: 40, borderRadius: 10, flexShrink: 0,
-          background: isOverdue ? 'rgba(232,114,110,0.1)' : event.isLender ? 'rgba(130,240,185,0.08)' : 'rgba(37,99,235,0.08)',
-          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-          border: isOverdue ? '1px solid rgba(232,114,110,0.2)' : '1px solid rgba(0,0,0,0.04)',
+          fontSize: 10, fontWeight: 600, color: isOverdue ? '#E8726E' : '#787776',
+          letterSpacing: '0.02em', flexShrink: 0, minWidth: 46, textAlign: 'center',
         }}>
-          <span style={{
-            fontSize: 13, fontWeight: 700, lineHeight: 1.1,
-            color: isOverdue ? '#E8726E' : '#1A1918',
-          }}>
-            {isOverdue ? `-${daysAbs}` : daysAbs}
-          </span>
-          <span style={{
-            fontSize: 8, fontWeight: 600, color: isOverdue ? '#E8726E' : '#787776',
-            textTransform: 'uppercase', letterSpacing: '0.02em',
-          }}>
-            {daysAbs === 1 ? 'day' : 'days'}
-          </span>
+          {daysLabel}
         </div>
+        {/* Main info */}
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ fontSize: 13, fontWeight: 500, color: '#1A1918' }}>
             {event.isLender
-              ? `Receive payment from ${event.fullName || event.username}`
-              : `Send payment to ${event.fullName || event.username}`}
+              ? `${firstName} pays you${purpose ? ` for ${purpose}` : ''}`
+              : `Pay ${firstName}${purpose ? ` for ${purpose}` : ''}`}
           </div>
-          <div style={{ fontSize: 11, color: isOverdue ? '#E8726E' : '#787776', marginTop: 2 }}>
-            {isOverdue
-              ? `Due ${format(event.date, "do MMMM")}`
-              : event.days === 0
-                ? 'Due today'
-                : `Due ${format(event.date, "do MMMM")}`}
+          <div style={{ fontSize: 11, color: '#787776', marginTop: 2 }}>
+            due {format(event.date, 'do MMM')}
           </div>
         </div>
-        <div style={{
-          fontSize: 13, fontWeight: 600, flexShrink: 0,
-          color: event.isLender ? '#4CAF50' : '#1A1918',
-        }}>
-          {event.isLender ? '+' : ''}{formatMoney(event.amount)}
+        {/* Amount */}
+        <div style={{ fontSize: 14, fontWeight: 600, flexShrink: 0, color: '#1A1918' }}>
+          {event.isLender ? '+' : '-'}{formatMoney(event.amount)}
         </div>
-        <button style={{
-          width: 28, height: 28, borderRadius: '50%', border: 'none',
-          background: 'transparent', cursor: 'pointer', display: 'flex',
-          alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-        }}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C7C6C4" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="5" r="1" /><circle cx="12" cy="12" r="1" /><circle cx="12" cy="19" r="1" /></svg>
-        </button>
       </div>
     );
   };

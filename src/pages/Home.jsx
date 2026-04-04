@@ -11,6 +11,7 @@ import { formatMoney } from "@/components/utils/formatMoney";
 import { toLocalDate, getLocalToday, daysUntil as daysUntilDate } from "@/components/utils/dateUtils";
 
 import DashboardSidebar from "@/components/DashboardSidebar";
+import { CardEntrance, CountUp } from "@/components/ui/animations";
 
 // SVG star field data — exact positions from mockup
 const STAR_CIRCLES = [
@@ -347,9 +348,12 @@ export default function Home() {
             </p>
             <button onClick={handleLogin} disabled={isAuthenticating} style={{
               width: '100%', padding: '12px 24px', fontSize: 16, fontWeight: 600,
-              background: '#82F0B9', color: 'white', border: 'none', borderRadius: 12,
-              cursor: isAuthenticating ? 'not-allowed' : 'pointer', opacity: isAuthenticating ? 0.7 : 1,
-              fontFamily: "'DM Sans', sans-serif", transition: 'background 0.15s'
+              background: isAuthenticating ? 'rgba(3,172,234,0.5)' : 'linear-gradient(135deg, #03ACEA 0%, #7C3AED 100%)',
+              color: 'white', border: 'none', borderRadius: 12,
+              cursor: isAuthenticating ? 'not-allowed' : 'pointer',
+              fontFamily: "'DM Sans', sans-serif",
+              boxShadow: isAuthenticating ? 'none' : '0 4px 16px rgba(3,172,234,0.3)',
+              transition: 'opacity 0.15s, transform 0.15s',
             }}>
               {isAuthenticating ? 'Signing you in...' : 'Sign In to Get Started'}
             </button>
@@ -709,6 +713,8 @@ export default function Home() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20, gridRow: '1 / 2' }}>
 
               {/* Inbox / Notifications */}
+              <CardEntrance delay={0}>
+              <div className="gradient-border-wrapper">
               <div className="glass-card" style={{ overflow: 'hidden' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px 0' }}>
                   <span style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.07em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>Inbox</span>
@@ -719,8 +725,8 @@ export default function Home() {
                 <div style={{ padding: '10px 16px 12px' }}>
                   {notifCount === 0 ? (
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                      <div style={{ width: 28, height: 28, borderRadius: '50%', background: '#FEF3C7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="#D97706">
+                      <div style={{ width: 28, height: 28, borderRadius: '50%', background: '#C4EEFF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="#03ACEA">
                           <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
                         </svg>
                       </div>
@@ -728,8 +734,8 @@ export default function Home() {
                     </div>
                   ) : (
                     <Link to={createPageUrl("Requests")} style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
-                      <div style={{ width: 28, height: 28, borderRadius: '50%', background: '#FEF3C7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="#D97706">
+                      <div style={{ width: 28, height: 28, borderRadius: '50%', background: '#C4EEFF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="#03ACEA">
                           <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
                         </svg>
                       </div>
@@ -738,77 +744,90 @@ export default function Home() {
                   )}
                 </div>
               </div>
+              </div>{/* /gradient-border-wrapper */}
+              </CardEntrance>
 
               {/* Next payment due */}
+              <CardEntrance delay={0.07}>
+              <div className="glow-wrapper glow-blue">
               <div className="galaxy-border-card">
-                <div style={{ padding: '14px 16px 0' }}>
+                {/* Label row + badge */}
+                <div style={{ padding: '14px 16px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <div style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.07em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>Next payment due</div>
+                  {nextBorrowerPayment && (() => {
+                    const days = Math.ceil((nextBorrowerPayment.date.getTime() - Date.now()) / 86400000);
+                    const isLate = days < 0;
+                    const label = isLate ? `${Math.abs(days)}d late` : days === 0 ? 'today' : `in ${days}d`;
+                    return (
+                      <span style={{ fontSize: 10, fontWeight: 700, color: 'white', background: isLate ? '#E8726E' : '#03ACEA', borderRadius: 20, padding: '3px 9px', whiteSpace: 'nowrap', letterSpacing: '0.02em' }}>{label}</span>
+                    );
+                  })()}
                 </div>
-                <div style={{ padding: '10px 16px 12px' }}>
+                {/* Hero date */}
+                <div style={{ padding: '6px 16px 16px' }}>
                   {nextBorrowerPayment ? (
                     <>
-                      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 8 }}>
-                        <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', lineHeight: 1 }}>
-                          {format(nextBorrowerPayment.date, 'MMM d')}
-                        </div>
-                        {(() => {
-                          const days = Math.ceil((nextBorrowerPayment.date.getTime() - Date.now()) / 86400000);
-                          const label = days < 0 ? `${Math.abs(days)}d late` : days === 0 ? 'today' : `${days}d`;
-                          const isLate = days < 0;
-                          return (
-                            <span style={{ fontSize: 10, fontWeight: 700, color: isLate ? '#E8726E' : '#1A1918', background: isLate ? 'rgba(232,114,110,0.1)' : 'rgba(0,0,0,0.06)', borderRadius: 6, padding: '2px 6px', whiteSpace: 'nowrap', letterSpacing: '0.03em' }}>
-                              {label}
-                            </span>
-                          );
-                        })()}
+                      <div style={{ fontSize: '2.6rem', fontWeight: 800, color: '#1A1918', letterSpacing: '-0.04em', lineHeight: 1, marginBottom: 6, fontFamily: "'DM Sans', sans-serif" }}>
+                        {format(nextBorrowerPayment.date, 'MMM d')}
                       </div>
-                      <div style={{ fontSize: 12, color: '#787776', marginTop: 6 }}>
-                        {formatMoney(nextBorrowerPayment.payment_amount || 0)} to {nextBorrowerPayment.firstName}
+                      <div style={{ fontSize: 12, color: '#5C5B5A' }}>
+                        {formatMoney(nextBorrowerPayment.payment_amount || 0)} · to {nextBorrowerPayment.firstName}
                       </div>
                     </>
                   ) : (
-                    <div style={{ fontSize: 13, color: '#787776' }}>No upcoming payments to send</div>
+                    <div style={{ paddingTop: 8 }}>
+                      <div style={{ fontSize: 22, marginBottom: 4 }}>🎉</div>
+                      <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918' }}>Nothing due right now</div>
+                    </div>
                   )}
                 </div>
               </div>
+              </div>{/* /glow-wrapper glow-blue */}
+              </CardEntrance>
 
               {/* Next payment incoming */}
+              <CardEntrance delay={0.14}>
+              <div className="glow-wrapper glow-purple">
               <div className="glass-card" style={{ overflow: 'hidden' }}>
-                <div style={{ padding: '14px 16px 0' }}>
+                {/* Label row + badge */}
+                <div style={{ padding: '14px 16px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <div style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.07em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>Next payment incoming</div>
+                  {nextLenderPayment && (() => {
+                    const days = Math.ceil((nextLenderPayment.date.getTime() - Date.now()) / 86400000);
+                    const isLate = days < 0;
+                    const label = isLate ? `${Math.abs(days)}d late` : days === 0 ? 'today' : `in ${days}d`;
+                    return (
+                      <span style={{ fontSize: 10, fontWeight: 700, color: 'white', background: isLate ? '#E8726E' : '#35B276', borderRadius: 20, padding: '3px 9px', whiteSpace: 'nowrap', letterSpacing: '0.02em' }}>{label}</span>
+                    );
+                  })()}
                 </div>
-                <div style={{ padding: '10px 16px 12px' }}>
+                {/* Hero date */}
+                <div style={{ padding: '6px 16px 16px' }}>
                   {nextLenderPayment ? (
                     <>
-                      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 8 }}>
-                        <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', lineHeight: 1 }}>
-                          {format(nextLenderPayment.date, 'MMM d')}
-                        </div>
-                        {(() => {
-                          const days = Math.ceil((nextLenderPayment.date.getTime() - Date.now()) / 86400000);
-                          const label = days < 0 ? `${Math.abs(days)}d late` : days === 0 ? 'today' : `${days}d`;
-                          const isLate = days < 0;
-                          return (
-                            <span style={{ fontSize: 10, fontWeight: 700, color: isLate ? '#E8726E' : '#1A1918', background: isLate ? 'rgba(232,114,110,0.1)' : 'rgba(0,0,0,0.06)', borderRadius: 6, padding: '2px 6px', whiteSpace: 'nowrap', letterSpacing: '0.03em' }}>
-                              {label}
-                            </span>
-                          );
-                        })()}
+                      <div style={{ fontSize: '2.6rem', fontWeight: 800, color: '#1A1918', letterSpacing: '-0.04em', lineHeight: 1, marginBottom: 6, fontFamily: "'DM Sans', sans-serif" }}>
+                        {format(nextLenderPayment.date, 'MMM d')}
                       </div>
-                      <div style={{ fontSize: 12, color: '#787776', marginTop: 6 }}>
-                        {formatMoney(nextLenderPayment.payment_amount || 0)} from {nextLenderPayment.firstName}
+                      <div style={{ fontSize: 12, color: '#5C5B5A' }}>
+                        {formatMoney(nextLenderPayment.payment_amount || 0)} · from {nextLenderPayment.firstName}
                       </div>
                     </>
                   ) : (
-                    <div style={{ fontSize: 13, color: '#787776' }}>No upcoming payments to receive</div>
+                    <div style={{ paddingTop: 8 }}>
+                      <div style={{ fontSize: 22, marginBottom: 4 }}>💸</div>
+                      <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918' }}>All quiet on the lender front</div>
+                    </div>
                   )}
                 </div>
               </div>
+              </div>{/* /glow-wrapper glow-purple */}
+              </CardEntrance>
 
             </div>
 
             {/* Upcoming Payments */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20, gridRow: '1 / 2' }}>
+              <CardEntrance delay={0.05}>
               <div className="glass-card" style={{ overflow: 'hidden' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px 0' }}>
                   <div style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.07em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>Upcoming payments</div>
@@ -816,31 +835,37 @@ export default function Home() {
                 </div>
                 <div style={{ padding: '12px 16px 16px', minHeight: 200 }}>
                   {combinedPaymentEvents.length === 0 ? (
-                    <div style={{ textAlign: 'center', padding: '40px 0', color: '#787776', fontSize: 13 }}>No upcoming payments</div>
+                    <div style={{ textAlign: 'center', padding: '32px 0' }}>
+                      <div style={{ fontSize: 32, marginBottom: 8 }}>✨</div>
+                      <div style={{ fontSize: 14, fontWeight: 600, color: '#1A1918', marginBottom: 4 }}>You're all clear!</div>
+                      <div style={{ fontSize: 12, color: '#787776' }}>No payments coming up.</div>
+                    </div>
                   ) : (
                     <div>
                       {combinedPaymentEvents.slice(0, 5).map((event, idx) => {
                         const isOverdue = event.days < 0;
                         const daysLabel = isOverdue ? `${Math.abs(event.days)}d late` : `${event.days}d`;
                         return (
-                          <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 0' }}>
-                            {/* Days label — left column */}
-                            <div style={{ fontSize: 10, fontWeight: 600, color: isOverdue ? '#E8726E' : '#787776', letterSpacing: '0.02em', flexShrink: 0, minWidth: 46, textAlign: 'center' }}>
-                              {daysLabel}
+                          <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 0', borderBottom: idx < Math.min(combinedPaymentEvents.length, 5) - 1 ? '1px solid rgba(0,0,0,0.04)' : 'none' }}>
+                            {/* Days badge */}
+                            <div style={{ flexShrink: 0 }}>
+                              <span style={{ fontSize: 10, fontWeight: 700, color: isOverdue ? '#E8726E' : '#5C5B5A', background: isOverdue ? 'rgba(232,114,110,0.1)' : 'rgba(0,0,0,0.05)', borderRadius: 20, padding: '3px 8px', whiteSpace: 'nowrap', letterSpacing: '0.02em' }}>
+                                {daysLabel}
+                              </span>
                             </div>
                             {/* Main info — middle */}
                             <div style={{ flex: 1, minWidth: 0 }}>
-                              <div style={{ fontSize: 13, fontWeight: 500, color: '#1A1918' }}>
+                              <div style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                 {event.isLender
-                                  ? `${event.firstName} pays you${event.purpose ? ` for ${event.purpose}` : ''}`
-                                  : `Pay ${event.firstName}${event.purpose ? ` for ${event.purpose}` : ''}`}
+                                  ? `${event.firstName} pays you${event.purpose ? ` · ${event.purpose}` : ''}`
+                                  : `Pay ${event.firstName}${event.purpose ? ` · ${event.purpose}` : ''}`}
                               </div>
-                              <div style={{ fontSize: 11, color: '#787776', marginTop: 2 }}>
-                                due {format(event.date, 'do MMM')}
+                              <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 1 }}>
+                                {format(event.date, 'MMM d')}
                               </div>
                             </div>
-                            {/* Amount — right */}
-                            <div style={{ fontSize: 14, fontWeight: 600, flexShrink: 0, color: '#1A1918' }}>
+                            {/* Amount — right, bigger + colored */}
+                            <div style={{ fontSize: 15, fontWeight: 700, flexShrink: 0, color: event.isLender ? '#35B276' : '#2563EB', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>
                               {event.isLender ? '+' : '-'}{formatMoney(event.remainingAmount)}
                             </div>
                           </div>
@@ -850,44 +875,61 @@ export default function Home() {
                   )}
                 </div>
               </div>
+              </CardEntrance>
 
               {/* How [Month] is going */}
+              <CardEntrance delay={0.12}>
               <div className="glass-card" style={{ overflow: 'hidden' }}>
                 <div style={{ padding: '14px 16px 0' }}>
                   <div style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.07em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>How {format(today, 'MMMM')} is going</div>
                 </div>
                 <div style={{ padding: '10px 16px 14px' }}>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0 }}>
-                    <div style={{ textAlign: 'center', padding: '0 12px' }}>
-                      <div style={{ fontSize: 11, color: '#787776', marginBottom: 4 }}>Received</div>
-                      <div style={{ fontSize: 16, fontWeight: 700, letterSpacing: '-0.02em', color: '#82F0B9' }}>{formatMoney(monthlyReceived)}</div>
-                      <div style={{ width: '100%', height: 4, borderRadius: 2, marginTop: 8, background: 'rgba(130,240,185,0.15)' }}>
-                        <div style={{ height: '100%', borderRadius: 2, background: '#82F0B9', width: `${monthlyExpectedReceive > 0 ? Math.min((monthlyReceived / monthlyExpectedReceive) * 100, 100) : 0}%`, transition: 'width 0.6s cubic-bezier(0.4, 0, 0.2, 1)' }} />
+                    <div style={{ textAlign: 'center', padding: '0 10px 0 0', borderRight: '1px solid rgba(0,0,0,0.06)' }}>
+                      <div style={{ fontSize: 10, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 4 }}>Received</div>
+                      <div style={{ fontSize: '1.75rem', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1, color: '#35B276', fontFamily: "'DM Sans', sans-serif" }}>
+                        <CountUp end={monthlyReceived} prefix="$" decimals={0} duration={900} delay={200} />
                       </div>
-                      <div style={{ fontSize: 10, color: '#787776', marginTop: 4 }}>{formatMoney(monthlyReceived)} of {formatMoney(monthlyExpectedReceive)} received</div>
+                      <div style={{ width: '100%', height: 4, borderRadius: 2, marginTop: 10, background: 'rgba(130,240,185,0.2)' }}>
+                        <motion.div style={{ height: '100%', borderRadius: 2, background: '#82F0B9' }} initial={{ width: '0%' }} animate={{ width: `${monthlyExpectedReceive > 0 ? Math.min((monthlyReceived / monthlyExpectedReceive) * 100, 100) : 0}%` }} transition={{ duration: 0.9, delay: 0.5, ease: 'easeOut' }} />
+                      </div>
+                      <div style={{ fontSize: 10, color: '#9B9A98', marginTop: 5 }}>of {formatMoney(monthlyExpectedReceive)} expected</div>
                     </div>
-                    <div style={{ textAlign: 'center', padding: '0 12px' }}>
-                      <div style={{ fontSize: 11, color: '#787776', marginBottom: 4 }}>Paid out</div>
-                      <div style={{ fontSize: 16, fontWeight: 700, letterSpacing: '-0.02em', color: '#2563EB' }}>{formatMoney(monthlyPaidOut)}</div>
-                      <div style={{ width: '100%', height: 4, borderRadius: 2, marginTop: 8, background: 'rgba(37,99,235,0.15)' }}>
-                        <div style={{ height: '100%', borderRadius: 2, background: '#2563EB', width: `${monthlyExpectedPay > 0 ? Math.min((monthlyPaidOut / monthlyExpectedPay) * 100, 100) : 0}%`, transition: 'width 0.6s cubic-bezier(0.4, 0, 0.2, 1)' }} />
+                    <div style={{ textAlign: 'center', padding: '0 0 0 10px' }}>
+                      <div style={{ fontSize: 10, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 4 }}>Paid out</div>
+                      <div style={{ fontSize: '1.75rem', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1, color: '#2563EB', fontFamily: "'DM Sans', sans-serif" }}>
+                        <CountUp end={monthlyPaidOut} prefix="$" decimals={0} duration={900} delay={300} />
                       </div>
-                      <div style={{ fontSize: 10, color: '#787776', marginTop: 4 }}>{formatMoney(monthlyPaidOut)} of {formatMoney(monthlyExpectedPay)} paid out</div>
+                      <div style={{ width: '100%', height: 4, borderRadius: 2, marginTop: 10, background: 'rgba(37,99,235,0.15)' }}>
+                        <motion.div style={{ height: '100%', borderRadius: 2, background: '#2563EB' }} initial={{ width: '0%' }} animate={{ width: `${monthlyExpectedPay > 0 ? Math.min((monthlyPaidOut / monthlyExpectedPay) * 100, 100) : 0}%` }} transition={{ duration: 0.9, delay: 0.6, ease: 'easeOut' }} />
+                      </div>
+                      <div style={{ fontSize: 10, color: '#9B9A98', marginTop: 5 }}>of {formatMoney(monthlyExpectedPay)} expected</div>
                     </div>
                   </div>
                 </div>
               </div>
+              </CardEntrance>
 
             </div>
 
             {/* Your Loans — spans both sub-columns, directly under How March is going */}
-            <div className="glass-card" style={{ overflow: 'hidden', gridColumn: '1 / 3' }}>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.19, ease: 'easeOut' }}
+              style={{ gridColumn: '1 / 3' }}
+            >
+            <div className="glass-card" style={{ overflow: 'hidden' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 0, padding: '14px 16px 0' }}>
                 <div style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.07em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>Your active loans</div>
                 <Link to={createPageUrl("YourLoans")} style={{ fontSize: 12, fontWeight: 500, color: '#2563EB', textDecoration: 'none' }}>Manage</Link>
               </div>
               {myLoans.filter(l => l && l.status === 'active').length === 0 ? (
-                <div style={{ padding: '14px 16px', textAlign: 'center', color: '#787776', fontSize: 13 }}>No active loans</div>
+                <div style={{ padding: '20px 16px', textAlign: 'center' }}>
+                  <div style={{ fontSize: 28, marginBottom: 6 }}>🤝</div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', marginBottom: 2 }}>No active loans yet</div>
+                  <div style={{ fontSize: 11, color: '#787776' }}>Create an offer to get started.</div>
+                </div>
               ) : (
                 <div style={{ padding: '10px 16px 14px', display: 'flex', flexDirection: 'column', gap: 16 }}>
                   {myLoans.filter(l => l && l.status === 'active').slice(0, 4).map((loan, idx) => {
@@ -908,7 +950,7 @@ export default function Home() {
                           <div style={{ fontSize: 12, color: '#787776', flexShrink: 0, marginLeft: 8 }}>{pct}%</div>
                         </div>
                         <div style={{ width: '100%', height: 8, borderRadius: 4, background: isLender ? 'rgba(130,240,185,0.15)' : 'rgba(37,99,235,0.15)', overflow: 'hidden' }}>
-                          <div style={{ height: '100%', borderRadius: 4, width: `${pct}%`, background: isLender ? '#82F0B9' : '#2563EB', transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)' }} />
+                          <motion.div style={{ height: '100%', borderRadius: 4, background: isLender ? '#82F0B9' : '#2563EB' }} initial={{ width: '0%' }} animate={{ width: `${pct}%` }} transition={{ duration: 0.9, delay: 0.3 + idx * 0.1, ease: 'easeOut' }} />
                         </div>
                         <div style={{ fontSize: 11, color: '#787776', marginTop: 6 }}>{formatMoney(amountPaid)} of {formatMoney(totalAmt)} {isLender ? 'repaid' : 'paid back'}</div>
                       </div>
@@ -917,6 +959,7 @@ export default function Home() {
                 </div>
               )}
             </div>
+            </motion.div>
 
             </div>{/* end LEFT SECTION sub-grid */}
 
@@ -924,36 +967,57 @@ export default function Home() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
 
               {/* Loan Progress */}
+              <CardEntrance delay={0.1}>
               <div className="glass-card" style={{ overflow: 'hidden' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px 0' }}>
                   <div style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.07em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>Loan progress</div>
                   <Link to={createPageUrl("Lending")} style={{ fontSize: 12, fontWeight: 500, color: '#2563EB', textDecoration: 'none' }}>Manage</Link>
                 </div>
                 <div style={{ padding: '12px 16px 14px', display: 'flex', flexDirection: 'column', gap: 18 }}>
+                  {/* Lending row */}
                   <div>
-                    <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 8 }}>
-                      <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1918' }}>Lending</div>
-                      <div style={{ fontSize: 12, color: '#787776' }}>{percentRepaid}%</div>
+                    <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 6 }}>
+                      <div>
+                        <div style={{ fontSize: 10, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 2 }}>Lending</div>
+                        <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#35B276', letterSpacing: '-0.03em', lineHeight: 1, fontFamily: "'DM Sans', sans-serif" }}>
+                          <CountUp end={totalLentAmount} prefix="$" decimals={0} duration={1000} delay={200} />
+                        </div>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <div style={{ fontSize: 11, fontWeight: 700, color: '#35B276' }}>{percentRepaid}%</div>
+                        <div style={{ fontSize: 10, color: '#9B9A98' }}>repaid</div>
+                      </div>
                     </div>
-                    <div style={{ width: '100%', height: 8, borderRadius: 4, background: 'rgba(130,240,185,0.15)', overflow: 'hidden' }}>
-                      <div style={{ height: '100%', borderRadius: 4, background: '#82F0B9', width: `${percentRepaid}%`, transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)' }} />
+                    <div style={{ width: '100%', height: 6, borderRadius: 3, background: 'rgba(130,240,185,0.2)', overflow: 'hidden' }}>
+                      <motion.div style={{ height: '100%', borderRadius: 3, background: 'linear-gradient(90deg, #82F0B9, #35B276)' }} initial={{ width: '0%' }} animate={{ width: `${percentRepaid}%` }} transition={{ duration: 1, delay: 0.4, ease: 'easeOut' }} />
                     </div>
-                    <div style={{ fontSize: 11, color: '#787776', marginTop: 6 }}>{formatMoney(totalRepaid)} of {formatMoney(totalLentAmount)} repaid</div>
+                    <div style={{ fontSize: 10, color: '#9B9A98', marginTop: 4 }}>{formatMoney(totalRepaid)} repaid · {formatMoney(lentRemaining)} remaining</div>
                   </div>
+                  {/* Borrowing row */}
                   <div>
-                    <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 8 }}>
-                      <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1918' }}>Borrowing</div>
-                      <div style={{ fontSize: 12, color: '#787776' }}>{percentPaid}%</div>
+                    <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 6 }}>
+                      <div>
+                        <div style={{ fontSize: 10, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 2 }}>Borrowing</div>
+                        <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#2563EB', letterSpacing: '-0.03em', lineHeight: 1, fontFamily: "'DM Sans', sans-serif" }}>
+                          <CountUp end={totalBorrowedAmount} prefix="$" decimals={0} duration={1000} delay={300} />
+                        </div>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <div style={{ fontSize: 11, fontWeight: 700, color: '#2563EB' }}>{percentPaid}%</div>
+                        <div style={{ fontSize: 10, color: '#9B9A98' }}>paid back</div>
+                      </div>
                     </div>
-                    <div style={{ width: '100%', height: 8, borderRadius: 4, background: 'rgba(37,99,235,0.15)', overflow: 'hidden' }}>
-                      <div style={{ height: '100%', borderRadius: 4, background: '#2563EB', width: `${percentPaid}%`, transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)' }} />
+                    <div style={{ width: '100%', height: 6, borderRadius: 3, background: 'rgba(37,99,235,0.15)', overflow: 'hidden' }}>
+                      <motion.div style={{ height: '100%', borderRadius: 3, background: 'linear-gradient(90deg, #2563EB, #7C3AED)' }} initial={{ width: '0%' }} animate={{ width: `${percentPaid}%` }} transition={{ duration: 1, delay: 0.5, ease: 'easeOut' }} />
                     </div>
-                    <div style={{ fontSize: 11, color: '#787776', marginTop: 6 }}>{formatMoney(totalPaidBack)} of {formatMoney(totalBorrowedAmount)} paid back</div>
+                    <div style={{ fontSize: 10, color: '#9B9A98', marginTop: 4 }}>{formatMoney(totalPaidBack)} paid · {formatMoney(borrowedRemaining)} remaining</div>
                   </div>
                 </div>
               </div>
+              </CardEntrance>
 
               {/* Loans Over Time chart */}
+              <CardEntrance delay={0.17}>
               <div className="glass-card" style={{ overflow: 'hidden' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px 0' }}>
                   <div style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.07em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>Loans over time</div>
@@ -1001,12 +1065,18 @@ export default function Home() {
                       </>
                     );
                   })() : (
-                    <div style={{ textAlign: 'center', padding: '20px 0', color: '#787776', fontSize: 13 }}>No loan data yet</div>
+                    <div style={{ textAlign: 'center', padding: '20px 0' }}>
+                      <div style={{ fontSize: 28, marginBottom: 6 }}>📊</div>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', marginBottom: 2 }}>No data yet</div>
+                      <div style={{ fontSize: 11, color: '#787776' }}>Your loan history will appear here.</div>
+                    </div>
                   )}
                 </div>
               </div>
+              </CardEntrance>
 
               {/* Recent Activity */}
+              <CardEntrance delay={0.24}>
               <div className="glass-card" style={{ overflow: 'hidden' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px 0' }}>
                   <div style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.07em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>Recent activity</div>
@@ -1014,7 +1084,11 @@ export default function Home() {
                 </div>
                 <div style={{ padding: '12px 16px 16px' }}>
                   {recentActivity.length === 0 ? (
-                    <div style={{ textAlign: 'center', padding: '20px 0', color: '#787776', fontSize: 13 }}>No recent activity</div>
+                    <div style={{ textAlign: 'center', padding: '20px 0' }}>
+                      <div style={{ fontSize: 28, marginBottom: 6 }}>✨</div>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', marginBottom: 2 }}>Fresh start!</div>
+                      <div style={{ fontSize: 11, color: '#787776' }}>Nothing to report yet.</div>
+                    </div>
                   ) : (
                     recentActivity.map((item, idx) => (
                       <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '13px 0', paddingTop: idx === 0 ? 0 : 13, paddingBottom: idx === recentActivity.length - 1 ? 0 : 13 }}>
@@ -1038,6 +1112,7 @@ export default function Home() {
                   )}
                 </div>
               </div>
+              </CardEntrance>
             </div>
 
 
