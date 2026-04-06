@@ -748,7 +748,6 @@ export default function Home() {
               </CardEntrance>
 
               {/* Next payment due */}
-              <CardEntrance delay={0.07}>
               <div className="glow-wrapper glow-blue">
               <div className="galaxy-border-card">
                 {/* Label row + badge */}
@@ -783,10 +782,8 @@ export default function Home() {
                 </div>
               </div>
               </div>{/* /glow-wrapper glow-blue */}
-              </CardEntrance>
 
               {/* Next payment incoming */}
-              <CardEntrance delay={0.14}>
               <div className="glow-wrapper glow-purple">
               <div className="glass-card" style={{ overflow: 'hidden' }}>
                 {/* Label row + badge */}
@@ -821,7 +818,6 @@ export default function Home() {
                 </div>
               </div>
               </div>{/* /glow-wrapper glow-purple */}
-              </CardEntrance>
 
             </div>
 
@@ -887,21 +883,17 @@ export default function Home() {
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0 }}>
                     <div style={{ textAlign: 'center', padding: '0 10px 0 0', borderRight: '1px solid rgba(0,0,0,0.06)' }}>
                       <div style={{ fontSize: 10, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 4 }}>Received</div>
-                      <div style={{ fontSize: '1.75rem', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1, color: '#35B276', fontFamily: "'DM Sans', sans-serif" }}>
-                        <CountUp end={monthlyReceived} prefix="$" decimals={0} duration={900} delay={200} />
-                      </div>
+                      <div style={{ fontSize: '1.75rem', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1, color: '#35B276', fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(monthlyReceived)}</div>
                       <div style={{ width: '100%', height: 4, borderRadius: 2, marginTop: 10, background: 'rgba(130,240,185,0.2)' }}>
-                        <motion.div style={{ height: '100%', borderRadius: 2, background: '#82F0B9' }} initial={{ width: '0%' }} animate={{ width: `${monthlyExpectedReceive > 0 ? Math.min((monthlyReceived / monthlyExpectedReceive) * 100, 100) : 0}%` }} transition={{ duration: 0.9, delay: 0.5, ease: 'easeOut' }} />
+                        <div style={{ height: '100%', borderRadius: 2, background: '#82F0B9', width: `${monthlyExpectedReceive > 0 ? Math.min((monthlyReceived / monthlyExpectedReceive) * 100, 100) : 0}%` }} />
                       </div>
                       <div style={{ fontSize: 10, color: '#9B9A98', marginTop: 5 }}>of {formatMoney(monthlyExpectedReceive)} expected</div>
                     </div>
                     <div style={{ textAlign: 'center', padding: '0 0 0 10px' }}>
                       <div style={{ fontSize: 10, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 4 }}>Paid out</div>
-                      <div style={{ fontSize: '1.75rem', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1, color: '#2563EB', fontFamily: "'DM Sans', sans-serif" }}>
-                        <CountUp end={monthlyPaidOut} prefix="$" decimals={0} duration={900} delay={300} />
-                      </div>
+                      <div style={{ fontSize: '1.75rem', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1, color: '#2563EB', fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(monthlyPaidOut)}</div>
                       <div style={{ width: '100%', height: 4, borderRadius: 2, marginTop: 10, background: 'rgba(37,99,235,0.15)' }}>
-                        <motion.div style={{ height: '100%', borderRadius: 2, background: '#2563EB' }} initial={{ width: '0%' }} animate={{ width: `${monthlyExpectedPay > 0 ? Math.min((monthlyPaidOut / monthlyExpectedPay) * 100, 100) : 0}%` }} transition={{ duration: 0.9, delay: 0.6, ease: 'easeOut' }} />
+                        <div style={{ height: '100%', borderRadius: 2, background: '#2563EB', width: `${monthlyExpectedPay > 0 ? Math.min((monthlyPaidOut / monthlyExpectedPay) * 100, 100) : 0}%` }} />
                       </div>
                       <div style={{ fontSize: 10, color: '#9B9A98', marginTop: 5 }}>of {formatMoney(monthlyExpectedPay)} expected</div>
                     </div>
@@ -979,9 +971,7 @@ export default function Home() {
                     <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 6 }}>
                       <div>
                         <div style={{ fontSize: 10, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 2 }}>Lending</div>
-                        <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#35B276', letterSpacing: '-0.03em', lineHeight: 1, fontFamily: "'DM Sans', sans-serif" }}>
-                          <CountUp end={totalLentAmount} prefix="$" decimals={0} duration={1000} delay={200} />
-                        </div>
+                        <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#35B276', letterSpacing: '-0.03em', lineHeight: 1, fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(totalLentAmount)}</div>
                       </div>
                       <div style={{ textAlign: 'right' }}>
                         <div style={{ fontSize: 11, fontWeight: 700, color: '#35B276' }}>{percentRepaid}%</div>
@@ -989,7 +979,7 @@ export default function Home() {
                       </div>
                     </div>
                     <div style={{ width: '100%', height: 6, borderRadius: 3, background: 'rgba(130,240,185,0.2)', overflow: 'hidden' }}>
-                      <motion.div style={{ height: '100%', borderRadius: 3, background: 'linear-gradient(90deg, #82F0B9, #35B276)' }} initial={{ width: '0%' }} animate={{ width: `${percentRepaid}%` }} transition={{ duration: 1, delay: 0.4, ease: 'easeOut' }} />
+                      <div style={{ height: '100%', borderRadius: 3, background: 'linear-gradient(90deg, #82F0B9, #35B276)', width: `${percentRepaid}%`, transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)' }} />
                     </div>
                     <div style={{ fontSize: 10, color: '#9B9A98', marginTop: 4 }}>{formatMoney(totalRepaid)} repaid · {formatMoney(lentRemaining)} remaining</div>
                   </div>
@@ -998,9 +988,7 @@ export default function Home() {
                     <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 6 }}>
                       <div>
                         <div style={{ fontSize: 10, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 2 }}>Borrowing</div>
-                        <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#2563EB', letterSpacing: '-0.03em', lineHeight: 1, fontFamily: "'DM Sans', sans-serif" }}>
-                          <CountUp end={totalBorrowedAmount} prefix="$" decimals={0} duration={1000} delay={300} />
-                        </div>
+                        <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#2563EB', letterSpacing: '-0.03em', lineHeight: 1, fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(totalBorrowedAmount)}</div>
                       </div>
                       <div style={{ textAlign: 'right' }}>
                         <div style={{ fontSize: 11, fontWeight: 700, color: '#2563EB' }}>{percentPaid}%</div>
@@ -1008,7 +996,7 @@ export default function Home() {
                       </div>
                     </div>
                     <div style={{ width: '100%', height: 6, borderRadius: 3, background: 'rgba(37,99,235,0.15)', overflow: 'hidden' }}>
-                      <motion.div style={{ height: '100%', borderRadius: 3, background: 'linear-gradient(90deg, #2563EB, #7C3AED)' }} initial={{ width: '0%' }} animate={{ width: `${percentPaid}%` }} transition={{ duration: 1, delay: 0.5, ease: 'easeOut' }} />
+                      <div style={{ height: '100%', borderRadius: 3, background: 'linear-gradient(90deg, #2563EB, #7C3AED)', width: `${percentPaid}%`, transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)' }} />
                     </div>
                     <div style={{ fontSize: 10, color: '#9B9A98', marginTop: 4 }}>{formatMoney(totalPaidBack)} paid · {formatMoney(borrowedRemaining)} remaining</div>
                   </div>
