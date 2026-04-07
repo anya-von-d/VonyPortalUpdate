@@ -712,29 +712,29 @@ export default function Home() {
 
       <DashboardSidebar activePage="Dashboard" user={user} />
 
-      {/* ── Blue hero banner ── */}
+      {/* ── Hero banner ── */}
       <div style={{
-        margin: '0 10px',
-        height: 180,
-        background: '#03ACEA',
+        margin: '20px 10px 0',
+        height: 210,
+        background: '#6587F9',
         borderRadius: 18,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'flex-end',
-        paddingBottom: 28,
+        paddingBottom: 32,
         overflow: 'hidden',
         position: 'relative',
       }}>
-        {/* Subtle star field inside hero */}
-        <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0.18, pointerEvents: 'none' }} viewBox="0 0 1200 180" preserveAspectRatio="xMidYMid slice">
-          {[{cx:80,cy:40},{cx:200,cy:100},{cx:320,cy:25},{cx:430,cy:140},{cx:540,cy:60},{cx:660,cy:110},{cx:770,cy:30},{cx:890,cy:150},{cx:1000,cy:70},{cx:1100,cy:120},{cx:150,cy:160},{cx:480,cy:90},{cx:720,cy:155},{cx:950,cy:45}].map((s, i) => (
+        {/* Subtle star field */}
+        <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0.15, pointerEvents: 'none' }} viewBox="0 0 1200 210" preserveAspectRatio="xMidYMid slice">
+          {[{cx:80,cy:40},{cx:200,cy:110},{cx:320,cy:25},{cx:430,cy:160},{cx:540,cy:70},{cx:660,cy:130},{cx:770,cy:35},{cx:890,cy:175},{cx:1000,cy:80},{cx:1100,cy:140},{cx:150,cy:185},{cx:480,cy:100},{cx:720,cy:180},{cx:950,cy:55},{cx:280,cy:195},{cx:620,cy:48},{cx:1050,cy:195}].map((s, i) => (
             <circle key={i} cx={s.cx} cy={s.cy} r={i % 3 === 0 ? 2.5 : 1.5} fill="white" />
           ))}
         </svg>
         <h1 style={{
           fontFamily: "'Cormorant Garamond', Georgia, serif",
-          fontSize: 38, fontWeight: 600, color: 'white',
+          fontSize: 38, fontWeight: 600, color: '#1A1918',
           margin: 0, letterSpacing: '-0.01em', lineHeight: 1,
           textAlign: 'center', position: 'relative', zIndex: 1,
         }}>
@@ -798,7 +798,7 @@ export default function Home() {
               <div style={{ padding: '6px 16px 16px' }}>
                 {nextBorrowerPayment ? (
                   <>
-                    <div style={{ fontSize: '2rem', fontWeight: 800, color: '#1A1918', letterSpacing: '-0.04em', lineHeight: 1, marginBottom: 6, fontFamily: "'DM Sans', sans-serif" }}>
+                    <div style={{ fontSize: '1.45rem', fontWeight: 800, color: '#1A1918', letterSpacing: '-0.03em', lineHeight: 1, marginBottom: 6, fontFamily: "'DM Sans', sans-serif" }}>
                       {format(nextBorrowerPayment.date, 'MMM d')}
                     </div>
                     <div style={{ fontSize: 12, color: '#5C5B5A' }}>
@@ -828,7 +828,7 @@ export default function Home() {
               <div style={{ padding: '6px 16px 16px' }}>
                 {nextLenderPayment ? (
                   <>
-                    <div style={{ fontSize: '2rem', fontWeight: 800, color: '#1A1918', letterSpacing: '-0.04em', lineHeight: 1, marginBottom: 6, fontFamily: "'DM Sans', sans-serif" }}>
+                    <div style={{ fontSize: '1.45rem', fontWeight: 800, color: '#1A1918', letterSpacing: '-0.03em', lineHeight: 1, marginBottom: 6, fontFamily: "'DM Sans', sans-serif" }}>
                       {format(nextLenderPayment.date, 'MMM d')}
                     </div>
                     <div style={{ fontSize: 12, color: '#5C5B5A' }}>
@@ -998,7 +998,7 @@ export default function Home() {
               <CardEntrance delay={0.1}>
               <DashboardCard title="Owed to You">
                 <div style={{ padding: '6px 16px 16px' }}>
-                  <div style={{ fontSize: '2rem', fontWeight: 800, color: '#35B276', letterSpacing: '-0.04em', lineHeight: 1, fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(lentRemaining)}</div>
+                  <div style={{ fontSize: '1.45rem', fontWeight: 800, color: '#35B276', letterSpacing: '-0.03em', lineHeight: 1, fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(lentRemaining)}</div>
                   <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 6 }}>outstanding balance</div>
                 </div>
               </DashboardCard>
@@ -1008,7 +1008,7 @@ export default function Home() {
               <CardEntrance delay={0.13}>
               <DashboardCard title="You Owe">
                 <div style={{ padding: '6px 16px 16px' }}>
-                  <div style={{ fontSize: '2rem', fontWeight: 800, color: '#2563EB', letterSpacing: '-0.04em', lineHeight: 1, fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(borrowedRemaining)}</div>
+                  <div style={{ fontSize: '1.45rem', fontWeight: 800, color: '#2563EB', letterSpacing: '-0.03em', lineHeight: 1, fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(borrowedRemaining)}</div>
                   <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 6 }}>outstanding balance</div>
                 </div>
               </DashboardCard>
@@ -1021,7 +1021,7 @@ export default function Home() {
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0 }}>
                     <div style={{ textAlign: 'center', padding: '0 10px 0 0', borderRight: '1px solid rgba(0,0,0,0.06)' }}>
                       <div style={{ fontSize: 10, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 4 }}>Received</div>
-                      <div style={{ fontSize: '1.75rem', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1, color: '#35B276', fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(monthlyReceived)}</div>
+                      <div style={{ fontSize: '1.35rem', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1, color: '#35B276', fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(monthlyReceived)}</div>
                       <div style={{ width: '100%', height: 4, borderRadius: 2, marginTop: 10, background: 'rgba(130,240,185,0.2)' }}>
                         <div style={{ height: '100%', borderRadius: 2, background: '#82F0B9', width: `${monthlyExpectedReceive > 0 ? Math.min((monthlyReceived / monthlyExpectedReceive) * 100, 100) : 0}%` }} />
                       </div>
@@ -1029,7 +1029,7 @@ export default function Home() {
                     </div>
                     <div style={{ textAlign: 'center', padding: '0 0 0 10px' }}>
                       <div style={{ fontSize: 10, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 4 }}>Paid out</div>
-                      <div style={{ fontSize: '1.75rem', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1, color: '#2563EB', fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(monthlyPaidOut)}</div>
+                      <div style={{ fontSize: '1.35rem', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1, color: '#2563EB', fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(monthlyPaidOut)}</div>
                       <div style={{ width: '100%', height: 4, borderRadius: 2, marginTop: 10, background: 'rgba(37,99,235,0.15)' }}>
                         <div style={{ height: '100%', borderRadius: 2, background: '#2563EB', width: `${monthlyExpectedPay > 0 ? Math.min((monthlyPaidOut / monthlyExpectedPay) * 100, 100) : 0}%` }} />
                       </div>

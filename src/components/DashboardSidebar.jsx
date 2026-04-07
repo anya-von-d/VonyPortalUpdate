@@ -25,10 +25,9 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
   const { logout } = useAuth();
   const firstName = user?.full_name?.split(' ')[0] || '';
   const [notifCount, setNotifCount] = useState(0);
-  const [settingsOpen, setSettingsOpen] = useState(false);
-  const settingsRef = useRef(null);
+  const [moreOpen, setMoreOpen] = useState(false);
+  const moreRef = useRef(null);
 
-  // Clear any residual paddingLeft from a previous sidebar render
   useEffect(() => {
     document.body.style.paddingLeft = '';
     return () => { document.body.style.paddingLeft = ''; };
@@ -38,7 +37,7 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
 
   useEffect(() => {
     const handler = (e) => {
-      if (settingsRef.current && !settingsRef.current.contains(e.target)) setSettingsOpen(false);
+      if (moreRef.current && !moreRef.current.contains(e.target)) setMoreOpen(false);
     };
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
@@ -63,6 +62,7 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
   };
 
   const active = (...pages) => pages.includes(activePage);
+  const moreActive = active('RecentActivity', 'LoanAgreements');
 
   const linkStyle = (...pages) => ({
     display: 'inline-flex', alignItems: 'center', gap: 5,
@@ -70,7 +70,7 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
     fontSize: 13, fontFamily: "'DM Sans', sans-serif",
     color: '#1A1918',
     fontWeight: active(...pages) ? 600 : 400,
-    background: active(...pages) ? '#F1EADE' : 'transparent',
+    background: active(...pages) ? 'rgba(255,255,255,0.55)' : 'transparent',
     transition: 'background 0.13s',
     whiteSpace: 'nowrap',
   });
@@ -91,19 +91,22 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
 
   return createPortal(
     <>
-      {/* ── Floating top nav pill ── */}
+      {/* ── Floating top nav bar ── */}
       <div style={{
         position: 'fixed', top: 12, left: 0, right: 0,
-        zIndex: 100, padding: '0 12px', pointerEvents: 'none',
+        zIndex: 100, padding: '0 40px', pointerEvents: 'none',
         fontFamily: "'DM Sans', sans-serif",
       }}>
         <div style={{ maxWidth: 1080, margin: '0 auto', pointerEvents: 'auto' }}>
           <div style={{
             display: 'flex', alignItems: 'center', height: 50,
-            background: 'white', borderRadius: 100,
-            padding: '0 18px',
-            boxShadow: '0 2px 20px rgba(0,0,0,0.09), 0 1px 4px rgba(0,0,0,0.04)',
-            border: '1px solid rgba(0,0,0,0.06)',
+            background: 'rgba(255,255,255,0.72)',
+            backdropFilter: 'blur(22px) saturate(1.6)',
+            WebkitBackdropFilter: 'blur(22px) saturate(1.6)',
+            borderRadius: 100,
+            padding: '0 20px',
+            boxShadow: '0 2px 20px rgba(0,0,0,0.07), 0 1px 4px rgba(0,0,0,0.04)',
+            border: '1px solid rgba(255,255,255,0.55)',
           }}>
 
             {/* Logo */}
@@ -111,13 +114,12 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
               fontFamily: "'Playfair Display', Georgia, serif",
               fontWeight: 400, fontStyle: 'italic', fontSize: '1.3rem',
               letterSpacing: '-0.02em', color: '#1A1918', textDecoration: 'none',
-              flexShrink: 0, marginRight: 8,
+              flexShrink: 0, marginRight: 10,
             }}>Vony</Link>
 
-            {/* Divider */}
-            <div style={{ width: 1, height: 18, background: 'rgba(0,0,0,0.09)', marginRight: 8, flexShrink: 0 }} />
+            <div style={{ width: 1, height: 16, background: 'rgba(0,0,0,0.1)', marginRight: 10, flexShrink: 0 }} />
 
-            {/* Nav links — centered */}
+            {/* Nav links */}
             <nav style={{ display: 'flex', alignItems: 'center', gap: 1, flex: 1, justifyContent: 'center' }}>
               <Link to="/" style={linkStyle('Dashboard')}>Home</Link>
               <Link to={createPageUrl("CreateOffer")} style={linkStyle('CreateOffer')}>Create</Link>
@@ -125,43 +127,48 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
               <Link to={createPageUrl("Upcoming")} style={linkStyle('Upcoming')}>Upcoming</Link>
               <Link to={createPageUrl("YourLoans")} style={linkStyle('YourLoans', 'Borrowing', 'Lending')}>My Loans</Link>
               <Link to={createPageUrl("Friends")} style={linkStyle('Friends')}>Friends</Link>
-              <Link to={createPageUrl("RecentActivity")} style={linkStyle('RecentActivity')}>Activity</Link>
-              <Link to={createPageUrl("LoanAgreements")} style={linkStyle('LoanAgreements')}>Documents</Link>
-              <Link to={createPageUrl("Requests")} style={{ ...linkStyle('Requests'), gap: 6 }}>
-                Notifications
-                {notifCount > 0 && (
-                  <span style={{ fontSize: 10, fontWeight: 700, color: 'white', background: '#E8726E', borderRadius: 10, padding: '1px 6px', minWidth: 16, textAlign: 'center', lineHeight: 1.6 }}>
-                    {notifCount > 99 ? '99+' : notifCount}
-                  </span>
-                )}
-              </Link>
-            </nav>
 
-            {/* Divider */}
-            <div style={{ width: 1, height: 18, background: 'rgba(0,0,0,0.09)', marginLeft: 8, flexShrink: 0 }} />
-
-            {/* Right: Settings + Profile */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 2, flexShrink: 0, marginLeft: 8 }}>
-
-              {/* Settings gear */}
-              <div ref={settingsRef} style={{ position: 'relative' }}>
+              {/* More dropdown */}
+              <div ref={moreRef} style={{ position: 'relative' }}>
                 <button
-                  onClick={() => setSettingsOpen(o => !o)}
-                  style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '6px 8px', borderRadius: 20, display: 'flex', alignItems: 'center', color: '#1A1918', transition: 'background 0.12s' }}
-                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.04)'}
-                  onMouseLeave={e => e.currentTarget.style.background = 'none'}
+                  onClick={() => setMoreOpen(o => !o)}
+                  style={{
+                    display: 'inline-flex', alignItems: 'center', gap: 4,
+                    padding: '5px 11px', borderRadius: 20, border: 'none', cursor: 'pointer',
+                    fontSize: 13, fontFamily: "'DM Sans', sans-serif",
+                    color: '#1A1918',
+                    fontWeight: moreActive ? 600 : 400,
+                    background: moreActive ? 'rgba(255,255,255,0.55)' : 'transparent',
+                    transition: 'background 0.13s',
+                  }}
                 >
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
-                    <circle cx="12" cy="12" r="3"/>
-                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                  More
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginTop: 1, opacity: 0.5 }}>
+                    <polyline points="6 9 12 15 18 9" />
                   </svg>
                 </button>
-                {settingsOpen && (
+                {moreOpen && (
                   <div style={{
-                    position: 'absolute', top: 'calc(100% + 4px)', right: 0,
-                    width: 200, background: 'white', borderRadius: 12, padding: 6,
-                    boxShadow: '0 4px 24px rgba(0,0,0,0.12)', border: '1px solid rgba(0,0,0,0.06)', zIndex: 200,
+                    position: 'absolute', top: 'calc(100% + 6px)', left: '50%', transform: 'translateX(-50%)',
+                    width: 200, background: 'rgba(255,255,255,0.9)',
+                    backdropFilter: 'blur(20px) saturate(1.5)',
+                    WebkitBackdropFilter: 'blur(20px) saturate(1.5)',
+                    borderRadius: 14, padding: 6,
+                    boxShadow: '0 8px 32px rgba(0,0,0,0.12)', border: '1px solid rgba(255,255,255,0.6)', zIndex: 200,
                   }}>
+                    <Link to={createPageUrl("RecentActivity")} onClick={() => setMoreOpen(false)}
+                      style={{ ...dropdownItemStyle, fontWeight: active('RecentActivity') ? 600 : 400 }}>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                      Activity
+                    </Link>
+                    <Link to={createPageUrl("LoanAgreements")} onClick={() => setMoreOpen(false)}
+                      style={{ ...dropdownItemStyle, fontWeight: active('LoanAgreements') ? 600 : 400 }}>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                      Documents
+                    </Link>
+
+                    <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', margin: '4px 4px' }} />
+
                     <button style={{ ...dropdownItemStyle, color: '#9B9A98', cursor: 'default' }}>
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
                       Learn <span style={comingSoonBadge}>Soon</span>
@@ -170,18 +177,26 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                       Loan Help <span style={comingSoonBadge}>Soon</span>
                     </button>
+
                     <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', margin: '4px 4px' }} />
+
                     <button style={{ ...dropdownItemStyle, color: '#787776', cursor: 'default' }}>
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                       Help & Support
                     </button>
-                    <button onClick={() => { setSettingsOpen(false); logout(); }} style={{ ...dropdownItemStyle, color: '#E8726E' }}>
+                    <button onClick={() => { setMoreOpen(false); logout(); }} style={{ ...dropdownItemStyle, color: '#E8726E' }}>
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
                       Log Out
                     </button>
                   </div>
                 )}
               </div>
+            </nav>
+
+            <div style={{ width: 1, height: 16, background: 'rgba(0,0,0,0.1)', marginRight: 10, flexShrink: 0 }} />
+
+            {/* Right: Profile + Bell */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 2, flexShrink: 0 }}>
 
               {/* Profile */}
               <Link to={createPageUrl("Profile")} style={{ ...linkStyle('Profile'), padding: '4px 10px 4px 5px' }}>
@@ -196,13 +211,36 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
                 )}
                 <span>{firstName || 'Profile'}</span>
               </Link>
-            </div>
 
+              {/* Notifications bell */}
+              <Link to={createPageUrl("Requests")} style={{
+                position: 'relative', display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                width: 34, height: 34, borderRadius: 20, textDecoration: 'none',
+                color: active('Requests') ? '#1A1918' : '#787776',
+                background: active('Requests') ? 'rgba(255,255,255,0.55)' : 'transparent',
+                transition: 'background 0.13s',
+              }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                </svg>
+                {notifCount > 0 && (
+                  <span style={{
+                    position: 'absolute', top: 4, right: 4,
+                    fontSize: 9, fontWeight: 700, color: 'white', background: '#E8726E',
+                    borderRadius: 10, padding: '1px 4px', minWidth: 14, textAlign: 'center', lineHeight: 1.5,
+                  }}>
+                    {notifCount > 99 ? '99+' : notifCount}
+                  </span>
+                )}
+              </Link>
+
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Page title row — shown on all pages except Dashboard */}
+      {/* Page title row — non-dashboard pages */}
       {activePage !== 'Dashboard' && (
         <div style={{
           position: 'fixed', top: 74, left: 0, right: 0,
