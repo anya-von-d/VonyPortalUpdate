@@ -132,7 +132,7 @@ export default function Upcoming() {
   // Loading
   if (isLoading) {
     return (
-      <div style={{ minHeight: '100vh', background: '#F5F4F0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ minHeight: '100vh', background: '#5881FE', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{ width: 32, height: 32, border: '2px solid #82F0B9', borderTopColor: 'transparent', borderRadius: '50%', margin: '0 auto 16px' }} className="animate-spin" />
           <p style={{ fontSize: 14, color: '#787776', fontFamily: "'DM Sans', sans-serif" }}>Loading upcoming...</p>
@@ -144,7 +144,7 @@ export default function Upcoming() {
   // Not logged in
   if (!user) {
     return (
-      <div style={{ minHeight: '100vh', background: '#F5F4F0', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+      <div style={{ minHeight: '100vh', background: '#5881FE', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
         <div className="glass-card" style={{ padding: 32, textAlign: 'center', maxWidth: 400 }}>
           <h1 style={{ fontSize: '1.8rem', fontWeight: 700, color: '#1A1918', marginBottom: 8, fontFamily: "'DM Sans', sans-serif" }}>
             Sign in to view upcoming
@@ -324,7 +324,7 @@ export default function Upcoming() {
   };
 
   return (
-    <div className="home-with-sidebar" style={{ minHeight: '100vh', display: 'flex', alignItems: 'flex-start', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingTop: 132, background: '#F5F4F0' }}>
+    <div className="home-with-sidebar" style={{ minHeight: '100vh', display: 'flex', alignItems: 'flex-start', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingTop: 132, background: '#5881FE' }}>
 
       <DashboardSidebar activePage="Upcoming" user={user} tabs={[{key:'summary',label:'Summary'},{key:'calendar',label:'Calendar'}]} activeTab={activeTab} onTabChange={setActiveTab} />
 

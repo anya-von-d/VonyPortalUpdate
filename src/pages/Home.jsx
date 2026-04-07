@@ -322,7 +322,7 @@ export default function Home() {
   // Loading state
   if (isLoading) {
     return (
-      <div style={{ minHeight: '100vh', background: '#F5F4F0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ minHeight: '100vh', background: '#5881FE', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{ width: 32, height: 32, border: '2px solid #82F0B9', borderTopColor: 'transparent', borderRadius: '50%', margin: '0 auto 16px' }} className="animate-spin" />
           <p style={{ fontSize: 14, color: '#787776', fontFamily: "'DM Sans', sans-serif" }}>Loading dashboard...</p>
@@ -334,7 +334,7 @@ export default function Home() {
   // Not logged in state
   if (!user && !isLoading) {
     return (
-      <div style={{ minHeight: '100vh', background: '#F5F4F0', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+      <div style={{ minHeight: '100vh', background: '#5881FE', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} style={{ maxWidth: 400, width: '100%' }}>
           <div className="glass-card" style={{ padding: 32, textAlign: 'center' }}>
             <div style={{ width: 96, height: 96, margin: '0 auto 24px', borderRadius: '50%', overflow: 'hidden', background: 'white', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
@@ -695,7 +695,7 @@ export default function Home() {
   overdueCountRef.current = alertTotal;
 
   return (
-    <div className="home-with-sidebar" style={{ minHeight: '100vh', display: 'flex', alignItems: 'flex-start', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingTop: 132, background: '#F5F4F0' }}>
+    <div className="home-with-sidebar" style={{ minHeight: '100vh', display: 'flex', alignItems: 'flex-start', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingTop: 132, background: '#5881FE' }}>
 
       <DashboardSidebar activePage="Dashboard" user={user} />
 
