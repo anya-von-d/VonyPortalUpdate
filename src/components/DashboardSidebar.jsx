@@ -23,7 +23,7 @@ const PAGE_TITLES = {
   Requests: 'Notifications',
 };
 
-const RIGHT_SIDEBAR_WIDTH = 236;
+const RIGHT_SIDEBAR_WIDTH = 260;
 
 export default function DashboardSidebar({ activePage = "Dashboard", user, tabs, activeTab, onTabChange }) {
   const { logout } = useAuth();
@@ -37,6 +37,12 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
   // Right sidebar data
   const [notifications, setNotifications] = useState([]);
   const [upcomingPayments, setUpcomingPayments] = useState([]);
+
+  // Reserve right sidebar space so pages center correctly
+  useEffect(() => {
+    document.body.style.paddingRight = `${RIGHT_SIDEBAR_WIDTH}px`;
+    return () => { document.body.style.paddingRight = ''; };
+  }, []);
 
   useEffect(() => { if (user?.id) fetchData(); }, [user?.id]);
 
@@ -271,7 +277,7 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
           </div>
 
           {/* PAGE TITLE ROW */}
-          <div style={{ position: 'fixed', top: 76, left: 8, right: RIGHT_SIDEBAR_WIDTH + 24, zIndex: 99, pointerEvents: 'none' }}>
+          <div style={{ position: 'fixed', top: 76, left: 8, right: RIGHT_SIDEBAR_WIDTH, zIndex: 99, pointerEvents: 'none' }}>
             <div style={{ maxWidth: 1080, margin: '0 auto', paddingLeft: 40, paddingRight: 40, display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 48, pointerEvents: 'auto' }}>
               <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 34, fontWeight: 600, color: '#1A1918', margin: 0, letterSpacing: '-0.01em', lineHeight: 1 }}>
                 {activePage === 'Dashboard' ? (
@@ -302,39 +308,33 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
             </div>
           </div>
 
-          {/* RIGHT SIDEBAR */}
+          {/* RIGHT SIDEBAR — continuous strip */}
           <div style={{
-            position: 'fixed', top: 76, right: 16, width: RIGHT_SIDEBAR_WIDTH,
-            height: 'calc(100vh - 92px)', zIndex: 98,
-            display: 'flex', flexDirection: 'column', gap: 12,
-            overflowY: 'auto', overflowX: 'hidden',
-            paddingBottom: 16,
+            position: 'fixed', top: 76, right: 0, bottom: 0, width: RIGHT_SIDEBAR_WIDTH,
+            zIndex: 98, overflowY: 'auto', overflowX: 'hidden',
+            background: 'rgba(255,255,255,0.97)',
+            backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+            borderLeft: '1px solid rgba(0,0,0,0.07)',
+            fontFamily: "'DM Sans', sans-serif",
           }}>
 
-            {/* Profile card */}
-            <div style={{
-              background: 'rgba(255,255,255,0.88)', borderRadius: 16,
-              border: '1px solid rgba(255,255,255,0.6)',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
-              padding: '16px 14px',
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                {/* Photo */}
+            {/* Profile */}
+            <div style={{ padding: '20px 18px 18px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 {user?.profile_picture_url ? (
-                  <div style={{ width: 44, height: 44, borderRadius: 12, overflow: 'hidden', flexShrink: 0, border: '2px solid rgba(255,255,255,0.8)', boxShadow: '0 2px 8px rgba(0,0,0,0.12)' }}>
+                  <div style={{ width: 46, height: 46, borderRadius: '50%', overflow: 'hidden', flexShrink: 0, border: '2px solid rgba(0,0,0,0.06)' }}>
                     <img src={user.profile_picture_url} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   </div>
                 ) : (
-                  <div style={{ width: 44, height: 44, borderRadius: 12, flexShrink: 0, background: 'linear-gradient(135deg, #03ACEA 0%, #7C3AED 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(3,172,234,0.3)' }}>
+                  <div style={{ width: 46, height: 46, borderRadius: '50%', flexShrink: 0, background: 'linear-gradient(135deg, #03ACEA 0%, #7C3AED 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" strokeWidth="1.8" strokeLinecap="round">
                       <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
                       <circle cx="12" cy="7" r="4"/>
                     </svg>
                   </div>
                 )}
-                {/* Name + username */}
                 <div style={{ minWidth: 0 }}>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.01em', lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.01em', lineHeight: 1.25, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {user?.full_name || firstName || 'User'}
                   </div>
                   {user?.username && (
@@ -344,28 +344,27 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
               </div>
             </div>
 
-            {/* Notifications card */}
-            <div style={{
-              background: 'rgba(255,255,255,0.88)', borderRadius: 16,
-              border: '1px solid rgba(255,255,255,0.6)',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
-              overflow: 'hidden',
-            }}>
-              <div style={{ padding: '12px 14px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.07em', textTransform: 'uppercase' }}>Notifications</span>
+            {/* Divider */}
+            <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', margin: '0' }} />
+
+            {/* Notifications section */}
+            <div style={{ padding: '16px 18px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+                <span style={{ fontSize: 10, fontWeight: 700, color: '#B0AFAD', letterSpacing: '0.09em', textTransform: 'uppercase' }}>Notifications</span>
                 {notifCount > 0 && (
                   <Link to={createPageUrl("Requests")} style={{ fontSize: 11, fontWeight: 500, color: '#2563EB', textDecoration: 'none' }}>View all</Link>
                 )}
               </div>
-              <div style={{ padding: '8px 8px 10px' }}>
-                {notifications.length === 0 ? (
-                  <div style={{ padding: '10px 6px', textAlign: 'center' }}>
-                    <div style={{ fontSize: 20, marginBottom: 4 }}>✅</div>
-                    <div style={{ fontSize: 11, color: '#787776' }}>All caught up!</div>
-                  </div>
-                ) : (
-                  notifications.map((n, i) => (
-                    <Link key={i} to={n.link} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, padding: '7px 6px', borderRadius: 8, textDecoration: 'none', transition: 'background 0.12s' }}
+              <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 10 }} />
+              {notifications.length === 0 ? (
+                <div style={{ padding: '8px 0 4px', display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span style={{ fontSize: 16 }}>✅</span>
+                  <span style={{ fontSize: 12, color: '#9B9A98' }}>All caught up!</span>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  {notifications.map((n, i) => (
+                    <Link key={i} to={n.link} style={{ display: 'flex', alignItems: 'flex-start', gap: 9, padding: '7px 6px', borderRadius: 8, textDecoration: 'none', transition: 'background 0.12s' }}
                       onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.04)'}
                       onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                     >
@@ -374,55 +373,51 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
                       </div>
                       <span style={{ fontSize: 11.5, color: '#1A1918', lineHeight: 1.4, fontWeight: 500 }}>{n.text}</span>
                     </Link>
-                  ))
-                )}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
 
-            {/* Upcoming Payments card */}
-            <div style={{
-              background: 'rgba(255,255,255,0.88)', borderRadius: 16,
-              border: '1px solid rgba(255,255,255,0.6)',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
-              overflow: 'hidden',
-            }}>
-              <div style={{ padding: '12px 14px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.07em', textTransform: 'uppercase' }}>Upcoming</span>
+            {/* Divider */}
+            <div style={{ height: 1, background: 'rgba(0,0,0,0.07)' }} />
+
+            {/* Upcoming section */}
+            <div style={{ padding: '16px 18px 24px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+                <span style={{ fontSize: 10, fontWeight: 700, color: '#B0AFAD', letterSpacing: '0.09em', textTransform: 'uppercase' }}>Upcoming</span>
                 <Link to={createPageUrl("Upcoming")} style={{ fontSize: 11, fontWeight: 500, color: '#2563EB', textDecoration: 'none' }}>See all</Link>
               </div>
-              <div style={{ padding: '8px 10px 10px', display: 'flex', flexDirection: 'column', gap: 2 }}>
-                {upcomingPayments.length === 0 ? (
-                  <div style={{ padding: '10px 4px', textAlign: 'center' }}>
-                    <div style={{ fontSize: 20, marginBottom: 4 }}>✨</div>
-                    <div style={{ fontSize: 11, color: '#787776' }}>Nothing coming up</div>
-                  </div>
-                ) : (
-                  upcomingPayments.map((p, i) => {
-                    const color = p.isOverdue ? '#E8726E' : p.isLender ? '#35B276' : '#2563EB';
-                    const daysLabel = p.isOverdue ? `${Math.abs(p.days)}d late` : p.days === 0 ? 'today' : `in ${p.days}d`;
+              <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 10 }} />
+              {upcomingPayments.length === 0 ? (
+                <div style={{ padding: '8px 0 4px', display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span style={{ fontSize: 16 }}>✨</span>
+                  <span style={{ fontSize: 12, color: '#9B9A98' }}>Nothing coming up</span>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  {upcomingPayments.map((p, i) => {
+                    const daysLabel = p.isOverdue ? `${Math.abs(p.days)}d late` : p.days === 0 ? 'Today' : `${p.days}d`;
                     return (
-                      <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '7px 4px', borderBottom: i < upcomingPayments.length - 1 ? '1px solid rgba(0,0,0,0.05)' : 'none' }}>
+                      <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '9px 0', borderBottom: i < upcomingPayments.length - 1 ? '1px solid rgba(0,0,0,0.05)' : 'none' }}>
                         <div style={{ minWidth: 0, flex: 1 }}>
                           <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                             {p.isLender ? `From ${p.name}` : `To ${p.name}`}
                           </div>
-                          <div style={{ fontSize: 10, color: '#9B9A98', marginTop: 1 }}>
-                            {format(p.date, 'MMM d')}
-                          </div>
+                          <div style={{ fontSize: 10, color: '#9B9A98', marginTop: 2 }}>{format(p.date, 'MMM d')}</div>
                         </div>
-                        <div style={{ textAlign: 'right', flexShrink: 0, marginLeft: 6 }}>
-                          <div style={{ fontSize: 12, fontWeight: 700, color: p.isLender ? '#35B276' : '#2563EB' }}>
+                        <div style={{ textAlign: 'right', flexShrink: 0, marginLeft: 8 }}>
+                          <div style={{ fontSize: 12, fontWeight: 700, color: p.isOverdue ? '#E8726E' : p.isLender ? '#35B276' : '#2563EB' }}>
                             {p.isLender ? '+' : '-'}${(p.amount || 0).toLocaleString()}
                           </div>
-                          <div style={{ fontSize: 9, fontWeight: 700, color: p.isOverdue ? '#E8726E' : '#9B9A98', background: p.isOverdue ? 'rgba(232,114,110,0.1)' : 'rgba(0,0,0,0.05)', borderRadius: 4, padding: '1px 5px', marginTop: 2 }}>
+                          <div style={{ fontSize: 9, fontWeight: 700, color: p.isOverdue ? '#E8726E' : '#9B9A98', background: p.isOverdue ? 'rgba(232,114,110,0.1)' : 'rgba(0,0,0,0.05)', borderRadius: 4, padding: '1px 5px', marginTop: 3, display: 'inline-block' }}>
                             {daysLabel}
                           </div>
                         </div>
                       </div>
                     );
-                  })
-                )}
-              </div>
+                  })}
+                </div>
+              )}
             </div>
 
           </div>
