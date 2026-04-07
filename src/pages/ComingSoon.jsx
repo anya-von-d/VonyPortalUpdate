@@ -121,7 +121,7 @@ export default function ComingSoon() {
   const [activeTab, setActiveTab] = useState('shop');
 
   return (
-    <div className="home-with-sidebar" style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingTop: 132, background: 'transparent' }}>
+    <div className="home-with-sidebar" style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingTop: 88, background: 'transparent' }}>
       <DashboardSidebar activePage="ComingSoon" user={user} tabs={[{key:'shop',label:'Shop'},{key:'learn',label:'Learn'}]} activeTab={activeTab} onTabChange={setActiveTab} />
 
         <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 40px', background: 'transparent', position: 'relative', zIndex: 2 }}>

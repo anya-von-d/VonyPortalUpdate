@@ -694,13 +694,26 @@ export default function Home() {
   const alertTotal = overdueReminders.length;
   overdueCountRef.current = alertTotal;
 
+  // Card wrapper: cream outer box with title, white inner content
+  const DashboardCard = ({ title, headerRight, children, style }) => (
+    <div style={{ background: '#F1EADE', borderRadius: 12, overflow: 'hidden', ...style }}>
+      <div style={{ padding: '9px 14px 8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>{title}</span>
+        {headerRight && <div style={{ flexShrink: 0 }}>{headerRight}</div>}
+      </div>
+      <div style={{ background: 'white', margin: '0 5px 5px', borderRadius: 8, overflow: 'hidden' }}>
+        {children}
+      </div>
+    </div>
+  );
+
   return (
-    <div className="home-with-sidebar" style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingTop: 132, background: 'transparent' }}>
+    <div className="home-with-sidebar" style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingTop: 88, background: 'transparent' }}>
 
       <DashboardSidebar activePage="Dashboard" user={user} />
 
       {/* ── Main page content ── */}
-      <div style={{ maxWidth: 1080, margin: '0 auto', padding: '24px 40px 64px', position: 'relative', zIndex: 1 }}>
+      <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 40px 64px', position: 'relative', zIndex: 1 }}>
 
         {/* Top row grid: quick actions + snapshot cards */}
         <div style={{ marginTop: 0 }}>
@@ -712,14 +725,7 @@ export default function Home() {
             {/* Inbox — spans both sub-columns */}
             <div style={{ gridColumn: '1 / 3' }}>
               <CardEntrance delay={0}>
-              <div className="gradient-border-wrapper">
-              <div className="glass-card" style={{ overflow: 'hidden' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px 0' }}>
-                  <span style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.07em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>Inbox</span>
-                  {notifCount > 0 && (
-                    <Link to={createPageUrl("Requests")} style={{ fontSize: 12, fontWeight: 500, color: '#2563EB', textDecoration: 'none' }}>View all</Link>
-                  )}
-                </div>
+              <DashboardCard title="Inbox" headerRight={notifCount > 0 ? <Link to={createPageUrl("Requests")} style={{ fontSize: 12, fontWeight: 500, color: '#2563EB', textDecoration: 'none' }}>View all</Link> : null}>
                 <div style={{ padding: '10px 16px 12px' }}>
                   {notifCount === 0 ? (
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -741,30 +747,24 @@ export default function Home() {
                     </Link>
                   )}
                 </div>
-              </div>
-              </div>{/* /gradient-border-wrapper */}
+              </DashboardCard>
               </CardEntrance>
             </div>
 
             {/* Left sub-col: Next Payment Due */}
             <div className="glow-wrapper glow-blue">
-            <div className="gradient-border-wrapper">
-            <div className="glass-card" style={{ overflow: 'hidden' }}>
-              <div style={{ padding: '14px 16px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <div style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.07em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>Next payment due</div>
-                {nextBorrowerPayment && (() => {
+            <DashboardCard title="Next payment due" headerRight={nextBorrowerPayment && (() => {
                   const days = Math.ceil((nextBorrowerPayment.date.getTime() - Date.now()) / 86400000);
                   const isLate = days < 0;
                   const label = isLate ? `${Math.abs(days)}d late` : days === 0 ? 'today' : `in ${days}d`;
                   return (
                     <span style={{ fontSize: 10, fontWeight: 700, color: 'white', background: isLate ? '#E8726E' : '#03ACEA', borderRadius: 20, padding: '3px 9px', whiteSpace: 'nowrap', letterSpacing: '0.02em' }}>{label}</span>
                   );
-                })()}
-              </div>
+                })()}>
               <div style={{ padding: '6px 16px 16px' }}>
                 {nextBorrowerPayment ? (
                   <>
-                    <div style={{ fontSize: '2.6rem', fontWeight: 800, color: '#1A1918', letterSpacing: '-0.04em', lineHeight: 1, marginBottom: 6, fontFamily: "'DM Sans', sans-serif" }}>
+                    <div style={{ fontSize: '2rem', fontWeight: 800, color: '#1A1918', letterSpacing: '-0.04em', lineHeight: 1, marginBottom: 6, fontFamily: "'DM Sans', sans-serif" }}>
                       {format(nextBorrowerPayment.date, 'MMM d')}
                     </div>
                     <div style={{ fontSize: 12, color: '#5C5B5A' }}>
@@ -778,29 +778,23 @@ export default function Home() {
                   </div>
                 )}
               </div>
-            </div>
-            </div>
+            </DashboardCard>
             </div>{/* /glow-blue */}
 
             {/* Right sub-col: Next Payment Incoming (moved) */}
             <div className="glow-wrapper glow-purple">
-            <div className="gradient-border-wrapper">
-            <div className="glass-card" style={{ overflow: 'hidden' }}>
-              <div style={{ padding: '14px 16px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <div style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.07em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>Next payment incoming</div>
-                {nextLenderPayment && (() => {
+            <DashboardCard title="Next payment incoming" headerRight={nextLenderPayment && (() => {
                   const days = Math.ceil((nextLenderPayment.date.getTime() - Date.now()) / 86400000);
                   const isLate = days < 0;
                   const label = isLate ? `${Math.abs(days)}d late` : days === 0 ? 'today' : `in ${days}d`;
                   return (
                     <span style={{ fontSize: 10, fontWeight: 700, color: 'white', background: isLate ? '#E8726E' : '#35B276', borderRadius: 20, padding: '3px 9px', whiteSpace: 'nowrap', letterSpacing: '0.02em' }}>{label}</span>
                   );
-                })()}
-              </div>
+                })()}>
               <div style={{ padding: '6px 16px 16px' }}>
                 {nextLenderPayment ? (
                   <>
-                    <div style={{ fontSize: '2.6rem', fontWeight: 800, color: '#1A1918', letterSpacing: '-0.04em', lineHeight: 1, marginBottom: 6, fontFamily: "'DM Sans', sans-serif" }}>
+                    <div style={{ fontSize: '2rem', fontWeight: 800, color: '#1A1918', letterSpacing: '-0.04em', lineHeight: 1, marginBottom: 6, fontFamily: "'DM Sans', sans-serif" }}>
                       {format(nextLenderPayment.date, 'MMM d')}
                     </div>
                     <div style={{ fontSize: 12, color: '#5C5B5A' }}>
@@ -814,18 +808,12 @@ export default function Home() {
                   </div>
                 )}
               </div>
-            </div>
-            </div>
+            </DashboardCard>
             </div>{/* /glow-purple */}
 
             {/* Left sub-col: Upcoming Payments (moved from right sub-col) */}
             <CardEntrance delay={0.05}>
-            <div className="gradient-border-wrapper">
-            <div className="glass-card" style={{ overflow: 'hidden' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px 0' }}>
-                <div style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.07em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>Upcoming payments</div>
-                <Link to={createPageUrl("YourLoans")} style={{ fontSize: 12, fontWeight: 500, color: '#2563EB', textDecoration: 'none' }}>Full schedule</Link>
-              </div>
+            <DashboardCard title="Upcoming payments" headerRight={<Link to={createPageUrl("YourLoans")} style={{ fontSize: 12, fontWeight: 500, color: '#2563EB', textDecoration: 'none' }}>Full schedule</Link>}>
               <div style={{ padding: '12px 16px 16px', minHeight: 200 }}>
                 {combinedPaymentEvents.length === 0 ? (
                   <div style={{ textAlign: 'center', padding: '32px 0' }}>
@@ -864,18 +852,12 @@ export default function Home() {
                   </div>
                 )}
               </div>
-            </div>
-            </div>
+            </DashboardCard>
             </CardEntrance>
 
             {/* Right sub-col: Loans Over Time (swapped from right main col) */}
             <CardEntrance delay={0.17}>
-            <div className="gradient-border-wrapper">
-            <div className="glass-card" style={{ overflow: 'hidden' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px 0' }}>
-                <div style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.07em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>Loans over time</div>
-                <span style={{ fontSize: 12, fontWeight: 500, color: '#2563EB' }}>6 months</span>
-              </div>
+            <DashboardCard title="Loans over time" headerRight={<span style={{ fontSize: 12, fontWeight: 500, color: '#2563EB' }}>6 months</span>}>
               <div style={{ padding: '12px 16px 16px' }}>
                 {chartData ? (() => {
                   const { data, maxVal } = chartData;
@@ -925,8 +907,7 @@ export default function Home() {
                   </div>
                 )}
               </div>
-            </div>
-            </div>
+            </DashboardCard>
             </CardEntrance>
 
             {/* Your Active Loans — spans both sub-columns */}
@@ -936,12 +917,7 @@ export default function Home() {
               transition={{ duration: 0.4, delay: 0.19, ease: 'easeOut' }}
               style={{ gridColumn: '1 / 3' }}
             >
-            <div className="gradient-border-wrapper">
-            <div className="glass-card" style={{ overflow: 'hidden' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 0, padding: '14px 16px 0' }}>
-                <div style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.07em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>Your active loans</div>
-                <Link to={createPageUrl("YourLoans")} style={{ fontSize: 12, fontWeight: 500, color: '#2563EB', textDecoration: 'none' }}>Manage</Link>
-              </div>
+            <DashboardCard title="Your active loans" headerRight={<Link to={createPageUrl("YourLoans")} style={{ fontSize: 12, fontWeight: 500, color: '#2563EB', textDecoration: 'none' }}>Manage</Link>}>
               {myLoans.filter(l => l && l.status === 'active').length === 0 ? (
                 <div style={{ padding: '20px 16px', textAlign: 'center' }}>
                   <div style={{ fontSize: 28, marginBottom: 6 }}>🤝</div>
@@ -976,8 +952,7 @@ export default function Home() {
                   })}
                 </div>
               )}
-            </div>
-            </div>
+            </DashboardCard>
             </motion.div>
 
             </div>{/* end LEFT SECTION sub-grid */}
@@ -987,37 +962,27 @@ export default function Home() {
 
               {/* Owed to You */}
               <CardEntrance delay={0.1}>
-              <div className="gradient-border-wrapper">
-              <div className="glass-card" style={{ overflow: 'hidden' }}>
-                <div style={{ padding: '14px 16px 16px' }}>
-                  <div style={{ fontSize: 10, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.07em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif", marginBottom: 8 }}>Owed to You</div>
+              <DashboardCard title="Owed to You">
+                <div style={{ padding: '6px 16px 16px' }}>
                   <div style={{ fontSize: '2rem', fontWeight: 800, color: '#35B276', letterSpacing: '-0.04em', lineHeight: 1, fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(lentRemaining)}</div>
                   <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 6 }}>outstanding balance</div>
                 </div>
-              </div>
-              </div>
+              </DashboardCard>
               </CardEntrance>
 
               {/* You Owe */}
               <CardEntrance delay={0.13}>
-              <div className="gradient-border-wrapper">
-              <div className="glass-card" style={{ overflow: 'hidden' }}>
-                <div style={{ padding: '14px 16px 16px' }}>
-                  <div style={{ fontSize: 10, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.07em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif", marginBottom: 8 }}>You Owe</div>
+              <DashboardCard title="You Owe">
+                <div style={{ padding: '6px 16px 16px' }}>
                   <div style={{ fontSize: '2rem', fontWeight: 800, color: '#2563EB', letterSpacing: '-0.04em', lineHeight: 1, fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(borrowedRemaining)}</div>
                   <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 6 }}>outstanding balance</div>
                 </div>
-              </div>
-              </div>
+              </DashboardCard>
               </CardEntrance>
 
               {/* How [Month] is Going (swapped from left section) */}
               <CardEntrance delay={0.12}>
-              <div className="gradient-border-wrapper">
-              <div className="glass-card" style={{ overflow: 'hidden' }}>
-                <div style={{ padding: '14px 16px 0' }}>
-                  <div style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.07em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>How {format(today, 'MMMM')} is going</div>
-                </div>
+              <DashboardCard title={`How ${format(today, 'MMMM')} is going`}>
                 <div style={{ padding: '10px 16px 14px' }}>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0 }}>
                     <div style={{ textAlign: 'center', padding: '0 10px 0 0', borderRight: '1px solid rgba(0,0,0,0.06)' }}>
@@ -1038,18 +1003,12 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
-              </div>
-              </div>
+              </DashboardCard>
               </CardEntrance>
 
               {/* Recent Activity */}
               <CardEntrance delay={0.24}>
-              <div className="gradient-border-wrapper">
-              <div className="glass-card" style={{ overflow: 'hidden' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px 0' }}>
-                  <div style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.07em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>Recent activity</div>
-                  <Link to={createPageUrl("RecentActivity")} style={{ fontSize: 12, fontWeight: 500, color: '#2563EB', textDecoration: 'none' }}>View all</Link>
-                </div>
+              <DashboardCard title="Recent activity" headerRight={<Link to={createPageUrl("RecentActivity")} style={{ fontSize: 12, fontWeight: 500, color: '#2563EB', textDecoration: 'none' }}>View all</Link>}>
                 <div style={{ padding: '12px 16px 16px' }}>
                   {recentActivity.length === 0 ? (
                     <div style={{ textAlign: 'center', padding: '20px 0' }}>
@@ -1079,8 +1038,7 @@ export default function Home() {
                     ))
                   )}
                 </div>
-              </div>
-              </div>
+              </DashboardCard>
               </CardEntrance>
             </div>
 

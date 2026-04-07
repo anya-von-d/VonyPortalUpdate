@@ -303,7 +303,7 @@ export default function Profile() {
   if (!user) return null;
 
   return (
-    <div className="home-with-sidebar" style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingTop: 132, background: 'transparent' }}>
+    <div className="home-with-sidebar" style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingTop: 88, background: 'transparent' }}>
       <DashboardSidebar activePage="Profile" user={user} />
 
         <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 40px', position: 'relative', zIndex: 2, maxWidth: 900, margin: '0 auto', padding: '0 28px' }}>
