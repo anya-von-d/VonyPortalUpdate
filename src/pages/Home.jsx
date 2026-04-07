@@ -5,7 +5,7 @@ import { Loan, Payment, PublicProfile, Friendship } from "@/entities/all";
 import { useAuth } from "@/lib/AuthContext";
 
 
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useInView } from "framer-motion";
 import { format, startOfMonth, endOfMonth, addMonths, addDays, isBefore, isAfter, isSameDay, differenceInDays } from "date-fns";
 import { formatMoney } from "@/components/utils/formatMoney";
 import { toLocalDate, getLocalToday, daysUntil as daysUntilDate } from "@/components/utils/dateUtils";
@@ -244,6 +244,10 @@ export default function Home() {
   const [dataLoaded, setDataLoaded] = useState(false);
   const [alertSlide, setAlertSlide] = useState(0);
   const overdueCountRef = useRef(0);
+  const loansChartRef = useRef(null);
+  const activeLoansRef = useRef(null);
+  const loansInView = useInView(loansChartRef, { once: false, amount: 0.3 });
+  const activeLoansInView = useInView(activeLoansRef, { once: false, amount: 0.3 });
 
   // Scroll state for top bar behavior
   const [topBarHidden, setTopBarHidden] = useState(false);
@@ -565,15 +569,15 @@ export default function Home() {
       const amount = `$${(loan.amount || 0).toLocaleString()}`;
       let description = '';
       let icon = 'loan';
-      let color = '#82F0B9';
+      let color = '#7EC0EA';
 
       if (loan.status === 'pending' || !loan.status) {
         description = isLender ? `Sent ${amount} loan offer to ${name}` : `Received ${amount} loan offer from ${name}`;
         icon = isLender ? 'send' : 'receive';
-        color = isLender ? '#2563EB' : '#82F0B9';
+        color = isLender ? '#B0F1FF' : '#7EC0EA';
       } else if (loan.status === 'active') {
         description = isLender ? `${name} accepted your ${amount} loan` : `You accepted ${amount} loan from ${name}`;
-        icon = 'check'; color = '#82F0B9';
+        icon = 'check'; color = '#7EC0EA';
       } else if (loan.status === 'declined') {
         description = isLender ? `${name} declined your ${amount} loan` : `You declined ${amount} loan from ${name}`;
         icon = 'x'; color = '#E8726E';
@@ -582,7 +586,7 @@ export default function Home() {
         icon = 'x'; color = '#E8726E';
       } else if (loan.status === 'completed') {
         description = isLender ? `${name} fully repaid your ${amount} loan` : `You fully repaid ${amount} loan to ${name}`;
-        icon = 'check'; color = '#82F0B9';
+        icon = 'check'; color = '#7EC0EA';
       } else {
         description = isLender ? `${amount} loan to ${name}` : `${amount} loan from ${name}`;
       }
@@ -608,7 +612,7 @@ export default function Home() {
         description: isBorrower ? `You made a ${amount} payment to ${name}` : `Received ${amount} payment from ${name}`,
         detail: format(new Date(p.payment_date || p.created_at), 'MMM d'),
         icon: isBorrower ? 'send' : 'receive',
-        color: isBorrower ? '#2563EB' : '#82F0B9',
+        color: isBorrower ? '#B0F1FF' : '#7EC0EA',
         amount: isBorrower ? `-${amount}` : `+${amount}`
       });
     });
@@ -754,7 +758,7 @@ export default function Home() {
           <div className="home-top-row" style={{ display: 'grid', gridTemplateColumns: '2fr 0.82fr', columnGap: 20, rowGap: 20, alignItems: 'start' }}>
 
             {/* LEFT SECTION: sub-grid for left two columns */}
-            <div style={{ display: 'grid', gridTemplateColumns: '0.75fr 1fr', gap: 20, alignItems: 'start' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, alignItems: 'start' }}>
 
             {/* Inbox — spans both sub-columns */}
             <div style={{ gridColumn: '1 / 3' }}>
@@ -883,7 +887,7 @@ export default function Home() {
                               {format(event.date, 'MMM d')}
                             </div>
                           </div>
-                          <div style={{ fontSize: 15, fontWeight: 700, flexShrink: 0, color: event.isLender ? '#35B276' : '#2563EB', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>
+                          <div style={{ fontSize: 15, fontWeight: 700, flexShrink: 0, color: event.isLender ? '#7EC0EA' : '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>
                             {event.isLender ? '+' : '-'}{formatMoney(event.remainingAmount)}
                           </div>
                         </div>
@@ -897,8 +901,8 @@ export default function Home() {
 
             {/* Right sub-col: Loans Over Time (swapped from right main col) */}
             <CardEntrance delay={0.17}>
-            <DashboardCard title="Loans over time" headerRight={<span style={{ fontSize: 12, fontWeight: 500, color: '#2563EB' }}>6 months</span>}>
-              <div style={{ padding: '12px 16px 16px' }}>
+            <DashboardCard title="Loans over time" headerRight={<span style={{ fontSize: 12, fontWeight: 500, color: '#787776' }}>6 months</span>}>
+              <div ref={loansChartRef} style={{ padding: '12px 16px 16px' }}>
                 {chartData ? (() => {
                   const { data, maxVal } = chartData;
                   const chartHeight = 110;
@@ -919,8 +923,14 @@ export default function Home() {
                               return (
                                 <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                                   <div style={{ display: 'flex', alignItems: 'flex-end', gap: 4, height: chartHeight }}>
-                                    <div style={{ width: 14, borderRadius: '4px 4px 0 0', height: Math.max(owedH, owedH > 0 ? 2 : 0), background: '#82F0B9', opacity: d.isFuture ? 0.45 : 1, transition: 'height 0.3s' }} />
-                                    <div style={{ width: 14, borderRadius: '4px 4px 0 0', height: Math.max(oweH, oweH > 0 ? 2 : 0), background: '#2563EB', opacity: d.isFuture ? 0.45 : 1, transition: 'height 0.3s' }} />
+                                    <motion.div style={{ width: 14, borderRadius: '4px 4px 0 0', background: '#7EC0EA', opacity: d.isFuture ? 0.45 : 1 }}
+                                      initial={{ height: 0 }}
+                                      animate={{ height: loansInView ? Math.max(owedH, owedH > 0 ? 2 : 0) : 0 }}
+                                      transition={{ duration: 0.5, delay: i * 0.05, ease: 'easeOut' }} />
+                                    <motion.div style={{ width: 14, borderRadius: '4px 4px 0 0', background: '#B0F1FF', opacity: d.isFuture ? 0.45 : 1 }}
+                                      initial={{ height: 0 }}
+                                      animate={{ height: loansInView ? Math.max(oweH, oweH > 0 ? 2 : 0) : 0 }}
+                                      transition={{ duration: 0.5, delay: i * 0.05 + 0.04, ease: 'easeOut' }} />
                                   </div>
                                 </div>
                               );
@@ -930,12 +940,12 @@ export default function Home() {
                       </div>
                       <div style={{ display: 'flex', justifyContent: 'space-around', marginTop: 10, paddingLeft: 36 }}>
                         {data.map((d, i) => (
-                          <span key={i} style={{ flex: 1, textAlign: 'center', fontSize: 10, fontWeight: d.isCurrent ? 600 : 500, color: d.isCurrent ? '#2563EB' : '#787776' }}>{d.label}</span>
+                          <span key={i} style={{ flex: 1, textAlign: 'center', fontSize: 10, fontWeight: d.isCurrent ? 600 : 500, color: d.isCurrent ? '#5C5B5A' : '#787776' }}>{d.label}</span>
                         ))}
                       </div>
                       <div style={{ display: 'flex', justifyContent: 'center', gap: 20, marginTop: 14, paddingTop: 14 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 11, color: '#787776' }}><div style={{ width: 8, height: 8, borderRadius: '50%', background: '#82F0B9' }} /> Owed to you</div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 11, color: '#787776' }}><div style={{ width: 8, height: 8, borderRadius: '50%', background: '#2563EB' }} /> You owe</div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 11, color: '#787776' }}><div style={{ width: 8, height: 8, borderRadius: '50%', background: '#7EC0EA' }} /> Owed to you</div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 11, color: '#787776' }}><div style={{ width: 8, height: 8, borderRadius: '50%', background: '#B0F1FF' }} /> You owe</div>
                       </div>
                     </>
                   );
@@ -965,7 +975,7 @@ export default function Home() {
                   <div style={{ fontSize: 11, color: '#787776' }}>Create an offer to get started.</div>
                 </div>
               ) : (
-                <div style={{ padding: '10px 16px 14px', display: 'flex', flexDirection: 'column', gap: 16 }}>
+                <div ref={activeLoansRef} style={{ padding: '10px 16px 14px', display: 'flex', flexDirection: 'column', gap: 16 }}>
                   {myLoans.filter(l => l && l.status === 'active').slice(0, 4).map((loan, idx) => {
                     const isLender = loan.lender_id === user.id;
                     const otherUserId = isLender ? loan.borrower_id : loan.lender_id;
@@ -983,8 +993,8 @@ export default function Home() {
                           </div>
                           <div style={{ fontSize: 12, color: '#787776', flexShrink: 0, marginLeft: 8 }}>{pct}%</div>
                         </div>
-                        <div style={{ width: '100%', height: 8, borderRadius: 4, background: isLender ? 'rgba(130,240,185,0.15)' : 'rgba(37,99,235,0.15)', overflow: 'hidden' }}>
-                          <motion.div style={{ height: '100%', borderRadius: 4, background: isLender ? '#82F0B9' : '#2563EB' }} initial={{ width: '0%' }} animate={{ width: `${pct}%` }} transition={{ duration: 0.9, delay: 0.3 + idx * 0.1, ease: 'easeOut' }} />
+                        <div style={{ width: '100%', height: 8, borderRadius: 4, background: isLender ? 'rgba(126,192,234,0.18)' : 'rgba(176,241,255,0.25)', overflow: 'hidden' }}>
+                          <motion.div style={{ height: '100%', borderRadius: 4, background: isLender ? '#7EC0EA' : '#B0F1FF' }} initial={{ width: '0%' }} animate={{ width: activeLoansInView ? `${pct}%` : '0%' }} transition={{ duration: 0.8, delay: idx * 0.1, ease: 'easeOut' }} />
                         </div>
                         <div style={{ fontSize: 11, color: '#787776', marginTop: 6 }}>{formatMoney(amountPaid)} of {formatMoney(totalAmt)} {isLender ? 'repaid' : 'paid back'}</div>
                       </div>
@@ -1004,7 +1014,7 @@ export default function Home() {
               <CardEntrance delay={0.1}>
               <DashboardCard title="Owed to You">
                 <div style={{ padding: '6px 16px 16px' }}>
-                  <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#35B276', letterSpacing: '-0.03em', lineHeight: 1, fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(lentRemaining)}</div>
+                  <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#7EC0EA', letterSpacing: '-0.03em', lineHeight: 1, fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(lentRemaining)}</div>
                   <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 6 }}>outstanding balance</div>
                 </div>
               </DashboardCard>
@@ -1014,7 +1024,7 @@ export default function Home() {
               <CardEntrance delay={0.13}>
               <DashboardCard title="You Owe">
                 <div style={{ padding: '6px 16px 16px' }}>
-                  <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#2563EB', letterSpacing: '-0.03em', lineHeight: 1, fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(borrowedRemaining)}</div>
+                  <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#1A1918', letterSpacing: '-0.03em', lineHeight: 1, fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(borrowedRemaining)}</div>
                   <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 6 }}>outstanding balance</div>
                 </div>
               </DashboardCard>
@@ -1027,17 +1037,17 @@ export default function Home() {
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0 }}>
                     <div style={{ textAlign: 'center', padding: '0 10px 0 0', borderRight: '1px solid rgba(0,0,0,0.06)' }}>
                       <div style={{ fontSize: 10, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 4 }}>Received</div>
-                      <div style={{ fontSize: '1.1rem', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1, color: '#35B276', fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(monthlyReceived)}</div>
-                      <div style={{ width: '100%', height: 4, borderRadius: 2, marginTop: 10, background: 'rgba(130,240,185,0.2)' }}>
-                        <div style={{ height: '100%', borderRadius: 2, background: '#82F0B9', width: `${monthlyExpectedReceive > 0 ? Math.min((monthlyReceived / monthlyExpectedReceive) * 100, 100) : 0}%` }} />
+                      <div style={{ fontSize: '1.1rem', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1, color: '#7EC0EA', fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(monthlyReceived)}</div>
+                      <div style={{ width: '100%', height: 4, borderRadius: 2, marginTop: 10, background: 'rgba(126,192,234,0.15)' }}>
+                        <div style={{ height: '100%', borderRadius: 2, background: '#7EC0EA', width: `${monthlyExpectedReceive > 0 ? Math.min((monthlyReceived / monthlyExpectedReceive) * 100, 100) : 0}%` }} />
                       </div>
                       <div style={{ fontSize: 10, color: '#9B9A98', marginTop: 5 }}>of {formatMoney(monthlyExpectedReceive)} expected</div>
                     </div>
                     <div style={{ textAlign: 'center', padding: '0 0 0 10px' }}>
                       <div style={{ fontSize: 10, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 4 }}>Paid out</div>
-                      <div style={{ fontSize: '1.1rem', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1, color: '#2563EB', fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(monthlyPaidOut)}</div>
-                      <div style={{ width: '100%', height: 4, borderRadius: 2, marginTop: 10, background: 'rgba(37,99,235,0.15)' }}>
-                        <div style={{ height: '100%', borderRadius: 2, background: '#2563EB', width: `${monthlyExpectedPay > 0 ? Math.min((monthlyPaidOut / monthlyExpectedPay) * 100, 100) : 0}%` }} />
+                      <div style={{ fontSize: '1.1rem', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(monthlyPaidOut)}</div>
+                      <div style={{ width: '100%', height: 4, borderRadius: 2, marginTop: 10, background: 'rgba(176,241,255,0.2)' }}>
+                        <div style={{ height: '100%', borderRadius: 2, background: '#B0F1FF', width: `${monthlyExpectedPay > 0 ? Math.min((monthlyPaidOut / monthlyExpectedPay) * 100, 100) : 0}%` }} />
                       </div>
                       <div style={{ fontSize: 10, color: '#9B9A98', marginTop: 5 }}>of {formatMoney(monthlyExpectedPay)} expected</div>
                     </div>
@@ -1059,7 +1069,7 @@ export default function Home() {
                   ) : (
                     recentActivity.map((item, idx) => (
                       <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '13px 0', paddingTop: idx === 0 ? 0 : 13, paddingBottom: idx === recentActivity.length - 1 ? 0 : 13 }}>
-                        <div style={{ width: 36, height: 36, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, background: `${item.color}20` }}>
+                        <div style={{ width: 36, height: 36, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, background: `${item.color}20` }}>
                           {item.icon === 'send' ? (
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={item.color} strokeWidth="2" strokeLinecap="round"><polyline points="7 13 12 18 17 13"></polyline><line x1="12" y1="18" x2="12" y2="6"></line></svg>
                           ) : item.icon === 'receive' ? (
