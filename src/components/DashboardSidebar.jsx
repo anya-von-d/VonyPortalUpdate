@@ -2,11 +2,13 @@ import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Loan, Payment, Friendship } from "@/entities/all";
+import { Loan, Payment, Friendship, PublicProfile } from "@/entities/all";
 import { useAuth } from "@/lib/AuthContext";
+import { daysUntil } from "@/components/utils/dateUtils";
+import { format } from "date-fns";
 
 const PAGE_TITLES = {
-  Dashboard: null, // handled separately as greeting
+  Dashboard: null,
   CreateOffer: 'Create Loan',
   RecordPayment: 'Record Payment',
   Upcoming: 'Upcoming',
@@ -21,6 +23,8 @@ const PAGE_TITLES = {
   Requests: 'Notifications',
 };
 
+const RIGHT_SIDEBAR_WIDTH = 236;
+
 export default function DashboardSidebar({ activePage = "Dashboard", user, tabs, activeTab, onTabChange }) {
   const { logout } = useAuth();
   const firstName = user?.full_name?.split(' ')[0] || '';
@@ -30,9 +34,12 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
   const settingsRef = useRef(null);
   const moreRef = useRef(null);
 
+  // Right sidebar data
+  const [notifications, setNotifications] = useState([]);
+  const [upcomingPayments, setUpcomingPayments] = useState([]);
+
   useEffect(() => { if (user?.id) fetchData(); }, [user?.id]);
 
-  // Close dropdowns on outside click
   useEffect(() => {
     const handler = (e) => {
       if (settingsRef.current && !settingsRef.current.contains(e.target)) setSettingsOpen(false);
@@ -44,19 +51,62 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
 
   const fetchData = async () => {
     try {
-      const [payments, loans, friendships] = await Promise.all([
-        Payment.list().catch(() => []),
+      const [payments, loans, friendships, profiles] = await Promise.all([
+        Payment.list('-created_at').catch(() => []),
         Loan.list().catch(() => []),
         Friendship.list().catch(() => []),
+        PublicProfile.list().catch(() => []),
       ]);
+
       const userLoans   = loans.filter(l => l.lender_id === user.id || l.borrower_id === user.id);
       const userLoanIds = userLoans.map(l => l.id);
+
       const paymentsToConfirm = payments.filter(p =>
         p.status === 'pending_confirmation' && userLoanIds.includes(p.loan_id) && p.recorded_by !== user.id
       );
       const offersReceived = loans.filter(l => l.borrower_id === user.id && l.status === 'pending');
       const friendRequests = friendships.filter(f => f.friend_id === user.id && f.status === 'pending');
+
       setNotifCount(paymentsToConfirm.length + offersReceived.length + friendRequests.length);
+
+      // Build notifications list
+      const notifs = [];
+      paymentsToConfirm.slice(0, 3).forEach(p => {
+        const loan = userLoans.find(l => l.id === p.loan_id);
+        const otherUserId = loan ? (loan.lender_id === user.id ? loan.borrower_id : loan.lender_id) : null;
+        const profile = profiles.find(pr => pr.user_id === otherUserId);
+        const name = profile?.full_name?.split(' ')[0] || profile?.username || 'Someone';
+        notifs.push({ type: 'payment', text: `${name} recorded $${(p.amount || 0).toFixed(0)} payment`, link: createPageUrl("Requests"), color: '#82F0B9' });
+      });
+      friendRequests.slice(0, 2).forEach(f => {
+        const profile = profiles.find(pr => pr.user_id === f.user_id);
+        const name = profile?.full_name?.split(' ')[0] || profile?.username || 'Someone';
+        notifs.push({ type: 'friend', text: `${name} wants to be friends`, link: createPageUrl("Friends"), color: '#03ACEA' });
+      });
+      offersReceived.slice(0, 2).forEach(l => {
+        const profile = profiles.find(pr => pr.user_id === l.lender_id);
+        const name = profile?.full_name?.split(' ')[0] || profile?.username || 'Someone';
+        notifs.push({ type: 'offer', text: `${name} sent you a $${(l.amount || 0).toLocaleString()} loan offer`, link: createPageUrl("Requests"), color: '#7C3AED' });
+      });
+      setNotifications(notifs);
+
+      // Build upcoming payments
+      const today = new Date();
+      const upcoming = userLoans
+        .filter(l => l.status === 'active' && l.next_payment_date)
+        .map(l => {
+          const isLender = l.lender_id === user.id;
+          const otherUserId = isLender ? l.borrower_id : l.lender_id;
+          const profile = profiles.find(pr => pr.user_id === otherUserId);
+          const name = profile?.full_name?.split(' ')[0] || profile?.username || 'user';
+          const days = daysUntil(l.next_payment_date);
+          const date = new Date(l.next_payment_date + 'T12:00:00');
+          return { days, date, name, amount: l.payment_amount || 0, isLender, isOverdue: days < 0 };
+        })
+        .sort((a, b) => a.days - b.days)
+        .slice(0, 5);
+      setUpcomingPayments(upcoming);
+
     } catch (e) { console.error("Sidebar data error:", e); }
   };
 
@@ -90,11 +140,12 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
   const hour = new Date().getHours();
   const timeGreeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good night';
 
-  const pageTitle = activePage === 'Dashboard'
-    ? (firstName ? `${timeGreeting}, ${firstName}` : timeGreeting)
-    : (PAGE_TITLES[activePage] || activePage);
-
-  const isMoreActive = active('RecentActivity', 'LoanAgreements');
+  // Notification icon by type
+  const notifIcon = (type) => {
+    if (type === 'payment') return <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>;
+    if (type === 'friend') return <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>;
+    return <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>;
+  };
 
   return (
     <>
@@ -128,31 +179,19 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
                   <Link to={createPageUrl("YourLoans")} style={navStyle('YourLoans', 'Borrowing', 'Lending')}>My Loans</Link>
                   <Link to={createPageUrl("Friends")} style={navStyle('Friends')}>Friends</Link>
 
-                  {/* More dropdown (Activity + Docs) */}
+                  {/* More dropdown */}
                   <div ref={moreRef} style={{ position: 'relative' }}>
                     <button
                       onClick={() => { setMoreOpen(o => !o); setSettingsOpen(false); }}
-                      style={{
-                        ...navStyle('RecentActivity', 'LoanAgreements'),
-                        border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4,
-                      }}
+                      style={{ ...navStyle('RecentActivity', 'LoanAgreements'), border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}
                     >
                       More
                       <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><polyline points="6 9 12 15 18 9"/></svg>
                     </button>
                     {moreOpen && (
-                      <div style={{
-                        position: 'absolute', top: 'calc(100% + 8px)', left: '50%', transform: 'translateX(-50%)',
-                        background: 'white', borderRadius: 12, padding: 6, minWidth: 160,
-                        boxShadow: '0 8px 32px rgba(0,0,0,0.14), 0 2px 8px rgba(0,0,0,0.08)',
-                        border: '1px solid rgba(0,0,0,0.06)', zIndex: 200,
-                      }}>
-                        <Link to={createPageUrl("RecentActivity")} onClick={() => setMoreOpen(false)} style={{ ...dropdownItemStyle, color: active('RecentActivity') ? '#03ACEA' : '#1A1918' }}>
-                          Activity
-                        </Link>
-                        <Link to={createPageUrl("LoanAgreements")} onClick={() => setMoreOpen(false)} style={{ ...dropdownItemStyle, color: active('LoanAgreements') ? '#03ACEA' : '#1A1918' }}>
-                          Documents
-                        </Link>
+                      <div style={{ position: 'absolute', top: 'calc(100% + 8px)', left: '50%', transform: 'translateX(-50%)', background: 'white', borderRadius: 12, padding: 6, minWidth: 160, boxShadow: '0 8px 32px rgba(0,0,0,0.14)', border: '1px solid rgba(0,0,0,0.06)', zIndex: 200 }}>
+                        <Link to={createPageUrl("RecentActivity")} onClick={() => setMoreOpen(false)} style={{ ...dropdownItemStyle, color: active('RecentActivity') ? '#03ACEA' : '#1A1918' }}>Activity</Link>
+                        <Link to={createPageUrl("LoanAgreements")} onClick={() => setMoreOpen(false)} style={{ ...dropdownItemStyle, color: active('LoanAgreements') ? '#03ACEA' : '#1A1918' }}>Documents</Link>
                       </div>
                     )}
                   </div>
@@ -162,12 +201,7 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
                 <div ref={settingsRef} style={{ position: 'relative', marginRight: 10 }}>
                   <button
                     onClick={() => { setSettingsOpen(o => !o); setMoreOpen(false); }}
-                    style={{
-                      width: 34, height: 34, borderRadius: '50%', border: 'none', cursor: 'pointer',
-                      background: settingsOpen ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.18)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      transition: 'background 0.15s',
-                    }}
+                    style={{ width: 34, height: 34, borderRadius: '50%', border: 'none', cursor: 'pointer', background: settingsOpen ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.15s' }}
                   >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round">
                       <circle cx="12" cy="12" r="3"/>
@@ -175,12 +209,7 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
                     </svg>
                   </button>
                   {settingsOpen && (
-                    <div style={{
-                      position: 'absolute', top: 'calc(100% + 8px)', right: 0,
-                      background: 'white', borderRadius: 12, padding: 6, minWidth: 200,
-                      boxShadow: '0 8px 32px rgba(0,0,0,0.14), 0 2px 8px rgba(0,0,0,0.08)',
-                      border: '1px solid rgba(0,0,0,0.06)', zIndex: 200,
-                    }}>
+                    <div style={{ position: 'absolute', top: 'calc(100% + 8px)', right: 0, background: 'white', borderRadius: 12, padding: 6, minWidth: 200, boxShadow: '0 8px 32px rgba(0,0,0,0.14)', border: '1px solid rgba(0,0,0,0.06)', zIndex: 200 }}>
                       <button style={{ ...dropdownItemStyle, color: '#9B9A98', cursor: 'default' }}>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
                         Learn
@@ -241,8 +270,8 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
             </div>
           </div>
 
-          {/* PAGE TITLE ROW — all pages */}
-          <div style={{ position: 'fixed', top: 76, left: 8, right: 8, zIndex: 99, pointerEvents: 'none' }}>
+          {/* PAGE TITLE ROW */}
+          <div style={{ position: 'fixed', top: 76, left: 8, right: RIGHT_SIDEBAR_WIDTH + 24, zIndex: 99, pointerEvents: 'none' }}>
             <div style={{ maxWidth: 1080, margin: '0 auto', paddingLeft: 40, paddingRight: 40, display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 48, pointerEvents: 'auto' }}>
               <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 34, fontWeight: 600, color: '#1A1918', margin: 0, letterSpacing: '-0.01em', lineHeight: 1 }}>
                 {activePage === 'Dashboard' ? (
@@ -255,7 +284,6 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
                   <span style={{ fontStyle: 'italic' }}>{PAGE_TITLES[activePage] || activePage}</span>
                 )}
               </h1>
-              {/* Tabs for pages that have them */}
               {tabs && tabs.length > 0 && onTabChange && (
                 <div style={{ display: 'inline-flex', gap: 2, background: 'rgba(0,0,0,0.05)', borderRadius: 10, padding: 3 }}>
                   {tabs.map(tab => (
@@ -272,6 +300,131 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
                 </div>
               )}
             </div>
+          </div>
+
+          {/* RIGHT SIDEBAR */}
+          <div style={{
+            position: 'fixed', top: 76, right: 16, width: RIGHT_SIDEBAR_WIDTH,
+            height: 'calc(100vh - 92px)', zIndex: 98,
+            display: 'flex', flexDirection: 'column', gap: 12,
+            overflowY: 'auto', overflowX: 'hidden',
+            paddingBottom: 16,
+          }}>
+
+            {/* Profile card */}
+            <div style={{
+              background: 'rgba(255,255,255,0.88)', borderRadius: 16,
+              border: '1px solid rgba(255,255,255,0.6)',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+              padding: '16px 14px',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                {/* Photo */}
+                {user?.profile_picture_url ? (
+                  <div style={{ width: 44, height: 44, borderRadius: 12, overflow: 'hidden', flexShrink: 0, border: '2px solid rgba(255,255,255,0.8)', boxShadow: '0 2px 8px rgba(0,0,0,0.12)' }}>
+                    <img src={user.profile_picture_url} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  </div>
+                ) : (
+                  <div style={{ width: 44, height: 44, borderRadius: 12, flexShrink: 0, background: 'linear-gradient(135deg, #03ACEA 0%, #7C3AED 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(3,172,234,0.3)' }}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" strokeWidth="1.8" strokeLinecap="round">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                      <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                  </div>
+                )}
+                {/* Name + username */}
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.01em', lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {user?.full_name || firstName || 'User'}
+                  </div>
+                  {user?.username && (
+                    <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 2 }}>@{user.username}</div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Notifications card */}
+            <div style={{
+              background: 'rgba(255,255,255,0.88)', borderRadius: 16,
+              border: '1px solid rgba(255,255,255,0.6)',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+              overflow: 'hidden',
+            }}>
+              <div style={{ padding: '12px 14px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.07em', textTransform: 'uppercase' }}>Notifications</span>
+                {notifCount > 0 && (
+                  <Link to={createPageUrl("Requests")} style={{ fontSize: 11, fontWeight: 500, color: '#2563EB', textDecoration: 'none' }}>View all</Link>
+                )}
+              </div>
+              <div style={{ padding: '8px 8px 10px' }}>
+                {notifications.length === 0 ? (
+                  <div style={{ padding: '10px 6px', textAlign: 'center' }}>
+                    <div style={{ fontSize: 20, marginBottom: 4 }}>✅</div>
+                    <div style={{ fontSize: 11, color: '#787776' }}>All caught up!</div>
+                  </div>
+                ) : (
+                  notifications.map((n, i) => (
+                    <Link key={i} to={n.link} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, padding: '7px 6px', borderRadius: 8, textDecoration: 'none', transition: 'background 0.12s' }}
+                      onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.04)'}
+                      onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                    >
+                      <div style={{ width: 22, height: 22, borderRadius: 6, background: `${n.color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, color: n.color, marginTop: 1 }}>
+                        {notifIcon(n.type)}
+                      </div>
+                      <span style={{ fontSize: 11.5, color: '#1A1918', lineHeight: 1.4, fontWeight: 500 }}>{n.text}</span>
+                    </Link>
+                  ))
+                )}
+              </div>
+            </div>
+
+            {/* Upcoming Payments card */}
+            <div style={{
+              background: 'rgba(255,255,255,0.88)', borderRadius: 16,
+              border: '1px solid rgba(255,255,255,0.6)',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+              overflow: 'hidden',
+            }}>
+              <div style={{ padding: '12px 14px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.07em', textTransform: 'uppercase' }}>Upcoming</span>
+                <Link to={createPageUrl("Upcoming")} style={{ fontSize: 11, fontWeight: 500, color: '#2563EB', textDecoration: 'none' }}>See all</Link>
+              </div>
+              <div style={{ padding: '8px 10px 10px', display: 'flex', flexDirection: 'column', gap: 2 }}>
+                {upcomingPayments.length === 0 ? (
+                  <div style={{ padding: '10px 4px', textAlign: 'center' }}>
+                    <div style={{ fontSize: 20, marginBottom: 4 }}>✨</div>
+                    <div style={{ fontSize: 11, color: '#787776' }}>Nothing coming up</div>
+                  </div>
+                ) : (
+                  upcomingPayments.map((p, i) => {
+                    const color = p.isOverdue ? '#E8726E' : p.isLender ? '#35B276' : '#2563EB';
+                    const daysLabel = p.isOverdue ? `${Math.abs(p.days)}d late` : p.days === 0 ? 'today' : `in ${p.days}d`;
+                    return (
+                      <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '7px 4px', borderBottom: i < upcomingPayments.length - 1 ? '1px solid rgba(0,0,0,0.05)' : 'none' }}>
+                        <div style={{ minWidth: 0, flex: 1 }}>
+                          <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {p.isLender ? `From ${p.name}` : `To ${p.name}`}
+                          </div>
+                          <div style={{ fontSize: 10, color: '#9B9A98', marginTop: 1 }}>
+                            {format(p.date, 'MMM d')}
+                          </div>
+                        </div>
+                        <div style={{ textAlign: 'right', flexShrink: 0, marginLeft: 6 }}>
+                          <div style={{ fontSize: 12, fontWeight: 700, color: p.isLender ? '#35B276' : '#2563EB' }}>
+                            {p.isLender ? '+' : '-'}${(p.amount || 0).toLocaleString()}
+                          </div>
+                          <div style={{ fontSize: 9, fontWeight: 700, color: p.isOverdue ? '#E8726E' : '#9B9A98', background: p.isOverdue ? 'rgba(232,114,110,0.1)' : 'rgba(0,0,0,0.05)', borderRadius: 4, padding: '1px 5px', marginTop: 2 }}>
+                            {daysLabel}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            </div>
+
           </div>
         </>,
         document.body
