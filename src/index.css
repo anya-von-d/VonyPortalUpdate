@@ -27,8 +27,7 @@ input[type="date"] {
 @layer base {
   html {
     scroll-behavior: smooth;
-    background: linear-gradient(90deg, #03ACEA 0px, #F5F4F0 220px);
-    background-attachment: fixed;
+    background: #F5F4F0;
   }
 
   /* Scrollbar styling */

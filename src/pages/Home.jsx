@@ -708,12 +708,46 @@ export default function Home() {
   );
 
   return (
-    <div className="home-with-sidebar" style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingTop: 88, background: 'transparent' }}>
+    <div className="home-with-sidebar" style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingTop: 0, background: 'transparent' }}>
 
       <DashboardSidebar activePage="Dashboard" user={user} />
 
+      {/* ── Blue hero banner ── */}
+      <div style={{
+        margin: '0 10px',
+        height: 180,
+        background: '#03ACEA',
+        borderRadius: 18,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+        paddingBottom: 28,
+        overflow: 'hidden',
+        position: 'relative',
+      }}>
+        {/* Subtle star field inside hero */}
+        <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0.18, pointerEvents: 'none' }} viewBox="0 0 1200 180" preserveAspectRatio="xMidYMid slice">
+          {[{cx:80,cy:40},{cx:200,cy:100},{cx:320,cy:25},{cx:430,cy:140},{cx:540,cy:60},{cx:660,cy:110},{cx:770,cy:30},{cx:890,cy:150},{cx:1000,cy:70},{cx:1100,cy:120},{cx:150,cy:160},{cx:480,cy:90},{cx:720,cy:155},{cx:950,cy:45}].map((s, i) => (
+            <circle key={i} cx={s.cx} cy={s.cy} r={i % 3 === 0 ? 2.5 : 1.5} fill="white" />
+          ))}
+        </svg>
+        <h1 style={{
+          fontFamily: "'Cormorant Garamond', Georgia, serif",
+          fontSize: 38, fontWeight: 600, color: 'white',
+          margin: 0, letterSpacing: '-0.01em', lineHeight: 1,
+          textAlign: 'center', position: 'relative', zIndex: 1,
+        }}>
+          {firstName ? (
+            <><span style={{ fontStyle: 'normal' }}>{greeting}, </span><span style={{ fontStyle: 'italic' }}>{firstName}</span></>
+          ) : (
+            <span style={{ fontStyle: 'italic' }}>{greeting}</span>
+          )}
+        </h1>
+      </div>
+
       {/* ── Main page content ── */}
-      <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 40px 64px', position: 'relative', zIndex: 1 }}>
+      <div style={{ maxWidth: 1080, margin: '0 auto', padding: '20px 40px 64px', position: 'relative', zIndex: 1 }}>
 
         {/* Top row grid: quick actions + snapshot cards */}
         <div style={{ marginTop: 0 }}>
