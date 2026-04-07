@@ -748,8 +748,8 @@ export default function Home() {
 
             {/* Left sub-col: Next Payment Due */}
             <div className="glow-wrapper glow-blue">
-            <div className="gradient-border-wrapper" style={{ borderRadius: 17 }}>
-            <div className="glass-card" style={{ borderRadius: 16 }}>
+            <div className="gradient-border-wrapper">
+            <div className="glass-card" style={{ overflow: 'hidden' }}>
               <div style={{ padding: '14px 16px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.07em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>Next payment due</div>
                 {nextBorrowerPayment && (() => {

@@ -184,18 +184,18 @@ input[type="date"] {
 }
 
 /* ===== GRADIENT BORDER WRAPPER ===== */
-/* Wrap any glass-card in this to get a 1px gradient border */
+/* Wrap any glass-card in this to get a thick blue border (matches carousel frame) */
 .gradient-border-wrapper {
-  padding: 1px;
+  padding: 6px;
   background: rgba(3, 172, 234, 0.45);
-  border-radius: 17px;
+  border-radius: 22px;
   transition: transform 0.22s ease, box-shadow 0.22s ease;
 }
 .gradient-border-wrapper:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 28px rgba(3, 172, 234, 0.15), 0 4px 12px rgba(124, 58, 237, 0.12);
+  box-shadow: 0 8px 28px rgba(3, 172, 234, 0.18), 0 4px 12px rgba(3, 172, 234, 0.12);
 }
-/* Reset border on glass-card inside wrapper so the gradient border shows */
+/* Reset border on glass-card inside wrapper so the blue border shows */
 .gradient-border-wrapper > .glass-card {
   border-color: transparent;
   border-radius: 16px;
