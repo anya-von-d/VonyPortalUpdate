@@ -717,7 +717,7 @@ export default function Home() {
 
   // Card wrapper: cream outer box with title, white inner content
   const DashboardCard = ({ title, headerRight, children, style }) => (
-    <div style={{ background: '#A7D3F3', borderRadius: 12, overflow: 'hidden', ...style }}>
+    <div style={{ background: '#C1E4FD', borderRadius: 12, overflow: 'hidden', ...style }}>
       <div style={{ padding: '9px 14px 8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>{title}</span>
         {headerRight && <div style={{ flexShrink: 0 }}>{headerRight}</div>}
@@ -813,14 +813,14 @@ export default function Home() {
                 {nextBorrowerPayment ? (() => {
                   const days = Math.ceil((nextBorrowerPayment.date.getTime() - Date.now()) / 86400000);
                   const isLate = days < 0;
-                  const label = isLate ? `${Math.abs(days)}d late` : days === 0 ? 'today' : `in ${days}d`;
+                  const label = isLate ? `${Math.abs(days)}d late` : days === 0 ? 'today' : `${days}d`;
                   return (
                     <>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
                         <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#1A1918', letterSpacing: '-0.03em', lineHeight: 1, fontFamily: "'DM Sans', sans-serif" }}>
                           {format(nextBorrowerPayment.date, 'MMM d')}
                         </div>
-                        <span style={{ fontSize: 10, fontWeight: 700, color: isLate ? '#E8726E' : '#2563EB', background: isLate ? 'rgba(232,114,110,0.1)' : 'rgba(37,99,235,0.10)', borderRadius: 6, padding: '2px 7px', whiteSpace: 'nowrap' }}>
+                        <span style={{ fontSize: 10, fontWeight: 700, color: isLate ? '#E8726E' : '#5C5B5A', background: isLate ? 'rgba(232,114,110,0.1)' : 'rgba(0,0,0,0.05)', borderRadius: 6, padding: '2px 7px', whiteSpace: 'nowrap' }}>
                           {label}
                         </span>
                       </div>
@@ -846,14 +846,14 @@ export default function Home() {
                 {nextLenderPayment ? (() => {
                   const days = Math.ceil((nextLenderPayment.date.getTime() - Date.now()) / 86400000);
                   const isLate = days < 0;
-                  const label = isLate ? `${Math.abs(days)}d late` : days === 0 ? 'today' : `in ${days}d`;
+                  const label = isLate ? `${Math.abs(days)}d late` : days === 0 ? 'today' : `${days}d`;
                   return (
                     <>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
                         <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#1A1918', letterSpacing: '-0.03em', lineHeight: 1, fontFamily: "'DM Sans', sans-serif" }}>
                           {format(nextLenderPayment.date, 'MMM d')}
                         </div>
-                        <span style={{ fontSize: 10, fontWeight: 700, color: isLate ? '#E8726E' : '#35B276', background: isLate ? 'rgba(232,114,110,0.1)' : 'rgba(53,178,118,0.10)', borderRadius: 6, padding: '2px 7px', whiteSpace: 'nowrap' }}>
+                        <span style={{ fontSize: 10, fontWeight: 700, color: isLate ? '#E8726E' : '#5C5B5A', background: isLate ? 'rgba(232,114,110,0.1)' : 'rgba(0,0,0,0.05)', borderRadius: 6, padding: '2px 7px', whiteSpace: 'nowrap' }}>
                           {label}
                         </span>
                       </div>
@@ -890,7 +890,7 @@ export default function Home() {
                       return (
                         <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 0', borderBottom: idx < Math.min(combinedPaymentEvents.length, 5) - 1 ? '1px solid rgba(0,0,0,0.04)' : 'none' }}>
                           <div style={{ flexShrink: 0 }}>
-                            <span style={{ fontSize: 10, fontWeight: 700, color: isOverdue ? '#E8726E' : '#5C5B5A', background: isOverdue ? 'rgba(232,114,110,0.1)' : 'rgba(0,0,0,0.05)', borderRadius: 20, padding: '3px 8px', whiteSpace: 'nowrap', letterSpacing: '0.02em' }}>
+                            <span style={{ fontSize: 10, fontWeight: 700, color: isOverdue ? '#E8726E' : '#5C5B5A', background: isOverdue ? 'rgba(232,114,110,0.1)' : 'rgba(0,0,0,0.05)', borderRadius: 6, padding: '2px 7px', whiteSpace: 'nowrap', letterSpacing: '0.02em' }}>
                               {daysLabel}
                             </span>
                           </div>
@@ -940,14 +940,8 @@ export default function Home() {
                               return (
                                 <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                                   <div style={{ display: 'flex', alignItems: 'flex-end', gap: 4, height: chartHeight }}>
-                                    <motion.div style={{ width: 14, borderRadius: '4px 4px 0 0', background: '#7EC0EA', opacity: d.isFuture ? 0.45 : 1 }}
-                                      initial={{ height: 0 }}
-                                      animate={{ height: loansInView ? Math.max(owedH, owedH > 0 ? 2 : 0) : 0 }}
-                                      transition={{ duration: 0.5, delay: i * 0.05, ease: 'easeOut' }} />
-                                    <motion.div style={{ width: 14, borderRadius: '4px 4px 0 0', background: '#B0F1FF', opacity: d.isFuture ? 0.45 : 1 }}
-                                      initial={{ height: 0 }}
-                                      animate={{ height: loansInView ? Math.max(oweH, oweH > 0 ? 2 : 0) : 0 }}
-                                      transition={{ duration: 0.5, delay: i * 0.05 + 0.04, ease: 'easeOut' }} />
+                                    <div style={{ width: 14, borderRadius: '4px 4px 0 0', background: '#7EC0EA', opacity: d.isFuture ? 0.45 : 1, height: loansInView ? Math.max(owedH, owedH > 0 ? 2 : 0) : 0, transition: `height 0.5s ease-out ${i * 0.05}s` }} />
+                                    <div style={{ width: 14, borderRadius: '4px 4px 0 0', background: '#B0F1FF', opacity: d.isFuture ? 0.45 : 1, height: loansInView ? Math.max(oweH, oweH > 0 ? 2 : 0) : 0, transition: `height 0.5s ease-out ${i * 0.05 + 0.04}s` }} />
                                   </div>
                                 </div>
                               );
@@ -1011,7 +1005,7 @@ export default function Home() {
                           <div style={{ fontSize: 12, color: '#787776', flexShrink: 0, marginLeft: 8 }}>{pct}%</div>
                         </div>
                         <div style={{ width: '100%', height: 8, borderRadius: 4, background: isLender ? 'rgba(126,192,234,0.18)' : 'rgba(176,241,255,0.25)', overflow: 'hidden' }}>
-                          <motion.div style={{ height: '100%', borderRadius: 4, background: isLender ? '#7EC0EA' : '#B0F1FF' }} initial={{ width: '0%' }} animate={{ width: activeLoansInView ? `${pct}%` : '0%' }} transition={{ duration: 0.8, delay: idx * 0.1, ease: 'easeOut' }} />
+                          <div style={{ height: '100%', borderRadius: 4, background: isLender ? '#7EC0EA' : '#B0F1FF', width: activeLoansInView ? `${pct}%` : '0%', transition: `width 0.8s ease-out ${idx * 0.1}s` }} />
                         </div>
                         <div style={{ fontSize: 11, color: '#787776', marginTop: 6 }}>{formatMoney(amountPaid)} of {formatMoney(totalAmt)} {isLender ? 'repaid' : 'paid back'}</div>
                       </div>
@@ -1030,7 +1024,7 @@ export default function Home() {
               {/* Owed to You */}
               <CardEntrance delay={0.1}>
               <DashboardCard title="Owed to You">
-                <div style={{ padding: '12px 16px' }}>
+                <div style={{ padding: '12px 16px', display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: 54 }}>
                   <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#7EC0EA', letterSpacing: '-0.03em', lineHeight: 1, fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(lentRemaining)}</div>
                   <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 6, textAlign: 'right' }}>between {lentLoans.length} loan{lentLoans.length !== 1 ? 's' : ''}</div>
                 </div>
@@ -1040,7 +1034,7 @@ export default function Home() {
               {/* You Owe */}
               <CardEntrance delay={0.13}>
               <DashboardCard title="You Owe">
-                <div style={{ padding: '12px 16px' }}>
+                <div style={{ padding: '12px 16px', display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: 54 }}>
                   <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#1A1918', letterSpacing: '-0.03em', lineHeight: 1, fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(borrowedRemaining)}</div>
                   <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 6, textAlign: 'right' }}>between {borrowedLoans.length} loan{borrowedLoans.length !== 1 ? 's' : ''}</div>
                 </div>
