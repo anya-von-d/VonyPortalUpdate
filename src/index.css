@@ -27,7 +27,10 @@ input[type="date"] {
 @layer base {
   html {
     scroll-behavior: smooth;
-    background: #FDF9F7;
+    background-color: #F5F4F0;
+    background-image: url('/images/tile.png.jpeg');
+    background-repeat: repeat;
+    background-size: 50px 50px;
   }
 
   /* Scrollbar styling */
