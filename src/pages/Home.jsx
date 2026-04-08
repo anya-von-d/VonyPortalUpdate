@@ -734,11 +734,11 @@ export default function Home() {
 
   const SHADOW = '0px 50px 40px rgba(0,0,0,0.01), 0px 50px 40px rgba(0,0,0,0.02), 0px 20px 40px rgba(0,0,0,0.05), 0px 3px 10px rgba(0,0,0,0.08)';
   const DashboardCard = ({ title, headerRight, children, style, highlight }) => {
-    const outerBg = highlight ? '#7BBDE8' : '#EAEAEB';
+    const outerBg = highlight ? '#54A6CF' : '#F4F4F5';
     return (
       <div style={{ background: outerBg, borderRadius: 14, overflow: 'hidden', boxShadow: SHADOW, ...style }}>
         <div style={{ padding: '6px 14px 5px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>{title}</span>
+          <span style={{ fontSize: 10, fontWeight: 700, color: '#5C5B5A', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>{title}</span>
           {headerRight && <div style={{ flexShrink: 0 }}>{headerRight}</div>}
         </div>
         <div style={{ background: '#ffffff', margin: '0 5px 5px', borderRadius: 10, overflow: 'hidden' }}>
@@ -757,7 +757,7 @@ export default function Home() {
       <div style={{
         margin: '8px 10px 0',
         height: 168,
-        background: '#5AADD6',
+        background: '#54A6CF',
         borderRadius: 18,
         display: 'flex',
         flexDirection: 'column',
