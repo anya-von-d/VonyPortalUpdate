@@ -740,7 +740,7 @@ export default function Home() {
 
   // Card wrapper: cream outer box with title, white inner content
   const DashboardCard = ({ title, headerRight, children, style }) => (
-    <div style={{ background: '#C1E4FD', borderRadius: 12, overflow: 'hidden', ...style }}>
+    <div style={{ background: '#9AD3EF', borderRadius: 12, overflow: 'hidden', ...style }}>
       <div style={{ padding: '9px 14px 8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>{title}</span>
         {headerRight && <div style={{ flexShrink: 0 }}>{headerRight}</div>}
@@ -912,7 +912,7 @@ export default function Home() {
                       const daysLabel = isOverdue ? `${Math.abs(event.days)}d late` : `${event.days}d`;
                       return (
                         <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 0', borderBottom: idx < Math.min(combinedPaymentEvents.length, 5) - 1 ? '1px solid rgba(0,0,0,0.04)' : 'none' }}>
-                          <div style={{ flexShrink: 0 }}>
+                          <div style={{ flexShrink: 0, width: 52, textAlign: 'center' }}>
                             <span style={{ fontSize: 10, fontWeight: 700, color: isOverdue ? '#E8726E' : '#5C5B5A', background: isOverdue ? 'rgba(232,114,110,0.1)' : 'rgba(0,0,0,0.05)', borderRadius: 6, padding: '2px 7px', whiteSpace: 'nowrap', letterSpacing: '0.02em' }}>
                               {daysLabel}
                             </span>
@@ -920,14 +920,14 @@ export default function Home() {
                           <div style={{ flex: 1, minWidth: 0 }}>
                             <div style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                               {event.isLender
-                                ? `${event.firstName} pays you${event.purpose ? ` · ${event.purpose}` : ''}`
-                                : `Pay ${event.firstName}${event.purpose ? ` · ${event.purpose}` : ''}`}
+                                ? `${event.firstName} pays you`
+                                : `Pay ${event.firstName}`}
                             </div>
                             <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 1 }}>
-                              {format(event.date, 'MMM d')}
+                              {event.purpose ? `for ${event.purpose}` : format(event.date, 'MMM d')}
                             </div>
                           </div>
-                          <div style={{ fontSize: 15, fontWeight: 700, flexShrink: 0, color: event.isLender ? '#7EC0EA' : '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>
+                          <div style={{ fontSize: 13, fontWeight: 700, flexShrink: 0, color: event.isLender ? '#7EC0EA' : '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>
                             {event.isLender ? '+' : '-'}{formatMoney(event.remainingAmount)}
                           </div>
                         </div>
