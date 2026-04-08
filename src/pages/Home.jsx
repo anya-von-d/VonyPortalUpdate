@@ -757,17 +757,17 @@ export default function Home() {
       {/* ── Hero banner ── */}
       <div style={{
         margin: '8px 10px 0',
-        height: 168,
+        height: 240,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'flex-end',
-        paddingBottom: 24,
+        justifyContent: 'flex-start',
+        paddingTop: 106,
         position: 'relative',
       }}>
         {/* Paper texture overlay */}
         {/* Subtle star field */}
-        <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0.15, pointerEvents: 'none', zIndex: 0 }} viewBox="0 0 1200 168" preserveAspectRatio="xMidYMid slice">
+        <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0.15, pointerEvents: 'none', zIndex: 0 }} viewBox="0 0 1200 240" preserveAspectRatio="xMidYMid slice">
           {[{cx:80,cy:40},{cx:200,cy:110},{cx:320,cy:25},{cx:430,cy:160},{cx:540,cy:70},{cx:660,cy:130},{cx:770,cy:35},{cx:890,cy:175},{cx:1000,cy:80},{cx:1100,cy:140},{cx:150,cy:185},{cx:480,cy:100},{cx:720,cy:180},{cx:950,cy:55},{cx:280,cy:195},{cx:620,cy:48},{cx:1050,cy:195}].map((s, i) => (
             <circle key={i} cx={s.cx} cy={s.cy} r={i % 3 === 0 ? 2.5 : 1.5} fill="white" />
           ))}
@@ -786,16 +786,16 @@ export default function Home() {
         </h1>
         <div style={{ display: 'flex', gap: 12, marginTop: 18, position: 'relative', zIndex: 1 }}>
           <Link to={createPageUrl("CreateOffer")} style={{
-            padding: '10px 24px', fontSize: 14, fontWeight: 600,
+            padding: '8px 20px', fontSize: 13, fontWeight: 600,
             background: '#1A1918',
-            color: '#fff', border: 'none', borderRadius: 10,
+            color: '#fff', border: 'none', borderRadius: 9,
             textDecoration: 'none', fontFamily: "'DM Sans', sans-serif",
             transition: 'background 0.2s',
           }}>Create Loan</Link>
           <Link to={createPageUrl("RecordPayment")} style={{
-            padding: '10px 24px', fontSize: 14, fontWeight: 600,
+            padding: '8px 20px', fontSize: 13, fontWeight: 600,
             background: '#1A1918',
-            color: '#fff', border: 'none', borderRadius: 10,
+            color: '#fff', border: 'none', borderRadius: 9,
             textDecoration: 'none', fontFamily: "'DM Sans', sans-serif",
             transition: 'background 0.2s',
           }}>Record Payment</Link>
