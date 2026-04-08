@@ -879,7 +879,7 @@ export default function YourLoans() {
         <PageCard title="Select a Loan to Learn More" style={{ marginBottom: 16 }}>
           <div style={{ padding: '10px 14px 14px' }}>
             <div style={{ position: 'relative' }}>
-              <select value={manageLoanSelected?.id || ''} onChange={(e) => { const selected = allManageableLoans.find(l => l.id === e.target.value); if (selected) setManageLoanSelected(selected); }} style={{ width: '100%', appearance: 'none', borderRadius: 10, padding: '8px 12px', fontSize: 12, fontWeight: 600, color: '#1A1918', background: 'rgba(130,240,185,0.08)', cursor: 'pointer', border: '1px solid rgba(130,240,185,0.2)', outline: 'none', fontFamily: "'DM Sans', sans-serif" }}>
+              <select value={manageLoanSelected?.id || ''} onChange={(e) => { const selected = allManageableLoans.find(l => l.id === e.target.value); if (selected) setManageLoanSelected(selected); }} style={{ width: '100%', appearance: 'none', borderRadius: 10, padding: '8px 12px', fontSize: 12, fontWeight: 600, color: '#1A1918', background: 'rgba(84,166,207,0.08)', cursor: 'pointer', border: '1px solid rgba(84,166,207,0.2)', outline: 'none', fontFamily: "'DM Sans', sans-serif" }}>
                 {allManageableLoans.map((loan) => {
                   const isLend = loan.lender_id === user?.id;
                   const otherParty = publicProfiles.find(p => p.user_id === (isLend ? loan.borrower_id : loan.lender_id));
@@ -887,7 +887,7 @@ export default function YourLoans() {
                   return (<option key={loan.id} value={loan.id}>{roleLabel} {otherParty?.full_name || 'User'} · ${loan.amount?.toLocaleString()}{loan.status === 'cancelled' ? ' · Cancelled' : ''}</option>);
                 })}
               </select>
-              <div style={{ pointerEvents: 'none', position: 'absolute', top: 0, bottom: 0, right: 10, display: 'flex', alignItems: 'center' }}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#82F0B9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+              <div style={{ pointerEvents: 'none', position: 'absolute', top: 0, bottom: 0, right: 10, display: 'flex', alignItems: 'center' }}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#54A6CF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
             </div>
           </div>
         </PageCard>
@@ -916,7 +916,6 @@ export default function YourLoans() {
               return (
                 <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: 12 }}>
                   {/* Payment Progress circle card */}
-                  <div className="glow-wrapper glow-purple">
                   <PageCard title="Payment Progress" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <div style={{ padding: '10px 14px 12px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
@@ -932,7 +931,6 @@ export default function YourLoans() {
                     </p>
                     </div>
                   </PageCard>
-                  </div>{/* /glow-wrapper glow-purple */}
                   {/* Stacked: next payment date + amount */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                     {/* Next payment date card */}
@@ -991,7 +989,7 @@ export default function YourLoans() {
                     </div>
                     <div style={{ flex: 1, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', position: 'relative', height: '100%' }}>
                       {plannedPaymentAmount > 0 && (
-                        <div style={{ position: 'absolute', left: 0, right: 0, borderTop: '2px dashed rgba(130,240,185,0.3)', zIndex: 10, bottom: `${(plannedPaymentAmount / maxChartVal) * 100}%` }}>
+                        <div style={{ position: 'absolute', left: 0, right: 0, borderTop: '2px dashed rgba(84,166,207,0.4)', zIndex: 10, bottom: `${(plannedPaymentAmount / maxChartVal) * 100}%` }}>
                           <span style={{ position: 'absolute', top: -14, right: 0, fontSize: 10, fontWeight: 600, color: '#787776', background: 'rgba(255,255,255,0.88)', padding: '0 4px' }}>${plannedPaymentAmount.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
                         </div>
                       )}
@@ -1080,7 +1078,7 @@ export default function YourLoans() {
                   <div className="space-y-0 max-h-[200px] overflow-y-auto" style={{ scrollbarWidth: 'thin' }}>
                     {activities.map((activity, idx) => (
                       <div key={idx} className="flex items-start gap-2.5 relative">
-                        {idx < activities.length - 1 && <div className="absolute left-[11px] top-[22px] w-[1px]" style={{ height: 'calc(100% - 6px)', background: 'rgba(130,240,185,0.2)' }} />}
+                        {idx < activities.length - 1 && <div className="absolute left-[11px] top-[22px] w-[1px]" style={{ height: 'calc(100% - 6px)', background: 'rgba(84,166,207,0.2)' }} />}
                         <div className={`w-[23px] h-[23px] rounded-full border-[1.5px] ${getDotColor(activity.type)} flex items-center justify-center flex-shrink-0 z-10 mt-1`}>{getIcon(activity.type)}</div>
                         <div className="flex-1 min-w-0 pb-3">
                           <div className="flex items-center gap-2 flex-wrap">
@@ -1134,20 +1132,20 @@ export default function YourLoans() {
                 {/* Document Icons */}
                 <div style={{ display: 'flex', justifyContent: 'center', gap: 20, padding: '4px 0' }}>
                   <button onClick={() => { const agreement = loanAgreements.find(a => a.loan_id === manageLoanSelected.id); if (agreement) openDocPopup('promissory', agreement); }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, cursor: 'pointer', background: 'none', border: 'none' }}>
-                    <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(130,240,185,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#82F0B9" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg></div>
+                    <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(84,166,207,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#54A6CF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg></div>
                     <p style={{ fontSize: 10, fontWeight: 600, color: '#1A1918', textAlign: 'center', lineHeight: 1.3 }}>Promissory<br/>Note</p>
                   </button>
                   <button onClick={() => { const agreement = loanAgreements.find(a => a.loan_id === manageLoanSelected.id); if (agreement) openDocPopup('amortization', agreement); }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, cursor: 'pointer', background: 'none', border: 'none' }}>
-                    <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(130,240,185,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#82F0B9" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></div>
+                    <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(84,166,207,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#54A6CF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></div>
                     <p style={{ fontSize: 10, fontWeight: 600, color: '#1A1918', textAlign: 'center', lineHeight: 1.3 }}>Amortization<br/>Schedule</p>
                   </button>
                   <button onClick={() => { const agreement = loanAgreements.find(a => a.loan_id === manageLoanSelected.id); if (agreement) openDocPopup('summary', agreement); }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, cursor: 'pointer', background: 'none', border: 'none' }}>
-                    <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(130,240,185,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#82F0B9" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></div>
+                    <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(84,166,207,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#54A6CF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></div>
                     <p style={{ fontSize: 10, fontWeight: 600, color: '#1A1918', textAlign: 'center', lineHeight: 1.3 }}>Loan<br/>Summary</p>
                   </button>
                   <Link to={createPageUrl("RecordPayment")} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, textDecoration: 'none' }}>
-                    <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(37,99,235,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <DollarSign size={20} style={{ color: '#2563EB' }} />
+                    <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(84,166,207,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <DollarSign size={20} style={{ color: '#54A6CF' }} />
                     </div>
                     <p style={{ fontSize: 10, fontWeight: 600, color: '#1A1918', textAlign: 'center', lineHeight: 1.3, margin: 0 }}>Record<br/>Payment</p>
                   </Link>
@@ -1263,7 +1261,7 @@ export default function YourLoans() {
         <span style={{ fontSize: 10, fontWeight: 700, color: highlight ? 'rgba(255,255,255,0.85)' : '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>{title}</span>
         {headerRight && <div style={{ flexShrink: 0 }}>{headerRight}</div>}
       </div>
-      <div style={{ background: '#ffffff', margin: '0 5px 5px', borderRadius: 10, overflow: 'hidden' }}>
+      <div style={{ background: '#ffffff', margin: highlight ? 0 : '0 5px 5px', borderRadius: highlight ? 0 : 10, overflow: 'hidden' }}>
         {children}
       </div>
     </div>
@@ -1338,16 +1336,15 @@ export default function YourLoans() {
 
             {/* Page content */}
             <div style={{ maxWidth: 1080, margin: '0 auto', padding: '20px 40px 64px', position: 'relative', zIndex: 1 }}>
-              {(() => {
+              {activeTab !== 'details' && (() => {
                 const isLendingTab = activeTab === 'lending';
                 const allOverdue = isLendingTab
                   ? activeLendingLoans.filter(l => l.next_payment_date && daysUntilDate(l.next_payment_date) < 0).map(l => ({ ...l, role: 'lending' }))
                   : activeBorrowingLoans.filter(l => l.next_payment_date && daysUntilDate(l.next_payment_date) < 0).map(l => ({ ...l, role: 'borrowing' }));
                 if (allOverdue.length === 0) return null;
                 const clampedSlide = reminderSlide % allOverdue.length;
-                return (
-                  <PageCard title="Overdue Payments" style={{ marginBottom: 20 }}>
-                    {/* Carousel viewport */}
+                const carouselInner = (
+                  <>
                     <div style={{ overflow: 'hidden' }}>
                       <div style={{ display: 'flex', transition: 'transform 0.5s cubic-bezier(0.4,0,0.2,1)', transform: `translateX(-${clampedSlide * 100}%)` }}>
                         {allOverdue.map((loan, idx) => {
@@ -1386,7 +1383,6 @@ export default function YourLoans() {
                         })}
                       </div>
                     </div>
-                    {/* Dots */}
                     {allOverdue.length > 1 && (
                       <div style={{ display: 'flex', justifyContent: 'center', gap: 6, padding: '4px 0 14px' }}>
                         {allOverdue.map((_, i) => (
@@ -1399,8 +1395,16 @@ export default function YourLoans() {
                         ))}
                       </div>
                     )}
-                  </PageCard>
+                  </>
                 );
+                if (isLendingTab) {
+                  return (
+                    <PageCard title="Overdue Payments" style={{ marginBottom: 20 }}>
+                      {carouselInner}
+                    </PageCard>
+                  );
+                }
+                return <div style={{ background: '#F4F4F5', borderRadius: 14, marginBottom: 20, overflow: 'hidden' }}>{carouselInner}</div>;
               })()}
 
               {activeTab === 'lending' && renderSummaryTab('lending')}
