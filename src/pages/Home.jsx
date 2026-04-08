@@ -784,6 +784,24 @@ export default function Home() {
             <span style={{ fontStyle: 'italic' }}>{greeting}</span>
           )}
         </h1>
+        <div style={{ display: 'flex', gap: 12, marginTop: 18, position: 'relative', zIndex: 1 }}>
+          <Link to={createPageUrl("CreateOffer")} style={{
+            padding: '10px 28px', fontSize: 14, fontWeight: 600,
+            background: 'linear-gradient(135deg, #03ACEA 0%, #7C3AED 100%)',
+            color: 'white', border: 'none', borderRadius: 12,
+            textDecoration: 'none', fontFamily: "'DM Sans', sans-serif",
+            boxShadow: '0 4px 16px rgba(3,172,234,0.3)',
+            transition: 'opacity 0.15s, transform 0.15s',
+          }}>Create Loan</Link>
+          <Link to={createPageUrl("RecordPayment")} style={{
+            padding: '10px 28px', fontSize: 14, fontWeight: 600,
+            background: 'linear-gradient(135deg, #03ACEA 0%, #7C3AED 100%)',
+            color: 'white', border: 'none', borderRadius: 12,
+            textDecoration: 'none', fontFamily: "'DM Sans', sans-serif",
+            boxShadow: '0 4px 16px rgba(3,172,234,0.3)',
+            transition: 'opacity 0.15s, transform 0.15s',
+          }}>Record Payment</Link>
+        </div>
       </div>
 
       {/* ── Main page content ── */}
