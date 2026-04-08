@@ -603,7 +603,7 @@ export default function Home() {
       const amount = `$${(loan.amount || 0).toLocaleString()}`;
       let description = '';
       let icon = 'loan';
-      let color = '#7EC0EA';
+      let color = '#F5A96A';
 
       if (loan.status === 'pending' || !loan.status) {
         description = isLender ? `Sent ${amount} loan offer to ${name}` : `Received ${amount} loan offer from ${name}`;
@@ -806,7 +806,7 @@ export default function Home() {
       <div className="dashboard-content-wrap" style={{ maxWidth: 1080, margin: '0 auto', padding: '20px 40px 0', position: 'relative', zIndex: 1 }}>
 
         {/* Top row grid: quick actions + snapshot cards */}
-        <div className="dashboard-grey-box" style={{ marginTop: 0, background: '#EDECEA', borderRadius: 18, padding: 20 }}>
+        <div className="dashboard-grey-box" style={{ marginTop: 0, background: '#E5E2DF', borderRadius: 18, padding: 20 }}>
           <div className="home-top-row" style={{ display: 'grid', gridTemplateColumns: '2fr 0.82fr', columnGap: 20, rowGap: 20, alignItems: 'start' }}>
 
             {/* LEFT SECTION: sub-grid for left two columns */}
@@ -982,7 +982,7 @@ export default function Home() {
                                 <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                                   <div style={{ display: 'flex', alignItems: 'flex-end', gap: 4, height: chartHeight }}>
                                     <div key={`owed-${i}-${loansAnimKey}`} style={{ width: 14, borderRadius: '4px 4px 0 0', background: '#54A6CF', opacity: d.isFuture ? 0.45 : 1, height: Math.max(owedH, owedH > 0 ? 2 : 0), transformOrigin: 'bottom', animation: `barGrowUp 0.5s ease-out ${i * 0.05}s both` }} />
-                                    <div key={`owe-${i}-${loansAnimKey}`} style={{ width: 14, borderRadius: '4px 4px 0 0', background: '#7EC0EA', opacity: d.isFuture ? 0.45 : 1, height: Math.max(oweH, oweH > 0 ? 2 : 0), transformOrigin: 'bottom', animation: `barGrowUp 0.5s ease-out ${i * 0.05 + 0.04}s both` }} />
+                                    <div key={`owe-${i}-${loansAnimKey}`} style={{ width: 14, borderRadius: '4px 4px 0 0', background: '#F5A96A', opacity: d.isFuture ? 0.45 : 1, height: Math.max(oweH, oweH > 0 ? 2 : 0), transformOrigin: 'bottom', animation: `barGrowUp 0.5s ease-out ${i * 0.05 + 0.04}s both` }} />
                                   </div>
                                 </div>
                               );
@@ -997,7 +997,7 @@ export default function Home() {
                       </div>
                       <div style={{ display: 'flex', justifyContent: 'center', gap: 20, marginTop: 14, paddingTop: 14 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 11, color: '#787776' }}><div style={{ width: 8, height: 8, borderRadius: '50%', background: '#54A6CF' }} /> Owed to you</div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 11, color: '#787776' }}><div style={{ width: 8, height: 8, borderRadius: '50%', background: '#7EC0EA' }} /> You owe</div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 11, color: '#787776' }}><div style={{ width: 8, height: 8, borderRadius: '50%', background: '#F5A96A' }} /> You owe</div>
                       </div>
                     </>
                   );
@@ -1047,7 +1047,7 @@ export default function Home() {
                           <div style={{ fontSize: 12, color: '#787776', flexShrink: 0, marginLeft: 8 }}>{pct}%</div>
                         </div>
                         <div style={{ width: '100%', height: 8, borderRadius: 4, background: isLender ? 'rgba(84,166,207,0.18)' : 'rgba(126,192,234,0.22)', overflow: 'hidden' }}>
-                          <div key={`active-${idx}-${activeAnimKey}`} style={{ height: '100%', borderRadius: 4, background: isLender ? '#54A6CF' : '#7EC0EA', width: `${pct}%`, transformOrigin: 'left', animation: `barGrowRight 0.8s ease-out ${idx * 0.1}s both` }} />
+                          <div key={`active-${idx}-${activeAnimKey}`} style={{ height: '100%', borderRadius: 4, background: isLender ? '#54A6CF' : '#F5A96A', width: `${pct}%`, transformOrigin: 'left', animation: `barGrowRight 0.8s ease-out ${idx * 0.1}s both` }} />
                         </div>
                         <div style={{ fontSize: 11, color: '#787776', marginTop: 6 }}>{formatMoney(amountPaid)} of {formatMoney(totalAmt)} {isLender ? 'repaid' : 'paid back'}</div>
                       </div>
@@ -1105,7 +1105,7 @@ export default function Home() {
                       <div style={{ fontSize: 10, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 4 }}>Paid out</div>
                       <div style={{ fontSize: '1.1rem', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(monthlyPaidOut)}</div>
                       <div style={{ width: '100%', height: 4, borderRadius: 2, marginTop: 10, background: 'rgba(126,192,234,0.2)' }}>
-                        <div style={{ height: '100%', borderRadius: 2, background: '#7EC0EA', width: `${monthlyExpectedPay > 0 ? Math.min((monthlyPaidOut / monthlyExpectedPay) * 100, 100) : 0}%` }} />
+                        <div style={{ height: '100%', borderRadius: 2, background: '#F5A96A', width: `${monthlyExpectedPay > 0 ? Math.min((monthlyPaidOut / monthlyExpectedPay) * 100, 100) : 0}%` }} />
                       </div>
                       <div style={{ fontSize: 10, color: '#9B9A98', marginTop: 5 }}>of {formatMoney(monthlyExpectedPay)} expected</div>
                     </div>

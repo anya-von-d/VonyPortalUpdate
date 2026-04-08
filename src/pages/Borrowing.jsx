@@ -890,7 +890,7 @@ export default function Borrowing() {
 
         {/* Page content */}
         <div className="dashboard-content-wrap" style={{ maxWidth: 1080, margin: '0 auto', padding: '20px 40px 0', position: 'relative', zIndex: 1 }}>
-          <div className="dashboard-grey-box" style={{ background: '#EDECEA', borderRadius: 18, padding: 20 }}>
+          <div className="dashboard-grey-box" style={{ background: '#E5E2DF', borderRadius: 18, padding: 20 }}>
 
           {/* Tab bar — centered */}
           <div className="mobile-tab-bar" style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>

@@ -524,7 +524,7 @@ export default function YourLoans() {
     const otherPartyUsername = isLending ? nextPaymentBorrowerUsername : nextPaymentLenderUsername;
     const rankingFilter = isLending ? rankingFilterLending : rankingFilterBorrowing;
     const setRankingFilter = isLending ? setRankingFilterLending : setRankingFilterBorrowing;
-    const accentColor = isLending ? '#54A6CF' : '#7EC0EA';
+    const accentColor = isLending ? '#54A6CF' : '#F5A96A';
     const accentLight = isLending ? 'rgba(84,166,207,0.10)' : 'rgba(126,192,234,0.10)';
     const accentMid = isLending ? 'rgba(84,166,207,0.18)' : 'rgba(126,192,234,0.18)';
 
@@ -1336,7 +1336,7 @@ export default function YourLoans() {
 
             {/* Page content */}
             <div className="dashboard-content-wrap" style={{ maxWidth: 1080, margin: '0 auto', padding: '20px 40px 0', position: 'relative', zIndex: 1 }}>
-              <div className="dashboard-grey-box" style={{ background: '#EDECEA', borderRadius: 18, padding: 20 }}>
+              <div className="dashboard-grey-box" style={{ background: '#E5E2DF', borderRadius: 18, padding: 20 }}>
               {activeTab !== 'details' && (() => {
                 const isLendingTab = activeTab === 'lending';
                 const allOverdue = isLendingTab

@@ -55,7 +55,7 @@ function MiniCalendar({ today, paymentDates }) {
             }}>
               {format(day, 'd')}
               {hasPmt && !isToday && (
-                <div style={{ width: 4, height: 4, borderRadius: '50%', background: pmtType === 'incoming' ? '#54A6CF' : '#7EC0EA', margin: '2px auto 0' }} />
+                <div style={{ width: 4, height: 4, borderRadius: '50%', background: pmtType === 'incoming' ? '#54A6CF' : '#F5A96A', margin: '2px auto 0' }} />
               )}
             </div>
           );
@@ -68,7 +68,7 @@ function MiniCalendar({ today, paymentDates }) {
           <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#54A6CF' }} /> Owed to you
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: '#787776' }}>
-          <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#7EC0EA' }} /> You owe
+          <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#F5A96A' }} /> You owe
         </div>
       </div>
     </div>
@@ -358,7 +358,7 @@ export default function Upcoming() {
 
       {/* ── Content ── */}
       <div className="dashboard-content-wrap" style={{ maxWidth: 1080, margin: '0 auto', padding: '20px 40px 0', position: 'relative', zIndex: 1 }}>
-        <div className="dashboard-grey-box" style={{ background: '#EDECEA', borderRadius: 18, padding: 20 }}>
+        <div className="dashboard-grey-box" style={{ background: '#E5E2DF', borderRadius: 18, padding: 20 }}>
 
         {activeTab === 'summary' ? (
           /* ════════ SUMMARY VIEW ════════ */
@@ -507,7 +507,7 @@ export default function Upcoming() {
                             </span>
                           )}
                           {dayEvents.filter(e => !e.isLender).length > 0 && (
-                            <span style={{ fontSize: 11, fontWeight: 600, color: '#7EC0EA' }}>
+                            <span style={{ fontSize: 11, fontWeight: 600, color: '#F5A96A' }}>
                               {formatMoney(dayEvents.filter(e => !e.isLender).reduce((s, e) => s + e.amount, 0))}
                             </span>
                           )}
@@ -520,7 +520,7 @@ export default function Upcoming() {
                             <div key={j} style={{
                               width: 24, height: 24, borderRadius: '50%', fontSize: 10, fontWeight: 600,
                               display: 'flex', alignItems: 'center', justifyContent: 'center',
-                              background: ev.isLender ? '#54A6CF' : '#7EC0EA', color: 'white',
+                              background: ev.isLender ? '#54A6CF' : '#F5A96A', color: 'white',
                             }}>
                               {ev.initial}
                             </div>
@@ -545,7 +545,7 @@ export default function Upcoming() {
                   <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#54A6CF' }} /> Owed to you
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: '#787776' }}>
-                  <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#7EC0EA' }} /> You owe
+                  <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#F5A96A' }} /> You owe
                 </div>
               </div>
             </div>

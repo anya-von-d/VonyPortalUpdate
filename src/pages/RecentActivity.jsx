@@ -717,7 +717,7 @@ export default function RecentActivityPage() {
 
   const getIconStyle = (IconComp) => {
     if (IconComp === Send)           return { bg: 'rgba(84,166,207,0.14)',   color: '#54A6CF' };
-    if (IconComp === ArrowDownRight) return { bg: 'rgba(126,192,234,0.16)',  color: '#7EC0EA' };
+    if (IconComp === ArrowDownRight) return { bg: 'rgba(126,192,234,0.16)',  color: '#F5A96A' };
     if (IconComp === ArrowUpRight)   return { bg: 'rgba(139,92,246,0.13)',   color: '#8B5CF6' };
     if (IconComp === Check)          return { bg: 'rgba(34,197,94,0.13)',    color: '#22C55E' };
     if (IconComp === X)              return { bg: 'rgba(232,114,110,0.14)',  color: '#E8726E' };
@@ -785,7 +785,7 @@ export default function RecentActivityPage() {
 
         {/* Page content */}
         <div className="dashboard-content-wrap" style={{ maxWidth: 1080, margin: '0 auto', padding: '20px 40px 0', position: 'relative', zIndex: 1 }}>
-          <div className="dashboard-grey-box" style={{ background: '#EDECEA', borderRadius: 18, padding: 20 }}>
+          <div className="dashboard-grey-box" style={{ background: '#E5E2DF', borderRadius: 18, padding: 20 }}>
 
           {/* ── Search Bar + Sort + Export ───────────────────────── */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
