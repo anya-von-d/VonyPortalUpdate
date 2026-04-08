@@ -278,7 +278,7 @@ export default function ComingSoon() {
           </div>
 
         {/* Footer */}
-        <div style={{ padding: '20px 28px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ padding: '12px 28px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <span style={{ fontSize: 11, color: '#787776' }}>2026 Vony, Inc. All rights reserved.</span>
           <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
             <span style={{ fontSize: 11, color: '#787776' }}>Terms of Service</span>

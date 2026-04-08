@@ -261,7 +261,7 @@ export default function Friends() {
     return (
       <div className="home-with-sidebar" style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingTop: 0, background: 'transparent' }}>
         <DashboardSidebar activePage="Friends" user={user} />
-        <div style={{ maxWidth: 1080, margin: '0 auto', padding: '20px 40px 64px', position: 'relative', zIndex: 1 }}>
+        <div style={{ maxWidth: 1080, margin: '0 auto', padding: '20px 40px 0', position: 'relative', zIndex: 1 }}>
           <PageCard title="Friends">
             <div style={{ padding: 40, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
               <div style={{ width: 32, height: 32, border: '2px solid #82F0B9', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite', marginBottom: 12 }} />
@@ -292,7 +292,7 @@ export default function Friends() {
         </h1>
       </div>
 
-      <div style={{ maxWidth: 1080, margin: '0 auto', padding: '20px 40px 64px', position: 'relative', zIndex: 1 }}>
+      <div style={{ maxWidth: 1080, margin: '0 auto', padding: '20px 40px 0', position: 'relative', zIndex: 1 }}>
         <div style={{ background: '#EDECEA', borderRadius: 18, padding: 20 }}>
 
         {/* Two-Column Layout: Friends Left, Search + Requests Right */}
@@ -595,7 +595,7 @@ export default function Friends() {
         </div>
 
         {/* Footer */}
-        <div style={{ padding: '20px 28px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ padding: '12px 28px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <span style={{ fontSize: 11, color: '#787776' }}>2026 Vony, Inc. All rights reserved.</span>
           <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
             <span style={{ fontSize: 11, color: '#787776' }}>Terms of Service</span>
