@@ -788,15 +788,15 @@ export default function Home() {
             <span style={{ fontStyle: 'italic' }}>{greeting}</span>
           )}
         </h1>
-        <div style={{ display: 'inline-flex', gap: 2, background: 'rgba(0,0,0,0.12)', borderRadius: 10, padding: 3, marginTop: 14, position: 'relative', zIndex: 1 }}>
-          <Link to={createPageUrl("Lending") + "?tab=create"} style={{
-            padding: '6px 18px', borderRadius: 8, fontSize: 13, fontFamily: "'DM Sans', sans-serif",
-            fontWeight: 500, color: 'rgba(255,255,255,0.85)', background: 'transparent',
+        <div style={{ display: 'inline-flex', gap: 8, marginTop: 14, position: 'relative', zIndex: 1 }}>
+          <Link to={createPageUrl("CreateOffer")} style={{
+            padding: '6px 18px', borderRadius: 20, fontSize: 13, fontFamily: "'DM Sans', sans-serif",
+            fontWeight: 500, color: '#1A1918', background: '#FDF9F7',
             textDecoration: 'none', whiteSpace: 'nowrap',
           }}>Create Loan</Link>
           <Link to={createPageUrl("RecordPayment")} style={{
-            padding: '6px 18px', borderRadius: 8, fontSize: 13, fontFamily: "'DM Sans', sans-serif",
-            fontWeight: 500, color: 'rgba(255,255,255,0.85)', background: 'transparent',
+            padding: '6px 18px', borderRadius: 20, fontSize: 13, fontFamily: "'DM Sans', sans-serif",
+            fontWeight: 500, color: '#1A1918', background: '#FDF9F7',
             textDecoration: 'none', whiteSpace: 'nowrap',
           }}>Record Payment</Link>
         </div>
