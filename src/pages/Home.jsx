@@ -732,13 +732,14 @@ export default function Home() {
   const alertTotal = overdueReminders.length;
   overdueCountRef.current = alertTotal;
 
-  const SHADOW = '0px 50px 40px rgba(0,0,0,0.01), 0px 50px 40px rgba(0,0,0,0.02), 0px 20px 40px rgba(0,0,0,0.05), 0px 3px 10px rgba(0,0,0,0.08)';
+  const SHADOW = '0px 50px 40px rgba(0,0,0,0.02), 0px 50px 40px rgba(0,0,0,0.04), 0px 20px 40px rgba(0,0,0,0.08), 0px 3px 10px rgba(0,0,0,0.12)';
   const DashboardCard = ({ title, headerRight, children, style, highlight }) => {
     const outerBg = highlight ? '#54A6CF' : '#F4F4F5';
+    const titleColor = highlight ? 'rgba(255,255,255,0.85)' : '#9B9A98';
     return (
       <div style={{ background: outerBg, borderRadius: 14, overflow: 'hidden', boxShadow: SHADOW, ...style }}>
         <div style={{ padding: '6px 14px 5px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: 10, fontWeight: 700, color: '#5C5B5A', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>{title}</span>
+          <span style={{ fontSize: 10, fontWeight: 700, color: titleColor, letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>{title}</span>
           {headerRight && <div style={{ flexShrink: 0 }}>{headerRight}</div>}
         </div>
         <div style={{ background: '#ffffff', margin: '0 5px 5px', borderRadius: 10, overflow: 'hidden' }}>
@@ -1127,9 +1128,6 @@ export default function Home() {
 
           </div>
         </div>
-
-        {/* ── Carousel ── */}
-        <LoanCarousel notifications={carouselNotifications} />
 
       {/* ── Footer ── */}
       <div style={{ padding: '20px 28px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
