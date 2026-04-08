@@ -263,22 +263,45 @@ export default function Home() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Bar chart viewport tracking — native IntersectionObserver (reliable across framer-motion versions)
+  // Bar chart viewport tracking — uses IntersectionObserver with a requestAnimationFrame
+  // delay so the browser paints height:0 / width:0 before transitioning to the target value.
   useEffect(() => {
     const el = loansChartRef.current;
     if (!el) return;
-    const obs = new IntersectionObserver(([e]) => setLoansInView(e.isIntersecting), { threshold: 0.1 });
+    let rafId;
+    const obs = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) {
+        // Delay one frame so the browser paints the 0-height state first,
+        // allowing the CSS transition to animate from 0 → target.
+        rafId = requestAnimationFrame(() => {
+          rafId = requestAnimationFrame(() => setLoansInView(true));
+        });
+      } else {
+        cancelAnimationFrame(rafId);
+        setLoansInView(false);
+      }
+    }, { threshold: 0.1 });
     obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
+    return () => { obs.disconnect(); cancelAnimationFrame(rafId); };
+  }, [dataLoaded]);
 
   useEffect(() => {
     const el = activeLoansRef.current;
     if (!el) return;
-    const obs = new IntersectionObserver(([e]) => setActiveLoansInView(e.isIntersecting), { threshold: 0.1 });
+    let rafId;
+    const obs = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) {
+        rafId = requestAnimationFrame(() => {
+          rafId = requestAnimationFrame(() => setActiveLoansInView(true));
+        });
+      } else {
+        cancelAnimationFrame(rafId);
+        setActiveLoansInView(false);
+      }
+    }, { threshold: 0.1 });
     obs.observe(el);
-    return () => obs.disconnect();
-  }, [loans]); // re-run when loan data loads so we observe the newly rendered element
+    return () => { obs.disconnect(); cancelAnimationFrame(rafId); };
+  }, [dataLoaded]);
 
   // Alert carousel auto-advance timer
   useEffect(() => {
