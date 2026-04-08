@@ -120,8 +120,8 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
             {/* Nav links */}
             <nav style={{ display: 'flex', alignItems: 'center', gap: 1, flex: 1, justifyContent: 'center' }}>
               <Link to="/" style={linkStyle('Dashboard')}>Home</Link>
-              <Link to={createPageUrl("CreateOffer")} style={linkStyle('CreateOffer')}>Create</Link>
-              <Link to={createPageUrl("RecordPayment")} style={linkStyle('RecordPayment')}>Record</Link>
+              <Link to={createPageUrl("CreateOffer")} style={linkStyle('CreateOffer')}>Create Loan</Link>
+              <Link to={createPageUrl("RecordPayment")} style={linkStyle('RecordPayment')}>Record Payment</Link>
               <Link to={createPageUrl("Upcoming")} style={linkStyle('Upcoming')}>Upcoming</Link>
               <Link to={createPageUrl("YourLoans")} style={linkStyle('YourLoans', 'Borrowing', 'Lending')}>My Loans</Link>
               <Link to={createPageUrl("Friends")} style={linkStyle('Friends')}>Friends</Link>
@@ -156,34 +156,28 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
                   }}>
                     <Link to={createPageUrl("RecentActivity")} onClick={() => setMoreOpen(false)}
                       style={{ ...dropdownItemStyle, fontWeight: active('RecentActivity') ? 600 : 400 }}>
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
                       Activity
                     </Link>
                     <Link to={createPageUrl("LoanAgreements")} onClick={() => setMoreOpen(false)}
                       style={{ ...dropdownItemStyle, fontWeight: active('LoanAgreements') ? 600 : 400 }}>
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                       Documents
                     </Link>
 
                     <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', margin: '4px 4px' }} />
 
                     <button style={{ ...dropdownItemStyle, color: '#9B9A98', cursor: 'default' }}>
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
                       Learn <span style={comingSoonBadge}>Soon</span>
                     </button>
                     <button style={{ ...dropdownItemStyle, color: '#9B9A98', cursor: 'default' }}>
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                       Loan Help <span style={comingSoonBadge}>Soon</span>
                     </button>
 
                     <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', margin: '4px 4px' }} />
 
                     <button style={{ ...dropdownItemStyle, color: '#787776', cursor: 'default' }}>
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                       Help & Support
                     </button>
                     <button onClick={() => { setMoreOpen(false); logout(); }} style={{ ...dropdownItemStyle, color: '#E8726E' }}>
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
                       Log Out
                     </button>
                   </div>
@@ -224,7 +218,7 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
                     <img src={user.profile_picture_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   </div>
                 ) : (
-                  <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg, #6587F9, #7C3AED)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, border: '2px solid rgba(255,255,255,0.8)', boxShadow: '0 0 0 1.5px rgba(0,0,0,0.08)' }}>
+                  <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#54A6CF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, border: '2px solid rgba(255,255,255,0.8)', boxShadow: '0 0 0 1.5px rgba(0,0,0,0.08)' }}>
                     <span style={{ fontSize: 12, fontWeight: 700, color: 'white', fontFamily: "'DM Sans', sans-serif" }}>
                       {(user?.full_name || 'U').charAt(0).toUpperCase()}
                     </span>

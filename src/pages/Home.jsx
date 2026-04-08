@@ -757,14 +757,14 @@ export default function Home() {
       {/* ── Hero banner ── */}
       <div style={{
         margin: '8px 10px 0',
-        height: 220,
+        height: 168,
         background: '#54A6CF',
         borderRadius: 18,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'flex-start',
-        paddingTop: 106,
+        justifyContent: 'flex-end',
+        paddingBottom: 24,
         overflow: 'hidden',
         position: 'relative',
         boxShadow: '0px 50px 40px rgba(0,0,0,0.01), 0px 50px 40px rgba(0,0,0,0.02), 0px 20px 40px rgba(0,0,0,0.05), 0px 3px 10px rgba(0,0,0,0.08)',
@@ -788,18 +788,6 @@ export default function Home() {
             <span style={{ fontStyle: 'italic' }}>{greeting}</span>
           )}
         </h1>
-        <div style={{ display: 'inline-flex', gap: 8, marginTop: 14, position: 'relative', zIndex: 1 }}>
-          <Link to={createPageUrl("CreateOffer")} style={{
-            padding: '6px 18px', borderRadius: 20, fontSize: 13, fontFamily: "'DM Sans', sans-serif",
-            fontWeight: 500, color: '#1A1918', background: '#FDF9F7',
-            textDecoration: 'none', whiteSpace: 'nowrap',
-          }}>Create Loan</Link>
-          <Link to={createPageUrl("RecordPayment")} style={{
-            padding: '6px 18px', borderRadius: 20, fontSize: 13, fontFamily: "'DM Sans', sans-serif",
-            fontWeight: 500, color: '#1A1918', background: '#FDF9F7',
-            textDecoration: 'none', whiteSpace: 'nowrap',
-          }}>Record Payment</Link>
-        </div>
       </div>
 
       {/* ── Main page content ── */}
