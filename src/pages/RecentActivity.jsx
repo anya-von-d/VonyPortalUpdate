@@ -891,7 +891,7 @@ export default function RecentActivityPage() {
                           }}
                         >
                           {/* Icon bubble */}
-                          <div style={{ width: 28, height: 28, borderRadius: '50%', background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                          <div style={{ width: 26, height: 26, borderRadius: 7, background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                             <Icon size={12} style={{ color: iconColor }} />
                           </div>
                           {/* Mobile layout — shown on small screens */}
