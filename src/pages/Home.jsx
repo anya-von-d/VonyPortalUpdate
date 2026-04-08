@@ -246,8 +246,8 @@ export default function Home() {
   const overdueCountRef = useRef(0);
   const loansChartRef = useRef(null);
   const activeLoansRef = useRef(null);
-  const [loansInView, setLoansInView] = useState(false);
-  const [activeLoansInView, setActiveLoansInView] = useState(false);
+  const [loansAnimKey, setLoansAnimKey] = useState(0);
+  const [activeAnimKey, setActiveAnimKey] = useState(0);
 
   // Scroll state for top bar behavior
   const [topBarHidden, setTopBarHidden] = useState(false);
@@ -263,44 +263,27 @@ export default function Home() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Bar chart viewport tracking — uses IntersectionObserver with a requestAnimationFrame
-  // delay so the browser paints height:0 / width:0 before transitioning to the target value.
+  // Bar chart viewport tracking — increment a key counter each time the chart
+  // enters the viewport. Changing the key forces React to remount the bar elements,
+  // replaying their CSS @keyframes animation (barGrowUp / barGrowRight).
   useEffect(() => {
     const el = loansChartRef.current;
     if (!el) return;
-    let rafId;
     const obs = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting) {
-        // Delay one frame so the browser paints the 0-height state first,
-        // allowing the CSS transition to animate from 0 → target.
-        rafId = requestAnimationFrame(() => {
-          rafId = requestAnimationFrame(() => setLoansInView(true));
-        });
-      } else {
-        cancelAnimationFrame(rafId);
-        setLoansInView(false);
-      }
+      if (e.isIntersecting) setLoansAnimKey(k => k + 1);
     }, { threshold: 0.1 });
     obs.observe(el);
-    return () => { obs.disconnect(); cancelAnimationFrame(rafId); };
+    return () => obs.disconnect();
   }, [dataLoaded]);
 
   useEffect(() => {
     const el = activeLoansRef.current;
     if (!el) return;
-    let rafId;
     const obs = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting) {
-        rafId = requestAnimationFrame(() => {
-          rafId = requestAnimationFrame(() => setActiveLoansInView(true));
-        });
-      } else {
-        cancelAnimationFrame(rafId);
-        setActiveLoansInView(false);
-      }
+      if (e.isIntersecting) setActiveAnimKey(k => k + 1);
     }, { threshold: 0.1 });
     obs.observe(el);
-    return () => { obs.disconnect(); cancelAnimationFrame(rafId); };
+    return () => obs.disconnect();
   }, [dataLoaded]);
 
   // Alert carousel auto-advance timer
@@ -740,7 +723,7 @@ export default function Home() {
 
   // Card wrapper: cream outer box with title, white inner content
   const DashboardCard = ({ title, headerRight, children, style }) => (
-    <div style={{ background: '#9AD3EF', borderRadius: 12, overflow: 'hidden', ...style }}>
+    <div style={{ background: '#B0DCF4', borderRadius: 12, overflow: 'hidden', ...style }}>
       <div style={{ padding: '9px 14px 8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>{title}</span>
         {headerRight && <div style={{ flexShrink: 0 }}>{headerRight}</div>}
@@ -963,8 +946,8 @@ export default function Home() {
                               return (
                                 <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                                   <div style={{ display: 'flex', alignItems: 'flex-end', gap: 4, height: chartHeight }}>
-                                    <div style={{ width: 14, borderRadius: '4px 4px 0 0', background: '#7EC0EA', opacity: d.isFuture ? 0.45 : 1, height: loansInView ? Math.max(owedH, owedH > 0 ? 2 : 0) : 0, transition: `height 0.5s ease-out ${i * 0.05}s` }} />
-                                    <div style={{ width: 14, borderRadius: '4px 4px 0 0', background: '#B0F1FF', opacity: d.isFuture ? 0.45 : 1, height: loansInView ? Math.max(oweH, oweH > 0 ? 2 : 0) : 0, transition: `height 0.5s ease-out ${i * 0.05 + 0.04}s` }} />
+                                    <div key={`owed-${i}-${loansAnimKey}`} style={{ width: 14, borderRadius: '4px 4px 0 0', background: '#7EC0EA', opacity: d.isFuture ? 0.45 : 1, height: Math.max(owedH, owedH > 0 ? 2 : 0), transformOrigin: 'bottom', animation: `barGrowUp 0.5s ease-out ${i * 0.05}s both` }} />
+                                    <div key={`owe-${i}-${loansAnimKey}`} style={{ width: 14, borderRadius: '4px 4px 0 0', background: '#B0F1FF', opacity: d.isFuture ? 0.45 : 1, height: Math.max(oweH, oweH > 0 ? 2 : 0), transformOrigin: 'bottom', animation: `barGrowUp 0.5s ease-out ${i * 0.05 + 0.04}s both` }} />
                                   </div>
                                 </div>
                               );
@@ -1028,7 +1011,7 @@ export default function Home() {
                           <div style={{ fontSize: 12, color: '#787776', flexShrink: 0, marginLeft: 8 }}>{pct}%</div>
                         </div>
                         <div style={{ width: '100%', height: 8, borderRadius: 4, background: isLender ? 'rgba(126,192,234,0.18)' : 'rgba(176,241,255,0.25)', overflow: 'hidden' }}>
-                          <div style={{ height: '100%', borderRadius: 4, background: isLender ? '#7EC0EA' : '#B0F1FF', width: activeLoansInView ? `${pct}%` : '0%', transition: `width 0.8s ease-out ${idx * 0.1}s` }} />
+                          <div key={`active-${idx}-${activeAnimKey}`} style={{ height: '100%', borderRadius: 4, background: isLender ? '#7EC0EA' : '#B0F1FF', width: `${pct}%`, transformOrigin: 'left', animation: `barGrowRight 0.8s ease-out ${idx * 0.1}s both` }} />
                         </div>
                         <div style={{ fontSize: 11, color: '#787776', marginTop: 6 }}>{formatMoney(amountPaid)} of {formatMoney(totalAmt)} {isLender ? 'repaid' : 'paid back'}</div>
                       </div>
@@ -1047,9 +1030,9 @@ export default function Home() {
               {/* Owed to You */}
               <CardEntrance delay={0.1}>
               <DashboardCard title="Owed to You">
-                <div style={{ padding: '12px 16px', display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: 54 }}>
+                <div style={{ padding: '16px 16px 20px', position: 'relative', display: 'flex', alignItems: 'center', minHeight: 48 }}>
                   <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#7EC0EA', letterSpacing: '-0.03em', lineHeight: 1, fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(lentRemaining)}</div>
-                  <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 6, textAlign: 'right' }}>between {lentLoans.length} loan{lentLoans.length !== 1 ? 's' : ''}</div>
+                  <div style={{ position: 'absolute', bottom: 6, right: 16, fontSize: 11, color: '#9B9A98' }}>between {lentLoans.length} loan{lentLoans.length !== 1 ? 's' : ''}</div>
                 </div>
               </DashboardCard>
               </CardEntrance>
@@ -1057,9 +1040,9 @@ export default function Home() {
               {/* You Owe */}
               <CardEntrance delay={0.13}>
               <DashboardCard title="You Owe">
-                <div style={{ padding: '12px 16px', display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: 54 }}>
+                <div style={{ padding: '16px 16px 20px', position: 'relative', display: 'flex', alignItems: 'center', minHeight: 48 }}>
                   <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#1A1918', letterSpacing: '-0.03em', lineHeight: 1, fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(borrowedRemaining)}</div>
-                  <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 6, textAlign: 'right' }}>between {borrowedLoans.length} loan{borrowedLoans.length !== 1 ? 's' : ''}</div>
+                  <div style={{ position: 'absolute', bottom: 6, right: 16, fontSize: 11, color: '#9B9A98' }}>between {borrowedLoans.length} loan{borrowedLoans.length !== 1 ? 's' : ''}</div>
                 </div>
               </DashboardCard>
               </CardEntrance>

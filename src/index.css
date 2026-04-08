@@ -308,6 +308,17 @@ input[type="date"] {
   animation: twinkle 3.2s ease-in-out 1.5s infinite alternate;
 }
 
+/* Dashboard bar chart animations */
+@keyframes barGrowUp {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+
+@keyframes barGrowRight {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
 /* Borrowing page responsive */
 @media (max-width: 900px) {
   .borrowing-grid {
