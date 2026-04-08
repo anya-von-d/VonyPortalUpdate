@@ -884,7 +884,7 @@ export default function Borrowing() {
               ))}
             </svg>
             <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 38, fontWeight: 600, color: '#1A1918', margin: 0, letterSpacing: '-0.01em', lineHeight: 1, textAlign: 'center', position: 'relative', zIndex: 1 }}>
-              <span style={{ fontStyle: 'italic' }}>Your Borrowing</span>
+              <span style={{ fontStyle: 'normal' }}>Your Borrowing</span>
             </h1>
           </div>
 

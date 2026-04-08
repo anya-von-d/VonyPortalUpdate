@@ -1400,10 +1400,10 @@ export default function Lending({ initialTab }) {
 
   const SHADOW = '0px 50px 40px rgba(0,0,0,0.02), 0px 50px 40px rgba(0,0,0,0.04), 0px 20px 40px rgba(0,0,0,0.08), 0px 3px 10px rgba(0,0,0,0.12)';
 
-  const PageCard = ({ title, headerRight, children, style }) => (
-    <div style={{ background: '#F4F4F5', borderRadius: 14, overflow: 'hidden', boxShadow: SHADOW, ...style }}>
+  const PageCard = ({ title, headerRight, children, style, highlight }) => (
+    <div style={{ background: highlight ? '#54A6CF' : '#F4F4F5', borderRadius: 14, overflow: 'hidden', boxShadow: SHADOW, ...style }}>
       <div style={{ padding: '6px 14px 5px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>{title}</span>
+        <span style={{ fontSize: 10, fontWeight: 700, color: highlight ? 'rgba(255,255,255,0.85)' : '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>{title}</span>
         {headerRight && <div style={{ flexShrink: 0 }}>{headerRight}</div>}
       </div>
       <div style={{ background: '#ffffff', margin: '0 5px 5px', borderRadius: 10, overflow: 'hidden' }}>
@@ -1515,7 +1515,7 @@ export default function Lending({ initialTab }) {
             ))}
           </svg>
           <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 38, fontWeight: 600, color: '#1A1918', margin: 0, letterSpacing: '-0.01em', lineHeight: 1, textAlign: 'center', position: 'relative', zIndex: 1 }}>
-            <span style={{ fontStyle: 'italic' }}>Your Lending</span>
+            <span style={{ fontStyle: 'normal' }}>{initialTab === 'create' ? 'Create Loan' : 'Your Lending'}</span>
           </h1>
         </div>
 
@@ -2116,7 +2116,7 @@ export default function Lending({ initialTab }) {
 
                             {/* Repeating Options */}
                             {formData.is_repeating && (
-                              <div className="px-5 pt-5 pb-1 bg-[#82F0B9]/5 rounded-xl overflow-hidden">
+                              <div className="px-5 pt-5 pb-1 rounded-xl overflow-hidden" style={{ background: '#DBEDFE' }}>
                                 <p className="text-sm text-slate-700 leading-[4.2] [&_input]:inline-flex [&_input]:align-baseline [&_input]:my-[2px] [&_input[type=number]]:appearance-none [&_input[type=number]]:[-moz-appearance:textfield] [&_input[type=number]::-webkit-outer-spin-button]:appearance-none [&_input[type=number]::-webkit-inner-spin-button]:appearance-none [&_.inline-flex]:my-[2px]">
                                   Payments of ${' '}
                                   <Input
@@ -2236,7 +2236,7 @@ export default function Lending({ initialTab }) {
 
                         {/* Scheduled loan fields - Sentence format */}
                         {loanType === 'scheduled' && (
-                          <div className="px-5 pt-5 pb-1 bg-[#82F0B9]/5 rounded-xl overflow-hidden">
+                          <div className="px-5 pt-5 pb-1 rounded-xl overflow-hidden" style={{ background: '#DBEDFE' }}>
                             <p className="text-sm text-slate-700 leading-[4.2] [&_input]:inline-flex [&_input]:align-baseline [&_input]:my-[2px] [&_input[type=number]]:appearance-none [&_input[type=number]]:[-moz-appearance:textfield] [&_input[type=number]::-webkit-outer-spin-button]:appearance-none [&_input[type=number]::-webkit-inner-spin-button]:appearance-none [&_.inline-flex]:my-[2px] [&:last-child]:mb-0">
                               {isUserBorrower ? (
                                 <>
@@ -2253,14 +2253,14 @@ export default function Lending({ initialTab }) {
                                     style={{ MozAppearance: 'textfield' }}
                                   />{' '}
                                   from{' '}
-                                  <span className="text-[#82F0B9] font-medium">
+                                  <span className="font-medium" style={{ color: '#54A6CF' }}>
                                     {formData.lender_username ? formData.lender_username : 'the lender'}
                                   </span>{' '}
                                 </>
                               ) : (
                                 <>
                                   The lender agrees to lend{' '}
-                                  <span className="text-[#82F0B9] font-medium">
+                                  <span className="font-medium" style={{ color: '#54A6CF' }}>
                                     {formData.borrower_username ? formData.borrower_username : 'the borrower'}
                                   </span>{' '}
                                   ${' '}
@@ -2333,7 +2333,7 @@ export default function Lending({ initialTab }) {
                                 </SelectContent>
                               </Select>{' '}
                               payments of{' '}
-                              <span className="font-bold text-[#82F0B9]">
+                              <span className="font-bold" style={{ color: '#54A6CF' }}>
                                 ${details.monthlyPayment.toFixed(2)}
                               </span>
                               . Payments will be due{' '}
@@ -2415,7 +2415,7 @@ export default function Lending({ initialTab }) {
                                 return (
                                   <>
                                     , with the first of the{' '}
-                                    <span className="font-bold text-[#82F0B9]">{numPayments || '_'}</span>{' '}
+                                    <span className="font-bold" style={{ color: '#54A6CF' }}>{numPayments || '_'}</span>{' '}
                                     payments due on{' '}
                                     <Input
                                       type="date"
@@ -2425,7 +2425,7 @@ export default function Lending({ initialTab }) {
                                       className="w-auto h-8 px-3 bg-white/80 inline-flex border-0 shadow-none rounded-md"
                                     />{' '}
                                     and the last payment due on{' '}
-                                    <span className="font-bold text-[#82F0B9]">
+                                    <span className="font-bold" style={{ color: '#54A6CF' }}>
                                       {lastPaymentDate ? format(lastPaymentDate, 'MMM d, yyyy') : '_'}
                                     </span>
                                     .
@@ -2451,8 +2451,8 @@ export default function Lending({ initialTab }) {
                           disabled={isSubmitting || !formData.lender_username || !formData.borrower_username || !formData.amount || !formData.purpose || (loanType === 'scheduled' && (!formData.interest_rate || !formData.repayment_period || !formData.lender_send_funds_date || !formData.first_payment_date)) || (loanType === 'flexible' && formData.is_repeating && (!formData.repeating_start_date || !formData.repeating_num_payments))}
                           className={`w-full py-3 text-base font-semibold rounded-xl border-0 mt-4 transition-all duration-200 ${
                             isSubmitting || !formData.lender_username || !formData.borrower_username || !formData.amount || !formData.purpose || (loanType === 'scheduled' && (!formData.interest_rate || !formData.repayment_period || !formData.lender_send_funds_date || !formData.first_payment_date)) || (loanType === 'flexible' && formData.is_repeating && (!formData.repeating_start_date || !formData.repeating_num_payments))
-                              ? 'bg-[#82F0B9]/40 text-white cursor-not-allowed'
-                              : 'bg-[#82F0B9] text-white hover:bg-[#5a7ae0]'
+                              ? 'bg-[#54A6CF]/40 text-white cursor-not-allowed'
+                              : 'bg-[#54A6CF] text-white hover:bg-[#5a7ae0]'
                           }`}
                         >
                           <Send className="w-4 h-4 mr-2" />
@@ -2521,13 +2521,7 @@ export default function Lending({ initialTab }) {
 
                   {/* Borrower Payment Box - Only for Loan type, always visible */}
                   {loanType === 'scheduled' && (
-                    <PageCard title={
-                      isUserBorrower ? 'Your payment' :
-                      formData.borrower_username ? (() => {
-                        const selectedUser = users.find(u => u.username === formData.borrower_username);
-                        return `${selectedUser?.full_name || formData.borrower_username}'s payment`;
-                      })() : 'Borrower payment'
-                    }>
+                    <PageCard title="Borrower Will Pay">
                       <div style={{ padding: '10px 16px 12px' }}>
                         <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 8 }}>
                           <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', lineHeight: 1 }}>
@@ -2542,7 +2536,7 @@ export default function Lending({ initialTab }) {
                   )}
 
                   {/* Loan Summary - Always Last */}
-                  <PageCard title="Loan Summary" style={{ position: 'sticky', top: 6 }}>
+                  <PageCard title="Loan Summary" highlight style={{ position: 'sticky', top: 6 }}>
                   <div style={{ padding: '12px 16px 16px' }}>
                     <div className="space-y-3">
                       <div className="pb-2 border-b border-[#82F0B9]/20 flex items-baseline gap-1">

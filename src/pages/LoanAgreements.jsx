@@ -1045,7 +1045,7 @@ export default function LoanAgreements() {
             ))}
           </svg>
           <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 38, fontWeight: 600, color: '#1A1918', margin: 0, letterSpacing: '-0.01em', lineHeight: 1, textAlign: 'center', position: 'relative', zIndex: 1 }}>
-            <span style={{ fontStyle: 'italic' }}>Loan Agreements</span>
+            <span style={{ fontStyle: 'normal' }}>Loan Agreements</span>
           </h1>
         </div>
 

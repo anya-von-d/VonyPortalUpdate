@@ -288,7 +288,7 @@ export default function Friends() {
           ))}
         </svg>
         <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 38, fontWeight: 600, color: '#1A1918', margin: 0, letterSpacing: '-0.01em', lineHeight: 1, textAlign: 'center', position: 'relative', zIndex: 1 }}>
-          <span style={{ fontStyle: 'italic' }}>Friends</span>
+          <span style={{ fontStyle: 'normal' }}>Friends</span>
         </h1>
       </div>
 
