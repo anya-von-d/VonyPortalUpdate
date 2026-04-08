@@ -174,9 +174,9 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
 
                     <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', margin: '4px 4px' }} />
 
-                    <button style={{ ...dropdownItemStyle, color: '#787776', cursor: 'default' }}>
+                    <a href="https://www.vony-lending.com/help" target="_blank" rel="noopener noreferrer" style={{ ...dropdownItemStyle, color: '#787776' }}>
                       Help & Support
-                    </button>
+                    </a>
                     <button onClick={() => { setMoreOpen(false); logout(); }} style={{ ...dropdownItemStyle, color: '#E8726E' }}>
                       Log Out
                     </button>
