@@ -752,7 +752,7 @@ export default function Home() {
     }
     return (
       <div style={{ background: '#D6CFC8', borderRadius: 14, overflow: 'hidden', boxShadow: SHADOW, ...style }}>
-        <div style={{ background: 'white', margin: '5px 5px 5px', borderRadius: 10, overflow: 'hidden' }}>
+        <div style={{ background: 'white', margin: 0, borderRadius: 14, overflow: 'hidden' }}>
           <div style={{ padding: '9px 14px 8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>{title}</span>
             {headerRight && <div style={{ flexShrink: 0 }}>{headerRight}</div>}
@@ -784,7 +784,7 @@ export default function Home() {
         boxShadow: '0px 50px 40px rgba(0,0,0,0.01), 0px 50px 40px rgba(0,0,0,0.02), 0px 20px 40px rgba(0,0,0,0.05), 0px 3px 10px rgba(0,0,0,0.08)',
       }}>
         {/* Paper texture overlay */}
-        <img src="/images/paper-texture.png" aria-hidden="true" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.5, mixBlendMode: 'overlay', pointerEvents: 'none', zIndex: 0 }} />
+        <img src="/images/paper-texture.png" aria-hidden="true" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 1, mixBlendMode: 'overlay', pointerEvents: 'none', zIndex: 0 }} />
         {/* Subtle star field */}
         <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0.15, pointerEvents: 'none', zIndex: 0 }} viewBox="0 0 1200 168" preserveAspectRatio="xMidYMid slice">
           {[{cx:80,cy:40},{cx:200,cy:110},{cx:320,cy:25},{cx:430,cy:160},{cx:540,cy:70},{cx:660,cy:130},{cx:770,cy:35},{cx:890,cy:175},{cx:1000,cy:80},{cx:1100,cy:140},{cx:150,cy:185},{cx:480,cy:100},{cx:720,cy:180},{cx:950,cy:55},{cx:280,cy:195},{cx:620,cy:48},{cx:1050,cy:195}].map((s, i) => (
