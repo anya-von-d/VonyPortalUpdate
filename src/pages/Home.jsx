@@ -734,8 +734,8 @@ export default function Home() {
 
   const SHADOW = '0px 50px 40px rgba(0,0,0,0.02), 0px 50px 40px rgba(0,0,0,0.04), 0px 20px 40px rgba(0,0,0,0.08), 0px 3px 10px rgba(0,0,0,0.12)';
   const DashboardCard = ({ title, headerRight, children, style, highlight }) => {
-    const outerBg = highlight ? '#75F0FB' : '#F4F4F5';
-    const titleColor = highlight ? 'rgba(0,0,0,0.5)' : '#9B9A98';
+    const outerBg = highlight ? '#03ACEA' : '#F4F4F5';
+    const titleColor = highlight ? 'rgba(255,255,255,0.85)' : '#9B9A98';
     return (
       <div style={{ background: outerBg, borderRadius: 14, overflow: 'hidden', boxShadow: SHADOW, ...style }}>
         <div style={{ padding: '6px 14px 5px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
