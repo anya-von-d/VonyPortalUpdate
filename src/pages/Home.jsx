@@ -757,7 +757,7 @@ export default function Home() {
       {/* ── Hero banner ── */}
       <div style={{
         margin: '8px 10px 0',
-        height: 168,
+        height: 220,
         background: '#54A6CF',
         borderRadius: 18,
         display: 'flex',
