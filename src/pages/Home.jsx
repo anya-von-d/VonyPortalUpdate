@@ -794,7 +794,7 @@ export default function Home() {
       <div style={{ maxWidth: 1080, margin: '0 auto', padding: '20px 40px 64px', position: 'relative', zIndex: 1 }}>
 
         {/* Top row grid: quick actions + snapshot cards */}
-        <div style={{ marginTop: 0 }}>
+        <div style={{ marginTop: 0, border: '1.5px solid #1A1918', borderRadius: 18, padding: 20 }}>
           <div className="home-top-row" style={{ display: 'grid', gridTemplateColumns: '2fr 0.82fr', columnGap: 20, rowGap: 20, alignItems: 'start' }}>
 
             {/* LEFT SECTION: sub-grid for left two columns */}
