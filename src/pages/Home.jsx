@@ -700,7 +700,7 @@ export default function Home() {
 
   // Card wrapper: cream outer box with title, white inner content
   const DashboardCard = ({ title, headerRight, children, style }) => (
-    <div style={{ background: '#B0F1FF', borderRadius: 12, overflow: 'hidden', ...style }}>
+    <div style={{ background: '#DBEDFE', borderRadius: 12, overflow: 'hidden', ...style }}>
       <div style={{ padding: '9px 14px 8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>{title}</span>
         {headerRight && <div style={{ flexShrink: 0 }}>{headerRight}</div>}
@@ -792,7 +792,7 @@ export default function Home() {
             {/* Left sub-col: Next Payment Due */}
             <div className="glow-wrapper glow-blue">
             <DashboardCard title="Next payment due">
-              <div style={{ padding: '6px 16px 16px' }}>
+              <div style={{ padding: '6px 16px 16px', minHeight: 70, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                 {nextBorrowerPayment ? (() => {
                   const days = Math.ceil((nextBorrowerPayment.date.getTime() - Date.now()) / 86400000);
                   const isLate = days < 0;
@@ -813,7 +813,7 @@ export default function Home() {
                     </>
                   );
                 })() : (
-                  <div style={{ paddingTop: 8 }}>
+                  <div>
                     <div style={{ fontSize: 22, marginBottom: 4 }}>🎉</div>
                     <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918' }}>Nothing due right now</div>
                   </div>
@@ -825,7 +825,7 @@ export default function Home() {
             {/* Right sub-col: Next Payment Incoming (moved) */}
             <div className="glow-wrapper glow-purple">
             <DashboardCard title="Next payment incoming">
-              <div style={{ padding: '6px 16px 16px' }}>
+              <div style={{ padding: '6px 16px 16px', minHeight: 70, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                 {nextLenderPayment ? (() => {
                   const days = Math.ceil((nextLenderPayment.date.getTime() - Date.now()) / 86400000);
                   const isLate = days < 0;
@@ -846,7 +846,7 @@ export default function Home() {
                     </>
                   );
                 })() : (
-                  <div style={{ paddingTop: 8 }}>
+                  <div>
                     <div style={{ fontSize: 22, marginBottom: 4 }}>💸</div>
                     <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918' }}>No payments heading your way</div>
                   </div>
@@ -1013,9 +1013,9 @@ export default function Home() {
               {/* Owed to You */}
               <CardEntrance delay={0.1}>
               <DashboardCard title="Owed to You">
-                <div style={{ padding: '6px 16px 16px' }}>
+                <div style={{ padding: '6px 16px 16px', minHeight: 70, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                   <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#7EC0EA', letterSpacing: '-0.03em', lineHeight: 1, fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(lentRemaining)}</div>
-                  <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 6 }}>outstanding balance</div>
+                  <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 6 }}>between {lentLoans.length} loan{lentLoans.length !== 1 ? 's' : ''}</div>
                 </div>
               </DashboardCard>
               </CardEntrance>
@@ -1023,9 +1023,9 @@ export default function Home() {
               {/* You Owe */}
               <CardEntrance delay={0.13}>
               <DashboardCard title="You Owe">
-                <div style={{ padding: '6px 16px 16px' }}>
+                <div style={{ padding: '6px 16px 16px', minHeight: 70, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                   <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#1A1918', letterSpacing: '-0.03em', lineHeight: 1, fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(borrowedRemaining)}</div>
-                  <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 6 }}>outstanding balance</div>
+                  <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 6 }}>between {borrowedLoans.length} loan{borrowedLoans.length !== 1 ? 's' : ''}</div>
                 </div>
               </DashboardCard>
               </CardEntrance>
