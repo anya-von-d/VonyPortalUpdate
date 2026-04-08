@@ -715,6 +715,16 @@ export default function RecentActivityPage() {
     return { title, description, icon, status, friendName, amount, category };
   };
 
+  const getIconStyle = (IconComp) => {
+    if (IconComp === Send)           return { bg: 'rgba(84,166,207,0.14)',   color: '#54A6CF' };
+    if (IconComp === ArrowDownRight) return { bg: 'rgba(126,192,234,0.16)',  color: '#7EC0EA' };
+    if (IconComp === ArrowUpRight)   return { bg: 'rgba(139,92,246,0.13)',   color: '#8B5CF6' };
+    if (IconComp === Check)          return { bg: 'rgba(34,197,94,0.13)',    color: '#22C55E' };
+    if (IconComp === X)              return { bg: 'rgba(232,114,110,0.14)',  color: '#E8726E' };
+    if (IconComp === Ban)            return { bg: 'rgba(245,158,11,0.14)',   color: '#F59E0B' };
+    return                                  { bg: 'rgba(155,154,152,0.13)', color: '#9B9A98' };
+  };
+
   /* ── Export CSV ──────────────────────────────────────────── */
   const handleExportCSV = () => {
     const headers = ['Date', 'Friend', 'Category', 'Status', 'Amount', 'Description'];
@@ -869,6 +879,7 @@ export default function RecentActivityPage() {
                       const { title, description, icon: Icon, status, friendName, amount, category } = getActivityInfo(activity);
                       const catDisplay = CATEGORY_DISPLAY[category] || CATEGORY_DISPLAY.sent_offer;
                       const dateDisplay = formatActivityDate(activity.date);
+                      const { bg: iconBg, color: iconColor } = getIconStyle(Icon);
 
                       return (
                         <div
@@ -879,6 +890,10 @@ export default function RecentActivityPage() {
                             borderBottom: index < filtered.length - 1 ? '1px solid rgba(0,0,0,0.05)' : 'none',
                           }}
                         >
+                          {/* Icon bubble */}
+                          <div style={{ width: 28, height: 28, borderRadius: '50%', background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                            <Icon size={12} style={{ color: iconColor }} />
+                          </div>
                           {/* Mobile layout — shown on small screens */}
                           <div className="activity-mobile-content" style={{ flex: 1, minWidth: 0 }}>
                             <p style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>

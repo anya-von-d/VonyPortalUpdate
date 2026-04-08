@@ -593,7 +593,6 @@ export default function Friends() {
           </div>
 
         </div>
-        </div>
 
         {/* Footer */}
         <div style={{ padding: '20px 28px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
