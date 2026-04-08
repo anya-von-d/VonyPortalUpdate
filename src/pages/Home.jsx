@@ -758,7 +758,7 @@ export default function Home() {
       <div style={{
         margin: '8px 10px 0',
         height: 168,
-        background: '#54A6CF',
+        background: '#FDF9F7',
         borderRadius: 18,
         display: 'flex',
         flexDirection: 'column',

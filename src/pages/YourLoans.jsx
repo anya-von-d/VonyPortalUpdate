@@ -1310,7 +1310,7 @@ export default function YourLoans() {
         <DashboardSidebar activePage="YourLoans" user={user} />
 
           {/* Hero */}
-          <div style={{ margin: '8px 10px 0', height: 220, background: '#54A6CF', borderRadius: 18, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: 106, overflow: 'hidden', position: 'relative', boxShadow: '0px 50px 40px rgba(0,0,0,0.01), 0px 50px 40px rgba(0,0,0,0.02), 0px 20px 40px rgba(0,0,0,0.05), 0px 3px 10px rgba(0,0,0,0.08)' }}>
+          <div style={{ margin: '8px 10px 0', height: 220, background: '#FDF9F7', borderRadius: 18, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: 106, overflow: 'hidden', position: 'relative', boxShadow: '0px 50px 40px rgba(0,0,0,0.01), 0px 50px 40px rgba(0,0,0,0.02), 0px 20px 40px rgba(0,0,0,0.05), 0px 3px 10px rgba(0,0,0,0.08)' }}>
             <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0.15, pointerEvents: 'none', zIndex: 0 }} viewBox="0 0 1200 168" preserveAspectRatio="xMidYMid slice">
               {[{cx:80,cy:40},{cx:200,cy:110},{cx:320,cy:25},{cx:430,cy:160},{cx:540,cy:70},{cx:660,cy:130},{cx:770,cy:35},{cx:890,cy:175},{cx:1000,cy:80},{cx:1100,cy:140},{cx:150,cy:185},{cx:480,cy:100},{cx:720,cy:180},{cx:950,cy:55},{cx:280,cy:195},{cx:620,cy:48},{cx:1050,cy:195}].map((s, i) => (
                 <circle key={i} cx={s.cx} cy={s.cy} r={i % 3 === 0 ? 2.5 : 1.5} fill="white" />
@@ -1319,13 +1319,13 @@ export default function YourLoans() {
             <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 38, fontWeight: 600, color: '#1A1918', margin: 0, letterSpacing: '-0.01em', lineHeight: 1, textAlign: 'center', position: 'relative', zIndex: 1 }}>
               <span style={{ fontStyle: 'normal' }}>My Loans</span>
             </h1>
-            <div style={{ display: 'inline-flex', gap: 2, background: 'rgba(0,0,0,0.12)', borderRadius: 10, padding: 3, marginTop: 16, position: 'relative', zIndex: 1 }}>
+            <div style={{ display: 'inline-flex', gap: 2, background: 'rgba(0,0,0,0.06)', borderRadius: 10, padding: 3, marginTop: 16, position: 'relative', zIndex: 1 }}>
               {[{key:'lending',label:'Lending'},{key:'borrowing',label:'Borrowing'},{key:'details',label:'Loan Details'}].map(tab => (
                 <button key={tab.key} onClick={() => setActiveTab(tab.key)} style={{
                   padding: '6px 16px', borderRadius: 8, border: 'none', cursor: 'pointer',
                   fontSize: 13, fontFamily: "'DM Sans', sans-serif",
                   fontWeight: activeTab === tab.key ? 600 : 500,
-                  color: activeTab === tab.key ? '#1A1918' : 'rgba(255,255,255,0.85)',
+                  color: activeTab === tab.key ? '#1A1918' : 'rgba(0,0,0,0.45)',
                   background: activeTab === tab.key ? 'white' : 'transparent',
                   boxShadow: activeTab === tab.key ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
                   transition: 'all 0.15s', whiteSpace: 'nowrap',
