@@ -531,7 +531,8 @@ export default function Requests() {
           paymentsToConfirm.forEach(payment => {
             const recorderProfile = profiles.find(p => p.user_id === payment.recorded_by);
             const name = recorderProfile?.full_name || recorderProfile?.username || 'Unknown';
-            allItems.push({ type: 'payment_confirm', id: `pmt-confirm-${payment.id}`, timestamp: new Date(payment.created_at || payment.payment_date || 0), data: payment, name, purpose: null, amount: payment.amount });
+            const pmtLoan = loans.find(l => l.id === payment.loan_id);
+            allItems.push({ type: 'payment_confirm', id: `pmt-confirm-${payment.id}`, timestamp: new Date(payment.created_at || payment.payment_date || 0), data: payment, name, purpose: pmtLoan?.purpose || null, amount: payment.amount, paymentMethod: payment.payment_method || null, paymentDate: payment.payment_date || null });
           });
           termChangeRequests.forEach(loan => {
             const otherUserId = loan.lender_id === user.id ? loan.borrower_id : loan.lender_id;
@@ -597,9 +598,12 @@ export default function Requests() {
                       <p style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', lineHeight: 1.5, margin: '0 0 2px' }}>
                         {item.type === 'friend' && `${item.name} sent you a friend request`}
                         {item.type === 'offer_received' && `${item.name} sent you a loan offer${item.purpose ? ` for ${item.purpose}` : ''}`}
-                        {item.type === 'payment_confirm' && `${item.name} recorded a payment of $${item.amount?.toFixed(2)}`}
+                        {item.type === 'payment_confirm' && `${item.name} paid you $${item.amount?.toFixed(2)}${item.purpose ? ` for ${item.purpose}` : ''}${item.paymentMethod ? ` using ${item.paymentMethod}` : ''}`}
                         {item.type === 'term_change' && `${item.name} sent you a loan change request`}
                       </p>
+                      {item.type === 'payment_confirm' && item.paymentDate && (
+                        <p style={{ fontSize: 11, color: '#9B9A98', margin: '0 0 2px', fontWeight: 400 }}>Date of payment: {format(parseISO(item.paymentDate), 'do MMMM')}</p>
+                      )}
                     </div>
                     <div style={{ flexShrink: 0 }}>
                       {item.type === 'friend' && (
@@ -612,10 +616,16 @@ export default function Requests() {
                         </button>
                       )}
                       {item.type === 'payment_confirm' && (
-                        <button onClick={() => setViewingPayment({ payment: item.data, direction: 'confirm' })} disabled={processingId === item.data.id}
-                          style={{ fontSize: 12, fontWeight: 600, color: '#03ACEA', background: 'none', border: 'none', cursor: 'pointer', padding: 0, opacity: processingId === item.data.id ? 0.5 : 1 }}>
-                          Confirm payment
-                        </button>
+                        <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
+                          <button onClick={() => handleConfirmPayment(item.data)} disabled={processingId === item.data.id}
+                            style={{ fontSize: 11, fontWeight: 600, color: 'white', background: '#03ACEA', border: 'none', borderRadius: 7, padding: '5px 10px', cursor: 'pointer', opacity: processingId === item.data.id ? 0.5 : 1, whiteSpace: 'nowrap' }}>
+                            Confirm
+                          </button>
+                          <button onClick={() => setConfirmingDeny(item.data)} disabled={processingId === item.data.id}
+                            style={{ fontSize: 11, fontWeight: 600, color: '#E8726E', background: 'rgba(232,114,110,0.1)', border: 'none', borderRadius: 7, padding: '5px 10px', cursor: 'pointer', opacity: processingId === item.data.id ? 0.5 : 1, whiteSpace: 'nowrap' }}>
+                            Reject
+                          </button>
+                        </div>
                       )}
                       {item.type === 'term_change' && (
                         <button onClick={() => setViewingPayment({ termChange: item.data, direction: 'term' })} disabled={processingId === item.data.id}
