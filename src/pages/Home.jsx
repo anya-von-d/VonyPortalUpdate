@@ -733,9 +733,17 @@ export default function Home() {
   overdueCountRef.current = alertTotal;
 
   const SHADOW = '0px 50px 40px rgba(0,0,0,0.02), 0px 50px 40px rgba(0,0,0,0.04), 0px 20px 40px rgba(0,0,0,0.08), 0px 3px 10px rgba(0,0,0,0.12)';
+  const LENDER_GREEN = '#52B788';
   const DashboardCard = ({ title, headerRight, children, style }) => (
-    <div style={{ background: '#ffffff', borderRadius: 14, overflow: 'hidden', boxShadow: SHADOW, ...style }}>
-      <div style={{ padding: '10px 14px 8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+    <div style={{
+      background: 'linear-gradient(160deg, rgba(255,255,255,0.97) 0%, rgba(246,249,252,0.92) 100%)',
+      backdropFilter: 'blur(10px) saturate(1.3)',
+      WebkitBackdropFilter: 'blur(10px) saturate(1.3)',
+      borderRadius: 11, overflow: 'hidden',
+      boxShadow: SHADOW + ', inset 0 1px 0 rgba(255,255,255,0.95), inset 0 0 0 1px rgba(255,255,255,0.5)',
+      ...style,
+    }}>
+      <div style={{ padding: '9px 14px 5px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>{title}</span>
         {headerRight && <div style={{ flexShrink: 0 }}>{headerRight}</div>}
       </div>
@@ -809,7 +817,7 @@ export default function Home() {
             {/* Inbox — spans both sub-columns */}
             <div className="dash-inbox" style={{ gridColumn: '1 / 3' }}>
               <CardEntrance delay={0}>
-                <div style={{ background: '#ffffff', borderRadius: 14, display: 'flex', alignItems: 'center', gap: 10, padding: '8px 14px', boxShadow: SHADOW }}>
+                <div style={{ background: 'linear-gradient(160deg, rgba(255,255,255,0.97) 0%, rgba(246,249,252,0.92) 100%)', backdropFilter: 'blur(10px) saturate(1.3)', WebkitBackdropFilter: 'blur(10px) saturate(1.3)', borderRadius: 11, display: 'flex', alignItems: 'center', gap: 10, padding: '8px 14px', boxShadow: SHADOW + ', inset 0 1px 0 rgba(255,255,255,0.95)' }}>
                   {notifCount === 0 ? (
                     <>
                       <div style={{ width: 24, height: 24, borderRadius: 6, background: 'rgba(3,172,234,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -937,7 +945,7 @@ export default function Home() {
                               {event.purpose ? `for ${event.purpose}` : format(event.date, 'MMM d')}
                             </div>
                           </div>
-                          <div style={{ fontSize: 13, fontWeight: 700, flexShrink: 0, color: event.isLender ? '#54A6CF' : '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>
+                          <div style={{ fontSize: 13, fontWeight: 700, flexShrink: 0, color: event.isLender ? LENDER_GREEN : '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>
                             {event.isLender ? '+' : '-'}{formatMoney(event.remainingAmount)}
                           </div>
                         </div>
@@ -973,7 +981,7 @@ export default function Home() {
                               return (
                                 <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                                   <div style={{ display: 'flex', alignItems: 'flex-end', gap: 4, height: chartHeight }}>
-                                    <div key={`owed-${i}-${loansAnimKey}`} style={{ width: 14, borderRadius: '4px 4px 0 0', background: '#54A6CF', opacity: d.isFuture ? 0.45 : 1, height: Math.max(owedH, owedH > 0 ? 2 : 0), transformOrigin: 'bottom', animation: `barGrowUp 0.5s ease-out ${i * 0.05}s both` }} />
+                                    <div key={`owed-${i}-${loansAnimKey}`} style={{ width: 14, borderRadius: '4px 4px 0 0', background: LENDER_GREEN, opacity: d.isFuture ? 0.45 : 1, height: Math.max(owedH, owedH > 0 ? 2 : 0), transformOrigin: 'bottom', animation: `barGrowUp 0.5s ease-out ${i * 0.05}s both` }} />
                                     <div key={`owe-${i}-${loansAnimKey}`} style={{ width: 14, borderRadius: '4px 4px 0 0', background: '#7EC0EA', opacity: d.isFuture ? 0.45 : 1, height: Math.max(oweH, oweH > 0 ? 2 : 0), transformOrigin: 'bottom', animation: `barGrowUp 0.5s ease-out ${i * 0.05 + 0.04}s both` }} />
                                   </div>
                                 </div>
@@ -988,7 +996,7 @@ export default function Home() {
                         ))}
                       </div>
                       <div style={{ display: 'flex', justifyContent: 'center', gap: 20, marginTop: 14, paddingTop: 14 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 11, color: '#787776' }}><div style={{ width: 8, height: 8, borderRadius: '50%', background: '#54A6CF' }} /> Owed to you</div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 11, color: '#787776' }}><div style={{ width: 8, height: 8, borderRadius: '50%', background: LENDER_GREEN }} /> Owed to you</div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 11, color: '#787776' }}><div style={{ width: 8, height: 8, borderRadius: '50%', background: '#7EC0EA' }} /> You owe</div>
                       </div>
                     </>
@@ -1038,8 +1046,8 @@ export default function Home() {
                           </div>
                           <div style={{ fontSize: 12, color: '#787776', flexShrink: 0, marginLeft: 8 }}>{pct}%</div>
                         </div>
-                        <div style={{ width: '100%', height: 8, borderRadius: 4, background: isLender ? 'rgba(84,166,207,0.18)' : 'rgba(126,192,234,0.22)', overflow: 'hidden' }}>
-                          <div key={`active-${idx}-${activeAnimKey}`} style={{ height: '100%', borderRadius: 4, background: isLender ? '#54A6CF' : '#7EC0EA', width: `${pct}%`, transformOrigin: 'left', animation: `barGrowRight 0.8s ease-out ${idx * 0.1}s both` }} />
+                        <div style={{ width: '100%', height: 8, borderRadius: 4, background: isLender ? 'rgba(82,183,136,0.18)' : 'rgba(126,192,234,0.22)', overflow: 'hidden' }}>
+                          <div key={`active-${idx}-${activeAnimKey}`} style={{ height: '100%', borderRadius: 4, background: isLender ? LENDER_GREEN : '#7EC0EA', width: `${pct}%`, transformOrigin: 'left', animation: `barGrowRight 0.8s ease-out ${idx * 0.1}s both` }} />
                         </div>
                         <div style={{ fontSize: 11, color: '#787776', marginTop: 6 }}>{formatMoney(amountPaid)} of {formatMoney(totalAmt)} {isLender ? 'repaid' : 'paid back'}</div>
                       </div>
@@ -1062,7 +1070,7 @@ export default function Home() {
               <CardEntrance delay={0.1}>
               <DashboardCard title="Owed to You">
                 <div style={{ padding: '16px 16px 20px', position: 'relative', display: 'flex', alignItems: 'center', minHeight: 48 }}>
-                  <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#54A6CF', letterSpacing: '-0.03em', lineHeight: 1, fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(lentRemaining)}</div>
+                  <div style={{ fontSize: '1.2rem', fontWeight: 800, color: LENDER_GREEN, letterSpacing: '-0.03em', lineHeight: 1, fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(lentRemaining)}</div>
                   <div style={{ position: 'absolute', bottom: 6, right: 16, fontSize: 12, color: '#9B9A98' }}>between {lentLoans.length} loan{lentLoans.length !== 1 ? 's' : ''}</div>
                 </div>
               </DashboardCard>
@@ -1087,9 +1095,9 @@ export default function Home() {
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0 }}>
                     <div style={{ textAlign: 'center', padding: '0 10px 0 0', borderRight: '1px solid rgba(0,0,0,0.06)' }}>
                       <div style={{ fontSize: 10, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 4 }}>Received</div>
-                      <div style={{ fontSize: '1.1rem', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1, color: '#54A6CF', fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(monthlyReceived)}</div>
-                      <div style={{ width: '100%', height: 4, borderRadius: 2, marginTop: 10, background: 'rgba(84,166,207,0.15)' }}>
-                        <div style={{ height: '100%', borderRadius: 2, background: '#54A6CF', width: `${monthlyExpectedReceive > 0 ? Math.min((monthlyReceived / monthlyExpectedReceive) * 100, 100) : 0}%` }} />
+                      <div style={{ fontSize: '1.1rem', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1, color: LENDER_GREEN, fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(monthlyReceived)}</div>
+                      <div style={{ width: '100%', height: 4, borderRadius: 2, marginTop: 10, background: 'rgba(82,183,136,0.15)' }}>
+                        <div style={{ height: '100%', borderRadius: 2, background: LENDER_GREEN, width: `${monthlyExpectedReceive > 0 ? Math.min((monthlyReceived / monthlyExpectedReceive) * 100, 100) : 0}%` }} />
                       </div>
                       <div style={{ fontSize: 10, color: '#9B9A98', marginTop: 5 }}>of {formatMoney(monthlyExpectedReceive)} expected</div>
                     </div>
