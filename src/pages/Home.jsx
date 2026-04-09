@@ -844,7 +844,7 @@ export default function Home() {
 
             {/* Left sub-col: Next Payment Due */}
             <div className="glow-wrapper glow-blue">
-            <DashboardCard title="Next payment due" style={{ border: '6px solid #03ACEA', boxShadow: '0 0 24px 6px rgba(3,172,234,0.5), ' + SHADOW }}>
+            <DashboardCard title="Next payment due" style={{ border: '6px solid #03ACEA', boxShadow: '0 0 28px 4px rgba(3,172,234,0.7), ' + SHADOW }}>
               <div style={{ padding: '16px 16px 20px', position: 'relative', display: 'flex', alignItems: 'center', minHeight: 48 }}>
                 {nextBorrowerPayment ? (() => {
                   const days = Math.ceil((nextBorrowerPayment.date.getTime() - Date.now()) / 86400000);
@@ -878,7 +878,7 @@ export default function Home() {
 
             {/* Right sub-col: Next Payment Incoming (moved) */}
             <div className="glow-wrapper glow-purple">
-            <DashboardCard title="Next payment incoming" style={{ border: '6px solid #03ACEA', boxShadow: '0 0 24px 6px rgba(3,172,234,0.5), ' + SHADOW }}>
+            <DashboardCard title="Next payment incoming" style={{ border: '6px solid #03ACEA', boxShadow: '0 0 28px 4px rgba(3,172,234,0.7), ' + SHADOW }}>
               <div style={{ padding: '16px 16px 20px', position: 'relative', display: 'flex', alignItems: 'center', minHeight: 48 }}>
                 {nextLenderPayment ? (() => {
                   const days = Math.ceil((nextLenderPayment.date.getTime() - Date.now()) / 86400000);
