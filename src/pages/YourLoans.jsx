@@ -1093,25 +1093,25 @@ export default function YourLoans() {
                 };
                 const getIcon = (type) => {
                   const cfg = activityIconConfig[type] || activityIconConfig.created;
-                  return <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke={cfg.stroke} strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d={cfg.path} /></svg>;
+                  return <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke={cfg.stroke} strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d={cfg.path} /></svg>;
                 };
                 const getDotStyle = (type) => {
                   const cfg = activityIconConfig[type] || activityIconConfig.created;
-                  return { width: 23, height: 23, borderRadius: 6, background: cfg.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, position: 'relative', zIndex: 10, marginTop: 2 };
+                  return { width: 24, height: 24, borderRadius: 6, background: cfg.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, position: 'relative', zIndex: 10, marginTop: 2 };
                 };
                 if (activities.length === 0) return <p style={{ fontSize: 11, color: '#C7C6C4' }}>No activity recorded yet.</p>;
                 return (
                   <div className="space-y-0 max-h-[200px] overflow-y-auto" style={{ scrollbarWidth: 'thin' }}>
                     {activities.map((activity, idx) => (
                       <div key={idx} className="flex items-start gap-2.5 relative">
-                        {idx < activities.length - 1 && <div className="absolute left-[11px] top-[22px] w-[1px]" style={{ height: 'calc(100% - 6px)', background: 'rgba(84,166,207,0.2)' }} />}
+                        {idx < activities.length - 1 && <div className="absolute left-[12px] top-[23px] w-[1px]" style={{ height: 'calc(100% - 6px)', background: 'rgba(84,166,207,0.2)' }} />}
                         <div style={getDotStyle(activity.type)}>{getIcon(activity.type)}</div>
                         <div className="flex-1 min-w-0 pb-3">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <p style={{ fontSize: 11, color: '#1A1918', lineHeight: 1.4 }}>{activity.description}</p>
+                            <p style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', lineHeight: 1.4 }}>{activity.description}</p>
                             {activity.isAwaitingConfirmation && <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[8px] font-semibold bg-[#F59E0B]/20 text-[#F59E0B] border border-[#F59E0B]/30 whitespace-nowrap">Awaiting Confirmation</span>}
                           </div>
-                          <p style={{ fontSize: 9, color: '#9B9A98', marginTop: 2 }}>{format(activity.timestamp, 'MMM d, yyyy · h:mm a')}</p>
+                          <p style={{ fontSize: 11, color: '#9B9A98', marginTop: 2 }}>{format(activity.timestamp, 'MMM d, yyyy · h:mm a')}</p>
                         </div>
                       </div>
                     ))}
@@ -1277,11 +1277,11 @@ export default function YourLoans() {
                                 {row.status === 'partial' && row.paidAmount > 0 && (
                                   <>
                                     <p style={{ fontSize: 12, fontWeight: 700, color: '#15803D', margin: '1px 0 0' }}>Paid: ${row.paidAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-                                    <p style={{ fontSize: 11, fontWeight: 600, color: '#E8726E', margin: '1px 0 0' }}>Remaining: ${Math.max(0, row.amount - row.paidAmount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                                    <p style={{ fontSize: 11, fontWeight: 600, color: '#F97316', margin: '1px 0 0' }}>Remaining: ${Math.max(0, row.amount - row.paidAmount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                                   </>
                                 )}
                                 {row.status !== 'partial' && row.paidAmount > 0 && <p style={{ fontSize: 12, fontWeight: 700, color: '#15803D', margin: '1px 0 0' }}>Paid: ${row.paidAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>}
-                                <p style={{ fontSize: 10, color: '#C7C6C4', margin: '1px 0 0' }}>{format(row.date, 'MMM d, yyyy')}</p>
+                                <p style={{ fontSize: 11, color: '#4B4A48', margin: '1px 0 0' }}>{format(row.date, 'MMM d, yyyy')}</p>
                               </div>
                               <span style={{ flexShrink: 0, padding: '4px 10px', borderRadius: 8, fontSize: 10, fontWeight: 600, background: cfg.bg, color: cfg.text }}>{cfg.label}</span>
                             </div>
