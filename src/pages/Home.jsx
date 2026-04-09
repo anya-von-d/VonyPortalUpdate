@@ -844,7 +844,7 @@ export default function Home() {
 
             {/* Left sub-col: Next Payment Due */}
             <div className="glow-wrapper glow-blue">
-            <DashboardCard title="Next payment due" style={{ border: '6px solid #03ACEA', boxShadow: '0 0 40px 14px rgba(3,172,234,0.5), ' + SHADOW }}>
+            <DashboardCard title="Next payment due" style={{ border: '6px solid #03ACEA', boxShadow: '0 0 24px 6px rgba(3,172,234,0.5), ' + SHADOW }}>
               <div style={{ padding: '16px 16px 20px', position: 'relative', display: 'flex', alignItems: 'center', minHeight: 48 }}>
                 {nextBorrowerPayment ? (() => {
                   const days = Math.ceil((nextBorrowerPayment.date.getTime() - Date.now()) / 86400000);
@@ -878,7 +878,7 @@ export default function Home() {
 
             {/* Right sub-col: Next Payment Incoming (moved) */}
             <div className="glow-wrapper glow-purple">
-            <DashboardCard title="Next payment incoming" style={{ border: '6px solid #03ACEA', boxShadow: '0 0 40px 14px rgba(3,172,234,0.5), ' + SHADOW }}>
+            <DashboardCard title="Next payment incoming" style={{ border: '6px solid #03ACEA', boxShadow: '0 0 24px 6px rgba(3,172,234,0.5), ' + SHADOW }}>
               <div style={{ padding: '16px 16px 20px', position: 'relative', display: 'flex', alignItems: 'center', minHeight: 48 }}>
                 {nextLenderPayment ? (() => {
                   const days = Math.ceil((nextLenderPayment.date.getTime() - Date.now()) / 86400000);
@@ -1066,7 +1066,7 @@ export default function Home() {
 
               {/* Owed to You */}
               <CardEntrance delay={0.1}>
-              <DashboardCard title="Owed to You" style={{ border: '6px solid #03ACEA', boxShadow: '0 0 40px 14px rgba(3,172,234,0.5), ' + SHADOW }}>
+              <DashboardCard title="Owed to You">
                 <div style={{ padding: '16px 16px 20px', position: 'relative', display: 'flex', alignItems: 'center', minHeight: 48 }}>
                   <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#54A6CF', letterSpacing: '-0.03em', lineHeight: 1, fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(lentRemaining)}</div>
                   <div style={{ position: 'absolute', bottom: 6, right: 16, fontSize: 12, color: '#9B9A98' }}>between {lentLoans.length} loan{lentLoans.length !== 1 ? 's' : ''}</div>
