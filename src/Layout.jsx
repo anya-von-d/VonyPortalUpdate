@@ -29,7 +29,7 @@ export default function Layout({ children }) {
     if (isNativeApp()) {
       try {
         StatusBar.setStyle({ style: Style.Light });
-        StatusBar.setBackgroundColor({ color: '#1C4332' });
+        StatusBar.setBackgroundColor({ color: '#F5F4F0' });
       } catch (e) {
         console.log('StatusBar config error:', e);
       }
@@ -65,24 +65,24 @@ export default function Layout({ children }) {
   const themeColors = {
     morning: {
       cssVars: {
-        '--theme-primary': '0 168 107',
-        '--theme-primary-light': '232 252 240',
-        '--theme-primary-dark': '13 155 118',
-        '--theme-bg-from': '54 206 142',
-        '--theme-bg-to': '54 206 142',
+        '--theme-primary': '3 172 234',
+        '--theme-primary-light': '224 246 254',
+        '--theme-primary-dark': '2 138 187',
+        '--theme-bg-from': '245 244 240',
+        '--theme-bg-to': '245 244 240',
         '--theme-card-bg': '255 255 255',
-        '--theme-border': '122 212 160 / 0.3'
+        '--theme-border': '3 172 234 / 0.2'
       }
     },
     afternoon: {
       cssVars: {
-        '--theme-primary': '0 168 107',
-        '--theme-primary-light': '208 237 111',
-        '--theme-primary-dark': '13 155 118',
-        '--theme-bg-from': '54 206 142',
-        '--theme-bg-to': '54 206 142',
+        '--theme-primary': '3 172 234',
+        '--theme-primary-light': '224 246 254',
+        '--theme-primary-dark': '2 138 187',
+        '--theme-bg-from': '245 244 240',
+        '--theme-bg-to': '245 244 240',
         '--theme-card-bg': '255 255 255',
-        '--theme-border': '54 206 142 / 0.3'
+        '--theme-border': '3 172 234 / 0.2'
       }
     }
   };

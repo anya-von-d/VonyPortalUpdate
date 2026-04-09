@@ -4,287 +4,165 @@ import { createPageUrl } from "@/utils";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-// Top bar items (medium green #00A86B bar - secondary links + Vony logo)
 const topBarItems = [
-  {
-    title: "Notifications",
-    url: createPageUrl("Requests"),
-  },
-  {
-    title: "Friends",
-    url: createPageUrl("Friends"),
-  },
-  {
-    title: "My Loan Documents",
-    url: createPageUrl("LoanAgreements"),
-  },
-  {
-    title: "Recent Activity",
-    url: createPageUrl("RecentActivity"),
-  },
-  {
-    title: "Profile",
-    url: createPageUrl("Profile"),
-  },
+  { title: "Notifications", url: createPageUrl("Requests") },
+  { title: "Friends",       url: createPageUrl("Friends") },
+  { title: "My Documents",  url: createPageUrl("LoanAgreements") },
+  { title: "Recent Activity", url: createPageUrl("RecentActivity") },
+  { title: "Profile",       url: createPageUrl("Profile") },
 ];
 
-// Bottom bar items (left of logo)
 const bottomLeftItems = [
-  {
-    title: "Dashboard",
-    url: createPageUrl("Home"),
-  },
-  {
-    title: "Lending",
-    url: createPageUrl("Lending"),
-  },
+  { title: "Dashboard", url: createPageUrl("Home") },
+  { title: "Lending",   url: createPageUrl("Lending") },
 ];
 
-// Bottom bar items (right of logo)
 const bottomRightItems = [
-  {
-    title: "Borrowing",
-    url: createPageUrl("Borrowing"),
-  },
+  { title: "Borrowing", url: createPageUrl("Borrowing") },
 ];
 
 const allNavItems = [...bottomLeftItems, ...bottomRightItems, ...topBarItems];
 
+const GLASS_NAV = {
+  backgroundImage: 'linear-gradient(rgba(255,255,255,0.8) 7%, rgba(255,255,255,0) 86%)',
+  backgroundColor: 'rgba(255,255,255,0.12)',
+  backdropFilter: 'blur(16px) saturate(1.5)',
+  WebkitBackdropFilter: 'blur(16px) saturate(1.5)',
+  boxShadow: 'inset 0 -5px 6px 0 rgba(255,255,255,0.5), inset 0 -8px 24px 0 rgba(255,255,255,0.12), 0 2px 4px -2px rgba(0,0,0,0.08), 0 8px 16px -8px rgba(0,0,0,0.03)',
+  border: '1px solid rgba(255,255,255,0.4)',
+};
+
 export default function TopNav({ location }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
-  // Lock body scroll when menu is open
   useEffect(() => {
-    if (menuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
-    };
+    document.body.style.overflow = menuOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
   }, [menuOpen]);
 
-  const handleNavClick = (url) => {
+  const handleNavClick = () => {
     setMenuOpen(false);
-    setTimeout(() => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, 150);
+    setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 150);
   };
 
-  // Stagger animation variants for menu items
+  const isActive = (url) => location.pathname === url;
+
   const containerVariants = {
     hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.06,
-        delayChildren: 0.1,
-      },
-    },
-    exit: {
-      opacity: 0,
-      transition: {
-        staggerChildren: 0.03,
-        staggerDirection: -1,
-      },
-    },
+    visible: { opacity: 1, transition: { staggerChildren: 0.06, delayChildren: 0.1 } },
+    exit:   { opacity: 0, transition: { staggerChildren: 0.03, staggerDirection: -1 } },
   };
-
   const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.3,
-        ease: "easeOut",
-      },
-    },
-    exit: {
-      opacity: 0,
-      y: -20,
-      transition: {
-        duration: 0.2,
-      },
-    },
+    hidden:   { opacity: 0, y: 30 },
+    visible:  { opacity: 1, y: 0, transition: { duration: 0.3, ease: "easeOut" } },
+    exit:     { opacity: 0, y: -20, transition: { duration: 0.2 } },
   };
 
   return (
     <>
-      {/* Fixed Double Navigation Bar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 shadow-sm shadow-black/5">
-        {/* Top Bar - Deep Green (#0A3D22) secondary navigation with Vony logo */}
-        <div className="h-10" style={{backgroundColor: '#0F2B1F'}}>
-          <div className="h-full px-4 sm:px-8 md:px-24 lg:px-36 mx-auto flex items-center justify-between">
-            {/* Hamburger Menu Button - Mobile only */}
+      {/* Fixed nav bar */}
+      <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50, padding: '12px 40px 0', fontFamily: "'DM Sans', sans-serif" }}>
+        <div style={{ maxWidth: 1080, margin: '0 auto' }}>
+          <div style={{ display: 'flex', alignItems: 'center', height: 50, borderRadius: 16, padding: '0 20px', ...GLASS_NAV }}>
+
+            {/* Logo */}
+            <Link to={createPageUrl("Home")} onClick={handleNavClick} style={{
+              fontFamily: "'Playfair Display', Georgia, serif",
+              fontWeight: 400, fontStyle: 'italic', fontSize: '1.3rem',
+              letterSpacing: '-0.02em', color: '#1A1918', textDecoration: 'none',
+              flexShrink: 0, marginRight: 14,
+            }}>Vony</Link>
+
+            {/* Desktop nav links */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 1, flex: 1, justifyContent: 'center' }}>
+              {[...bottomLeftItems, ...bottomRightItems].map(item => (
+                <Link key={item.title} to={item.url} onClick={handleNavClick} style={{
+                  display: 'inline-flex', alignItems: 'center', padding: '6px 16px',
+                  borderRadius: 10, textDecoration: 'none', fontSize: 14,
+                  fontWeight: isActive(item.url) ? 600 : 500,
+                  color: '#1A1918',
+                  background: isActive(item.url) ? 'rgba(0,0,0,0.06)' : 'transparent',
+                  transition: 'background 0.2s', whiteSpace: 'nowrap',
+                }}>
+                  {item.title}
+                </Link>
+              ))}
+            </div>
+
+            {/* Right side: secondary links */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+              {topBarItems.map(item => (
+                <Link key={item.title} to={item.url} onClick={handleNavClick} style={{
+                  fontSize: 12, fontWeight: 500, color: isActive(item.url) ? '#1A1918' : '#787776',
+                  textDecoration: 'none', whiteSpace: 'nowrap', padding: '4px 8px',
+                  borderRadius: 8, transition: 'color 0.15s',
+                }}>
+                  {item.title}
+                </Link>
+              ))}
+            </div>
+
+            {/* Mobile: hamburger */}
             <button
-              type="button"
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="md:hidden w-10 h-10 -ml-1 flex items-center justify-center text-white active:bg-white/10 rounded-lg transition-colors"
-              aria-label="Toggle menu"
-              style={{ minWidth: '44px', minHeight: '44px' }}
+              onClick={() => setMenuOpen(o => !o)}
+              style={{
+                display: 'none', alignItems: 'center', justifyContent: 'center',
+                width: 44, height: 32, borderRadius: 8, border: 'none', cursor: 'pointer',
+                background: menuOpen ? '#ECEAE6' : 'rgba(255,255,255,0.06)',
+                flexShrink: 0,
+              }}
+              className="mobile-hamburger"
+              aria-label="Menu"
             >
-              {menuOpen ? (
-                <X className="w-[22px] h-[22px]" strokeWidth={2} />
-              ) : (
-                <Menu className="w-[22px] h-[22px]" strokeWidth={2} />
-              )}
+              {menuOpen ? <X size={18} stroke="#1f1f1f" /> : <Menu size={18} stroke="#1f1f1f" />}
             </button>
-
-            {/* Desktop: Vony logo left-aligned + Top bar links right-aligned */}
-            <Link
-              to={createPageUrl("Home")}
-              onClick={() => handleNavClick(createPageUrl("Home"))}
-              className="hidden md:block font-display italic text-3xl text-white tracking-wide"
-            >
-              Vony
-            </Link>
-
-            <div className="hidden md:flex items-center gap-8 ml-auto">
-              {topBarItems.map((item) => (
-                <Link
-                  key={item.title}
-                  to={item.url}
-                  onClick={() => handleNavClick(item.url)}
-                  className={`font-sans text-xs font-medium transition-colors duration-200 ${
-                    location.pathname === item.url
-                      ? "text-white font-bold"
-                      : "text-white/60 hover:text-white"
-                  }`}
-                >
-                  {item.title}
-                </Link>
-              ))}
-            </div>
-
-            {/* Mobile: Logo on top bar */}
-            <Link
-              to={createPageUrl("Home")}
-              onClick={() => handleNavClick(createPageUrl("Home"))}
-              className="md:hidden absolute left-1/2 -translate-x-1/2 font-display italic text-2xl text-white tracking-wide"
-            >
-              Vony
-            </Link>
-
-            {/* Mobile: Profile button */}
-            <Link
-              to={createPageUrl("Profile")}
-              onClick={() => handleNavClick(createPageUrl("Profile"))}
-              className="md:hidden px-3 py-1 bg-white/20 hover:bg-white/30 text-white font-sans text-xs font-semibold rounded-md transition-all duration-200"
-            >
-              Profile
-            </Link>
-          </div>
-        </div>
-
-        {/* Bottom Bar - Transparent primary navigation, left-aligned */}
-        <div className={`h-12 ${menuOpen ? 'hidden md:block' : ''}`} style={{backgroundColor: '#6AD478'}}>
-          <div className="h-full px-4 sm:px-8 md:px-24 lg:px-36 mx-auto flex items-center justify-start">
-            {/* Mobile: Main nav links left-aligned */}
-            <div className="flex md:hidden items-center gap-6">
-              {[...bottomLeftItems, ...bottomRightItems].map((item) => (
-                <Link
-                  key={item.title}
-                  to={item.url}
-                  onClick={() => handleNavClick(item.url)}
-                  className={`font-sans text-sm font-medium transition-colors duration-200 ${
-                    location.pathname === item.url
-                      ? "text-[#1C4332]"
-                      : "text-[#1C4332]/50 hover:text-[#1C4332]"
-                  }`}
-                >
-                  {item.title}
-                </Link>
-              ))}
-            </div>
-
-            {/* Desktop: Left-aligned Nav Links */}
-            <div className="hidden md:flex items-center gap-10">
-              {[...bottomLeftItems, ...bottomRightItems].map((item) => (
-                <Link
-                  key={item.title}
-                  to={item.url}
-                  onClick={() => handleNavClick(item.url)}
-                  className={`font-sans text-sm font-semibold transition-colors duration-200 ${
-                    location.pathname === item.url
-                      ? "text-[#1C4332]"
-                      : "text-[#1C4332]/50 hover:text-[#1C4332]"
-                  }`}
-                >
-                  {item.title}
-                </Link>
-              ))}
-            </div>
           </div>
         </div>
       </nav>
 
-      {/* Full Screen Menu Overlay - Mobile */}
+      {/* Mobile full-screen overlay */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-40 flex flex-col md:hidden"
-            style={{ top: '40px', backgroundColor: '#0F2B1F' }}
-            onClick={(e) => {
-              // Close menu when tapping the background (not a link)
-              if (e.target === e.currentTarget) setMenuOpen(false);
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            style={{
+              position: 'fixed', inset: 0, zIndex: 40,
+              backgroundColor: 'rgba(255,255,255,0.92)',
+              backdropFilter: 'blur(18px) saturate(1.5)',
+              WebkitBackdropFilter: 'blur(18px) saturate(1.5)',
+              display: 'flex', flexDirection: 'column',
             }}
           >
-            {/* Navigation Links */}
             <motion.nav
-              className="flex-1 flex flex-col items-center justify-center px-6"
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
+              style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 32px 32px' }}
+              variants={containerVariants} initial="hidden" animate="visible" exit="exit"
             >
-              <div className="flex flex-col items-center w-full">
-                {allNavItems.map((item) => (
-                  <motion.div key={item.title} variants={itemVariants} className="text-center">
-                    <Link
-                      to={item.url}
-                      onClick={() => handleNavClick(item.url)}
-                      className={`block py-2 text-2xl md:text-3xl font-bold tracking-tight transition-colors duration-200 ${
-                        location.pathname === item.url
-                          ? "text-white"
-                          : "text-white/60 hover:text-white"
-                      }`}
-                    >
-                      {item.title}
-                    </Link>
-                    {item.comingSoon && (
-                      <p className="text-xs text-white/40 -mt-1 mb-1" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
-                        Coming Soon
-                      </p>
-                    )}
-                  </motion.div>
-                ))}
-              </div>
+              {allNavItems.map(item => (
+                <motion.div key={item.title} variants={itemVariants} style={{ borderBottom: '0.5px solid rgba(31,31,31,0.06)', width: '100%', textAlign: 'center' }}>
+                  <Link to={item.url} onClick={handleNavClick} style={{
+                    display: 'block', padding: '18px 0',
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: 12, fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase',
+                    color: '#1f1f1f', textDecoration: 'none',
+                    opacity: isActive(item.url) ? 1 : 0.6,
+                  }}>
+                    {item.title}
+                  </Link>
+                </motion.div>
+              ))}
             </motion.nav>
-
-            {/* Footer */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ delay: 0.4, duration: 0.3 }}
-              className="py-6 text-center"
-            >
-              <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-white/40">
+            <div style={{ padding: 24, textAlign: 'center' }}>
+              <p style={{ fontFamily: 'monospace', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(31,31,31,0.4)', margin: 0 }}>
                 Vony · Lending Made Simple
               </p>
-            </motion.div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Spacer to prevent content from going under fixed nav (10 + 12 = 22 = h-[88px]) */}
-      <div className="h-[88px]"></div>
+      {/* Spacer */}
+      <div style={{ height: 88 }} />
     </>
   );
 }

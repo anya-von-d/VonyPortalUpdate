@@ -362,7 +362,7 @@ export default function Home() {
     return (
       <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ width: 32, height: 32, border: '2px solid #82F0B9', borderTopColor: 'transparent', borderRadius: '50%', margin: '0 auto 16px' }} className="animate-spin" />
+          <div style={{ width: 32, height: 32, border: '2px solid #03ACEA', borderTopColor: 'transparent', borderRadius: '50%', margin: '0 auto 16px' }} className="animate-spin" />
           <p style={{ fontSize: 14, color: '#787776', fontFamily: "'DM Sans', sans-serif" }}>Loading dashboard...</p>
         </div>
       </div>
@@ -375,11 +375,11 @@ export default function Home() {
       <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} style={{ maxWidth: 400, width: '100%' }}>
           <div className="glass-card" style={{ padding: 32, textAlign: 'center' }}>
-            <div style={{ width: 96, height: 96, margin: '0 auto 24px', borderRadius: '50%', overflow: 'hidden', background: 'white', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
-              <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/e492d87a7_Logo.png" alt="Vony Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            <div style={{ width: 80, height: 80, margin: '0 auto 20px', borderRadius: 20, overflow: 'hidden', background: 'white', boxShadow: '0 2px 12px rgba(0,0,0,0.10)' }}>
+              <img src="/favicon.png" alt="Vony" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             </div>
             <h1 style={{ fontSize: '1.8rem', fontWeight: 700, color: '#1A1918', marginBottom: 8, letterSpacing: '-0.02em', fontFamily: "'DM Sans', sans-serif" }}>
-              Welcome to <span style={{ color: '#82F0B9' }}>Vony</span>
+              Welcome to <span style={{ color: '#03ACEA' }}>Vony</span>
             </h1>
             <p style={{ color: '#787776', marginBottom: 24, fontSize: 14, fontFamily: "'DM Sans', sans-serif" }}>
               Lending money to friends made simple.

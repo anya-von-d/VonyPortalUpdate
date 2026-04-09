@@ -26,11 +26,11 @@ const toastVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-[#DBFFEB] text-slate-800",
+        default: "bg-white text-slate-800 border border-slate-100 shadow-md",
         destructive:
           "destructive group bg-red-50 text-red-800 border-red-200",
         success:
-          "bg-[#83F384] text-slate-800",
+          "bg-white text-slate-800 border border-slate-100 shadow-md",
       },
     },
     defaultVariants: {
@@ -54,7 +54,7 @@ const ToastAction = React.forwardRef(({ className, ...props }, ref) => (
   <div
     ref={ref}
     className={cn(
-      "inline-flex h-8 shrink-0 items-center justify-center rounded-xl bg-[#00A86B] hover:bg-[#0D9B76] text-white px-4 text-sm font-medium transition-colors focus:outline-none disabled:pointer-events-none disabled:opacity-50 group-[.destructive]:bg-red-600 group-[.destructive]:hover:bg-red-700 group-[.destructive]:text-white cursor-pointer",
+      "inline-flex h-8 shrink-0 items-center justify-center rounded-xl bg-[#03ACEA] hover:opacity-90 text-white px-4 text-sm font-medium transition-colors focus:outline-none disabled:pointer-events-none disabled:opacity-50 group-[.destructive]:bg-red-600 group-[.destructive]:hover:bg-red-700 group-[.destructive]:text-white cursor-pointer",
       className
     )}
     {...props}
