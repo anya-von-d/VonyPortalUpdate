@@ -382,39 +382,33 @@ export default function YourLoans() {
     const lenderInfo = getUserById(agreement.lender_id);
     const borrowerInfo = getUserById(agreement.borrower_id);
     return (
-      <div className="space-y-6">
-        <div className="text-center border-b border-slate-200 pb-4">
-          <h2 className="text-2xl font-bold text-slate-800">PROMISSORY NOTE</h2>
-          <p className="text-sm text-slate-500 mt-1">Document ID: {agreement.id}</p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+        <div style={{ background: '#F4F4F5', borderRadius: 12, padding: 14, marginBottom: 0 }}>
+          <p style={{ fontSize: 11, color: '#787776', margin: '0 0 4px' }}>Principal Amount</p>
+          <p style={{ fontSize: 26, fontWeight: 700, color: '#1A1918', margin: 0 }}>{formatMoney(agreement.amount)}</p>
         </div>
-        <div className="bg-[#83F384] rounded-xl p-4">
-          <p className="text-sm text-slate-600 mb-1">Principal Amount</p>
-          <p className="text-3xl font-bold text-slate-800">{formatMoney(agreement.amount)}</p>
-        </div>
-        <div className="space-y-3 text-sm">
-          <p className="leading-relaxed">
-            <span className="font-semibold">{lenderInfo.full_name}</span> agrees to lend <span className="font-semibold">{borrowerInfo.full_name}</span> <span className="font-semibold">{formatMoney(agreement.amount)}</span>{agreement.purpose ? <> for <span className="font-semibold">{agreement.purpose}</span></> : ''}, with <span className="font-semibold">{agreement.interest_rate}%</span> interest. <span className="font-semibold">{borrowerInfo.full_name}</span> agrees to pay back <span className="font-semibold">{formatMoney(agreement.total_amount)}</span> in <span className="font-semibold">{agreement.payment_frequency}</span> payments of <span className="font-semibold">{formatMoney(agreement.payment_amount)}</span> over <span className="font-semibold">{agreement.repayment_period} {agreement.repayment_unit || 'months'}</span>.
-          </p>
-        </div>
-        <div className="bg-slate-50 rounded-xl p-4 space-y-2">
-          <h3 className="font-semibold text-slate-800 mb-3">Terms of Repayment</h3>
-          <div className="grid grid-cols-2 gap-3 text-sm">
-            <div><span className="text-slate-500">Total Amount Due:</span> <span className="font-medium">{formatMoney(agreement.total_amount)}</span></div>
-            <div><span className="text-slate-500">Interest Rate:</span> <span className="font-medium">{agreement.interest_rate}%</span></div>
-            <div><span className="text-slate-500">Payment:</span> <span className="font-medium">{formatMoney(agreement.payment_amount)} {agreement.payment_frequency}</span></div>
-            <div><span className="text-slate-500">Term:</span> <span className="font-medium">{agreement.repayment_period} {agreement.repayment_unit || 'months'}</span></div>
+        <p style={{ fontSize: 13, lineHeight: 1.7, color: '#1A1918', margin: 0 }}>
+          <strong>{lenderInfo.full_name}</strong> agrees to lend <strong>{borrowerInfo.full_name}</strong> <strong>{formatMoney(agreement.amount)}</strong>{agreement.purpose ? <> for <strong>{agreement.purpose}</strong></> : ''}, with <strong>{agreement.interest_rate}%</strong> interest. <strong>{borrowerInfo.full_name}</strong> agrees to pay back <strong>{formatMoney(agreement.total_amount)}</strong> in <strong>{agreement.payment_frequency}</strong> payments of <strong>{formatMoney(agreement.payment_amount)}</strong> over <strong>{agreement.repayment_period} {agreement.repayment_unit || 'months'}</strong>.
+        </p>
+        <div style={{ background: '#F4F4F5', borderRadius: 12, padding: 14 }}>
+          <h3 style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', margin: '0 0 10px' }}>Terms of Repayment</h3>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, fontSize: 13 }}>
+            <div><span style={{ color: '#787776' }}>Total Amount Due:</span> <span style={{ fontWeight: 500, color: '#1A1918' }}>{formatMoney(agreement.total_amount)}</span></div>
+            <div><span style={{ color: '#787776' }}>Interest Rate:</span> <span style={{ fontWeight: 500, color: '#1A1918' }}>{agreement.interest_rate}%</span></div>
+            <div><span style={{ color: '#787776' }}>Payment:</span> <span style={{ fontWeight: 500, color: '#1A1918' }}>{formatMoney(agreement.payment_amount)} {agreement.payment_frequency}</span></div>
+            <div><span style={{ color: '#787776' }}>Term:</span> <span style={{ fontWeight: 500, color: '#1A1918' }}>{agreement.repayment_period} {agreement.repayment_unit || 'months'}</span></div>
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-4">
-          <div className="bg-slate-50 rounded-lg p-4">
-            <p className="text-xs text-slate-500 mb-1">Borrower</p>
-            <p className="text-lg font-serif italic text-slate-800">{agreement.borrower_name || borrowerInfo.full_name}</p>
-            {agreement.borrower_signed_date && <p className="text-xs text-slate-500 mt-1">Signed {format(new Date(agreement.borrower_signed_date), 'MMM d, yyyy')}</p>}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+          <div style={{ background: '#F4F4F5', borderRadius: 10, padding: 14 }}>
+            <p style={{ fontSize: 11, color: '#787776', margin: '0 0 4px' }}>Borrower</p>
+            <p style={{ fontSize: 18, fontStyle: 'italic', fontFamily: 'Georgia, serif', color: '#1A1918', margin: 0 }}>{agreement.borrower_name || borrowerInfo.full_name}</p>
+            {agreement.borrower_signed_date && <p style={{ fontSize: 11, color: '#787776', margin: '4px 0 0' }}>Signed {format(new Date(agreement.borrower_signed_date), 'MMM d, yyyy')}</p>}
           </div>
-          <div className="bg-slate-50 rounded-lg p-4">
-            <p className="text-xs text-slate-500 mb-1">Lender</p>
-            <p className="text-lg font-serif italic text-slate-800">{agreement.lender_name || lenderInfo.full_name}</p>
-            {agreement.lender_signed_date && <p className="text-xs text-slate-500 mt-1">Signed {format(new Date(agreement.lender_signed_date), 'MMM d, yyyy')}</p>}
+          <div style={{ background: '#F4F4F5', borderRadius: 10, padding: 14 }}>
+            <p style={{ fontSize: 11, color: '#787776', margin: '0 0 4px' }}>Lender</p>
+            <p style={{ fontSize: 18, fontStyle: 'italic', fontFamily: 'Georgia, serif', color: '#1A1918', margin: 0 }}>{agreement.lender_name || lenderInfo.full_name}</p>
+            {agreement.lender_signed_date && <p style={{ fontSize: 11, color: '#787776', margin: '4px 0 0' }}>Signed {format(new Date(agreement.lender_signed_date), 'MMM d, yyyy')}</p>}
           </div>
         </div>
       </div>
@@ -426,41 +420,37 @@ export default function YourLoans() {
     const loan = manageLoanSelected;
     const paidPayments = loan?.amount_paid ? Math.floor(loan.amount_paid / agreement.payment_amount) : 0;
     return (
-      <div className="space-y-6">
-        <div className="text-center border-b border-slate-200 pb-4">
-          <h2 className="text-2xl font-bold text-slate-800">AMORTIZATION SCHEDULE</h2>
-          <p className="text-sm text-slate-500 mt-1">{schedule.length} payments · {agreement.payment_frequency}</p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
+          <div style={{ background: '#F4F4F5', borderRadius: 12, padding: 12, textAlign: 'center' }}><p style={{ fontSize: 11, color: '#787776', margin: 0 }}>Principal</p><p style={{ fontSize: 18, fontWeight: 700, color: '#1A1918', margin: '4px 0 0' }}>{formatMoney(agreement.amount)}</p></div>
+          <div style={{ background: '#F4F4F5', borderRadius: 12, padding: 12, textAlign: 'center' }}><p style={{ fontSize: 11, color: '#787776', margin: 0 }}>Interest</p><p style={{ fontSize: 18, fontWeight: 700, color: '#1A1918', margin: '4px 0 0' }}>{formatMoney((agreement.total_amount || 0) - (agreement.amount || 0))}</p></div>
+          <div style={{ background: '#F4F4F5', borderRadius: 12, padding: 12, textAlign: 'center' }}><p style={{ fontSize: 11, color: '#787776', margin: 0 }}>Total</p><p style={{ fontSize: 18, fontWeight: 700, color: '#1A1918', margin: '4px 0 0' }}>{formatMoney(agreement.total_amount)}</p></div>
         </div>
-        <div className="grid grid-cols-3 gap-3">
-          <div className="bg-[#83F384] rounded-xl p-3 text-center"><p className="text-xs text-slate-600">Principal</p><p className="text-lg font-bold text-slate-800">{formatMoney(agreement.amount)}</p></div>
-          <div className="bg-[#83F384] rounded-xl p-3 text-center"><p className="text-xs text-slate-600">Interest</p><p className="text-lg font-bold text-slate-800">{formatMoney((agreement.total_amount || 0) - (agreement.amount || 0))}</p></div>
-          <div className="bg-[#83F384] rounded-xl p-3 text-center"><p className="text-xs text-slate-600">Total</p><p className="text-lg font-bold text-slate-800">{formatMoney(agreement.total_amount)}</p></div>
-        </div>
-        <div className="max-h-[300px] overflow-x-auto overflow-y-auto rounded-xl border border-slate-200">
-          <table className="w-full text-xs min-w-[700px]">
-            <thead className="bg-slate-50 sticky top-0">
-              <tr>
-                <th className="px-2 py-2 text-left font-medium text-slate-600">Payment</th>
-                <th className="px-2 py-2 text-left font-medium text-slate-600">Payment Date</th>
-                <th className="px-2 py-2 text-right font-medium text-slate-600">Starting Balance</th>
-                <th className="px-2 py-2 text-right font-medium text-slate-600">Principal Payment</th>
-                <th className="px-2 py-2 text-right font-medium text-slate-600">Interest Payment</th>
-                <th className="px-2 py-2 text-right font-medium text-slate-600">Principal to Date</th>
-                <th className="px-2 py-2 text-right font-medium text-slate-600">Interest to Date</th>
-                <th className="px-2 py-2 text-right font-medium text-slate-600">Ending Balance</th>
+        <div style={{ maxHeight: 300, overflowX: 'auto', overflowY: 'auto', borderRadius: 12, border: '1px solid rgba(0,0,0,0.06)' }}>
+          <table style={{ width: '100%', fontSize: 11, minWidth: 700, borderCollapse: 'collapse' }}>
+            <thead>
+              <tr style={{ background: '#F4F4F5' }}>
+                <th style={{ padding: '8px', textAlign: 'left', fontWeight: 500, color: '#787776' }}>Payment</th>
+                <th style={{ padding: '8px', textAlign: 'left', fontWeight: 500, color: '#787776' }}>Payment Date</th>
+                <th style={{ padding: '8px', textAlign: 'right', fontWeight: 500, color: '#787776' }}>Starting Balance</th>
+                <th style={{ padding: '8px', textAlign: 'right', fontWeight: 500, color: '#787776' }}>Principal Payment</th>
+                <th style={{ padding: '8px', textAlign: 'right', fontWeight: 500, color: '#787776' }}>Interest Payment</th>
+                <th style={{ padding: '8px', textAlign: 'right', fontWeight: 500, color: '#787776' }}>Principal to Date</th>
+                <th style={{ padding: '8px', textAlign: 'right', fontWeight: 500, color: '#787776' }}>Interest to Date</th>
+                <th style={{ padding: '8px', textAlign: 'right', fontWeight: 500, color: '#787776' }}>Ending Balance</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody>
               {schedule.map((row, index) => (
-                <tr key={row.number} className={index < paidPayments ? 'bg-green-50' : ''}>
-                  <td className="px-2 py-2 text-slate-600">{row.number}</td>
-                  <td className="px-2 py-2 text-slate-800">{format(row.date, 'MMM d, yyyy')}</td>
-                  <td className="px-2 py-2 text-right text-slate-600">{formatMoney(row.startingBalance)}</td>
-                  <td className="px-2 py-2 text-right font-medium text-slate-800">{formatMoney(row.principal)}</td>
-                  <td className="px-2 py-2 text-right text-slate-600">{formatMoney(row.interest)}</td>
-                  <td className="px-2 py-2 text-right text-slate-600">{formatMoney(row.principalToDate)}</td>
-                  <td className="px-2 py-2 text-right text-slate-600">{formatMoney(row.interestToDate)}</td>
-                  <td className="px-2 py-2 text-right font-medium text-slate-800">{formatMoney(row.endingBalance)}</td>
+                <tr key={row.number} style={{ background: index < paidPayments ? 'rgba(3,172,234,0.06)' : 'transparent', borderTop: '1px solid rgba(0,0,0,0.04)' }}>
+                  <td style={{ padding: '6px 8px', color: '#787776' }}>{row.number}</td>
+                  <td style={{ padding: '6px 8px', color: '#1A1918' }}>{format(row.date, 'MMM d, yyyy')}</td>
+                  <td style={{ padding: '6px 8px', textAlign: 'right', color: '#787776' }}>{formatMoney(row.startingBalance)}</td>
+                  <td style={{ padding: '6px 8px', textAlign: 'right', fontWeight: 500, color: '#1A1918' }}>{formatMoney(row.principal)}</td>
+                  <td style={{ padding: '6px 8px', textAlign: 'right', color: '#787776' }}>{formatMoney(row.interest)}</td>
+                  <td style={{ padding: '6px 8px', textAlign: 'right', color: '#787776' }}>{formatMoney(row.principalToDate)}</td>
+                  <td style={{ padding: '6px 8px', textAlign: 'right', color: '#787776' }}>{formatMoney(row.interestToDate)}</td>
+                  <td style={{ padding: '6px 8px', textAlign: 'right', fontWeight: 500, color: '#1A1918' }}>{formatMoney(row.endingBalance)}</td>
                 </tr>
               ))}
             </tbody>
@@ -478,39 +468,61 @@ export default function YourLoans() {
       switch(status) { case 'active': return 'bg-green-100 text-green-800 border-green-200'; case 'completed': return 'bg-blue-100 text-blue-800 border-blue-200'; case 'cancelled': return 'bg-red-100 text-red-800 border-red-200'; default: return 'bg-gray-100 text-gray-800 border-gray-200'; }
     };
     return (
-      <div className="space-y-6">
-        <div className="flex items-center justify-between border-b border-slate-200 pb-4">
-          <div><h2 className="text-2xl font-bold text-slate-800">Loan Summary</h2><p className="text-sm text-slate-500 mt-1">{format(new Date(agreement.created_at), 'MMMM d, yyyy')}</p></div>
-          <Badge className={`${getStatusColor(loan?.status)} capitalize`}>{loan?.status || 'active'}</Badge>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+        <div style={{ background: '#F4F4F5', borderRadius: 12, padding: 14 }}>
+          <p style={{ fontSize: 11, color: '#787776', margin: '0 0 4px' }}>Purpose</p>
+          <p style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', margin: 0 }}>{loan?.purpose || agreement.purpose || 'Reason'}</p>
         </div>
-        <div className="bg-[#83F384] rounded-xl p-4 mb-1"><p className="text-xs text-slate-600 mb-1">Purpose</p><p className="text-sm font-semibold text-slate-800">{loan?.purpose || agreement.purpose || 'Reason'}</p></div>
-        <div className="grid grid-cols-2 gap-4">
-          <div className="bg-[#83F384] rounded-xl p-4"><p className="text-xs text-slate-600 mb-1">Loan Amount</p><p className="text-2xl font-bold text-slate-800">{formatMoney(agreement.amount)}</p></div>
-          <div className="bg-[#83F384] rounded-xl p-4"><p className="text-xs text-slate-600 mb-1">Total Due</p><p className="text-2xl font-bold text-[#00A86B]">{formatMoney(agreement.total_amount)}</p></div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+          <div style={{ background: '#F4F4F5', borderRadius: 12, padding: 16 }}>
+            <p style={{ fontSize: 11, color: '#787776', margin: '0 0 4px' }}>Loan Amount</p>
+            <p style={{ fontSize: 24, fontWeight: 700, color: '#1A1918', margin: 0 }}>{formatMoney(agreement.amount)}</p>
+          </div>
+          <div style={{ background: '#F4F4F5', borderRadius: 12, padding: 16 }}>
+            <p style={{ fontSize: 11, color: '#787776', margin: '0 0 4px' }}>Total Due</p>
+            <p style={{ fontSize: 24, fontWeight: 700, color: '#1A1918', margin: 0 }}>{formatMoney(agreement.total_amount)}</p>
+          </div>
         </div>
         {loan && (
-          <div className="bg-[#C2FFDC] rounded-xl p-4">
-            <div className="flex justify-between items-center mb-2"><span className="text-sm text-slate-600">Payment Progress</span><span className="text-sm font-medium text-slate-800">{formatMoney(loan.amount_paid || 0)} / {formatMoney(agreement.total_amount)}</span></div>
-            <div className="w-full bg-white rounded-full h-2"><div className="bg-[#00A86B] h-2 rounded-full transition-all" style={{ width: `${Math.min(100, ((loan.amount_paid || 0) / agreement.total_amount) * 100)}%` }} /></div>
+          <div style={{ background: '#F4F4F5', borderRadius: 12, padding: 16 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+              <span style={{ fontSize: 13, color: '#787776' }}>Payment Progress</span>
+              <span style={{ fontSize: 13, fontWeight: 500, color: '#1A1918' }}>{formatMoney(loan.amount_paid || 0)} / {formatMoney(agreement.total_amount)}</span>
+            </div>
+            <div style={{ width: '100%', background: 'white', borderRadius: 999, height: 8 }}>
+              <div style={{ background: '#03ACEA', height: 8, borderRadius: 999, transition: 'width 0.3s', width: `${Math.min(100, ((loan.amount_paid || 0) / agreement.total_amount) * 100)}%` }} />
+            </div>
           </div>
         )}
-        <div className="grid grid-cols-2 gap-4 text-sm">
-          <div className="space-y-3">
-            <div className="flex items-center gap-2"><DollarSign className="w-4 h-4 text-slate-400" /><div><p className="text-slate-500">Interest Rate</p><p className="font-semibold text-slate-800">{agreement.interest_rate}%</p></div></div>
-            <div className="flex items-center gap-2"><DollarSign className="w-4 h-4 text-slate-400" /><div><p className="text-slate-500">Payment Amount</p><p className="font-semibold text-slate-800">{formatMoney(agreement.payment_amount)}</p></div></div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, fontSize: 13 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <DollarSign size={16} style={{ color: '#787776' }} />
+              <div><p style={{ color: '#787776', margin: 0 }}>Interest Rate</p><p style={{ fontWeight: 600, color: '#1A1918', margin: 0 }}>{agreement.interest_rate}%</p></div>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <DollarSign size={16} style={{ color: '#787776' }} />
+              <div><p style={{ color: '#787776', margin: 0 }}>Payment Amount</p><p style={{ fontWeight: 600, color: '#1A1918', margin: 0 }}>{formatMoney(agreement.payment_amount)}</p></div>
+            </div>
           </div>
-          <div className="space-y-3">
-            <div className="flex items-center gap-2"><Clock className="w-4 h-4 text-slate-400" /><div><p className="text-slate-500">Payment Frequency</p><p className="font-semibold text-slate-800 capitalize">{agreement.payment_frequency}</p></div></div>
-            <div className="flex items-center gap-2"><Calendar className="w-4 h-4 text-slate-400" /><div><p className="text-slate-500">Due Date</p><p className="font-semibold text-slate-800">{agreement.due_date ? format(new Date(agreement.due_date), 'MMM d, yyyy') : 'N/A'}</p></div></div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <Clock size={16} style={{ color: '#787776' }} />
+              <div><p style={{ color: '#787776', margin: 0 }}>Payment Frequency</p><p style={{ fontWeight: 600, color: '#1A1918', margin: 0, textTransform: 'capitalize' }}>{agreement.payment_frequency}</p></div>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <Calendar size={16} style={{ color: '#787776' }} />
+              <div><p style={{ color: '#787776', margin: 0 }}>Due Date</p><p style={{ fontWeight: 600, color: '#1A1918', margin: 0 }}>{agreement.due_date ? format(new Date(agreement.due_date), 'MMM d, yyyy') : 'N/A'}</p></div>
+            </div>
           </div>
         </div>
-        <div className="border-t border-slate-200 pt-4">
-          <h4 className="font-semibold text-slate-800 mb-3">Parties</h4>
-          <div className="grid grid-cols-2 gap-4">
+        <div style={{ borderTop: '1px solid rgba(0,0,0,0.06)', paddingTop: 16 }}>
+          <h4 style={{ fontSize: 14, fontWeight: 600, color: '#1A1918', margin: '0 0 12px' }}>Parties</h4>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
             {[{ label: 'Lender', info: lenderInfo }, { label: 'Borrower', info: borrowerInfo }].map(({ label, info }) => (
-              <div key={label} className="flex items-center gap-3">
-                <img src={info.profile_picture_url || `https://ui-avatars.com/api/?name=${encodeURIComponent((info.full_name || 'U').charAt(0))}&background=678AFB&color=fff&size=64`} alt={info.full_name} className="w-10 h-10 rounded-full" />
-                <div><p className="text-xs text-slate-500">{label}</p><p className="font-medium text-slate-800">{info.full_name}</p></div>
+              <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <img src={info.profile_picture_url || `https://ui-avatars.com/api/?name=${encodeURIComponent((info.full_name || 'U').charAt(0))}&background=678AFB&color=fff&size=64`} alt={info.full_name} style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover' }} />
+                <div><p style={{ fontSize: 11, color: '#787776', margin: 0 }}>{label}</p><p style={{ fontWeight: 500, color: '#1A1918', margin: 0 }}>{info.full_name}</p></div>
               </div>
             ))}
           </div>
@@ -1369,19 +1381,19 @@ export default function YourLoans() {
       <AnimatePresence>
         {activeDocPopup && docPopupAgreement && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={closeDocPopup}>
-            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} onClick={(e) => e.stopPropagation()} className="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl">
-              <div className="sticky top-0 bg-white border-b border-slate-100 p-4 flex justify-between items-center">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: 'rgba(130,240,185,0.1)' }}><FileText className="w-4 h-4" style={{ color: '#82F0B9' }} /></div>
-                  <span className="font-medium text-slate-800">
+            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} onClick={(e) => e.stopPropagation()} style={{ background: '#F4F4F5', borderRadius: 18, maxWidth: 520, width: '100%', maxHeight: '90vh', overflowY: 'auto', boxShadow: '0px 50px 40px rgba(0,0,0,0.02), 0px 50px 40px rgba(0,0,0,0.04), 0px 20px 40px rgba(0,0,0,0.08), 0px 3px 10px rgba(0,0,0,0.12)' }}>
+              <div style={{ position: 'sticky', top: 0, background: '#F4F4F5', padding: '6px 14px 5px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderRadius: '18px 18px 0 0' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <FileText size={14} style={{ color: '#9B9A98' }} />
+                  <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>
                     {activeDocPopup === 'promissory' && 'Promissory Note'}
                     {activeDocPopup === 'amortization' && 'Amortization Schedule'}
                     {activeDocPopup === 'summary' && 'Loan Summary'}
                   </span>
                 </div>
-                <Button variant="ghost" size="sm" onClick={closeDocPopup} className="text-slate-500 hover:text-slate-800"><X className="w-5 h-5" /></Button>
+                <button onClick={closeDocPopup} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, color: '#787776' }}><X size={20} /></button>
               </div>
-              <div className="p-6">
+              <div style={{ background: '#ffffff', margin: '0 5px 5px', borderRadius: 14, padding: 20 }}>
                 {activeDocPopup === 'promissory' && <PromissoryNotePopup agreement={docPopupAgreement} />}
                 {activeDocPopup === 'amortization' && <AmortizationSchedulePopup agreement={docPopupAgreement} />}
                 {activeDocPopup === 'summary' && <LoanSummaryPopup agreement={docPopupAgreement} />}
