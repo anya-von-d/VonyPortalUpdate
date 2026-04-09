@@ -815,7 +815,7 @@ export default function Home() {
             {/* Inbox — spans both sub-columns */}
             <div className="dash-inbox" style={{ gridColumn: '1 / 3' }}>
               <CardEntrance delay={0}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '4px 2px' }}>
+                <div style={{ background: '#ffffff', borderRadius: 10, display: 'flex', alignItems: 'center', gap: 10, padding: '8px 14px' }}>
                   {notifCount === 0 ? (
                     <>
                       <div style={{ width: 24, height: 24, borderRadius: 6, background: 'rgba(3,172,234,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
