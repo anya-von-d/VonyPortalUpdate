@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Friendship, PublicProfile, User } from "@/entities/all";
 import { useAuth } from "@/lib/AuthContext";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
+import { createPageUrl } from "@/utils";
 import {
   Users,
   UserPlus,
@@ -18,14 +19,15 @@ import {
   UserMinus
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import DashboardSidebar from "@/components/DashboardSidebar";
 import confetti from "canvas-confetti";
 
 const SHADOW = '0px 50px 40px rgba(0,0,0,0.02), 0px 50px 40px rgba(0,0,0,0.04), 0px 20px 40px rgba(0,0,0,0.08), 0px 3px 10px rgba(0,0,0,0.12)';
 
 export default function Friends() {
-  const { user: authUser, userProfile } = useAuth();
+  const { user: authUser, userProfile, logout } = useAuth();
   const user = userProfile ? { ...userProfile, id: authUser?.id } : null;
+  const [moreNavOpen, setMoreNavOpen] = useState(false);
+  const moreNavCloseTimerRef = useRef(null);
 
   const [friends, setFriends] = useState([]);
   const [sentRequests, setSentRequests] = useState([]);
@@ -256,355 +258,166 @@ export default function Friends() {
     </div>
   );
 
-  /* ── Loading state ──────────────────────────────────────────── */
-  if (isLoading && !user) {
-    return (
-      <div className="home-with-sidebar" style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingTop: 0, background: 'transparent' }}>
-        <DashboardSidebar activePage="Friends" user={user} />
-        <div className="dashboard-content-wrap" style={{ maxWidth: 1080, margin: '0 auto', padding: '20px 40px 0', position: 'relative', zIndex: 1 }}>
-          <PageCard title="Friends">
-            <div style={{ padding: 40, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-              <div style={{ width: 32, height: 32, border: '2px solid #82F0B9', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite', marginBottom: 12 }} />
-              <p style={{ fontSize: 13, color: '#787776' }}>Loading friends...</p>
+  const RightSection = ({ title, children }) => (
+    <div style={{ marginBottom: 24 }}>
+      <div style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', letterSpacing: '0.01em', marginBottom: 9 }}>{title}</div>
+      <div style={{ height: 1, background: 'rgba(0,0,0,0.08)', marginBottom: 14 }} />
+      {children}
+    </div>
+  );
+
+  const LeftNav = () => (
+    <div className="mesh-left" style={{ paddingRight: 20, borderRight: '1px solid rgba(0,0,0,0.07)', position: 'sticky', top: 88 }}>
+      <nav style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+        {[
+          { label: 'Home', to: '/', active: false },
+          { label: 'Upcoming', to: createPageUrl("Upcoming"), active: false },
+          { label: 'My Loans', to: createPageUrl("YourLoans"), active: false },
+          { label: 'Friends', to: createPageUrl("Friends"), active: true },
+        ].map(({ label, to, active: isActive }) => (
+          <Link key={label} to={to} style={{ display: 'block', padding: '8px 10px 8px 4px', borderRadius: 9, textDecoration: 'none', fontSize: 14, fontWeight: isActive ? 600 : 500, color: isActive ? '#1A1918' : '#787776', background: isActive ? 'rgba(0,0,0,0.05)' : 'transparent', fontFamily: "'DM Sans', sans-serif", width: '100%', boxSizing: 'border-box' }}>{label}</Link>
+        ))}
+        <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', margin: '8px 0' }} />
+        {[
+          { label: 'Recent Activity', to: createPageUrl("RecentActivity") },
+          { label: 'Documents', to: createPageUrl("LoanAgreements") },
+          { label: 'Record Payment', to: createPageUrl("RecordPayment") },
+        ].map(({ label, to }) => (
+          <Link key={label} to={to} style={{ display: 'block', padding: '7px 10px 7px 4px', borderRadius: 9, textDecoration: 'none', fontSize: 13, fontWeight: 500, color: '#9B9A98', background: 'transparent', fontFamily: "'DM Sans', sans-serif", width: '100%', boxSizing: 'border-box' }}>{label}</Link>
+        ))}
+        <div style={{ position: 'relative' }} onMouseEnter={() => { if (moreNavCloseTimerRef.current) { clearTimeout(moreNavCloseTimerRef.current); moreNavCloseTimerRef.current = null; } setMoreNavOpen(true); }} onMouseLeave={() => { moreNavCloseTimerRef.current = setTimeout(() => setMoreNavOpen(false), 150); }}>
+          <button style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '7px 10px 7px 4px', borderRadius: 9, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 500, color: '#9B9A98', background: 'transparent', fontFamily: "'DM Sans', sans-serif", width: '100%', boxSizing: 'border-box' }}>
+            More <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="6 9 12 15 18 9" /></svg>
+          </button>
+          {moreNavOpen && (
+            <div style={{ position: 'absolute', top: 'calc(100% + 4px)', left: 0, right: 0, background: 'white', borderRadius: 10, padding: '4px 0', boxShadow: '0 4px 16px rgba(0,0,0,0.10)', zIndex: 50 }}>
+              {[{ label: 'Learn', to: createPageUrl("ComingSoon") }, { label: 'Loan Help', to: createPageUrl("LoanHelp") }].map(({ label, to }) => (
+                <Link key={label} to={to} onClick={() => setMoreNavOpen(false)} style={{ display: 'block', padding: '8px 14px', fontSize: 13, fontWeight: 500, color: '#1A1918', textDecoration: 'none', fontFamily: "'DM Sans', sans-serif" }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.04)'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>{label}</Link>
+              ))}
+              <a href="https://www.vony-lending.com/help" target="_blank" rel="noopener noreferrer" style={{ display: 'block', padding: '8px 14px', fontSize: 13, fontWeight: 500, color: '#1A1918', textDecoration: 'none', fontFamily: "'DM Sans', sans-serif" }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.04)'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>Help & Support</a>
+              <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', margin: '4px 14px' }} />
+              <button onClick={() => { setMoreNavOpen(false); logout?.(); }} style={{ display: 'block', width: '100%', padding: '8px 14px', fontSize: 13, fontWeight: 500, color: '#E8726E', background: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left', fontFamily: "'DM Sans', sans-serif" }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(232,114,110,0.06)'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>Log Out</button>
             </div>
-          </PageCard>
+          )}
         </div>
-      </div>
-    );
-  }
+      </nav>
+    </div>
+  );
 
-  /* ══════════════════════════════════════════════════════════
-     RENDER
-     ══════════════════════════════════════════════════════════ */
   return (
-    <div className="home-with-sidebar" style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingTop: 0, background: 'transparent' }}>
-      <DashboardSidebar activePage="Friends" user={user} />
+    <div className="mesh-layout" style={{ maxWidth: 1200, margin: '0 auto', padding: '88px 8px 60px 8px', display: 'grid', gridTemplateColumns: '160px 1fr 240px', gap: 0, alignItems: 'start' }}>
 
-      {/* Hero */}
-      <div className="dash-hero" style={{ margin: '8px 10px 0', height: 168, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 24, position: 'relative' }}>
-        <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0.15, pointerEvents: 'none', zIndex: 0 }} viewBox="0 0 1200 168" preserveAspectRatio="xMidYMid slice">
-          {[{cx:80,cy:40},{cx:200,cy:110},{cx:320,cy:25},{cx:430,cy:160},{cx:540,cy:70},{cx:660,cy:130},{cx:770,cy:35},{cx:890,cy:175},{cx:1000,cy:80},{cx:1100,cy:140},{cx:150,cy:185},{cx:480,cy:100},{cx:720,cy:180},{cx:950,cy:55},{cx:280,cy:195},{cx:620,cy:48},{cx:1050,cy:195}].map((s, i) => (
-            <circle key={i} cx={s.cx} cy={s.cy} r={i % 3 === 0 ? 2.5 : 1.5} fill="white" />
-          ))}
-        </svg>
-        <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 40, fontWeight: 600, color: '#1A1918', margin: 0, letterSpacing: '-0.01em', lineHeight: 1, textAlign: 'center', position: 'relative', zIndex: 1 }}>
-          <span style={{ fontStyle: 'normal' }}>Friends</span>
-        </h1>
-      </div>
+      <LeftNav />
 
-      <div className="dashboard-content-wrap" style={{ maxWidth: 1080, margin: '0 auto', padding: '20px 40px 0', position: 'relative', zIndex: 1 }}>
-        <div className="dashboard-grey-box" style={{ background: '#E5E2DF', borderRadius: 18, padding: 20 }}>
+      {/* ── CENTER: Search for Friends + Friend Requests ── */}
+      <div className="mesh-center" style={{ padding: '0 32px', minHeight: 500, borderRight: '1px solid rgba(0,0,0,0.07)' }}>
 
-        {/* Two-Column Layout: Friends Left, Search + Requests Right */}
-        <div className="friends-two-col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, alignItems: 'stretch' }}>
-
-          {/* Left Column: Your Friends */}
-          <PageCard title="Your Friends" className="friends-left-col friends-card" style={{ minHeight: 'calc(100vh - 280px)' }}>
-            <div style={{ padding: '10px 16px 16px' }}>
-              {isLoading ? (
-                <div style={{ display: 'flex', justifyContent: 'center', padding: '32px 0' }}>
-                  <div style={{ width: 32, height: 32, border: '2px solid #82F0B9', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-                </div>
-              ) : sortedFriends.length === 0 ? (
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 0', color: '#C7C6C4' }}>
-                  <Users size={32} style={{ opacity: 0.4, marginBottom: 8 }} />
-                  <p style={{ fontSize: 13, color: '#787776', margin: 0 }}>No friends yet</p>
-                  <p style={{ fontSize: 12, color: '#C7C6C4', margin: '4px 0 0' }}>Search for friends to get started</p>
-                </div>
-              ) : (
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  {sortedFriends.map((friendship, index) => {
-                    const friendProfile = getFriendProfile(friendship);
-                    if (!friendProfile) return null;
-
-                    return (
-                      <div
-                        key={friendship.id}
-                        style={{
-                          display: 'flex', alignItems: 'center', gap: 12, padding: '13px 0',
-                        }}
-                      >
-                        {/* Avatar */}
-                        <img
-                          src={friendProfile.profile_picture_url || friendProfile.avatar_url || defaultAvatarUrl(friendProfile.full_name)}
-                          alt={friendProfile.full_name || 'Friend'}
-                          style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover', flexShrink: 0, background: 'rgba(130,240,185,0.1)' }}
-                        />
-
-                        {/* Name */}
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <p style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                            {friendProfile.full_name || friendProfile.username}
-                          </p>
-                          <p style={{ fontSize: 11, color: '#787776', margin: '2px 0 0' }}>
-                            @{friendProfile.username}
-                          </p>
-                        </div>
-
-                        {/* Star Button */}
-                        <button
-                          onClick={() => handleToggleStar(friendship)}
-                          disabled={processingId === friendship.id}
-                          style={{
-                            background: 'none', border: 'none', cursor: 'pointer', padding: 6,
-                            color: friendship.is_starred ? '#F5A623' : '#C7C6C4',
-                            transition: 'color 0.15s',
-                          }}
-                        >
-                          <Star
-                            size={18}
-                            fill={friendship.is_starred ? 'currentColor' : 'none'}
-                          />
-                        </button>
-
-                        {/* Unfriend Button */}
-                        <button
-                          onClick={() => handleRemoveFriend(friendship.id)}
-                          disabled={processingId === friendship.id}
-                          style={{
-                            padding: '6px 12px', borderRadius: 10, border: 'none',
-                            background: 'rgba(232,114,110,0.08)', fontSize: 11, fontWeight: 600,
-                            color: '#E8726E', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
-                            transition: 'background 0.15s', whiteSpace: 'nowrap',
-                          }}
-                        >
-                          {processingId === friendship.id ? (
-                            <div style={{ width: 16, height: 16, border: '2px solid #E8726E', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-                          ) : (
-                            'Unfriend'
-                          )}
-                        </button>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
+        {/* Search for Friends */}
+        <PageCard title="Search for Friends" style={{ marginBottom: 16 }}>
+          <div style={{ padding: '10px 16px 16px' }}>
+            <div style={{ position: 'relative', marginBottom: searchQuery.trim() ? 14 : 0 }}>
+              <Search size={18} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#C7C6C4' }} />
+              <input type="text" placeholder="Search by username..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
+                style={{ width: '100%', padding: '10px 36px 10px 38px', borderRadius: 12, border: '1px solid rgba(0,0,0,0.08)', background: 'rgba(0,0,0,0.03)', fontSize: 13, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", outline: 'none', boxSizing: 'border-box' }}
+                onFocus={(e) => e.target.style.borderColor = 'rgba(130,240,185,0.4)'} onBlur={(e) => e.target.style.borderColor = 'rgba(0,0,0,0.08)'} />
+              {searchQuery && <button onClick={() => setSearchQuery('')} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#787776', padding: 2 }}><X size={16} /></button>}
             </div>
-          </PageCard>
-
-          {/* Right Column: Search + Friend Requests */}
-          <div className="friends-right-col" style={{ display: 'flex', flexDirection: 'column', gap: 16, height: '100%' }}>
-
-            {/* Search for Friends */}
-            <PageCard title="Search for Friends" className="friends-card" style={{ minHeight: 'calc(100vh - 280px)' }}>
-              <div style={{ padding: '10px 16px 16px' }}>
-                {/* Search Input */}
-                <div style={{ position: 'relative', marginBottom: searchQuery.trim() ? 14 : 0 }}>
-                  <Search size={18} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#C7C6C4' }} />
-                  <input
-                    type="text"
-                    placeholder="Search by username..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    style={{
-                      width: '100%', padding: '10px 36px 10px 38px', borderRadius: 12,
-                      border: '1px solid rgba(0,0,0,0.08)', background: 'rgba(0,0,0,0.03)',
-                      fontSize: 13, color: '#1A1918', fontFamily: "'DM Sans', sans-serif",
-                      outline: 'none', transition: 'border-color 0.15s',
-                    }}
-                    onFocus={(e) => e.target.style.borderColor = 'rgba(130,240,185,0.4)'}
-                    onBlur={(e) => e.target.style.borderColor = 'rgba(0,0,0,0.08)'}
-                  />
-                  {searchQuery && (
-                    <button
-                      onClick={() => setSearchQuery('')}
-                      style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#787776', padding: 2 }}
-                    >
-                      <X size={16} />
-                    </button>
-                  )}
-                </div>
-
-                {/* Search Results */}
-                {searchQuery.trim() && (
-                  <div>
-                    {allSearchResults.length === 0 ? (
-                      <div style={{ textAlign: 'center', padding: '16px 0' }}>
-                        <p style={{ fontSize: 13, color: '#787776', margin: 0 }}>No users found</p>
-                      </div>
-                    ) : (
-                      <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        {allSearchResults.map((profile) => {
-                          const receivedRequest = getReceivedRequestFrom(profile.user_id);
-                          const sentRequest = getSentRequestTo(profile.user_id);
-
-                          return (
-                            <div
-                              key={profile.user_id}
-                              style={{
-                                display: 'flex', alignItems: 'center', gap: 12, padding: '13px 0',
-                              }}
-                            >
-                              <img
-                                src={profile.profile_picture_url || profile.avatar_url || defaultAvatarUrl(profile.full_name)}
-                                alt={profile.full_name || 'User'}
-                                style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover', flexShrink: 0, background: 'rgba(130,240,185,0.1)' }}
-                              />
-                              <div style={{ flex: 1, minWidth: 0 }}>
-                                <p style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                  {profile.full_name || profile.username}
-                                </p>
-                                <p style={{ fontSize: 11, color: '#787776', margin: '2px 0 0' }}>@{profile.username}</p>
-                              </div>
-
-                              {/* Action Button */}
-                              {receivedRequest ? (
-                                <button
-                                  onClick={() => handleAcceptRequestFromSearch(receivedRequest.id)}
-                                  disabled={processingId === receivedRequest.id}
-                                  style={{
-                                    padding: '6px 12px', borderRadius: 10, border: 'none',
-                                    background: '#82F0B9', fontSize: 11, fontWeight: 600,
-                                    color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6,
-                                    fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap',
-                                    opacity: processingId === receivedRequest.id ? 0.5 : 1,
-                                  }}
-                                >
-                                  {processingId === receivedRequest.id ? (
-                                    <div style={{ width: 14, height: 14, border: '2px solid white', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-                                  ) : (
-                                    <>
-                                      <CheckCircle size={14} />
-                                      Accept
-                                    </>
-                                  )}
-                                </button>
-                              ) : sentRequest ? (
-                                <button
-                                  onClick={() => handleCancelRequest(sentRequest.id)}
-                                  disabled={processingId === sentRequest.id}
-                                  style={{
-                                    padding: '6px 12px', borderRadius: 10, border: 'none',
-                                    background: 'rgba(232,114,110,0.08)', fontSize: 11, fontWeight: 600,
-                                    color: '#E8726E', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6,
-                                    fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap',
-                                    opacity: processingId === sentRequest.id ? 0.5 : 1,
-                                  }}
-                                >
-                                  {processingId === sentRequest.id ? (
-                                    <div style={{ width: 14, height: 14, border: '2px solid #E8726E', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-                                  ) : (
-                                    <>
-                                      <UserMinus size={14} />
-                                      Unsend Request
-                                    </>
-                                  )}
-                                </button>
-                              ) : (
-                                <button
-                                  onClick={() => handleSendRequest(profile.user_id)}
-                                  disabled={processingId === profile.user_id}
-                                  style={{
-                                    padding: '6px 12px', borderRadius: 10, border: 'none',
-                                    background: '#82F0B9', fontSize: 11, fontWeight: 600,
-                                    color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6,
-                                    fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap',
-                                    opacity: processingId === profile.user_id ? 0.5 : 1,
-                                  }}
-                                >
-                                  {processingId === profile.user_id ? (
-                                    <div style={{ width: 14, height: 14, border: '2px solid white', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-                                  ) : (
-                                    <>
-                                      <Send size={14} />
-                                      Send Request
-                                    </>
-                                  )}
-                                </button>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            </PageCard>
-
-            {/* Friend Requests (Received) */}
-            {receivedRequests.length > 0 && (
-              <PageCard
-                title="Friend Requests"
-                headerRight={
-                  <span style={{ fontSize: 12, color: '#787776' }}>{receivedRequests.length} pending</span>
-                }
-              >
-                <div style={{ padding: '10px 16px 16px' }}>
+            {searchQuery.trim() && (
+              <div>
+                {allSearchResults.length === 0 ? (
+                  <div style={{ textAlign: 'center', padding: '16px 0' }}><p style={{ fontSize: 13, color: '#787776', margin: 0 }}>No users found</p></div>
+                ) : (
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    {receivedRequests.map((request) => {
-                      const profile = getProfileById(request.user_id);
-                      if (!profile) return null;
-
+                    {allSearchResults.map((profile) => {
+                      const receivedRequest = getReceivedRequestFrom(profile.user_id);
+                      const sentRequest = getSentRequestTo(profile.user_id);
                       return (
-                        <div
-                          key={request.id}
-                          style={{
-                            display: 'flex', alignItems: 'center', gap: 12, padding: '13px 0',
-                            borderBottom: '1px solid rgba(0,0,0,0.05)',
-                          }}
-                        >
-                          <img
-                            src={profile.profile_picture_url || profile.avatar_url || defaultAvatarUrl(profile.full_name)}
-                            alt={profile.full_name || 'User'}
-                            style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover', flexShrink: 0, background: 'rgba(130,240,185,0.1)' }}
-                          />
+                        <div key={profile.user_id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '13px 0', borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
+                          <img src={profile.profile_picture_url || profile.avatar_url || defaultAvatarUrl(profile.full_name)} alt={profile.full_name || 'User'} style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
                           <div style={{ flex: 1, minWidth: 0 }}>
-                            <p style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                              {profile.full_name || profile.username}
-                            </p>
+                            <p style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{profile.full_name || profile.username}</p>
                             <p style={{ fontSize: 11, color: '#787776', margin: '2px 0 0' }}>@{profile.username}</p>
                           </div>
-                          <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
-                            <button
-                              onClick={() => handleAcceptRequestFromSearch(request.id)}
-                              disabled={processingId === request.id}
-                              style={{
-                                padding: '6px 12px', borderRadius: 10, border: 'none',
-                                background: '#82F0B9', fontSize: 11, fontWeight: 600,
-                                color: 'white', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
-                                opacity: processingId === request.id ? 0.5 : 1,
-                              }}
-                            >
-                              {processingId === request.id ? (
-                                <div style={{ width: 14, height: 14, border: '2px solid white', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-                              ) : 'Confirm'}
+                          {receivedRequest ? (
+                            <button onClick={() => handleAcceptRequestFromSearch(receivedRequest.id)} disabled={processingId === receivedRequest.id} style={{ padding: '6px 12px', borderRadius: 10, border: 'none', background: '#82F0B9', fontSize: 11, fontWeight: 600, color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, fontFamily: "'DM Sans', sans-serif", opacity: processingId === receivedRequest.id ? 0.5 : 1 }}>
+                              <CheckCircle size={14} /> Accept
                             </button>
-                            <button
-                              onClick={() => handleCancelRequest(request.id)}
-                              disabled={processingId === request.id}
-                              style={{
-                                padding: '6px 12px', borderRadius: 10, border: 'none',
-                                background: 'rgba(232,114,110,0.08)', fontSize: 11, fontWeight: 600,
-                                color: '#E8726E', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
-                                opacity: processingId === request.id ? 0.5 : 1,
-                              }}
-                            >
-                              Delete
+                          ) : sentRequest ? (
+                            <button onClick={() => handleCancelRequest(sentRequest.id)} disabled={processingId === sentRequest.id} style={{ padding: '6px 12px', borderRadius: 10, border: 'none', background: 'rgba(232,114,110,0.08)', fontSize: 11, fontWeight: 600, color: '#E8726E', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, fontFamily: "'DM Sans', sans-serif", opacity: processingId === sentRequest.id ? 0.5 : 1 }}>
+                              <UserMinus size={14} /> Unsend Request
                             </button>
-                          </div>
+                          ) : (
+                            <button onClick={() => handleSendRequest(profile.user_id)} disabled={processingId === profile.user_id} style={{ padding: '6px 12px', borderRadius: 10, border: 'none', background: '#82F0B9', fontSize: 11, fontWeight: 600, color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, fontFamily: "'DM Sans', sans-serif", opacity: processingId === profile.user_id ? 0.5 : 1 }}>
+                              <Send size={14} /> Send Request
+                            </button>
+                          )}
                         </div>
                       );
                     })}
                   </div>
-                </div>
-              </PageCard>
+                )}
+              </div>
             )}
           </div>
+        </PageCard>
 
-        </div>
-        </div>
+        {/* Friend Requests (Received) */}
+        {receivedRequests.length > 0 && (
+          <PageCard title="Friend Requests" headerRight={<span style={{ fontSize: 12, color: '#787776' }}>{receivedRequests.length} pending</span>}>
+            <div style={{ padding: '10px 16px 16px' }}>
+              {receivedRequests.map((request) => {
+                const profile = getProfileById(request.user_id);
+                if (!profile) return null;
+                return (
+                  <div key={request.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '13px 0', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+                    <img src={profile.profile_picture_url || profile.avatar_url || defaultAvatarUrl(profile.full_name)} alt={profile.full_name || 'User'} style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <p style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{profile.full_name || profile.username}</p>
+                      <p style={{ fontSize: 11, color: '#787776', margin: '2px 0 0' }}>@{profile.username}</p>
+                    </div>
+                    <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
+                      <button onClick={() => handleAcceptRequestFromSearch(request.id)} disabled={processingId === request.id} style={{ padding: '6px 12px', borderRadius: 10, border: 'none', background: '#82F0B9', fontSize: 11, fontWeight: 600, color: 'white', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", opacity: processingId === request.id ? 0.5 : 1 }}>Confirm</button>
+                      <button onClick={() => handleCancelRequest(request.id)} disabled={processingId === request.id} style={{ padding: '6px 12px', borderRadius: 10, border: 'none', background: 'rgba(232,114,110,0.08)', fontSize: 11, fontWeight: 600, color: '#E8726E', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", opacity: processingId === request.id ? 0.5 : 1 }}>Delete</button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </PageCard>
+        )}
+      </div>
 
-        {/* Footer */}
-        <div className="dashboard-footer" style={{ padding: '12px 28px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: 11, color: '#787776' }}>2026 Vony, Inc. All rights reserved.</span>
-          <div className="dashboard-footer-links" style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-            <a href="https://www.vony-lending.com/terms" target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#787776', textDecoration: 'none' }}>Terms of Service</a>
-            <a href="https://www.vony-lending.com/privacy" target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#787776', textDecoration: 'none' }}>Privacy Center</a>
-            <a href="https://www.vony-lending.com/do-not-sell" target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#787776', textDecoration: 'none' }}>Do not sell or share my personal information</a>
-          </div>
-        </div>
-
+      {/* ── RIGHT: Your Friends ── */}
+      <div className="mesh-right" style={{ paddingLeft: 28, position: 'sticky', top: 88 }}>
+        <RightSection title="Your Friends">
+          {isLoading ? (
+            <div style={{ display: 'flex', justifyContent: 'center', padding: '20px 0' }}>
+              <div style={{ width: 24, height: 24, border: '2px solid #82F0B9', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+            </div>
+          ) : sortedFriends.length === 0 ? (
+            <div style={{ fontSize: 12, color: '#9B9A98', textAlign: 'center', padding: '12px 0' }}>No friends yet</div>
+          ) : sortedFriends.map((friendship) => {
+            const friendProfile = getFriendProfile(friendship);
+            if (!friendProfile) return null;
+            return (
+              <div key={friendship.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '7px 0', borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
+                <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'rgba(130,240,185,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden' }}>
+                  {friendProfile.profile_picture_url || friendProfile.avatar_url
+                    ? <img src={friendProfile.profile_picture_url || friendProfile.avatar_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    : <span style={{ fontSize: 11, fontWeight: 600, color: '#52B788' }}>{(friendProfile.full_name || friendProfile.username || '?').charAt(0)}</span>
+                  }
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{friendProfile.full_name || friendProfile.username}</div>
+                  <div style={{ fontSize: 11, color: '#9B9A98' }}>@{friendProfile.username}</div>
+                </div>
+                <button onClick={() => handleToggleStar(friendship)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 3, color: friendship.is_starred ? '#F5A623' : '#C7C6C4', flexShrink: 0 }}>
+                  <Star size={14} fill={friendship.is_starred ? 'currentColor' : 'none'} />
+                </button>
+              </div>
+            );
+          })}
+        </RightSection>
       </div>
 
     </div>

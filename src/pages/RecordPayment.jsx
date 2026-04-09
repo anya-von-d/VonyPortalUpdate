@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Payment, Loan, User, PublicProfile, Friendship } from "@/entities/all";
 import { useAuth } from "@/lib/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import {
   DollarSign, CheckCircle, CreditCard, Banknote, Smartphone, ChevronDown,
@@ -9,7 +9,6 @@ import {
 } from "lucide-react";
 import { format, addMonths } from "date-fns";
 import { motion, AnimatePresence } from "framer-motion";
-import DashboardSidebar from "@/components/DashboardSidebar";
 import confetti from "canvas-confetti";
 import { AnimatedCheckmark } from "@/components/ui/animations";
 
@@ -84,7 +83,7 @@ function SingleSelectDropdown({ options, selected, onChange }) {
    MAIN COMPONENT
    ══════════════════════════════════════════════════════════════ */
 export default function RecordPayment() {
-  const { user: authUser, userProfile } = useAuth();
+  const { user: authUser, userProfile, logout } = useAuth();
   const user = userProfile ? { ...userProfile, id: authUser?.id } : null;
   const navigate = useNavigate();
 
@@ -116,6 +115,10 @@ export default function RecordPayment() {
   // Approval
   const [processingId, setProcessingId] = useState(null);
   const [confirmingDeny, setConfirmingDeny] = useState(null);
+
+  // More nav
+  const [moreNavOpen, setMoreNavOpen] = useState(false);
+  const moreNavCloseTimerRef = useRef(null);
 
   useEffect(() => { if (user?.id) loadData(); }, [user?.id]);
 
@@ -330,6 +333,28 @@ export default function RecordPayment() {
     return p.full_name || p.username;
   };
 
+  /* ── Upcoming payments for right panel ──────────────────── */
+  const upcomingPayments = allLoans
+    .filter(l => l.status === 'active' && l.next_payment_date)
+    .map(l => {
+      const isLender = l.lender_id === user?.id;
+      const otherId = isLender ? l.borrower_id : l.lender_id;
+      const otherProfile = profiles.find(p => p.user_id === otherId);
+      const days = Math.ceil((new Date(l.next_payment_date) - new Date()) / 86400000);
+      return { ...l, isLender, otherName: otherProfile?.full_name?.split(' ')[0] || 'User', days };
+    })
+    .sort((a, b) => new Date(a.next_payment_date) - new Date(b.next_payment_date))
+    .slice(0, 6);
+
+  /* ── RightSection component ──────────────────────────────── */
+  const RightSection = ({ title, children }) => (
+    <div style={{ marginBottom: 24 }}>
+      <div style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', letterSpacing: '0.01em', marginBottom: 9 }}>{title}</div>
+      <div style={{ height: 1, background: 'rgba(0,0,0,0.08)', marginBottom: 14 }} />
+      {children}
+    </div>
+  );
+
   /* ── PageCard component ──────────────────────────────────── */
   const PageCard = ({ title, headerRight, children, style, highlight }) => (
     <div style={{ background: '#F4F4F5', borderRadius: 14, overflow: 'hidden', border: highlight ? '6px solid #03ACEA' : undefined, boxShadow: highlight ? `0 0 28px 2px rgba(3,172,234,0.7), ${SHADOW}` : SHADOW, ...style }}>
@@ -346,22 +371,8 @@ export default function RecordPayment() {
   /* ── Loading state ──────────────────────────────────────── */
   if (isLoading && !user) {
     return (
-      <div className="home-with-sidebar" style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingTop: 0, background: 'transparent' }}>
-        <DashboardSidebar activePage="RecordPayment" user={user} />
-        <div className="dashboard-content-wrap" style={{ maxWidth: 1080, margin: '0 auto', padding: '20px 40px 0', position: 'relative', zIndex: 1 }}>
-          <div style={{ background: '#F4F4F5', borderRadius: 14, overflow: 'hidden', boxShadow: SHADOW, padding: 40, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <div style={{ width: 32, height: 32, border: '2px solid #03ACEA', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite', marginBottom: 12 }} />
-            <p style={{ fontSize: 13, color: '#787776' }}>Loading...</p>
-          </div>
-          <div style={{ padding: '20px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <span style={{ fontSize: 11, color: '#787776' }}>2026 Vony, Inc. All rights reserved.</span>
-            <div className="dashboard-footer-links" style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-              <a href="https://www.vony-lending.com/terms" target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#787776', textDecoration: 'none' }}>Terms of Service</a>
-              <a href="https://www.vony-lending.com/privacy" target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#787776', textDecoration: 'none' }}>Privacy Center</a>
-              <a href="https://www.vony-lending.com/do-not-sell" target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#787776', textDecoration: 'none' }}>Do not sell or share my personal information</a>
-            </div>
-          </div>
-        </div>
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ width: 32, height: 32, border: '2px solid #03ACEA', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
       </div>
     );
   }
@@ -406,38 +417,160 @@ export default function RecordPayment() {
         )}
       </AnimatePresence>
 
-      <div className="home-with-sidebar" style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingTop: 0, background: 'transparent' }}>
-        <DashboardSidebar activePage="RecordPayment" user={user} />
+      <div className="mesh-layout" style={{ maxWidth: 1200, margin: '0 auto', padding: '88px 8px 60px 8px', display: 'grid', gridTemplateColumns: '160px 1fr 240px', gap: 0, alignItems: 'start', fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased' }}>
 
-        {/* Hero */}
-        <div className="dash-hero" style={{ margin: '8px 10px 0', height: 168, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 24, position: 'relative' }}>
-          <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0.15, pointerEvents: 'none', zIndex: 0 }} viewBox="0 0 1200 168" preserveAspectRatio="xMidYMid slice">
-            {[{cx:80,cy:40},{cx:200,cy:110},{cx:320,cy:25},{cx:430,cy:160},{cx:540,cy:70},{cx:660,cy:130},{cx:770,cy:35},{cx:890,cy:175},{cx:1000,cy:80},{cx:1100,cy:140},{cx:150,cy:185},{cx:480,cy:100},{cx:720,cy:180},{cx:950,cy:55},{cx:280,cy:195},{cx:620,cy:48},{cx:1050,cy:195}].map((s, i) => (
-              <circle key={i} cx={s.cx} cy={s.cy} r={i % 3 === 0 ? 2.5 : 1.5} fill="white" />
+        {/* Col 1: left nav */}
+        <div className="mesh-left" style={{ paddingRight: 20, borderRight: '1px solid rgba(0,0,0,0.07)', position: 'sticky', top: 88 }}>
+          <nav style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+            {[
+              { label: 'Home', to: '/', active: false },
+              { label: 'Upcoming', to: createPageUrl("Upcoming"), active: false },
+              { label: 'My Loans', to: createPageUrl("YourLoans"), active: false },
+              { label: 'Friends', to: createPageUrl("Friends"), active: false },
+            ].map(({ label, to, active: isActive }) => (
+              <Link key={label} to={to} style={{
+                display: 'block', padding: '8px 10px 8px 4px', borderRadius: 9, textDecoration: 'none',
+                fontSize: 14, fontWeight: isActive ? 600 : 500,
+                color: isActive ? '#1A1918' : '#787776',
+                background: isActive ? 'rgba(0,0,0,0.05)' : 'transparent',
+                fontFamily: "'DM Sans', sans-serif", width: '100%', boxSizing: 'border-box',
+              }}>{label}</Link>
             ))}
-          </svg>
-          <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 40, fontWeight: 600, color: '#1A1918', margin: 0, letterSpacing: '-0.01em', lineHeight: 1, textAlign: 'center', position: 'relative', zIndex: 1 }}>
-            <span style={{ fontStyle: 'normal' }}>Record Payment</span>
-          </h1>
+            <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', margin: '8px 0' }} />
+            {[
+              { label: 'Recent Activity', to: createPageUrl("RecentActivity"), active: false },
+              { label: 'Documents', to: createPageUrl("LoanAgreements"), active: false },
+              { label: 'Record Payment', to: createPageUrl("RecordPayment"), active: true },
+            ].map(({ label, to, active: isActive }) => (
+              <Link key={label} to={to} style={{
+                display: 'block', padding: '7px 10px 7px 4px', borderRadius: 9, textDecoration: 'none',
+                fontSize: 13, fontWeight: isActive ? 600 : 500,
+                color: isActive ? '#1A1918' : '#9B9A98',
+                background: isActive ? 'rgba(0,0,0,0.04)' : 'transparent',
+                fontFamily: "'DM Sans', sans-serif", width: '100%', boxSizing: 'border-box',
+              }}>{label}</Link>
+            ))}
+            {/* More dropdown */}
+            <div style={{ position: 'relative' }}
+              onMouseEnter={() => { if (moreNavCloseTimerRef.current) { clearTimeout(moreNavCloseTimerRef.current); moreNavCloseTimerRef.current = null; } setMoreNavOpen(true); }}
+              onMouseLeave={() => { moreNavCloseTimerRef.current = setTimeout(() => setMoreNavOpen(false), 150); }}
+            >
+              <button style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '7px 10px 7px 4px', borderRadius: 9, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 500, color: '#9B9A98', background: 'transparent', fontFamily: "'DM Sans', sans-serif", width: '100%', boxSizing: 'border-box' }}>
+                More <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="6 9 12 15 18 9" /></svg>
+              </button>
+              {moreNavOpen && (
+                <div style={{ position: 'absolute', top: 'calc(100% + 4px)', left: 0, right: 0, background: 'white', borderRadius: 10, padding: '4px 0', boxShadow: '0 4px 16px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06)', zIndex: 50 }}>
+                  {[{ label: 'Learn', to: createPageUrl("ComingSoon") }, { label: 'Loan Help', to: createPageUrl("LoanHelp") }].map(({ label, to }) => (
+                    <Link key={label} to={to} onClick={() => setMoreNavOpen(false)} style={{ display: 'block', padding: '8px 14px', fontSize: 13, fontWeight: 500, color: '#1A1918', textDecoration: 'none', fontFamily: "'DM Sans', sans-serif" }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.04)'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>{label}</Link>
+                  ))}
+                  <a href="https://www.vony-lending.com/help" target="_blank" rel="noopener noreferrer" style={{ display: 'block', padding: '8px 14px', fontSize: 13, fontWeight: 500, color: '#1A1918', textDecoration: 'none', fontFamily: "'DM Sans', sans-serif" }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.04)'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>Help & Support</a>
+                  <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', margin: '4px 14px' }} />
+                  <button onClick={() => { setMoreNavOpen(false); logout?.(); }} style={{ display: 'block', width: '100%', padding: '8px 14px', fontSize: 13, fontWeight: 500, color: '#E8726E', background: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left', fontFamily: "'DM Sans', sans-serif" }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(232,114,110,0.06)'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>Log Out</button>
+                </div>
+              )}
+            </div>
+          </nav>
         </div>
 
-        {/* Page content */}
-        <div className="dashboard-content-wrap" style={{ maxWidth: 1080, margin: '0 auto', padding: '20px 40px 0', position: 'relative', zIndex: 1 }}>
-          <div className="dashboard-grey-box" style={{ background: '#E5E2DF', borderRadius: 18, padding: 20 }}>
+        {/* Col 2: center content */}
+        <div className="mesh-center" style={{ padding: '0 32px', minHeight: 500, borderRight: '1px solid rgba(0,0,0,0.07)' }}>
 
-          {/* Two-column layout */}
-          <div className="rp-main-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 16, alignItems: 'start' }}>
+          {/* ── Select Your Loan (top of center col) ── */}
+          <PageCard
+            title="Select Your Loan"
+            headerRight={
+              <button onClick={clearFilters} style={{
+                padding: '4px 10px', borderRadius: 8, border: 'none',
+                background: 'transparent', fontSize: 11, fontWeight: 500,
+                color: hasAnyFilter ? '#E8726E' : '#C7C6C4',
+                cursor: hasAnyFilter ? 'pointer' : 'default',
+                fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap',
+              }}>Clear Filters</button>
+            }
+            style={{ marginBottom: 16, overflow: 'visible' }}
+          >
+            {/* Filters */}
+            <div style={{ padding: '10px 9px 0', display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center', overflow: 'visible', position: 'relative', zIndex: 20 }}>
+              <SingleSelectDropdown options={ROLE_OPTIONS} selected={roleFilter} onChange={setRoleFilter} />
+              <SingleSelectDropdown options={friendOptions} selected={friendFilter} onChange={setFriendFilter} />
+            </div>
 
-            {/* ── Left Column (form — visually right after swap) ── */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16, order: 2 }}>
+            {/* Loan List */}
+            <div style={{ padding: '12px 9px 9px', maxHeight: 310, overflowY: 'auto' }}>
+              {filteredLoans.length === 0 ? (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '32px 0', color: '#C7C6C4' }}>
+                  <FileText size={28} style={{ opacity: 0.3, marginBottom: 8 }} />
+                  <p style={{ fontSize: 12, color: '#787776', margin: 0 }}>No active loans found</p>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  {filteredLoans.map(loan => {
+                    const other = getOtherParty(loan);
+                    const remaining = getRemainingBalance(loan);
+                    const isSelected = selectedLoan?.id === loan.id;
+                    return (
+                      <button key={loan.id} onClick={() => handleSelectLoan(loan)} style={{
+                        display: 'block', width: '100%', textAlign: 'left', padding: '13px 0',
+                        background: isSelected ? 'rgba(1,173,233,0.05)' : 'transparent',
+                        cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", transition: 'all 0.15s',
+                        border: 'none',
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                          <div style={{
+                            width: 28, height: 28, borderRadius: '50%', background: 'rgba(3,172,234,0.1)',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden',
+                          }}>
+                            {other.profile_picture_url ? (
+                              <img src={other.profile_picture_url} alt="" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+                            ) : (
+                              <span style={{ fontSize: 12, fontWeight: 600, color: '#03ACEA' }}>{(other.full_name || '?').charAt(0).toUpperCase()}</span>
+                            )}
+                          </div>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <p style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                              ${(loan.amount || 0).toLocaleString()} loan {isUserLender(loan) ? 'to' : 'from'} {other.full_name || other.username}
+                            </p>
+                            <p style={{ fontSize: 11, color: '#787776', margin: '2px 0 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                              {loan.purpose || 'No reason'} · ${remaining.toFixed(2)} remaining
+                            </p>
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </PageCard>
 
-              {/* Record Payment Form */}
-              <PageCard title={
-                currentStep === 0 ? 'Payment Details' :
-                currentStep === 1 ? 'Payment Details' :
-                currentStep === 2 ? 'Confirm Payment' :
-                'Payment Recorded'
-              } highlight>
+          {/* ── Recommended Payment (shown when loan selected) ── */}
+          {selectedLoan && currentStep <= 1 && (
+            <PageCard title="Recommended Payment" style={{ marginBottom: 16 }}>
+              <div style={{ padding: '12px 9px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div>
+                  <p style={{ fontSize: 22, fontWeight: 700, color: '#03ACEA', margin: 0 }}>${getSuggestedPayment(selectedLoan).toFixed(2)}</p>
+                  {selectedLoan.next_payment_date && (
+                    <p style={{ fontSize: 11, color: '#787776', margin: '4px 0 0' }}>Due {format(new Date(selectedLoan.next_payment_date + 'T12:00:00'), 'MMM d, yyyy')}</p>
+                  )}
+                </div>
+                <button onClick={() => { setAmount(getSuggestedPayment(selectedLoan).toFixed(2)); }} style={{
+                  padding: '8px 16px', borderRadius: 10, border: 'none',
+                  background: 'rgba(3,172,234,0.08)', fontSize: 12, fontWeight: 600,
+                  color: '#03ACEA', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
+                }}>
+                  Use Recommended
+                </button>
+              </div>
+            </PageCard>
+          )}
+
+          {/* ── Payment Form / Steps ── */}
+          <PageCard title={
+            currentStep === 0 ? 'Payment Details' :
+            currentStep === 1 ? 'Payment Details' :
+            currentStep === 2 ? 'Confirm Payment' :
+            'Payment Recorded'
+          } highlight>
                 <div style={{ padding: '16px', overflow: 'visible' }}>
                   {currentStep === 0 && !selectedLoan && (
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 0', color: '#C7C6C4' }}>
@@ -656,209 +789,59 @@ export default function RecordPayment() {
                 </div>
               </PageCard>
 
-            </div>
-
-            {/* ── Right Column: Select Your Loan (visually left after swap) ── */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16, order: 1 }}>
-
-              {/* Select Loan card */}
-              <PageCard
-                title="Select Your Loan"
-                headerRight={
-                  <button onClick={clearFilters} style={{
-                    padding: '4px 10px', borderRadius: 8, border: 'none',
-                    background: 'transparent', fontSize: 11, fontWeight: 500,
-                    color: hasAnyFilter ? '#E8726E' : '#C7C6C4',
-                    cursor: hasAnyFilter ? 'pointer' : 'default',
-                    fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap',
-                  }}>Clear Filters</button>
-                }
-                style={{ overflow: 'visible' }}
-              >
-                {/* Filters */}
-                <div style={{ padding: '10px 9px 0', display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center', overflow: 'visible', position: 'relative', zIndex: 20 }}>
-                  <SingleSelectDropdown options={ROLE_OPTIONS} selected={roleFilter} onChange={setRoleFilter} />
-                  <SingleSelectDropdown options={friendOptions} selected={friendFilter} onChange={setFriendFilter} />
-                </div>
-
-                {/* Loan List */}
-                <div style={{ padding: '12px 9px 9px', maxHeight: 310, overflowY: 'auto' }}>
-                  {filteredLoans.length === 0 ? (
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '32px 0', color: '#C7C6C4' }}>
-                      <FileText size={28} style={{ opacity: 0.3, marginBottom: 8 }} />
-                      <p style={{ fontSize: 12, color: '#787776', margin: 0 }}>No active loans found</p>
-                    </div>
-                  ) : (
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                      {filteredLoans.map(loan => {
-                        const other = getOtherParty(loan);
-                        const remaining = getRemainingBalance(loan);
-                        const isSelected = selectedLoan?.id === loan.id;
-                        return (
-                          <button key={loan.id} onClick={() => handleSelectLoan(loan)} style={{
-                            display: 'block', width: '100%', textAlign: 'left', padding: '13px 0',
-                            background: isSelected ? 'rgba(1,173,233,0.05)' : 'transparent',
-                            cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", transition: 'all 0.15s',
-                            border: 'none',
-                          }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                              <div style={{
-                                width: 28, height: 28, borderRadius: '50%', background: 'rgba(3,172,234,0.1)',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden',
-                              }}>
-                                {other.profile_picture_url ? (
-                                  <img src={other.profile_picture_url} alt="" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
-                                ) : (
-                                  <span style={{ fontSize: 12, fontWeight: 600, color: '#03ACEA' }}>{(other.full_name || '?').charAt(0).toUpperCase()}</span>
-                                )}
-                              </div>
-                              <div style={{ flex: 1, minWidth: 0 }}>
-                                <p style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                  ${(loan.amount || 0).toLocaleString()} loan {isUserLender(loan) ? 'to' : 'from'} {other.full_name || other.username}
-                                </p>
-                                <p style={{ fontSize: 11, color: '#787776', margin: '2px 0 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                  {loan.purpose || 'No reason'} · ${remaining.toFixed(2)} remaining
-                                </p>
-                              </div>
-                            </div>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              </PageCard>
-
-              {/* Recommended Payment */}
-              {selectedLoan && currentStep <= 1 && (
-                <PageCard title="Recommended Payment">
-                  <div style={{ padding: '12px 9px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <div>
-                      <p style={{ fontSize: 22, fontWeight: 700, color: '#03ACEA', margin: 0 }}>${getSuggestedPayment(selectedLoan).toFixed(2)}</p>
-                      {selectedLoan.next_payment_date && (
-                        <p style={{ fontSize: 11, color: '#787776', margin: '4px 0 0' }}>Due {format(new Date(selectedLoan.next_payment_date + 'T12:00:00'), 'MMM d, yyyy')}</p>
-                      )}
-                    </div>
-                    <button onClick={() => { setAmount(getSuggestedPayment(selectedLoan).toFixed(2)); }} style={{
-                      padding: '8px 16px', borderRadius: 10, border: 'none',
-                      background: 'rgba(3,172,234,0.08)', fontSize: 12, fontWeight: 600,
-                      color: '#03ACEA', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
-                    }}>
-                      Use Recommended
-                    </button>
-                  </div>
-                </PageCard>
-              )}
-
-            </div>
-          </div>
-
-          {/* Payments Waiting for Approval */}
-          {(paymentsToConfirm.length > 0 || paymentsYouRecorded.length > 0) && (
-            <PageCard
-              title="Payments Waiting for Approval"
-              headerRight={
-                <span style={{ fontSize: 12, color: '#787776' }}>{pendingPayments.length} pending</span>
-              }
-              style={{ marginTop: 16 }}
-            >
-              <div style={{ padding: '10px 9px 9px' }}>
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  {/* Payments needing your response */}
-                  {paymentsToConfirm.map(payment => {
-                    const loan = getPaymentLoan(payment);
-                    if (!loan) return null;
-                    const recorder = getUserById(payment.recorded_by);
-                    const otherId = loan.lender_id === payment.recorded_by ? loan.borrower_id : loan.lender_id;
-                    const recorderPic = recorder.profile_picture_url || `https://ui-avatars.com/api/?name=${encodeURIComponent((recorder.full_name || recorder.username || 'U').charAt(0))}&background=678AFB&color=fff&size=64`;
-                    const methodLabel = PAYMENT_METHODS.find(m => m.id === payment.payment_method)?.label || payment.payment_method || '';
-                    return (
-                      <div key={payment.id} style={{
-                        display: 'flex', alignItems: 'center', gap: 12, padding: '13px 0',
-                      }}>
-                        <img src={recorderPic} alt="" style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover', flexShrink: 0, background: 'rgba(103,138,251,0.1)' }} />
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <p style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', margin: 0 }}>
-                            {nameOrYouCapitalized(payment.recorded_by)} paid {nameOrYou(otherId)} ${payment.amount?.toFixed(2)} for {loan.purpose || 'this loan'}{methodLabel ? ` using ${methodLabel}` : ''}
-                          </p>
-                          <p style={{ fontSize: 11, color: '#787776', margin: '2px 0 0' }}>
-                            {payment.payment_date ? format(new Date(payment.payment_date + 'T12:00:00'), 'MMM d') : 'No date'}
-                          </p>
-                        </div>
-                        <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
-                          <button
-                            onClick={() => handleApprovePayment(payment)}
-                            disabled={processingId === payment.id}
-                            style={{
-                              padding: '6px 14px', borderRadius: 10, border: 'none',
-                              background: '#03ACEA', fontSize: 11, fontWeight: 600, color: 'white',
-                              cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
-                              opacity: processingId === payment.id ? 0.5 : 1,
-                            }}
-                          >
-                            {processingId === payment.id ? 'Confirming...' : 'Confirm'}
-                          </button>
-                          <button
-                            onClick={() => setConfirmingDeny(payment)}
-                            disabled={processingId === payment.id}
-                            style={{
-                              padding: '6px 14px', borderRadius: 10, border: 'none',
-                              background: 'rgba(232,114,110,0.08)', fontSize: 11, fontWeight: 600, color: '#E8726E',
-                              cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
-                            }}
-                          >
-                            Reject
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  })}
-
-                  {/* Payments you recorded (pending) */}
-                  {paymentsYouRecorded.map(payment => {
-                    const loan = getPaymentLoan(payment);
-                    if (!loan) return null;
-                    const otherId = loan.lender_id === user?.id ? loan.borrower_id : loan.lender_id;
-                    const otherParty = getUserById(otherId);
-                    const otherPic = otherParty.profile_picture_url || `https://ui-avatars.com/api/?name=${encodeURIComponent((otherParty.full_name || otherParty.username || 'U').charAt(0))}&background=678AFB&color=fff&size=64`;
-                    const methodLabel = PAYMENT_METHODS.find(m => m.id === payment.payment_method)?.label || payment.payment_method || '';
-                    return (
-                      <div key={payment.id} style={{
-                        display: 'flex', alignItems: 'center', gap: 12, padding: '13px 0',
-                      }}>
-                        <img src={otherPic} alt="" style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover', flexShrink: 0, background: 'rgba(103,138,251,0.1)' }} />
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <p style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', margin: 0 }}>
-                            {nameOrYouCapitalized(user?.id)} paid {nameOrYou(otherId)} ${payment.amount?.toFixed(2)} for {loan.purpose || 'this loan'}{methodLabel ? ` using ${methodLabel}` : ''}
-                          </p>
-                          <p style={{ fontSize: 11, color: '#787776', margin: '2px 0 0' }}>
-                            {payment.payment_date ? format(new Date(payment.payment_date + 'T12:00:00'), 'MMM d') : 'No date'}
-                          </p>
-                        </div>
-                        <span style={{
-                          padding: '4px 12px', borderRadius: 8, fontSize: 11, fontWeight: 600,
-                          background: 'rgba(120,119,118,0.08)', color: '#787776',
-                        }}>
-                          Pending
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </PageCard>
-          )}
-
-          </div>
-          <div style={{ padding: '20px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <span style={{ fontSize: 11, color: '#787776' }}>2026 Vony, Inc. All rights reserved.</span>
-            <div className="dashboard-footer-links" style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-              <a href="https://www.vony-lending.com/terms" target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#787776', textDecoration: 'none' }}>Terms of Service</a>
-              <a href="https://www.vony-lending.com/privacy" target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#787776', textDecoration: 'none' }}>Privacy Center</a>
-              <a href="https://www.vony-lending.com/do-not-sell" target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#787776', textDecoration: 'none' }}>Do not sell or share my personal information</a>
-            </div>
-          </div>
         </div>
+
+        {/* Col 3: right panel */}
+        <div className="mesh-right" style={{ paddingLeft: 28, position: 'sticky', top: 88 }}>
+          <RightSection title="Upcoming">
+            {upcomingPayments.length === 0 ? (
+              <p style={{ fontSize: 12, color: '#9B9A98', margin: 0 }}>No upcoming payments</p>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {upcomingPayments.map(l => (
+                  <div key={l.id} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <div style={{
+                      width: 28, height: 18, borderRadius: 5, background: l.days <= 3 ? 'rgba(232,114,110,0.1)' : 'rgba(3,172,234,0.08)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                    }}>
+                      <span style={{ fontSize: 10, fontWeight: 700, color: l.days <= 3 ? '#E8726E' : '#03ACEA' }}>{l.days}d</span>
+                    </div>
+                    <span style={{ fontSize: 12, color: '#1A1918', fontWeight: 500, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{l.otherName}</span>
+                    <span style={{ fontSize: 12, fontWeight: 600, color: l.isLender ? '#16A34A' : '#E8726E', flexShrink: 0 }}>
+                      {l.isLender ? '+' : '-'}${(l.payment_amount || 0).toLocaleString()}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </RightSection>
+
+          {paymentsToConfirm.length > 0 && (
+            <RightSection title="Pending Confirmations">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {paymentsToConfirm.map(payment => {
+                  const loan = getPaymentLoan(payment);
+                  if (!loan) return null;
+                  const recorder = getUserById(payment.recorded_by);
+                  const name = recorder?.full_name?.split(' ')[0] || recorder?.username || 'User';
+                  const initial = (recorder?.full_name || recorder?.username || 'U').charAt(0).toUpperCase();
+                  return (
+                    <div key={payment.id} style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+                      <div style={{ width: 24, height: 24, borderRadius: '50%', background: 'rgba(139,92,246,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <span style={{ fontSize: 10, fontWeight: 700, color: '#8B5CF6' }}>{initial}</span>
+                      </div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <p style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', margin: 0 }}>{name} paid ${payment.amount?.toFixed(2)}</p>
+                        <p style={{ fontSize: 11, color: '#9B9A98', margin: '2px 0 0' }}>Awaiting your confirmation</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </RightSection>
+          )}
+        </div>
+
       </div>
     </>
   );

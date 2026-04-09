@@ -4,9 +4,11 @@ import { FileText, CheckCircle, Download, ChevronDown, ChevronRight, X, Calendar
 import { motion, AnimatePresence } from "framer-motion";
 import { format, addMonths, addWeeks, addDays } from "date-fns";
 import { jsPDF } from "jspdf";
+import { Link } from "react-router-dom";
+import { createPageUrl } from "@/utils";
+import { useAuth } from "@/lib/AuthContext";
 import LoanActivity from "../components/loans/LoanActivity";
 import { formatMoney } from "@/components/utils/formatMoney";
-import DashboardSidebar from "@/components/DashboardSidebar";
 
 const ROLE_OPTIONS = [
   { id: 'all', label: 'All Categories' },
@@ -219,6 +221,10 @@ export default function LoanAgreements() {
   const [activeInfoTooltip, setActiveInfoTooltip] = useState(null);
   const [expandedId, setExpandedId] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
+
+  const { logout } = useAuth();
+  const [moreNavOpen, setMoreNavOpen] = useState(false);
+  const moreNavCloseTimerRef = useRef(null);
 
   useEffect(() => {
     loadData();
@@ -586,22 +592,8 @@ export default function LoanAgreements() {
   /* ── Loading state ──────────────────────────────────────────── */
   if (isLoading || !user) {
     return (
-      <div className="home-with-sidebar" style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingTop: 0, background: 'transparent' }}>
-        <DashboardSidebar activePage="LoanAgreements" user={user} />
-        <div className="dashboard-content-wrap" style={{ maxWidth: 1080, margin: '0 auto', padding: '20px 40px 0', position: 'relative', zIndex: 1 }}>
-          <div style={{ background: '#F4F4F5', borderRadius: 14, overflow: 'hidden', boxShadow: SHADOW, padding: 40, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-            <div style={{ width: 32, height: 32, border: '2px solid #82F0B9', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite', marginBottom: 12 }} />
-            <p style={{ fontSize: 13, color: '#787776' }}>{isLoading ? 'Loading documents...' : 'Please log in to view documents'}</p>
-          </div>
-          <div style={{ padding: '20px 0 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <span style={{ fontSize: 11, color: '#787776' }}>2026 Vony, Inc. All rights reserved.</span>
-            <div className="dashboard-footer-links" style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-              <a href="https://www.vony-lending.com/terms" target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#787776', textDecoration: 'none' }}>Terms of Service</a>
-              <a href="https://www.vony-lending.com/privacy" target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#787776', textDecoration: 'none' }}>Privacy Center</a>
-              <a href="https://www.vony-lending.com/do-not-sell" target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#787776', textDecoration: 'none' }}>Do not sell or share my personal information</a>
-            </div>
-          </div>
-        </div>
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ width: 32, height: 32, border: '2px solid #82F0B9', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
       </div>
     );
   }
@@ -955,6 +947,21 @@ export default function LoanAgreements() {
     );
   };
 
+  /* ── Pending confirmations for right panel ───────────────── */
+  const pendingToConfirm = payments.filter(p => {
+    const loan = loans.find(l => l.id === p.loan_id);
+    return loan && loan.lender_id === user?.id && p.status === 'pending_confirmation';
+  });
+
+  /* ── RightSection component ──────────────────────────────── */
+  const RightSection = ({ title, children }) => (
+    <div style={{ marginBottom: 24 }}>
+      <div style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', letterSpacing: '0.01em', marginBottom: 9 }}>{title}</div>
+      <div style={{ height: 1, background: 'rgba(0,0,0,0.08)', marginBottom: 14 }} />
+      {children}
+    </div>
+  );
+
   /* ══════════════════════════════════════════════════════════
      RENDER
      ══════════════════════════════════════════════════════════ */
@@ -1014,23 +1021,63 @@ export default function LoanAgreements() {
         )}
       </AnimatePresence>
 
-      <div className="home-with-sidebar" style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingTop: 0, background: 'transparent' }}>
-        <DashboardSidebar activePage="LoanAgreements" user={user} />
+      <div className="mesh-layout" style={{ maxWidth: 1200, margin: '0 auto', padding: '88px 8px 60px 8px', display: 'grid', gridTemplateColumns: '160px 1fr 240px', gap: 0, alignItems: 'start', fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased' }}>
 
-        {/* Hero */}
-        <div className="dash-hero" style={{ margin: '8px 10px 0', height: 168, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 24, position: 'relative' }}>
-          <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0.15, pointerEvents: 'none', zIndex: 0 }} viewBox="0 0 1200 168" preserveAspectRatio="xMidYMid slice">
-            {[{cx:80,cy:40},{cx:200,cy:110},{cx:320,cy:25},{cx:430,cy:160},{cx:540,cy:70},{cx:660,cy:130},{cx:770,cy:35},{cx:890,cy:175},{cx:1000,cy:80},{cx:1100,cy:140},{cx:150,cy:185},{cx:480,cy:100},{cx:720,cy:180},{cx:950,cy:55},{cx:280,cy:195},{cx:620,cy:48},{cx:1050,cy:195}].map((s, i) => (
-              <circle key={i} cx={s.cx} cy={s.cy} r={i % 3 === 0 ? 2.5 : 1.5} fill="white" />
+        {/* Col 1: left nav */}
+        <div className="mesh-left" style={{ paddingRight: 20, borderRight: '1px solid rgba(0,0,0,0.07)', position: 'sticky', top: 88 }}>
+          <nav style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+            {[
+              { label: 'Home', to: '/', active: false },
+              { label: 'Upcoming', to: createPageUrl("Upcoming"), active: false },
+              { label: 'My Loans', to: createPageUrl("YourLoans"), active: false },
+              { label: 'Friends', to: createPageUrl("Friends"), active: false },
+            ].map(({ label, to, active: isActive }) => (
+              <Link key={label} to={to} style={{
+                display: 'block', padding: '8px 10px 8px 4px', borderRadius: 9, textDecoration: 'none',
+                fontSize: 14, fontWeight: isActive ? 600 : 500,
+                color: isActive ? '#1A1918' : '#787776',
+                background: isActive ? 'rgba(0,0,0,0.05)' : 'transparent',
+                fontFamily: "'DM Sans', sans-serif", width: '100%', boxSizing: 'border-box',
+              }}>{label}</Link>
             ))}
-          </svg>
-          <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 40, fontWeight: 600, color: '#1A1918', margin: 0, letterSpacing: '-0.01em', lineHeight: 1, textAlign: 'center', position: 'relative', zIndex: 1 }}>
-            <span style={{ fontStyle: 'normal' }}>Documents</span>
-          </h1>
+            <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', margin: '8px 0' }} />
+            {[
+              { label: 'Recent Activity', to: createPageUrl("RecentActivity"), active: false },
+              { label: 'Documents', to: createPageUrl("LoanAgreements"), active: true },
+              { label: 'Record Payment', to: createPageUrl("RecordPayment"), active: false },
+            ].map(({ label, to, active: isActive }) => (
+              <Link key={label} to={to} style={{
+                display: 'block', padding: '7px 10px 7px 4px', borderRadius: 9, textDecoration: 'none',
+                fontSize: 13, fontWeight: isActive ? 600 : 500,
+                color: isActive ? '#1A1918' : '#9B9A98',
+                background: isActive ? 'rgba(0,0,0,0.04)' : 'transparent',
+                fontFamily: "'DM Sans', sans-serif", width: '100%', boxSizing: 'border-box',
+              }}>{label}</Link>
+            ))}
+            {/* More dropdown */}
+            <div style={{ position: 'relative' }}
+              onMouseEnter={() => { if (moreNavCloseTimerRef.current) { clearTimeout(moreNavCloseTimerRef.current); moreNavCloseTimerRef.current = null; } setMoreNavOpen(true); }}
+              onMouseLeave={() => { moreNavCloseTimerRef.current = setTimeout(() => setMoreNavOpen(false), 150); }}
+            >
+              <button style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '7px 10px 7px 4px', borderRadius: 9, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 500, color: '#9B9A98', background: 'transparent', fontFamily: "'DM Sans', sans-serif", width: '100%', boxSizing: 'border-box' }}>
+                More <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="6 9 12 15 18 9" /></svg>
+              </button>
+              {moreNavOpen && (
+                <div style={{ position: 'absolute', top: 'calc(100% + 4px)', left: 0, right: 0, background: 'white', borderRadius: 10, padding: '4px 0', boxShadow: '0 4px 16px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06)', zIndex: 50 }}>
+                  {[{ label: 'Learn', to: createPageUrl("ComingSoon") }, { label: 'Loan Help', to: createPageUrl("LoanHelp") }].map(({ label, to }) => (
+                    <Link key={label} to={to} onClick={() => setMoreNavOpen(false)} style={{ display: 'block', padding: '8px 14px', fontSize: 13, fontWeight: 500, color: '#1A1918', textDecoration: 'none', fontFamily: "'DM Sans', sans-serif" }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.04)'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>{label}</Link>
+                  ))}
+                  <a href="https://www.vony-lending.com/help" target="_blank" rel="noopener noreferrer" style={{ display: 'block', padding: '8px 14px', fontSize: 13, fontWeight: 500, color: '#1A1918', textDecoration: 'none', fontFamily: "'DM Sans', sans-serif" }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.04)'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>Help & Support</a>
+                  <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', margin: '4px 14px' }} />
+                  <button onClick={() => { setMoreNavOpen(false); logout?.(); }} style={{ display: 'block', width: '100%', padding: '8px 14px', fontSize: 13, fontWeight: 500, color: '#E8726E', background: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left', fontFamily: "'DM Sans', sans-serif" }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(232,114,110,0.06)'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>Log Out</button>
+                </div>
+              )}
+            </div>
+          </nav>
         </div>
 
-        <div className="dashboard-content-wrap" style={{ maxWidth: 1080, margin: '0 auto', padding: '20px 40px 0', position: 'relative', zIndex: 1 }}>
-          <div className="dashboard-grey-box" style={{ background: '#E5E2DF', borderRadius: 18, padding: 20 }}>
+        {/* Col 2: center content */}
+        <div className="mesh-center" style={{ padding: '0 32px', minHeight: 500, borderRight: '1px solid rgba(0,0,0,0.07)' }}>
 
           {/* ── Search Row ─────────────────────────────────────── */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
@@ -1268,16 +1315,37 @@ export default function LoanAgreements() {
             }
           `}</style>
 
-          </div>
-          <div style={{ padding: '20px 0 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <span style={{ fontSize: 11, color: '#787776' }}>2026 Vony, Inc. All rights reserved.</span>
-            <div className="dashboard-footer-links" style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-              <a href="https://www.vony-lending.com/terms" target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#787776', textDecoration: 'none' }}>Terms of Service</a>
-              <a href="https://www.vony-lending.com/privacy" target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#787776', textDecoration: 'none' }}>Privacy Center</a>
-              <a href="https://www.vony-lending.com/do-not-sell" target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#787776', textDecoration: 'none' }}>Do not sell or share my personal information</a>
-            </div>
-          </div>
         </div>
+
+        {/* Col 3: right panel */}
+        <div className="mesh-right" style={{ paddingLeft: 28, position: 'sticky', top: 88 }}>
+          <RightSection title="Notifications">
+            {pendingToConfirm.length === 0 ? (
+              <p style={{ fontSize: 12, color: '#9B9A98', margin: 0 }}>All caught up</p>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                {pendingToConfirm.map(p => {
+                  const loan = loans.find(l => l.id === p.loan_id);
+                  const borrower = getUserById(loan?.borrower_id);
+                  const name = borrower?.full_name?.split(' ')[0] || borrower?.username || 'User';
+                  const initial = (borrower?.full_name || borrower?.username || 'U').charAt(0).toUpperCase();
+                  return (
+                    <div key={p.id} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                      <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'rgba(3,172,234,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <span style={{ fontSize: 12, fontWeight: 700, color: '#03ACEA' }}>{initial}</span>
+                      </div>
+                      <div>
+                        <p style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', margin: 0 }}>{name} paid ${p.amount?.toFixed(2)}</p>
+                        <p style={{ fontSize: 11, color: '#9B9A98', margin: '2px 0 0' }}>Awaiting confirmation</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </RightSection>
+        </div>
+
       </div>
     </>
   );

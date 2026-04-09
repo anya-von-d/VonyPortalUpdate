@@ -1,7 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
+import { createPageUrl } from "@/utils";
 import { motion } from "framer-motion";
-import DashboardSidebar from "@/components/DashboardSidebar";
 import { useAuth } from "@/lib/AuthContext";
+import { Loan, Payment, PublicProfile } from "@/entities/all";
+import { format } from "date-fns";
+import { formatMoney } from "@/components/utils/formatMoney";
 
 const LEARN_CATEGORIES = [
   { id: 'lending', label: 'Lending with Friends' },
@@ -55,99 +59,172 @@ const LEARN_ARTICLES = {
 };
 
 export default function ComingSoon() {
-  const { user: authUser, userProfile } = useAuth();
+  const { user: authUser, userProfile, logout } = useAuth();
   const user = userProfile ? { ...userProfile, id: authUser?.id } : null;
+  const [moreNavOpen, setMoreNavOpen] = useState(false);
+  const moreNavCloseTimerRef = useRef(null);
   const [learnCategory, setLearnCategory] = useState('lending');
 
+  const [allLoans, setAllLoans] = useState([]);
+  const [allPayments, setAllPayments] = useState([]);
+  const [publicProfiles, setPublicProfiles] = useState([]);
+
+  useEffect(() => {
+    if (!user?.id) return;
+    Promise.all([
+      Loan.list('-created_at').catch(() => []),
+      Payment.list('-created_at').catch(() => []),
+      PublicProfile.list().catch(() => []),
+    ]).then(([loans, payments, profiles]) => {
+      setAllLoans((loans || []).filter(l => l.lender_id === user.id || l.borrower_id === user.id));
+      setAllPayments(payments || []);
+      setPublicProfiles(profiles || []);
+    });
+  }, [user?.id]);
+
+  const pendingToConfirm = allPayments.filter(p => {
+    const loan = allLoans.find(l => l.id === p.loan_id);
+    return loan && loan.lender_id === user?.id && p.status === 'pending_confirmation';
+  });
+
+  const recentActivity = allPayments
+    .filter(p => p.status === 'confirmed' || p.status === 'completed')
+    .slice(0, 5)
+    .map(p => {
+      const loan = allLoans.find(l => l.id === p.loan_id);
+      if (!loan) return null;
+      const isLender = loan.lender_id === user?.id;
+      const otherId = isLender ? loan.borrower_id : loan.lender_id;
+      const otherProfile = publicProfiles.find(pr => pr.user_id === otherId);
+      const name = otherProfile?.full_name?.split(' ')[0] || 'User';
+      return { id: p.id, isLender, name, amount: p.amount || 0, date: p.payment_date || p.created_at };
+    })
+    .filter(Boolean);
+
+  const RightSection = ({ title, children }) => (
+    <div style={{ marginBottom: 24 }}>
+      <div style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', letterSpacing: '0.01em', marginBottom: 9 }}>{title}</div>
+      <div style={{ height: 1, background: 'rgba(0,0,0,0.08)', marginBottom: 14 }} />
+      {children}
+    </div>
+  );
+
   return (
-    <div className="home-with-sidebar" style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingTop: 88, background: 'transparent' }}>
-      <DashboardSidebar activePage="ComingSoon" user={user} />
+    <div className="mesh-layout" style={{ maxWidth: 1200, margin: '0 auto', padding: '88px 8px 60px 8px', display: 'grid', gridTemplateColumns: '160px 1fr 240px', gap: 0, alignItems: 'start' }}>
 
-      <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 40px', background: 'transparent', position: 'relative', zIndex: 2 }}>
-
-        {/* Hero title */}
-        <div className="dash-hero" style={{ margin: '8px 10px 0', height: 168, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 24, position: 'relative' }}>
-          <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0.15, pointerEvents: 'none', zIndex: 0 }} viewBox="0 0 1200 168" preserveAspectRatio="xMidYMid slice">
-            {[{cx:80,cy:40},{cx:200,cy:110},{cx:320,cy:25},{cx:430,cy:160},{cx:540,cy:70},{cx:660,cy:130},{cx:770,cy:35},{cx:890,cy:175},{cx:1000,cy:80},{cx:1100,cy:140},{cx:150,cy:185},{cx:480,cy:100},{cx:720,cy:180},{cx:950,cy:55},{cx:280,cy:195},{cx:620,cy:48},{cx:1050,cy:195}].map((s, i) => (
-              <circle key={i} cx={s.cx} cy={s.cy} r={i % 3 === 0 ? 2.5 : 1.5} fill="white" />
-            ))}
-          </svg>
-          <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 40, fontWeight: 600, color: '#1A1918', margin: 0, letterSpacing: '-0.01em', lineHeight: 1, textAlign: 'center', position: 'relative', zIndex: 1 }}>
-            <span style={{ fontStyle: 'normal' }}>Learn</span>
-          </h1>
-        </div>
-
-        {/* Page content */}
-        <div className="dashboard-content-wrap" style={{ maxWidth: 1080, margin: '0 auto', padding: '20px 0 64px', position: 'relative', zIndex: 1 }}>
-
-          {/* Category bar */}
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 28 }}>
-            <div className="learn-selector-wrap" style={{ display: 'inline-flex', gap: 2, background: 'rgba(255,255,255,0.5)', borderRadius: 14, padding: 4, border: '1px solid rgba(0,0,0,0.08)', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
-              {LEARN_CATEGORIES.map(cat => (
-                <button
-                  key={cat.id}
-                  onClick={() => setLearnCategory(cat.id)}
-                  style={{
-                    padding: '8px 18px', borderRadius: 10, border: 'none', cursor: 'pointer',
-                    fontSize: 13, fontFamily: "'DM Sans', sans-serif",
-                    fontWeight: learnCategory === cat.id ? 700 : 400,
-                    color: learnCategory === cat.id ? '#1A1918' : '#5C5B5A',
-                    background: learnCategory === cat.id ? 'white' : 'transparent',
-                    boxShadow: learnCategory === cat.id ? '0 1px 6px rgba(0,0,0,0.1)' : 'none',
-                    transition: 'all 0.15s',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {cat.label}
-                </button>
-              ))}
-            </div>
+      {/* ── LEFT: Sidebar nav ── */}
+      <div className="mesh-left" style={{ paddingRight: 20, borderRight: '1px solid rgba(0,0,0,0.07)', position: 'sticky', top: 88 }}>
+        <nav style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+          {[
+            { label: 'Home', to: '/', active: false },
+            { label: 'Upcoming', to: createPageUrl("Upcoming"), active: false },
+            { label: 'My Loans', to: createPageUrl("YourLoans"), active: false },
+            { label: 'Friends', to: createPageUrl("Friends"), active: false },
+          ].map(({ label, to, active: isActive }) => (
+            <Link key={label} to={to} style={{ display: 'block', padding: '8px 10px 8px 4px', borderRadius: 9, textDecoration: 'none', fontSize: 14, fontWeight: isActive ? 600 : 500, color: isActive ? '#1A1918' : '#787776', background: isActive ? 'rgba(0,0,0,0.05)' : 'transparent', fontFamily: "'DM Sans', sans-serif", width: '100%', boxSizing: 'border-box' }}>{label}</Link>
+          ))}
+          <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', margin: '8px 0' }} />
+          {[
+            { label: 'Recent Activity', to: createPageUrl("RecentActivity") },
+            { label: 'Documents', to: createPageUrl("LoanAgreements") },
+            { label: 'Record Payment', to: createPageUrl("RecordPayment") },
+          ].map(({ label, to }) => (
+            <Link key={label} to={to} style={{ display: 'block', padding: '7px 10px 7px 4px', borderRadius: 9, textDecoration: 'none', fontSize: 13, fontWeight: 500, color: '#9B9A98', background: 'transparent', fontFamily: "'DM Sans', sans-serif", width: '100%', boxSizing: 'border-box' }}>{label}</Link>
+          ))}
+          <div style={{ position: 'relative' }} onMouseEnter={() => { if (moreNavCloseTimerRef.current) { clearTimeout(moreNavCloseTimerRef.current); moreNavCloseTimerRef.current = null; } setMoreNavOpen(true); }} onMouseLeave={() => { moreNavCloseTimerRef.current = setTimeout(() => setMoreNavOpen(false), 150); }}>
+            <button style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '7px 10px 7px 4px', borderRadius: 9, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 600, color: '#1A1918', background: 'rgba(0,0,0,0.04)', fontFamily: "'DM Sans', sans-serif", width: '100%', boxSizing: 'border-box' }}>
+              Learn <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="6 9 12 15 18 9" /></svg>
+            </button>
+            {moreNavOpen && (
+              <div style={{ position: 'absolute', top: 'calc(100% + 4px)', left: 0, right: 0, background: 'white', borderRadius: 10, padding: '4px 0', boxShadow: '0 4px 16px rgba(0,0,0,0.10)', zIndex: 50 }}>
+                {[{ label: 'Loan Help', to: createPageUrl("LoanHelp") }].map(({ label, to }) => (
+                  <Link key={label} to={to} onClick={() => setMoreNavOpen(false)} style={{ display: 'block', padding: '8px 14px', fontSize: 13, fontWeight: 500, color: '#1A1918', textDecoration: 'none', fontFamily: "'DM Sans', sans-serif" }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.04)'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>{label}</Link>
+                ))}
+                <a href="https://www.vony-lending.com/help" target="_blank" rel="noopener noreferrer" style={{ display: 'block', padding: '8px 14px', fontSize: 13, fontWeight: 500, color: '#1A1918', textDecoration: 'none', fontFamily: "'DM Sans', sans-serif" }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.04)'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>Help & Support</a>
+                <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', margin: '4px 14px' }} />
+                <button onClick={() => { setMoreNavOpen(false); logout?.(); }} style={{ display: 'block', width: '100%', padding: '8px 14px', fontSize: 13, fontWeight: 500, color: '#E8726E', background: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left', fontFamily: "'DM Sans', sans-serif" }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(232,114,110,0.06)'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>Log Out</button>
+              </div>
+            )}
           </div>
-
-          {/* Articles grid */}
-          <div className="learn-articles-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
-            {(LEARN_ARTICLES[learnCategory] || []).map((article, index) => (
-              <motion.div
-                key={article.title}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
-                style={{
-                  background: 'white', borderRadius: 18, padding: '24px 22px',
-                  boxShadow: '0 2px 12px rgba(0,0,0,0.06)', cursor: 'default',
-                  border: '1px solid rgba(0,0,0,0.05)',
-                }}
-              >
-                <div style={{
-                  display: 'inline-block', fontSize: 10, fontWeight: 600, color: '#9B9A98',
-                  textTransform: 'uppercase', letterSpacing: '0.1em',
-                  background: 'rgba(0,0,0,0.05)', borderRadius: 6, padding: '3px 8px', marginBottom: 14,
-                }}>
-                  Coming Soon
-                </div>
-                <div style={{ fontSize: 16, fontWeight: 700, color: '#1A1918', lineHeight: 1.35, marginBottom: 12 }}>
-                  {article.title}
-                </div>
-                <div style={{ fontSize: 13, color: '#787776', lineHeight: 1.6 }}>
-                  {article.body}
-                </div>
-              </motion.div>
-            ))}
-          </div>
-
-        </div>
-
-        {/* Footer */}
-        <div style={{ padding: '12px 28px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: 11, color: '#787776' }}>2026 Vony, Inc. All rights reserved.</span>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-            <a href="https://www.vony-lending.com/terms" target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#787776', textDecoration: 'none' }}>Terms of Service</a>
-            <a href="https://www.vony-lending.com/privacy" target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#787776', textDecoration: 'none' }}>Privacy Center</a>
-            <a href="https://www.vony-lending.com/do-not-sell" target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#787776', textDecoration: 'none' }}>Do not sell or share my personal information</a>
-          </div>
-        </div>
-
+        </nav>
       </div>
+
+      {/* ── CENTER: Category selector + articles ── */}
+      <div className="mesh-center" style={{ padding: '0 32px', minHeight: 500, borderRight: '1px solid rgba(0,0,0,0.07)' }}>
+
+        {/* Category bar */}
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 28 }}>
+          <div style={{ display: 'inline-flex', gap: 2, background: 'rgba(255,255,255,0.5)', borderRadius: 14, padding: 4, border: '1px solid rgba(0,0,0,0.08)', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+            {LEARN_CATEGORIES.map(cat => (
+              <button key={cat.id} onClick={() => setLearnCategory(cat.id)} style={{ padding: '8px 18px', borderRadius: 10, border: 'none', cursor: 'pointer', fontSize: 13, fontFamily: "'DM Sans', sans-serif", fontWeight: learnCategory === cat.id ? 700 : 400, color: learnCategory === cat.id ? '#1A1918' : '#5C5B5A', background: learnCategory === cat.id ? 'white' : 'transparent', boxShadow: learnCategory === cat.id ? '0 1px 6px rgba(0,0,0,0.1)' : 'none', transition: 'all 0.15s', whiteSpace: 'nowrap' }}>
+                {cat.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Articles grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
+          {(LEARN_ARTICLES[learnCategory] || []).map((article, index) => (
+            <motion.div key={article.title} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }} style={{ background: 'white', borderRadius: 18, padding: '24px 22px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)', cursor: 'default', border: '1px solid rgba(0,0,0,0.05)' }}>
+              <div style={{ display: 'inline-block', fontSize: 10, fontWeight: 600, color: '#9B9A98', textTransform: 'uppercase', letterSpacing: '0.1em', background: 'rgba(0,0,0,0.05)', borderRadius: 6, padding: '3px 8px', marginBottom: 14 }}>Coming Soon</div>
+              <div style={{ fontSize: 16, fontWeight: 700, color: '#1A1918', lineHeight: 1.35, marginBottom: 12 }}>{article.title}</div>
+              <div style={{ fontSize: 13, color: '#787776', lineHeight: 1.6 }}>{article.body}</div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── RIGHT: Notifications + Recent Activity ── */}
+      <div className="mesh-right" style={{ paddingLeft: 28, position: 'sticky', top: 88 }}>
+
+        {pendingToConfirm.length > 0 && (
+          <RightSection title="Notifications">
+            {pendingToConfirm.slice(0, 5).map((p, idx) => {
+              const loan = allLoans.find(l => l.id === p.loan_id);
+              const borrowerProfile = loan ? publicProfiles.find(pr => pr.user_id === loan.borrower_id) : null;
+              const name = borrowerProfile?.full_name?.split(' ')[0] || 'User';
+              return (
+                <div key={p.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 0', borderBottom: idx < pendingToConfirm.slice(0,5).length - 1 ? '1px solid rgba(0,0,0,0.04)' : 'none' }}>
+                  <div style={{ width: 26, height: 26, borderRadius: 7, background: 'rgba(245,158,11,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name} paid {formatMoney(p.amount || 0)}</div>
+                    <div style={{ fontSize: 11, color: '#9B9A98' }}>Awaiting confirmation</div>
+                  </div>
+                </div>
+              );
+            })}
+          </RightSection>
+        )}
+
+        {pendingToConfirm.length === 0 && (
+          <RightSection title="Notifications">
+            <div style={{ fontSize: 12, color: '#9B9A98' }}>All caught up</div>
+          </RightSection>
+        )}
+
+        <RightSection title="Recent Activity">
+          {recentActivity.length === 0 ? (
+            <div style={{ fontSize: 12, color: '#9B9A98' }}>No recent activity</div>
+          ) : recentActivity.map((item, idx) => (
+            <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '7px 0', borderBottom: idx < recentActivity.length - 1 ? '1px solid rgba(0,0,0,0.04)' : 'none' }}>
+              <div style={{ width: 26, height: 26, borderRadius: 7, background: item.isLender ? 'rgba(82,183,136,0.12)' : 'rgba(126,192,234,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={item.isLender ? '#52B788' : '#7EC0EA'} strokeWidth="2.5" strokeLinecap="round">
+                  {item.isLender ? <polyline points="17 11 12 6 7 11"/> : <polyline points="7 13 12 18 17 13"/>}
+                  <line x1="12" y1={item.isLender ? '6' : '18'} x2="12" y2={item.isLender ? '18' : '6'}/>
+                </svg>
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.isLender ? `${item.name} paid you` : `You paid ${item.name}`}</div>
+                <div style={{ fontSize: 11, color: '#9B9A98' }}>{formatMoney(item.amount)}</div>
+              </div>
+            </div>
+          ))}
+        </RightSection>
+      </div>
+
     </div>
   );
 }
