@@ -246,7 +246,7 @@ export default function Profile() {
         <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{title}</div>
         {headerRight && <div style={{ flexShrink: 0 }}>{headerRight}</div>}
       </div>
-      <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 14 }} />
+      <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 14 }} />
       <div style={{ overflow: 'visible' }}>{children}</div>
     </div>
   );
@@ -254,7 +254,7 @@ export default function Profile() {
   // Loading state
   if (isLoading) {
     return (
-      <div style={{ minHeight: '100vh', background: '#F5F4F0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ minHeight: '100vh', background: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{ width: 32, height: 32, border: '2px solid #03ACEA', borderTopColor: 'transparent', borderRadius: '50%', margin: '0 auto 16px' }} className="animate-spin" />
           <p style={{ fontSize: 14, color: '#787776', fontFamily: "'DM Sans', sans-serif" }}>Loading profile...</p>
@@ -266,8 +266,8 @@ export default function Profile() {
   // Error state for initial load failure
   if (error && !user) {
     return (
-      <div style={{ minHeight: '100vh', background: '#F5F4F0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ background: 'white', borderRadius: 14, border: '1px solid rgba(0,0,0,0.07)', padding: 32, maxWidth: 400 }}>
+      <div style={{ minHeight: '100vh', background: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ background: 'white', borderRadius: 14, border: '1px solid rgba(0,0,0,0.06)', padding: 32, maxWidth: 400 }}>
           <div style={{ textAlign: 'center' }}>
             <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <XCircle className="w-8 h-8 text-red-600" />
@@ -286,7 +286,7 @@ export default function Profile() {
   if (!user) return null;
 
   return (
-    <div style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", background: '#F5F4F0' }}>
+    <div style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", background: '#ffffff' }}>
 
       {/* Bank Account Coming Soon Modal */}
       {showComingSoonModal && (
@@ -299,7 +299,7 @@ export default function Profile() {
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.95, opacity: 0 }}
             onClick={e => e.stopPropagation()}
-            style={{ background: '#F4F4F5', borderRadius: 20, maxWidth: 440, width: '100%', boxShadow: '0px 50px 40px rgba(0,0,0,0.02), 0px 50px 40px rgba(0,0,0,0.04), 0px 20px 40px rgba(0,0,0,0.08), 0px 3px 10px rgba(0,0,0,0.12)', overflow: 'hidden' }}
+            style={{ background: '#fafafa', borderRadius: 20, maxWidth: 440, width: '100%', boxShadow: '0px 50px 40px rgba(0,0,0,0.02), 0px 50px 40px rgba(0,0,0,0.04), 0px 20px 40px rgba(0,0,0,0.08), 0px 3px 10px rgba(0,0,0,0.12)', overflow: 'hidden' }}
           >
             <div style={{ padding: '6px 14px 5px', display: 'flex', alignItems: 'center', gap: 6 }}>
               <Clock size={12} style={{ color: '#9B9A98' }} />
@@ -309,7 +309,7 @@ export default function Profile() {
               <div style={{ width: 48, height: 48, borderRadius: 14, margin: '0 auto 20px', background: 'rgba(3,172,234,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Landmark size={24} style={{ color: '#03ACEA' }} />
               </div>
-              <h3 style={{ fontSize: 20, fontWeight: 700, color: '#1A1918', margin: '0 0 10px', textAlign: 'center', fontFamily: "'Cormorant Garamond', Georgia, serif", letterSpacing: '-0.01em' }}>
+              <h3 style={{ fontSize: 20, fontWeight: 700, color: '#1A1918', margin: '0 0 10px', textAlign: 'center', fontFamily: "'DM Sans', system-ui, sans-serif", letterSpacing: '-0.02em' }}>
                 Coming Soon
               </h3>
               <p style={{ fontSize: 13, color: '#787776', margin: '0 0 8px', textAlign: 'center', lineHeight: 1.6 }}>
@@ -332,7 +332,7 @@ export default function Profile() {
       <div style={{ display: 'grid', gridTemplateColumns: '180px 1fr 300px', gap: 0, minHeight: '100vh' }}>
 
         {/* COL 1 - left nav */}
-        <div className="mesh-left" style={{ background: '#F5F4F0', borderRight: '1px solid rgba(0,0,0,0.08)' }}>
+        <div className="mesh-left" style={{ background: '#ffffff', borderRight: '1px solid rgba(0,0,0,0.06)' }}>
           <div style={{ position: 'sticky', top: 0, padding: '32px 20px 0' }}>
             <Link to="/" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, fontStyle: 'italic', fontSize: '1.75rem', color: '#1A1918', textDecoration: 'none', display: 'block', marginBottom: 28 }}>Vony</Link>
             <nav style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -349,14 +349,14 @@ export default function Profile() {
                   <Link key={label} to={to} style={{ fontSize: 14, fontWeight: isActive ? 600 : 500, color: isActive ? '#1A1918' : '#6B6A68', textDecoration: 'none', padding: '8px 10px', borderRadius: 8, background: isActive ? 'rgba(0,0,0,0.05)' : 'transparent' }}>{label}</Link>
                 );
               })}
-              <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', margin: '10px 0' }} />
+              <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', margin: '10px 0' }} />
               {[
                 { label: 'Recent Activity', to: createPageUrl("RecentActivity") },
                 { label: 'Documents', to: createPageUrl("LoanAgreements") },
               ].map(({ label, to }) => (
                 <Link key={label} to={to} style={{ fontSize: 14, fontWeight: 500, color: '#6B6A68', textDecoration: 'none', padding: '8px 10px', borderRadius: 8 }}>{label}</Link>
               ))}
-              <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', margin: '10px 0' }} />
+              <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', margin: '10px 0' }} />
               {[
                 { label: 'Learn', to: createPageUrl("ComingSoon") },
                 { label: 'Loan Help', to: createPageUrl("LoanHelp") },
@@ -370,9 +370,9 @@ export default function Profile() {
         </div>
 
         {/* COL 2 - main content */}
-        <div className="mesh-center" style={{ background: 'white', borderRight: '1px solid rgba(0,0,0,0.08)', padding: '40px 48px 80px' }}>
-          <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 26, fontWeight: 600, color: '#1A1918', marginBottom: 20 }}>Profile</div>
-          <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 24 }} />
+        <div className="mesh-center" style={{ background: 'white', borderRight: '1px solid rgba(0,0,0,0.06)', padding: '40px 48px 80px' }}>
+          <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 24, fontWeight: 600, color: '#1A1918', marginBottom: 20, letterSpacing: '-0.02em' }}>Profile</div>
+          <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 24 }} />
 
           {/* Error Alert */}
           {error && (
@@ -393,7 +393,7 @@ export default function Profile() {
               <img
                 src={formData.profile_picture_url || `https://ui-avatars.com/api/?name=${encodeURIComponent((user.full_name || 'User').charAt(0))}&background=678AFB&color=fff&size=128`}
                 alt="Profile"
-                style={{ width: 88, height: 88, borderRadius: '50%', objectFit: 'cover', border: '3px solid rgba(0,0,0,0.08)', boxShadow: '0 4px 16px rgba(0,0,0,0.12)', display: 'block' }}
+                style={{ width: 88, height: 88, borderRadius: '50%', objectFit: 'cover', border: '3px solid rgba(0,0,0,0.06)', boxShadow: '0 4px 16px rgba(0,0,0,0.12)', display: 'block' }}
               />
               <button
                 onClick={() => setShowPhotoMenu(!showPhotoMenu)}
@@ -412,7 +412,7 @@ export default function Profile() {
                   ref={photoMenuRef}
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  style={{ position: 'absolute', top: 'calc(100% + 8px)', left: '50%', transform: 'translateX(-50%)', background: 'white', borderRadius: 12, boxShadow: '0 8px 32px rgba(0,0,0,0.12)', border: '1px solid rgba(0,0,0,0.08)', overflow: 'hidden', zIndex: 10, minWidth: 200 }}
+                  style={{ position: 'absolute', top: 'calc(100% + 8px)', left: '50%', transform: 'translateX(-50%)', background: 'white', borderRadius: 12, boxShadow: '0 8px 32px rgba(0,0,0,0.12)', border: '1px solid rgba(0,0,0,0.06)', overflow: 'hidden', zIndex: 10, minWidth: 200 }}
                 >
                   <button onClick={() => fileInputRef.current?.click()} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '11px 16px', width: '100%', background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", textAlign: 'left' }}
                     onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.03)'}
@@ -438,7 +438,7 @@ export default function Profile() {
               )}
             </div>
 
-            <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 28, fontWeight: 600, color: '#1A1918', margin: 0, lineHeight: 1 }}>
+            <h2 style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 24, fontWeight: 600, color: '#1A1918', margin: 0, lineHeight: 1, letterSpacing: '-0.02em' }}>
               {formData.full_name || user.full_name}
             </h2>
 
@@ -660,7 +660,7 @@ export default function Profile() {
             </Button>
           </div>
 
-          <div style={{ paddingTop: 24, borderTop: '1px solid rgba(0,0,0,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ paddingTop: 24, borderTop: '1px solid rgba(0,0,0,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <span style={{ fontSize: 11, color: '#787776' }}>2026 Vony, Inc. All rights reserved.</span>
             <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
               <a href="https://www.vony-lending.com/terms" target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#787776', textDecoration: 'none' }}>Terms of Service</a>
@@ -671,7 +671,7 @@ export default function Profile() {
         </div>
 
         {/* COL 3 - right panel */}
-        <div className="mesh-right" style={{ background: '#F5F4F0' }}>
+        <div className="mesh-right" style={{ background: '#fafafa' }}>
           <div style={{ position: 'sticky', top: 0, padding: '28px 28px 0' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 10, marginBottom: 28 }}>
               <Link to={createPageUrl("Requests")} style={{ color: '#6B6A68', textDecoration: 'none' }}>

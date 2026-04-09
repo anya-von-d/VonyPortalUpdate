@@ -462,7 +462,7 @@ export default function Requests() {
 
   if (isLoading) {
     return (
-      <div style={{ minHeight: '100vh', background: '#F5F4F0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ minHeight: '100vh', background: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{ width: 32, height: 32, border: '2px solid #82F0B9', borderTopColor: 'transparent', borderRadius: '50%', margin: '0 auto 16px' }} className="animate-spin" />
           <p style={{ fontSize: 14, color: '#787776', fontFamily: "'DM Sans', sans-serif" }}>Loading notifications...</p>
@@ -477,17 +477,17 @@ export default function Requests() {
         <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{title}</div>
         {headerRight && <div style={{ flexShrink: 0 }}>{headerRight}</div>}
       </div>
-      <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 14 }} />
+      <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 14 }} />
       <div style={{ overflow: 'visible' }}>{children}</div>
     </div>
   );
 
   return (
-    <div style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", background: '#F5F4F0' }}>
+    <div style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", background: '#ffffff' }}>
       <div style={{ display: 'grid', gridTemplateColumns: '180px 1fr 300px', gap: 0, minHeight: '100vh' }}>
 
         {/* COL 1 - left nav */}
-        <div className="mesh-left" style={{ background: '#F5F4F0', borderRight: '1px solid rgba(0,0,0,0.08)' }}>
+        <div className="mesh-left" style={{ background: '#ffffff', borderRight: '1px solid rgba(0,0,0,0.06)' }}>
           <div style={{ position: 'sticky', top: 0, padding: '32px 20px 0' }}>
             <Link to="/" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, fontStyle: 'italic', fontSize: '1.75rem', color: '#1A1918', textDecoration: 'none', display: 'block', marginBottom: 28 }}>Vony</Link>
             <nav style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -504,14 +504,14 @@ export default function Requests() {
                   <Link key={label} to={to} style={{ fontSize: 14, fontWeight: isActive ? 600 : 500, color: isActive ? '#1A1918' : '#6B6A68', textDecoration: 'none', padding: '8px 10px', borderRadius: 8, background: isActive ? 'rgba(0,0,0,0.05)' : 'transparent' }}>{label}</Link>
                 );
               })}
-              <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', margin: '10px 0' }} />
+              <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', margin: '10px 0' }} />
               {[
                 { label: 'Recent Activity', to: createPageUrl("RecentActivity") },
                 { label: 'Documents', to: createPageUrl("LoanAgreements") },
               ].map(({ label, to }) => (
                 <Link key={label} to={to} style={{ fontSize: 14, fontWeight: 500, color: '#6B6A68', textDecoration: 'none', padding: '8px 10px', borderRadius: 8 }}>{label}</Link>
               ))}
-              <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', margin: '10px 0' }} />
+              <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', margin: '10px 0' }} />
               {[
                 { label: 'Learn', to: createPageUrl("ComingSoon") },
                 { label: 'Loan Help', to: createPageUrl("LoanHelp") },
@@ -525,9 +525,9 @@ export default function Requests() {
         </div>
 
         {/* COL 2 - main content */}
-        <div className="mesh-center" style={{ background: 'white', borderRight: '1px solid rgba(0,0,0,0.08)', padding: '40px 48px 80px' }}>
-          <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 26, fontWeight: 600, color: '#1A1918', marginBottom: 20 }}>Notifications</div>
-          <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 24 }} />
+        <div className="mesh-center" style={{ background: 'white', borderRight: '1px solid rgba(0,0,0,0.06)', padding: '40px 48px 80px' }}>
+          <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 24, fontWeight: 600, color: '#1A1918', marginBottom: 20, letterSpacing: '-0.02em' }}>Notifications</div>
+          <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 24 }} />
 
           {/* All items: reminders first, then notification requests */}
           {(() => {
@@ -654,7 +654,7 @@ export default function Requests() {
             );
           })()}
 
-          <div style={{ marginTop: 48, paddingTop: 24, borderTop: '1px solid rgba(0,0,0,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ marginTop: 48, paddingTop: 24, borderTop: '1px solid rgba(0,0,0,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <span style={{ fontSize: 11, color: '#787776' }}>2026 Vony, Inc. All rights reserved.</span>
             <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
               <a href="https://www.vony-lending.com/terms" target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#787776', textDecoration: 'none' }}>Terms of Service</a>
@@ -665,7 +665,7 @@ export default function Requests() {
         </div>
 
         {/* COL 3 - right panel */}
-        <div className="mesh-right" style={{ background: '#F5F4F0' }}>
+        <div className="mesh-right" style={{ background: '#fafafa' }}>
           <div style={{ position: 'sticky', top: 0, padding: '28px 28px 0' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 10, marginBottom: 28 }}>
               <Link to={createPageUrl("Requests")} style={{ color: '#1A1918', textDecoration: 'none' }}>

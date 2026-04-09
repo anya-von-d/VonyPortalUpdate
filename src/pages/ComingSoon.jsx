@@ -104,7 +104,7 @@ export default function ComingSoon() {
   const RightSection = ({ title, children }) => (
     <div style={{ marginBottom: 40 }}>
       <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 9 }}>{title}</div>
-      <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 14 }} />
+      <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 14 }} />
       {children}
     </div>
   );
@@ -113,7 +113,7 @@ export default function ComingSoon() {
     <div className="mesh-layout" style={{ minHeight: '100vh', display: 'grid', gridTemplateColumns: '180px 1fr 300px', gap: 0, fontFamily: "'DM Sans', sans-serif" }}>
 
       {/* ── LEFT: Sidebar nav ── */}
-      <div className="mesh-left" style={{ background: '#F5F4F0', borderRight: '1px solid rgba(0,0,0,0.08)' }}>
+      <div className="mesh-left" style={{ background: '#ffffff', borderRight: '1px solid rgba(0,0,0,0.06)' }}>
         <div style={{ position: 'sticky', top: 0, padding: '32px 20px 0' }}>
           <Link to="/" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, fontStyle: 'italic', fontSize: '1.75rem', color: '#1A1918', textDecoration: 'none', display: 'block', marginBottom: 24 }}>Vony</Link>
           <nav style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
@@ -153,15 +153,15 @@ export default function ComingSoon() {
       </div>
 
       {/* ── CENTER: Category selector + articles ── */}
-      <div className="mesh-center" style={{ background: 'white', borderRight: '1px solid rgba(0,0,0,0.08)', padding: '40px 48px 80px' }}>
+      <div className="mesh-center" style={{ background: 'white', borderRight: '1px solid rgba(0,0,0,0.06)', padding: '40px 48px 80px' }}>
 
         {/* Page title */}
-        <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 26, fontWeight: 600, color: '#1A1918', marginBottom: 20 }}>Learn</div>
-        <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 28 }} />
+        <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 24, fontWeight: 600, letterSpacing: '-0.02em', color: '#1A1918', marginBottom: 20 }}>Learn</div>
+        <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 28 }} />
 
         {/* Category bar */}
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 28 }}>
-          <div style={{ display: 'inline-flex', gap: 2, background: 'rgba(255,255,255,0.5)', borderRadius: 14, padding: 4, border: '1px solid rgba(0,0,0,0.08)', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+          <div style={{ display: 'inline-flex', gap: 2, background: 'rgba(255,255,255,0.5)', borderRadius: 14, padding: 4, border: '1px solid rgba(0,0,0,0.06)', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
             {LEARN_CATEGORIES.map(cat => (
               <button key={cat.id} onClick={() => setLearnCategory(cat.id)} style={{ padding: '8px 18px', borderRadius: 10, border: 'none', cursor: 'pointer', fontSize: 13, fontFamily: "'DM Sans', sans-serif", fontWeight: learnCategory === cat.id ? 700 : 400, color: learnCategory === cat.id ? '#1A1918' : '#5C5B5A', background: learnCategory === cat.id ? 'white' : 'transparent', boxShadow: learnCategory === cat.id ? '0 1px 6px rgba(0,0,0,0.1)' : 'none', transition: 'all 0.15s', whiteSpace: 'nowrap' }}>
                 {cat.label}
@@ -183,7 +183,7 @@ export default function ComingSoon() {
       </div>
 
       {/* ── RIGHT: Notifications + Recent Activity ── */}
-      <div className="mesh-right" style={{ background: '#F5F4F0' }}>
+      <div className="mesh-right" style={{ background: '#fafafa' }}>
         <div style={{ position: 'sticky', top: 0, padding: '28px 28px 0' }}>
           {/* Bell + Profile icons */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 10, marginBottom: 24 }}>

@@ -247,7 +247,7 @@ export default function Friends() {
   const RightSection = ({ title, children }) => (
     <div style={{ marginBottom: 40 }}>
       <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 9 }}>{title}</div>
-      <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 14 }} />
+      <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 14 }} />
       {children}
     </div>
   );
@@ -256,7 +256,7 @@ export default function Friends() {
     <div className="mesh-layout" style={{ display: 'grid', gridTemplateColumns: '180px 1fr 300px', gap: 0, minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased' }}>
 
       {/* Col 1: left nav */}
-      <div className="mesh-left" style={{ background: '#F5F4F0', borderRight: '1px solid rgba(0,0,0,0.08)' }}>
+      <div className="mesh-left" style={{ background: '#ffffff', borderRight: '1px solid rgba(0,0,0,0.06)' }}>
         <div style={{ position: 'sticky', top: 0, padding: '32px 20px 0' }}>
           <Link to="/" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, fontStyle: 'italic', fontSize: '1.75rem', color: '#1A1918', textDecoration: 'none', display: 'block', marginBottom: 24, lineHeight: 1, letterSpacing: '-0.02em' }}>Vony</Link>
           <nav style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
@@ -297,19 +297,19 @@ export default function Friends() {
       </div>
 
       {/* ── CENTER: Search for Friends + Friend Requests ── */}
-      <div className="mesh-center" style={{ background: 'white', borderRight: '1px solid rgba(0,0,0,0.08)', padding: '40px 48px 80px' }}>
+      <div className="mesh-center" style={{ background: 'white', borderRight: '1px solid rgba(0,0,0,0.06)', padding: '40px 48px 80px' }}>
 
         {/* Page title */}
-        <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 26, fontWeight: 600, color: '#1A1918', marginBottom: 20 }}>People</div>
-        <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 32 }} />
+        <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 24, fontWeight: 600, color: '#1A1918', marginBottom: 20, letterSpacing: '-0.02em' }}>People</div>
+        <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 32 }} />
 
         {/* Search for Friends */}
         <div style={{ marginBottom: 32 }}>
           <div style={{ position: 'relative', marginBottom: searchQuery.trim() ? 14 : 0 }}>
             <Search size={15} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#C7C6C4' }} />
             <input type="text" placeholder="Search by name or username..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
-              style={{ width: '100%', padding: '10px 36px 10px 36px', borderRadius: 10, border: '1px solid rgba(0,0,0,0.08)', background: 'rgba(0,0,0,0.02)', fontSize: 13, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", outline: 'none', boxSizing: 'border-box' }}
-              onFocus={(e) => e.target.style.borderColor = 'rgba(3,172,234,0.3)'} onBlur={(e) => e.target.style.borderColor = 'rgba(0,0,0,0.08)'} />
+              style={{ width: '100%', padding: '10px 36px 10px 36px', borderRadius: 10, border: '1px solid rgba(0,0,0,0.06)', background: 'rgba(0,0,0,0.02)', fontSize: 13, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", outline: 'none', boxSizing: 'border-box' }}
+              onFocus={(e) => e.target.style.borderColor = 'rgba(3,172,234,0.3)'} onBlur={(e) => e.target.style.borderColor = 'rgba(0,0,0,0.06)'} />
             {searchQuery && <button onClick={() => setSearchQuery('')} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#C7C6C4', padding: 2 }}><X size={14} /></button>}
           </div>
           {searchQuery.trim() && (
@@ -362,7 +362,7 @@ export default function Friends() {
               <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Friend Requests</div>
               <span style={{ fontSize: 11, color: '#9B9A98' }}>{receivedRequests.length} pending</span>
             </div>
-            <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 14 }} />
+            <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 14 }} />
             {receivedRequests.map((request) => {
               const profile = getProfileById(request.user_id);
               if (!profile) return null;
@@ -390,7 +390,7 @@ export default function Friends() {
       </div>
 
       {/* ── RIGHT: Your Friends ── */}
-      <div className="mesh-right" style={{ background: '#F5F4F0' }}>
+      <div className="mesh-right" style={{ background: '#fafafa' }}>
         <div style={{ position: 'sticky', top: 0, padding: '28px 28px 0' }}>
           {/* Bell + Profile icons */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 10, marginBottom: 24 }}>

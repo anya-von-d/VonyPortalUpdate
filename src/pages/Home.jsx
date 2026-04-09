@@ -754,7 +754,7 @@ export default function Home() {
       <div style={{ display: 'grid', gridTemplateColumns: '180px 1fr 300px', gap: 0 }}>
 
         {/* ── LEFT: Sidebar nav ── */}
-        <div className="mesh-left" style={{ background: '#F9F8F6', borderRight: '1px solid rgba(0,0,0,0.08)' }}>
+        <div className="mesh-left" style={{ background: '#ffffff', borderRight: '1px solid rgba(0,0,0,0.06)' }}>
           <div style={{ position: 'sticky', top: 0, padding: '32px 20px 0' }}>
             {/* Vony logo */}
             <Link to="/" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, fontStyle: 'italic', fontSize: '1.75rem', color: '#1A1918', textDecoration: 'none', display: 'block', marginBottom: 24, lineHeight: 1, letterSpacing: '-0.02em' }}>Vony</Link>
@@ -856,15 +856,15 @@ export default function Home() {
         </div>
 
         {/* ── CENTER ── */}
-        <div className="mesh-center" style={{ background: 'white', borderRight: '1px solid rgba(0,0,0,0.08)', padding: '40px 48px 80px' }}>
+        <div className="mesh-center" style={{ background: '#ffffff', borderRight: '1px solid rgba(0,0,0,0.06)', padding: '40px 48px 80px' }}>
 
           {/* Greeting */}
           <div style={{ marginBottom: 20 }}>
-            <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 26, fontWeight: 600, letterSpacing: '-0.01em', lineHeight: 1.1, color: '#1A1918' }}>
-              {greeting}, <span style={{ fontStyle: 'italic' }}>{firstName}</span>
+            <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 24, fontWeight: 600, letterSpacing: '-0.02em', lineHeight: 1.2, color: '#1A1918' }}>
+              {greeting}, {firstName}
             </div>
           </div>
-          <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 24 }} />
+          <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 24 }} />
 
           {/* Three summary cards — glass style */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, marginBottom: 28 }}>
@@ -1060,7 +1060,7 @@ export default function Home() {
         </div>
 
         {/* ── RIGHT PANEL ── */}
-        <div className="mesh-right" style={{ background: '#F9F8F6' }}>
+        <div className="mesh-right" style={{ background: '#fafafa' }}>
           <div style={{ position: 'sticky', top: 0, padding: '28px 28px 0' }}>
             {/* Bell + Profile icons */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 10, marginBottom: 28 }}>
@@ -1068,7 +1068,7 @@ export default function Home() {
                 <div style={{ width: 32, height: 32, borderRadius: 9, background: 'rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#787776" strokeWidth="2" strokeLinecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
                 </div>
-                {notifCount > 0 && <div style={{ position: 'absolute', top: 2, right: 2, width: 7, height: 7, borderRadius: '50%', background: '#03ACEA', border: '1.5px solid #F9F8F6' }} />}
+                {notifCount > 0 && <div style={{ position: 'absolute', top: 2, right: 2, width: 7, height: 7, borderRadius: '50%', background: '#03ACEA', border: '1.5px solid #fafafa' }} />}
               </Link>
               <Link to={createPageUrl("Profile")} style={{ textDecoration: 'none' }}>
                 <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(3,172,234,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>

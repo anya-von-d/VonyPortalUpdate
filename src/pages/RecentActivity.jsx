@@ -63,7 +63,7 @@ function MultiSelectDropdown({ label, options, selected, onChange }) {
         onClick={() => setOpen(!open)}
         style={{
           display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 10,
-          border: '1px solid rgba(0,0,0,0.08)', background: selected.length > 0 ? 'rgba(3,172,234,0.08)' : 'white',
+          border: '1px solid rgba(0,0,0,0.06)', background: selected.length > 0 ? 'rgba(3,172,234,0.08)' : 'white',
           fontSize: 13, fontWeight: 500, color: '#1A1918', cursor: 'pointer',
           fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap', transition: 'background 0.15s',
         }}
@@ -74,7 +74,7 @@ function MultiSelectDropdown({ label, options, selected, onChange }) {
       {open && (
         <div style={{
           position: 'absolute', top: 'calc(100% + 6px)', left: 0, minWidth: 220,
-          background: 'white', borderRadius: 12, border: '1px solid rgba(0,0,0,0.08)',
+          background: 'white', borderRadius: 12, border: '1px solid rgba(0,0,0,0.06)',
           boxShadow: '0 8px 32px rgba(0,0,0,0.08)', zIndex: 50, padding: 6, maxHeight: 280, overflowY: 'auto',
         }}>
           {options.map(opt => (
@@ -125,7 +125,7 @@ function SingleSelectDropdown({ options, selected, onChange }) {
         onClick={() => setOpen(!open)}
         style={{
           display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 10,
-          border: '1px solid rgba(0,0,0,0.08)', background: selected !== 'all' ? 'rgba(3,172,234,0.08)' : 'white',
+          border: '1px solid rgba(0,0,0,0.06)', background: selected !== 'all' ? 'rgba(3,172,234,0.08)' : 'white',
           fontSize: 13, fontWeight: 500, color: '#1A1918', cursor: 'pointer',
           fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap', transition: 'background 0.15s',
         }}
@@ -136,7 +136,7 @@ function SingleSelectDropdown({ options, selected, onChange }) {
       {open && (
         <div style={{
           position: 'absolute', top: 'calc(100% + 6px)', left: 0, minWidth: 200,
-          background: 'white', borderRadius: 12, border: '1px solid rgba(0,0,0,0.08)',
+          background: 'white', borderRadius: 12, border: '1px solid rgba(0,0,0,0.06)',
           boxShadow: '0 8px 32px rgba(0,0,0,0.08)', zIndex: 50, padding: 6,
         }}>
           {options.map(opt => (
@@ -181,7 +181,7 @@ function SortDropdown({ sortBy, onChange }) {
         onClick={() => setOpen(!open)}
         style={{
           display: 'flex', alignItems: 'center', gap: 6, padding: '9px 16px', borderRadius: 22,
-          border: '1px solid rgba(0,0,0,0.08)', background: 'white',
+          border: '1px solid rgba(0,0,0,0.06)', background: 'white',
           fontSize: 13, fontWeight: 500, color: '#1A1918', cursor: 'pointer',
           fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap',
         }}
@@ -192,7 +192,7 @@ function SortDropdown({ sortBy, onChange }) {
       {open && (
         <div style={{
           position: 'absolute', top: 'calc(100% + 6px)', right: 0, minWidth: 190,
-          background: 'white', borderRadius: 12, border: '1px solid rgba(0,0,0,0.08)',
+          background: 'white', borderRadius: 12, border: '1px solid rgba(0,0,0,0.06)',
           boxShadow: '0 8px 32px rgba(0,0,0,0.08)', zIndex: 50, padding: 6,
         }}>
           {SORT_OPTIONS.map(opt => (
@@ -235,7 +235,7 @@ function ExportDropdown({ filteredCount, totalCount, hasAnyFilter, onExport }) {
         onClick={() => setOpen(!open)}
         style={{
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          width: 40, height: 40, borderRadius: 22, border: '1px solid rgba(0,0,0,0.08)',
+          width: 40, height: 40, borderRadius: 22, border: '1px solid rgba(0,0,0,0.06)',
           background: 'white', cursor: 'pointer', flexShrink: 0,
         }}
       >
@@ -244,7 +244,7 @@ function ExportDropdown({ filteredCount, totalCount, hasAnyFilter, onExport }) {
       {open && (
         <div style={{
           position: 'absolute', top: 'calc(100% + 6px)', right: 0, width: 300,
-          background: 'white', borderRadius: 12, border: '1px solid rgba(0,0,0,0.08)',
+          background: 'white', borderRadius: 12, border: '1px solid rgba(0,0,0,0.06)',
           boxShadow: '0 8px 32px rgba(0,0,0,0.08)', zIndex: 50, padding: 20,
         }}>
           <h3 style={{ fontSize: 16, fontWeight: 700, color: '#1A1918', margin: '0 0 8px', fontFamily: "'DM Sans', sans-serif" }}>Download Activity</h3>
@@ -571,7 +571,7 @@ export default function RecentActivityPage() {
   const RightSection = ({ title, children }) => (
     <div style={{ marginBottom: 40 }}>
       <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 9 }}>{title}</div>
-      <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 14 }} />
+      <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 14 }} />
       {children}
     </div>
   );
@@ -641,7 +641,7 @@ export default function RecentActivityPage() {
       <div className="mesh-layout" style={{ display: 'grid', gridTemplateColumns: '180px 1fr 300px', gap: 0, minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased' }}>
 
         {/* Col 1: left nav */}
-        <div className="mesh-left" style={{ background: '#F5F4F0', borderRight: '1px solid rgba(0,0,0,0.08)' }}>
+        <div className="mesh-left" style={{ background: '#ffffff', borderRight: '1px solid rgba(0,0,0,0.06)' }}>
           <div style={{ position: 'sticky', top: 0, padding: '32px 20px 0' }}>
             <Link to="/" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, fontStyle: 'italic', fontSize: '1.75rem', color: '#1A1918', textDecoration: 'none', display: 'block', marginBottom: 24, lineHeight: 1, letterSpacing: '-0.02em' }}>Vony</Link>
             <nav style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
@@ -698,18 +698,18 @@ export default function RecentActivityPage() {
         </div>
 
         {/* Col 2: center content */}
-        <div className="mesh-center" style={{ background: 'white', borderRight: '1px solid rgba(0,0,0,0.08)', padding: '40px 48px 80px' }}>
+        <div className="mesh-center" style={{ background: 'white', borderRight: '1px solid rgba(0,0,0,0.06)', padding: '40px 48px 80px' }}>
 
           {/* Page title */}
-          <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 26, fontWeight: 600, color: '#1A1918', marginBottom: 20 }}>Recent Activity</div>
-          <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 24 }} />
+          <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 24, fontWeight: 600, letterSpacing: '-0.02em', color: '#1A1918', marginBottom: 20 }}>Recent Activity</div>
+          <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 24 }} />
 
           {/* ── Search Bar + Sort + Export ───────────────────────── */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
             <div style={{
               flex: 1, display: 'flex', alignItems: 'center', gap: 10,
               padding: '0 16px', background: 'white', borderRadius: 22,
-              border: '1px solid rgba(0,0,0,0.08)', height: 42,
+              border: '1px solid rgba(0,0,0,0.06)', height: 42,
             }}>
               <Search size={16} style={{ color: '#787776', flexShrink: 0 }} />
               <input
@@ -832,7 +832,7 @@ export default function RecentActivityPage() {
         </div>
 
         {/* Col 3: right panel */}
-        <div className="mesh-right" style={{ background: '#F5F4F0' }}>
+        <div className="mesh-right" style={{ background: '#fafafa' }}>
           <div style={{ position: 'sticky', top: 0, padding: '28px 28px 0' }}>
             {/* Bell + Profile icons */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 10, marginBottom: 24 }}>
@@ -899,19 +899,19 @@ export default function RecentActivityPage() {
               Loan Offer from {getUserById(viewingLoanOffer.lender_id)?.full_name || 'Lender'}
             </h2>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 20 }}>
-              <div style={{ background: '#F4F4F5', borderRadius: 10, padding: '12px 14px' }}>
+              <div style={{ background: '#fafafa', borderRadius: 10, padding: '12px 14px' }}>
                 <p style={{ fontSize: 11, color: '#787776', margin: '0 0 4px', textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 600 }}>Amount</p>
                 <p style={{ fontSize: 16, fontWeight: 700, color: '#1A1918', margin: 0 }}>${viewingLoanOffer.amount?.toLocaleString() || '0'}</p>
               </div>
-              <div style={{ background: '#F4F4F5', borderRadius: 10, padding: '12px 14px' }}>
+              <div style={{ background: '#fafafa', borderRadius: 10, padding: '12px 14px' }}>
                 <p style={{ fontSize: 11, color: '#787776', margin: '0 0 4px', textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 600 }}>Interest Rate</p>
                 <p style={{ fontSize: 16, fontWeight: 700, color: '#1A1918', margin: 0 }}>{viewingLoanOffer.interest_rate ?? '0'}%</p>
               </div>
-              <div style={{ background: '#F4F4F5', borderRadius: 10, padding: '12px 14px' }}>
+              <div style={{ background: '#fafafa', borderRadius: 10, padding: '12px 14px' }}>
                 <p style={{ fontSize: 11, color: '#787776', margin: '0 0 4px', textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 600 }}>Repayment Period</p>
                 <p style={{ fontSize: 16, fontWeight: 700, color: '#1A1918', margin: 0 }}>{viewingLoanOffer.repayment_period_months ?? viewingLoanOffer.duration_months ?? '—'} mo</p>
               </div>
-              <div style={{ background: '#F4F4F5', borderRadius: 10, padding: '12px 14px' }}>
+              <div style={{ background: '#fafafa', borderRadius: 10, padding: '12px 14px' }}>
                 <p style={{ fontSize: 11, color: '#787776', margin: '0 0 4px', textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 600 }}>Purpose</p>
                 <p style={{ fontSize: 14, fontWeight: 600, color: '#1A1918', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{viewingLoanOffer.purpose || '—'}</p>
               </div>

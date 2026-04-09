@@ -12,7 +12,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import { AnimatedCheckmark } from "@/components/ui/animations";
 
-const SHADOW = '0px 50px 40px rgba(0,0,0,0.02), 0px 50px 40px rgba(0,0,0,0.04), 0px 20px 40px rgba(0,0,0,0.08), 0px 3px 10px rgba(0,0,0,0.12)';
+const SHADOW = '0px 50px 40px rgba(0,0,0,0.02), 0px 50px 40px rgba(0,0,0,0.04), 0px 20px 40px rgba(0,0,0,0.06), 0px 3px 10px rgba(0,0,0,0.12)';
 
 const PAYMENT_METHODS = [
   { id: 'venmo', label: 'Venmo', icon: Smartphone, color: '#3b82f6' },
@@ -49,7 +49,7 @@ function SingleSelectDropdown({ options, selected, onChange }) {
     <div ref={ref} style={{ position: 'relative' }}>
       <button onClick={() => setOpen(!open)} style={{
         display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 10,
-        border: '1px solid rgba(0,0,0,0.08)', background: selected !== 'all' ? 'rgba(3,172,234,0.08)' : 'white',
+        border: '1px solid rgba(0,0,0,0.06)', background: selected !== 'all' ? 'rgba(3,172,234,0.08)' : 'white',
         fontSize: 13, fontWeight: 500, color: '#1A1918', cursor: 'pointer',
         fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap', transition: 'background 0.15s',
       }}>
@@ -59,8 +59,8 @@ function SingleSelectDropdown({ options, selected, onChange }) {
       {open && (
         <div style={{
           position: 'absolute', top: 'calc(100% + 6px)', left: 0, minWidth: 220,
-          background: 'white', borderRadius: 12, border: '1px solid rgba(0,0,0,0.08)',
-          boxShadow: '0 8px 32px rgba(0,0,0,0.08)', zIndex: 50, padding: 6,
+          background: 'white', borderRadius: 12, border: '1px solid rgba(0,0,0,0.06)',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.06)', zIndex: 50, padding: 6,
         }}>
           {options.map(opt => (
             <button key={opt.id} onClick={() => { onChange(opt.id); setOpen(false); }} style={{
@@ -350,7 +350,7 @@ export default function RecordPayment() {
   const RightSection = ({ title, children }) => (
     <div style={{ marginBottom: 40 }}>
       <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 9 }}>{title}</div>
-      <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 14 }} />
+      <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 14 }} />
       {children}
     </div>
   );
@@ -362,7 +362,7 @@ export default function RecordPayment() {
         <div style={{ fontSize: 10, fontWeight: 700, color: highlight ? '#03ACEA' : '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{title}</div>
         {headerRight && <div style={{ flexShrink: 0 }}>{headerRight}</div>}
       </div>
-      <div style={{ height: 1, background: highlight ? 'rgba(3,172,234,0.2)' : 'rgba(0,0,0,0.07)', marginBottom: 14 }} />
+      <div style={{ height: 1, background: highlight ? 'rgba(3,172,234,0.2)' : 'rgba(0,0,0,0.06)', marginBottom: 14 }} />
       <div style={{ overflow: 'visible' }}>{children}</div>
     </div>
   );
@@ -403,7 +403,7 @@ export default function RecordPayment() {
               </p>
               <div style={{ display: 'flex', gap: 12 }}>
                 <button onClick={() => setConfirmingDeny(null)} style={{
-                  flex: 1, padding: '10px 0', borderRadius: 12, border: '1px solid rgba(0,0,0,0.08)',
+                  flex: 1, padding: '10px 0', borderRadius: 12, border: '1px solid rgba(0,0,0,0.06)',
                   background: 'white', fontSize: 13, fontWeight: 600, color: '#787776', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
                 }}>Cancel</button>
                 <button onClick={handleDenyPayment} style={{
@@ -419,7 +419,7 @@ export default function RecordPayment() {
       <div className="mesh-layout" style={{ display: 'grid', gridTemplateColumns: '180px 1fr 300px', gap: 0, minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased' }}>
 
         {/* Col 1: left nav */}
-        <div className="mesh-left" style={{ background: '#F5F4F0', borderRight: '1px solid rgba(0,0,0,0.08)' }}>
+        <div className="mesh-left" style={{ background: '#ffffff', borderRight: '1px solid rgba(0,0,0,0.06)' }}>
           <div style={{ position: 'sticky', top: 0, padding: '32px 20px 0' }}>
             <Link to="/" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, fontStyle: 'italic', fontSize: '1.75rem', color: '#1A1918', textDecoration: 'none', display: 'block', marginBottom: 24, lineHeight: 1, letterSpacing: '-0.02em' }}>Vony</Link>
             <nav style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
@@ -476,11 +476,11 @@ export default function RecordPayment() {
         </div>
 
         {/* Col 2: center content */}
-        <div className="mesh-center" style={{ background: 'white', borderRight: '1px solid rgba(0,0,0,0.08)', padding: '40px 48px 80px' }}>
+        <div className="mesh-center" style={{ background: 'white', borderRight: '1px solid rgba(0,0,0,0.06)', padding: '40px 48px 80px' }}>
 
           {/* Page title */}
-          <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 26, fontWeight: 600, color: '#1A1918', marginBottom: 20 }}>Record Payment</div>
-          <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 32 }} />
+          <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 24, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', marginBottom: 20 }}>Record Payment</div>
+          <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 32 }} />
 
           {/* ── Payment Form / Steps ── */}
           <div style={{ overflow: 'visible' }}>
@@ -514,11 +514,11 @@ export default function RecordPayment() {
                             onChange={e => { setAmount(e.target.value); setError(''); }}
                             style={{
                               width: '100%', padding: '12px 14px 12px 28px', borderRadius: 12,
-                              border: '1px solid rgba(0,0,0,0.08)', background: 'white',
+                              border: '1px solid rgba(0,0,0,0.06)', background: 'white',
                               fontSize: 15, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", outline: 'none',
                             }}
                             onFocus={e => e.target.style.borderColor = 'rgba(3,172,234,0.4)'}
-                            onBlur={e => e.target.style.borderColor = 'rgba(0,0,0,0.08)'}
+                            onBlur={e => e.target.style.borderColor = 'rgba(0,0,0,0.06)'}
                           />
                         </div>
                         {selectedLoan && (
@@ -543,7 +543,7 @@ export default function RecordPayment() {
                                 transition={{ type: 'spring', stiffness: 420, damping: 18 }}
                                 style={{
                                   display: 'flex', alignItems: 'center', gap: 8, padding: '10px 12px', borderRadius: 12,
-                                  border: isSelected ? '2px solid #03ACEA' : '1px solid rgba(0,0,0,0.08)',
+                                  border: isSelected ? '2px solid #03ACEA' : '1px solid rgba(0,0,0,0.06)',
                                   background: isSelected ? 'rgba(3,172,234,0.1)' : 'white',
                                   cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", fontSize: 12, fontWeight: 500, color: '#1A1918',
                                   boxShadow: isSelected ? '0 0 0 3px rgba(3,172,234,0.2)' : 'none',
@@ -565,7 +565,7 @@ export default function RecordPayment() {
                           onChange={e => setPaymentDate(e.target.value)}
                           style={{
                             width: '100%', padding: '10px 14px', borderRadius: 12,
-                            border: '1px solid rgba(0,0,0,0.08)', background: 'white',
+                            border: '1px solid rgba(0,0,0,0.06)', background: 'white',
                             fontSize: 13, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", outline: 'none',
                           }}
                         />
@@ -627,7 +627,7 @@ export default function RecordPayment() {
 
                       <div style={{ display: 'flex', gap: 12 }}>
                         <button onClick={() => setCurrentStep(1)} style={{
-                          flex: 1, padding: '12px 0', borderRadius: 12, border: '1px solid rgba(0,0,0,0.08)',
+                          flex: 1, padding: '12px 0', borderRadius: 12, border: '1px solid rgba(0,0,0,0.06)',
                           background: 'white', fontSize: 13, fontWeight: 600, color: '#787776', cursor: 'pointer',
                           fontFamily: "'DM Sans', sans-serif", display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
                         }}>
@@ -703,7 +703,7 @@ export default function RecordPayment() {
         </div>
 
         {/* Col 3: right panel */}
-        <div className="mesh-right" style={{ background: '#F5F4F0' }}>
+        <div className="mesh-right" style={{ background: '#fafafa' }}>
           <div style={{ position: 'sticky', top: 0, padding: '28px 28px 0' }}>
             {/* Bell + Profile icons */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 10, marginBottom: 24 }}>
@@ -728,7 +728,7 @@ export default function RecordPayment() {
                 cursor: hasAnyFilter ? 'pointer' : 'default', fontFamily: "'DM Sans', sans-serif",
               }}>Clear</button>
             </div>
-            <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 12 }} />
+            <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 12 }} />
             {/* Filters */}
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 10, overflow: 'visible', position: 'relative', zIndex: 20 }}>
               <SingleSelectDropdown options={ROLE_OPTIONS} selected={roleFilter} onChange={setRoleFilter} />
@@ -787,7 +787,7 @@ export default function RecordPayment() {
           {selectedLoan && currentStep <= 1 && (
             <div style={{ marginBottom: 32 }}>
               <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 9 }}>Recommended Payment</div>
-              <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 14 }} />
+              <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 14 }} />
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div>
                   <div style={{ fontSize: '1.5rem', fontWeight: 700, color: '#03ACEA', letterSpacing: '-0.03em', lineHeight: 1 }}>${getSuggestedPayment(selectedLoan).toFixed(2)}</div>

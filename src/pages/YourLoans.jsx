@@ -899,7 +899,7 @@ export default function YourLoans() {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 9 }}>
             <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>Select a Loan</span>
           </div>
-          <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 14 }} />
+          <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 14 }} />
           <div style={{ position: 'relative' }}>
             <div
               onClick={() => setLoanDropdownOpen(o => !o)}
@@ -913,7 +913,7 @@ export default function YourLoans() {
             {loanDropdownOpen && (
               <>
                 <div style={{ position: 'fixed', inset: 0, zIndex: 90 }} onClick={() => setLoanDropdownOpen(false)} />
-                <div style={{ position: 'absolute', top: 'calc(100% + 4px)', left: 0, right: 0, background: '#ffffff', borderRadius: 10, boxShadow: '0 4px 20px rgba(0,0,0,0.12)', zIndex: 100, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.07)' }}>
+                <div style={{ position: 'absolute', top: 'calc(100% + 4px)', left: 0, right: 0, background: '#ffffff', borderRadius: 10, boxShadow: '0 4px 20px rgba(0,0,0,0.12)', zIndex: 100, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.06)' }}>
                   {allManageableLoans.map((loan) => (
                     <div key={loan.id} onClick={() => { setManageLoanSelected(loan); setLoanDropdownOpen(false); }}
                       style={{ padding: '10px 14px', fontSize: 13, fontWeight: 500, color: '#1A1918', cursor: 'pointer', background: manageLoanSelected?.id === loan.id ? 'rgba(0,0,0,0.04)' : 'transparent', borderBottom: '1px solid rgba(0,0,0,0.04)' }}
@@ -1189,7 +1189,7 @@ export default function YourLoans() {
                   const btnBase = { display: 'inline-flex', alignItems: 'center', gap: 6, background: '#1A1918', borderRadius: 9, padding: '7px 12px', border: 'none', cursor: 'pointer' };
                   const btnLabel = { fontSize: 11, fontWeight: 600, color: 'white', margin: 0 };
                   const infoBadge = { width: 15, height: 15, borderRadius: '50%', background: 'white', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 };
-                  const tooltipStyle = { position: 'absolute', top: 'calc(100% + 6px)', left: 0, background: 'white', borderRadius: 9, padding: '8px 11px', boxShadow: '0 4px 16px rgba(0,0,0,0.13)', width: 190, zIndex: 200, border: '1px solid rgba(0,0,0,0.07)' };
+                  const tooltipStyle = { position: 'absolute', top: 'calc(100% + 6px)', left: 0, background: 'white', borderRadius: 9, padding: '8px 11px', boxShadow: '0 4px 16px rgba(0,0,0,0.13)', width: 190, zIndex: 200, border: '1px solid rgba(0,0,0,0.06)' };
                   return (
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, padding: '4px 0', justifyContent: 'center' }}>
                       {/* Promissory Note */}
@@ -1281,7 +1281,7 @@ export default function YourLoans() {
                       partial:     { label: 'Partial',     bg: 'rgba(3,172,234,0.18)', text: '#0288CE', ringColor: '#0288CE', fillColor: '#0288CE' },
                       pending:     { label: 'Pending',     bg: 'rgba(0,0,0,0.05)',     text: '#9B9A98', ringColor: 'rgba(0,0,0,0.15)', fillColor: 'rgba(0,0,0,0.1)' },
                       missed:      { label: 'Missed',         bg: 'rgba(232,114,110,0.1)', text: '#E8726E', ringColor: '#E8726E', fillColor: '#E8726E' },
-                      upcoming:    { label: 'Upcoming',       bg: 'rgba(0,0,0,0.03)',      text: '#787776', ringColor: 'rgba(0,0,0,0.12)', fillColor: 'rgba(0,0,0,0.08)' },
+                      upcoming:    { label: 'Upcoming',       bg: 'rgba(0,0,0,0.03)',      text: '#787776', ringColor: 'rgba(0,0,0,0.12)', fillColor: 'rgba(0,0,0,0.06)' },
                     };
                     const PieCircle = ({ percentage, number, size = 32 }) => {
                       const pcx = size / 2; const pcy = size / 2; const r = (size / 2) - 3;
@@ -1338,7 +1338,7 @@ export default function YourLoans() {
   const RightSection = ({ title, children }) => (
     <div style={{ marginBottom: 40 }}>
       <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 9 }}>{title}</div>
-      <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 14 }} />
+      <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 14 }} />
       {children}
     </div>
   );
@@ -1349,7 +1349,7 @@ export default function YourLoans() {
         <div style={{ fontSize: 10, fontWeight: 700, color: highlight ? '#03ACEA' : '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{title}</div>
         {headerRight && <div style={{ flexShrink: 0 }}>{headerRight}</div>}
       </div>
-      <div style={{ height: 1, background: highlight ? 'rgba(3,172,234,0.2)' : 'rgba(0,0,0,0.07)', marginBottom: 14 }} />
+      <div style={{ height: 1, background: highlight ? 'rgba(3,172,234,0.2)' : 'rgba(0,0,0,0.06)', marginBottom: 14 }} />
       <div style={{ overflow: 'visible', ...(highlight ? { display: 'flex', flexDirection: 'column' } : {}) }}>
         {children}
       </div>
@@ -1394,8 +1394,8 @@ export default function YourLoans() {
       <AnimatePresence>
         {activeDocPopup && docPopupAgreement && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={closeDocPopup}>
-            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} onClick={(e) => e.stopPropagation()} style={{ background: '#F5F4F0', borderRadius: 18, maxWidth: activeDocPopup === 'amortization' ? 'min(960px, calc(100vw - 32px))' : 520, width: '100%', maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 8px 40px rgba(0,0,0,0.16)' }}>
-              <div style={{ position: 'sticky', top: 0, background: '#F9F8F6', padding: '6px 14px 5px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderRadius: '18px 18px 0 0' }}>
+            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} onClick={(e) => e.stopPropagation()} style={{ background: '#fafafa', borderRadius: 18, maxWidth: activeDocPopup === 'amortization' ? 'min(960px, calc(100vw - 32px))' : 520, width: '100%', maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 8px 40px rgba(0,0,0,0.16)' }}>
+              <div style={{ position: 'sticky', top: 0, background: '#fafafa', padding: '6px 14px 5px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderRadius: '18px 18px 0 0' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                   <FileText size={14} style={{ color: '#9B9A98' }} />
                   <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>
@@ -1420,7 +1420,7 @@ export default function YourLoans() {
       <div className="mesh-layout" style={{ minHeight: '100vh', display: 'grid', gridTemplateColumns: '180px 1fr 300px', gap: 0, fontFamily: "'DM Sans', sans-serif" }}>
 
         {/* ── LEFT: Sidebar nav ── */}
-        <div className="mesh-left" style={{ background: '#F9F8F6', borderRight: '1px solid rgba(0,0,0,0.08)' }}>
+        <div className="mesh-left" style={{ background: '#ffffff', borderRight: '1px solid rgba(0,0,0,0.06)' }}>
           <div style={{ position: 'sticky', top: 0, padding: '32px 20px 0' }}>
             <Link to="/" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, fontStyle: 'italic', fontSize: '1.75rem', color: '#1A1918', textDecoration: 'none', display: 'block', marginBottom: 24 }}>Vony</Link>
             <nav style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
@@ -1472,11 +1472,11 @@ export default function YourLoans() {
         </div>
 
         {/* ── CENTER ── */}
-        <div className="mesh-center" style={{ background: 'white', borderRight: '1px solid rgba(0,0,0,0.08)', padding: '40px 48px 80px' }}>
+        <div className="mesh-center" style={{ background: 'white', borderRight: '1px solid rgba(0,0,0,0.06)', padding: '40px 48px 80px' }}>
 
           {/* Page title */}
-          <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 26, fontWeight: 600, color: '#1A1918', marginBottom: 20 }}>My Loans</div>
-          <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 28 }} />
+          <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 24, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', marginBottom: 20 }}>My Loans</div>
+          <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 28 }} />
 
           {/* Glass tab toggle */}
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 28 }}>
@@ -1488,7 +1488,7 @@ export default function YourLoans() {
                   fontWeight: activeTab === tab.key ? 600 : 500,
                   color: activeTab === tab.key ? '#1A1918' : 'rgba(0,0,0,0.45)',
                   background: activeTab === tab.key ? 'white' : 'transparent',
-                  boxShadow: activeTab === tab.key ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
+                  boxShadow: activeTab === tab.key ? '0 1px 4px rgba(0,0,0,0.06)' : 'none',
                   transition: 'all 0.15s', whiteSpace: 'nowrap',
                 }}>{tab.label}</button>
               ))}
@@ -1564,7 +1564,7 @@ export default function YourLoans() {
         </div>
 
         {/* ── RIGHT PANEL ── */}
-        <div className="mesh-right" style={{ background: '#F9F8F6' }}>
+        <div className="mesh-right" style={{ background: '#fafafa' }}>
           <div style={{ position: 'sticky', top: 0, padding: '28px 28px 0' }}>
           {/* Bell + Profile icons */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 10, marginBottom: 24 }}>
@@ -1666,7 +1666,7 @@ export default function YourLoans() {
       )}
 
       <AlertDialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
-        <AlertDialogContent className="rounded-2xl border-0 p-0 overflow-hidden" style={{ backgroundColor: '#F5F4F0' }}>
+        <AlertDialogContent className="rounded-2xl border-0 p-0 overflow-hidden" style={{ backgroundColor: '#fafafa' }}>
           <div className="p-6 pb-4">
             <AlertDialogHeader>
               <AlertDialogTitle className="text-xl font-bold" style={{ fontFamily: "'DM Sans', system-ui, sans-serif", color: '#1A1918' }}>Cancel Loan</AlertDialogTitle>

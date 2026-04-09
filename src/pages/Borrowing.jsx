@@ -804,7 +804,7 @@ export default function Borrowing() {
         <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{title}</div>
         {headerRight && <div style={{ flexShrink: 0 }}>{headerRight}</div>}
       </div>
-      <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 14 }} />
+      <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 14 }} />
       <div style={{ overflow: 'visible' }}>{children}</div>
     </div>
   );
@@ -864,10 +864,10 @@ export default function Borrowing() {
         )}
       </AnimatePresence>
 
-      <div style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", background: '#F5F4F0' }}>
+      <div style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", background: '#ffffff' }}>
         <div style={{ display: 'grid', gridTemplateColumns: '180px 1fr 300px', gap: 0, minHeight: '100vh' }}>
           {/* COL 1 - left nav */}
-          <div className="mesh-left" style={{ background: '#F5F4F0', borderRight: '1px solid rgba(0,0,0,0.08)' }}>
+          <div className="mesh-left" style={{ background: '#ffffff', borderRight: '1px solid rgba(0,0,0,0.06)' }}>
             <div style={{ position: 'sticky', top: 0, padding: '32px 20px 0' }}>
               <Link to="/" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, fontStyle: 'italic', fontSize: '1.75rem', color: '#1A1918', textDecoration: 'none', display: 'block', marginBottom: 28 }}>Vony</Link>
               <nav style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -884,14 +884,14 @@ export default function Borrowing() {
                     <Link key={label} to={to} style={{ fontSize: 14, fontWeight: isActive ? 600 : 500, color: isActive ? '#1A1918' : '#6B6A68', textDecoration: 'none', padding: '8px 10px', borderRadius: 8, background: isActive ? 'rgba(0,0,0,0.05)' : 'transparent' }}>{label}</Link>
                   );
                 })}
-                <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', margin: '10px 0' }} />
+                <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', margin: '10px 0' }} />
                 {[
                   { label: 'Recent Activity', to: createPageUrl("RecentActivity") },
                   { label: 'Documents', to: createPageUrl("LoanAgreements") },
                 ].map(({ label, to }) => (
                   <Link key={label} to={to} style={{ fontSize: 14, fontWeight: 500, color: '#6B6A68', textDecoration: 'none', padding: '8px 10px', borderRadius: 8 }}>{label}</Link>
                 ))}
-                <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', margin: '10px 0' }} />
+                <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', margin: '10px 0' }} />
                 {[
                   { label: 'Learn', to: createPageUrl("ComingSoon") },
                   { label: 'Loan Help', to: createPageUrl("LoanHelp") },
@@ -905,9 +905,9 @@ export default function Borrowing() {
           </div>
 
           {/* COL 2 - main content */}
-          <div className="mesh-center" style={{ background: 'white', borderRight: '1px solid rgba(0,0,0,0.08)', padding: '40px 48px 80px' }}>
-            <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 26, fontWeight: 600, color: '#1A1918', marginBottom: 20 }}>My Loans</div>
-            <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 24 }} />
+          <div className="mesh-center" style={{ background: 'white', borderRight: '1px solid rgba(0,0,0,0.06)', padding: '40px 48px 80px' }}>
+            <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 24, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', marginBottom: 20 }}>My Loans</div>
+            <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 24 }} />
 
           {/* Tab bar — centered */}
           <div className="mobile-tab-bar" style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
@@ -919,7 +919,7 @@ export default function Borrowing() {
                   fontWeight: activeTab === tab.key ? 600 : 500,
                   color: activeTab === tab.key ? '#1A1918' : '#787776',
                   background: activeTab === tab.key ? 'white' : 'transparent',
-                  boxShadow: activeTab === tab.key ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
+                  boxShadow: activeTab === tab.key ? '0 1px 4px rgba(0,0,0,0.06)' : 'none',
                   transition: 'all 0.15s', whiteSpace: 'nowrap',
                 }}>{tab.label}</button>
               ))}
@@ -1562,7 +1562,7 @@ export default function Borrowing() {
                                         const circumference = 2 * Math.PI * r; const filled = (percentage / 100) * circumference;
                                         return (
                                           <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ flexShrink: 0 }}>
-                                            <circle cx={pcx} cy={pcy} r={r} fill="#F5F4F0" stroke={ringColor} strokeWidth="2" strokeOpacity="0.3" />
+                                            <circle cx={pcx} cy={pcy} r={r} fill="#ffffff" stroke={ringColor} strokeWidth="2" strokeOpacity="0.3" />
                                             {percentage > 0 && (<circle cx={pcx} cy={pcy} r={r} fill="none" stroke={fillColor} strokeWidth="2" strokeDasharray={`${filled} ${circumference - filled}`} strokeDashoffset={circumference * 0.25} strokeLinecap="round" transform={`rotate(-90 ${pcx} ${pcy})`} />)}
                                             <text x={pcx} y={pcy} textAnchor="middle" dominantBaseline="central" fill="#1A1918" fontSize="11" fontWeight="bold" fontFamily="'DM Sans', sans-serif">{number}</text>
                                           </svg>
@@ -1781,7 +1781,7 @@ export default function Borrowing() {
           </div>
 
           {/* COL 3 - right panel */}
-          <div className="mesh-right" style={{ background: '#F5F4F0' }}>
+          <div className="mesh-right" style={{ background: '#fafafa' }}>
             <div style={{ position: 'sticky', top: 0, padding: '28px 28px 0' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 10, marginBottom: 28 }}>
                 <Link to={createPageUrl("Requests")} style={{ color: '#6B6A68', textDecoration: 'none' }}>
@@ -1826,7 +1826,7 @@ export default function Borrowing() {
       )}
 
       <AlertDialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
-        <AlertDialogContent className="rounded-2xl border-0 p-0 overflow-hidden" style={{ backgroundColor: '#F5F4F0' }}>
+        <AlertDialogContent className="rounded-2xl border-0 p-0 overflow-hidden" style={{ backgroundColor: '#fafafa' }}>
           <div className="p-6 pb-4">
             <AlertDialogHeader>
               <AlertDialogTitle className="text-xl font-bold" style={{ fontFamily: "'DM Sans', system-ui, sans-serif", color: '#1A1918' }}>Cancel Loan</AlertDialogTitle>

@@ -1405,7 +1405,7 @@ export default function Lending({ initialTab }) {
         <div style={{ fontSize: 10, fontWeight: 700, color: highlight ? '#03ACEA' : '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{title}</div>
         {headerRight && <div style={{ flexShrink: 0 }}>{headerRight}</div>}
       </div>
-      <div style={{ height: 1, background: highlight ? 'rgba(3,172,234,0.2)' : 'rgba(0,0,0,0.07)', marginBottom: 14 }} />
+      <div style={{ height: 1, background: highlight ? 'rgba(3,172,234,0.2)' : 'rgba(0,0,0,0.06)', marginBottom: 14 }} />
       <div style={{ overflow: 'visible' }}>{children}</div>
     </div>
   );
@@ -1501,10 +1501,10 @@ export default function Lending({ initialTab }) {
         signingAs="Lender"
       />
 
-      <div style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", background: '#F5F4F0' }}>
+      <div style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", background: '#ffffff' }}>
         <div style={{ display: 'grid', gridTemplateColumns: '180px 1fr 300px', gap: 0, minHeight: '100vh' }}>
           {/* COL 1 - left nav */}
-          <div className="mesh-left" style={{ background: '#F5F4F0', borderRight: '1px solid rgba(0,0,0,0.08)' }}>
+          <div className="mesh-left" style={{ background: '#ffffff', borderRight: '1px solid rgba(0,0,0,0.06)' }}>
             <div style={{ position: 'sticky', top: 0, padding: '32px 20px 0' }}>
               <Link to="/" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, fontStyle: 'italic', fontSize: '1.75rem', color: '#1A1918', textDecoration: 'none', display: 'block', marginBottom: 28 }}>Vony</Link>
               <nav style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -1521,14 +1521,14 @@ export default function Lending({ initialTab }) {
                     <Link key={label} to={to} style={{ fontSize: 14, fontWeight: isActive ? 600 : 500, color: isActive ? '#1A1918' : '#6B6A68', textDecoration: 'none', padding: '8px 10px', borderRadius: 8, background: isActive ? 'rgba(0,0,0,0.05)' : 'transparent' }}>{label}</Link>
                   );
                 })}
-                <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', margin: '10px 0' }} />
+                <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', margin: '10px 0' }} />
                 {[
                   { label: 'Recent Activity', to: createPageUrl("RecentActivity") },
                   { label: 'Documents', to: createPageUrl("LoanAgreements") },
                 ].map(({ label, to }) => (
                   <Link key={label} to={to} style={{ fontSize: 14, fontWeight: 500, color: '#6B6A68', textDecoration: 'none', padding: '8px 10px', borderRadius: 8 }}>{label}</Link>
                 ))}
-                <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', margin: '10px 0' }} />
+                <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', margin: '10px 0' }} />
                 {[
                   { label: 'Learn', to: createPageUrl("ComingSoon") },
                   { label: 'Loan Help', to: createPageUrl("LoanHelp") },
@@ -1542,9 +1542,9 @@ export default function Lending({ initialTab }) {
           </div>
 
           {/* COL 2 - main content */}
-          <div className="mesh-center" style={{ background: 'white', borderRight: '1px solid rgba(0,0,0,0.08)', padding: '40px 48px 80px' }}>
-            <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 26, fontWeight: 600, color: '#1A1918', marginBottom: 20 }}>Create Loan</div>
-            <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 24 }} />
+          <div className="mesh-center" style={{ background: 'white', borderRight: '1px solid rgba(0,0,0,0.06)', padding: '40px 48px 80px' }}>
+            <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 24, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', marginBottom: 20 }}>Create Loan</div>
+            <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 24 }} />
 
           {/* Tab Navigation — hidden when accessed as standalone Create Loan page */}
           {!initialTab && (
@@ -2933,7 +2933,7 @@ export default function Lending({ initialTab }) {
           </div>
 
           {/* COL 3 - right panel */}
-          <div className="mesh-right" style={{ background: '#F5F4F0' }}>
+          <div className="mesh-right" style={{ background: '#fafafa' }}>
             <div style={{ position: 'sticky', top: 0, padding: '28px 28px 0' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 10, marginBottom: 28 }}>
                 <Link to={createPageUrl("Requests")} style={{ color: '#6B6A68', textDecoration: 'none' }}>
@@ -2949,7 +2949,7 @@ export default function Lending({ initialTab }) {
                   {/* Loan Type */}
                   <div style={{ marginBottom: 32 }}>
                     <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 9 }}>Loan Type</div>
-                    <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 14 }} />
+                    <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 14 }} />
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginBottom: 10 }}>
                       <span style={{ fontSize: 13, fontWeight: 500, color: loanType === 'scheduled' ? '#1A1918' : '#9B9A98' }}>Loan</span>
                       <button
@@ -2981,7 +2981,7 @@ export default function Lending({ initialTab }) {
                   {loanType === 'scheduled' && (
                     <div style={{ marginBottom: 32 }}>
                       <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 9 }}>Borrower Will Pay</div>
-                      <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 14 }} />
+                      <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 14 }} />
                       <div style={{ fontSize: '1.6rem', fontWeight: 700, color: '#1A1918', letterSpacing: '-0.03em', lineHeight: 1, marginBottom: 4 }}>
                         {formData.amount && details.monthlyPayment > 0 ? `$${details.monthlyPayment.toFixed(2)}` : '$0.00'}
                       </div>
@@ -2994,7 +2994,7 @@ export default function Lending({ initialTab }) {
                   {/* Loan Summary */}
                   <div style={{ marginBottom: 32 }}>
                     <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 9 }}>Loan Summary</div>
-                    <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 14 }} />
+                    <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 14 }} />
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                       {formData.purpose && (
                         <div>
@@ -3012,7 +3012,7 @@ export default function Lending({ initialTab }) {
                             <span style={{ fontSize: 12, color: '#9B9A98' }}>Payments</span>
                             <span style={{ fontSize: 13, fontWeight: 600, color: '#1A1918' }}>{formData.repeating_num_payments}</span>
                           </div>
-                          <div style={{ height: 1, background: 'rgba(0,0,0,0.07)' }} />
+                          <div style={{ height: 1, background: 'rgba(0,0,0,0.06)' }} />
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
                             <span style={{ fontSize: 12, color: '#9B9A98' }}>Total</span>
                             <span style={{ fontSize: 15, fontWeight: 700, color: '#1A1918' }}>
@@ -3032,7 +3032,7 @@ export default function Lending({ initialTab }) {
                               <span style={{ fontSize: 13, fontWeight: 600, color: '#1A1918' }}>{formData.amount && formData.interest_rate ? `$${details.totalInterest.toFixed(2)}` : '$0.00'}</span>
                             </div>
                           )}
-                          <div style={{ height: 1, background: 'rgba(0,0,0,0.07)' }} />
+                          <div style={{ height: 1, background: 'rgba(0,0,0,0.06)' }} />
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
                             <span style={{ fontSize: 12, color: '#9B9A98' }}>Total</span>
                             <span style={{ fontSize: 15, fontWeight: 700, color: '#1A1918' }}>
@@ -3075,7 +3075,7 @@ export default function Lending({ initialTab }) {
       )}
 
       <AlertDialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
-        <AlertDialogContent className="rounded-2xl border-0 p-0 overflow-hidden" style={{ backgroundColor: '#F5F4F0' }}>
+        <AlertDialogContent className="rounded-2xl border-0 p-0 overflow-hidden" style={{ backgroundColor: '#fafafa' }}>
           <div className="p-6 pb-4">
             <AlertDialogHeader>
               <AlertDialogTitle className="text-xl font-bold text-slate-800" style={{ fontFamily: "'Libre Baskerville', Georgia, serif" }}>Cancel Loan</AlertDialogTitle>
