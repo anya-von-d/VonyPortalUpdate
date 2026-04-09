@@ -1015,7 +1015,7 @@ export default function YourLoans() {
                                   height: Math.max(barHeight, d.amount > 0 ? 4 : 2), width: 14,
                                   background: d.isProjected ? 'rgba(130,240,185,0.15)' : d.isMissed ? 'rgba(232,114,110,0.3)' : d.amount === 0 ? '#E5E4E2' : isPendingOnly ? 'rgba(245,158,11,0.4)' : isFullPmt ? '#82F0B9' : isPartialPmt ? 'rgba(245,158,11,0.6)' : 'rgba(130,240,185,0.6)',
                                   border: d.isProjected ? '1px dashed rgba(130,240,185,0.3)' : d.isMissed ? '1px dashed rgba(232,114,110,0.5)' : isPendingOnly ? '1px dashed rgba(245,158,11,0.6)' : 'none',
-                                }} title={`${d.label}: $${d.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}${d.isProjected ? ' (projected)' : d.isMissed ? ' (missed)' : isPendingOnly ? ' (pending)' : isPartialPmt ? ' (partial)' : ''}`} />
+                                }} title={`${d.label}: $${d.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}${d.isProjected ? ' (expected)' : d.isMissed ? ' (missed)' : isPendingOnly ? ' (pending)' : isPartialPmt ? ' (partial)' : ''}`} />
                               )}
                             </div>
                             <p style={{ fontSize: 10, marginTop: 4, lineHeight: 1, margin: 0, color: isInProgress ? '#82F0B9' : d.isProjected ? '#C7C6C4' : d.isMissed ? '#E8726E' : isPendingOnly ? 'rgba(245,158,11,0.6)' : '#787776' }}>{d.label}</p>
@@ -1028,7 +1028,7 @@ export default function YourLoans() {
                     <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: '#82F0B9' }} /><span style={{ fontSize: 9, color: '#787776' }}>Completed</span></div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: 'linear-gradient(to top, rgba(130,240,185,0.6) 50%, rgba(130,240,185,0.1) 50%)' }} /><span style={{ fontSize: 9, color: '#82F0B9' }}>In Progress</span></div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: 'rgba(245,158,11,0.4)', border: '1px dashed rgba(245,158,11,0.6)' }} /><span style={{ fontSize: 9, color: 'rgba(245,158,11,0.8)' }}>Pending</span></div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: 'rgba(130,240,185,0.15)', border: '1px dashed rgba(130,240,185,0.3)' }} /><span style={{ fontSize: 9, color: '#C7C6C4' }}>Projected</span></div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: 'rgba(130,240,185,0.15)', border: '1px dashed rgba(130,240,185,0.3)' }} /><span style={{ fontSize: 9, color: '#C7C6C4' }}>Expected</span></div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><div style={{ width: 16, height: 0, borderTop: '2px dashed rgba(130,240,185,0.3)' }} /><span style={{ fontSize: 9, color: '#787776' }}>Plan</span></div>
                   </div>
                 </div>
@@ -1146,7 +1146,7 @@ export default function YourLoans() {
                   const infoBadge = { width: 15, height: 15, borderRadius: '50%', background: 'white', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 };
                   const tooltipStyle = { position: 'absolute', top: 'calc(100% + 6px)', left: 0, background: 'white', borderRadius: 9, padding: '8px 11px', boxShadow: '0 4px 16px rgba(0,0,0,0.13)', width: 190, zIndex: 200, border: '1px solid rgba(0,0,0,0.07)' };
                   return (
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, padding: '4px 0' }}>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, padding: '4px 0', justifyContent: 'center' }}>
                       {/* Promissory Note */}
                       <div style={{ position: 'relative' }}>
                         <div style={btnBase}>
@@ -1183,10 +1183,6 @@ export default function YourLoans() {
                       <button onClick={() => { const ag = loanAgreements.find(a => a.loan_id === manageLoanSelected.id); if (ag) openDocPopup('summary', ag); }} style={{ ...btnBase }}>
                         <p style={btnLabel}>Loan Summary</p>
                       </button>
-                      {/* Record Payment */}
-                      <Link to={createPageUrl("RecordPayment")} style={{ ...btnBase, textDecoration: 'none' }}>
-                        <p style={btnLabel}>Record Payment</p>
-                      </Link>
                     </div>
                   );
                 })()}
@@ -1222,7 +1218,7 @@ export default function YourLoans() {
                   <div style={{ padding: '10px 14px 14px' }}>
                   {(() => {
                     const paymentAmt = manageLoanSelected.payment_amount || 0;
-                    let firstRecordFound = false;
+                    let rolledOver = 0;
                     const paymentRows = loanAnalysis ? loanAnalysis.periodResults.map((pr) => {
                       let status;
                       if (pr.hasConfirmedPayments && pr.isFullPayment) status = 'completed';
@@ -1230,12 +1226,19 @@ export default function YourLoans() {
                       else if (pr.hasConfirmedPayments && !pr.isFullPayment) status = 'partial';
                       else if (pr.hasPendingPayments && !pr.hasConfirmedPayments) status = 'pending';
                       else if (pr.isPast && !pr.hasAnyPayments) status = 'missed';
-                      else if (!firstRecordFound) { status = 'record'; firstRecordFound = true; }
                       else status = 'upcoming';
-                      const scheduledAmount = pr.scheduledAmount || (loanAnalysis.recalcPayment > 0 ? loanAnalysis.recalcPayment : paymentAmt);
+                      const base = pr.scheduledAmount || (loanAnalysis.recalcPayment > 0 ? loanAnalysis.recalcPayment : paymentAmt);
+                      let expectedAmount;
+                      if (status === 'missed') {
+                        expectedAmount = base;
+                        rolledOver += base;
+                      } else {
+                        expectedAmount = base + rolledOver;
+                        rolledOver = 0;
+                      }
                       const paidAmount = pr.actualPaid || 0;
-                      const paidPercentage = scheduledAmount > 0 ? Math.min(100, (paidAmount / scheduledAmount) * 100) : 0;
-                      return { number: pr.period, date: pr.date, amount: scheduledAmount, paidAmount, paidPercentage, status };
+                      const paidPercentage = expectedAmount > 0 ? Math.min(100, (paidAmount / expectedAmount) * 100) : 0;
+                      return { number: pr.period, date: pr.date, amount: expectedAmount, paidAmount, paidPercentage, status };
                     }) : [];
                     const statusConfig = {
                       completed:   { label: 'Completed',      bg: 'rgba(22,163,74,0.1)',   text: '#16A34A', ringColor: '#16A34A', fillColor: '#16A34A' },
@@ -1243,7 +1246,6 @@ export default function YourLoans() {
                       partial:     { label: 'Partial',        bg: 'rgba(245,158,11,0.1)', text: '#F59E0B', ringColor: '#F59E0B', fillColor: '#F59E0B' },
                       pending:     { label: 'Pending',        bg: 'rgba(245,158,11,0.1)', text: '#F59E0B', ringColor: '#F59E0B', fillColor: '#F59E0B' },
                       missed:      { label: 'Missed',         bg: 'rgba(232,114,110,0.1)', text: '#E8726E', ringColor: '#E8726E', fillColor: '#E8726E' },
-                      record:      { label: 'Record Payment', bg: '#1A1918',               text: 'white',   ringColor: '#1A1918', fillColor: '#1A1918' },
                       upcoming:    { label: 'Upcoming',       bg: 'rgba(0,0,0,0.03)',      text: '#787776', ringColor: 'rgba(0,0,0,0.12)', fillColor: 'rgba(0,0,0,0.08)' },
                     };
                     const PieCircle = ({ percentage, ringColor, fillColor, number, size = 32 }) => {
@@ -1265,14 +1267,11 @@ export default function YourLoans() {
                             <div key={row.number} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: 8, borderRadius: 10, background: 'rgba(0,0,0,0.03)' }}>
                               <PieCircle percentage={row.paidPercentage} ringColor={cfg.ringColor} fillColor={cfg.fillColor} number={row.number} />
                               <div style={{ flex: 1, minWidth: 0 }}>
-                                <p style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', margin: 0 }}>${row.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-                                <p style={{ fontSize: 10, color: '#787776', margin: 0 }}>{format(row.date, 'MMM d, yyyy')}</p>
+                                <p style={{ fontSize: 11, color: '#787776', margin: 0, fontWeight: 500 }}>Expected: ${row.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                                {row.paidAmount > 0 && <p style={{ fontSize: 12, fontWeight: 700, color: '#16A34A', margin: '1px 0 0' }}>Paid: ${row.paidAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>}
+                                <p style={{ fontSize: 10, color: '#C7C6C4', margin: '1px 0 0' }}>{format(row.date, 'MMM d, yyyy')}</p>
                               </div>
-                              {row.status === 'record' ? (
-                                <button onClick={handleMakePayment} style={{ flexShrink: 0, padding: '4px 10px', borderRadius: 8, fontSize: 10, fontWeight: 600, background: cfg.bg, color: cfg.text, border: 'none', cursor: 'pointer' }}>{cfg.label}</button>
-                              ) : (
-                                <span style={{ flexShrink: 0, padding: '4px 10px', borderRadius: 8, fontSize: 10, fontWeight: 600, background: cfg.bg, color: cfg.text }}>{cfg.label}</span>
-                              )}
+                              <span style={{ flexShrink: 0, padding: '4px 10px', borderRadius: 8, fontSize: 10, fontWeight: 600, background: cfg.bg, color: cfg.text }}>{cfg.label}</span>
                             </div>
                           );
                         })}
@@ -1301,7 +1300,7 @@ export default function YourLoans() {
         <span style={{ fontSize: 10, fontWeight: 700, color: highlight ? 'rgba(255,255,255,0.85)' : '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>{title}</span>
         {headerRight && <div style={{ flexShrink: 0 }}>{headerRight}</div>}
       </div>
-      <div style={{ background: '#ffffff', margin: '0 5px 5px', borderRadius: 10, overflow: 'hidden' }}>
+      <div style={{ background: '#ffffff', margin: '0 5px 5px', borderRadius: 10, overflow: 'hidden', ...(highlight ? { flex: 1 } : {}) }}>
         {children}
       </div>
     </div>
