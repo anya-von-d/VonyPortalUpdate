@@ -48,6 +48,7 @@ export default function YourLoans() {
   const [loanToCancel, setLoanToCancel] = useState(null);
   const [manageLoanSelected, setManageLoanSelected] = useState(null);
   const [manageLoanInitialized, setManageLoanInitialized] = useState(false);
+  const [loanDropdownOpen, setLoanDropdownOpen] = useState(false);
   const [rankingFilterLending, setRankingFilterLending] = useState('highest_interest');
   const [rankingFilterBorrowing, setRankingFilterBorrowing] = useState('highest_interest');
   const [activeDocPopup, setActiveDocPopup] = useState(null);
@@ -110,7 +111,6 @@ export default function YourLoans() {
 
   useEffect(() => {
     if (!manageLoanInitialized && allManageableLoans.length > 0) {
-      setManageLoanSelected(allManageableLoans[0]);
       setManageLoanInitialized(true);
     }
   }, [allManageableLoans, manageLoanInitialized]);
@@ -891,24 +891,54 @@ export default function YourLoans() {
     const otherPartyProfile = otherPartyId ? publicProfiles.find(p => p.user_id === otherPartyId) : null;
     const otherPartyUsername = otherPartyProfile?.full_name || 'User';
 
+    const getLoanDescription = (loan) => {
+      const isLend = loan.lender_id === user?.id;
+      const other = publicProfiles.find(p => p.user_id === (isLend ? loan.borrower_id : loan.lender_id));
+      const name = other?.full_name || 'User';
+      const amt = `$${(loan.amount || 0).toLocaleString()}`;
+      const reason = loan.purpose ? ` for ${loan.purpose}` : '';
+      return isLend ? `Lent ${amt} to ${name}${reason}` : `Borrowed ${amt} from ${name}${reason}`;
+    };
+
     return (
       <div>
         {/* Select a Loan */}
-        <PageCard title="Select a Loan to Learn More" style={{ marginBottom: 16 }}>
+        <PageCard title="Select a Loan to Learn More" style={{ marginBottom: manageLoanSelected ? 8 : 16 }}>
           <div style={{ padding: '10px 14px 14px' }}>
             <div style={{ position: 'relative' }}>
-              <select value={manageLoanSelected?.id || ''} onChange={(e) => { const selected = allManageableLoans.find(l => l.id === e.target.value); if (selected) setManageLoanSelected(selected); }} style={{ width: '100%', appearance: 'none', borderRadius: 10, padding: '8px 12px', fontSize: 12, fontWeight: 600, color: '#1A1918', background: 'rgba(84,166,207,0.08)', cursor: 'pointer', border: '1px solid rgba(84,166,207,0.2)', outline: 'none', fontFamily: "'DM Sans', sans-serif" }}>
-                {allManageableLoans.map((loan) => {
-                  const isLend = loan.lender_id === user?.id;
-                  const otherParty = publicProfiles.find(p => p.user_id === (isLend ? loan.borrower_id : loan.lender_id));
-                  const roleLabel = isLend ? 'Lent to' : 'Borrowed from';
-                  return (<option key={loan.id} value={loan.id}>{roleLabel} {otherParty?.full_name || 'User'} · ${loan.amount?.toLocaleString()}{loan.status === 'cancelled' ? ' · Cancelled' : ''}</option>);
-                })}
-              </select>
+              <div
+                onClick={() => setLoanDropdownOpen(o => !o)}
+                style={{ width: '100%', borderRadius: 10, padding: '8px 36px 8px 12px', fontSize: 12, fontWeight: 600, color: 'transparent', background: 'rgba(84,166,207,0.08)', cursor: 'pointer', border: '1px solid rgba(84,166,207,0.2)', minHeight: 36, userSelect: 'none', boxSizing: 'border-box' }}
+              >
+                &nbsp;
+              </div>
               <div style={{ pointerEvents: 'none', position: 'absolute', top: 0, bottom: 0, right: 10, display: 'flex', alignItems: 'center' }}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#54A6CF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+              {loanDropdownOpen && (
+                <>
+                  <div style={{ position: 'fixed', inset: 0, zIndex: 90 }} onClick={() => setLoanDropdownOpen(false)} />
+                  <div style={{ position: 'absolute', top: 'calc(100% + 4px)', left: 0, right: 0, background: '#ffffff', borderRadius: 10, boxShadow: '0 4px 20px rgba(0,0,0,0.12)', zIndex: 100, overflow: 'hidden', border: '1px solid rgba(84,166,207,0.15)' }}>
+                    {allManageableLoans.map((loan) => (
+                      <div key={loan.id} onClick={() => { setManageLoanSelected(loan); setLoanDropdownOpen(false); }}
+                        style={{ padding: '10px 14px', fontSize: 12, fontWeight: 500, color: '#1A1918', cursor: 'pointer', background: manageLoanSelected?.id === loan.id ? 'rgba(84,166,207,0.1)' : 'transparent', borderBottom: '1px solid rgba(0,0,0,0.04)' }}
+                        onMouseEnter={e => e.currentTarget.style.background = 'rgba(84,166,207,0.08)'}
+                        onMouseLeave={e => e.currentTarget.style.background = manageLoanSelected?.id === loan.id ? 'rgba(84,166,207,0.1)' : 'transparent'}
+                      >
+                        {getLoanDescription(loan)}{loan.status === 'cancelled' ? ' · Cancelled' : ''}
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </PageCard>
+
+        {/* Selected loan description */}
+        {manageLoanSelected && (
+          <div style={{ background: '#ffffff', borderRadius: 12, padding: '10px 16px', marginBottom: 16, boxShadow: '0 2px 8px rgba(0,0,0,0.06)', border: '1px solid rgba(0,0,0,0.06)' }}>
+            <p style={{ fontSize: 14, fontWeight: 500, color: '#1A1918', margin: 0 }}>{getLoanDescription(manageLoanSelected)}{manageLoanSelected.status === 'cancelled' ? <span style={{ fontSize: 11, color: '#E8726E', marginLeft: 8 }}>Cancelled</span> : null}</p>
+          </div>
+        )}
 
 
         {/* Two-column grid */}
@@ -940,8 +970,8 @@ export default function YourLoans() {
                           strokeDasharray={`${ringDash} ${ringCirc - ringDash}`} strokeLinecap="round"
                           transform={`rotate(-90 ${dCx} ${dCy})`} />
                       )}
-                      <text x={dCx} y={dCy - 5} textAnchor="middle" dominantBaseline="middle" style={{ fontSize: 15, fontWeight: 700, fill: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>{Math.round(paidPct)}%</text>
-                      <text x={dCx} y={dCy + 10} textAnchor="middle" dominantBaseline="middle" style={{ fontSize: 8, fontWeight: 500, fill: '#787776', fontFamily: "'DM Sans', sans-serif" }}>repaid</text>
+                      <text x={dCx} y={dCy - 7} textAnchor="middle" dominantBaseline="middle" style={{ fontSize: 20, fontWeight: 700, fill: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>{Math.round(paidPct)}%</text>
+                      <text x={dCx} y={dCy + 12} textAnchor="middle" dominantBaseline="middle" style={{ fontSize: 11, fontWeight: 500, fill: '#787776', fontFamily: "'DM Sans', sans-serif" }}>repaid</text>
                     </svg>
                     <p style={{ fontSize: 11, fontWeight: 600, color: '#1A1918', marginTop: 6, textAlign: 'center', whiteSpace: 'nowrap' }}>
                       ${totalPaidAmt.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
@@ -1036,7 +1066,7 @@ export default function YourLoans() {
                                 }} title={`${d.label}: $${d.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}${d.isProjected ? ' (expected)' : d.isMissed ? ' (missed)' : isPendingOnly ? ' (pending)' : isPartialPmt ? ' (partial)' : ''}`} />
                               )}
                             </div>
-                            <p style={{ fontSize: 10, marginTop: 4, lineHeight: 1, margin: 0, color: isInProgress ? '#03ACEA' : d.isProjected ? '#54A6CF' : d.isMissed ? '#E8726E' : isPendingOnly ? '#9B9A98' : '#4B4A48' }}>{d.label}</p>
+                            <p style={{ fontSize: 11, marginTop: 5, lineHeight: 1, color: isInProgress ? '#03ACEA' : d.isProjected ? '#54A6CF' : d.isMissed ? '#E8726E' : isPendingOnly ? '#9B9A98' : '#4B4A48' }}>{d.label}</p>
                           </div>
                         );
                       })}
