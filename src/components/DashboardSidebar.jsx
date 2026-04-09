@@ -14,7 +14,8 @@ const PAGE_TITLES = {
   Friends: 'Friends',
   RecentActivity: 'Recent Activity',
   LoanAgreements: 'Documents',
-  ComingSoon: 'Shop & Learn',
+  ComingSoon: 'Learn',
+  LoanHelp: 'Loan Help',
   Profile: 'Profile',
   Requests: 'Notifications',
 };
@@ -72,7 +73,7 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
   };
 
   const active = (...pages) => pages.includes(activePage);
-  const moreActive = active('RecentActivity', 'LoanAgreements', 'RecordPayment', 'ComingSoon');
+  const moreActive = active('RecentActivity', 'LoanAgreements', 'RecordPayment', 'ComingSoon', 'LoanHelp');
 
   const linkStyle = (...pages) => ({
     display: 'inline-flex', alignItems: 'center', gap: 5,
@@ -186,9 +187,10 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
                         style={{ ...dropdownItemStyle, fontWeight: active('ComingSoon') ? 600 : 400 }}>
                         Learn <span style={comingSoonBadge}>Soon</span>
                       </Link>
-                      <button style={{ ...dropdownItemStyle, color: '#9B9A98', cursor: 'default' }}>
+                      <Link to={createPageUrl("LoanHelp")} onClick={() => setMoreOpen(false)}
+                        style={{ ...dropdownItemStyle, fontWeight: active('LoanHelp') ? 600 : 400 }}>
                         Loan Help <span style={comingSoonBadge}>Soon</span>
-                      </button>
+                      </Link>
 
                       <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', margin: '4px 4px' }} />
 
@@ -308,6 +310,7 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
               { label: 'Documents',       to: createPageUrl("LoanAgreements"),  pages: ['LoanAgreements'] },
               { label: 'Record Payment',  to: createPageUrl("RecordPayment"),   pages: ['RecordPayment'] },
               { label: 'Learn',           to: createPageUrl("ComingSoon"),       pages: ['ComingSoon'] },
+              { label: 'Loan Help',       to: createPageUrl("LoanHelp"),         pages: ['LoanHelp'] },
               { label: 'Notifications',   to: createPageUrl("Requests"),        pages: ['Requests'] },
               { label: 'Profile',       to: createPageUrl("Profile"),         pages: ['Profile'] },
             ].map(({ label, to, pages }) => (
