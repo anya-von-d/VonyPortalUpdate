@@ -1006,30 +1006,28 @@ export default function YourLoans() {
                             <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
                               {isInProgress && !isFullPmt ? (
                                 <div style={{ position: 'relative', height: Math.max(scheduledBarHeight, 4), width: 14 }}>
-                                  <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '100%', borderRadius: '4px 4px 0 0', background: 'rgba(130,240,185,0.1)', border: '1px dashed rgba(130,240,185,0.3)' }} />
-                                  <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: Math.max(barHeight, 4), borderRadius: '4px 4px 0 0', background: 'rgba(130,240,185,0.6)' }} />
+                                  <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '100%', borderRadius: '4px 4px 0 0', background: 'rgba(3,172,234,0.08)', border: '1px dashed rgba(3,172,234,0.2)' }} />
+                                  <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: Math.max(barHeight, 4), borderRadius: '4px 4px 0 0', background: '#03ACEA' }} />
                                 </div>
                               ) : (
                                 <div style={{
                                   borderRadius: '4px 4px 0 0', transition: 'all 0.3s',
                                   height: Math.max(barHeight, d.amount > 0 ? 4 : 2), width: 14,
-                                  background: d.isProjected ? 'rgba(130,240,185,0.15)' : d.isMissed ? 'rgba(232,114,110,0.3)' : d.amount === 0 ? '#E5E4E2' : isPendingOnly ? 'rgba(245,158,11,0.4)' : isFullPmt ? '#82F0B9' : isPartialPmt ? 'rgba(245,158,11,0.6)' : 'rgba(130,240,185,0.6)',
-                                  border: d.isProjected ? '1px dashed rgba(130,240,185,0.3)' : d.isMissed ? '1px dashed rgba(232,114,110,0.5)' : isPendingOnly ? '1px dashed rgba(245,158,11,0.6)' : 'none',
+                                  background: d.isProjected ? 'rgba(176,220,244,0.35)' : d.isMissed ? 'rgba(232,114,110,0.3)' : d.amount === 0 ? '#E5E4E2' : isPendingOnly ? 'rgba(0,0,0,0.1)' : isFullPmt ? '#03ACEA' : isPartialPmt ? 'rgba(245,158,11,0.6)' : 'rgba(3,172,234,0.25)',
+                                  border: d.isProjected ? '1px dashed #B0DCF4' : d.isMissed ? '1px dashed rgba(232,114,110,0.5)' : isPendingOnly ? '1px dashed rgba(0,0,0,0.15)' : 'none',
                                 }} title={`${d.label}: $${d.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}${d.isProjected ? ' (expected)' : d.isMissed ? ' (missed)' : isPendingOnly ? ' (pending)' : isPartialPmt ? ' (partial)' : ''}`} />
                               )}
                             </div>
-                            <p style={{ fontSize: 10, marginTop: 4, lineHeight: 1, margin: 0, color: isInProgress ? '#82F0B9' : d.isProjected ? '#C7C6C4' : d.isMissed ? '#E8726E' : isPendingOnly ? 'rgba(245,158,11,0.6)' : '#787776' }}>{d.label}</p>
+                            <p style={{ fontSize: 10, marginTop: 4, lineHeight: 1, margin: 0, color: isInProgress ? '#03ACEA' : d.isProjected ? '#B0DCF4' : d.isMissed ? '#E8726E' : isPendingOnly ? '#9B9A98' : '#787776' }}>{d.label}</p>
                           </div>
                         );
                       })}
                     </div>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 8, paddingTop: 8, borderTop: '1px solid rgba(0,0,0,0.06)', flexWrap: 'wrap' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: '#82F0B9' }} /><span style={{ fontSize: 9, color: '#787776' }}>Completed</span></div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: 'linear-gradient(to top, rgba(130,240,185,0.6) 50%, rgba(130,240,185,0.1) 50%)' }} /><span style={{ fontSize: 9, color: '#82F0B9' }}>In Progress</span></div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: 'rgba(245,158,11,0.4)', border: '1px dashed rgba(245,158,11,0.6)' }} /><span style={{ fontSize: 9, color: 'rgba(245,158,11,0.8)' }}>Pending</span></div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: 'rgba(130,240,185,0.15)', border: '1px dashed rgba(130,240,185,0.3)' }} /><span style={{ fontSize: 9, color: '#C7C6C4' }}>Expected</span></div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><div style={{ width: 16, height: 0, borderTop: '2px dashed rgba(130,240,185,0.3)' }} /><span style={{ fontSize: 9, color: '#787776' }}>Plan</span></div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: '#03ACEA' }} /><span style={{ fontSize: 9, color: '#787776' }}>Completed</span></div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: 'rgba(0,0,0,0.1)', border: '1px dashed rgba(0,0,0,0.15)' }} /><span style={{ fontSize: 9, color: '#9B9A98' }}>Pending</span></div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: 'rgba(176,220,244,0.35)', border: '1px dashed #B0DCF4' }} /><span style={{ fontSize: 9, color: '#B0DCF4' }}>Expected</span></div>
                   </div>
                 </div>
               )}
@@ -1222,7 +1220,7 @@ export default function YourLoans() {
                     const paymentRows = loanAnalysis ? loanAnalysis.periodResults.map((pr) => {
                       let status;
                       if (pr.hasConfirmedPayments && pr.isFullPayment) status = 'completed';
-                      else if (pr.hasAnyPayments && !pr.isPast) status = 'in_progress';
+                      else if (pr.hasAnyPayments && !pr.isPast) status = 'partial';
                       else if (pr.hasConfirmedPayments && !pr.isFullPayment) status = 'partial';
                       else if (pr.hasPendingPayments && !pr.hasConfirmedPayments) status = 'pending';
                       else if (pr.isPast && !pr.hasAnyPayments) status = 'missed';
@@ -1241,10 +1239,9 @@ export default function YourLoans() {
                       return { number: pr.period, date: pr.date, amount: expectedAmount, paidAmount, paidPercentage, status };
                     }) : [];
                     const statusConfig = {
-                      completed:   { label: 'Completed',      bg: 'rgba(22,163,74,0.1)',   text: '#16A34A', ringColor: '#16A34A', fillColor: '#16A34A' },
-                      in_progress: { label: 'In Progress',    bg: 'rgba(3,172,234,0.1)',   text: '#03ACEA', ringColor: '#03ACEA', fillColor: '#03ACEA' },
-                      partial:     { label: 'Partial',        bg: 'rgba(245,158,11,0.1)', text: '#F59E0B', ringColor: '#F59E0B', fillColor: '#F59E0B' },
-                      pending:     { label: 'Pending',        bg: 'rgba(245,158,11,0.1)', text: '#F59E0B', ringColor: '#F59E0B', fillColor: '#F59E0B' },
+                      completed:   { label: 'Completed',   bg: 'rgba(3,172,234,0.1)',   text: '#03ACEA', ringColor: '#03ACEA', fillColor: '#03ACEA' },
+                      partial:     { label: 'Partial',     bg: 'rgba(245,158,11,0.1)', text: '#F59E0B', ringColor: '#F59E0B', fillColor: '#F59E0B' },
+                      pending:     { label: 'Pending',     bg: 'rgba(0,0,0,0.05)',     text: '#9B9A98', ringColor: 'rgba(0,0,0,0.15)', fillColor: 'rgba(0,0,0,0.1)' },
                       missed:      { label: 'Missed',         bg: 'rgba(232,114,110,0.1)', text: '#E8726E', ringColor: '#E8726E', fillColor: '#E8726E' },
                       upcoming:    { label: 'Upcoming',       bg: 'rgba(0,0,0,0.03)',      text: '#787776', ringColor: 'rgba(0,0,0,0.12)', fillColor: 'rgba(0,0,0,0.08)' },
                     };
