@@ -380,12 +380,12 @@ export default function Borrowing() {
 
     // Only confirmed payments impact the loan balance
     const confirmedPayments = payments
-      .filter(p => p.loan_id === loan.id && p.status === 'confirmed')
+      .filter(p => p.loan_id === loan.id && (p.status === 'confirmed' || p.status === 'completed'))
       .sort((a, b) => new Date(a.payment_date) - new Date(b.payment_date));
 
     // All payments (confirmed + pending) for chart display
     const allLoanPayments = payments
-      .filter(p => p.loan_id === loan.id && (p.status === 'confirmed' || p.status === 'pending_confirmation'))
+      .filter(p => p.loan_id === loan.id && (p.status === 'confirmed' || p.status === 'completed' || p.status === 'pending_confirmation'))
       .sort((a, b) => new Date(a.payment_date) - new Date(b.payment_date));
 
     // Generate schedule dates
@@ -1618,7 +1618,7 @@ export default function Borrowing() {
 
                                       // Payments
                                       loanPmts.forEach(payment => {
-                                        const isConfirmed = payment.status === 'confirmed';
+                                        const isConfirmed = payment.status === 'confirmed' || payment.status === 'completed';
                                         const isRecordedByUser = payment.recorded_by === user?.id;
                                         const otherPartyProfile = publicProfiles.find(p => p.user_id === (isRecordedByUser
                                           ? (manageLoanSelected.lender_id === user?.id ? manageLoanSelected.borrower_id : manageLoanSelected.lender_id)
