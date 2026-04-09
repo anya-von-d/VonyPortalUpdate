@@ -754,7 +754,7 @@ export default function Home() {
       <div style={{ display: 'grid', gridTemplateColumns: '180px 1fr 300px', gap: 0 }}>
 
         {/* ── LEFT: Sidebar nav ── */}
-        <div className="mesh-left" style={{ background: '#F5F4F0', borderRight: '1px solid rgba(0,0,0,0.08)' }}>
+        <div className="mesh-left" style={{ background: '#F9F8F6', borderRight: '1px solid rgba(0,0,0,0.08)' }}>
           <div style={{ position: 'sticky', top: 0, padding: '32px 20px 0' }}>
             {/* Vony logo */}
             <Link to="/" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, fontStyle: 'italic', fontSize: '1.75rem', color: '#1A1918', textDecoration: 'none', display: 'block', marginBottom: 24, lineHeight: 1, letterSpacing: '-0.02em' }}>Vony</Link>
@@ -866,19 +866,8 @@ export default function Home() {
           </div>
           <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 24 }} />
 
-          {/* Notification banner */}
-          {notifCount > 0 && (
-            <Link to={createPageUrl("Requests")} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderRadius: 10, background: 'rgba(3,172,234,0.05)', border: '1px solid rgba(3,172,234,0.12)', textDecoration: 'none', marginBottom: 16 }}>
-              <div style={{ width: 26, height: 26, borderRadius: 7, background: 'rgba(3,172,234,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2" strokeLinecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-              </div>
-              <span style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', flex: 1 }}>You have <strong>{notifCount}</strong> new notification{notifCount !== 1 ? 's' : ''}</span>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#C5C3C0" strokeWidth="2" strokeLinecap="round"><polyline points="9 18 15 12 9 6"/></svg>
-            </Link>
-          )}
-
-          {/* Three summary cards — side by side */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10, marginBottom: 24 }}>
+          {/* Three summary cards — glass style */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, marginBottom: 28 }}>
             {/* Next due */}
             {(() => {
               const days = nextBorrowerPayment ? Math.ceil((nextBorrowerPayment.date.getTime() - Date.now()) / 86400000) : null;
@@ -886,18 +875,30 @@ export default function Home() {
               const daysLabel = days === null ? null : isLate ? `${Math.abs(days)}d late` : days === 0 ? 'today' : `${days}d`;
               const badgeColor = isLate ? '#E8726E' : days !== null && days <= 3 ? '#F59E0B' : '#9B9A98';
               const badgeBg = isLate ? 'rgba(232,114,110,0.08)' : days !== null && days <= 3 ? 'rgba(245,158,11,0.08)' : 'rgba(0,0,0,0.04)';
+              const iconBg = isLate ? 'rgba(232,114,110,0.10)' : 'rgba(245,158,11,0.10)';
+              const iconColor = isLate ? '#E8726E' : '#F59E0B';
               return (
-                <div style={{ padding: '12px 14px', borderRadius: 10, background: isLate ? 'rgba(232,114,110,0.04)' : 'rgba(0,0,0,0.025)', border: `1px solid ${isLate ? 'rgba(232,114,110,0.15)' : 'rgba(0,0,0,0.07)'}` }}>
-                  <div style={{ fontSize: 9, fontWeight: 700, color: '#C5C3C0', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 8 }}>Next due</div>
+                <div style={{ padding: '14px 16px', borderRadius: 14, background: 'white', boxShadow: '0 2px 12px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04)', border: '1px solid rgba(0,0,0,0.05)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                    <div style={{ width: 28, height: 28, borderRadius: 8, background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={iconColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    </div>
+                    <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Next Due</span>
+                  </div>
                   {nextBorrowerPayment ? (
                     <>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 4 }}>
-                        <span style={{ fontSize: 17, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em' }}>{formatMoney(nextBorrowerPayment.payment_amount || 0)}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 5 }}>
+                        <span style={{ fontSize: 18, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em' }}>{formatMoney(nextBorrowerPayment.payment_amount || 0)}</span>
                         {daysLabel && <span style={{ fontSize: 10, fontWeight: 700, color: badgeColor, background: badgeBg, borderRadius: 6, padding: '2px 7px', flexShrink: 0 }}>{daysLabel}</span>}
                       </div>
-                      <div style={{ fontSize: 12, color: '#787776' }}>to {nextBorrowerPayment.firstName}</div>
+                      <div style={{ fontSize: 12, color: '#9B9A98' }}>to {nextBorrowerPayment.firstName}</div>
                     </>
-                  ) : <div style={{ fontSize: 12, color: '#9B9A98' }}>Nothing due</div>}
+                  ) : (
+                    <>
+                      <div style={{ fontSize: 16, fontWeight: 700, color: '#C5C3C0', marginBottom: 5 }}>—</div>
+                      <div style={{ fontSize: 12, color: '#9B9A98' }}>Nothing due</div>
+                    </>
+                  )}
                 </div>
               );
             })()}
@@ -910,30 +911,45 @@ export default function Home() {
               const badgeColor = isLate ? '#E8726E' : LENDER_GREEN;
               const badgeBg = isLate ? 'rgba(232,114,110,0.08)' : 'rgba(82,183,136,0.10)';
               return (
-                <div style={{ padding: '12px 14px', borderRadius: 10, background: 'rgba(82,183,136,0.04)', border: '1px solid rgba(82,183,136,0.15)' }}>
-                  <div style={{ fontSize: 9, fontWeight: 700, color: '#C5C3C0', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 8 }}>Next incoming</div>
+                <div style={{ padding: '14px 16px', borderRadius: 14, background: 'white', boxShadow: '0 2px 12px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04)', border: '1px solid rgba(0,0,0,0.05)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                    <div style={{ width: 28, height: 28, borderRadius: 8, background: 'rgba(82,183,136,0.10)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={LENDER_GREEN} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="17 11 12 6 7 11"/><line x1="12" y1="6" x2="12" y2="18"/></svg>
+                    </div>
+                    <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Incoming</span>
+                  </div>
                   {nextLenderPayment ? (
                     <>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 4 }}>
-                        <span style={{ fontSize: 17, fontWeight: 800, color: LENDER_GREEN, letterSpacing: '-0.02em' }}>{formatMoney(nextLenderPayment.payment_amount || 0)}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 5 }}>
+                        <span style={{ fontSize: 18, fontWeight: 800, color: LENDER_GREEN, letterSpacing: '-0.02em' }}>{formatMoney(nextLenderPayment.payment_amount || 0)}</span>
                         {daysLabel && <span style={{ fontSize: 10, fontWeight: 700, color: badgeColor, background: badgeBg, borderRadius: 6, padding: '2px 7px', flexShrink: 0 }}>{daysLabel}</span>}
                       </div>
-                      <div style={{ fontSize: 12, color: '#787776' }}>from {nextLenderPayment.firstName}</div>
+                      <div style={{ fontSize: 12, color: '#9B9A98' }}>from {nextLenderPayment.firstName}</div>
                     </>
-                  ) : <div style={{ fontSize: 12, color: '#9B9A98' }}>None incoming</div>}
+                  ) : (
+                    <>
+                      <div style={{ fontSize: 16, fontWeight: 700, color: '#C5C3C0', marginBottom: 5 }}>—</div>
+                      <div style={{ fontSize: 12, color: '#9B9A98' }}>None incoming</div>
+                    </>
+                  )}
                 </div>
               );
             })()}
 
             {/* Overview */}
-            <div style={{ padding: '12px 14px', borderRadius: 10, background: 'rgba(0,0,0,0.025)', border: '1px solid rgba(0,0,0,0.07)' }}>
-              <div style={{ fontSize: 9, fontWeight: 700, color: '#C5C3C0', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 8 }}>Overview</div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-                <span style={{ fontSize: 11, color: '#787776' }}>Owed to you</span>
+            <div style={{ padding: '14px 16px', borderRadius: 14, background: 'white', boxShadow: '0 2px 12px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04)', border: '1px solid rgba(0,0,0,0.05)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                <div style={{ width: 28, height: 28, borderRadius: 8, background: 'rgba(3,172,234,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                </div>
+                <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Overview</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 7 }}>
+                <span style={{ fontSize: 12, color: '#787776' }}>Owed to you</span>
                 <span style={{ fontSize: 15, fontWeight: 800, color: LENDER_GREEN, letterSpacing: '-0.02em' }}>{formatMoney(lentRemaining)}</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: 11, color: '#787776' }}>You owe</span>
+                <span style={{ fontSize: 12, color: '#787776' }}>You owe</span>
                 <span style={{ fontSize: 15, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em' }}>{formatMoney(borrowedRemaining)}</span>
               </div>
             </div>
@@ -980,7 +996,7 @@ export default function Home() {
           </div>
 
           {/* RECENT ACTIVITY */}
-          <div>
+          <div style={{ marginBottom: 36 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 10, marginBottom: 4, borderBottom: '1px solid rgba(0,0,0,0.07)' }}>
               <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Recent Activity</span>
               <Link to={createPageUrl("RecentActivity")} style={{ fontSize: 11, fontWeight: 500, color: '#9B9A98', textDecoration: 'none' }}>View all →</Link>
@@ -1005,10 +1021,46 @@ export default function Home() {
               </div>
             ))}
           </div>
+
+          {/* ACTIVE LOANS */}
+          {myLoans.filter(l => l && l.status === 'active').length > 0 && (
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 10, marginBottom: 4, borderBottom: '1px solid rgba(0,0,0,0.07)' }}>
+                <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Active Loans</span>
+                <Link to={createPageUrl("YourLoans")} style={{ fontSize: 11, fontWeight: 500, color: '#9B9A98', textDecoration: 'none' }}>View all →</Link>
+              </div>
+              <div ref={activeLoansRef} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                {myLoans.filter(l => l && l.status === 'active').slice(0, 5).map((loan, idx) => {
+                  const isLender = loan.lender_id === user.id;
+                  const otherProfile = safeAllProfiles.find(p => p.user_id === (isLender ? loan.borrower_id : loan.lender_id));
+                  const totalAmt = loan.total_amount || loan.amount || 0;
+                  const paidAmt = loan.amount_paid || 0;
+                  const pct = totalAmt > 0 ? Math.round((paidAmt / totalAmt) * 100) : 0;
+                  const name = otherProfile?.full_name?.split(' ')[0] || otherProfile?.username || 'User';
+                  const purpose = loan.purpose ? ` for ${loan.purpose}` : '';
+                  const headerText = isLender
+                    ? `You lent ${name} ${formatMoney(totalAmt)}${purpose}`
+                    : `${name} lent you ${formatMoney(totalAmt)}${purpose}`;
+                  return (
+                    <div key={loan.id} style={{ padding: '10px 0' }}>
+                      <div style={{ fontSize: 13, color: '#1A1918', fontWeight: 500, marginBottom: 8, lineHeight: 1.4 }}>{headerText}</div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <div style={{ flex: 1, height: 6, borderRadius: 3, background: isLender ? 'rgba(3,172,234,0.1)' : 'rgba(29,91,148,0.1)', overflow: 'hidden' }}>
+                          <div key={`al-${idx}-${activeAnimKey}`} style={{ height: '100%', borderRadius: 3, background: isLender ? '#03ACEA' : '#1D5B94', width: `${pct}%`, animation: `barGrowRight 0.8s ease-out ${idx * 0.08}s both` }} />
+                        </div>
+                        <span style={{ fontSize: 11, fontWeight: 700, color: '#9B9A98', flexShrink: 0 }}>{pct}%</span>
+                      </div>
+                      <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 5 }}>{formatMoney(paidAmt)} of {formatMoney(totalAmt)} {isLender ? 'paid back' : 'repaid'}</div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* ── RIGHT PANEL ── */}
-        <div className="mesh-right" style={{ background: '#F5F4F0' }}>
+        <div className="mesh-right" style={{ background: '#F9F8F6' }}>
           <div style={{ position: 'sticky', top: 0, padding: '28px 28px 0' }}>
             {/* Bell + Profile icons */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 10, marginBottom: 28 }}>
@@ -1016,7 +1068,7 @@ export default function Home() {
                 <div style={{ width: 32, height: 32, borderRadius: 9, background: 'rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#787776" strokeWidth="2" strokeLinecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
                 </div>
-                {notifCount > 0 && <div style={{ position: 'absolute', top: 2, right: 2, width: 7, height: 7, borderRadius: '50%', background: '#03ACEA', border: '1.5px solid #F5F4F0' }} />}
+                {notifCount > 0 && <div style={{ position: 'absolute', top: 2, right: 2, width: 7, height: 7, borderRadius: '50%', background: '#03ACEA', border: '1.5px solid #F9F8F6' }} />}
               </Link>
               <Link to={createPageUrl("Profile")} style={{ textDecoration: 'none' }}>
                 <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(3,172,234,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
@@ -1028,6 +1080,24 @@ export default function Home() {
                 </div>
               </Link>
             </div>
+
+            {/* Notifications */}
+            <RightSection title="Notifications">
+              {notifCount > 0 ? (
+                <Link to={createPageUrl("Requests")} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 12px', borderRadius: 10, background: 'rgba(3,172,234,0.05)', border: '1px solid rgba(3,172,234,0.10)', textDecoration: 'none' }}>
+                  <div style={{ width: 28, height: 28, borderRadius: 8, background: 'rgba(3,172,234,0.10)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2" strokeLinecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1918' }}>{notifCount} new</div>
+                    <div style={{ fontSize: 11, color: '#9B9A98' }}>Tap to review</div>
+                  </div>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#C5C3C0" strokeWidth="2" strokeLinecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+                </Link>
+              ) : (
+                <div style={{ fontSize: 13, color: '#9B9A98' }}>You're all caught up</div>
+              )}
+            </RightSection>
 
             {/* How [month] is going */}
             <RightSection title={format(today, 'MMMM')}>
@@ -1055,37 +1125,6 @@ export default function Home() {
               </div>
             </RightSection>
 
-            {/* Active loan bars */}
-            {myLoans.filter(l => l && l.status === 'active').length > 0 && (
-              <RightSection title="Active Loans">
-                <div ref={activeLoansRef} style={{ display: 'flex', flexDirection: 'column', gap: 22 }}>
-                  {myLoans.filter(l => l && l.status === 'active').slice(0, 5).map((loan, idx) => {
-                    const isLender = loan.lender_id === user.id;
-                    const otherProfile = safeAllProfiles.find(p => p.user_id === (isLender ? loan.borrower_id : loan.lender_id));
-                    const totalAmt = loan.total_amount || loan.amount || 0;
-                    const paidAmt = loan.amount_paid || 0;
-                    const pct = totalAmt > 0 ? Math.round((paidAmt / totalAmt) * 100) : 0;
-                    const name = otherProfile?.full_name?.split(' ')[0] || otherProfile?.username || 'User';
-                    const purpose = loan.purpose ? ` for ${loan.purpose}` : '';
-                    const headerText = isLender
-                      ? `You lent ${name} ${formatMoney(totalAmt)}${purpose}`
-                      : `${name} lent you ${formatMoney(totalAmt)}${purpose}`;
-                    return (
-                      <div key={loan.id}>
-                        <div style={{ fontSize: 12, color: '#1A1918', fontWeight: 500, marginBottom: 8, lineHeight: 1.4 }}>{headerText}</div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <div style={{ flex: 1, height: 6, borderRadius: 3, background: isLender ? 'rgba(3,172,234,0.1)' : 'rgba(29,91,148,0.1)', overflow: 'hidden' }}>
-                            <div key={`al-${idx}-${activeAnimKey}`} style={{ height: '100%', borderRadius: 3, background: isLender ? '#03ACEA' : '#1D5B94', width: `${pct}%`, animation: `barGrowRight 0.8s ease-out ${idx * 0.08}s both` }} />
-                          </div>
-                          <span style={{ fontSize: 11, fontWeight: 700, color: '#9B9A98', flexShrink: 0 }}>{pct}%</span>
-                        </div>
-                        <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 5 }}>{formatMoney(paidAmt)} of {formatMoney(totalAmt)} {isLender ? 'paid back' : 'repaid'}</div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </RightSection>
-            )}
           </div>
         </div>
 
