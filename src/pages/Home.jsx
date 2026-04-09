@@ -1066,7 +1066,7 @@ export default function Home() {
 
               {/* Owed to You */}
               <CardEntrance delay={0.1}>
-              <DashboardCard title="Owed to You" style={{ border: '6px solid #03ACEA', boxShadow: '0 0 55px 4px #03ACEA, ' + SHADOW }}>
+              <DashboardCard title="Owed to You" style={{ boxShadow: '0 0 60px 20px #03ACEA, ' + SHADOW }}>
                 <div style={{ padding: '16px 16px 20px', position: 'relative', display: 'flex', alignItems: 'center', minHeight: 48 }}>
                   <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#54A6CF', letterSpacing: '-0.03em', lineHeight: 1, fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(lentRemaining)}</div>
                   <div style={{ position: 'absolute', bottom: 6, right: 16, fontSize: 12, color: '#9B9A98' }}>between {lentLoans.length} loan{lentLoans.length !== 1 ? 's' : ''}</div>
