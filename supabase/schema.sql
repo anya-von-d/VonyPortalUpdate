@@ -173,13 +173,13 @@ create policy "payments read participants"
     )
   );
 
-create policy "payments insert borrower"
+create policy "payments insert participants"
   on payments for insert
   with check (
     exists (
       select 1 from loans
       where loans.id = payments.loan_id
-        and loans.borrower_id = auth.uid()
+        and (loans.borrower_id = auth.uid() or loans.lender_id = auth.uid())
     )
   );
 

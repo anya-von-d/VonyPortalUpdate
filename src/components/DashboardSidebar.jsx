@@ -72,7 +72,7 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
   };
 
   const active = (...pages) => pages.includes(activePage);
-  const moreActive = active('RecentActivity', 'LoanAgreements');
+  const moreActive = active('RecentActivity', 'LoanAgreements', 'RecordPayment');
 
   const linkStyle = (...pages) => ({
     display: 'inline-flex', alignItems: 'center', gap: 5,
@@ -174,6 +174,10 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
                       <Link to={createPageUrl("LoanAgreements")} onClick={() => setMoreOpen(false)}
                         style={{ ...dropdownItemStyle, fontWeight: active('LoanAgreements') ? 600 : 400 }}>
                         Documents
+                      </Link>
+                      <Link to={createPageUrl("RecordPayment")} onClick={() => setMoreOpen(false)}
+                        style={{ ...dropdownItemStyle, fontWeight: active('RecordPayment') ? 600 : 400 }}>
+                        Record Payment
                       </Link>
 
                       <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', margin: '4px 4px' }} />
@@ -300,8 +304,9 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
               { label: 'My Loans',      to: createPageUrl("YourLoans"),       pages: ['YourLoans', 'Borrowing', 'Lending'] },
               { label: 'Friends',       to: createPageUrl("Friends"),         pages: ['Friends'] },
               { label: 'Recent Activity', to: createPageUrl("RecentActivity"),  pages: ['RecentActivity'] },
-              { label: 'Documents',     to: createPageUrl("LoanAgreements"),  pages: ['LoanAgreements'] },
-              { label: 'Notifications', to: createPageUrl("Requests"),        pages: ['Requests'] },
+              { label: 'Documents',       to: createPageUrl("LoanAgreements"),  pages: ['LoanAgreements'] },
+              { label: 'Record Payment',  to: createPageUrl("RecordPayment"),   pages: ['RecordPayment'] },
+              { label: 'Notifications',   to: createPageUrl("Requests"),        pages: ['Requests'] },
               { label: 'Profile',       to: createPageUrl("Profile"),         pages: ['Profile'] },
             ].map(({ label, to, pages }) => (
               <div key={label} style={{ borderBottom: '0.5px solid rgba(31,31,31,0.06)' }}>
