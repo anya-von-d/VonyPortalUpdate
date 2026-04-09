@@ -733,21 +733,15 @@ export default function Home() {
   overdueCountRef.current = alertTotal;
 
   const SHADOW = '0px 50px 40px rgba(0,0,0,0.02), 0px 50px 40px rgba(0,0,0,0.04), 0px 20px 40px rgba(0,0,0,0.08), 0px 3px 10px rgba(0,0,0,0.12)';
-  const DashboardCard = ({ title, headerRight, children, style, highlight }) => {
-    const outerBg = highlight ? '#03ACEA' : '#F4F4F5';
-    const titleColor = highlight ? 'rgba(255,255,255,0.85)' : '#9B9A98';
-    return (
-      <div style={{ background: outerBg, borderRadius: 14, overflow: 'hidden', boxShadow: SHADOW, ...style }}>
-        <div style={{ padding: '6px 14px 5px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: 10, fontWeight: 700, color: titleColor, letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>{title}</span>
-          {headerRight && <div style={{ flexShrink: 0 }}>{headerRight}</div>}
-        </div>
-        <div style={{ background: '#ffffff', margin: '0 5px 5px', borderRadius: 10, overflow: 'hidden' }}>
-          {children}
-        </div>
+  const DashboardCard = ({ title, headerRight, children, style }) => (
+    <div style={{ background: '#ffffff', borderRadius: 14, overflow: 'hidden', boxShadow: SHADOW, ...style }}>
+      <div style={{ padding: '10px 14px 8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>{title}</span>
+        {headerRight && <div style={{ flexShrink: 0 }}>{headerRight}</div>}
       </div>
-    );
-  };
+      {children}
+    </div>
+  );
 
   return (
     <div className="home-with-sidebar" style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingTop: 0, background: 'transparent' }}>
@@ -806,7 +800,7 @@ export default function Home() {
       <div className="dashboard-content-wrap" style={{ maxWidth: 1080, margin: '0 auto', padding: '20px 40px 0', position: 'relative', zIndex: 1 }}>
 
         {/* Top row grid: quick actions + snapshot cards */}
-        <div className="dashboard-grey-box" style={{ marginTop: 0, background: '#E5E2DF', borderRadius: 18, padding: 20 }}>
+        <div className="dashboard-grey-box" style={{ marginTop: 0 }}>
           <div className="home-top-row" style={{ display: 'grid', gridTemplateColumns: '2fr 0.82fr', columnGap: 20, rowGap: 20, alignItems: 'start' }}>
 
             {/* LEFT SECTION: sub-grid for left two columns */}
@@ -815,7 +809,7 @@ export default function Home() {
             {/* Inbox — spans both sub-columns */}
             <div className="dash-inbox" style={{ gridColumn: '1 / 3' }}>
               <CardEntrance delay={0}>
-                <div style={{ background: '#ffffff', borderRadius: 10, display: 'flex', alignItems: 'center', gap: 10, padding: '8px 14px' }}>
+                <div style={{ background: '#ffffff', borderRadius: 14, display: 'flex', alignItems: 'center', gap: 10, padding: '8px 14px', boxShadow: SHADOW }}>
                   {notifCount === 0 ? (
                     <>
                       <div style={{ width: 24, height: 24, borderRadius: 6, background: 'rgba(3,172,234,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>

@@ -371,12 +371,6 @@ input[type="date"] {
     padding-right: 12px !important;
   }
 
-  /* Grey box: keep background but reduce radius/padding */
-  .dashboard-grey-box {
-    border-radius: 14px !important;
-    padding: 12px !important;
-  }
-
   /* Main layout: stack left col + right col vertically */
   .home-top-row {
     display: flex !important;
@@ -422,11 +416,6 @@ input[type="date"] {
   .dashboard-content-wrap {
     padding-left: 8px !important;
     padding-right: 8px !important;
-  }
-
-  .dashboard-grey-box {
-    border-radius: 12px !important;
-    padding: 10px !important;
   }
 
   .dash-next-pair,

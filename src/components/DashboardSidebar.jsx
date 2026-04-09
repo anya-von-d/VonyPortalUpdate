@@ -5,43 +5,15 @@ import { createPageUrl } from "@/utils";
 import { Loan, Payment, Friendship } from "@/entities/all";
 import { useAuth } from "@/lib/AuthContext";
 
-const PAGE_TITLES = {
-  Dashboard: null,
-  Upcoming: 'Upcoming',
-  YourLoans: 'My Loans',
-  Borrowing: 'My Loans',
-  Lending: 'My Loans',
-  Friends: 'Friends',
-  RecentActivity: 'Recent Activity',
-  LoanAgreements: 'Documents',
-  ComingSoon: 'Learn',
-  LoanHelp: 'Loan Help',
-  Profile: 'Profile',
-  Requests: 'Notifications',
-};
-
 export default function DashboardSidebar({ activePage = "Dashboard", user, tabs, activeTab, onTabChange }) {
   const { logout } = useAuth();
   const [notifCount, setNotifCount] = useState(0);
-  const [moreOpen, setMoreOpen] = useState(false);
+  const [panelOpen, setPanelOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 900);
-  const moreRef = useRef(null);
-
-  useEffect(() => {
-    document.body.style.paddingLeft = '';
-    return () => { document.body.style.paddingLeft = ''; };
-  }, []);
+  const closeTimerRef = useRef(null);
 
   useEffect(() => { if (user?.id) fetchData(); }, [user?.id]);
-
-  useEffect(() => {
-    const handler = (e) => {
-      if (moreRef.current && !moreRef.current.contains(e.target)) setMoreOpen(false);
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, []);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 900);
@@ -81,7 +53,7 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
     fontSize: 14, fontFamily: "'DM Sans', sans-serif",
     color: '#1A1918',
     fontWeight: active(...pages) ? 600 : 500,
-    background: active(...pages) ? 'rgba(0,0,0,0.06)' : 'transparent',
+    background: 'transparent',
     transition: 'background 0.2s',
     whiteSpace: 'nowrap',
   });
@@ -92,25 +64,15 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
     marginLeft: 6, flexShrink: 0,
   };
 
-  const dropdownItemStyle = {
-    display: 'flex', alignItems: 'center', gap: 9, width: '100%',
-    padding: '8px 12px', background: 'none', border: 'none', cursor: 'pointer',
-    fontSize: 13.5, fontFamily: "'DM Sans', sans-serif", fontWeight: 400,
-    color: '#1A1918', textAlign: 'left', textDecoration: 'none',
-    borderRadius: 8, transition: 'background 0.12s',
-  };
-
-  // Glass nav style matching VonyHomePage
   const glassNavStyle = {
-    display: 'flex', alignItems: 'center', height: 50,
+    display: 'flex', alignItems: 'center', gap: 4, height: 48,
     backgroundImage: 'linear-gradient(rgba(255,255,255,0.8) 7%, rgba(255,255,255,0) 86%)',
     backgroundColor: 'rgba(255,255,255,0.12)',
     backdropFilter: 'blur(16px) saturate(1.5)',
     WebkitBackdropFilter: 'blur(16px) saturate(1.5)',
     borderRadius: 16,
-    padding: '0 20px',
-    boxShadow: 'inset 0 -5px 6px 0 rgba(255,255,255,0.5), inset 0 -8px 24px 0 rgba(255,255,255,0.12), 0 2px 4px -2px rgba(0,0,0,0.08), 0 8px 16px -8px rgba(0,0,0,0.03)',
-    border: '1px solid rgba(255,255,255,0.4)',
+    padding: '6px 24px',
+    boxShadow: 'rgba(0,0,0,0.08) 0px 2px 4px -2px, rgba(0,0,0,0.03) 0px 8px 16px -8px, rgba(255,255,255,0.5) 0px -5px 6px 0px inset, rgba(255,255,255,0.12) 0px -8px 24px 0px inset',
   };
 
   return createPortal(
@@ -136,22 +98,30 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
           {!isMobile && (
             <div style={glassNavStyle}>
               <nav style={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Link to="/" style={linkStyle('Dashboard')}>Home</Link>
-                <Link to={createPageUrl("Upcoming")} style={linkStyle('Upcoming')}>Upcoming</Link>
-                <Link to={createPageUrl("YourLoans")} style={linkStyle('YourLoans', 'Borrowing', 'Lending')}>My Loans</Link>
-                <Link to={createPageUrl("Friends")} style={linkStyle('Friends')}>Friends</Link>
+                <Link to="/" style={linkStyle('Dashboard')} onMouseEnter={() => setPanelOpen(false)}>Home</Link>
+                <Link to={createPageUrl("Upcoming")} style={linkStyle('Upcoming')} onMouseEnter={() => setPanelOpen(false)}>Upcoming</Link>
+                <Link to={createPageUrl("YourLoans")} style={linkStyle('YourLoans', 'Borrowing', 'Lending')} onMouseEnter={() => setPanelOpen(false)}>My Loans</Link>
+                <Link to={createPageUrl("Friends")} style={linkStyle('Friends')} onMouseEnter={() => setPanelOpen(false)}>Friends</Link>
 
-                {/* More dropdown */}
-                <div ref={moreRef} style={{ position: 'relative' }}>
+                {/* More dropdown — hover-activated panel matching VonyHomePage */}
+                <div
+                  style={{ position: 'relative' }}
+                  onMouseEnter={() => {
+                    if (closeTimerRef.current) { clearTimeout(closeTimerRef.current); closeTimerRef.current = null; }
+                    setPanelOpen(true);
+                  }}
+                  onMouseLeave={() => {
+                    closeTimerRef.current = setTimeout(() => setPanelOpen(false), 120);
+                  }}
+                >
                   <button
-                    onClick={() => setMoreOpen(o => !o)}
                     style={{
                       display: 'inline-flex', alignItems: 'center', gap: 4,
                       padding: '6px 16px', borderRadius: 10, border: 'none', cursor: 'pointer',
                       fontSize: 14, fontFamily: "'DM Sans', sans-serif",
                       color: '#1A1918',
                       fontWeight: moreActive ? 600 : 500,
-                      background: moreActive ? 'rgba(0,0,0,0.06)' : 'transparent',
+                      background: 'transparent',
                       transition: 'background 0.2s',
                     }}
                   >
@@ -160,47 +130,82 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
                       <polyline points="6 9 12 15 18 9" />
                     </svg>
                   </button>
-                  {moreOpen && (
+                  {panelOpen && (
                     <div style={{
-                      position: 'absolute', top: 'calc(100% + 6px)', left: '50%', transform: 'translateX(-50%)',
-                      width: 200, background: 'rgba(255,255,255,0.9)',
-                      backdropFilter: 'blur(20px) saturate(1.5)',
-                      WebkitBackdropFilter: 'blur(20px) saturate(1.5)',
-                      borderRadius: 14, padding: 6,
-                      boxShadow: '0 8px 32px rgba(0,0,0,0.12)', border: '1px solid rgba(255,255,255,0.6)', zIndex: 200,
+                      position: 'absolute', top: 'calc(100% + 8px)', left: '50%', transform: 'translateX(-50%)',
+                      background: 'linear-gradient(rgba(255,255,255,0.92) 7%, rgba(255,255,255,0.85) 86%) rgba(255,255,255,0.45)',
+                      backdropFilter: 'blur(16px) saturate(1.5)',
+                      WebkitBackdropFilter: 'blur(16px) saturate(1.5)',
+                      borderRadius: 16, padding: '16px 20px',
+                      boxShadow: 'rgba(0,0,0,0.1) 0px 4px 12px -2px, rgba(0,0,0,0.05) 0px 12px 24px -8px, rgba(255,255,255,0.6) 0px -5px 6px 0px inset, rgba(255,255,255,0.2) 0px -8px 24px 0px inset',
+                      zIndex: 200, whiteSpace: 'nowrap',
                     }}>
-                      <Link to={createPageUrl("RecentActivity")} onClick={() => setMoreOpen(false)}
-                        style={{ ...dropdownItemStyle, fontWeight: active('RecentActivity') ? 600 : 400 }}>
-                        Recent Activity
-                      </Link>
-                      <Link to={createPageUrl("LoanAgreements")} onClick={() => setMoreOpen(false)}
-                        style={{ ...dropdownItemStyle, fontWeight: active('LoanAgreements') ? 600 : 400 }}>
-                        Documents
-                      </Link>
-                      <Link to={createPageUrl("RecordPayment")} onClick={() => setMoreOpen(false)}
-                        style={{ ...dropdownItemStyle, fontWeight: active('RecordPayment') ? 600 : 400 }}>
-                        Record Payment
-                      </Link>
-
-                      <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', margin: '4px 4px' }} />
-
-                      <Link to={createPageUrl("ComingSoon")} onClick={() => setMoreOpen(false)}
-                        style={{ ...dropdownItemStyle, fontWeight: active('ComingSoon') ? 600 : 400 }}>
-                        Learn <span style={comingSoonBadge}>Soon</span>
-                      </Link>
-                      <Link to={createPageUrl("LoanHelp")} onClick={() => setMoreOpen(false)}
-                        style={{ ...dropdownItemStyle, fontWeight: active('LoanHelp') ? 600 : 400 }}>
-                        Loan Help <span style={comingSoonBadge}>Soon</span>
-                      </Link>
-
-                      <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', margin: '4px 4px' }} />
-
-                      <a href="https://www.vony-lending.com/help" target="_blank" rel="noopener noreferrer" style={{ ...dropdownItemStyle }}>
-                        Help & Support
-                      </a>
-                      <button onClick={() => { setMoreOpen(false); logout(); }} style={{ ...dropdownItemStyle, color: '#E8726E' }}>
-                        Log Out
-                      </button>
+                      <div style={{ display: 'flex', gap: 20, alignItems: 'stretch' }}>
+                        {/* Left: SVG image */}
+                        <div style={{ width: 160, flexShrink: 0, borderRadius: 12, overflow: 'hidden' }}>
+                          <svg width="100%" height="100%" viewBox="0 0 160 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="160" height="120" rx="12" fill="#54A6CF"/>
+                            <text x="80" y="56" textAnchor="middle" fontFamily="'Cormorant Garamond', Georgia, serif" fontSize="28" fontWeight="600" fontStyle="italic" fill="#fff">Vony</text>
+                            <path d="M100 68L100 84L105 80L109 88L112 87L108 79L114 78Z" fill="#fff" opacity="0.9"/>
+                          </svg>
+                        </div>
+                        {/* Right: links column */}
+                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                          {[
+                            { label: 'Recent Activity', desc: 'Your payment history', to: createPageUrl("RecentActivity"), pages: ['RecentActivity'] },
+                            { label: 'Documents', desc: 'Loan agreements and records', to: createPageUrl("LoanAgreements"), pages: ['LoanAgreements'] },
+                            { label: 'Record Payment', desc: 'Log a payment on a loan', to: createPageUrl("RecordPayment"), pages: ['RecordPayment'] },
+                            { label: 'Learn', desc: 'Guides and loan tips', to: createPageUrl("ComingSoon"), pages: ['ComingSoon'], soon: true },
+                            { label: 'Loan Help', desc: 'Get help with your loans', to: createPageUrl("LoanHelp"), pages: ['LoanHelp'], soon: true },
+                          ].map(({ label, desc, to, pages, soon }) => (
+                            <Link
+                              key={label}
+                              to={to}
+                              onClick={() => setPanelOpen(false)}
+                              style={{
+                                display: 'flex', alignItems: 'center', gap: 12,
+                                padding: '8px 14px', borderRadius: 10, textDecoration: 'none',
+                                color: '#1A1918', transition: 'background 0.15s',
+                              }}
+                              onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.05)'}
+                              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                            >
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: active(...pages) ? 700 : 600, color: '#1A1918', display: 'flex', alignItems: 'center', gap: 6 }}>
+                                  {label}
+                                  {soon && <span style={comingSoonBadge}>Soon</span>}
+                                </span>
+                                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, fontWeight: 400, color: '#787776', lineHeight: 1.3 }}>{desc}</span>
+                              </div>
+                            </Link>
+                          ))}
+                          <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', margin: '4px 14px' }} />
+                          <a
+                            href="https://www.vony-lending.com/help"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '8px 14px', borderRadius: 10, textDecoration: 'none', color: '#1A1918', transition: 'background 0.15s' }}
+                            onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.05)'}
+                            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                          >
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 600, color: '#1A1918' }}>Help & Support</span>
+                              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, fontWeight: 400, color: '#787776', lineHeight: 1.3 }}>Get in touch with our team</span>
+                            </div>
+                          </a>
+                          <button
+                            onClick={() => { setPanelOpen(false); logout(); }}
+                            style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '8px 14px', borderRadius: 10, border: 'none', cursor: 'pointer', background: 'transparent', transition: 'background 0.15s', textAlign: 'left', width: '100%' }}
+                            onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.05)'}
+                            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                          >
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 600, color: '#E8726E' }}>Log Out</span>
+                              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, fontWeight: 400, color: '#787776', lineHeight: 1.3 }}>Sign out of your account</span>
+                            </div>
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   )}
                 </div>
