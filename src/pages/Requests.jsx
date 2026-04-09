@@ -276,27 +276,8 @@ export default function Requests() {
     setProcessingId(payment.id);
     try {
       await Payment.update(payment.id, { status: 'completed' });
-
-      const loan = loans.find(l => l.id === payment.loan_id);
-      if (loan) {
-        const newAmountPaid = (loan.amount_paid || 0) + payment.amount;
-        const newRemainingBalance = (loan.total_amount || 0) - newAmountPaid;
-
-        const loanUpdate = { amount_paid: newAmountPaid };
-
-        if (newRemainingBalance <= 0.01) {
-          loanUpdate.status = 'completed';
-          loanUpdate.next_payment_date = null;
-        } else {
-          loanUpdate.next_payment_date = format(addMonths(new Date(), 1), 'yyyy-MM-dd');
-        }
-
-        await Loan.update(loan.id, loanUpdate);
-      }
-
+      // Remove notification immediately once the payment is confirmed
       setPaymentsToConfirm(prev => prev.filter(p => p.id !== payment.id));
-      loadRequests();
-      // Celebrate the confirmed payment!
       confetti({
         particleCount: 80,
         spread: 65,
@@ -304,6 +285,25 @@ export default function Requests() {
         colors: ['#35B276', '#82F0B9', '#03ACEA', '#ffffff'],
         zIndex: 9999,
       });
+      // Update loan totals in the background — don't let a failure here undo the confirmation
+      try {
+        const loan = loans.find(l => l.id === payment.loan_id);
+        if (loan) {
+          const newAmountPaid = (loan.amount_paid || 0) + payment.amount;
+          const newRemainingBalance = (loan.total_amount || 0) - newAmountPaid;
+          const loanUpdate = { amount_paid: newAmountPaid };
+          if (newRemainingBalance <= 0.01) {
+            loanUpdate.status = 'completed';
+            loanUpdate.next_payment_date = null;
+          } else {
+            loanUpdate.next_payment_date = format(addMonths(new Date(), 1), 'yyyy-MM-dd');
+          }
+          await Loan.update(loan.id, loanUpdate);
+        }
+      } catch (loanError) {
+        console.error("Error updating loan after payment confirmation:", loanError);
+      }
+      loadRequests();
     } catch (error) {
       console.error("Error confirming payment:", error);
     }
