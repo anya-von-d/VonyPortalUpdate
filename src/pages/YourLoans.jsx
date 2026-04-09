@@ -925,21 +925,21 @@ export default function YourLoans() {
               const nextPmtAmt = loanAnalysis ? loanAnalysis.nextPaymentAmount : (recalculatedPayment > 0 ? recalculatedPayment : (manageLoanSelected.payment_amount || 0));
               let nextPmtDate = null; let daysUntil = null;
               if (manageLoanSelected.next_payment_date) { nextPmtDate = toLocalDate(manageLoanSelected.next_payment_date); daysUntil = daysUntilDate(manageLoanSelected.next_payment_date); }
-              const size = 140; const dCx = size / 2; const dCy = size / 2; const outerR = 60; const innerR = 48;
-              const paidAngle = (paidPct / 100) * 360;
-              const toRad = (deg) => (deg - 90) * (Math.PI / 180);
-              const paidEndXo = dCx + outerR * Math.cos(toRad(paidAngle)); const paidEndYo = dCy + outerR * Math.sin(toRad(paidAngle));
-              const paidEndXi = dCx + innerR * Math.cos(toRad(paidAngle)); const paidEndYi = dCy + innerR * Math.sin(toRad(paidAngle));
-              const largeArc = paidAngle > 180 ? 1 : 0;
+              const size = 140; const dCx = size / 2; const dCy = size / 2;
+              const ringR = 54; const ringStroke = 16;
+              const ringCirc = 2 * Math.PI * ringR; const ringDash = (paidPct / 100) * ringCirc;
               return (
                 <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: 12 }}>
                   {/* Payment Progress circle card */}
                   <PageCard title="Payment Progress" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <div style={{ padding: '10px 14px 12px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-                      <circle cx={dCx} cy={dCy} r={(outerR + innerR) / 2} fill="none" stroke="#E5E4E2" strokeWidth={outerR - innerR} />
-                      {paidPct > 0 && paidPct < 100 && (<path d={`M ${dCx} ${dCy - outerR} A ${outerR} ${outerR} 0 ${largeArc} 1 ${paidEndXo} ${paidEndYo} L ${paidEndXi} ${paidEndYi} A ${innerR} ${innerR} 0 ${largeArc} 0 ${dCx} ${dCy - innerR} Z`} fill="#82F0B9" />)}
-                      {paidPct >= 100 && (<circle cx={dCx} cy={dCy} r={(outerR + innerR) / 2} fill="none" stroke="#82F0B9" strokeWidth={outerR - innerR} />)}
+                      <circle cx={dCx} cy={dCy} r={ringR} fill="none" stroke="#E5E4E2" strokeWidth={ringStroke} strokeLinecap="round" />
+                      {paidPct > 0 && (
+                        <circle cx={dCx} cy={dCy} r={ringR} fill="none" stroke="#03ACEA" strokeWidth={ringStroke}
+                          strokeDasharray={`${ringDash} ${ringCirc - ringDash}`} strokeLinecap="round"
+                          transform={`rotate(-90 ${dCx} ${dCy})`} />
+                      )}
                       <text x={dCx} y={dCy - 5} textAnchor="middle" dominantBaseline="middle" style={{ fontSize: 15, fontWeight: 700, fill: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>{Math.round(paidPct)}%</text>
                       <text x={dCx} y={dCy + 10} textAnchor="middle" dominantBaseline="middle" style={{ fontSize: 8, fontWeight: 500, fill: '#787776', fontFamily: "'DM Sans', sans-serif" }}>repaid</text>
                     </svg>
@@ -953,7 +953,7 @@ export default function YourLoans() {
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                     {/* Next payment date card */}
                     <PageCard title={isLending ? 'Next Payment Incoming' : 'Next Payment Due'} highlight style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-                      <div style={{ padding: '6px 14px 10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flex: 1 }}>
+                      <div style={{ padding: '6px 14px 10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flex: 1, minHeight: 52 }}>
                         {nextPmtDate ? (
                           <>
                             <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', lineHeight: 1 }}>
@@ -970,13 +970,13 @@ export default function YourLoans() {
                     </PageCard>
                     {/* Next payment amount card */}
                     <PageCard title="Next Payment Amount" highlight style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-                      <div style={{ padding: '6px 14px 10px', display: 'flex', alignItems: 'center', gap: 8, flex: 1 }}>
+                      <div style={{ padding: '6px 14px 10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flex: 1, minHeight: 52 }}>
                         {nextPmtDate ? (
                           <>
                             <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', lineHeight: 1 }}>
                               {formatMoney(nextPmtAmt)}
                             </div>
-                            <div style={{ fontSize: 11, color: '#787776' }}>
+                            <div style={{ fontSize: 11, color: '#787776', textAlign: 'right' }}>
                               {isLending ? `from ${otherPartyUsername}` : `to ${otherPartyUsername}`}
                             </div>
                           </>
@@ -1046,7 +1046,7 @@ export default function YourLoans() {
                       })}
                     </div>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 8, paddingTop: 8, borderTop: '1px solid rgba(0,0,0,0.06)', flexWrap: 'wrap' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginTop: 8, paddingTop: 8, borderTop: '1px solid rgba(0,0,0,0.06)', flexWrap: 'wrap' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: '#03ACEA' }} /><span style={{ fontSize: 9, color: '#787776' }}>Completed</span></div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: 'rgba(0,0,0,0.1)', border: '1px dashed rgba(0,0,0,0.15)' }} /><span style={{ fontSize: 9, color: '#9B9A98' }}>Pending</span></div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: 'rgba(176,220,244,0.35)', border: '1px dashed #B0DCF4' }} /><span style={{ fontSize: 9, color: '#B0DCF4' }}>Expected</span></div>
@@ -1055,13 +1055,6 @@ export default function YourLoans() {
               )}
               </div>
             </PageCard>
-
-            {/* Record Payment */}
-            <div style={{ display: 'flex', justifyContent: 'center', padding: '0 0 4px' }}>
-              <Link to={createPageUrl("RecordPayment")} style={{ display: 'inline-flex', alignItems: 'center', background: '#1A1918', borderRadius: 9, padding: '7px 12px', textDecoration: 'none' }}>
-                <p style={{ fontSize: 11, fontWeight: 600, color: 'white', margin: 0 }}>Record Payment</p>
-              </Link>
-            </div>
 
             {/* Activity Timeline */}
             {manageLoanSelected && (
@@ -1265,13 +1258,13 @@ export default function YourLoans() {
                       missed:      { label: 'Missed',         bg: 'rgba(232,114,110,0.1)', text: '#E8726E', ringColor: '#E8726E', fillColor: '#E8726E' },
                       upcoming:    { label: 'Upcoming',       bg: 'rgba(0,0,0,0.03)',      text: '#787776', ringColor: 'rgba(0,0,0,0.12)', fillColor: 'rgba(0,0,0,0.08)' },
                     };
-                    const PieCircle = ({ percentage, ringColor, fillColor, number, size = 32 }) => {
-                      const r = (size / 2) - 2; const pcx = size / 2; const pcy = size / 2;
-                      const circumference = 2 * Math.PI * r; const filled = (percentage / 100) * circumference;
+                    const PieCircle = ({ percentage, number, size = 32 }) => {
+                      const pcx = size / 2; const pcy = size / 2; const r = (size / 2) - 3;
+                      const circ = 2 * Math.PI * r; const dash = (percentage / 100) * circ; const sw = 4;
                       return (
                         <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ flexShrink: 0 }}>
-                          <circle cx={pcx} cy={pcy} r={r} fill="#F7F7F7" stroke={ringColor} strokeWidth="2" strokeOpacity="0.3" />
-                          {percentage > 0 && (<circle cx={pcx} cy={pcy} r={r} fill="none" stroke={fillColor} strokeWidth="2" strokeDasharray={`${filled} ${circumference - filled}`} strokeDashoffset={circumference * 0.25} strokeLinecap="round" transform={`rotate(-90 ${pcx} ${pcy})`} />)}
+                          <circle cx={pcx} cy={pcy} r={r} fill="none" stroke="#E5E4E2" strokeWidth={sw} />
+                          {percentage > 0 && (<circle cx={pcx} cy={pcy} r={r} fill="none" stroke="#03ACEA" strokeWidth={sw} strokeDasharray={`${dash} ${circ - dash}`} strokeLinecap="round" transform={`rotate(-90 ${pcx} ${pcy})`} />)}
                           <text x={pcx} y={pcy} textAnchor="middle" dominantBaseline="central" fill="#1A1918" fontSize="11" fontWeight="bold" fontFamily="'DM Sans', sans-serif">{number}</text>
                         </svg>
                       );
@@ -1282,7 +1275,7 @@ export default function YourLoans() {
                           const cfg = statusConfig[row.status];
                           return (
                             <div key={row.number} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: 8, borderRadius: 10, background: 'rgba(0,0,0,0.03)' }}>
-                              <PieCircle percentage={row.paidPercentage} ringColor={cfg.ringColor} fillColor={cfg.fillColor} number={row.number} />
+                              <PieCircle percentage={row.paidPercentage} number={row.number} />
                               <div style={{ flex: 1, minWidth: 0 }}>
                                 <p style={{ fontSize: 11, color: '#4B4A48', margin: 0, fontWeight: 600 }}>Expected: ${row.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                                 {row.paidAmount > 0 && <p style={{ fontSize: 12, fontWeight: 700, color: '#15803D', margin: '1px 0 0' }}>Paid: ${row.paidAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>}
@@ -1317,7 +1310,7 @@ export default function YourLoans() {
         <span style={{ fontSize: 10, fontWeight: 700, color: highlight ? 'rgba(255,255,255,0.85)' : '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>{title}</span>
         {headerRight && <div style={{ flexShrink: 0 }}>{headerRight}</div>}
       </div>
-      <div style={{ background: '#ffffff', margin: '0 5px 5px', borderRadius: 10, overflow: 'hidden', ...(highlight ? { flex: 1 } : {}) }}>
+      <div style={{ background: '#ffffff', margin: '0 5px 5px', borderRadius: 10, overflow: 'hidden', ...(highlight ? { flex: 1, display: 'flex', flexDirection: 'column' } : {}) }}>
         {children}
       </div>
     </div>
