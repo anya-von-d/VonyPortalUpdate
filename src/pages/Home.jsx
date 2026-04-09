@@ -751,418 +751,304 @@ export default function Home() {
     </div>
   );
 
+  const SectionLabel = ({ children }) => (
+    <div style={{ fontSize: 10, fontWeight: 700, color: '#C5C3C0', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 12 }}>{children}</div>
+  );
+
   return (
-    <div className="home-with-sidebar" style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingTop: 0, background: 'transparent' }}>
+    <div className="home-with-sidebar" style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', background: 'transparent' }}>
 
       <DashboardSidebar activePage="Dashboard" user={user} />
 
-      {/* ── Hero banner ── */}
-      <div style={{
-        margin: '8px 10px 0',
-        height: 240,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'flex-start',
-        paddingTop: 106,
-        position: 'relative',
-      }}>
-        {/* Paper texture overlay */}
-        {/* Subtle star field */}
-        <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0.15, pointerEvents: 'none', zIndex: 0 }} viewBox="0 0 1200 240" preserveAspectRatio="xMidYMid slice">
-          {[{cx:80,cy:40},{cx:200,cy:110},{cx:320,cy:25},{cx:430,cy:160},{cx:540,cy:70},{cx:660,cy:130},{cx:770,cy:35},{cx:890,cy:175},{cx:1000,cy:80},{cx:1100,cy:140},{cx:150,cy:185},{cx:480,cy:100},{cx:720,cy:180},{cx:950,cy:55},{cx:280,cy:195},{cx:620,cy:48},{cx:1050,cy:195}].map((s, i) => (
-            <circle key={i} cx={s.cx} cy={s.cy} r={i % 3 === 0 ? 2.5 : 1.5} fill="white" />
-          ))}
-        </svg>
-        <h1 style={{
-          fontFamily: "'Cormorant Garamond', Georgia, serif",
-          fontSize: 40, fontWeight: 600, color: '#1A1918',
-          margin: 0, letterSpacing: '-0.01em', lineHeight: 1,
-          textAlign: 'center', position: 'relative', zIndex: 1,
-        }}>
-          {firstName ? (
-            <><span style={{ fontStyle: 'normal' }}>{greeting}, </span><span style={{ fontStyle: 'italic' }}>{firstName}</span></>
-          ) : (
-            <span style={{ fontStyle: 'italic' }}>{greeting}</span>
-          )}
-        </h1>
-        <div style={{ display: 'flex', gap: 12, marginTop: 18, position: 'relative', zIndex: 1 }}>
-          <Link to={createPageUrl("CreateOffer")} style={{
-            padding: '8px 20px', fontSize: 13, fontWeight: 600,
-            background: '#1A1918',
-            color: '#fff', border: 'none', borderRadius: 9,
-            textDecoration: 'none', fontFamily: "'DM Sans', sans-serif",
-            transition: 'background 0.2s',
-          }}>Create Loan</Link>
-          <Link to={createPageUrl("RecordPayment")} style={{
-            padding: '8px 20px', fontSize: 13, fontWeight: 600,
-            background: '#1A1918',
-            color: '#fff', border: 'none', borderRadius: 9,
-            textDecoration: 'none', fontFamily: "'DM Sans', sans-serif",
-            transition: 'background 0.2s',
-          }}>Record Payment</Link>
-        </div>
-      </div>
+      {/* ── MESH-STYLE THREE-COLUMN LAYOUT ── */}
+      <div className="mesh-layout" style={{ maxWidth: 1080, margin: '0 auto', padding: '88px 40px 60px', display: 'grid', gridTemplateColumns: '200px 1fr 210px', gap: 0, alignItems: 'start' }}>
 
-      {/* ── Main page content ── */}
-      <div className="dashboard-content-wrap" style={{ maxWidth: 1080, margin: '0 auto', padding: '20px 40px 0', position: 'relative', zIndex: 1 }}>
+        {/* ── LEFT PANEL ── */}
+        <div className="mesh-left" style={{ paddingRight: 32, borderRight: '1px solid rgba(0,0,0,0.07)', position: 'sticky', top: 88 }}>
 
-        {/* Top row grid: quick actions + snapshot cards */}
-        <div className="dashboard-grey-box" style={{ marginTop: 0 }}>
-          <div className="home-top-row" style={{ display: 'grid', gridTemplateColumns: '2fr 0.82fr', columnGap: 20, rowGap: 20, alignItems: 'start' }}>
+          {/* Greeting */}
+          <div style={{ marginBottom: 32 }}>
+            <div style={{ fontSize: 11, color: '#9B9A98', marginBottom: 3 }}>{greeting}</div>
+            <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 28, fontWeight: 600, fontStyle: 'italic', letterSpacing: '-0.01em', lineHeight: 1.1, color: '#1A1918' }}>{firstName}</div>
+          </div>
 
-            {/* LEFT SECTION: sub-grid for left two columns */}
-            <div className="dash-left-section" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, alignItems: 'start' }}>
-
-            {/* Inbox — spans both sub-columns */}
-            <div className="dash-inbox" style={{ gridColumn: '1 / 3' }}>
-              <CardEntrance delay={0}>
-                <div style={{ background: 'linear-gradient(160deg, rgba(255,255,255,0.97) 0%, rgba(246,249,252,0.92) 100%)', backdropFilter: 'blur(10px) saturate(1.3)', WebkitBackdropFilter: 'blur(10px) saturate(1.3)', borderRadius: 11, display: 'flex', alignItems: 'center', gap: 10, padding: '8px 14px', boxShadow: SHADOW + ', inset 0 1px 0 rgba(255,255,255,0.95)' }}>
-                  {notifCount === 0 ? (
-                    <>
-                      <div style={{ width: 24, height: 24, borderRadius: 6, background: 'rgba(3,172,234,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-                        </svg>
-                      </div>
-                      <span style={{ fontSize: 13, color: '#787776' }}>You're all caught up</span>
-                    </>
-                  ) : (
-                    <Link to={createPageUrl("Requests")} style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none', flex: 1 }}>
-                      <div style={{ width: 24, height: 24, borderRadius: 6, background: 'rgba(3,172,234,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-                        </svg>
-                      </div>
-                      <span style={{ fontSize: 13, color: '#1A1918', fontWeight: 500 }}>You have {notifCount} new notification{notifCount !== 1 ? 's' : ''}</span>
-                    </Link>
-                  )}
-                </div>
-              </CardEntrance>
+          {/* OVERVIEW */}
+          <div style={{ marginBottom: 28 }}>
+            <SectionLabel>Overview</SectionLabel>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: 12, color: '#787776' }}>Owed to you</span>
+                <span style={{ fontSize: 13, fontWeight: 700, color: LENDER_GREEN, letterSpacing: '-0.01em' }}>{formatMoney(lentRemaining)}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: 12, color: '#787776' }}>You owe</span>
+                <span style={{ fontSize: 13, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.01em' }}>{formatMoney(borrowedRemaining)}</span>
+              </div>
             </div>
+          </div>
 
-            {/* Next Payment Due + Incoming — paired row */}
-            <div className="dash-next-pair" style={{ gridColumn: '1 / 3', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
-
-            {/* Left sub-col: Next Payment Due */}
-            <div className="glow-wrapper glow-blue">
-            <DashboardCard title="Next payment due" style={{ border: '6px solid #03ACEA', boxShadow: '0 0 28px 2px rgba(3,172,234,0.7), ' + SHADOW }}>
-              <div style={{ padding: '16px 16px 20px', position: 'relative', display: 'flex', alignItems: 'center', minHeight: 48 }}>
-                {nextBorrowerPayment ? (() => {
-                  const days = Math.ceil((nextBorrowerPayment.date.getTime() - Date.now()) / 86400000);
-                  const isLate = days < 0;
-                  const label = isLate ? `${Math.abs(days)}d late` : days === 0 ? 'today' : `${days}d`;
-                  return (
-                    <>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#1A1918', letterSpacing: '-0.03em', lineHeight: 1, fontFamily: "'DM Sans', sans-serif" }}>
-                          {format(nextBorrowerPayment.date, 'MMM d')}
-                        </div>
-                        <span style={{ fontSize: 10, fontWeight: 700, color: isLate ? '#E8726E' : '#5C5B5A', background: isLate ? 'rgba(232,114,110,0.1)' : 'rgba(0,0,0,0.05)', borderRadius: 6, padding: '2px 7px', whiteSpace: 'nowrap' }}>
-                          {label}
-                        </span>
-                      </div>
-                      <div style={{ position: 'absolute', bottom: 6, right: 16, fontSize: 12, color: '#9B9A98' }}>
-                        {formatMoney(nextBorrowerPayment.payment_amount || 0)} to {nextBorrowerPayment.firstName}
-                      </div>
-                    </>
-                  );
-                })() : (
-                  <div>
-                    <div style={{ fontSize: 22, marginBottom: 4 }}>🎉</div>
-                    <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918' }}>Nothing due right now</div>
-                  </div>
-                )}
-              </div>
-            </DashboardCard>
-
-            </div>{/* /glow-blue */}
-
-            {/* Right sub-col: Next Payment Incoming (moved) */}
-            <div className="glow-wrapper glow-purple">
-            <DashboardCard title="Next payment incoming" style={{ border: '6px solid #03ACEA', boxShadow: '0 0 28px 2px rgba(3,172,234,0.7), ' + SHADOW }}>
-              <div style={{ padding: '16px 16px 20px', position: 'relative', display: 'flex', alignItems: 'center', minHeight: 48 }}>
-                {nextLenderPayment ? (() => {
-                  const days = Math.ceil((nextLenderPayment.date.getTime() - Date.now()) / 86400000);
-                  const isLate = days < 0;
-                  const label = isLate ? `${Math.abs(days)}d late` : days === 0 ? 'today' : `${days}d`;
-                  return (
-                    <>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#1A1918', letterSpacing: '-0.03em', lineHeight: 1, fontFamily: "'DM Sans', sans-serif" }}>
-                          {format(nextLenderPayment.date, 'MMM d')}
-                        </div>
-                        <span style={{ fontSize: 10, fontWeight: 700, color: isLate ? '#E8726E' : '#5C5B5A', background: isLate ? 'rgba(232,114,110,0.1)' : 'rgba(0,0,0,0.05)', borderRadius: 6, padding: '2px 7px', whiteSpace: 'nowrap' }}>
-                          {label}
-                        </span>
-                      </div>
-                      <div style={{ position: 'absolute', bottom: 6, right: 16, fontSize: 12, color: '#9B9A98' }}>
-                        {formatMoney(nextLenderPayment.payment_amount || 0)} from {nextLenderPayment.firstName}
-                      </div>
-                    </>
-                  );
-                })() : (
-                  <div>
-                    <div style={{ fontSize: 22, marginBottom: 4 }}>💸</div>
-                    <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918' }}>No payments heading your way</div>
-                  </div>
-                )}
-              </div>
-            </DashboardCard>
-            </div>{/* /glow-purple */}
-
-            </div>{/* /dash-next-pair */}
-
-            {/* Left sub-col: Upcoming Payments (moved from right sub-col) */}
-            <CardEntrance delay={0.05} className="dash-upcoming">
-            <DashboardCard title="Upcoming payments" headerRight={<Link to={createPageUrl("YourLoans")} style={{ fontSize: 12, fontWeight: 500, color: '#9B9A98', textDecoration: 'none' }}>Full schedule</Link>}>
-              <div style={{ padding: '12px 16px 16px', minHeight: 200 }}>
-                {combinedPaymentEvents.length === 0 ? (
-                  <div style={{ textAlign: 'center', padding: '32px 0' }}>
-                    <div style={{ fontSize: 32, marginBottom: 8 }}>✨</div>
-                    <div style={{ fontSize: 14, fontWeight: 600, color: '#1A1918', marginBottom: 4 }}>You're all clear!</div>
-                    <div style={{ fontSize: 12, color: '#787776' }}>No payments coming up.</div>
-                  </div>
-                ) : (
-                  <div>
-                    {combinedPaymentEvents.slice(0, 5).map((event, idx) => {
-                      const isOverdue = event.days < 0;
-                      const daysLabel = isOverdue ? `${Math.abs(event.days)}d late` : `${event.days}d`;
-                      return (
-                        <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 0' }}>
-                          <div style={{ flexShrink: 0, width: 52, textAlign: 'center' }}>
-                            <span style={{ fontSize: 10, fontWeight: 700, color: isOverdue ? '#E8726E' : '#5C5B5A', background: isOverdue ? 'rgba(232,114,110,0.1)' : 'rgba(0,0,0,0.05)', borderRadius: 6, padding: '2px 7px', whiteSpace: 'nowrap', letterSpacing: '0.02em' }}>
-                              {daysLabel}
-                            </span>
-                          </div>
-                          <div style={{ flex: 1, minWidth: 0 }}>
-                            <div style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                              {event.isLender
-                                ? `${event.firstName} pays you`
-                                : `Pay ${event.firstName}`}
-                            </div>
-                            <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 1 }}>
-                              {event.purpose ? `for ${event.purpose}` : format(event.date, 'MMM d')}
-                            </div>
-                          </div>
-                          <div style={{ fontSize: 13, fontWeight: 700, flexShrink: 0, color: event.isLender ? LENDER_GREEN : '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>
-                            {event.isLender ? '+' : '-'}{formatMoney(event.remainingAmount)}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            </DashboardCard>
-            </CardEntrance>
-
-            {/* Right sub-col: Loans Over Time (swapped from right main col) */}
-            <CardEntrance delay={0.17} className="dash-loans-time">
-            <DashboardCard title="Loans over time" headerRight={<span style={{ fontSize: 12, fontWeight: 500, color: '#787776' }}>6 months</span>}>
-              <div ref={loansChartRef} style={{ padding: '12px 16px 16px' }}>
-                {chartData ? (() => {
-                  const { data, maxVal } = chartData;
-                  const chartHeight = 110;
-                  const formatYLabel = (v) => v >= 1000 ? `$${(v / 1000).toFixed(v >= 10000 ? 0 : 1)}k` : `$${Math.round(v)}`;
-                  return (
-                    <>
-                      <div style={{ display: 'flex', gap: 12 }}>
-                        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: chartHeight }}>
-                          <span style={{ fontSize: 10, color: '#787776', textAlign: 'right', minWidth: 24 }}>{formatYLabel(maxVal)}</span>
-                          <span style={{ fontSize: 10, color: '#787776', textAlign: 'right', minWidth: 24 }}>{formatYLabel(maxVal / 2)}</span>
-                          <span style={{ fontSize: 10, color: '#787776', textAlign: 'right', minWidth: 24 }}>$0</span>
-                        </div>
-                        <div style={{ flex: 1, position: 'relative' }}>
-                          <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-around', height: chartHeight, position: 'relative', zIndex: 1 }}>
-                            {data.map((d, i) => {
-                              const owedH = maxVal > 0 ? (d.owedToYou / maxVal) * chartHeight : 0;
-                              const oweH = maxVal > 0 ? (d.youOwe / maxVal) * chartHeight : 0;
-                              return (
-                                <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                  <div style={{ display: 'flex', alignItems: 'flex-end', gap: 4, height: chartHeight }}>
-                                    <div key={`owed-${i}-${loansAnimKey}`} style={{ width: 14, borderRadius: '4px 4px 0 0', background: LENDER_GREEN, opacity: d.isFuture ? 0.45 : 1, height: Math.max(owedH, owedH > 0 ? 2 : 0), transformOrigin: 'bottom', animation: `barGrowUp 0.5s ease-out ${i * 0.05}s both` }} />
-                                    <div key={`owe-${i}-${loansAnimKey}`} style={{ width: 14, borderRadius: '4px 4px 0 0', background: '#7EC0EA', opacity: d.isFuture ? 0.45 : 1, height: Math.max(oweH, oweH > 0 ? 2 : 0), transformOrigin: 'bottom', animation: `barGrowUp 0.5s ease-out ${i * 0.05 + 0.04}s both` }} />
-                                  </div>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      </div>
-                      <div style={{ display: 'flex', justifyContent: 'space-around', marginTop: 10, paddingLeft: 36 }}>
-                        {data.map((d, i) => (
-                          <span key={i} style={{ flex: 1, textAlign: 'center', fontSize: 10, fontWeight: d.isCurrent ? 600 : 500, color: d.isCurrent ? '#5C5B5A' : '#787776' }}>{d.label}</span>
-                        ))}
-                      </div>
-                      <div style={{ display: 'flex', justifyContent: 'center', gap: 20, marginTop: 14, paddingTop: 14 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 11, color: '#787776' }}><div style={{ width: 8, height: 8, borderRadius: '50%', background: LENDER_GREEN }} /> Owed to you</div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 11, color: '#787776' }}><div style={{ width: 8, height: 8, borderRadius: '50%', background: '#7EC0EA' }} /> You owe</div>
-                      </div>
-                    </>
-                  );
-                })() : (
-                  <div style={{ textAlign: 'center', padding: '20px 0' }}>
-                    <div style={{ fontSize: 28, marginBottom: 6 }}>📊</div>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', marginBottom: 2 }}>No data yet</div>
-                    <div style={{ fontSize: 11, color: '#787776' }}>Your loan history will appear here.</div>
-                  </div>
-                )}
-              </div>
-            </DashboardCard>
-            </CardEntrance>
-
-            {/* Your Active Loans — spans both sub-columns */}
-            <motion.div
-              className="dash-active-loans"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.19, ease: 'easeOut' }}
-              style={{ gridColumn: '1 / 3' }}
-            >
-            <DashboardCard title="Your active loans" headerRight={<Link to={createPageUrl("YourLoans")} style={{ fontSize: 12, fontWeight: 500, color: '#9B9A98', textDecoration: 'none' }}>Manage</Link>}>
-              {myLoans.filter(l => l && l.status === 'active').length === 0 ? (
-                <div style={{ padding: '20px 16px', textAlign: 'center' }}>
-                  <div style={{ fontSize: 28, marginBottom: 6 }}>🤝</div>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', marginBottom: 2 }}>No active loans yet</div>
-                  <div style={{ fontSize: 11, color: '#787776' }}>Create an offer to get started.</div>
+          {/* THIS MONTH */}
+          <div style={{ marginBottom: 28 }}>
+            <SectionLabel>{format(today, 'MMMM')}</SectionLabel>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                  <span style={{ fontSize: 11, color: '#787776' }}>Received</span>
+                  <span style={{ fontSize: 11, fontWeight: 600, color: LENDER_GREEN }}>{formatMoney(monthlyReceived)}</span>
                 </div>
-              ) : (
-                <div ref={activeLoansRef} style={{ padding: '10px 16px 14px', display: 'flex', flexDirection: 'column', gap: 16 }}>
-                  {myLoans.filter(l => l && l.status === 'active').slice(0, 4).map((loan, idx) => {
-                    const isLender = loan.lender_id === user.id;
-                    const otherUserId = isLender ? loan.borrower_id : loan.lender_id;
-                    const otherProfile = safeAllProfiles.find(p => p.user_id === otherUserId);
-                    const totalAmt = loan.total_amount || loan.amount || 0;
-                    const amountPaid = loan.amount_paid || 0;
-                    const remaining = totalAmt - amountPaid;
-                    const pct = totalAmt > 0 ? Math.round((amountPaid / totalAmt) * 100) : 0;
-                    const firstName = otherProfile?.full_name?.split(' ')[0] || otherProfile?.username || 'user';
-                    return (
-                      <div key={loan.id}>
-                        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 8 }}>
-                          <div style={{ fontSize: 13, fontWeight: 500, color: '#1A1918' }}>
-                            {isLender ? `You lent ${firstName} ${formatMoney(totalAmt)}` : `${firstName} lent you ${formatMoney(totalAmt)}`}
-                          </div>
-                          <div style={{ fontSize: 12, color: '#787776', flexShrink: 0, marginLeft: 8 }}>{pct}%</div>
-                        </div>
-                        <div style={{ width: '100%', height: 8, borderRadius: 4, background: isLender ? 'rgba(82,183,136,0.18)' : 'rgba(126,192,234,0.22)', overflow: 'hidden' }}>
-                          <div key={`active-${idx}-${activeAnimKey}`} style={{ height: '100%', borderRadius: 4, background: isLender ? LENDER_GREEN : '#7EC0EA', width: `${pct}%`, transformOrigin: 'left', animation: `barGrowRight 0.8s ease-out ${idx * 0.1}s both` }} />
-                        </div>
-                        <div style={{ fontSize: 11, color: '#787776', marginTop: 6 }}>{formatMoney(amountPaid)} of {formatMoney(totalAmt)} {isLender ? 'repaid' : 'paid back'}</div>
-                      </div>
-                    );
-                  })}
+                <div style={{ height: 3, borderRadius: 2, background: 'rgba(82,183,136,0.15)' }}>
+                  <div style={{ height: '100%', borderRadius: 2, background: LENDER_GREEN, width: `${monthlyExpectedReceive > 0 ? Math.min((monthlyReceived / monthlyExpectedReceive) * 100, 100) : 0}%` }} />
                 </div>
+              </div>
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                  <span style={{ fontSize: 11, color: '#787776' }}>Paid out</span>
+                  <span style={{ fontSize: 11, fontWeight: 600, color: '#7EC0EA' }}>{formatMoney(monthlyPaidOut)}</span>
+                </div>
+                <div style={{ height: 3, borderRadius: 2, background: 'rgba(126,192,234,0.2)' }}>
+                  <div style={{ height: '100%', borderRadius: 2, background: '#7EC0EA', width: `${monthlyExpectedPay > 0 ? Math.min((monthlyPaidOut / monthlyExpectedPay) * 100, 100) : 0}%` }} />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* ACTIVE LOANS */}
+          {myLoans.filter(l => l && l.status === 'active').length > 0 && (
+            <div style={{ marginBottom: 28 }}>
+              <SectionLabel>Active loans</SectionLabel>
+              <div ref={activeLoansRef} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {myLoans.filter(l => l && l.status === 'active').slice(0, 5).map((loan, idx) => {
+                  const isLender = loan.lender_id === user.id;
+                  const otherProfile = safeAllProfiles.find(p => p.user_id === (isLender ? loan.borrower_id : loan.lender_id));
+                  const totalAmt = loan.total_amount || loan.amount || 0;
+                  const pct = totalAmt > 0 ? Math.round(((loan.amount_paid || 0) / totalAmt) * 100) : 0;
+                  const name = otherProfile?.full_name?.split(' ')[0] || otherProfile?.username || 'user';
+                  return (
+                    <div key={loan.id}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                        <span style={{ fontSize: 11, color: '#1A1918', fontWeight: 500 }}>{name}</span>
+                        <span style={{ fontSize: 10, color: '#9B9A98' }}>{pct}%</span>
+                      </div>
+                      <div style={{ height: 3, borderRadius: 2, background: isLender ? 'rgba(82,183,136,0.15)' : 'rgba(126,192,234,0.18)' }}>
+                        <div key={`left-${idx}-${activeAnimKey}`} style={{ height: '100%', borderRadius: 2, background: isLender ? LENDER_GREEN : '#7EC0EA', width: `${pct}%`, animation: `barGrowRight 0.8s ease-out ${idx * 0.08}s both` }} />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              {myLoans.filter(l => l && l.status === 'active').length > 5 && (
+                <Link to={createPageUrl("YourLoans")} style={{ fontSize: 11, color: '#9B9A98', textDecoration: 'none', display: 'block', marginTop: 8 }}>
+                  +{myLoans.filter(l => l && l.status === 'active').length - 5} more
+                </Link>
               )}
-            </DashboardCard>
-            </motion.div>
-
-            </div>{/* end LEFT SECTION sub-grid */}
-
-            {/* Right column: Loan Progress + How [Month] is Going + Recent Activity */}
-            <div className="dash-right-col" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-
-              {/* Owed to You + You Owe — paired row */}
-              <div className="dash-balance-pair" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-
-              {/* Owed to You */}
-              <CardEntrance delay={0.1}>
-              <DashboardCard title="Owed to You">
-                <div style={{ padding: '16px 16px 20px', position: 'relative', display: 'flex', alignItems: 'center', minHeight: 48 }}>
-                  <div style={{ fontSize: '1.2rem', fontWeight: 800, color: LENDER_GREEN, letterSpacing: '-0.03em', lineHeight: 1, fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(lentRemaining)}</div>
-                  <div style={{ position: 'absolute', bottom: 6, right: 16, fontSize: 12, color: '#9B9A98' }}>between {lentLoans.length} loan{lentLoans.length !== 1 ? 's' : ''}</div>
-                </div>
-              </DashboardCard>
-              </CardEntrance>
-
-              {/* You Owe */}
-              <CardEntrance delay={0.13}>
-              <DashboardCard title="You Owe">
-                <div style={{ padding: '16px 16px 20px', position: 'relative', display: 'flex', alignItems: 'center', minHeight: 48 }}>
-                  <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#1A1918', letterSpacing: '-0.03em', lineHeight: 1, fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(borrowedRemaining)}</div>
-                  <div style={{ position: 'absolute', bottom: 6, right: 16, fontSize: 12, color: '#9B9A98' }}>between {borrowedLoans.length} loan{borrowedLoans.length !== 1 ? 's' : ''}</div>
-                </div>
-              </DashboardCard>
-              </CardEntrance>
-
-              </div>{/* /dash-balance-pair */}
-
-              {/* How [Month] is Going (swapped from left section) */}
-              <CardEntrance delay={0.12} className="dash-how-month">
-              <DashboardCard title={`How ${format(today, 'MMMM')} is going`}>
-                <div style={{ padding: '10px 16px 14px' }}>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0 }}>
-                    <div style={{ textAlign: 'center', padding: '0 10px 0 0', borderRight: '1px solid rgba(0,0,0,0.06)' }}>
-                      <div style={{ fontSize: 10, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 4 }}>Received</div>
-                      <div style={{ fontSize: '1.1rem', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1, color: LENDER_GREEN, fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(monthlyReceived)}</div>
-                      <div style={{ width: '100%', height: 4, borderRadius: 2, marginTop: 10, background: 'rgba(82,183,136,0.15)' }}>
-                        <div style={{ height: '100%', borderRadius: 2, background: LENDER_GREEN, width: `${monthlyExpectedReceive > 0 ? Math.min((monthlyReceived / monthlyExpectedReceive) * 100, 100) : 0}%` }} />
-                      </div>
-                      <div style={{ fontSize: 10, color: '#9B9A98', marginTop: 5 }}>of {formatMoney(monthlyExpectedReceive)} expected</div>
-                    </div>
-                    <div style={{ textAlign: 'center', padding: '0 0 0 10px' }}>
-                      <div style={{ fontSize: 10, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 4 }}>Paid out</div>
-                      <div style={{ fontSize: '1.1rem', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(monthlyPaidOut)}</div>
-                      <div style={{ width: '100%', height: 4, borderRadius: 2, marginTop: 10, background: 'rgba(126,192,234,0.2)' }}>
-                        <div style={{ height: '100%', borderRadius: 2, background: '#7EC0EA', width: `${monthlyExpectedPay > 0 ? Math.min((monthlyPaidOut / monthlyExpectedPay) * 100, 100) : 0}%` }} />
-                      </div>
-                      <div style={{ fontSize: 10, color: '#9B9A98', marginTop: 5 }}>of {formatMoney(monthlyExpectedPay)} expected</div>
-                    </div>
-                  </div>
-                </div>
-              </DashboardCard>
-              </CardEntrance>
-
-              {/* Recent Activity */}
-              <CardEntrance delay={0.24} className="dash-recent">
-              <DashboardCard title="Recent activity" headerRight={<Link to={createPageUrl("RecentActivity")} style={{ fontSize: 12, fontWeight: 500, color: '#9B9A98', textDecoration: 'none' }}>View all</Link>}>
-                <div style={{ padding: '12px 16px 16px' }}>
-                  {recentActivity.length === 0 ? (
-                    <div style={{ textAlign: 'center', padding: '20px 0' }}>
-                      <div style={{ fontSize: 28, marginBottom: 6 }}>✨</div>
-                      <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', marginBottom: 2 }}>Fresh start!</div>
-                      <div style={{ fontSize: 11, color: '#787776' }}>Nothing to report yet.</div>
-                    </div>
-                  ) : (
-                    recentActivity.map((item, idx) => (
-                      <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '13px 0', paddingTop: idx === 0 ? 0 : 13, paddingBottom: idx === recentActivity.length - 1 ? 0 : 13 }}>
-                        <div style={{ width: 24, height: 24, borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, background: `${item.color}20` }}>
-                          {item.icon === 'send' ? (
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={item.color} strokeWidth="2" strokeLinecap="round"><polyline points="7 13 12 18 17 13"></polyline><line x1="12" y1="18" x2="12" y2="6"></line></svg>
-                          ) : item.icon === 'receive' ? (
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={item.color} strokeWidth="2" strokeLinecap="round"><polyline points="17 11 12 6 7 11"></polyline><line x1="12" y1="6" x2="12" y2="18"></line></svg>
-                          ) : item.icon === 'check' ? (
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={item.color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                          ) : (
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={item.color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                          )}
-                        </div>
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ fontSize: 13, fontWeight: 500, color: '#1A1918' }}>{item.description}</div>
-                          <div style={{ fontSize: 11, color: '#787776', marginTop: 2 }}>{item.detail}</div>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </DashboardCard>
-              </CardEntrance>
             </div>
+          )}
 
+          {/* QUICK ACTIONS */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 2, marginTop: 4 }}>
+            <Link to={createPageUrl("CreateOffer")} style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', textDecoration: 'none', padding: '7px 0', display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span style={{ fontSize: 16, lineHeight: 1, color: '#9B9A98' }}>+</span> Create Loan
+            </Link>
+            <Link to={createPageUrl("RecordPayment")} style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', textDecoration: 'none', padding: '7px 0', display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span style={{ fontSize: 16, lineHeight: 1, color: '#9B9A98' }}>+</span> Record Payment
+            </Link>
           </div>
         </div>
 
-      {/* ── Footer ── */}
-      <div className="dashboard-footer" style={{ padding: '12px 28px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        {/* ── CENTER FEED ── */}
+        <div className="mesh-center" style={{ padding: '0 32px', minHeight: 500, borderRight: '1px solid rgba(0,0,0,0.07)' }}>
+
+          {/* Header */}
+          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 28 }}>
+            <h1 style={{ margin: 0, fontSize: 20, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', fontFamily: "'DM Sans', sans-serif" }}>Home</h1>
+            <span style={{ fontSize: 11, color: '#9B9A98' }}>{format(today, 'EEE, MMM d')}</span>
+          </div>
+
+          {/* Notification banner */}
+          {notifCount > 0 && (
+            <Link to={createPageUrl("Requests")} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderRadius: 10, background: 'rgba(3,172,234,0.05)', border: '1px solid rgba(3,172,234,0.12)', textDecoration: 'none', marginBottom: 24 }}>
+              <div style={{ width: 26, height: 26, borderRadius: 7, background: 'rgba(3,172,234,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2" strokeLinecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              </div>
+              <span style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', flex: 1 }}>You have <strong>{notifCount}</strong> new notification{notifCount !== 1 ? 's' : ''}</span>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#C5C3C0" strokeWidth="2" strokeLinecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </Link>
+          )}
+
+          {/* UPCOMING section */}
+          <div style={{ marginBottom: 36 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 10, marginBottom: 4, borderBottom: '1px solid rgba(0,0,0,0.07)' }}>
+              <span style={{ fontSize: 10, fontWeight: 700, color: '#C5C3C0', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Upcoming</span>
+              <Link to={createPageUrl("Upcoming")} style={{ fontSize: 11, fontWeight: 500, color: '#9B9A98', textDecoration: 'none' }}>Full schedule →</Link>
+            </div>
+            {combinedPaymentEvents.length === 0 ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 0' }}>
+                <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(82,183,136,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <span>✨</span>
+                </div>
+                <span style={{ fontSize: 13, color: '#787776' }}>You're all clear — nothing coming up.</span>
+              </div>
+            ) : combinedPaymentEvents.map((event, idx) => {
+              const isOverdue = event.days < 0;
+              const daysLabel = isOverdue ? `${Math.abs(event.days)}d late` : event.days === 0 ? 'today' : `${event.days}d`;
+              return (
+                <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 0', borderBottom: idx < combinedPaymentEvents.length - 1 ? '1px solid rgba(0,0,0,0.04)' : 'none' }}>
+                  <div style={{ width: 32, height: 32, borderRadius: '50%', background: event.isLender ? 'rgba(82,183,136,0.12)' : 'rgba(126,192,234,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: 12, fontWeight: 700, color: event.isLender ? LENDER_GREEN : '#7EC0EA' }}>
+                    {event.initial}
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: 13, color: '#1A1918', lineHeight: 1.4 }}>
+                      {event.isLender
+                        ? <><strong>{event.firstName}</strong> pays you {formatMoney(event.remainingAmount)}</>
+                        : <>Pay <strong>{event.firstName}</strong> {formatMoney(event.remainingAmount)}</>}
+                      {event.purpose && <span style={{ color: '#9B9A98' }}> · {event.purpose}</span>}
+                    </div>
+                    <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 2 }}>{format(event.date, 'MMM d')}</div>
+                  </div>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: isOverdue ? '#E8726E' : event.days <= 3 ? '#F59E0B' : '#9B9A98', background: isOverdue ? 'rgba(232,114,110,0.08)' : event.days <= 3 ? 'rgba(245,158,11,0.08)' : 'rgba(0,0,0,0.04)', borderRadius: 6, padding: '2px 7px', flexShrink: 0, whiteSpace: 'nowrap' }}>
+                    {daysLabel}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* RECENT ACTIVITY section */}
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 10, marginBottom: 4, borderBottom: '1px solid rgba(0,0,0,0.07)' }}>
+              <span style={{ fontSize: 10, fontWeight: 700, color: '#C5C3C0', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Recent Activity</span>
+              <Link to={createPageUrl("RecentActivity")} style={{ fontSize: 11, fontWeight: 500, color: '#9B9A98', textDecoration: 'none' }}>View all →</Link>
+            </div>
+            {recentActivity.length === 0 ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 0' }}>
+                <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(0,0,0,0.04)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <span>📋</span>
+                </div>
+                <span style={{ fontSize: 13, color: '#787776' }}>No recent activity yet.</span>
+              </div>
+            ) : recentActivity.map((item, idx) => (
+              <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 0', borderBottom: idx < recentActivity.length - 1 ? '1px solid rgba(0,0,0,0.04)' : 'none' }}>
+                <div style={{ width: 32, height: 32, borderRadius: '50%', background: `${item.color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  {item.icon === 'send' ? (
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={item.color} strokeWidth="2.2" strokeLinecap="round"><polyline points="7 13 12 18 17 13"/><line x1="12" y1="18" x2="12" y2="6"/></svg>
+                  ) : item.icon === 'receive' ? (
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={item.color} strokeWidth="2.2" strokeLinecap="round"><polyline points="17 11 12 6 7 11"/><line x1="12" y1="6" x2="12" y2="18"/></svg>
+                  ) : item.icon === 'check' ? (
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={item.color} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  ) : (
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={item.color} strokeWidth="2.2" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  )}
+                </div>
+                <div style={{ flex: 1, minWidth: 0, fontSize: 13, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.description}</div>
+                <span style={{ fontSize: 11, color: '#9B9A98', flexShrink: 0 }}>{item.detail}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ── RIGHT PANEL ── */}
+        <div className="mesh-right" style={{ paddingLeft: 32, position: 'sticky', top: 88 }}>
+
+          {/* User mini profile */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 28 }}>
+            {user?.profile_picture_url ? (
+              <div style={{ width: 36, height: 36, borderRadius: '50%', overflow: 'hidden', flexShrink: 0 }}>
+                <img src={user.profile_picture_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              </div>
+            ) : (
+              <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#54A6CF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <span style={{ fontSize: 14, fontWeight: 700, color: 'white', fontFamily: "'DM Sans', sans-serif" }}>{avatarInitial}</span>
+              </div>
+            )}
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em' }}>{user.full_name || user.username}</div>
+              <div style={{ fontSize: 11, color: '#9B9A98' }}>{activeLoanCount} active loan{activeLoanCount !== 1 ? 's' : ''}</div>
+            </div>
+          </div>
+
+          {/* NEXT PAYMENT DUE */}
+          <div style={{ marginBottom: 22 }}>
+            <SectionLabel>Next payment due</SectionLabel>
+            {nextBorrowerPayment ? (() => {
+              const days = Math.ceil((nextBorrowerPayment.date.getTime() - Date.now()) / 86400000);
+              const isLate = days < 0;
+              return (
+                <div style={{ padding: '11px 13px', borderRadius: 10, background: isLate ? 'rgba(232,114,110,0.06)' : 'rgba(0,0,0,0.03)', border: `1px solid ${isLate ? 'rgba(232,114,110,0.15)' : 'rgba(0,0,0,0.07)'}` }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 3 }}>
+                    <span style={{ fontSize: 16, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em' }}>{format(nextBorrowerPayment.date, 'MMM d')}</span>
+                    <span style={{ fontSize: 10, fontWeight: 700, color: isLate ? '#E8726E' : '#9B9A98', background: isLate ? 'rgba(232,114,110,0.1)' : 'rgba(0,0,0,0.05)', borderRadius: 6, padding: '2px 7px' }}>
+                      {isLate ? `${Math.abs(days)}d late` : days === 0 ? 'today' : `${days}d`}
+                    </span>
+                  </div>
+                  <div style={{ fontSize: 12, color: '#787776' }}>{formatMoney(nextBorrowerPayment.payment_amount || 0)} to {nextBorrowerPayment.firstName}</div>
+                </div>
+              );
+            })() : (
+              <div style={{ fontSize: 12, color: '#9B9A98', padding: '6px 0' }}>Nothing due right now 🎉</div>
+            )}
+          </div>
+
+          {/* NEXT INCOMING */}
+          <div style={{ marginBottom: 22 }}>
+            <SectionLabel>Next incoming</SectionLabel>
+            {nextLenderPayment ? (() => {
+              const days = Math.ceil((nextLenderPayment.date.getTime() - Date.now()) / 86400000);
+              const isLate = days < 0;
+              return (
+                <div style={{ padding: '11px 13px', borderRadius: 10, background: 'rgba(82,183,136,0.06)', border: '1px solid rgba(82,183,136,0.18)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 3 }}>
+                    <span style={{ fontSize: 16, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em' }}>{format(nextLenderPayment.date, 'MMM d')}</span>
+                    <span style={{ fontSize: 10, fontWeight: 700, color: isLate ? '#E8726E' : LENDER_GREEN, background: isLate ? 'rgba(232,114,110,0.1)' : 'rgba(82,183,136,0.12)', borderRadius: 6, padding: '2px 7px' }}>
+                      {isLate ? `${Math.abs(days)}d late` : days === 0 ? 'today' : `${days}d`}
+                    </span>
+                  </div>
+                  <div style={{ fontSize: 12, color: '#787776' }}>{formatMoney(nextLenderPayment.payment_amount || 0)} from {nextLenderPayment.firstName}</div>
+                </div>
+              );
+            })() : (
+              <div style={{ fontSize: 12, color: '#9B9A98', padding: '6px 0' }}>No payments heading your way 💸</div>
+            )}
+          </div>
+
+          {/* WEEK CALENDAR */}
+          <div style={{ marginBottom: 22 }}>
+            <SectionLabel>This week</SectionLabel>
+            <WeekStrip allPaymentEvents={allPaymentEvents} today={today} formatMoney={formatMoney} />
+          </div>
+
+          {/* 6-MONTH CHART */}
+          {chartData && (
+            <div>
+              <SectionLabel>6-month overview</SectionLabel>
+              <div ref={loansChartRef} style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', height: 72, gap: 3 }}>
+                {chartData.data.map((d, i) => {
+                  const owedH = chartData.maxVal > 0 ? (d.owedToYou / chartData.maxVal) * 72 : 0;
+                  const oweH = chartData.maxVal > 0 ? (d.youOwe / chartData.maxVal) * 72 : 0;
+                  return (
+                    <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                      <div style={{ display: 'flex', alignItems: 'flex-end', gap: 2, height: 72 }}>
+                        <div key={`rc-${i}-${loansAnimKey}`} style={{ width: 7, borderRadius: '3px 3px 0 0', background: LENDER_GREEN, opacity: d.isFuture ? 0.35 : 1, height: Math.max(owedH, owedH > 0 ? 2 : 0), animation: `barGrowUp 0.5s ease-out ${i * 0.05}s both` }} />
+                        <div key={`rb-${i}-${loansAnimKey}`} style={{ width: 7, borderRadius: '3px 3px 0 0', background: '#7EC0EA', opacity: d.isFuture ? 0.35 : 1, height: Math.max(oweH, oweH > 0 ? 2 : 0), animation: `barGrowUp 0.5s ease-out ${i * 0.05 + 0.04}s both` }} />
+                      </div>
+                      <span style={{ fontSize: 9, color: d.isCurrent ? '#5C5B5A' : '#C5C3C0', fontWeight: d.isCurrent ? 600 : 400 }}>{d.label}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+
+      </div>
+
+      {/* Footer */}
+      <div className="dashboard-footer" style={{ maxWidth: 1080, margin: '0 auto', padding: '12px 40px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid rgba(0,0,0,0.06)' }}>
         <span style={{ fontSize: 11, color: '#787776' }}>2026 Vony, Inc. All rights reserved.</span>
         <div className="dashboard-footer-links" style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
           <a href="https://www.vony-lending.com/terms" target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#787776', textDecoration: 'none' }}>Terms of Service</a>
           <a href="https://www.vony-lending.com/privacy" target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#787776', textDecoration: 'none' }}>Privacy Center</a>
           <a href="https://www.vony-lending.com/do-not-sell" target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#787776', textDecoration: 'none' }}>Do not sell or share my personal information</a>
         </div>
-      </div>
-
       </div>
 
     </div>

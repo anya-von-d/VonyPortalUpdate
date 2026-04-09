@@ -341,6 +341,32 @@ input[type="date"] {
   background: transparent !important;
 }
 
+/* Mesh layout responsive */
+@media (max-width: 900px) {
+  .mesh-layout {
+    grid-template-columns: 1fr !important;
+    padding: 80px 16px 40px !important;
+    gap: 32px !important;
+  }
+  .mesh-left {
+    border-right: none !important;
+    border-bottom: 1px solid rgba(0,0,0,0.07) !important;
+    padding-right: 0 !important;
+    padding-bottom: 28px !important;
+    position: static !important;
+  }
+  .mesh-center {
+    padding: 0 !important;
+    border-right: none !important;
+    border-bottom: 1px solid rgba(0,0,0,0.07) !important;
+    padding-bottom: 28px !important;
+  }
+  .mesh-right {
+    padding-left: 0 !important;
+    position: static !important;
+  }
+}
+
 /* Home + Dashboard pages responsive */
 @media (max-width: 900px) {
   .home-sidebar {
