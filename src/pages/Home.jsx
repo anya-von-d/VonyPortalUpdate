@@ -743,7 +743,7 @@ export default function Home() {
   );
 
   const RightSection = ({ title, children }) => (
-    <div style={{ marginBottom: 28 }}>
+    <div style={{ marginBottom: 40 }}>
       <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 9 }}>{title}</div>
       <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 14 }} />
       {children}
@@ -754,7 +754,7 @@ export default function Home() {
     <div style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased' }}>
 
       {/* ── MESH THREE-COLUMN LAYOUT ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '180px 1fr 260px', gap: 0 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '180px 1fr 300px', gap: 0 }}>
 
         {/* ── LEFT: Sidebar nav ── */}
         <div className="mesh-left" style={{ background: '#F5F4F0', borderRight: '1px solid rgba(0,0,0,0.08)' }}>
@@ -764,6 +764,11 @@ export default function Home() {
             <nav style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
               {[
                 { label: 'Home', to: '/', active: true },
+                { label: 'Upcoming', to: createPageUrl("Upcoming") },
+                { label: 'Create Loan', to: createPageUrl("CreateOffer") },
+                { label: 'Record Payment', to: createPageUrl("RecordPayment") },
+                { label: 'My Loans', to: createPageUrl("YourLoans") },
+                { label: 'Friends', to: createPageUrl("Friends") },
               ].map(({ label, to, active: isActive }) => (
                 <Link key={label} to={to} style={{
                   display: 'block', padding: '8px 10px', borderRadius: 9, textDecoration: 'none',
@@ -771,25 +776,6 @@ export default function Home() {
                   color: isActive ? '#1A1918' : '#787776',
                   background: isActive ? 'rgba(0,0,0,0.05)' : 'transparent',
                   fontFamily: "'DM Sans', sans-serif", width: '100%', boxSizing: 'border-box',
-                }}>
-                  {label}
-                </Link>
-              ))}
-              <Link to={createPageUrl("Upcoming")} style={{
-                display: 'block', padding: '8px 10px', borderRadius: 9, textDecoration: 'none',
-                fontSize: 14, fontWeight: 500, color: '#787776',
-                background: 'transparent', fontFamily: "'DM Sans', sans-serif", width: '100%', boxSizing: 'border-box',
-              }}>Upcoming</Link>
-              <Link to={createPageUrl("CreateOffer")} style={{ display: 'block', padding: '5px 10px 5px 16px', borderRadius: 7, textDecoration: 'none', fontSize: 12, fontWeight: 500, color: '#9B9A98', background: 'transparent', fontFamily: "'DM Sans', sans-serif", width: '100%', boxSizing: 'border-box' }}>Create Loan</Link>
-              <Link to={createPageUrl("RecordPayment")} style={{ display: 'block', padding: '5px 10px 5px 16px', borderRadius: 7, textDecoration: 'none', fontSize: 12, fontWeight: 500, color: '#9B9A98', background: 'transparent', fontFamily: "'DM Sans', sans-serif", width: '100%', boxSizing: 'border-box' }}>Record Payment</Link>
-              {[
-                { label: 'My Loans', to: createPageUrl("YourLoans") },
-                { label: 'Friends', to: createPageUrl("Friends") },
-              ].map(({ label, to }) => (
-                <Link key={label} to={to} style={{
-                  display: 'block', padding: '8px 10px', borderRadius: 9, textDecoration: 'none',
-                  fontSize: 14, fontWeight: 500, color: '#787776',
-                  background: 'transparent', fontFamily: "'DM Sans', sans-serif", width: '100%', boxSizing: 'border-box',
                 }}>
                   {label}
                 </Link>
@@ -876,11 +862,12 @@ export default function Home() {
         <div className="mesh-center" style={{ background: 'white', borderRight: '1px solid rgba(0,0,0,0.08)', padding: '40px 48px 80px' }}>
 
           {/* Greeting */}
-          <div style={{ marginBottom: 22 }}>
+          <div style={{ marginBottom: 20 }}>
             <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 26, fontWeight: 600, letterSpacing: '-0.01em', lineHeight: 1.1, color: '#1A1918' }}>
               {greeting}, <span style={{ fontStyle: 'italic' }}>{firstName}</span>
             </div>
           </div>
+          <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 24 }} />
 
           {/* Notification banner */}
           {notifCount > 0 && (

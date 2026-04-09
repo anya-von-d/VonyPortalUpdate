@@ -570,7 +570,7 @@ export default function RecentActivityPage() {
 
   /* ── RightSection component ──────────────────────────────── */
   const RightSection = ({ title, children }) => (
-    <div style={{ marginBottom: 28 }}>
+    <div style={{ marginBottom: 40 }}>
       <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 9 }}>{title}</div>
       <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 14 }} />
       {children}
@@ -651,7 +651,7 @@ export default function RecentActivityPage() {
      ══════════════════════════════════════════════════════════ */
   return (
     <>
-      <div className="mesh-layout" style={{ display: 'grid', gridTemplateColumns: '180px 1fr 260px', gap: 0, minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased' }}>
+      <div className="mesh-layout" style={{ display: 'grid', gridTemplateColumns: '180px 1fr 300px', gap: 0, minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased' }}>
 
         {/* Col 1: left nav */}
         <div className="mesh-left" style={{ background: '#F5F4F0', borderRight: '1px solid rgba(0,0,0,0.08)' }}>
@@ -661,23 +661,13 @@ export default function RecentActivityPage() {
               {[
                 { label: 'Home', to: '/', active: false },
                 { label: 'Upcoming', to: createPageUrl("Upcoming"), active: false },
-              ].map(({ label, to, active: isActive }) => (
-                <Link key={label} to={to} style={{
-                  display: 'block', padding: '8px 10px 8px 4px', borderRadius: 9, textDecoration: 'none',
-                  fontSize: 14, fontWeight: isActive ? 600 : 500,
-                  color: isActive ? '#1A1918' : '#787776',
-                  background: isActive ? 'rgba(0,0,0,0.05)' : 'transparent',
-                  fontFamily: "'DM Sans', sans-serif", width: '100%', boxSizing: 'border-box',
-                }}>{label}</Link>
-              ))}
-              <Link to={createPageUrl("CreateOffer")} style={{ display: 'block', padding: '5px 10px 5px 16px', borderRadius: 7, textDecoration: 'none', fontSize: 12, fontWeight: 500, color: '#9B9A98', background: 'transparent', fontFamily: "'DM Sans', sans-serif", width: '100%', boxSizing: 'border-box' }}>Create Loan</Link>
-              <Link to={createPageUrl("RecordPayment")} style={{ display: 'block', padding: '5px 10px 5px 16px', borderRadius: 7, textDecoration: 'none', fontSize: 12, fontWeight: 500, color: '#9B9A98', background: 'transparent', fontFamily: "'DM Sans', sans-serif", width: '100%', boxSizing: 'border-box' }}>Record Payment</Link>
-              {[
+                { label: 'Create Loan', to: createPageUrl("CreateOffer"), active: false },
+                { label: 'Record Payment', to: createPageUrl("RecordPayment"), active: false },
                 { label: 'My Loans', to: createPageUrl("YourLoans"), active: false },
                 { label: 'Friends', to: createPageUrl("Friends"), active: false },
               ].map(({ label, to, active: isActive }) => (
                 <Link key={label} to={to} style={{
-                  display: 'block', padding: '8px 10px 8px 4px', borderRadius: 9, textDecoration: 'none',
+                  display: 'block', padding: '8px 10px', borderRadius: 9, textDecoration: 'none',
                   fontSize: 14, fontWeight: isActive ? 600 : 500,
                   color: isActive ? '#1A1918' : '#787776',
                   background: isActive ? 'rgba(0,0,0,0.05)' : 'transparent',

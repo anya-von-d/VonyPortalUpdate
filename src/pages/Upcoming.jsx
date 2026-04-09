@@ -9,10 +9,7 @@ import {
 } from "date-fns";
 import { formatMoney } from "@/components/utils/formatMoney";
 import { daysUntil as daysUntilDate } from "@/components/utils/dateUtils";
-import DashboardSidebar from "@/components/DashboardSidebar";
-
 const SHADOW = '0px 50px 40px rgba(0,0,0,0.02), 0px 50px 40px rgba(0,0,0,0.04), 0px 20px 40px rgba(0,0,0,0.08), 0px 3px 10px rgba(0,0,0,0.12)';
-const LENDER_GREEN = '#52B788';
 
 export default function Upcoming() {
   const { user: authUser, userProfile, isLoadingAuth, navigateToLogin, logout } = useAuth();
@@ -204,15 +201,15 @@ export default function Upcoming() {
   });
 
   // ── PaymentRow component ──
-  const PaymentRow = ({ event, isLast }) => {
+  const PaymentRow = ({ event }) => {
     const isOverdueItem = event.days < 0;
     const daysLabel = isOverdueItem ? `${Math.abs(event.days)}d late` : event.days === 0 ? 'today' : `${event.days}d`;
     const badgeColor = isOverdueItem ? '#E8726E' : event.days <= 3 ? '#F59E0B' : '#9B9A98';
     const badgeBg = isOverdueItem ? 'rgba(232,114,110,0.08)' : event.days <= 3 ? 'rgba(245,158,11,0.08)' : 'rgba(0,0,0,0.04)';
-    const amtColor = event.isLender ? LENDER_GREEN : '#1A1918';
+    const amtColor = event.isLender ? '#03ACEA' : '#1A1918';
     const amtSign = event.isLender ? '+' : '-';
     return (
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 0', borderBottom: isLast ? 'none' : '1px solid rgba(0,0,0,0.05)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 0', borderBottom: 'none' }}>
         <div style={{ minWidth: 50, flexShrink: 0, fontSize: 10, fontWeight: 700, color: badgeColor, background: badgeBg, borderRadius: 6, padding: '3px 7px', textAlign: 'center' }}>{daysLabel}</div>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ fontSize: 13, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -229,57 +226,56 @@ export default function Upcoming() {
   // ── Section heading ──
   const SectionHead = ({ label, count, total }) => (
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 10, marginBottom: 4, borderBottom: '1px solid rgba(0,0,0,0.07)', marginTop: 28 }}>
-      <span style={{ fontSize: 10, fontWeight: 700, color: '#C5C3C0', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{label}</span>
+      <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{label}</span>
       {count > 0 && <span style={{ fontSize: 11, color: '#9B9A98' }}>{count} · {formatMoney(total)}</span>}
     </div>
   );
 
   // ── Right panel section heading ──
   const RightSection = ({ title, children }) => (
-    <div style={{ marginBottom: 24 }}>
-      <div style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', letterSpacing: '0.01em', marginBottom: 9 }}>{title}</div>
-      <div style={{ height: 1, background: 'rgba(0,0,0,0.08)', marginBottom: 14 }} />
+    <div style={{ marginBottom: 40 }}>
+      <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 9 }}>{title}</div>
+      <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 14 }} />
       {children}
     </div>
   );
 
   return (
-    <div style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', background: 'transparent' }}>
-
-      <DashboardSidebar activePage="Upcoming" user={user} />
-
-      <div className="mesh-layout" style={{ maxWidth: 1200, margin: '0 auto', padding: '88px 8px 60px 8px', display: 'grid', gridTemplateColumns: '160px 1fr 240px', gap: 0, alignItems: 'start' }}>
+    <div style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '180px 1fr 300px', gap: 0, minHeight: '100vh' }}>
 
         {/* ── LEFT: Sidebar nav ── */}
-        <div className="mesh-left" style={{ paddingRight: 20, borderRight: '1px solid rgba(0,0,0,0.07)', position: 'sticky', top: 88 }}>
-          <nav style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-            {[
-              { label: 'Home', to: '/', active: false },
-              { label: 'Upcoming', to: createPageUrl("Upcoming"), active: true },
-              { label: 'My Loans', to: createPageUrl("YourLoans"), active: false },
-              { label: 'Friends', to: createPageUrl("Friends"), active: false },
-            ].map(({ label, to, active: isActive }) => (
-              <Link key={label} to={to} style={{
-                display: 'block', padding: '8px 10px 8px 4px', borderRadius: 9, textDecoration: 'none',
-                fontSize: 14, fontWeight: isActive ? 600 : 500,
-                color: isActive ? '#1A1918' : '#787776',
-                background: isActive ? 'rgba(0,0,0,0.05)' : 'transparent',
-                fontFamily: "'DM Sans', sans-serif", width: '100%', boxSizing: 'border-box',
-              }}>{label}</Link>
-            ))}
-            <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', margin: '8px 0' }} />
-            {[
-              { label: 'Recent Activity', to: createPageUrl("RecentActivity") },
-              { label: 'Documents', to: createPageUrl("LoanAgreements") },
-              { label: 'Record Payment', to: createPageUrl("RecordPayment") },
-            ].map(({ label, to }) => (
-              <Link key={label} to={to} style={{
-                display: 'block', padding: '7px 10px 7px 4px', borderRadius: 9, textDecoration: 'none',
-                fontSize: 13, fontWeight: 500, color: '#9B9A98',
-                background: 'transparent', fontFamily: "'DM Sans', sans-serif",
-                width: '100%', boxSizing: 'border-box',
-              }}>{label}</Link>
-            ))}
+        <div className="mesh-left" style={{ background: '#F5F4F0', borderRight: '1px solid rgba(0,0,0,0.08)' }}>
+          <div style={{ position: 'sticky', top: 0, padding: '32px 20px 0' }}>
+            <Link to="/" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, fontStyle: 'italic', fontSize: '1.75rem', color: '#1A1918', textDecoration: 'none', display: 'block', marginBottom: 24, lineHeight: 1, letterSpacing: '-0.02em' }}>Vony</Link>
+            <nav style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+              {[
+                { label: 'Home', to: '/', active: false },
+                { label: 'Upcoming', to: createPageUrl("Upcoming"), active: true },
+                { label: 'Create Loan', to: createPageUrl("CreateOffer"), active: false },
+                { label: 'Record Payment', to: createPageUrl("RecordPayment"), active: false },
+                { label: 'My Loans', to: createPageUrl("YourLoans"), active: false },
+                { label: 'Friends', to: createPageUrl("Friends"), active: false },
+              ].map(({ label, to, active: isActive }) => (
+                <Link key={label} to={to} style={{
+                  display: 'block', padding: '8px 10px', borderRadius: 9, textDecoration: 'none',
+                  fontSize: 14, fontWeight: isActive ? 600 : 500,
+                  color: isActive ? '#1A1918' : '#787776',
+                  background: isActive ? 'rgba(0,0,0,0.05)' : 'transparent',
+                  fontFamily: "'DM Sans', sans-serif", width: '100%', boxSizing: 'border-box',
+                }}>{label}</Link>
+              ))}
+              <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', margin: '8px 0' }} />
+              {[
+                { label: 'Recent Activity', to: createPageUrl("RecentActivity") },
+                { label: 'Documents', to: createPageUrl("LoanAgreements") },
+              ].map(({ label, to }) => (
+                <Link key={label} to={to} style={{
+                  display: 'block', padding: '7px 10px', borderRadius: 9, textDecoration: 'none',
+                  fontSize: 13, fontWeight: 500, color: '#9B9A98',
+                  background: 'transparent', fontFamily: "'DM Sans', sans-serif", width: '100%', boxSizing: 'border-box',
+                }}>{label}</Link>
+              ))}
             {/* More dropdown */}
             <div style={{ position: 'relative' }}
               onMouseEnter={() => { if (moreNavCloseTimerRef.current) { clearTimeout(moreNavCloseTimerRef.current); moreNavCloseTimerRef.current = null; } setMoreNavOpen(true); }}
@@ -309,17 +305,18 @@ export default function Upcoming() {
                 </div>
               )}
             </div>
-          </nav>
+            </nav>
+          </div>
         </div>
 
         {/* ── CENTER ── */}
-        <div className="mesh-center" style={{ padding: '0 32px', minHeight: 500, borderRight: '1px solid rgba(0,0,0,0.07)' }}>
+        <div className="mesh-center" style={{ background: 'white', borderRight: '1px solid rgba(0,0,0,0.08)', padding: '40px 48px 80px' }}>
 
-          {/* Heading */}
-          <div style={{ marginBottom: 22 }}>
-            <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 26, fontWeight: 600, fontStyle: 'italic', letterSpacing: '-0.01em', lineHeight: 1.1, color: '#1A1918' }}>Upcoming</div>
-            <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 4 }}>{format(today, 'EEEE, MMMM d')}</div>
+          {/* Title */}
+          <div style={{ marginBottom: 20 }}>
+            <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 26, fontWeight: 600, letterSpacing: '-0.01em', lineHeight: 1.1, color: '#1A1918' }}>Upcoming</div>
           </div>
+          <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 24 }} />
 
           {/* Glass tab selector */}
           <div style={{ display: 'inline-flex', gap: 2, background: 'rgba(255,255,255,0.6)', borderRadius: 12, padding: 3, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 1px 6px rgba(0,0,0,0.05)', marginBottom: 8, backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}>
@@ -389,9 +386,9 @@ export default function Upcoming() {
                   return (
                     <div key={i} style={{
                       minHeight: 84, padding: '7px 8px', borderRadius: 9,
-                      background: inMonth ? (hasIncoming ? 'rgba(82,183,136,0.06)' : hasOutgoing ? 'rgba(126,192,234,0.07)' : 'transparent') : 'transparent',
+                      background: inMonth ? (hasIncoming ? 'rgba(3,172,234,0.06)' : hasOutgoing ? 'rgba(29,91,148,0.07)' : 'transparent') : 'transparent',
                       opacity: inMonth ? 1 : 0.3,
-                      border: isToday ? `1.5px solid ${LENDER_GREEN}` : '1px solid transparent',
+                      border: isToday ? '1.5px solid #03ACEA' : '1px solid transparent',
                     }}>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
                         <span style={{
@@ -399,17 +396,17 @@ export default function Upcoming() {
                           width: isToday ? 22 : 'auto', height: isToday ? 22 : 'auto',
                           borderRadius: '50%', fontSize: 12, fontWeight: isToday ? 700 : 500,
                           color: isToday ? 'white' : inMonth ? '#1A1918' : '#C7C6C4',
-                          background: isToday ? LENDER_GREEN : 'transparent',
+                          background: isToday ? '#03ACEA' : 'transparent',
                         }}>{format(day, 'd')}</span>
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 1 }}>
-                          {hasIncoming && <span style={{ fontSize: 10, fontWeight: 600, color: LENDER_GREEN }}>+{formatMoney(dayEvents.filter(e => e.isLender).reduce((s, e) => s + e.amount, 0))}</span>}
-                          {hasOutgoing && <span style={{ fontSize: 10, fontWeight: 600, color: '#7EC0EA' }}>{formatMoney(dayEvents.filter(e => !e.isLender).reduce((s, e) => s + e.amount, 0))}</span>}
+                          {hasIncoming && <span style={{ fontSize: 10, fontWeight: 600, color: '#03ACEA' }}>+{formatMoney(dayEvents.filter(e => e.isLender).reduce((s, e) => s + e.amount, 0))}</span>}
+                          {hasOutgoing && <span style={{ fontSize: 10, fontWeight: 600, color: '#1D5B94' }}>{formatMoney(dayEvents.filter(e => !e.isLender).reduce((s, e) => s + e.amount, 0))}</span>}
                         </div>
                       </div>
                       {dayEvents.length > 0 && (
                         <div style={{ display: 'flex', gap: 3, flexWrap: 'wrap' }}>
                           {dayEvents.slice(0, 3).map((ev, j) => (
-                            <div key={j} style={{ width: 20, height: 20, borderRadius: '50%', fontSize: 9, fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', background: ev.isLender ? LENDER_GREEN : '#7EC0EA', color: 'white' }}>{ev.initial}</div>
+                            <div key={j} style={{ width: 20, height: 20, borderRadius: '50%', fontSize: 9, fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', background: ev.isLender ? '#03ACEA' : '#1D5B94', color: 'white' }}>{ev.initial}</div>
                           ))}
                           {dayEvents.length > 3 && <div style={{ width: 20, height: 20, borderRadius: '50%', fontSize: 9, fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.06)', color: '#787776' }}>+{dayEvents.length - 3}</div>}
                         </div>
@@ -421,41 +418,49 @@ export default function Upcoming() {
 
               {/* Legend */}
               <div style={{ display: 'flex', gap: 20, marginTop: 16, paddingTop: 14, borderTop: '1px solid rgba(0,0,0,0.06)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: '#787776' }}><div style={{ width: 8, height: 8, borderRadius: '50%', background: LENDER_GREEN }} /> Owed to you</div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: '#787776' }}><div style={{ width: 8, height: 8, borderRadius: '50%', background: '#7EC0EA' }} /> You owe</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: '#787776' }}><div style={{ width: 8, height: 8, borderRadius: '50%', background: '#03ACEA' }} /> Owed to you</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: '#787776' }}><div style={{ width: 8, height: 8, borderRadius: '50%', background: '#1D5B94' }} /> You owe</div>
               </div>
             </div>
           )}
         </div>
 
         {/* ── RIGHT PANEL ── */}
-        <div className="mesh-right" style={{ paddingLeft: 28, position: 'sticky', top: 88 }}>
+        <div className="mesh-right" style={{ background: '#F5F4F0' }}>
+          <div style={{ position: 'sticky', top: 0, padding: '28px 28px 0' }}>
 
-          <Link to={createPageUrl("CreateOffer")} style={{ display: 'block', width: '100%', padding: '12px 16px', borderRadius: 10, boxSizing: 'border-box', background: '#1A1918', color: 'white', textDecoration: 'none', fontSize: 14, fontWeight: 600, textAlign: 'center', fontFamily: "'DM Sans', sans-serif", marginBottom: 9 }}>
-            Create Loan
-          </Link>
-          <Link to={createPageUrl("RecordPayment")} style={{ display: 'block', width: '100%', padding: '12px 16px', borderRadius: 10, boxSizing: 'border-box', background: '#1A1918', color: 'white', textDecoration: 'none', fontSize: 14, fontWeight: 600, textAlign: 'center', fontFamily: "'DM Sans', sans-serif", marginBottom: 28 }}>
-            Record Payment
-          </Link>
+            {/* Bell + Profile icons */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 10, marginBottom: 28 }}>
+              <Link to={createPageUrl("Requests")} style={{ position: 'relative', textDecoration: 'none' }}>
+                <div style={{ width: 32, height: 32, borderRadius: 9, background: 'rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#787776" strokeWidth="2" strokeLinecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                </div>
+              </Link>
+              <Link to={createPageUrl("Profile")} style={{ textDecoration: 'none' }}>
+                <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(3,172,234,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+                </div>
+              </Link>
+            </div>
 
           <RightSection title={`How ${format(today, 'MMMM')} is going`}>
             <div style={{ marginBottom: 16 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 6 }}>
                 <span style={{ fontSize: 13, color: '#787776' }}>Received</span>
-                <span style={{ fontSize: 14, fontWeight: 700, color: LENDER_GREEN, letterSpacing: '-0.01em' }}>{formatMoney(monthlyReceived)}</span>
+                <span style={{ fontSize: 14, fontWeight: 700, color: '#03ACEA', letterSpacing: '-0.01em' }}>{formatMoney(monthlyReceived)}</span>
               </div>
-              <div style={{ height: 6, borderRadius: 3, background: 'rgba(82,183,136,0.12)', overflow: 'hidden' }}>
-                <div style={{ height: '100%', borderRadius: 3, background: LENDER_GREEN, width: `${monthlyExpectedReceive > 0 ? Math.min((monthlyReceived / monthlyExpectedReceive) * 100, 100) : 0}%`, transition: 'width 0.8s ease-out' }} />
+              <div style={{ height: 6, borderRadius: 3, background: 'rgba(3,172,234,0.1)', overflow: 'hidden' }}>
+                <div style={{ height: '100%', borderRadius: 3, background: '#03ACEA', width: `${monthlyExpectedReceive > 0 ? Math.min((monthlyReceived / monthlyExpectedReceive) * 100, 100) : 0}%`, transition: 'width 0.8s ease-out' }} />
               </div>
               <div style={{ fontSize: 11, color: '#C5C3C0', marginTop: 4 }}>of {formatMoney(monthlyExpectedReceive)} expected</div>
             </div>
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 6 }}>
                 <span style={{ fontSize: 13, color: '#787776' }}>Paid out</span>
-                <span style={{ fontSize: 14, fontWeight: 700, color: '#7EC0EA', letterSpacing: '-0.01em' }}>{formatMoney(monthlyPaidOut)}</span>
+                <span style={{ fontSize: 14, fontWeight: 700, color: '#1D5B94', letterSpacing: '-0.01em' }}>{formatMoney(monthlyPaidOut)}</span>
               </div>
-              <div style={{ height: 6, borderRadius: 3, background: 'rgba(126,192,234,0.15)', overflow: 'hidden' }}>
-                <div style={{ height: '100%', borderRadius: 3, background: '#7EC0EA', width: `${monthlyExpectedPay > 0 ? Math.min((monthlyPaidOut / monthlyExpectedPay) * 100, 100) : 0}%`, transition: 'width 0.8s ease-out' }} />
+              <div style={{ height: 6, borderRadius: 3, background: 'rgba(29,91,148,0.1)', overflow: 'hidden' }}>
+                <div style={{ height: '100%', borderRadius: 3, background: '#1D5B94', width: `${monthlyExpectedPay > 0 ? Math.min((monthlyPaidOut / monthlyExpectedPay) * 100, 100) : 0}%`, transition: 'width 0.8s ease-out' }} />
               </div>
               <div style={{ fontSize: 11, color: '#C5C3C0', marginTop: 4 }}>of {formatMoney(monthlyExpectedPay)} expected</div>
             </div>
@@ -477,8 +482,8 @@ export default function Upcoming() {
                     <div key={loan.id}>
                       <div style={{ fontSize: 12, color: '#1A1918', fontWeight: 500, marginBottom: 8, lineHeight: 1.4 }}>{headerText}</div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <div style={{ flex: 1, height: 6, borderRadius: 3, background: isLender ? 'rgba(82,183,136,0.12)' : 'rgba(126,192,234,0.15)', overflow: 'hidden' }}>
-                          <div key={`al-${idx}-${activeAnimKey}`} style={{ height: '100%', borderRadius: 3, background: isLender ? LENDER_GREEN : '#7EC0EA', width: `${pct}%`, animation: `barGrowRight 0.8s ease-out ${idx * 0.08}s both` }} />
+                        <div style={{ flex: 1, height: 6, borderRadius: 3, background: isLender ? 'rgba(3,172,234,0.1)' : 'rgba(29,91,148,0.1)', overflow: 'hidden' }}>
+                          <div key={`al-${idx}-${activeAnimKey}`} style={{ height: '100%', borderRadius: 3, background: isLender ? '#03ACEA' : '#1D5B94', width: `${pct}%`, animation: `barGrowRight 0.8s ease-out ${idx * 0.08}s both` }} />
                         </div>
                         <span style={{ fontSize: 11, fontWeight: 700, color: '#9B9A98', flexShrink: 0 }}>{pct}%</span>
                       </div>
@@ -489,6 +494,7 @@ export default function Upcoming() {
               </div>
             </RightSection>
           )}
+          </div>
         </div>
 
       </div>
