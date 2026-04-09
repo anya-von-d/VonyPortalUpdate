@@ -771,7 +771,7 @@ export default function Home() {
       <DashboardSidebar activePage="Dashboard" user={user} />
 
       {/* ── MESH THREE-COLUMN LAYOUT ── */}
-      <div className="mesh-layout" style={{ maxWidth: 1080, margin: '0 auto', padding: '88px 24px 60px 24px', display: 'grid', gridTemplateColumns: '160px 1fr 230px', gap: 0, alignItems: 'start' }}>
+      <div className="mesh-layout" style={{ maxWidth: 1200, margin: '0 auto', padding: '88px 8px 60px 8px', display: 'grid', gridTemplateColumns: '160px 1fr 240px', gap: 0, alignItems: 'start' }}>
 
         {/* ── LEFT: Sidebar nav ── */}
         <div className="mesh-left" style={{ paddingRight: 20, borderRight: '1px solid rgba(0,0,0,0.07)', position: 'sticky', top: 88 }}>
@@ -881,9 +881,20 @@ export default function Home() {
             <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 4 }}>{format(today, 'EEEE, MMMM d')}</div>
           </div>
 
-          {/* Three summary bars */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 24 }}>
-            {/* Next payment due */}
+          {/* Notification banner */}
+          {notifCount > 0 && (
+            <Link to={createPageUrl("Requests")} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderRadius: 10, background: 'rgba(3,172,234,0.05)', border: '1px solid rgba(3,172,234,0.12)', textDecoration: 'none', marginBottom: 16 }}>
+              <div style={{ width: 26, height: 26, borderRadius: 7, background: 'rgba(3,172,234,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2" strokeLinecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              </div>
+              <span style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', flex: 1 }}>You have <strong>{notifCount}</strong> new notification{notifCount !== 1 ? 's' : ''}</span>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#C5C3C0" strokeWidth="2" strokeLinecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </Link>
+          )}
+
+          {/* Three summary cards — side by side */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10, marginBottom: 24 }}>
+            {/* Next due */}
             {(() => {
               const days = nextBorrowerPayment ? Math.ceil((nextBorrowerPayment.date.getTime() - Date.now()) / 86400000) : null;
               const isLate = days !== null && days < 0;
@@ -891,15 +902,17 @@ export default function Home() {
               const badgeColor = isLate ? '#E8726E' : days !== null && days <= 3 ? '#F59E0B' : '#9B9A98';
               const badgeBg = isLate ? 'rgba(232,114,110,0.08)' : days !== null && days <= 3 ? 'rgba(245,158,11,0.08)' : 'rgba(0,0,0,0.04)';
               return (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px', borderRadius: 10, background: isLate ? 'rgba(232,114,110,0.04)' : 'rgba(0,0,0,0.02)', border: `1px solid ${isLate ? 'rgba(232,114,110,0.15)' : 'rgba(0,0,0,0.06)'}` }}>
-                  <span style={{ fontSize: 10, fontWeight: 700, color: '#C5C3C0', letterSpacing: '0.08em', textTransform: 'uppercase', flexShrink: 0, width: 68 }}>Next due</span>
+                <div style={{ padding: '12px 14px', borderRadius: 10, background: isLate ? 'rgba(232,114,110,0.04)' : 'rgba(0,0,0,0.025)', border: `1px solid ${isLate ? 'rgba(232,114,110,0.15)' : 'rgba(0,0,0,0.07)'}` }}>
+                  <div style={{ fontSize: 9, fontWeight: 700, color: '#C5C3C0', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 8 }}>Next due</div>
                   {nextBorrowerPayment ? (
                     <>
-                      <span style={{ fontSize: 15, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em' }}>{formatMoney(nextBorrowerPayment.payment_amount || 0)}</span>
-                      <span style={{ fontSize: 10, fontWeight: 700, color: badgeColor, background: badgeBg, borderRadius: 6, padding: '2px 7px', flexShrink: 0 }}>{daysLabel}</span>
-                      <span style={{ fontSize: 12, color: '#787776', flex: 1, textAlign: 'right' }}>to {nextBorrowerPayment.firstName}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 4 }}>
+                        <span style={{ fontSize: 17, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em' }}>{formatMoney(nextBorrowerPayment.payment_amount || 0)}</span>
+                        {daysLabel && <span style={{ fontSize: 10, fontWeight: 700, color: badgeColor, background: badgeBg, borderRadius: 6, padding: '2px 7px', flexShrink: 0 }}>{daysLabel}</span>}
+                      </div>
+                      <div style={{ fontSize: 12, color: '#787776' }}>to {nextBorrowerPayment.firstName}</div>
                     </>
-                  ) : <span style={{ fontSize: 12, color: '#9B9A98' }}>Nothing due</span>}
+                  ) : <div style={{ fontSize: 12, color: '#9B9A98' }}>Nothing due</div>}
                 </div>
               );
             })()}
@@ -912,40 +925,34 @@ export default function Home() {
               const badgeColor = isLate ? '#E8726E' : LENDER_GREEN;
               const badgeBg = isLate ? 'rgba(232,114,110,0.08)' : 'rgba(82,183,136,0.10)';
               return (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px', borderRadius: 10, background: 'rgba(82,183,136,0.04)', border: '1px solid rgba(82,183,136,0.15)' }}>
-                  <span style={{ fontSize: 10, fontWeight: 700, color: '#C5C3C0', letterSpacing: '0.08em', textTransform: 'uppercase', flexShrink: 0, width: 68 }}>Incoming</span>
+                <div style={{ padding: '12px 14px', borderRadius: 10, background: 'rgba(82,183,136,0.04)', border: '1px solid rgba(82,183,136,0.15)' }}>
+                  <div style={{ fontSize: 9, fontWeight: 700, color: '#C5C3C0', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 8 }}>Next incoming</div>
                   {nextLenderPayment ? (
                     <>
-                      <span style={{ fontSize: 15, fontWeight: 800, color: LENDER_GREEN, letterSpacing: '-0.02em' }}>{formatMoney(nextLenderPayment.payment_amount || 0)}</span>
-                      <span style={{ fontSize: 10, fontWeight: 700, color: badgeColor, background: badgeBg, borderRadius: 6, padding: '2px 7px', flexShrink: 0 }}>{daysLabel}</span>
-                      <span style={{ fontSize: 12, color: '#787776', flex: 1, textAlign: 'right' }}>from {nextLenderPayment.firstName}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 4 }}>
+                        <span style={{ fontSize: 17, fontWeight: 800, color: LENDER_GREEN, letterSpacing: '-0.02em' }}>{formatMoney(nextLenderPayment.payment_amount || 0)}</span>
+                        {daysLabel && <span style={{ fontSize: 10, fontWeight: 700, color: badgeColor, background: badgeBg, borderRadius: 6, padding: '2px 7px', flexShrink: 0 }}>{daysLabel}</span>}
+                      </div>
+                      <div style={{ fontSize: 12, color: '#787776' }}>from {nextLenderPayment.firstName}</div>
                     </>
-                  ) : <span style={{ fontSize: 12, color: '#9B9A98' }}>None incoming</span>}
+                  ) : <div style={{ fontSize: 12, color: '#9B9A98' }}>None incoming</div>}
                 </div>
               );
             })()}
 
             {/* Overview */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px', borderRadius: 10, background: 'rgba(0,0,0,0.02)', border: '1px solid rgba(0,0,0,0.06)' }}>
-              <span style={{ fontSize: 10, fontWeight: 700, color: '#C5C3C0', letterSpacing: '0.08em', textTransform: 'uppercase', flexShrink: 0, width: 68 }}>Overview</span>
-              <span style={{ fontSize: 12, color: '#787776' }}>Owed to you</span>
-              <span style={{ fontSize: 14, fontWeight: 800, color: LENDER_GREEN, letterSpacing: '-0.02em' }}>{formatMoney(lentRemaining)}</span>
-              <span style={{ fontSize: 12, color: '#C5C3C0' }}>·</span>
-              <span style={{ fontSize: 12, color: '#787776' }}>You owe</span>
-              <span style={{ fontSize: 14, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em' }}>{formatMoney(borrowedRemaining)}</span>
+            <div style={{ padding: '12px 14px', borderRadius: 10, background: 'rgba(0,0,0,0.025)', border: '1px solid rgba(0,0,0,0.07)' }}>
+              <div style={{ fontSize: 9, fontWeight: 700, color: '#C5C3C0', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 8 }}>Overview</div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                <span style={{ fontSize: 11, color: '#787776' }}>Owed to you</span>
+                <span style={{ fontSize: 15, fontWeight: 800, color: LENDER_GREEN, letterSpacing: '-0.02em' }}>{formatMoney(lentRemaining)}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: 11, color: '#787776' }}>You owe</span>
+                <span style={{ fontSize: 15, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em' }}>{formatMoney(borrowedRemaining)}</span>
+              </div>
             </div>
           </div>
-
-          {/* Notification banner */}
-          {notifCount > 0 && (
-            <Link to={createPageUrl("Requests")} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderRadius: 10, background: 'rgba(3,172,234,0.05)', border: '1px solid rgba(3,172,234,0.12)', textDecoration: 'none', marginBottom: 24 }}>
-              <div style={{ width: 26, height: 26, borderRadius: 7, background: 'rgba(3,172,234,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2" strokeLinecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-              </div>
-              <span style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', flex: 1 }}>You have <strong>{notifCount}</strong> new notification{notifCount !== 1 ? 's' : ''}</span>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#C5C3C0" strokeWidth="2" strokeLinecap="round"><polyline points="9 18 15 12 9 6"/></svg>
-            </Link>
-          )}
 
           {/* UPCOMING */}
           <div style={{ marginBottom: 36 }}>
@@ -997,7 +1004,17 @@ export default function Home() {
               <div style={{ padding: '10px 0', fontSize: 13, color: '#9B9A98' }}>No recent activity yet.</div>
             ) : recentActivity.map((item, idx) => (
               <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 0', borderBottom: idx < recentActivity.length - 1 ? '1px solid rgba(0,0,0,0.04)' : 'none' }}>
-                <div style={{ width: 8, height: 8, borderRadius: 2, background: item.color, flexShrink: 0 }} />
+                <div style={{ width: 28, height: 28, borderRadius: 7, background: `${item.color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  {item.icon === 'send' ? (
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={item.color} strokeWidth="2.5" strokeLinecap="round"><polyline points="7 13 12 18 17 13"/><line x1="12" y1="18" x2="12" y2="6"/></svg>
+                  ) : item.icon === 'receive' ? (
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={item.color} strokeWidth="2.5" strokeLinecap="round"><polyline points="17 11 12 6 7 11"/><line x1="12" y1="6" x2="12" y2="18"/></svg>
+                  ) : item.icon === 'check' ? (
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={item.color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  ) : (
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={item.color} strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  )}
+                </div>
                 <div style={{ flex: 1, minWidth: 0, fontSize: 13, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.description}</div>
                 <span style={{ fontSize: 11, color: '#9B9A98', flexShrink: 0 }}>{item.detail}</span>
               </div>

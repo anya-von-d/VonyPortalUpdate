@@ -1,98 +1,55 @@
-import React, { useState, useEffect } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import React, { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Loan, Payment, PublicProfile } from "@/entities/all";
 import { useAuth } from "@/lib/AuthContext";
-import { format, startOfMonth, endOfMonth, addMonths, addDays, startOfWeek, endOfWeek, isSameMonth, isSameDay } from "date-fns";
+import {
+  format, startOfMonth, endOfMonth, addMonths, addDays,
+  startOfWeek, endOfWeek, isSameMonth, isSameDay,
+} from "date-fns";
 import { formatMoney } from "@/components/utils/formatMoney";
 import { daysUntil as daysUntilDate } from "@/components/utils/dateUtils";
 import DashboardSidebar from "@/components/DashboardSidebar";
 
 const SHADOW = '0px 50px 40px rgba(0,0,0,0.02), 0px 50px 40px rgba(0,0,0,0.04), 0px 20px 40px rgba(0,0,0,0.08), 0px 3px 10px rgba(0,0,0,0.12)';
-
-// ── Mini calendar widget for Summary view ──
-function MiniCalendar({ today, paymentDates }) {
-  const monthStart = startOfMonth(today);
-  const monthEnd = endOfMonth(today);
-  const calStart = startOfWeek(monthStart);
-  const calEnd = endOfWeek(monthEnd);
-  const days = [];
-  let d = calStart;
-  while (d <= calEnd) { days.push(new Date(d)); d = addDays(d, 1); }
-
-  const hasPayment = (day) => paymentDates.some(pd => isSameDay(pd.date, day));
-  const getPaymentType = (day) => {
-    const match = paymentDates.find(pd => isSameDay(pd.date, day));
-    return match ? match.type : null;
-  };
-
-  return (
-    <div>
-      {/* Month at top */}
-      <div style={{ textAlign: 'center', marginBottom: 12 }}>
-        <span style={{ fontSize: 15, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em' }}>
-          {format(today, 'MMMM yyyy')}
-        </span>
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 0, marginBottom: 6 }}>
-        {['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d => (
-          <div key={d} style={{ textAlign: 'center', fontSize: 11, fontWeight: 600, color: '#787776', padding: '8px 0' }}>{d}</div>
-        ))}
-      </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2 }}>
-        {days.map((day, i) => {
-          const inMonth = isSameMonth(day, today);
-          const isToday = isSameDay(day, new Date());
-          const hasPmt = hasPayment(day);
-          const pmtType = getPaymentType(day);
-          return (
-            <div key={i} style={{
-              textAlign: 'center', padding: '6px 2px', borderRadius: 8, fontSize: 12, position: 'relative',
-              color: !inMonth ? '#C7C6C4' : isToday ? 'white' : '#1A1918',
-              fontWeight: isToday ? 700 : 400,
-              background: isToday ? '#54A6CF' : hasPmt && pmtType === 'incoming' ? 'rgba(84,166,207,0.08)' : hasPmt ? 'rgba(84,166,207,0.06)' : 'transparent',
-            }}>
-              {format(day, 'd')}
-              {hasPmt && !isToday && (
-                <div style={{ width: 4, height: 4, borderRadius: '50%', background: pmtType === 'incoming' ? '#54A6CF' : '#7EC0EA', margin: '2px auto 0' }} />
-              )}
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Key at bottom */}
-      <div style={{ display: 'flex', justifyContent: 'center', gap: 20, marginTop: 14, paddingTop: 12, borderTop: '1px solid rgba(0,0,0,0.06)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: '#787776' }}>
-          <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#54A6CF' }} /> Owed to you
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: '#787776' }}>
-          <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#7EC0EA' }} /> You owe
-        </div>
-      </div>
-    </div>
-  );
-}
+const LENDER_GREEN = '#52B788';
 
 export default function Upcoming() {
-  const { user: authUser, userProfile, isLoadingAuth, navigateToLogin } = useAuth();
-  const [searchParams] = useSearchParams();
-  const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'summary');
+  const { user: authUser, userProfile, isLoadingAuth, navigateToLogin, logout } = useAuth();
   const [loans, setLoans] = useState([]);
   const [payments, setPayments] = useState([]);
   const [publicProfiles, setPublicProfiles] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('summary');
   const [calendarMonth, setCalendarMonth] = useState(new Date());
+  const [moreNavOpen, setMoreNavOpen] = useState(false);
+  const moreNavCloseTimerRef = useRef(null);
+  const activeLoansRef = useRef(null);
+  const [activeAnimKey, setActiveAnimKey] = useState(0);
+  const activeWasOut = useRef(true);
 
   const user = userProfile ? { ...userProfile, id: authUser?.id, email: authUser?.email } : null;
+
+  useEffect(() => {
+    const el = activeLoansRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting && activeWasOut.current) {
+        activeWasOut.current = false;
+        setActiveAnimKey(k => k + 1);
+      } else if (!e.isIntersecting) {
+        activeWasOut.current = true;
+      }
+    }, { threshold: 0.1 });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
 
   const safeEntityCall = async (entityCall, fallback = []) => {
     try {
       const result = await entityCall();
       return Array.isArray(result) ? result : (result ? [result] : fallback);
     } catch (error) {
-      console.error("Entity call failed:", error);
       return fallback;
     }
   };
@@ -109,9 +66,7 @@ export default function Upcoming() {
       setLoans(allLoans);
       setPayments(allPayments);
       setPublicProfiles(allProfiles);
-    } catch (error) {
-      console.error("Data load error:", error);
-    }
+    } catch (e) { console.error(e); }
     setIsLoading(false);
   };
 
@@ -120,40 +75,29 @@ export default function Upcoming() {
     else if (!isLoadingAuth && !authUser) setIsLoading(false);
   }, [isLoadingAuth]);
 
-  // Loading
   if (isLoading) {
     return (
-      <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{ width: 32, height: 32, border: '2px solid #54A6CF', borderTopColor: 'transparent', borderRadius: '50%', margin: '0 auto 16px' }} className="animate-spin" />
-          <p style={{ fontSize: 14, color: '#787776', fontFamily: "'DM Sans', sans-serif" }}>Loading upcoming...</p>
+          <p style={{ fontSize: 14, color: '#787776', fontFamily: "'DM Sans', sans-serif" }}>Loading...</p>
         </div>
       </div>
     );
   }
 
-  // Not logged in
   if (!user) {
     return (
-      <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
-        <div style={{ background: '#F4F4F5', borderRadius: 14, overflow: 'hidden', boxShadow: SHADOW, padding: 32, textAlign: 'center', maxWidth: 400 }}>
-          <h1 style={{ fontSize: '1.8rem', fontWeight: 700, color: '#1A1918', marginBottom: 8, fontFamily: "'DM Sans', sans-serif" }}>
-            Sign in to view upcoming
-          </h1>
-          <p style={{ color: '#787776', marginBottom: 24, fontSize: 14, fontFamily: "'DM Sans', sans-serif" }}>
-            See your scheduled payments and repayments.
-          </p>
-          <button onClick={navigateToLogin} style={{
-            width: '100%', padding: '12px 24px', fontSize: 16, fontWeight: 600,
-            background: '#54A6CF', color: 'white', border: 'none', borderRadius: 12,
-            cursor: 'pointer', fontFamily: "'DM Sans', sans-serif"
-          }}>Sign In</button>
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+        <div style={{ background: 'white', borderRadius: 16, padding: 32, textAlign: 'center', maxWidth: 400, boxShadow: SHADOW }}>
+          <h1 style={{ fontSize: '1.6rem', fontWeight: 700, color: '#1A1918', marginBottom: 8, fontFamily: "'DM Sans', sans-serif" }}>Sign in to view upcoming</h1>
+          <button onClick={navigateToLogin} style={{ width: '100%', padding: '12px 24px', fontSize: 15, fontWeight: 600, background: '#54A6CF', color: 'white', border: 'none', borderRadius: 12, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>Sign In</button>
         </div>
       </div>
     );
   }
 
-  // ── Data computations ──
+  // ── Data ──
   const today = new Date();
   const safeLoans = Array.isArray(loans) ? loans : [];
   const safeProfiles = Array.isArray(publicProfiles) ? publicProfiles : [];
@@ -161,60 +105,65 @@ export default function Upcoming() {
 
   const myLoans = safeLoans.filter(l => l && (l.lender_id === user.id || l.borrower_id === user.id));
   const activeLoans = myLoans.filter(l => l && l.status === 'active' && l.next_payment_date);
+  const lentLoans = myLoans.filter(l => l && l.lender_id === user.id && l.status === 'active');
+  const borrowedLoans = myLoans.filter(l => l && l.borrower_id === user.id && l.status === 'active');
 
   const getProfile = (userId) => safeProfiles.find(p => p.user_id === userId);
 
-  // Build upcoming payment events
+  // Upcoming payment events
   const allPaymentEvents = activeLoans.map(loan => {
     const isLender = loan.lender_id === user.id;
     const otherUserId = isLender ? loan.borrower_id : loan.lender_id;
     const otherProfile = getProfile(otherUserId);
     const days = daysUntilDate(loan.next_payment_date);
     const nextPayDate = new Date(loan.next_payment_date);
-
-    // Calculate remaining amount for this period
     const loanPayments = safePayments.filter(p => p && p.loan_id === loan.id);
     let periodStart = new Date(nextPayDate);
     const freq = loan.payment_frequency || 'monthly';
     if (freq === 'weekly') periodStart.setDate(periodStart.getDate() - 7);
     else if (freq === 'bi-weekly') periodStart.setDate(periodStart.getDate() - 14);
     else periodStart.setMonth(periodStart.getMonth() - 1);
-
     const paidThisPeriod = loanPayments
-      .filter(p => {
-        const pDate = new Date(p.payment_date || p.created_at);
-        return pDate >= periodStart && pDate <= today && p.status === 'completed';
-      })
+      .filter(p => { const pDate = new Date(p.payment_date || p.created_at); return pDate >= periodStart && pDate <= today && p.status === 'completed'; })
       .reduce((sum, p) => sum + (p.amount || 0), 0);
-
     const originalAmount = loan.payment_amount || 0;
     const remainingAmount = Math.max(0, originalAmount - paidThisPeriod);
-
     return {
-      loan,
-      date: nextPayDate,
-      days,
-      amount: remainingAmount,
-      originalAmount,
-      isLender,
+      loan, date: nextPayDate, days, amount: remainingAmount, originalAmount, isLender, frequency: freq,
       username: otherProfile?.username || 'user',
       fullName: otherProfile?.full_name || 'Unknown',
+      firstName: (otherProfile?.full_name || otherProfile?.username || 'User').split(' ')[0],
       initial: (otherProfile?.full_name || 'U').charAt(0).toUpperCase(),
       purpose: loan.purpose || '',
       loanId: loan.id,
-      frequency: freq,
     };
   }).filter(e => e.amount > 0).sort((a, b) => a.date - b.date);
 
-  // Split into next 7 days vs coming later (8-30 days)
+  const overdue = allPaymentEvents.filter(e => e.days < 0);
   const next7Days = allPaymentEvents.filter(e => e.days >= 0 && e.days <= 7);
   const comingLater = allPaymentEvents.filter(e => e.days > 7 && e.days <= 30);
-  const overdue = allPaymentEvents.filter(e => e.days < 0);
 
-  const next7Total = next7Days.reduce((s, e) => s + e.amount, 0);
-  const next7Count = next7Days.length;
-  const laterTotal = comingLater.reduce((s, e) => s + e.amount, 0);
-  const laterCount = comingLater.length;
+  // Monthly stats for right panel
+  const currentMonth = startOfMonth(today);
+  const currentMonthEnd = endOfMonth(today);
+  const monthlyReceived = safePayments.filter(p => {
+    if (!p || p.status !== 'completed') return false;
+    const loan = myLoans.find(l => l.id === p.loan_id);
+    if (!loan || loan.lender_id !== user.id) return false;
+    const pDate = new Date(p.payment_date || p.created_at);
+    return pDate >= currentMonth && pDate <= currentMonthEnd;
+  }).reduce((s, p) => s + (p.amount || 0), 0);
+
+  const monthlyPaidOut = safePayments.filter(p => {
+    if (!p || p.status !== 'completed') return false;
+    const loan = myLoans.find(l => l.id === p.loan_id);
+    if (!loan || loan.borrower_id !== user.id) return false;
+    const pDate = new Date(p.payment_date || p.created_at);
+    return pDate >= currentMonth && pDate <= currentMonthEnd;
+  }).reduce((s, p) => s + (p.amount || 0), 0);
+
+  const monthlyExpectedReceive = lentLoans.reduce((s, l) => s + (l.payment_amount || 0), 0);
+  const monthlyExpectedPay = borrowedLoans.reduce((s, l) => s + (l.payment_amount || 0), 0);
 
   // Calendar data
   const calMonthStart = startOfMonth(calendarMonth);
@@ -225,7 +174,6 @@ export default function Upcoming() {
   let cd = calWeekStart;
   while (cd <= calWeekEnd) { calendarDays.push(new Date(cd)); cd = addDays(cd, 1); }
 
-  // Project payment dates for the calendar month
   const calendarEvents = {};
   activeLoans.forEach(loan => {
     const isLender = loan.lender_id === user.id;
@@ -234,8 +182,6 @@ export default function Upcoming() {
     const freq = loan.payment_frequency || 'monthly';
     const nextPay = new Date(loan.next_payment_date);
     const amount = loan.payment_amount || 0;
-
-    // Project dates into the displayed month
     const projected = [];
     if (freq === 'weekly' || freq === 'bi-weekly') {
       const step = freq === 'weekly' ? 7 : 14;
@@ -246,228 +192,193 @@ export default function Upcoming() {
         d = addDays(d, step);
       }
     } else {
-      // Monthly: same day-of-month
       const dayOfMonth = nextPay.getDate();
       const projDate = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth(), dayOfMonth);
       if (projDate >= calMonthStart && projDate <= calMonthEnd) projected.push(projDate);
     }
-
     projected.forEach(date => {
       const key = format(date, 'yyyy-MM-dd');
       if (!calendarEvents[key]) calendarEvents[key] = [];
-      calendarEvents[key].push({
-        amount,
-        isLender,
-        username: otherProfile?.username || 'user',
-        initial: (otherProfile?.full_name || 'U').charAt(0).toUpperCase(),
-        purpose: loan.purpose || '',
-      });
+      calendarEvents[key].push({ amount, isLender, initial: (otherProfile?.full_name || 'U').charAt(0).toUpperCase(), purpose: loan.purpose || '' });
     });
   });
 
-  // Mini-calendar payment dates for summary view
-  const miniCalPaymentDates = allPaymentEvents.map(e => ({
-    date: e.date,
-    type: e.isLender ? 'incoming' : 'outgoing',
-  }));
-
-  const avatarInitial = (user.full_name || 'U').charAt(0).toUpperCase();
-
-  // Format due date for display
-  const formatDueDate = (date) => {
-    return format(date, "do MMMM 'at' h:mmaaa");
-  };
-
-  // ── Payment list item component ──
-  const PaymentRow = ({ event, showBorder = true }) => {
-    const isOverdue = event.days < 0;
-    const daysAbs = Math.abs(event.days);
-    const daysLabel = isOverdue ? `${daysAbs}d late` : event.days === 0 ? 'today' : `${event.days}d`;
-    const firstName = (event.fullName || event.username || 'User').split(' ')[0];
-    const purpose = event.purpose || '';
-
+  // ── PaymentRow component ──
+  const PaymentRow = ({ event, isLast }) => {
+    const isOverdueItem = event.days < 0;
+    const daysLabel = isOverdueItem ? `${Math.abs(event.days)}d late` : event.days === 0 ? 'today' : `${event.days}d`;
+    const badgeColor = isOverdueItem ? '#E8726E' : event.days <= 3 ? '#F59E0B' : '#9B9A98';
+    const badgeBg = isOverdueItem ? 'rgba(232,114,110,0.08)' : event.days <= 3 ? 'rgba(245,158,11,0.08)' : 'rgba(0,0,0,0.04)';
+    const amtColor = event.isLender ? LENDER_GREEN : '#1A1918';
+    const amtSign = event.isLender ? '+' : '-';
     return (
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 0' }}>
-        {/* Days label */}
-        <div style={{
-          fontSize: 10, fontWeight: 600, color: isOverdue ? '#E8726E' : '#787776',
-          letterSpacing: '0.02em', flexShrink: 0, minWidth: 46, textAlign: 'center',
-        }}>
-          {daysLabel}
-        </div>
-        {/* Main info */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 0', borderBottom: isLast ? 'none' : '1px solid rgba(0,0,0,0.05)' }}>
+        <div style={{ minWidth: 50, flexShrink: 0, fontSize: 10, fontWeight: 700, color: badgeColor, background: badgeBg, borderRadius: 6, padding: '3px 7px', textAlign: 'center' }}>{daysLabel}</div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 13, fontWeight: 500, color: '#1A1918' }}>
-            {event.isLender
-              ? `${firstName} pays you${purpose ? ` for ${purpose}` : ''}`
-              : `Pay ${firstName}${purpose ? ` for ${purpose}` : ''}`}
+          <div style={{ fontSize: 13, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {event.isLender ? <><strong>{event.firstName}</strong> pays you</> : <>Pay <strong>{event.firstName}</strong></>}
+            {event.purpose && <span style={{ color: '#9B9A98', fontWeight: 400 }}> · {event.purpose}</span>}
           </div>
-          <div style={{ fontSize: 11, color: '#787776', marginTop: 2 }}>
-            due {format(event.date, 'do MMM')}
-          </div>
+          <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 1 }}>{format(event.date, 'MMM d')}</div>
         </div>
-        {/* Amount */}
-        <div style={{ fontSize: 14, fontWeight: 600, flexShrink: 0, color: event.isLender ? '#54A6CF' : '#1A1918' }}>
-          {event.isLender ? '+' : '-'}{formatMoney(event.amount)}
-        </div>
+        <span style={{ fontSize: 13, fontWeight: 700, flexShrink: 0, color: amtColor, letterSpacing: '-0.01em' }}>{amtSign}{formatMoney(event.amount)}</span>
       </div>
     );
   };
 
-  const PageCard = ({ title, headerRight, children, style, highlight }) => (
-    <div style={{ background: '#F4F4F5', borderRadius: 14, overflow: 'hidden', border: highlight ? '6px solid #03ACEA' : undefined, boxShadow: highlight ? `0 0 28px 2px rgba(3,172,234,0.7), ${SHADOW}` : SHADOW, ...style }}>
-      <div style={{ padding: '6px 14px 5px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>{title}</span>
-        {headerRight && <div style={{ flexShrink: 0 }}>{headerRight}</div>}
-      </div>
-      <div style={{ background: '#ffffff', margin: '0 5px 5px', borderRadius: 10, overflow: 'hidden' }}>
-        {children}
-      </div>
+  // ── Section heading ──
+  const SectionHead = ({ label, count, total }) => (
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 10, marginBottom: 4, borderBottom: '1px solid rgba(0,0,0,0.07)', marginTop: 28 }}>
+      <span style={{ fontSize: 10, fontWeight: 700, color: '#C5C3C0', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{label}</span>
+      {count > 0 && <span style={{ fontSize: 11, color: '#9B9A98' }}>{count} · {formatMoney(total)}</span>}
+    </div>
+  );
+
+  // ── Right panel section heading ──
+  const RightSection = ({ title, children }) => (
+    <div style={{ marginBottom: 24 }}>
+      <div style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', letterSpacing: '0.01em', marginBottom: 9 }}>{title}</div>
+      <div style={{ height: 1, background: 'rgba(0,0,0,0.08)', marginBottom: 14 }} />
+      {children}
     </div>
   );
 
   return (
-    <div className="home-with-sidebar" style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingTop: 0, background: 'transparent' }}>
+    <div style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', background: 'transparent' }}>
 
       <DashboardSidebar activePage="Upcoming" user={user} />
 
-      {/* Hero */}
-      <div style={{ margin: '8px 10px 0', height: 220, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: 106, position: 'relative' }}>
-        <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0.15, pointerEvents: 'none', zIndex: 0 }} viewBox="0 0 1200 168" preserveAspectRatio="xMidYMid slice">
-          {[{cx:80,cy:40},{cx:200,cy:110},{cx:320,cy:25},{cx:430,cy:160},{cx:540,cy:70},{cx:660,cy:130},{cx:770,cy:35},{cx:890,cy:175},{cx:1000,cy:80},{cx:1100,cy:140},{cx:150,cy:185},{cx:480,cy:100},{cx:720,cy:180},{cx:950,cy:55},{cx:280,cy:195},{cx:620,cy:48},{cx:1050,cy:195}].map((s, i) => (
-            <circle key={i} cx={s.cx} cy={s.cy} r={i % 3 === 0 ? 2.5 : 1.5} fill="white" />
-          ))}
-        </svg>
-        <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 40, fontWeight: 600, color: '#1A1918', margin: 0, letterSpacing: '-0.01em', lineHeight: 1, textAlign: 'center', position: 'relative', zIndex: 1 }}>
-          <span style={{ fontStyle: 'normal' }}>Upcoming</span>
-        </h1>
-        <div style={{ display: 'inline-flex', gap: 2, background: 'rgba(255,255,255,0.5)', borderRadius: 14, padding: 4, border: '1px solid rgba(0,0,0,0.08)', boxShadow: '0 2px 8px rgba(0,0,0,0.06)', marginTop: 16, position: 'relative', zIndex: 1 }}>
-          {[{key:'summary',label:'Summary'},{key:'calendar',label:'Calendar'}].map(tab => (
-            <button key={tab.key} onClick={() => setActiveTab(tab.key)} style={{
-              padding: '8px 18px', borderRadius: 10, border: 'none', cursor: 'pointer',
-              fontSize: 13, fontFamily: "'DM Sans', sans-serif",
-              fontWeight: activeTab === tab.key ? 700 : 400,
-              color: activeTab === tab.key ? '#1A1918' : '#5C5B5A',
-              background: activeTab === tab.key ? 'white' : 'transparent',
-              boxShadow: activeTab === tab.key ? '0 1px 6px rgba(0,0,0,0.1)' : 'none',
-              transition: 'all 0.15s', whiteSpace: 'nowrap',
-            }}>{tab.label}</button>
-          ))}
-        </div>
-      </div>
+      <div className="mesh-layout" style={{ maxWidth: 1200, margin: '0 auto', padding: '88px 8px 60px 8px', display: 'grid', gridTemplateColumns: '160px 1fr 240px', gap: 0, alignItems: 'start' }}>
 
-      {/* ── Content ── */}
-      <div className="dashboard-content-wrap" style={{ maxWidth: 1080, margin: '0 auto', padding: '20px 40px 0', position: 'relative', zIndex: 1 }}>
-        <div className="dashboard-grey-box" style={{ background: '#E5E2DF', borderRadius: 18, padding: 20 }}>
-
-        {activeTab === 'summary' ? (
-          /* ════════ SUMMARY VIEW ════════ */
-          <div className="upcoming-summary-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 24, alignItems: 'start' }}>
-
-            {/* Left column: Payment lists */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              {/* Overdue section */}
-              {overdue.length > 0 && (
-                <PageCard
-                  highlight
-                  title="Overdue"
-                  headerRight={
-                    <span style={{ fontSize: 11, color: '#787776', fontWeight: 500, fontFamily: "'DM Sans', sans-serif" }}>
-                      {overdue.length} payment{overdue.length !== 1 ? 's' : ''} · {formatMoney(overdue.reduce((s, e) => s + e.amount, 0))}
-                    </span>
-                  }
-                >
-                  <div style={{ padding: '6px 16px 14px' }}>
-                    {overdue.map((event, idx) => (
-                      <PaymentRow key={event.loanId + '-ov'} event={event} showBorder={idx < overdue.length - 1} />
-                    ))}
-                  </div>
-                </PageCard>
+        {/* ── LEFT: Sidebar nav ── */}
+        <div className="mesh-left" style={{ paddingRight: 20, borderRight: '1px solid rgba(0,0,0,0.07)', position: 'sticky', top: 88 }}>
+          <nav style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+            {[
+              { label: 'Home', to: '/', active: false },
+              { label: 'Upcoming', to: createPageUrl("Upcoming"), active: true },
+              { label: 'My Loans', to: createPageUrl("YourLoans"), active: false },
+              { label: 'Friends', to: createPageUrl("Friends"), active: false },
+            ].map(({ label, to, active: isActive }) => (
+              <Link key={label} to={to} style={{
+                display: 'block', padding: '8px 10px 8px 4px', borderRadius: 9, textDecoration: 'none',
+                fontSize: 14, fontWeight: isActive ? 600 : 500,
+                color: isActive ? '#1A1918' : '#787776',
+                background: isActive ? 'rgba(0,0,0,0.05)' : 'transparent',
+                fontFamily: "'DM Sans', sans-serif", width: '100%', boxSizing: 'border-box',
+              }}>{label}</Link>
+            ))}
+            <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', margin: '8px 0' }} />
+            {[
+              { label: 'Recent Activity', to: createPageUrl("RecentActivity") },
+              { label: 'Documents', to: createPageUrl("LoanAgreements") },
+              { label: 'Record Payment', to: createPageUrl("RecordPayment") },
+            ].map(({ label, to }) => (
+              <Link key={label} to={to} style={{
+                display: 'block', padding: '7px 10px 7px 4px', borderRadius: 9, textDecoration: 'none',
+                fontSize: 13, fontWeight: 500, color: '#9B9A98',
+                background: 'transparent', fontFamily: "'DM Sans', sans-serif",
+                width: '100%', boxSizing: 'border-box',
+              }}>{label}</Link>
+            ))}
+            {/* More dropdown */}
+            <div style={{ position: 'relative' }}
+              onMouseEnter={() => { if (moreNavCloseTimerRef.current) { clearTimeout(moreNavCloseTimerRef.current); moreNavCloseTimerRef.current = null; } setMoreNavOpen(true); }}
+              onMouseLeave={() => { moreNavCloseTimerRef.current = setTimeout(() => setMoreNavOpen(false), 150); }}
+            >
+              <button style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '7px 10px 7px 4px', borderRadius: 9, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 500, color: '#9B9A98', background: 'transparent', fontFamily: "'DM Sans', sans-serif", width: '100%', boxSizing: 'border-box' }}>
+                More
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="6 9 12 15 18 9" /></svg>
+              </button>
+              {moreNavOpen && (
+                <div style={{ position: 'absolute', top: 'calc(100% + 4px)', left: 0, right: 0, background: 'white', borderRadius: 10, padding: '4px 0', boxShadow: '0 4px 16px rgba(0,0,0,0.10)', zIndex: 50 }}>
+                  {[{ label: 'Learn', to: createPageUrl("ComingSoon") }, { label: 'Loan Help', to: createPageUrl("LoanHelp") }].map(({ label, to }) => (
+                    <Link key={label} to={to} onClick={() => setMoreNavOpen(false)} style={{ display: 'block', padding: '8px 14px', fontSize: 13, fontWeight: 500, color: '#1A1918', textDecoration: 'none', fontFamily: "'DM Sans', sans-serif" }}
+                      onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.04)'}
+                      onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                    >{label}</Link>
+                  ))}
+                  <a href="https://www.vony-lending.com/help" target="_blank" rel="noopener noreferrer" style={{ display: 'block', padding: '8px 14px', fontSize: 13, fontWeight: 500, color: '#1A1918', textDecoration: 'none', fontFamily: "'DM Sans', sans-serif" }}
+                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.04)'}
+                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                  >Help & Support</a>
+                  <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', margin: '4px 14px' }} />
+                  <button onClick={() => { setMoreNavOpen(false); logout?.(); }} style={{ display: 'block', width: '100%', padding: '8px 14px', fontSize: 13, fontWeight: 500, color: '#E8726E', background: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left', fontFamily: "'DM Sans', sans-serif" }}
+                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(232,114,110,0.06)'}
+                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                  >Log Out</button>
+                </div>
               )}
-
-              {/* Next 7 Days */}
-              <PageCard
-                highlight
-                title="Next 7 Days"
-                headerRight={
-                  <span style={{ fontSize: 11, color: '#787776', fontWeight: 500, fontFamily: "'DM Sans', sans-serif" }}>
-                    {next7Count} payment{next7Count !== 1 ? 's' : ''} · {formatMoney(next7Total)}
-                  </span>
-                }
-              >
-                <div style={{ padding: '6px 16px 14px' }}>
-                  {next7Days.length === 0 ? (
-                    <div style={{ textAlign: 'center', padding: '24px 0', color: '#787776', fontSize: 13 }}>No payments in the next 7 days</div>
-                  ) : (
-                    next7Days.map((event, idx) => (
-                      <PaymentRow key={event.loanId + '-7'} event={event} showBorder={idx < next7Days.length - 1} />
-                    ))
-                  )}
-                </div>
-              </PageCard>
-
-              {/* Coming Later */}
-              <PageCard
-                title="Coming Later"
-                headerRight={
-                  <span style={{ fontSize: 11, color: '#9B9A98', fontWeight: 500, fontFamily: "'DM Sans', sans-serif" }}>
-                    {laterCount} payment{laterCount !== 1 ? 's' : ''} · {formatMoney(laterTotal)}
-                  </span>
-                }
-              >
-                <div style={{ padding: '6px 16px 14px' }}>
-                  {comingLater.length === 0 ? (
-                    <div style={{ textAlign: 'center', padding: '24px 0', color: '#787776', fontSize: 13 }}>No payments coming up</div>
-                  ) : (
-                    comingLater.map((event, idx) => (
-                      <PaymentRow key={event.loanId + '-later'} event={event} showBorder={idx < comingLater.length - 1} />
-                    ))
-                  )}
-                </div>
-              </PageCard>
             </div>
+          </nav>
+        </div>
 
-            {/* Right column: Mini calendar */}
-            <div>
-              <PageCard title="This Month">
-                <div style={{ padding: '14px 16px' }}>
-                  <MiniCalendar today={today} paymentDates={miniCalPaymentDates} />
-                </div>
-              </PageCard>
-            </div>
+        {/* ── CENTER ── */}
+        <div className="mesh-center" style={{ padding: '0 32px', minHeight: 500, borderRight: '1px solid rgba(0,0,0,0.07)' }}>
+
+          {/* Heading */}
+          <div style={{ marginBottom: 22 }}>
+            <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 26, fontWeight: 600, fontStyle: 'italic', letterSpacing: '-0.01em', lineHeight: 1.1, color: '#1A1918' }}>Upcoming</div>
+            <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 4 }}>{format(today, 'EEEE, MMMM d')}</div>
           </div>
-        ) : (
-          /* ════════ CALENDAR VIEW ════════ */
-          <PageCard title={format(calendarMonth, 'MMMM yyyy')}>
-            <div style={{ padding: '28px 32px' }}>
-              {/* Month header */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 28 }}>
-                <button onClick={() => setCalendarMonth(addMonths(calendarMonth, -1))} style={{
-                  width: 36, height: 36, borderRadius: '50%', border: '1px solid rgba(0,0,0,0.08)',
-                  background: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                }}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#787776" strokeWidth="2" strokeLinecap="round"><polyline points="15 18 9 12 15 6" /></svg>
+
+          {/* Glass tab selector */}
+          <div style={{ display: 'inline-flex', gap: 2, background: 'rgba(255,255,255,0.6)', borderRadius: 12, padding: 3, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 1px 6px rgba(0,0,0,0.05)', marginBottom: 8, backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}>
+            {[{ key: 'summary', label: 'Summary' }, { key: 'calendar', label: 'Calendar' }].map(tab => (
+              <button key={tab.key} onClick={() => setActiveTab(tab.key)} style={{
+                padding: '7px 18px', borderRadius: 9, border: 'none', cursor: 'pointer',
+                fontSize: 13, fontFamily: "'DM Sans', sans-serif",
+                fontWeight: activeTab === tab.key ? 600 : 500,
+                color: activeTab === tab.key ? '#1A1918' : '#787776',
+                background: activeTab === tab.key ? 'white' : 'transparent',
+                boxShadow: activeTab === tab.key ? '0 1px 6px rgba(0,0,0,0.10)' : 'none',
+                transition: 'all 0.15s',
+              }}>{tab.label}</button>
+            ))}
+          </div>
+
+          {activeTab === 'summary' ? (
+            /* ── SUMMARY VIEW ── */
+            <div>
+              {overdue.length > 0 ? (
+                <>
+                  <SectionHead label="Overdue" count={overdue.length} total={overdue.reduce((s, e) => s + e.amount, 0)} />
+                  {overdue.map((event, idx) => <PaymentRow key={event.loanId + '-ov'} event={event} isLast={idx === overdue.length - 1} />)}
+                </>
+              ) : null}
+
+              <SectionHead label="Next 7 Days" count={next7Days.length} total={next7Days.reduce((s, e) => s + e.amount, 0)} />
+              {next7Days.length === 0 ? (
+                <div style={{ padding: '12px 0', fontSize: 13, color: '#9B9A98' }}>No payments in the next 7 days.</div>
+              ) : next7Days.map((event, idx) => <PaymentRow key={event.loanId + '-7'} event={event} isLast={idx === next7Days.length - 1} />)}
+
+              <SectionHead label="Coming Later" count={comingLater.length} total={comingLater.reduce((s, e) => s + e.amount, 0)} />
+              {comingLater.length === 0 ? (
+                <div style={{ padding: '12px 0', fontSize: 13, color: '#9B9A98' }}>Nothing coming up after 7 days.</div>
+              ) : comingLater.map((event, idx) => <PaymentRow key={event.loanId + '-later'} event={event} isLast={idx === comingLater.length - 1} />)}
+            </div>
+          ) : (
+            /* ── CALENDAR VIEW ── */
+            <div style={{ marginTop: 16 }}>
+              {/* Month nav */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+                <button onClick={() => setCalendarMonth(addMonths(calendarMonth, -1))} style={{ width: 32, height: 32, borderRadius: '50%', border: '1px solid rgba(0,0,0,0.09)', background: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#787776" strokeWidth="2" strokeLinecap="round"><polyline points="15 18 9 12 15 6" /></svg>
                 </button>
-                <h2 style={{ fontSize: '1.4rem', fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', fontFamily: "'DM Sans', sans-serif" }}>
-                  {format(calendarMonth, 'MMMM yyyy')}
-                </h2>
-                <button onClick={() => setCalendarMonth(addMonths(calendarMonth, 1))} style={{
-                  width: 36, height: 36, borderRadius: '50%', border: '1px solid rgba(0,0,0,0.08)',
-                  background: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                }}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#787776" strokeWidth="2" strokeLinecap="round"><polyline points="9 18 15 12 9 6" /></svg>
+                <span style={{ fontSize: 15, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em' }}>{format(calendarMonth, 'MMMM yyyy')}</span>
+                <button onClick={() => setCalendarMonth(addMonths(calendarMonth, 1))} style={{ width: 32, height: 32, borderRadius: '50%', border: '1px solid rgba(0,0,0,0.09)', background: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#787776" strokeWidth="2" strokeLinecap="round"><polyline points="9 18 15 12 9 6" /></svg>
                 </button>
               </div>
 
-              {/* Day of week headers */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', borderBottom: '1px solid rgba(0,0,0,0.06)', marginBottom: 4 }}>
+              {/* Day headers */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', borderBottom: '1px solid rgba(0,0,0,0.07)', marginBottom: 4 }}>
                 {['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d => (
-                  <div key={d} style={{ textAlign: 'center', fontSize: 12, fontWeight: 600, color: '#787776', padding: '10px 0' }}>{d}</div>
+                  <div key={d} style={{ textAlign: 'center', fontSize: 11, fontWeight: 600, color: '#787776', padding: '8px 0' }}>{d}</div>
                 ))}
               </div>
 
               {/* Calendar grid */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 3 }}>
                 {calendarDays.map((day, i) => {
                   const inMonth = isSameMonth(day, calendarMonth);
                   const isToday = isSameDay(day, new Date());
@@ -475,63 +386,32 @@ export default function Upcoming() {
                   const dayEvents = calendarEvents[key] || [];
                   const hasIncoming = dayEvents.some(e => e.isLender);
                   const hasOutgoing = dayEvents.some(e => !e.isLender);
-
-                  let cellBg = 'transparent';
-                  if (hasIncoming && hasOutgoing) cellBg = 'rgba(84,166,207,0.06)';
-                  else if (hasIncoming) cellBg = 'rgba(84,166,207,0.08)';
-                  else if (hasOutgoing) cellBg = 'rgba(84,166,207,0.06)';
-
                   return (
                     <div key={i} style={{
-                      minHeight: 100, padding: '8px 10px', borderRadius: 10,
-                      background: inMonth ? cellBg : 'transparent',
+                      minHeight: 84, padding: '7px 8px', borderRadius: 9,
+                      background: inMonth ? (hasIncoming ? 'rgba(82,183,136,0.06)' : hasOutgoing ? 'rgba(126,192,234,0.07)' : 'transparent') : 'transparent',
                       opacity: inMonth ? 1 : 0.3,
-                      border: isToday ? '2px solid #54A6CF' : '1px solid transparent',
+                      border: isToday ? `1.5px solid ${LENDER_GREEN}` : '1px solid transparent',
                     }}>
-                      {/* Date number */}
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
                         <span style={{
                           display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                          width: isToday ? 26 : 'auto', height: isToday ? 26 : 'auto',
+                          width: isToday ? 22 : 'auto', height: isToday ? 22 : 'auto',
                           borderRadius: '50%', fontSize: 12, fontWeight: isToday ? 700 : 500,
                           color: isToday ? 'white' : inMonth ? '#1A1918' : '#C7C6C4',
-                          background: isToday ? '#54A6CF' : 'transparent',
-                        }}>
-                          {format(day, 'd')}
-                        </span>
-                        {/* Show amounts */}
+                          background: isToday ? LENDER_GREEN : 'transparent',
+                        }}>{format(day, 'd')}</span>
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 1 }}>
-                          {dayEvents.filter(e => e.isLender).length > 0 && (
-                            <span style={{ fontSize: 11, fontWeight: 600, color: '#54A6CF' }}>
-                              +{formatMoney(dayEvents.filter(e => e.isLender).reduce((s, e) => s + e.amount, 0))}
-                            </span>
-                          )}
-                          {dayEvents.filter(e => !e.isLender).length > 0 && (
-                            <span style={{ fontSize: 11, fontWeight: 600, color: '#7EC0EA' }}>
-                              {formatMoney(dayEvents.filter(e => !e.isLender).reduce((s, e) => s + e.amount, 0))}
-                            </span>
-                          )}
+                          {hasIncoming && <span style={{ fontSize: 10, fontWeight: 600, color: LENDER_GREEN }}>+{formatMoney(dayEvents.filter(e => e.isLender).reduce((s, e) => s + e.amount, 0))}</span>}
+                          {hasOutgoing && <span style={{ fontSize: 10, fontWeight: 600, color: '#7EC0EA' }}>{formatMoney(dayEvents.filter(e => !e.isLender).reduce((s, e) => s + e.amount, 0))}</span>}
                         </div>
                       </div>
-                      {/* Avatar circles */}
                       {dayEvents.length > 0 && (
-                        <div style={{ display: 'flex', gap: 4, marginTop: 'auto', paddingTop: 8 }}>
+                        <div style={{ display: 'flex', gap: 3, flexWrap: 'wrap' }}>
                           {dayEvents.slice(0, 3).map((ev, j) => (
-                            <div key={j} style={{
-                              width: 24, height: 24, borderRadius: '50%', fontSize: 10, fontWeight: 600,
-                              display: 'flex', alignItems: 'center', justifyContent: 'center',
-                              background: ev.isLender ? '#54A6CF' : '#7EC0EA', color: 'white',
-                            }}>
-                              {ev.initial}
-                            </div>
+                            <div key={j} style={{ width: 20, height: 20, borderRadius: '50%', fontSize: 9, fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', background: ev.isLender ? LENDER_GREEN : '#7EC0EA', color: 'white' }}>{ev.initial}</div>
                           ))}
-                          {dayEvents.length > 3 && (
-                            <div style={{
-                              width: 24, height: 24, borderRadius: '50%', fontSize: 9, fontWeight: 600,
-                              display: 'flex', alignItems: 'center', justifyContent: 'center',
-                              background: 'rgba(0,0,0,0.06)', color: '#787776',
-                            }}>+{dayEvents.length - 3}</div>
-                          )}
+                          {dayEvents.length > 3 && <div style={{ width: 20, height: 20, borderRadius: '50%', fontSize: 9, fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.06)', color: '#787776' }}>+{dayEvents.length - 3}</div>}
                         </div>
                       )}
                     </div>
@@ -540,28 +420,89 @@ export default function Upcoming() {
               </div>
 
               {/* Legend */}
-              <div style={{ display: 'flex', justifyContent: 'center', gap: 24, marginTop: 20, paddingTop: 16, borderTop: '1px solid rgba(0,0,0,0.06)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: '#787776' }}>
-                  <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#54A6CF' }} /> Owed to you
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: '#787776' }}>
-                  <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#7EC0EA' }} /> You owe
-                </div>
+              <div style={{ display: 'flex', gap: 20, marginTop: 16, paddingTop: 14, borderTop: '1px solid rgba(0,0,0,0.06)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: '#787776' }}><div style={{ width: 8, height: 8, borderRadius: '50%', background: LENDER_GREEN }} /> Owed to you</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: '#787776' }}><div style={{ width: 8, height: 8, borderRadius: '50%', background: '#7EC0EA' }} /> You owe</div>
               </div>
             </div>
-          </PageCard>
-        )}
-
+          )}
         </div>
-        <div className="dashboard-footer" style={{ padding: '12px 28px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: 11, color: '#787776' }}>2026 Vony, Inc. All rights reserved.</span>
-          <div className="dashboard-footer-links" style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-            <a href="https://www.vony-lending.com/terms" target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#787776', textDecoration: 'none' }}>Terms of Service</a>
-            <a href="https://www.vony-lending.com/privacy" target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#787776', textDecoration: 'none' }}>Privacy Center</a>
-            <a href="https://www.vony-lending.com/do-not-sell" target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#787776', textDecoration: 'none' }}>Do not sell or share my personal information</a>
-          </div>
+
+        {/* ── RIGHT PANEL ── */}
+        <div className="mesh-right" style={{ paddingLeft: 28, position: 'sticky', top: 88 }}>
+
+          <Link to={createPageUrl("CreateOffer")} style={{ display: 'block', width: '100%', padding: '12px 16px', borderRadius: 10, boxSizing: 'border-box', background: '#1A1918', color: 'white', textDecoration: 'none', fontSize: 14, fontWeight: 600, textAlign: 'center', fontFamily: "'DM Sans', sans-serif", marginBottom: 9 }}>
+            Create Loan
+          </Link>
+          <Link to={createPageUrl("RecordPayment")} style={{ display: 'block', width: '100%', padding: '12px 16px', borderRadius: 10, boxSizing: 'border-box', background: '#1A1918', color: 'white', textDecoration: 'none', fontSize: 14, fontWeight: 600, textAlign: 'center', fontFamily: "'DM Sans', sans-serif", marginBottom: 28 }}>
+            Record Payment
+          </Link>
+
+          <RightSection title={`How ${format(today, 'MMMM')} is going`}>
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 6 }}>
+                <span style={{ fontSize: 13, color: '#787776' }}>Received</span>
+                <span style={{ fontSize: 14, fontWeight: 700, color: LENDER_GREEN, letterSpacing: '-0.01em' }}>{formatMoney(monthlyReceived)}</span>
+              </div>
+              <div style={{ height: 6, borderRadius: 3, background: 'rgba(82,183,136,0.12)', overflow: 'hidden' }}>
+                <div style={{ height: '100%', borderRadius: 3, background: LENDER_GREEN, width: `${monthlyExpectedReceive > 0 ? Math.min((monthlyReceived / monthlyExpectedReceive) * 100, 100) : 0}%`, transition: 'width 0.8s ease-out' }} />
+              </div>
+              <div style={{ fontSize: 11, color: '#C5C3C0', marginTop: 4 }}>of {formatMoney(monthlyExpectedReceive)} expected</div>
+            </div>
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 6 }}>
+                <span style={{ fontSize: 13, color: '#787776' }}>Paid out</span>
+                <span style={{ fontSize: 14, fontWeight: 700, color: '#7EC0EA', letterSpacing: '-0.01em' }}>{formatMoney(monthlyPaidOut)}</span>
+              </div>
+              <div style={{ height: 6, borderRadius: 3, background: 'rgba(126,192,234,0.15)', overflow: 'hidden' }}>
+                <div style={{ height: '100%', borderRadius: 3, background: '#7EC0EA', width: `${monthlyExpectedPay > 0 ? Math.min((monthlyPaidOut / monthlyExpectedPay) * 100, 100) : 0}%`, transition: 'width 0.8s ease-out' }} />
+              </div>
+              <div style={{ fontSize: 11, color: '#C5C3C0', marginTop: 4 }}>of {formatMoney(monthlyExpectedPay)} expected</div>
+            </div>
+          </RightSection>
+
+          {myLoans.filter(l => l && l.status === 'active').length > 0 && (
+            <RightSection title="Active Loans">
+              <div ref={activeLoansRef} style={{ display: 'flex', flexDirection: 'column', gap: 22 }}>
+                {myLoans.filter(l => l && l.status === 'active').slice(0, 5).map((loan, idx) => {
+                  const isLender = loan.lender_id === user.id;
+                  const otherProfile = safeProfiles.find(p => p.user_id === (isLender ? loan.borrower_id : loan.lender_id));
+                  const totalAmt = loan.total_amount || loan.amount || 0;
+                  const paidAmt = loan.amount_paid || 0;
+                  const pct = totalAmt > 0 ? Math.round((paidAmt / totalAmt) * 100) : 0;
+                  const name = otherProfile?.full_name?.split(' ')[0] || otherProfile?.username || 'User';
+                  const purpose = loan.purpose ? ` for ${loan.purpose}` : '';
+                  const headerText = isLender ? `You lent ${name} ${formatMoney(totalAmt)}${purpose}` : `${name} lent you ${formatMoney(totalAmt)}${purpose}`;
+                  return (
+                    <div key={loan.id}>
+                      <div style={{ fontSize: 12, color: '#1A1918', fontWeight: 500, marginBottom: 8, lineHeight: 1.4 }}>{headerText}</div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <div style={{ flex: 1, height: 6, borderRadius: 3, background: isLender ? 'rgba(82,183,136,0.12)' : 'rgba(126,192,234,0.15)', overflow: 'hidden' }}>
+                          <div key={`al-${idx}-${activeAnimKey}`} style={{ height: '100%', borderRadius: 3, background: isLender ? LENDER_GREEN : '#7EC0EA', width: `${pct}%`, animation: `barGrowRight 0.8s ease-out ${idx * 0.08}s both` }} />
+                        </div>
+                        <span style={{ fontSize: 11, fontWeight: 700, color: '#9B9A98', flexShrink: 0 }}>{pct}%</span>
+                      </div>
+                      <div style={{ fontSize: 11, color: '#C5C3C0', marginTop: 5 }}>{formatMoney(paidAmt)} of {formatMoney(totalAmt)} {isLender ? 'paid back' : 'repaid'}</div>
+                    </div>
+                  );
+                })}
+              </div>
+            </RightSection>
+          )}
+        </div>
+
+      </div>
+
+      {/* Footer */}
+      <div className="dashboard-footer" style={{ maxWidth: 1200, margin: '0 auto', padding: '12px 8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid rgba(0,0,0,0.06)' }}>
+        <span style={{ fontSize: 11, color: '#787776' }}>2026 Vony, Inc. All rights reserved.</span>
+        <div className="dashboard-footer-links" style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+          <a href="https://www.vony-lending.com/terms" target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#787776', textDecoration: 'none' }}>Terms of Service</a>
+          <a href="https://www.vony-lending.com/privacy" target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#787776', textDecoration: 'none' }}>Privacy Center</a>
+          <a href="https://www.vony-lending.com/do-not-sell" target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#787776', textDecoration: 'none' }}>Do not sell or share my personal information</a>
         </div>
       </div>
+
     </div>
   );
 }
