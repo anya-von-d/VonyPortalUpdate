@@ -4,13 +4,6 @@ import { UploadFile } from "@/integrations/Core";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import {
   CheckCircle,
   XCircle,
@@ -276,7 +269,7 @@ export default function Profile() {
     return (
       <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ width: 32, height: 32, border: '2px solid #82F0B9', borderTopColor: 'transparent', borderRadius: '50%', margin: '0 auto 16px' }} className="animate-spin" />
+          <div style={{ width: 32, height: 32, border: '2px solid #03ACEA', borderTopColor: 'transparent', borderRadius: '50%', margin: '0 auto 16px' }} className="animate-spin" />
           <p style={{ fontSize: 14, color: '#787776', fontFamily: "'DM Sans', sans-serif" }}>Loading profile...</p>
         </div>
       </div>
@@ -294,7 +287,7 @@ export default function Profile() {
             </div>
             <h3 style={{ fontSize: 18, fontWeight: 600, color: '#0D0D0C', marginBottom: 8 }}>Connection Error</h3>
             <p style={{ color: '#787776', marginBottom: 16 }}>{error}</p>
-            <Button onClick={loadUserData} className="text-white hover:opacity-90" style={{ background: '#82F0B9' }}>
+            <Button onClick={loadUserData} className="text-white hover:opacity-90" style={{ background: '#03ACEA' }}>
               Try Again
             </Button>
           </div>
@@ -307,145 +300,144 @@ export default function Profile() {
 
   return (
     <div className="home-with-sidebar" style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingTop: 0, background: 'transparent' }}>
+      {/* Bank Account Coming Soon Modal */}
+      {showComingSoonModal && (
+        <div
+          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}
+          onClick={() => setShowComingSoonModal(false)}
+        >
+          <motion.div
+            initial={{ scale: 0.95, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.95, opacity: 0 }}
+            onClick={e => e.stopPropagation()}
+            style={{ background: '#F4F4F5', borderRadius: 20, maxWidth: 440, width: '100%', boxShadow: '0px 50px 40px rgba(0,0,0,0.02), 0px 50px 40px rgba(0,0,0,0.04), 0px 20px 40px rgba(0,0,0,0.08), 0px 3px 10px rgba(0,0,0,0.12)', overflow: 'hidden' }}
+          >
+            {/* Header strip */}
+            <div style={{ padding: '6px 14px 5px', display: 'flex', alignItems: 'center', gap: 6 }}>
+              <Clock size={12} style={{ color: '#9B9A98' }} />
+              <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>Bank Account</span>
+            </div>
+            {/* White inner card */}
+            <div style={{ background: '#ffffff', margin: '0 5px 5px', borderRadius: 14, padding: '28px 28px 24px' }}>
+              <div style={{ width: 48, height: 48, borderRadius: 14, margin: '0 auto 20px', background: 'rgba(3,172,234,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Landmark size={24} style={{ color: '#03ACEA' }} />
+              </div>
+              <h3 style={{ fontSize: 20, fontWeight: 700, color: '#1A1918', margin: '0 0 10px', textAlign: 'center', fontFamily: "'Cormorant Garamond', Georgia, serif", letterSpacing: '-0.01em' }}>
+                Coming Soon
+              </h3>
+              <p style={{ fontSize: 13, color: '#787776', margin: '0 0 8px', textAlign: 'center', lineHeight: 1.6 }}>
+                Bank account connections via Plaid & Dwolla are coming soon! This feature will enable secure bank transfers directly through Vony.
+              </p>
+              <p style={{ fontSize: 12, color: '#9B9A98', margin: '0 0 24px', textAlign: 'center', lineHeight: 1.6 }}>
+                In the meantime, you can use Venmo, Cash App, PayPal, or Zelle for payments.
+              </p>
+              <button
+                onClick={() => setShowComingSoonModal(false)}
+                style={{ width: '100%', padding: '12px 0', borderRadius: 12, border: 'none', background: 'linear-gradient(135deg, #03ACEA 0%, #7C3AED 100%)', color: 'white', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}
+              >
+                Got it!
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
       <DashboardSidebar activePage="Profile" user={user} />
 
-      {/* Hero */}
-      <div className="dash-hero" style={{ margin: '8px 10px 0', height: 168, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 24, position: 'relative' }}>
-        <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0.15, pointerEvents: 'none', zIndex: 0 }} viewBox="0 0 1200 168" preserveAspectRatio="xMidYMid slice">
+      {/* Profile Hero — photo, name, member-since, edit button unboxed */}
+      <div style={{ margin: '8px 10px 0', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '32px 20px 28px', position: 'relative' }}>
+        <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0.15, pointerEvents: 'none', zIndex: 0 }} viewBox="0 0 1200 200" preserveAspectRatio="xMidYMid slice">
           {[{cx:80,cy:40},{cx:200,cy:110},{cx:320,cy:25},{cx:430,cy:160},{cx:540,cy:70},{cx:660,cy:130},{cx:770,cy:35},{cx:890,cy:175},{cx:1000,cy:80},{cx:1100,cy:140},{cx:150,cy:185},{cx:480,cy:100},{cx:720,cy:180},{cx:950,cy:55},{cx:280,cy:195},{cx:620,cy:48},{cx:1050,cy:195}].map((s, i) => (
             <circle key={i} cx={s.cx} cy={s.cy} r={i % 3 === 0 ? 2.5 : 1.5} fill="white" />
           ))}
         </svg>
-        <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 40, fontWeight: 600, color: '#1A1918', margin: 0, letterSpacing: '-0.01em', lineHeight: 1, textAlign: 'center', position: 'relative', zIndex: 1 }}>
-          <span style={{ fontStyle: 'normal' }}>Your Profile</span>
-        </h1>
+
+        {/* Error Alert */}
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            style={{ marginBottom: 16, textAlign: 'left', background: 'rgba(232,114,110,0.08)', borderRadius: 10, padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 8, position: 'relative', zIndex: 1, maxWidth: 400, width: '100%' }}
+          >
+            <XCircle size={18} style={{ color: '#E8726E', flexShrink: 0 }} />
+            <p style={{ fontSize: 13, color: '#E8726E', margin: 0 }}>{error}</p>
+          </motion.div>
+        )}
+
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, position: 'relative', zIndex: 1 }}>
+          {/* Photo + hover overlay */}
+          <div style={{ position: 'relative', display: 'inline-block' }}>
+            <img
+              src={formData.profile_picture_url || `https://ui-avatars.com/api/?name=${encodeURIComponent((user.full_name || 'User').charAt(0))}&background=678AFB&color=fff&size=128`}
+              alt="Profile"
+              style={{ width: 88, height: 88, borderRadius: '50%', objectFit: 'cover', border: '3px solid rgba(255,255,255,0.8)', boxShadow: '0 4px 16px rgba(0,0,0,0.12)', display: 'block' }}
+            />
+            <button
+              onClick={() => setShowPhotoMenu(!showPhotoMenu)}
+              disabled={isSaving}
+              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.45)', borderRadius: '50%', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', cursor: 'pointer', opacity: 0, transition: 'opacity 0.2s' }}
+              onMouseEnter={e => e.currentTarget.style.opacity = '1'}
+              onMouseLeave={e => e.currentTarget.style.opacity = '0'}
+            >
+              <Camera size={22} />
+            </button>
+            <input type="file" ref={fileInputRef} onChange={handleProfilePictureChange} style={{ display: 'none' }} accept="image/*" />
+            <input type="file" ref={cameraInputRef} onChange={handleProfilePictureChange} style={{ display: 'none' }} accept="image/*" capture="environment" />
+
+            {showPhotoMenu && (
+              <motion.div
+                ref={photoMenuRef}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                style={{ position: 'absolute', top: 'calc(100% + 8px)', left: '50%', transform: 'translateX(-50%)', background: 'white', borderRadius: 12, boxShadow: '0 8px 32px rgba(0,0,0,0.12)', border: '1px solid rgba(0,0,0,0.08)', overflow: 'hidden', zIndex: 10, minWidth: 200 }}
+              >
+                <button onClick={() => fileInputRef.current?.click()} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '11px 16px', width: '100%', background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", textAlign: 'left' }}
+                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.03)'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'none'}
+                >
+                  <Image size={16} style={{ color: '#787776' }} /> Choose from Library
+                </button>
+                <button onClick={() => cameraInputRef.current?.click()} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '11px 16px', width: '100%', background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", textAlign: 'left', borderTop: '1px solid rgba(0,0,0,0.06)' }}
+                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.03)'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'none'}
+                >
+                  <Camera size={16} style={{ color: '#787776' }} /> Take Photo
+                </button>
+                {formData.profile_picture_url && (
+                  <button onClick={handleRemovePhoto} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '11px 16px', width: '100%', background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: '#E8726E', fontFamily: "'DM Sans', sans-serif", textAlign: 'left', borderTop: '1px solid rgba(0,0,0,0.06)' }}
+                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(232,114,110,0.06)'}
+                    onMouseLeave={e => e.currentTarget.style.background = 'none'}
+                  >
+                    <Trash2 size={16} style={{ color: '#E8726E' }} /> Remove Profile Photo
+                  </button>
+                )}
+              </motion.div>
+            )}
+          </div>
+
+          {/* Name */}
+          <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 32, fontWeight: 600, color: '#1A1918', margin: 0, lineHeight: 1 }}>
+            {formData.full_name || user.full_name}
+          </h2>
+
+          {/* Member since */}
+          <p style={{ fontSize: 13, color: '#787776', margin: 0, fontFamily: "'DM Sans', sans-serif" }}>
+            Member since {user.created_at ? new Date(user.created_at).getFullYear() : new Date().getFullYear()}
+          </p>
+
+          {/* Edit Profile Photo button */}
+          <button
+            onClick={() => setShowPhotoMenu(!showPhotoMenu)}
+            disabled={isSaving}
+            style={{ background: 'rgba(0,0,0,0.05)', backdropFilter: 'blur(10px)', color: '#1A1918', border: '1px solid rgba(0,0,0,0.1)', borderRadius: 10, padding: '8px 20px', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}
+          >
+            Edit Profile Photo
+          </button>
+        </div>
       </div>
 
       <div className="dashboard-content-wrap" style={{ maxWidth: 1080, margin: '0 auto', padding: '20px 40px 0', position: 'relative', zIndex: 1 }}>
         <div className="dashboard-grey-box" style={{ background: '#E5E2DF', borderRadius: 18, padding: 20 }}>
-
-        {/* Coming Soon Modal */}
-        <Dialog open={showComingSoonModal} onOpenChange={setShowComingSoonModal}>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2 text-xl">
-                <Clock className="w-6 h-6" style={{ color: '#82F0B9' }} />
-                Feature Coming Soon
-              </DialogTitle>
-            </DialogHeader>
-            <div className="py-4">
-              <p style={{ color: '#787776' }}>
-                Bank account connections via Plaid & Dwolla are coming soon! This feature will enable secure bank transfers directly through Vony.
-              </p>
-              <p className="text-sm mt-3" style={{ color: '#787776' }}>
-                In the meantime, you can use Venmo, Cash App, PayPal, or Zelle for payments.
-              </p>
-            </div>
-            <Button
-              onClick={() => setShowComingSoonModal(false)}
-              className="w-full text-white hover:opacity-90"
-              style={{ background: '#82F0B9' }}
-            >
-              Got it!
-            </Button>
-          </DialogContent>
-        </Dialog>
-
-        {/* Profile avatar card */}
-        <PageCard title="Profile" style={{ marginBottom: 16 }}>
-          <div style={{ padding: '24px 20px', textAlign: 'center' }}>
-            {/* Error Alert */}
-            {error && (
-              <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-red-50 border border-red-200 rounded-lg p-4"
-                style={{ marginBottom: 20, textAlign: 'left' }}
-              >
-                <div className="flex items-center gap-2">
-                  <XCircle className="w-5 h-5 text-red-600" />
-                  <p className="text-red-800">{error}</p>
-                </div>
-              </motion.div>
-            )}
-
-            <div className="relative inline-block group" style={{ position: 'relative', display: 'inline-block' }}>
-              <img
-                src={formData.profile_picture_url || `https://ui-avatars.com/api/?name=${encodeURIComponent((user.full_name || 'User').charAt(0))}&background=678AFB&color=fff&size=128`}
-                alt="Profile"
-                className="w-24 h-24 md:w-32 md:h-32 rounded-full mx-auto object-cover border-4 border-white/80 shadow-lg"
-              />
-              <button
-                onClick={() => setShowPhotoMenu(!showPhotoMenu)}
-                className="absolute inset-0 w-full h-full bg-black/50 rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity"
-                disabled={isSaving}
-              >
-                <Camera className="w-8 h-8"/>
-              </button>
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleProfilePictureChange}
-                className="hidden"
-                accept="image/*"
-              />
-              <input
-                type="file"
-                ref={cameraInputRef}
-                onChange={handleProfilePictureChange}
-                className="hidden"
-                accept="image/*"
-                capture="environment"
-              />
-
-              {showPhotoMenu && (
-                <motion.div
-                  ref={photoMenuRef}
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="absolute top-full mt-2 left-1/2 -translate-x-1/2 bg-white rounded-lg shadow-lg border border-slate-200 overflow-hidden z-10"
-                >
-                  <button
-                    onClick={() => fileInputRef.current?.click()}
-                    className="flex items-center gap-3 px-4 py-3 w-full hover:bg-slate-50 transition-colors text-left"
-                  >
-                    <Image className="w-5 h-5 text-slate-600" />
-                    <span className="text-sm font-medium text-slate-700">Choose from Library</span>
-                  </button>
-                  <button
-                    onClick={() => cameraInputRef.current?.click()}
-                    className="flex items-center gap-3 px-4 py-3 w-full hover:bg-slate-50 transition-colors text-left border-t border-slate-100"
-                  >
-                    <Camera className="w-5 h-5 text-slate-600" />
-                    <span className="text-sm font-medium text-slate-700">Take Photo</span>
-                  </button>
-                  {formData.profile_picture_url && (
-                    <button
-                      onClick={handleRemovePhoto}
-                      className="flex items-center gap-3 px-4 py-3 w-full hover:bg-red-50 transition-colors text-left border-t border-slate-100"
-                    >
-                      <Trash2 className="w-5 h-5 text-red-600" />
-                      <span className="text-sm font-medium text-red-600">Remove Profile Photo</span>
-                    </button>
-                  )}
-                </motion.div>
-              )}
-            </div>
-            <h2 style={{ color: '#1A1918', fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '2rem', fontWeight: 600, marginTop: 16, marginBottom: 4 }}>
-              {formData.full_name || user.full_name}
-            </h2>
-            <p style={{ color: '#787776', fontSize: 13, margin: '0 0 16px' }}>
-              Member since {user.created_at ? new Date(user.created_at).getFullYear() : new Date().getFullYear()}
-            </p>
-            <button
-              onClick={() => setShowPhotoMenu(!showPhotoMenu)}
-              disabled={isSaving}
-              style={{ background: 'rgba(0,0,0,0.05)', backdropFilter: 'blur(10px)', color: '#1A1918', border: '1px solid rgba(0,0,0,0.1)', borderRadius: 10, padding: '8px 20px', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}
-            >
-              Edit Profile Photo
-            </button>
-          </div>
-        </PageCard>
 
         {/* Page Content */}
         <div className="grid lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8 w-full" style={{ paddingBottom: 40 }}>
@@ -480,7 +472,7 @@ export default function Profile() {
                       onClick={handleSave}
                       disabled={isSaving || usernameError || isCheckingUsername}
                       className="text-white font-semibold hover:opacity-90"
-                      style={{ background: '#82F0B9', fontSize: 12, padding: '4px 12px', height: 'auto' }}
+                      style={{ background: '#03ACEA', fontSize: 12, padding: '4px 12px', height: 'auto' }}
                     >
                       {isSaving ? 'Saving...' : 'Save Changes'}
                     </Button>
@@ -489,7 +481,7 @@ export default function Profile() {
                   <Button
                     onClick={() => setIsEditing(true)}
                     className="text-white font-semibold hover:opacity-90"
-                    style={{ background: '#82F0B9', fontSize: 12, padding: '4px 12px', height: 'auto' }}
+                    style={{ background: '#03ACEA', fontSize: 12, padding: '4px 12px', height: 'auto' }}
                   >
                     Edit
                   </Button>
@@ -498,7 +490,7 @@ export default function Profile() {
             >
               <div style={{ padding: '16px 16px' }}>
                 {/* Inner box with fields */}
-                <div className="space-y-4" style={{ background: 'rgba(130,240,185,0.06)', borderRadius: 12, padding: 16 }}>
+                <div className="space-y-4" style={{ background: 'rgba(3,172,234,0.06)', borderRadius: 12, padding: 16 }}>
                   <div className="grid md:grid-cols-2 gap-3 md:gap-4">
                     <div className="space-y-1">
                       <Label htmlFor="full_name" className="text-xs font-medium" style={{ color: '#787776' }}>
@@ -595,7 +587,7 @@ export default function Profile() {
                   </p>
                   <Button
                     className="w-full text-white hover:opacity-90"
-                    style={{ background: '#82F0B9' }}
+                    style={{ background: '#03ACEA' }}
                     onClick={() => setShowComingSoonModal(true)}
                   >
                     <Landmark className="w-4 h-4 mr-2" />
@@ -614,36 +606,31 @@ export default function Profile() {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium">Email Verified</span>
-                    <Badge className="bg-green-100 text-green-800 border-green-200">
-                      <CheckCircle className="w-3 h-3 mr-1" />
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12, fontWeight: 600, padding: '3px 8px', borderRadius: 6, background: 'rgba(22,163,74,0.12)', color: '#16A34A', border: '1px solid rgba(22,163,74,0.2)', fontFamily: "'DM Sans', sans-serif" }}>
+                      <CheckCircle size={12} />
                       Verified
-                    </Badge>
+                    </span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium">Phone Verified</span>
-                    <Badge className="bg-gray-100 text-gray-800 border-gray-200">
-                      <XCircle className="w-3 h-3 mr-1" />
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12, fontWeight: 600, padding: '3px 8px', borderRadius: 6, background: 'rgba(0,0,0,0.05)', color: '#787776', border: '1px solid rgba(0,0,0,0.1)', fontFamily: "'DM Sans', sans-serif" }}>
+                      <XCircle size={12} />
                       Not Verified
-                    </Badge>
+                    </span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium">Profile Complete</span>
-                    <Badge className={user.full_name && user.username ?
-                      "bg-green-100 text-green-800 border-green-200" :
-                      "bg-gray-100 text-gray-800 border-gray-200"
-                    }>
-                      {user.full_name && user.username ? (
-                        <>
-                          <CheckCircle className="w-3 h-3 mr-1" />
-                          Complete
-                        </>
-                      ) : (
-                        <>
-                          <XCircle className="w-3 h-3 mr-1" />
-                          Incomplete
-                        </>
-                      )}
-                    </Badge>
+                    {user.full_name && user.username ? (
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12, fontWeight: 600, padding: '3px 8px', borderRadius: 6, background: 'rgba(22,163,74,0.12)', color: '#16A34A', border: '1px solid rgba(22,163,74,0.2)', fontFamily: "'DM Sans', sans-serif" }}>
+                        <CheckCircle size={12} />
+                        Complete
+                      </span>
+                    ) : (
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12, fontWeight: 600, padding: '3px 8px', borderRadius: 6, background: 'rgba(0,0,0,0.05)', color: '#787776', border: '1px solid rgba(0,0,0,0.1)', fontFamily: "'DM Sans', sans-serif" }}>
+                        <XCircle size={12} />
+                        Incomplete
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>

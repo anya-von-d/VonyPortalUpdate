@@ -245,12 +245,12 @@ export default function Friends() {
     `https://ui-avatars.com/api/?name=${encodeURIComponent((name || 'U').charAt(0))}&background=678AFB&color=fff&size=128`;
 
   const PageCard = ({ title, headerRight, children, style, className }) => (
-    <div className={className} style={{ background: '#F4F4F5', borderRadius: 14, overflow: 'hidden', boxShadow: SHADOW, ...style }}>
-      <div style={{ padding: '6px 14px 5px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+    <div className={className} style={{ background: '#F4F4F5', borderRadius: 14, overflow: 'hidden', boxShadow: SHADOW, display: 'flex', flexDirection: 'column', ...style }}>
+      <div style={{ padding: '6px 14px 5px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
         <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>{title}</span>
         {headerRight && <div style={{ flexShrink: 0 }}>{headerRight}</div>}
       </div>
-      <div style={{ background: '#ffffff', margin: 0, borderRadius: 0, overflow: 'hidden' }}>
+      <div style={{ background: '#ffffff', margin: '0 5px 5px', borderRadius: 10, overflow: 'hidden', flex: 1 }}>
         {children}
       </div>
     </div>
@@ -296,7 +296,7 @@ export default function Friends() {
         <div className="dashboard-grey-box" style={{ background: '#E5E2DF', borderRadius: 18, padding: 20 }}>
 
         {/* Two-Column Layout: Friends Left, Search + Requests Right */}
-        <div className="friends-two-col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+        <div className="friends-two-col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, alignItems: 'stretch' }}>
 
           {/* Left Column: Your Friends */}
           <PageCard title="Your Friends" className="friends-left-col friends-card" style={{ minHeight: 'calc(100vh - 280px)' }}>
@@ -383,7 +383,7 @@ export default function Friends() {
           </PageCard>
 
           {/* Right Column: Search + Friend Requests */}
-          <div className="friends-right-col" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <div className="friends-right-col" style={{ display: 'flex', flexDirection: 'column', gap: 16, height: '100%' }}>
 
             {/* Search for Friends */}
             <PageCard title="Search for Friends" className="friends-card" style={{ minHeight: 'calc(100vh - 280px)' }}>

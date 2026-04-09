@@ -341,15 +341,15 @@ export default function Upcoming() {
         <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 40, fontWeight: 600, color: '#1A1918', margin: 0, letterSpacing: '-0.01em', lineHeight: 1, textAlign: 'center', position: 'relative', zIndex: 1 }}>
           <span style={{ fontStyle: 'normal' }}>Upcoming</span>
         </h1>
-        <div style={{ display: 'inline-flex', gap: 2, background: 'rgba(0,0,0,0.06)', borderRadius: 10, padding: 3, marginTop: 16, position: 'relative', zIndex: 1 }}>
+        <div style={{ display: 'inline-flex', gap: 2, background: 'rgba(255,255,255,0.5)', borderRadius: 14, padding: 4, border: '1px solid rgba(0,0,0,0.08)', boxShadow: '0 2px 8px rgba(0,0,0,0.06)', marginTop: 16, position: 'relative', zIndex: 1 }}>
           {[{key:'summary',label:'Summary'},{key:'calendar',label:'Calendar'}].map(tab => (
             <button key={tab.key} onClick={() => setActiveTab(tab.key)} style={{
-              padding: '6px 16px', borderRadius: 8, border: 'none', cursor: 'pointer',
+              padding: '8px 18px', borderRadius: 10, border: 'none', cursor: 'pointer',
               fontSize: 13, fontFamily: "'DM Sans', sans-serif",
-              fontWeight: activeTab === tab.key ? 600 : 500,
-              color: activeTab === tab.key ? '#1A1918' : 'rgba(0,0,0,0.45)',
+              fontWeight: activeTab === tab.key ? 700 : 400,
+              color: activeTab === tab.key ? '#1A1918' : '#5C5B5A',
               background: activeTab === tab.key ? 'white' : 'transparent',
-              boxShadow: activeTab === tab.key ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
+              boxShadow: activeTab === tab.key ? '0 1px 6px rgba(0,0,0,0.1)' : 'none',
               transition: 'all 0.15s', whiteSpace: 'nowrap',
             }}>{tab.label}</button>
           ))}
