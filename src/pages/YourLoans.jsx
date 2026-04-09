@@ -1118,7 +1118,7 @@ export default function YourLoans() {
                             <p style={{ fontSize: 11, color: '#1A1918', lineHeight: 1.4 }}>{activity.description}</p>
                             {activity.isAwaitingConfirmation && <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[8px] font-semibold bg-[#F59E0B]/20 text-[#F59E0B] border border-[#F59E0B]/30 whitespace-nowrap">Awaiting Confirmation</span>}
                           </div>
-                          <p style={{ fontSize: 9, color: '#C7C6C4', marginTop: 2 }}>{format(activity.timestamp, 'MMM d, yyyy · h:mm a')}</p>
+                          <p style={{ fontSize: 9, color: '#9B9A98', marginTop: 2 }}>{format(activity.timestamp, 'MMM d, yyyy · h:mm a')}</p>
                         </div>
                       </div>
                     ))}
@@ -1249,7 +1249,7 @@ export default function YourLoans() {
                       else if (pr.hasPendingPayments && !pr.hasConfirmedPayments) status = 'pending';
                       else if (pr.isPast && !pr.hasAnyPayments) status = 'missed';
                       else status = 'upcoming';
-                      const expectedAmount = pr.scheduledAmount || (loanAnalysis.recalcPayment > 0 ? loanAnalysis.recalcPayment : paymentAmt);
+                      const expectedAmount = loanAnalysis.originalPaymentAmount || paymentAmt;
                       const paidAmount = pr.actualPaid || 0;
                       const paidPercentage = status === 'completed' ? 100 : (status === 'partial' && expectedAmount > 0) ? Math.min(99, (paidAmount / expectedAmount) * 100) : 0;
                       return { number: pr.period, date: pr.date, amount: expectedAmount, paidAmount, paidPercentage, status };
@@ -1280,8 +1280,8 @@ export default function YourLoans() {
                             <div key={row.number} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: 8, borderRadius: 10, background: 'rgba(0,0,0,0.03)' }}>
                               <PieCircle percentage={row.paidPercentage} ringColor={cfg.ringColor} fillColor={cfg.fillColor} number={row.number} />
                               <div style={{ flex: 1, minWidth: 0 }}>
-                                <p style={{ fontSize: 11, color: '#787776', margin: 0, fontWeight: 500 }}>Expected: ${row.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-                                {row.paidAmount > 0 && <p style={{ fontSize: 12, fontWeight: 700, color: '#16A34A', margin: '1px 0 0' }}>Paid: ${row.paidAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>}
+                                <p style={{ fontSize: 11, color: '#4B4A48', margin: 0, fontWeight: 600 }}>Expected: ${row.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                                {row.paidAmount > 0 && <p style={{ fontSize: 12, fontWeight: 700, color: '#15803D', margin: '1px 0 0' }}>Paid: ${row.paidAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>}
                                 <p style={{ fontSize: 10, color: '#C7C6C4', margin: '1px 0 0' }}>{format(row.date, 'MMM d, yyyy')}</p>
                               </div>
                               <span style={{ flexShrink: 0, padding: '4px 10px', borderRadius: 8, fontSize: 10, fontWeight: 600, background: cfg.bg, color: cfg.text }}>{cfg.label}</span>
