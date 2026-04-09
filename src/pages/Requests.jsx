@@ -600,9 +600,6 @@ export default function Requests() {
                         {item.type === 'payment_confirm' && `${item.name} recorded a payment of $${item.amount?.toFixed(2)}`}
                         {item.type === 'term_change' && `${item.name} sent you a loan change request`}
                       </p>
-                      <p style={{ fontSize: 12, color: '#787776', lineHeight: 1.5, margin: 0 }}>
-                        {item.timestamp && item.timestamp.getTime() > 0 ? format(item.timestamp, 'MMM d') : ''}
-                      </p>
                     </div>
                     <div style={{ flexShrink: 0 }}>
                       {item.type === 'friend' && (
