@@ -50,7 +50,7 @@ function SingleSelectDropdown({ options, selected, onChange }) {
     <div ref={ref} style={{ position: 'relative' }}>
       <button onClick={() => setOpen(!open)} style={{
         display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 10,
-        border: '1px solid rgba(0,0,0,0.08)', background: selected !== 'all' ? 'rgba(130,240,185,0.08)' : 'white',
+        border: '1px solid rgba(0,0,0,0.08)', background: selected !== 'all' ? 'rgba(3,172,234,0.08)' : 'white',
         fontSize: 13, fontWeight: 500, color: '#1A1918', cursor: 'pointer',
         fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap', transition: 'background 0.15s',
       }}>
@@ -67,7 +67,7 @@ function SingleSelectDropdown({ options, selected, onChange }) {
             <button key={opt.id} onClick={() => { onChange(opt.id); setOpen(false); }} style={{
               display: 'block', width: '100%', textAlign: 'left', padding: '8px 10px', borderRadius: 8,
               border: 'none', cursor: 'pointer', fontSize: 13, color: '#1A1918',
-              background: selected === opt.id ? 'rgba(130,240,185,0.08)' : 'transparent',
+              background: selected === opt.id ? 'rgba(3,172,234,0.08)' : 'transparent',
               fontWeight: selected === opt.id ? 600 : 400, fontFamily: "'DM Sans', sans-serif",
             }}
               onMouseEnter={e => { if (selected !== opt.id) e.currentTarget.style.background = 'rgba(0,0,0,0.03)'; }}
@@ -126,7 +126,7 @@ export default function RecordPayment() {
         particleCount: 100,
         spread: 80,
         origin: { y: 0.55 },
-        colors: ['#03ACEA', '#7C3AED', '#82F0B9', '#ffffff', '#35B276'],
+        colors: ['#03ACEA', '#7C3AED', '#60C4F8', '#ffffff', '#A78BFA'],
         zIndex: 9999,
       });
       setTimeout(() => {
@@ -141,7 +141,7 @@ export default function RecordPayment() {
           particleCount: 50,
           spread: 60,
           origin: { x: 0.8, y: 0.6 },
-          colors: ['#82F0B9', '#35B276'],
+          colors: ['#03ACEA', '#7C3AED'],
           zIndex: 9999,
         });
       }, 250);
@@ -265,8 +265,8 @@ export default function RecordPayment() {
       setCurrentStep(3);
 
       // Fire confetti
-      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#82F0B9', '#2563EB', '#7792F4', '#BB98E8'] });
-      setTimeout(() => confetti({ particleCount: 50, spread: 100, origin: { y: 0.5 }, colors: ['#82F0B9', '#2563EB'] }), 300);
+      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#03ACEA', '#7C3AED', '#60C4F8', '#A78BFA'] });
+      setTimeout(() => confetti({ particleCount: 50, spread: 100, origin: { y: 0.5 }, colors: ['#03ACEA', '#7C3AED'] }), 300);
 
       setTimeout(() => loadData(), 2000);
     } catch (err) {
@@ -350,7 +350,7 @@ export default function RecordPayment() {
         <DashboardSidebar activePage="RecordPayment" user={user} />
         <div className="dashboard-content-wrap" style={{ maxWidth: 1080, margin: '0 auto', padding: '20px 40px 0', position: 'relative', zIndex: 1 }}>
           <div style={{ background: '#F4F4F5', borderRadius: 14, overflow: 'hidden', boxShadow: SHADOW, padding: 40, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <div style={{ width: 32, height: 32, border: '2px solid #82F0B9', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite', marginBottom: 12 }} />
+            <div style={{ width: 32, height: 32, border: '2px solid #03ACEA', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite', marginBottom: 12 }} />
             <p style={{ fontSize: 13, color: '#787776' }}>Loading...</p>
           </div>
           <div style={{ padding: '20px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -449,12 +449,12 @@ export default function RecordPayment() {
                   {currentStep === 1 && selectedLoan && (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
                       {/* Loan sentence */}
-                      <div style={{ background: '#DBEDFE', borderRadius: 14, padding: 16 }}>
+                      <div style={{ background: 'rgba(3,172,234,0.08)', borderRadius: 14, padding: 16 }}>
                         <p style={{ fontSize: 15, fontWeight: 500, color: '#1A1918', margin: 0, lineHeight: 1.6 }}>
                           {nameOrYouCapitalized(isUserLender(selectedLoan) ? selectedLoan.borrower_id : user?.id)} paid {nameOrYou(isUserLender(selectedLoan) ? user?.id : selectedLoan.lender_id)}{' '}
                           {amount && parseFloat(amount) > 0
                             ? <strong>${parseFloat(amount).toFixed(2)}</strong>
-                            : <span style={{ color: '#2563EB', borderBottom: '2px solid #2563EB', paddingBottom: 1, fontWeight: 600, letterSpacing: '0.04em' }}>$__</span>
+                            : <span style={{ color: '#03ACEA', borderBottom: '2px solid #03ACEA', paddingBottom: 1, fontWeight: 600, letterSpacing: '0.04em' }}>$__</span>
                           }{' '}for {selectedLoan.purpose || 'this loan'}
                         </p>
                       </div>
@@ -472,7 +472,7 @@ export default function RecordPayment() {
                               border: '1px solid rgba(0,0,0,0.08)', background: 'white',
                               fontSize: 15, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", outline: 'none',
                             }}
-                            onFocus={e => e.target.style.borderColor = 'rgba(84,166,207,0.4)'}
+                            onFocus={e => e.target.style.borderColor = 'rgba(3,172,234,0.4)'}
                             onBlur={e => e.target.style.borderColor = 'rgba(0,0,0,0.08)'}
                           />
                         </div>
@@ -498,13 +498,13 @@ export default function RecordPayment() {
                                 transition={{ type: 'spring', stiffness: 420, damping: 18 }}
                                 style={{
                                   display: 'flex', alignItems: 'center', gap: 8, padding: '10px 12px', borderRadius: 12,
-                                  border: isSelected ? '2px solid #54A6CF' : '1px solid rgba(0,0,0,0.08)',
-                                  background: isSelected ? 'rgba(84,166,207,0.1)' : 'white',
+                                  border: isSelected ? '2px solid #03ACEA' : '1px solid rgba(0,0,0,0.08)',
+                                  background: isSelected ? 'rgba(3,172,234,0.1)' : 'white',
                                   cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", fontSize: 12, fontWeight: 500, color: '#1A1918',
-                                  boxShadow: isSelected ? '0 0 0 3px rgba(84,166,207,0.2)' : 'none',
+                                  boxShadow: isSelected ? '0 0 0 3px rgba(3,172,234,0.2)' : 'none',
                                 }}
                               >
-                                <Icon size={16} style={{ color: isSelected ? '#54A6CF' : method.color }} />
+                                <Icon size={16} style={{ color: isSelected ? '#03ACEA' : method.color }} />
                                 {method.label}
                               </motion.button>
                             );
@@ -535,7 +535,7 @@ export default function RecordPayment() {
 
                       <button onClick={handleContinue} style={{
                         width: '100%', padding: '12px 0', borderRadius: 12, border: 'none',
-                        background: '#54A6CF', color: 'white', fontSize: 14, fontWeight: 600,
+                        background: '#03ACEA', color: 'white', fontSize: 14, fontWeight: 600,
                         cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                       }}>
                         Continue <ArrowRight size={16} />
@@ -546,19 +546,19 @@ export default function RecordPayment() {
                   {currentStep === 2 && selectedLoan && (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                        <div style={{ background: '#DBEDFE', borderRadius: 12, padding: 14 }}>
+                        <div style={{ background: 'rgba(3,172,234,0.08)', borderRadius: 12, padding: 14 }}>
                           <p style={{ fontSize: 11, color: '#787776', margin: 0 }}>Amount</p>
                           <p style={{ fontSize: 20, fontWeight: 700, color: '#1A1918', margin: '4px 0 0' }}>${parseFloat(amount).toFixed(2)}</p>
                         </div>
-                        <div style={{ background: 'rgba(37,99,235,0.08)', borderRadius: 12, padding: 14 }}>
+                        <div style={{ background: 'rgba(3,172,234,0.08)', borderRadius: 12, padding: 14 }}>
                           <p style={{ fontSize: 11, color: '#787776', margin: 0 }}>Method</p>
                           <p style={{ fontSize: 15, fontWeight: 600, color: '#1A1918', margin: '4px 0 0' }}>{PAYMENT_METHODS.find(m => m.id === paymentMethod)?.label}</p>
                         </div>
-                        <div style={{ background: '#DBEDFE', borderRadius: 12, padding: 14 }}>
+                        <div style={{ background: 'rgba(3,172,234,0.08)', borderRadius: 12, padding: 14 }}>
                           <p style={{ fontSize: 11, color: '#787776', margin: 0 }}>Date</p>
                           <p style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', margin: '4px 0 0' }}>{format(new Date(paymentDate + 'T12:00:00'), 'MMM d, yyyy')}</p>
                         </div>
-                        <div style={{ background: 'rgba(37,99,235,0.08)', borderRadius: 12, padding: 14 }}>
+                        <div style={{ background: 'rgba(3,172,234,0.08)', borderRadius: 12, padding: 14 }}>
                           <p style={{ fontSize: 11, color: '#787776', margin: 0 }}>To</p>
                           <p style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', margin: '4px 0 0' }}>
                             {nameOrYouCapitalized(isUserLender(selectedLoan) ? selectedLoan.borrower_id : selectedLoan.lender_id)}
@@ -566,9 +566,9 @@ export default function RecordPayment() {
                         </div>
                       </div>
 
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px', borderRadius: 10, background: 'rgba(84,166,207,0.08)' }}>
-                        <Clock size={14} style={{ color: '#54A6CF', flexShrink: 0 }} />
-                        <span style={{ fontSize: 12, color: '#54A6CF' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px', borderRadius: 10, background: 'rgba(3,172,234,0.08)' }}>
+                        <Clock size={14} style={{ color: '#03ACEA', flexShrink: 0 }} />
+                        <span style={{ fontSize: 12, color: '#03ACEA' }}>
                           {getOtherParty(selectedLoan).full_name || getOtherParty(selectedLoan).username} will need to confirm this payment
                         </span>
                       </div>
@@ -590,7 +590,7 @@ export default function RecordPayment() {
                         </button>
                         <button onClick={handleConfirmPayment} disabled={isProcessing} style={{
                           flex: 2, padding: '12px 0', borderRadius: 12, border: 'none',
-                          background: isProcessing ? '#a0b8f8' : '#54A6CF', color: 'white', fontSize: 14, fontWeight: 600,
+                          background: isProcessing ? 'rgba(3,172,234,0.5)' : '#03ACEA', color: 'white', fontSize: 14, fontWeight: 600,
                           cursor: isProcessing ? 'default' : 'pointer', fontFamily: "'DM Sans', sans-serif",
                           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                         }}>
@@ -703,13 +703,13 @@ export default function RecordPayment() {
                           }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                               <div style={{
-                                width: 28, height: 28, borderRadius: '50%', background: 'rgba(130,240,185,0.1)',
+                                width: 28, height: 28, borderRadius: '50%', background: 'rgba(3,172,234,0.1)',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden',
                               }}>
                                 {other.profile_picture_url ? (
                                   <img src={other.profile_picture_url} alt="" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
                                 ) : (
-                                  <span style={{ fontSize: 12, fontWeight: 600, color: '#54A6CF' }}>{(other.full_name || '?').charAt(0).toUpperCase()}</span>
+                                  <span style={{ fontSize: 12, fontWeight: 600, color: '#03ACEA' }}>{(other.full_name || '?').charAt(0).toUpperCase()}</span>
                                 )}
                               </div>
                               <div style={{ flex: 1, minWidth: 0 }}>
@@ -734,15 +734,15 @@ export default function RecordPayment() {
                 <PageCard title="Recommended Payment">
                   <div style={{ padding: '12px 9px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <div>
-                      <p style={{ fontSize: 22, fontWeight: 700, color: '#54A6CF', margin: 0 }}>${getSuggestedPayment(selectedLoan).toFixed(2)}</p>
+                      <p style={{ fontSize: 22, fontWeight: 700, color: '#03ACEA', margin: 0 }}>${getSuggestedPayment(selectedLoan).toFixed(2)}</p>
                       {selectedLoan.next_payment_date && (
                         <p style={{ fontSize: 11, color: '#787776', margin: '4px 0 0' }}>Due {format(new Date(selectedLoan.next_payment_date + 'T12:00:00'), 'MMM d, yyyy')}</p>
                       )}
                     </div>
                     <button onClick={() => { setAmount(getSuggestedPayment(selectedLoan).toFixed(2)); }} style={{
                       padding: '8px 16px', borderRadius: 10, border: 'none',
-                      background: 'rgba(84,166,207,0.08)', fontSize: 12, fontWeight: 600,
-                      color: '#54A6CF', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
+                      background: 'rgba(3,172,234,0.08)', fontSize: 12, fontWeight: 600,
+                      color: '#03ACEA', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
                     }}>
                       Use Recommended
                     </button>
@@ -791,7 +791,7 @@ export default function RecordPayment() {
                             disabled={processingId === payment.id}
                             style={{
                               padding: '6px 14px', borderRadius: 10, border: 'none',
-                              background: '#54A6CF', fontSize: 11, fontWeight: 600, color: 'white',
+                              background: '#03ACEA', fontSize: 11, fontWeight: 600, color: 'white',
                               cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
                               opacity: processingId === payment.id ? 0.5 : 1,
                             }}
