@@ -72,7 +72,7 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
   };
 
   const active = (...pages) => pages.includes(activePage);
-  const moreActive = active('RecentActivity', 'LoanAgreements', 'RecordPayment');
+  const moreActive = active('RecentActivity', 'LoanAgreements', 'RecordPayment', 'ComingSoon');
 
   const linkStyle = (...pages) => ({
     display: 'inline-flex', alignItems: 'center', gap: 5,
@@ -182,9 +182,10 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
 
                       <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', margin: '4px 4px' }} />
 
-                      <button style={{ ...dropdownItemStyle, color: '#9B9A98', cursor: 'default' }}>
-                        Learn <span style={comingSoonBadge}>Soon</span>
-                      </button>
+                      <Link to={createPageUrl("ComingSoon")} onClick={() => setMoreOpen(false)}
+                        style={{ ...dropdownItemStyle, fontWeight: active('ComingSoon') ? 600 : 400 }}>
+                        Learn
+                      </Link>
                       <button style={{ ...dropdownItemStyle, color: '#9B9A98', cursor: 'default' }}>
                         Loan Help <span style={comingSoonBadge}>Soon</span>
                       </button>
@@ -306,6 +307,7 @@ export default function DashboardSidebar({ activePage = "Dashboard", user, tabs,
               { label: 'Recent Activity', to: createPageUrl("RecentActivity"),  pages: ['RecentActivity'] },
               { label: 'Documents',       to: createPageUrl("LoanAgreements"),  pages: ['LoanAgreements'] },
               { label: 'Record Payment',  to: createPageUrl("RecordPayment"),   pages: ['RecordPayment'] },
+              { label: 'Learn',           to: createPageUrl("ComingSoon"),       pages: ['ComingSoon'] },
               { label: 'Notifications',   to: createPageUrl("Requests"),        pages: ['Requests'] },
               { label: 'Profile',       to: createPageUrl("Profile"),         pages: ['Profile'] },
             ].map(({ label, to, pages }) => (
