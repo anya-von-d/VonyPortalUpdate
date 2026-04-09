@@ -548,7 +548,7 @@ export default function Requests() {
             term_change:     { color: '#D97706', bg: 'rgba(217,119,6,0.12)',  svg: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> },
           };
 
-          const rowStyle = { background: '#ffffff', borderRadius: 10, display: 'flex', alignItems: 'center', gap: 14, padding: '14px 16px' };
+          const rowStyle = { background: '#ffffff', borderRadius: 10, display: 'flex', alignItems: 'center', gap: 14, padding: '9px 16px' };
 
           if (reminders.length === 0 && allItems.length === 0) {
             return (
@@ -565,7 +565,7 @@ export default function Requests() {
           }
 
           return (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               {/* Reminders always first */}
               {reminders.map(reminder => {
                 const isOverdue = reminder.type.startsWith('overdue');
