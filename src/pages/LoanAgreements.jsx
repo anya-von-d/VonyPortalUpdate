@@ -60,7 +60,7 @@ function SingleSelectDropdown({ options, selected, onChange }) {
         onClick={() => setOpen(!open)}
         style={{
           display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 10,
-          border: '1px solid rgba(0,0,0,0.08)', background: selected !== 'all' ? 'rgba(130,240,185,0.08)' : 'white',
+          border: '1px solid rgba(0,0,0,0.08)', background: selected !== 'all' ? 'rgba(3,172,234,0.08)' : 'white',
           fontSize: 13, fontWeight: 500, color: '#1A1918', cursor: 'pointer',
           fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap', transition: 'background 0.15s',
         }}
@@ -81,7 +81,7 @@ function SingleSelectDropdown({ options, selected, onChange }) {
               style={{
                 display: 'block', width: '100%', textAlign: 'left', padding: '8px 10px', borderRadius: 8,
                 border: 'none', cursor: 'pointer', fontSize: 13, color: '#1A1918',
-                background: selected === opt.id ? 'rgba(130,240,185,0.08)' : 'transparent',
+                background: selected === opt.id ? 'rgba(3,172,234,0.08)' : 'transparent',
                 fontWeight: selected === opt.id ? 600 : 400, fontFamily: "'DM Sans', sans-serif",
                 transition: 'background 0.1s',
               }}
@@ -133,7 +133,7 @@ function AmountFilterDropdown({ amountMode, setAmountMode, amountVal1, setAmount
     <div ref={ref} style={{ position: 'relative' }}>
       <button onClick={() => setOpen(!open)} style={{
         display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 10,
-        border: '1px solid rgba(0,0,0,0.08)', background: isFiltered ? 'rgba(130,240,185,0.08)' : 'white',
+        border: '1px solid rgba(0,0,0,0.08)', background: isFiltered ? 'rgba(3,172,234,0.08)' : 'white',
         fontSize: 13, fontWeight: 500, color: '#1A1918', cursor: 'pointer',
         fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap', transition: 'background 0.15s',
       }}>
@@ -274,8 +274,8 @@ export default function LoanAgreements() {
 
   const getStatusBadgeStyle = (status) => {
     switch(status) {
-      case 'active': return { background: 'rgba(130,240,185,0.1)', color: '#82F0B9', border: '1px solid rgba(130,240,185,0.2)' };
-      case 'completed': return { background: 'rgba(130,240,185,0.1)', color: '#82F0B9', border: '1px solid rgba(130,240,185,0.2)' };
+      case 'active': return { background: 'rgba(22,163,74,0.18)', color: '#16A34A', border: '1px solid rgba(22,163,74,0.2)' };
+      case 'completed': return { background: 'rgba(0,0,0,0.03)', color: '#787776', border: '1px solid rgba(0,0,0,0.1)' };
       case 'cancelled': return { background: 'rgba(232,114,110,0.08)', color: '#E8726E', border: '1px solid rgba(232,114,110,0.2)' };
       default: return { background: 'rgba(120,119,118,0.08)', color: '#787776', border: '1px solid rgba(120,119,118,0.15)' };
     }
@@ -965,7 +965,7 @@ export default function LoanAgreements() {
         <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>{title}</span>
         {headerRight && <div style={{ flexShrink: 0 }}>{headerRight}</div>}
       </div>
-      <div style={{ background: '#ffffff', margin: '0 5px 5px', borderRadius: 10, overflow: 'hidden' }}>
+      <div style={{ background: '#ffffff', margin: '0 5px 5px', borderRadius: 10, overflow: style?.overflow ?? 'hidden' }}>
         {children}
       </div>
     </div>
@@ -1025,7 +1025,7 @@ export default function LoanAgreements() {
             ))}
           </svg>
           <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 40, fontWeight: 600, color: '#1A1918', margin: 0, letterSpacing: '-0.01em', lineHeight: 1, textAlign: 'center', position: 'relative', zIndex: 1 }}>
-            <span style={{ fontStyle: 'normal' }}>Loan Agreements</span>
+            <span style={{ fontStyle: 'normal' }}>Documents</span>
           </h1>
         </div>
 
@@ -1148,7 +1148,7 @@ export default function LoanAgreements() {
                             </div>
                             {/* Category */}
                             <div className="la-col-category" style={{ display: 'flex', flex: 1.2, minWidth: 0, alignItems: 'center' }}>
-                              <span style={{ fontSize: 12, fontWeight: 500, color: isLender ? '#22c55e' : '#2563EB' }}>{categoryLabel}</span>
+                              <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918' }}>{categoryLabel}</span>
                             </div>
                             {/* Status */}
                             <div className="la-col-status" style={{ display: 'flex', width: 110, justifyContent: 'center', flexShrink: 0 }}>
@@ -1181,77 +1181,63 @@ export default function LoanAgreements() {
                               borderTop: '1px solid rgba(0,0,0,0.05)',
                               display: 'flex', gap: 8, flexWrap: 'wrap',
                             }}>
-                              <button
-                                onClick={(e) => { e.stopPropagation(); openPopup('promissory', agreement); }}
-                                style={{
-                                  padding: '8px 16px', borderRadius: 10, border: '1px solid rgba(0,0,0,0.08)',
-                                  background: 'white', fontSize: 12, fontWeight: 500, color: '#1A1918',
-                                  cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6,
-                                  fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap', transition: 'background 0.15s',
-                                }}
-                                onMouseEnter={e => e.currentTarget.style.background = 'rgba(130,240,185,0.06)'}
-                                onMouseLeave={e => e.currentTarget.style.background = 'white'}
-                              >
-                                <FileText size={14} style={{ color: '#82F0B9' }} />
-                                Promissory Note
-                                <div
-                                  style={{ position: 'relative' }}
-                                  onMouseEnter={(e) => { e.stopPropagation(); setActiveInfoTooltip(`promissory-${agreement.id}`); }}
-                                  onMouseLeave={() => setActiveInfoTooltip(null)}
-                                  onClick={(e) => e.stopPropagation()}
+                              {/* Promissory Note */}
+                              <div style={{ position: 'relative' }}>
+                                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#1A1918', borderRadius: 9, padding: '7px 12px', border: 'none', cursor: 'pointer' }}
+                                  onClick={(e) => { e.stopPropagation(); openPopup('promissory', agreement); }}
+                                  onMouseEnter={e => e.currentTarget.style.background = '#333'}
+                                  onMouseLeave={e => e.currentTarget.style.background = '#1A1918'}
                                 >
-                                  <div style={{ width: 16, height: 16, borderRadius: '50%', background: 'rgba(130,240,185,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'help' }}>
-                                    <span style={{ fontSize: 10, fontWeight: 700, color: '#82F0B9' }}>i</span>
-                                  </div>
-                                  {activeInfoTooltip === `promissory-${agreement.id}` && (
-                                    <div style={{ position: 'absolute', left: 24, top: 0, zIndex: 50, width: 224, background: '#1A1918', color: 'white', fontSize: 11, borderRadius: 10, padding: 12, boxShadow: '0 8px 24px rgba(0,0,0,0.15)', whiteSpace: 'normal' }}>
-                                      A promissory note is a legal document where the borrower promises to repay the loan amount plus any interest by a specific date.
-                                    </div>
-                                  )}
+                                  <p style={{ fontSize: 11, fontWeight: 600, color: 'white', margin: 0 }}>Promissory Note</p>
+                                  <span
+                                    style={{ width: 15, height: 15, borderRadius: '50%', background: 'white', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
+                                    onMouseEnter={(e) => { e.stopPropagation(); setActiveInfoTooltip(`promissory-${agreement.id}`); }}
+                                    onMouseLeave={(e) => { e.stopPropagation(); setActiveInfoTooltip(null); }}
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
+                                    <span style={{ fontSize: 9, fontWeight: 800, color: '#1A1918', lineHeight: 1 }}>i</span>
+                                  </span>
                                 </div>
-                              </button>
-                              <button
-                                onClick={(e) => { e.stopPropagation(); openPopup('amortization', agreement); }}
-                                style={{
-                                  padding: '8px 16px', borderRadius: 10, border: '1px solid rgba(0,0,0,0.08)',
-                                  background: 'white', fontSize: 12, fontWeight: 500, color: '#1A1918',
-                                  cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6,
-                                  fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap', transition: 'background 0.15s',
-                                }}
-                                onMouseEnter={e => e.currentTarget.style.background = 'rgba(130,240,185,0.06)'}
-                                onMouseLeave={e => e.currentTarget.style.background = 'white'}
-                              >
-                                <FileText size={14} style={{ color: '#2563EB' }} />
-                                Amortization Schedule
-                                <div
-                                  style={{ position: 'relative' }}
-                                  onMouseEnter={(e) => { e.stopPropagation(); setActiveInfoTooltip(`amortization-${agreement.id}`); }}
-                                  onMouseLeave={() => setActiveInfoTooltip(null)}
-                                  onClick={(e) => e.stopPropagation()}
+                                {activeInfoTooltip === `promissory-${agreement.id}` && (
+                                  <div style={{ position: 'absolute', top: 'calc(100% + 6px)', left: 0, background: 'white', borderRadius: 9, padding: '8px 11px', boxShadow: '0 4px 16px rgba(0,0,0,0.13)', width: 190, zIndex: 200, border: '1px solid rgba(0,0,0,0.07)' }}>
+                                    <p style={{ fontSize: 11, color: '#1A1918', margin: 0, lineHeight: 1.55 }}>A signed legal document where the borrower promises to repay a specific amount under agreed terms.</p>
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Amortization Schedule */}
+                              <div style={{ position: 'relative' }}>
+                                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#1A1918', borderRadius: 9, padding: '7px 12px', border: 'none', cursor: 'pointer' }}
+                                  onClick={(e) => { e.stopPropagation(); openPopup('amortization', agreement); }}
+                                  onMouseEnter={e => e.currentTarget.style.background = '#333'}
+                                  onMouseLeave={e => e.currentTarget.style.background = '#1A1918'}
                                 >
-                                  <div style={{ width: 16, height: 16, borderRadius: '50%', background: 'rgba(130,240,185,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'help' }}>
-                                    <span style={{ fontSize: 10, fontWeight: 700, color: '#82F0B9' }}>i</span>
-                                  </div>
-                                  {activeInfoTooltip === `amortization-${agreement.id}` && (
-                                    <div style={{ position: 'absolute', left: 24, top: 0, zIndex: 50, width: 224, background: '#1A1918', color: 'white', fontSize: 11, borderRadius: 10, padding: 12, boxShadow: '0 8px 24px rgba(0,0,0,0.15)', whiteSpace: 'normal' }}>
-                                      An amortization schedule shows the breakdown of each payment over the life of the loan, including how much goes toward principal vs. interest.
-                                    </div>
-                                  )}
+                                  <p style={{ fontSize: 11, fontWeight: 600, color: 'white', margin: 0 }}>Amortization Schedule</p>
+                                  <span
+                                    style={{ width: 15, height: 15, borderRadius: '50%', background: 'white', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
+                                    onMouseEnter={(e) => { e.stopPropagation(); setActiveInfoTooltip(`amortization-${agreement.id}`); }}
+                                    onMouseLeave={(e) => { e.stopPropagation(); setActiveInfoTooltip(null); }}
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
+                                    <span style={{ fontSize: 9, fontWeight: 800, color: '#1A1918', lineHeight: 1 }}>i</span>
+                                  </span>
                                 </div>
-                              </button>
-                              <button
+                                {activeInfoTooltip === `amortization-${agreement.id}` && (
+                                  <div style={{ position: 'absolute', top: 'calc(100% + 6px)', left: 0, background: 'white', borderRadius: 9, padding: '8px 11px', boxShadow: '0 4px 16px rgba(0,0,0,0.13)', width: 190, zIndex: 200, border: '1px solid rgba(0,0,0,0.07)' }}>
+                                    <p style={{ fontSize: 11, color: '#1A1918', margin: 0, lineHeight: 1.55 }}>A table showing each scheduled payment broken down into principal and interest over the life of the loan.</p>
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Loan Summary */}
+                              <div
+                                style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#1A1918', borderRadius: 9, padding: '7px 12px', border: 'none', cursor: 'pointer' }}
                                 onClick={(e) => { e.stopPropagation(); openPopup('summary', agreement); }}
-                                style={{
-                                  padding: '8px 16px', borderRadius: 10, border: 'none',
-                                  background: '#1A1918', fontSize: 12, fontWeight: 500, color: 'white',
-                                  cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap',
-                                  transition: 'background 0.15s', display: 'flex', alignItems: 'center', gap: 6,
-                                }}
                                 onMouseEnter={e => e.currentTarget.style.background = '#333'}
                                 onMouseLeave={e => e.currentTarget.style.background = '#1A1918'}
                               >
-                                Loan Summary
-                              </button>
+                                <p style={{ fontSize: 11, fontWeight: 600, color: 'white', margin: 0 }}>Loan Summary</p>
+                              </div>
                             </div>
                           )}
                         </div>

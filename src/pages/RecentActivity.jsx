@@ -62,7 +62,7 @@ function MultiSelectDropdown({ label, options, selected, onChange }) {
         onClick={() => setOpen(!open)}
         style={{
           display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 10,
-          border: '1px solid rgba(0,0,0,0.08)', background: selected.length > 0 ? 'rgba(130,240,185,0.08)' : 'white',
+          border: '1px solid rgba(0,0,0,0.08)', background: selected.length > 0 ? 'rgba(3,172,234,0.08)' : 'white',
           fontSize: 13, fontWeight: 500, color: '#1A1918', cursor: 'pointer',
           fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap', transition: 'background 0.15s',
         }}
@@ -89,7 +89,7 @@ function MultiSelectDropdown({ label, options, selected, onChange }) {
             >
               <div style={{
                 width: 18, height: 18, borderRadius: 5, border: selected.includes(opt.id) ? 'none' : '1.5px solid rgba(0,0,0,0.2)',
-                background: selected.includes(opt.id) ? '#82F0B9' : 'white', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                background: selected.includes(opt.id) ? '#03ACEA' : 'white', display: 'flex', alignItems: 'center', justifyContent: 'center',
                 transition: 'all 0.15s', flexShrink: 0,
               }}>
                 {selected.includes(opt.id) && (
@@ -124,7 +124,7 @@ function SingleSelectDropdown({ options, selected, onChange }) {
         onClick={() => setOpen(!open)}
         style={{
           display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 10,
-          border: '1px solid rgba(0,0,0,0.08)', background: selected !== 'all' ? 'rgba(130,240,185,0.08)' : 'white',
+          border: '1px solid rgba(0,0,0,0.08)', background: selected !== 'all' ? 'rgba(3,172,234,0.08)' : 'white',
           fontSize: 13, fontWeight: 500, color: '#1A1918', cursor: 'pointer',
           fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap', transition: 'background 0.15s',
         }}
@@ -145,7 +145,7 @@ function SingleSelectDropdown({ options, selected, onChange }) {
               style={{
                 display: 'block', width: '100%', textAlign: 'left', padding: '8px 10px', borderRadius: 8,
                 border: 'none', cursor: 'pointer', fontSize: 13, color: '#1A1918',
-                background: selected === opt.id ? 'rgba(130,240,185,0.08)' : 'transparent',
+                background: selected === opt.id ? 'rgba(3,172,234,0.08)' : 'transparent',
                 fontWeight: selected === opt.id ? 600 : 400, fontFamily: "'DM Sans', sans-serif",
                 transition: 'background 0.1s',
               }}
@@ -201,7 +201,7 @@ function SortDropdown({ sortBy, onChange }) {
               style={{
                 display: 'block', width: '100%', textAlign: 'left', padding: '8px 10px', borderRadius: 8,
                 border: 'none', cursor: 'pointer', fontSize: 13, color: '#1A1918',
-                background: sortBy === opt.id ? 'rgba(130,240,185,0.08)' : 'transparent',
+                background: sortBy === opt.id ? 'rgba(3,172,234,0.08)' : 'transparent',
                 fontWeight: sortBy === opt.id ? 600 : 400, fontFamily: "'DM Sans', sans-serif",
                 transition: 'background 0.1s',
               }}
@@ -569,7 +569,7 @@ export default function RecentActivityPage() {
         <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>{title}</span>
         {headerRight && <div style={{ flexShrink: 0 }}>{headerRight}</div>}
       </div>
-      <div style={{ background: '#ffffff', margin: '0 5px 5px', borderRadius: 10, overflow: 'hidden' }}>
+      <div style={{ background: '#ffffff', margin: '0 5px 5px', borderRadius: 10, overflow: style?.overflow ?? 'hidden' }}>
         {children}
       </div>
     </div>
