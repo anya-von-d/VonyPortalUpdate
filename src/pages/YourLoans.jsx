@@ -375,14 +375,14 @@ export default function YourLoans() {
     const borrowerInfo = getUserById(agreement.borrower_id);
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-        <div style={{ background: '#F4F4F5', borderRadius: 12, padding: 14, marginBottom: 0 }}>
+        <div style={{ background: 'rgba(0,0,0,0.03)', borderRadius: 12, border: '1px solid rgba(0,0,0,0.05)', padding: 14, marginBottom: 0 }}>
           <p style={{ fontSize: 11, color: '#787776', margin: '0 0 4px' }}>Principal Amount</p>
           <p style={{ fontSize: 26, fontWeight: 700, color: '#1A1918', margin: 0 }}>{formatMoney(agreement.amount)}</p>
         </div>
         <p style={{ fontSize: 13, lineHeight: 1.7, color: '#1A1918', margin: 0 }}>
           <strong>{lenderInfo.full_name}</strong> agrees to lend <strong>{borrowerInfo.full_name}</strong> <strong>{formatMoney(agreement.amount)}</strong>{agreement.purpose ? <> for <strong>{agreement.purpose}</strong></> : ''}, with <strong>{agreement.interest_rate}%</strong> interest. <strong>{borrowerInfo.full_name}</strong> agrees to pay back <strong>{formatMoney(agreement.total_amount)}</strong> in <strong>{agreement.payment_frequency}</strong> payments of <strong>{formatMoney(agreement.payment_amount)}</strong> over <strong>{agreement.repayment_period} {agreement.repayment_unit || 'months'}</strong>.
         </p>
-        <div style={{ background: '#F4F4F5', borderRadius: 12, padding: 14 }}>
+        <div style={{ background: 'rgba(0,0,0,0.03)', borderRadius: 12, border: '1px solid rgba(0,0,0,0.05)', padding: 14 }}>
           <h3 style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', margin: '0 0 10px' }}>Terms of Repayment</h3>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, fontSize: 13 }}>
             <div><span style={{ color: '#787776' }}>Total Amount Due:</span> <span style={{ fontWeight: 500, color: '#1A1918' }}>{formatMoney(agreement.total_amount)}</span></div>
@@ -392,12 +392,12 @@ export default function YourLoans() {
           </div>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-          <div style={{ background: '#F4F4F5', borderRadius: 10, padding: 14 }}>
+          <div style={{ background: 'rgba(0,0,0,0.03)', borderRadius: 10, border: '1px solid rgba(0,0,0,0.05)', padding: 14 }}>
             <p style={{ fontSize: 11, color: '#787776', margin: '0 0 4px' }}>Borrower</p>
             <p style={{ fontSize: 18, fontStyle: 'italic', fontFamily: 'Georgia, serif', color: '#1A1918', margin: 0 }}>{agreement.borrower_name || borrowerInfo.full_name}</p>
             {agreement.borrower_signed_date && <p style={{ fontSize: 11, color: '#787776', margin: '4px 0 0' }}>Signed {format(new Date(agreement.borrower_signed_date), 'MMM d, yyyy')}</p>}
           </div>
-          <div style={{ background: '#F4F4F5', borderRadius: 10, padding: 14 }}>
+          <div style={{ background: 'rgba(0,0,0,0.03)', borderRadius: 10, border: '1px solid rgba(0,0,0,0.05)', padding: 14 }}>
             <p style={{ fontSize: 11, color: '#787776', margin: '0 0 4px' }}>Lender</p>
             <p style={{ fontSize: 18, fontStyle: 'italic', fontFamily: 'Georgia, serif', color: '#1A1918', margin: 0 }}>{agreement.lender_name || lenderInfo.full_name}</p>
             {agreement.lender_signed_date && <p style={{ fontSize: 11, color: '#787776', margin: '4px 0 0' }}>Signed {format(new Date(agreement.lender_signed_date), 'MMM d, yyyy')}</p>}
@@ -414,14 +414,14 @@ export default function YourLoans() {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
-          <div style={{ background: '#F4F4F5', borderRadius: 12, padding: 12, textAlign: 'center' }}><p style={{ fontSize: 11, color: '#787776', margin: 0 }}>Principal</p><p style={{ fontSize: 18, fontWeight: 700, color: '#1A1918', margin: '4px 0 0' }}>{formatMoney(agreement.amount)}</p></div>
-          <div style={{ background: '#F4F4F5', borderRadius: 12, padding: 12, textAlign: 'center' }}><p style={{ fontSize: 11, color: '#787776', margin: 0 }}>Interest</p><p style={{ fontSize: 18, fontWeight: 700, color: '#1A1918', margin: '4px 0 0' }}>{formatMoney((agreement.total_amount || 0) - (agreement.amount || 0))}</p></div>
-          <div style={{ background: '#F4F4F5', borderRadius: 12, padding: 12, textAlign: 'center' }}><p style={{ fontSize: 11, color: '#787776', margin: 0 }}>Total</p><p style={{ fontSize: 18, fontWeight: 700, color: '#1A1918', margin: '4px 0 0' }}>{formatMoney(agreement.total_amount)}</p></div>
+          <div style={{ background: 'rgba(0,0,0,0.03)', borderRadius: 12, border: '1px solid rgba(0,0,0,0.05)', padding: 12, textAlign: 'center' }}><p style={{ fontSize: 11, color: '#787776', margin: 0 }}>Principal</p><p style={{ fontSize: 18, fontWeight: 700, color: '#1A1918', margin: '4px 0 0' }}>{formatMoney(agreement.amount)}</p></div>
+          <div style={{ background: 'rgba(0,0,0,0.03)', borderRadius: 12, border: '1px solid rgba(0,0,0,0.05)', padding: 12, textAlign: 'center' }}><p style={{ fontSize: 11, color: '#787776', margin: 0 }}>Interest</p><p style={{ fontSize: 18, fontWeight: 700, color: '#1A1918', margin: '4px 0 0' }}>{formatMoney((agreement.total_amount || 0) - (agreement.amount || 0))}</p></div>
+          <div style={{ background: 'rgba(0,0,0,0.03)', borderRadius: 12, border: '1px solid rgba(0,0,0,0.05)', padding: 12, textAlign: 'center' }}><p style={{ fontSize: 11, color: '#787776', margin: 0 }}>Total</p><p style={{ fontSize: 18, fontWeight: 700, color: '#1A1918', margin: '4px 0 0' }}>{formatMoney(agreement.total_amount)}</p></div>
         </div>
         <div style={{ maxHeight: 300, overflowX: 'auto', overflowY: 'auto', borderRadius: 12, border: '1px solid rgba(0,0,0,0.06)' }}>
           <table style={{ width: '100%', fontSize: 11, minWidth: 700, borderCollapse: 'collapse' }}>
             <thead>
-              <tr style={{ background: '#F4F4F5' }}>
+              <tr style={{ background: 'rgba(0,0,0,0.03)' }}>
                 <th style={{ padding: '8px', textAlign: 'left', fontWeight: 500, color: '#787776' }}>Payment</th>
                 <th style={{ padding: '8px', textAlign: 'left', fontWeight: 500, color: '#787776' }}>Payment Date</th>
                 <th style={{ padding: '8px', textAlign: 'right', fontWeight: 500, color: '#787776' }}>Starting Balance</th>
@@ -461,22 +461,22 @@ export default function YourLoans() {
     };
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-        <div style={{ background: '#F4F4F5', borderRadius: 12, padding: 14 }}>
+        <div style={{ background: 'rgba(0,0,0,0.03)', borderRadius: 12, border: '1px solid rgba(0,0,0,0.05)', padding: 14 }}>
           <p style={{ fontSize: 11, color: '#787776', margin: '0 0 4px' }}>Purpose</p>
           <p style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', margin: 0 }}>{loan?.purpose || agreement.purpose || 'Reason'}</p>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-          <div style={{ background: '#F4F4F5', borderRadius: 12, padding: 16 }}>
+          <div style={{ background: 'rgba(0,0,0,0.03)', borderRadius: 12, border: '1px solid rgba(0,0,0,0.05)', padding: 16 }}>
             <p style={{ fontSize: 11, color: '#787776', margin: '0 0 4px' }}>Loan Amount</p>
             <p style={{ fontSize: 24, fontWeight: 700, color: '#1A1918', margin: 0 }}>{formatMoney(agreement.amount)}</p>
           </div>
-          <div style={{ background: '#F4F4F5', borderRadius: 12, padding: 16 }}>
+          <div style={{ background: 'rgba(0,0,0,0.03)', borderRadius: 12, border: '1px solid rgba(0,0,0,0.05)', padding: 16 }}>
             <p style={{ fontSize: 11, color: '#787776', margin: '0 0 4px' }}>Total Due</p>
             <p style={{ fontSize: 24, fontWeight: 700, color: '#1A1918', margin: 0 }}>{formatMoney(agreement.total_amount)}</p>
           </div>
         </div>
         {loan && (
-          <div style={{ background: '#F4F4F5', borderRadius: 12, padding: 16 }}>
+          <div style={{ background: 'rgba(0,0,0,0.03)', borderRadius: 12, border: '1px solid rgba(0,0,0,0.05)', padding: 16 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
               <span style={{ fontSize: 13, color: '#787776' }}>Payment Progress</span>
               <span style={{ fontSize: 13, fontWeight: 500, color: '#1A1918' }}>{formatMoney(loan.amount_paid || 0)} / {formatMoney(agreement.total_amount)}</span>
@@ -643,90 +643,78 @@ export default function YourLoans() {
             {/* LENDING: next payment incoming → upcoming payments */}
             {/* BORROWING: next payment due → loans ranked by */}
 
-            {/* Next payment due — borrowing only (split into two side-by-side cards) */}
+            {/* Next payment due — borrowing only */}
             {!isLending && (
               <>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                  {/* Card 1: Date + days badge */}
-                  <PageCard title="Next Payment Due" highlight style={{ display: 'flex', flexDirection: 'column' }}>
-                    <div style={{ padding: '10px 16px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flex: 1 }}>
+                {(() => {
+                  const isLate = nextPaymentDays !== null && nextPaymentDays < 0;
+                  const daysLabel = nextPaymentDays === null ? null : isLate ? `${Math.abs(nextPaymentDays)}d late` : nextPaymentDays === 0 ? 'today' : `${nextPaymentDays}d`;
+                  const badgeColor = isLate ? '#E8726E' : nextPaymentDays !== null && nextPaymentDays <= 3 ? '#F59E0B' : accentColor;
+                  const badgeBg = isLate ? 'rgba(232,114,110,0.08)' : nextPaymentDays !== null && nextPaymentDays <= 3 ? 'rgba(245,158,11,0.08)' : accentLight;
+                  const iconBg = isLate ? 'rgba(232,114,110,0.10)' : accentLight;
+                  const iconColor = isLate ? '#E8726E' : accentColor;
+                  return (
+                    <div style={{ padding: '16px', borderRadius: 14, background: 'white', boxShadow: '0 2px 12px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04)', border: '1px solid rgba(0,0,0,0.05)', marginBottom: 4 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                        <div style={{ width: 28, height: 28, borderRadius: 8, background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={iconColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        </div>
+                        <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Next Payment Due</span>
+                      </div>
                       {nextPaymentLoan ? (
                         <>
-                          <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', lineHeight: 1 }}>
-                            {format(new Date(nextPaymentLoan.next_payment_date), 'MMM d')}
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+                            <span style={{ fontSize: 22, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em' }}>{formatMoney(nextPaymentAmount)}</span>
+                            {daysLabel && <span style={{ fontSize: 10, fontWeight: 700, color: badgeColor, background: badgeBg, borderRadius: 6, padding: '2px 8px' }}>{daysLabel}</span>}
                           </div>
-                          <span style={{ fontSize: 10, fontWeight: 700, color: nextPaymentDays < 0 ? '#E8726E' : accentColor, background: nextPaymentDays < 0 ? 'rgba(232,114,110,0.1)' : accentLight, borderRadius: 6, padding: '2px 6px', whiteSpace: 'nowrap' }}>
-                            {nextPaymentDays < 0 ? `${Math.abs(nextPaymentDays)}d late` : nextPaymentDays === 0 ? 'today' : `${nextPaymentDays}d`}
-                          </span>
+                          <div style={{ fontSize: 12, color: '#9B9A98' }}>to {otherPartyUsername} · {format(new Date(nextPaymentLoan.next_payment_date), 'MMM d, yyyy')}</div>
                         </>
                       ) : (
-                        <div style={{ fontSize: 13, color: '#787776' }}>No upcoming</div>
+                        <div style={{ fontSize: 13, color: '#9B9A98' }}>No upcoming payments</div>
                       )}
                     </div>
-                  </PageCard>
-                  {/* Card 2: Amount + to/from name */}
-                  <PageCard title="Next Payment Amount" highlight style={{ display: 'flex', flexDirection: 'column' }}>
-                    <div style={{ padding: '10px 14px 14px', display: 'flex', alignItems: 'center', gap: 8, flex: 1 }}>
-                      {nextPaymentLoan ? (
-                        <>
-                          <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', lineHeight: 1 }}>
-                            {formatMoney(nextPaymentAmount)}
-                          </div>
-                          <div style={{ fontSize: 11, color: '#787776' }}>to {otherPartyUsername}</div>
-                        </>
-                      ) : (
-                        <div style={{ fontSize: 13, color: '#787776' }}>N/A</div>
-                      )}
-                    </div>
-                  </PageCard>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'center' }}>
-                  <Link to={createPageUrl("RecordPayment")} style={{ display: 'inline-flex', alignItems: 'center', background: '#1A1918', borderRadius: 9, padding: '7px 12px', textDecoration: 'none' }}>
+                  );
+                })()}
+                <div style={{ display: 'flex', justifyContent: 'center', marginTop: 12 }}>
+                  <Link to={createPageUrl("RecordPayment")} style={{ display: 'inline-flex', alignItems: 'center', background: '#1A1918', borderRadius: 9, padding: '7px 14px', textDecoration: 'none' }}>
                     <p style={{ fontSize: 11, fontWeight: 600, color: 'white', margin: 0 }}>Record Payment</p>
                   </Link>
                 </div>
               </>
             )}
 
-            {/* Next payment incoming — lending only (split into two side-by-side cards) */}
+            {/* Next payment incoming — lending only */}
             {isLending && (
               <>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                  {/* Card 1: Date + days badge */}
-                  <PageCard title="Next Payment Incoming" highlight style={{ display: 'flex', flexDirection: 'column' }}>
-                    <div style={{ padding: '10px 16px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flex: 1 }}>
+                {(() => {
+                  const isLate = nextPaymentDays !== null && nextPaymentDays < 0;
+                  const daysLabel = nextPaymentDays === null ? null : isLate ? `${Math.abs(nextPaymentDays)}d late` : nextPaymentDays === 0 ? 'today' : `${nextPaymentDays}d`;
+                  const badgeColor = isLate ? '#E8726E' : '#52B788';
+                  const badgeBg = isLate ? 'rgba(232,114,110,0.08)' : 'rgba(82,183,136,0.10)';
+                  return (
+                    <div style={{ padding: '16px', borderRadius: 14, background: 'white', boxShadow: '0 2px 12px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04)', border: '1px solid rgba(0,0,0,0.05)', marginBottom: 4 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                        <div style={{ width: 28, height: 28, borderRadius: 8, background: 'rgba(82,183,136,0.10)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#52B788" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="17 11 12 6 7 11"/><line x1="12" y1="6" x2="12" y2="18"/></svg>
+                        </div>
+                        <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Next Payment Incoming</span>
+                      </div>
                       {nextPaymentLoan ? (
                         <>
-                          <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', lineHeight: 1 }}>
-                            {format(new Date(nextPaymentLoan.next_payment_date), 'MMM d')}
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+                            <span style={{ fontSize: 22, fontWeight: 800, color: '#52B788', letterSpacing: '-0.02em' }}>{formatMoney(nextPaymentAmount)}</span>
+                            {daysLabel && <span style={{ fontSize: 10, fontWeight: 700, color: badgeColor, background: badgeBg, borderRadius: 6, padding: '2px 8px' }}>{daysLabel}</span>}
                           </div>
-                          <span style={{ fontSize: 10, fontWeight: 700, color: nextPaymentDays < 0 ? '#E8726E' : accentColor, background: nextPaymentDays < 0 ? 'rgba(232,114,110,0.1)' : accentLight, borderRadius: 6, padding: '2px 6px', whiteSpace: 'nowrap' }}>
-                            {nextPaymentDays < 0 ? `${Math.abs(nextPaymentDays)}d late` : nextPaymentDays === 0 ? 'today' : `${nextPaymentDays}d`}
-                          </span>
+                          <div style={{ fontSize: 12, color: '#9B9A98' }}>from {otherPartyUsername} · {format(new Date(nextPaymentLoan.next_payment_date), 'MMM d, yyyy')}</div>
                         </>
                       ) : (
-                        <div style={{ fontSize: 13, color: '#787776' }}>No incoming</div>
+                        <div style={{ fontSize: 13, color: '#9B9A98' }}>No incoming payments</div>
                       )}
                     </div>
-                  </PageCard>
-                  {/* Card 2: Amount + from name */}
-                  <PageCard title="Next Payment Amount" highlight style={{ display: 'flex', flexDirection: 'column' }}>
-                    <div style={{ padding: '10px 14px 14px', display: 'flex', alignItems: 'center', gap: 8, flex: 1 }}>
-                      {nextPaymentLoan ? (
-                        <>
-                          <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', lineHeight: 1 }}>
-                            {formatMoney(nextPaymentAmount)}
-                          </div>
-                          <div style={{ fontSize: 11, color: '#787776' }}>from {otherPartyUsername}</div>
-                        </>
-                      ) : (
-                        <div style={{ fontSize: 13, color: '#787776' }}>N/A</div>
-                      )}
-                    </div>
-                  </PageCard>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'center' }}>
-                  <Link to={createPageUrl("RecordPayment")} style={{ display: 'inline-flex', alignItems: 'center', background: '#1A1918', borderRadius: 9, padding: '7px 12px', textDecoration: 'none' }}>
+                  );
+                })()}
+                <div style={{ display: 'flex', justifyContent: 'center', marginTop: 12 }}>
+                  <Link to={createPageUrl("RecordPayment")} style={{ display: 'inline-flex', alignItems: 'center', background: '#1A1918', borderRadius: 9, padding: '7px 14px', textDecoration: 'none' }}>
                     <p style={{ fontSize: 11, fontWeight: 600, color: 'white', margin: 0 }}>Record Payment</p>
                   </Link>
                 </div>
@@ -907,34 +895,37 @@ export default function YourLoans() {
     return (
       <div>
         {/* Select a Loan */}
-        <div style={{ background: '#F4F4F5', borderRadius: 14, overflow: 'visible', boxShadow: '0px 50px 40px rgba(0,0,0,0.02), 0px 50px 40px rgba(0,0,0,0.04), 0px 20px 40px rgba(0,0,0,0.08), 0px 3px 10px rgba(0,0,0,0.12)', marginBottom: manageLoanSelected ? 8 : 16 }}>
-          <div style={{ padding: '6px 14px 5px' }}><span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>Select a Loan to Learn More</span></div>
-          <div style={{ background: '#ffffff', margin: '0 5px 5px', borderRadius: 10, overflow: 'visible', padding: '10px 14px 14px' }}>
-            <div style={{ position: 'relative' }}>
-              <div
-                onClick={() => setLoanDropdownOpen(o => !o)}
-                style={{ width: '100%', borderRadius: 10, padding: '8px 36px 8px 12px', fontSize: 12, fontWeight: 600, color: 'transparent', background: 'rgba(84,166,207,0.08)', cursor: 'pointer', border: '1px solid rgba(84,166,207,0.2)', minHeight: 36, userSelect: 'none', boxSizing: 'border-box' }}
-              >
-                &nbsp;
-              </div>
-              <div style={{ pointerEvents: 'none', position: 'absolute', top: 0, bottom: 0, right: 10, display: 'flex', alignItems: 'center' }}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#54A6CF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
-              {loanDropdownOpen && (
-                <>
-                  <div style={{ position: 'fixed', inset: 0, zIndex: 90 }} onClick={() => setLoanDropdownOpen(false)} />
-                  <div style={{ position: 'absolute', top: 'calc(100% + 4px)', left: 0, right: 0, background: '#ffffff', borderRadius: 10, boxShadow: '0 4px 20px rgba(0,0,0,0.12)', zIndex: 100, overflow: 'hidden', border: '1px solid rgba(84,166,207,0.15)' }}>
-                    {allManageableLoans.map((loan) => (
-                      <div key={loan.id} onClick={() => { setManageLoanSelected(loan); setLoanDropdownOpen(false); }}
-                        style={{ padding: '10px 14px', fontSize: 12, fontWeight: 500, color: '#1A1918', cursor: 'pointer', background: manageLoanSelected?.id === loan.id ? 'rgba(84,166,207,0.1)' : 'transparent', borderBottom: '1px solid rgba(0,0,0,0.04)' }}
-                        onMouseEnter={e => e.currentTarget.style.background = 'rgba(84,166,207,0.08)'}
-                        onMouseLeave={e => e.currentTarget.style.background = manageLoanSelected?.id === loan.id ? 'rgba(84,166,207,0.1)' : 'transparent'}
-                      >
-                        {getLoanDescription(loan)}{loan.status === 'cancelled' ? ' · Cancelled' : ''}
-                      </div>
-                    ))}
-                  </div>
-                </>
-              )}
+        <div style={{ marginBottom: manageLoanSelected ? 8 : 16 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 9 }}>
+            <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>Select a Loan</span>
+          </div>
+          <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 14 }} />
+          <div style={{ position: 'relative' }}>
+            <div
+              onClick={() => setLoanDropdownOpen(o => !o)}
+              style={{ width: '100%', borderRadius: 10, padding: '10px 36px 10px 14px', fontSize: 13, fontWeight: 500, color: manageLoanSelected ? '#1A1918' : '#9B9A98', background: 'white', cursor: 'pointer', border: '1px solid rgba(0,0,0,0.09)', minHeight: 40, userSelect: 'none', boxSizing: 'border-box', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}
+            >
+              {manageLoanSelected ? getLoanDescription(manageLoanSelected) : 'Choose a loan to view details…'}
             </div>
+            <div style={{ pointerEvents: 'none', position: 'absolute', top: 0, bottom: 0, right: 12, display: 'flex', alignItems: 'center' }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9B9A98" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+            {loanDropdownOpen && (
+              <>
+                <div style={{ position: 'fixed', inset: 0, zIndex: 90 }} onClick={() => setLoanDropdownOpen(false)} />
+                <div style={{ position: 'absolute', top: 'calc(100% + 4px)', left: 0, right: 0, background: '#ffffff', borderRadius: 10, boxShadow: '0 4px 20px rgba(0,0,0,0.12)', zIndex: 100, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.07)' }}>
+                  {allManageableLoans.map((loan) => (
+                    <div key={loan.id} onClick={() => { setManageLoanSelected(loan); setLoanDropdownOpen(false); }}
+                      style={{ padding: '10px 14px', fontSize: 13, fontWeight: 500, color: '#1A1918', cursor: 'pointer', background: manageLoanSelected?.id === loan.id ? 'rgba(0,0,0,0.04)' : 'transparent', borderBottom: '1px solid rgba(0,0,0,0.04)' }}
+                      onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.03)'}
+                      onMouseLeave={e => e.currentTarget.style.background = manageLoanSelected?.id === loan.id ? 'rgba(0,0,0,0.04)' : 'transparent'}
+                    >
+                      {getLoanDescription(loan)}{loan.status === 'cancelled' ? <span style={{ fontSize: 11, color: '#E8726E', marginLeft: 8 }}>Cancelled</span> : ''}
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
         </div>
 
@@ -987,44 +978,44 @@ export default function YourLoans() {
                     </p>
                     </div>
                   </PageCard>
-                  {/* Stacked: next payment date + amount */}
+                  {/* Stacked: next payment glass card + record button */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                    {/* Next payment date card */}
-                    <PageCard title={isLending ? 'Next Payment Incoming' : 'Next Payment Due'} highlight style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-                      <div style={{ padding: '6px 14px 10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flex: 1, minHeight: 52 }}>
-                        {nextPmtDate ? (
-                          <>
-                            <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', lineHeight: 1 }}>
-                              {format(nextPmtDate, 'MMM d')}
+                    {(() => {
+                      const isLate = daysUntil !== null && daysUntil < 0;
+                      const dLabel = daysUntil === null ? null : isLate ? `${Math.abs(daysUntil)}d late` : daysUntil === 0 ? 'today' : `${daysUntil}d`;
+                      const bColor = isLate ? '#E8726E' : isLending ? '#52B788' : '#54A6CF';
+                      const bBg = isLate ? 'rgba(232,114,110,0.08)' : isLending ? 'rgba(82,183,136,0.10)' : 'rgba(84,166,207,0.10)';
+                      const iColor = isLate ? '#E8726E' : isLending ? '#52B788' : '#54A6CF';
+                      const iBg = isLate ? 'rgba(232,114,110,0.10)' : isLending ? 'rgba(82,183,136,0.10)' : 'rgba(84,166,207,0.10)';
+                      return (
+                        <div style={{ padding: '14px 16px', borderRadius: 14, background: 'white', boxShadow: '0 2px 12px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04)', border: '1px solid rgba(0,0,0,0.05)' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                            <div style={{ width: 28, height: 28, borderRadius: 8, background: iBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                              {isLending
+                                ? <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={iColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="17 11 12 6 7 11"/><line x1="12" y1="6" x2="12" y2="18"/></svg>
+                                : <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={iColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                              }
                             </div>
-                            <span style={{ fontSize: 10, fontWeight: 700, color: daysUntil < 0 ? '#E8726E' : '#54A6CF', background: daysUntil < 0 ? 'rgba(232,114,110,0.1)' : 'rgba(84,166,207,0.08)', borderRadius: 6, padding: '2px 6px', whiteSpace: 'nowrap' }}>
-                              {daysUntil < 0 ? `${Math.abs(daysUntil)}d late` : daysUntil === 0 ? 'today' : `${daysUntil}d`}
-                            </span>
-                          </>
-                        ) : (
-                          <div style={{ fontSize: 13, color: '#787776' }}>N/A</div>
-                        )}
-                      </div>
-                    </PageCard>
-                    {/* Next payment amount card */}
-                    <PageCard title="Next Payment Amount" highlight style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-                      <div style={{ padding: '6px 14px 10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flex: 1, minHeight: 52 }}>
-                        {nextPmtDate ? (
-                          <>
-                            <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', lineHeight: 1 }}>
-                              {formatMoney(nextPmtAmt)}
-                            </div>
-                            <div style={{ fontSize: 11, color: '#787776', textAlign: 'right' }}>
-                              {isLending ? `from ${otherPartyUsername}` : `to ${otherPartyUsername}`}
-                            </div>
-                          </>
-                        ) : (
-                          <div style={{ fontSize: 13, color: '#787776' }}>N/A</div>
-                        )}
-                      </div>
-                    </PageCard>
+                            <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase' }}>{isLending ? 'Next Payment Incoming' : 'Next Payment Due'}</span>
+                          </div>
+                          {nextPmtDate ? (
+                            <>
+                              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+                                <span style={{ fontSize: 20, fontWeight: 800, color: isLending ? '#52B788' : '#1A1918', letterSpacing: '-0.02em' }}>{formatMoney(nextPmtAmt)}</span>
+                                {dLabel && <span style={{ fontSize: 10, fontWeight: 700, color: bColor, background: bBg, borderRadius: 6, padding: '2px 8px' }}>{dLabel}</span>}
+                              </div>
+                              <div style={{ fontSize: 12, color: '#9B9A98' }}>
+                                {isLending ? `from ${otherPartyUsername}` : `to ${otherPartyUsername}`} · {format(nextPmtDate, 'MMM d, yyyy')}
+                              </div>
+                            </>
+                          ) : (
+                            <div style={{ fontSize: 13, color: '#9B9A98' }}>No upcoming payments</div>
+                          )}
+                        </div>
+                      );
+                    })()}
                     <div style={{ display: 'flex', justifyContent: 'center' }}>
-                      <Link to={createPageUrl("RecordPayment")} style={{ display: 'inline-flex', alignItems: 'center', background: '#1A1918', borderRadius: 9, padding: '7px 12px', textDecoration: 'none' }}>
+                      <Link to={createPageUrl("RecordPayment")} style={{ display: 'inline-flex', alignItems: 'center', background: '#1A1918', borderRadius: 9, padding: '7px 14px', textDecoration: 'none' }}>
                         <p style={{ fontSize: 11, fontWeight: 600, color: 'white', margin: 0 }}>Record Payment</p>
                       </Link>
                     </div>
@@ -1404,7 +1395,7 @@ export default function YourLoans() {
         {activeDocPopup && docPopupAgreement && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={closeDocPopup}>
             <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} onClick={(e) => e.stopPropagation()} style={{ background: '#F5F4F0', borderRadius: 18, maxWidth: activeDocPopup === 'amortization' ? 'min(960px, calc(100vw - 32px))' : 520, width: '100%', maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 8px 40px rgba(0,0,0,0.16)' }}>
-              <div style={{ position: 'sticky', top: 0, background: '#F4F4F5', padding: '6px 14px 5px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderRadius: '18px 18px 0 0' }}>
+              <div style={{ position: 'sticky', top: 0, background: '#F9F8F6', padding: '6px 14px 5px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderRadius: '18px 18px 0 0' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                   <FileText size={14} style={{ color: '#9B9A98' }} />
                   <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>
@@ -1429,7 +1420,7 @@ export default function YourLoans() {
       <div className="mesh-layout" style={{ minHeight: '100vh', display: 'grid', gridTemplateColumns: '180px 1fr 300px', gap: 0, fontFamily: "'DM Sans', sans-serif" }}>
 
         {/* ── LEFT: Sidebar nav ── */}
-        <div className="mesh-left" style={{ background: '#F5F4F0', borderRight: '1px solid rgba(0,0,0,0.08)' }}>
+        <div className="mesh-left" style={{ background: '#F9F8F6', borderRight: '1px solid rgba(0,0,0,0.08)' }}>
           <div style={{ position: 'sticky', top: 0, padding: '32px 20px 0' }}>
             <Link to="/" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, fontStyle: 'italic', fontSize: '1.75rem', color: '#1A1918', textDecoration: 'none', display: 'block', marginBottom: 24 }}>Vony</Link>
             <nav style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
@@ -1564,9 +1555,7 @@ export default function YourLoans() {
                 )}
               </>
             );
-            return isLendingTab
-              ? <PageCard title="Overdue Payments" style={{ marginBottom: 20 }}>{carouselInner}</PageCard>
-              : <div style={{ background: '#F4F4F5', borderRadius: 14, marginBottom: 20, overflow: 'hidden' }}>{carouselInner}</div>;
+            return <PageCard title="Overdue Payments" style={{ marginBottom: 20 }}>{carouselInner}</PageCard>;
           })()}
 
           {activeTab === 'lending' && renderSummaryTab('lending')}
@@ -1575,7 +1564,7 @@ export default function YourLoans() {
         </div>
 
         {/* ── RIGHT PANEL ── */}
-        <div className="mesh-right" style={{ background: '#F5F4F0' }}>
+        <div className="mesh-right" style={{ background: '#F9F8F6' }}>
           <div style={{ position: 'sticky', top: 0, padding: '28px 28px 0' }}>
           {/* Bell + Profile icons */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 10, marginBottom: 24 }}>
