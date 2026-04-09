@@ -25,13 +25,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { format, addDays, addMonths, addWeeks } from "date-fns";
 import { formatMoney } from "@/components/utils/formatMoney";
 import { toLocalDate, getLocalToday, daysUntil as daysUntilDate } from "@/components/utils/dateUtils";
+import { useAuth } from "@/lib/AuthContext";
 
 import LoanCard from "@/components/loans/LoanCard";
 
 import LoanDetailsModal from "@/components/loans/LoanDetailsModal";
 import MyLoanOffers from "@/components/dashboard/MyLoanOffers";
 import BorrowerSignatureModal from "@/components/loans/BorrowerSignatureModal";
-import DashboardSidebar from "@/components/DashboardSidebar";
 
 const STAR_CIRCLES = [
   {cx:82,cy:45,o:0.7},{cx:195,cy:112,o:0.5},{cx:310,cy:28,o:0.8},{cx:420,cy:198,o:0.4},
@@ -45,6 +45,7 @@ const STAR_CIRCLES = [
 ];
 
 export default function Borrowing() {
+  const { logout } = useAuth();
   const [loans, setLoans] = useState([]);
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -866,24 +867,50 @@ export default function Borrowing() {
         )}
       </AnimatePresence>
 
-      <div className="home-with-sidebar" style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingTop: 0, background: 'transparent' }}>
-        <DashboardSidebar activePage="Borrowing" user={user} tabs={[{key:'summary',label:'Summary'},{key:'details',label:'Individual Loan Details'}]} activeTab={activeTab} onTabChange={setActiveTab} />
-
-          {/* Hero */}
-          <div className="dash-hero" style={{ margin: '8px 10px 0', height: 168, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 24, position: 'relative' }}>
-            <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0.15, pointerEvents: 'none', zIndex: 0 }} viewBox="0 0 1200 168" preserveAspectRatio="xMidYMid slice">
-              {[{cx:80,cy:40},{cx:200,cy:110},{cx:320,cy:25},{cx:430,cy:160},{cx:540,cy:70},{cx:660,cy:130},{cx:770,cy:35},{cx:890,cy:175},{cx:1000,cy:80},{cx:1100,cy:140},{cx:150,cy:185},{cx:480,cy:100},{cx:720,cy:180},{cx:950,cy:55},{cx:280,cy:195},{cx:620,cy:48},{cx:1050,cy:195}].map((s, i) => (
-                <circle key={i} cx={s.cx} cy={s.cy} r={i % 3 === 0 ? 2.5 : 1.5} fill="white" />
-              ))}
-            </svg>
-            <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 40, fontWeight: 600, color: '#1A1918', margin: 0, letterSpacing: '-0.01em', lineHeight: 1, textAlign: 'center', position: 'relative', zIndex: 1 }}>
-              <span style={{ fontStyle: 'normal' }}>Your Borrowing</span>
-            </h1>
+      <div style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", background: '#F5F4F0' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '180px 1fr 300px', gap: 0, minHeight: '100vh' }}>
+          {/* COL 1 - left nav */}
+          <div className="mesh-left" style={{ background: '#F5F4F0', borderRight: '1px solid rgba(0,0,0,0.08)' }}>
+            <div style={{ position: 'sticky', top: 0, padding: '32px 20px 0' }}>
+              <Link to="/" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, fontStyle: 'italic', fontSize: '1.75rem', color: '#1A1918', textDecoration: 'none', display: 'block', marginBottom: 28 }}>Vony</Link>
+              <nav style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                {[
+                  { label: 'Home', to: '/' },
+                  { label: 'Upcoming', to: createPageUrl("Upcoming") },
+                  { label: 'Create Loan', to: createPageUrl("CreateOffer") },
+                  { label: 'Record Payment', to: createPageUrl("RecordPayment") },
+                  { label: 'My Loans', to: createPageUrl("YourLoans") },
+                  { label: 'Friends', to: createPageUrl("Friends") },
+                ].map(({ label, to }) => {
+                  const isActive = label === 'My Loans';
+                  return (
+                    <Link key={label} to={to} style={{ fontSize: 14, fontWeight: isActive ? 600 : 500, color: isActive ? '#1A1918' : '#6B6A68', textDecoration: 'none', padding: '8px 10px', borderRadius: 8, background: isActive ? 'rgba(0,0,0,0.05)' : 'transparent' }}>{label}</Link>
+                  );
+                })}
+                <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', margin: '10px 0' }} />
+                {[
+                  { label: 'Recent Activity', to: createPageUrl("RecentActivity") },
+                  { label: 'Documents', to: createPageUrl("LoanAgreements") },
+                ].map(({ label, to }) => (
+                  <Link key={label} to={to} style={{ fontSize: 14, fontWeight: 500, color: '#6B6A68', textDecoration: 'none', padding: '8px 10px', borderRadius: 8 }}>{label}</Link>
+                ))}
+                <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', margin: '10px 0' }} />
+                {[
+                  { label: 'Learn', to: createPageUrl("ComingSoon") },
+                  { label: 'Loan Help', to: createPageUrl("LoanHelp") },
+                  { label: 'Help & Support', to: createPageUrl("ComingSoon") },
+                ].map(({ label, to }) => (
+                  <Link key={label} to={to} style={{ fontSize: 14, fontWeight: 500, color: '#6B6A68', textDecoration: 'none', padding: '8px 10px', borderRadius: 8 }}>{label}</Link>
+                ))}
+                <button onClick={logout} style={{ fontSize: 14, fontWeight: 500, color: '#6B6A68', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', padding: '8px 10px', borderRadius: 8, fontFamily: 'inherit' }}>Log Out</button>
+              </nav>
+            </div>
           </div>
 
-        {/* Page content */}
-        <div className="dashboard-content-wrap" style={{ maxWidth: 1080, margin: '0 auto', padding: '20px 40px 0', position: 'relative', zIndex: 1 }}>
-          <div className="dashboard-grey-box" style={{ background: '#E5E2DF', borderRadius: 18, padding: 20 }}>
+          {/* COL 2 - main content */}
+          <div className="mesh-center" style={{ background: 'white', borderRight: '1px solid rgba(0,0,0,0.08)', padding: '40px 48px 80px' }}>
+            <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 26, fontWeight: 600, color: '#1A1918', marginBottom: 20 }}>My Loans</div>
+            <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 24 }} />
 
           {/* Tab bar — centered */}
           <div className="mobile-tab-bar" style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
@@ -1754,16 +1781,20 @@ export default function Borrowing() {
                       );
                     })()}
 
-        </div>
-        </div>
+          </div>
 
-        {/* Footer */}
-        <div className="dashboard-footer" style={{ padding: '12px 28px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: 11, color: '#787776' }}>2026 Vony, Inc. All rights reserved.</span>
-          <div className="dashboard-footer-links" style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-            <a href="https://www.vony-lending.com/terms" target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#787776', textDecoration: 'none' }}>Terms of Service</a>
-            <a href="https://www.vony-lending.com/privacy" target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#787776', textDecoration: 'none' }}>Privacy Center</a>
-            <a href="https://www.vony-lending.com/do-not-sell" target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#787776', textDecoration: 'none' }}>Do not sell or share my personal information</a>
+          {/* COL 3 - right panel */}
+          <div className="mesh-right" style={{ background: '#F5F4F0' }}>
+            <div style={{ position: 'sticky', top: 0, padding: '28px 28px 0' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 10, marginBottom: 28 }}>
+                <Link to={createPageUrl("Requests")} style={{ color: '#6B6A68', textDecoration: 'none' }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                </Link>
+                <Link to={createPageUrl("Profile")} style={{ color: '#6B6A68', textDecoration: 'none' }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </div>

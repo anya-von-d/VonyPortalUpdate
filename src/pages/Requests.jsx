@@ -5,7 +5,6 @@ import { Payment, Loan, PublicProfile, LoanAgreement, Friendship } from "@/entit
 import { useAuth } from "@/lib/AuthContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import DashboardSidebar from "@/components/DashboardSidebar";
 import {
   CheckCircle,
   XCircle,
@@ -50,7 +49,7 @@ const PAYMENT_METHOD_ICONS = {
 const SHADOW = '0px 50px 40px rgba(0,0,0,0.02), 0px 50px 40px rgba(0,0,0,0.04), 0px 20px 40px rgba(0,0,0,0.08), 0px 3px 10px rgba(0,0,0,0.12)';
 
 export default function Requests() {
-  const { user: authUser, userProfile } = useAuth();
+  const { user: authUser, userProfile, logout } = useAuth();
   const user = userProfile ? { ...userProfile, id: authUser?.id } : null;
 
   const [paymentsToConfirm, setPaymentsToConfirm] = useState([]);
@@ -107,7 +106,6 @@ export default function Requests() {
         if (!userLoanIds.includes(payment.loan_id)) return false;
         const loan = userLoans.find(l => l.id === payment.loan_id);
         if (!loan) return false;
-        // You can't confirm your own payment — confirmation goes to the other party
         if (payment.recorded_by === user.id) return false;
         return true;
       });
@@ -169,7 +167,6 @@ export default function Requests() {
     activeLoans.forEach(loan => {
       const daysUntil = daysUntilDate(loan.next_payment_date);
 
-      // Only show reminders for payments within 5 days or overdue
       if (daysUntil > 5) return;
 
       const isBorrower = loan.borrower_id === user.id;
@@ -178,7 +175,6 @@ export default function Requests() {
       const otherName = otherProfile?.full_name || otherProfile?.username || 'Unknown';
       const paymentDate = toLocalDate(loan.next_payment_date);
 
-      // Calculate remaining amount considering completed payments
       const completedPayments = allPayments.filter(p =>
         p.loan_id === loan.id && p.status === 'completed'
       );
@@ -189,9 +185,7 @@ export default function Requests() {
       if (paymentAmount <= 0) return;
 
       if (isBorrower) {
-        // User owes a payment
         if (daysUntil < 0) {
-          // Overdue
           reminders.push({
             id: `reminder-owe-${loan.id}`,
             type: 'overdue_owe',
@@ -226,7 +220,6 @@ export default function Requests() {
           });
         }
       } else {
-        // User is due to receive a payment
         if (daysUntil < 0) {
           reminders.push({
             id: `reminder-receive-${loan.id}`,
@@ -264,19 +257,16 @@ export default function Requests() {
       }
     });
 
-    // Sort: overdue first, then by days until
     reminders.sort((a, b) => a.daysUntil - b.daysUntil);
     return reminders;
   };
 
   const reminders = buildReminders();
 
-  // All existing handlers preserved
   const handleConfirmPayment = async (payment) => {
     setProcessingId(payment.id);
     try {
       await Payment.update(payment.id, { status: 'completed' });
-      // Remove notification immediately once the payment is confirmed
       setPaymentsToConfirm(prev => prev.filter(p => p.id !== payment.id));
       confetti({
         particleCount: 80,
@@ -285,7 +275,6 @@ export default function Requests() {
         colors: ['#35B276', '#82F0B9', '#03ACEA', '#ffffff'],
         zIndex: 9999,
       });
-      // Update loan totals in the background — don't let a failure here undo the confirmation
       try {
         const loan = loans.find(l => l.id === payment.loan_id);
         if (loan) {
@@ -473,7 +462,7 @@ export default function Requests() {
 
   if (isLoading) {
     return (
-      <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ minHeight: '100vh', background: '#F5F4F0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{ width: 32, height: 32, border: '2px solid #82F0B9', borderTopColor: 'transparent', borderRadius: '50%', margin: '0 auto 16px' }} className="animate-spin" />
           <p style={{ fontSize: 14, color: '#787776', fontFamily: "'DM Sans', sans-serif" }}>Loading notifications...</p>
@@ -495,161 +484,201 @@ export default function Requests() {
   );
 
   return (
-    <div className="home-with-sidebar" style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingTop: 0, background: 'transparent' }}>
-      <DashboardSidebar activePage="Requests" user={user} />
+    <div style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", background: '#F5F4F0' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '180px 1fr 300px', gap: 0, minHeight: '100vh' }}>
 
-      {/* Hero */}
-      <div className="dash-hero" style={{ margin: '8px 10px 0', height: 168, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 24, position: 'relative' }}>
-        <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0.15, pointerEvents: 'none', zIndex: 0 }} viewBox="0 0 1200 168" preserveAspectRatio="xMidYMid slice">
-          {[{cx:80,cy:40},{cx:200,cy:110},{cx:320,cy:25},{cx:430,cy:160},{cx:540,cy:70},{cx:660,cy:130},{cx:770,cy:35},{cx:890,cy:175},{cx:1000,cy:80},{cx:1100,cy:140},{cx:150,cy:185},{cx:480,cy:100},{cx:720,cy:180},{cx:950,cy:55},{cx:280,cy:195},{cx:620,cy:48},{cx:1050,cy:195}].map((s, i) => (
-            <circle key={i} cx={s.cx} cy={s.cy} r={i % 3 === 0 ? 2.5 : 1.5} fill="white" />
-          ))}
-        </svg>
-        <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 40, fontWeight: 600, color: '#1A1918', margin: 0, letterSpacing: '-0.01em', lineHeight: 1, textAlign: 'center', position: 'relative', zIndex: 1 }}>
-          <span style={{ fontStyle: 'normal' }}>Notifications</span>
-        </h1>
-      </div>
-
-      <div className="dashboard-content-wrap" style={{ maxWidth: 1080, margin: '0 auto', padding: '20px 40px 0', position: 'relative', zIndex: 1 }}>
-        <div className="dashboard-grey-box" style={{ background: '#E5E2DF', borderRadius: 18, padding: 20 }}>
-
-        {/* All items: reminders first, then notification requests */}
-        {(() => {
-          // Build notification items
-          const allItems = [];
-
-          friendRequestsReceived.forEach(request => {
-            const senderProfile = profiles.find(p => p.user_id === request.user_id);
-            const name = senderProfile?.full_name || senderProfile?.username || 'Unknown';
-            allItems.push({ type: 'friend', id: `friend-${request.id}`, timestamp: new Date(request.created_at || 0), data: request, name, purpose: null, amount: null });
-          });
-          loanOffersReceived.forEach(offer => {
-            const lender = getUserById(offer.lender_id);
-            const name = lender?.full_name || lender?.username || 'Unknown';
-            allItems.push({ type: 'offer_received', id: `offer-recv-${offer.id}`, timestamp: new Date(offer.created_at || 0), data: offer, name, purpose: offer.purpose, amount: null });
-          });
-          paymentsToConfirm.forEach(payment => {
-            const recorderProfile = profiles.find(p => p.user_id === payment.recorded_by);
-            const name = recorderProfile?.full_name || recorderProfile?.username || 'Unknown';
-            const pmtLoan = loans.find(l => l.id === payment.loan_id);
-            allItems.push({ type: 'payment_confirm', id: `pmt-confirm-${payment.id}`, timestamp: new Date(payment.created_at || payment.payment_date || 0), data: payment, name, purpose: pmtLoan?.purpose || null, amount: payment.amount, paymentMethod: payment.payment_method || null, paymentDate: payment.payment_date || null });
-          });
-          termChangeRequests.forEach(loan => {
-            const otherUserId = loan.lender_id === user.id ? loan.borrower_id : loan.lender_id;
-            const otherProfile = profiles.find(p => p.user_id === otherUserId);
-            const name = otherProfile?.full_name || otherProfile?.username || getLoanOtherParty(loan);
-            allItems.push({ type: 'term_change', id: `term-${loan.id}`, timestamp: new Date(loan.updated_at || loan.created_at || 0), data: loan, name, purpose: null, amount: null });
-          });
-          allItems.sort((a, b) => b.timestamp - a.timestamp);
-
-          const typeIconMap = {
-            friend:          { color: '#7C3AED', bg: 'rgba(124,58,237,0.12)', svg: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> },
-            offer_received:  { color: '#2563EB', bg: 'rgba(37,99,235,0.12)',  svg: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> },
-            payment_confirm: { color: '#16A34A', bg: 'rgba(22,163,74,0.12)',  svg: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> },
-            term_change:     { color: '#D97706', bg: 'rgba(217,119,6,0.12)',  svg: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> },
-          };
-
-          const rowStyle = { background: '#ffffff', borderRadius: 10, display: 'flex', alignItems: 'center', gap: 14, padding: '9px 16px' };
-
-          if (reminders.length === 0 && allItems.length === 0) {
-            return (
-              <div style={rowStyle}>
-                <div style={{ width: 24, height: 24, borderRadius: 6, background: 'rgba(3,172,234,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, color: '#03ACEA' }}>
-                  <CheckCircle style={{ width: 11, height: 11 }} />
-                </div>
-                <div style={{ flex: 1 }}>
-                  <p style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', margin: '0 0 2px' }}>All caught up!</p>
-                  <p style={{ fontSize: 12, color: '#787776', margin: 0 }}>You have no notifications.</p>
-                </div>
-              </div>
-            );
-          }
-
-          return (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              {/* Reminders always first */}
-              {reminders.map(reminder => {
-                const isOverdue = reminder.type.startsWith('overdue');
+        {/* COL 1 - left nav */}
+        <div className="mesh-left" style={{ background: '#F5F4F0', borderRight: '1px solid rgba(0,0,0,0.08)' }}>
+          <div style={{ position: 'sticky', top: 0, padding: '32px 20px 0' }}>
+            <Link to="/" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, fontStyle: 'italic', fontSize: '1.75rem', color: '#1A1918', textDecoration: 'none', display: 'block', marginBottom: 28 }}>Vony</Link>
+            <nav style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              {[
+                { label: 'Home', to: '/' },
+                { label: 'Upcoming', to: createPageUrl("Upcoming") },
+                { label: 'Create Loan', to: createPageUrl("CreateOffer") },
+                { label: 'Record Payment', to: createPageUrl("RecordPayment") },
+                { label: 'My Loans', to: createPageUrl("YourLoans") },
+                { label: 'Friends', to: createPageUrl("Friends") },
+              ].map(({ label, to }) => {
+                const isActive = false;
                 return (
-                  <div key={reminder.id} style={rowStyle}>
-                    <div style={{ width: 24, height: 24, borderRadius: 6, background: isOverdue ? 'rgba(232,114,110,0.12)' : 'rgba(3,172,234,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, color: isOverdue ? '#E8726E' : '#03ACEA' }}>
-                      <Clock style={{ width: 11, height: 11 }} />
-                    </div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <p style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', lineHeight: 1.5, margin: '0 0 2px' }}>{reminder.title}</p>
-                      <p style={{ fontSize: 12, color: '#787776', lineHeight: 1.5, margin: 0 }}>{reminder.subtitle}</p>
-                    </div>
-                    <Link to={createPageUrl("RecordPayment")} style={{ display: 'inline-flex', padding: '7px 14px', borderRadius: 20, background: isOverdue ? '#E8726E' : '#03ACEA', color: 'white', fontSize: 11, fontWeight: 600, textDecoration: 'none', whiteSpace: 'nowrap', flexShrink: 0 }}>
-                      Record Payment
-                    </Link>
-                  </div>
+                  <Link key={label} to={to} style={{ fontSize: 14, fontWeight: isActive ? 600 : 500, color: isActive ? '#1A1918' : '#6B6A68', textDecoration: 'none', padding: '8px 10px', borderRadius: 8, background: isActive ? 'rgba(0,0,0,0.05)' : 'transparent' }}>{label}</Link>
                 );
               })}
-
-              {/* Notification requests underneath */}
-              {allItems.map(item => {
-                const ti = typeIconMap[item.type] || { color: '#9B9A98', bg: 'rgba(155,154,152,0.12)', svg: null };
-                return (
-                  <div key={item.id} style={rowStyle}>
-                    <div style={{ width: 24, height: 24, borderRadius: 6, background: ti.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, color: ti.color }}>
-                      {ti.svg}
-                    </div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <p style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', lineHeight: 1.5, margin: '0 0 2px' }}>
-                        {item.type === 'friend' && `${item.name} sent you a friend request`}
-                        {item.type === 'offer_received' && `${item.name} sent you a loan offer${item.purpose ? ` for ${item.purpose}` : ''}`}
-                        {item.type === 'payment_confirm' && `${item.name} paid you $${item.amount?.toFixed(2)}${item.purpose ? ` for ${item.purpose}` : ''}${item.paymentMethod ? ` using ${item.paymentMethod}` : ''}`}
-                        {item.type === 'term_change' && `${item.name} sent you a loan change request`}
-                      </p>
-                      {item.type === 'payment_confirm' && item.paymentDate && (
-                        <p style={{ fontSize: 11, color: '#9B9A98', margin: '0 0 2px', fontWeight: 400 }}>Date of payment: {format(parseISO(item.paymentDate), 'do MMMM')}</p>
-                      )}
-                    </div>
-                    <div style={{ flexShrink: 0 }}>
-                      {item.type === 'friend' && (
-                        <Link to={createPageUrl("Friends")} style={{ fontSize: 12, fontWeight: 600, color: '#03ACEA', textDecoration: 'none' }}>View request</Link>
-                      )}
-                      {item.type === 'offer_received' && (
-                        <button onClick={() => { setSelectedOffer(item.data); setShowSignatureModal(true); }} disabled={processingId === item.data.id}
-                          style={{ fontSize: 12, fontWeight: 600, color: '#03ACEA', background: 'none', border: 'none', cursor: 'pointer', padding: 0, opacity: processingId === item.data.id ? 0.5 : 1 }}>
-                          View offer
-                        </button>
-                      )}
-                      {item.type === 'payment_confirm' && (
-                        <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
-                          <button onClick={() => handleConfirmPayment(item.data)} disabled={processingId === item.data.id}
-                            style={{ fontSize: 11, fontWeight: 600, color: 'white', background: '#03ACEA', border: 'none', borderRadius: 7, padding: '5px 10px', cursor: 'pointer', opacity: processingId === item.data.id ? 0.5 : 1, whiteSpace: 'nowrap' }}>
-                            Confirm
-                          </button>
-                          <button onClick={() => setConfirmingDeny(item.data)} disabled={processingId === item.data.id}
-                            style={{ fontSize: 11, fontWeight: 600, color: '#E8726E', background: 'rgba(232,114,110,0.1)', border: 'none', borderRadius: 7, padding: '5px 10px', cursor: 'pointer', opacity: processingId === item.data.id ? 0.5 : 1, whiteSpace: 'nowrap' }}>
-                            Reject
-                          </button>
-                        </div>
-                      )}
-                      {item.type === 'term_change' && (
-                        <button onClick={() => setViewingPayment({ termChange: item.data, direction: 'term' })} disabled={processingId === item.data.id}
-                          style={{ fontSize: 12, fontWeight: 600, color: '#03ACEA', background: 'none', border: 'none', cursor: 'pointer', padding: 0, opacity: processingId === item.data.id ? 0.5 : 1 }}>
-                          View request
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          );
-        })()}
-
-        </div>
-        <div style={{ padding: '20px 0 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: 11, color: '#787776' }}>2026 Vony, Inc. All rights reserved.</span>
-          <div className="dashboard-footer-links" style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-            <a href="https://www.vony-lending.com/terms" target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#787776', textDecoration: 'none' }}>Terms of Service</a>
-            <a href="https://www.vony-lending.com/privacy" target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#787776', textDecoration: 'none' }}>Privacy Center</a>
-            <a href="https://www.vony-lending.com/do-not-sell" target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#787776', textDecoration: 'none' }}>Do not sell or share my personal information</a>
+              <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', margin: '10px 0' }} />
+              {[
+                { label: 'Recent Activity', to: createPageUrl("RecentActivity") },
+                { label: 'Documents', to: createPageUrl("LoanAgreements") },
+              ].map(({ label, to }) => (
+                <Link key={label} to={to} style={{ fontSize: 14, fontWeight: 500, color: '#6B6A68', textDecoration: 'none', padding: '8px 10px', borderRadius: 8 }}>{label}</Link>
+              ))}
+              <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', margin: '10px 0' }} />
+              {[
+                { label: 'Learn', to: createPageUrl("ComingSoon") },
+                { label: 'Loan Help', to: createPageUrl("LoanHelp") },
+                { label: 'Help & Support', to: createPageUrl("ComingSoon") },
+              ].map(({ label, to }) => (
+                <Link key={label} to={to} style={{ fontSize: 14, fontWeight: 500, color: '#6B6A68', textDecoration: 'none', padding: '8px 10px', borderRadius: 8 }}>{label}</Link>
+              ))}
+              <button onClick={logout} style={{ fontSize: 14, fontWeight: 500, color: '#6B6A68', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', padding: '8px 10px', borderRadius: 8, fontFamily: 'inherit' }}>Log Out</button>
+            </nav>
           </div>
         </div>
+
+        {/* COL 2 - main content */}
+        <div className="mesh-center" style={{ background: 'white', borderRight: '1px solid rgba(0,0,0,0.08)', padding: '40px 48px 80px' }}>
+          <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 26, fontWeight: 600, color: '#1A1918', marginBottom: 20 }}>Notifications</div>
+          <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 24 }} />
+
+          {/* All items: reminders first, then notification requests */}
+          {(() => {
+            const allItems = [];
+
+            friendRequestsReceived.forEach(request => {
+              const senderProfile = profiles.find(p => p.user_id === request.user_id);
+              const name = senderProfile?.full_name || senderProfile?.username || 'Unknown';
+              allItems.push({ type: 'friend', id: `friend-${request.id}`, timestamp: new Date(request.created_at || 0), data: request, name, purpose: null, amount: null });
+            });
+            loanOffersReceived.forEach(offer => {
+              const lender = getUserById(offer.lender_id);
+              const name = lender?.full_name || lender?.username || 'Unknown';
+              allItems.push({ type: 'offer_received', id: `offer-recv-${offer.id}`, timestamp: new Date(offer.created_at || 0), data: offer, name, purpose: offer.purpose, amount: null });
+            });
+            paymentsToConfirm.forEach(payment => {
+              const recorderProfile = profiles.find(p => p.user_id === payment.recorded_by);
+              const name = recorderProfile?.full_name || recorderProfile?.username || 'Unknown';
+              const pmtLoan = loans.find(l => l.id === payment.loan_id);
+              allItems.push({ type: 'payment_confirm', id: `pmt-confirm-${payment.id}`, timestamp: new Date(payment.created_at || payment.payment_date || 0), data: payment, name, purpose: pmtLoan?.purpose || null, amount: payment.amount, paymentMethod: payment.payment_method || null, paymentDate: payment.payment_date || null });
+            });
+            termChangeRequests.forEach(loan => {
+              const otherUserId = loan.lender_id === user.id ? loan.borrower_id : loan.lender_id;
+              const otherProfile = profiles.find(p => p.user_id === otherUserId);
+              const name = otherProfile?.full_name || otherProfile?.username || getLoanOtherParty(loan);
+              allItems.push({ type: 'term_change', id: `term-${loan.id}`, timestamp: new Date(loan.updated_at || loan.created_at || 0), data: loan, name, purpose: null, amount: null });
+            });
+            allItems.sort((a, b) => b.timestamp - a.timestamp);
+
+            const typeIconMap = {
+              friend:          { color: '#7C3AED', bg: 'rgba(124,58,237,0.12)', svg: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> },
+              offer_received:  { color: '#2563EB', bg: 'rgba(37,99,235,0.12)',  svg: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> },
+              payment_confirm: { color: '#16A34A', bg: 'rgba(22,163,74,0.12)',  svg: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> },
+              term_change:     { color: '#D97706', bg: 'rgba(217,119,6,0.12)',  svg: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> },
+            };
+
+            const rowStyle = { background: '#F8F8F8', borderRadius: 10, display: 'flex', alignItems: 'center', gap: 14, padding: '9px 16px' };
+
+            if (reminders.length === 0 && allItems.length === 0) {
+              return (
+                <div style={rowStyle}>
+                  <div style={{ width: 24, height: 24, borderRadius: 6, background: 'rgba(3,172,234,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, color: '#03ACEA' }}>
+                    <CheckCircle style={{ width: 11, height: 11 }} />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <p style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', margin: '0 0 2px' }}>All caught up!</p>
+                    <p style={{ fontSize: 12, color: '#787776', margin: 0 }}>You have no notifications.</p>
+                  </div>
+                </div>
+              );
+            }
+
+            return (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                {reminders.map(reminder => {
+                  const isOverdue = reminder.type.startsWith('overdue');
+                  return (
+                    <div key={reminder.id} style={rowStyle}>
+                      <div style={{ width: 24, height: 24, borderRadius: 6, background: isOverdue ? 'rgba(232,114,110,0.12)' : 'rgba(3,172,234,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, color: isOverdue ? '#E8726E' : '#03ACEA' }}>
+                        <Clock style={{ width: 11, height: 11 }} />
+                      </div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <p style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', lineHeight: 1.5, margin: '0 0 2px' }}>{reminder.title}</p>
+                        <p style={{ fontSize: 12, color: '#787776', lineHeight: 1.5, margin: 0 }}>{reminder.subtitle}</p>
+                      </div>
+                      <Link to={createPageUrl("RecordPayment")} style={{ display: 'inline-flex', padding: '7px 14px', borderRadius: 20, background: isOverdue ? '#E8726E' : '#03ACEA', color: 'white', fontSize: 11, fontWeight: 600, textDecoration: 'none', whiteSpace: 'nowrap', flexShrink: 0 }}>
+                        Record Payment
+                      </Link>
+                    </div>
+                  );
+                })}
+
+                {allItems.map(item => {
+                  const ti = typeIconMap[item.type] || { color: '#9B9A98', bg: 'rgba(155,154,152,0.12)', svg: null };
+                  return (
+                    <div key={item.id} style={rowStyle}>
+                      <div style={{ width: 24, height: 24, borderRadius: 6, background: ti.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, color: ti.color }}>
+                        {ti.svg}
+                      </div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <p style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', lineHeight: 1.5, margin: '0 0 2px' }}>
+                          {item.type === 'friend' && `${item.name} sent you a friend request`}
+                          {item.type === 'offer_received' && `${item.name} sent you a loan offer${item.purpose ? ` for ${item.purpose}` : ''}`}
+                          {item.type === 'payment_confirm' && `${item.name} paid you $${item.amount?.toFixed(2)}${item.purpose ? ` for ${item.purpose}` : ''}${item.paymentMethod ? ` using ${item.paymentMethod}` : ''}`}
+                          {item.type === 'term_change' && `${item.name} sent you a loan change request`}
+                        </p>
+                        {item.type === 'payment_confirm' && item.paymentDate && (
+                          <p style={{ fontSize: 11, color: '#9B9A98', margin: '0 0 2px', fontWeight: 400 }}>Date of payment: {format(parseISO(item.paymentDate), 'do MMMM')}</p>
+                        )}
+                      </div>
+                      <div style={{ flexShrink: 0 }}>
+                        {item.type === 'friend' && (
+                          <Link to={createPageUrl("Friends")} style={{ fontSize: 12, fontWeight: 600, color: '#03ACEA', textDecoration: 'none' }}>View request</Link>
+                        )}
+                        {item.type === 'offer_received' && (
+                          <button onClick={() => { setSelectedOffer(item.data); setShowSignatureModal(true); }} disabled={processingId === item.data.id}
+                            style={{ fontSize: 12, fontWeight: 600, color: '#03ACEA', background: 'none', border: 'none', cursor: 'pointer', padding: 0, opacity: processingId === item.data.id ? 0.5 : 1 }}>
+                            View offer
+                          </button>
+                        )}
+                        {item.type === 'payment_confirm' && (
+                          <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
+                            <button onClick={() => handleConfirmPayment(item.data)} disabled={processingId === item.data.id}
+                              style={{ fontSize: 11, fontWeight: 600, color: 'white', background: '#03ACEA', border: 'none', borderRadius: 7, padding: '5px 10px', cursor: 'pointer', opacity: processingId === item.data.id ? 0.5 : 1, whiteSpace: 'nowrap' }}>
+                              Confirm
+                            </button>
+                            <button onClick={() => setConfirmingDeny(item.data)} disabled={processingId === item.data.id}
+                              style={{ fontSize: 11, fontWeight: 600, color: '#E8726E', background: 'rgba(232,114,110,0.1)', border: 'none', borderRadius: 7, padding: '5px 10px', cursor: 'pointer', opacity: processingId === item.data.id ? 0.5 : 1, whiteSpace: 'nowrap' }}>
+                              Reject
+                            </button>
+                          </div>
+                        )}
+                        {item.type === 'term_change' && (
+                          <button onClick={() => setViewingPayment({ termChange: item.data, direction: 'term' })} disabled={processingId === item.data.id}
+                            style={{ fontSize: 12, fontWeight: 600, color: '#03ACEA', background: 'none', border: 'none', cursor: 'pointer', padding: 0, opacity: processingId === item.data.id ? 0.5 : 1 }}>
+                            View request
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          })()}
+
+          <div style={{ marginTop: 48, paddingTop: 24, borderTop: '1px solid rgba(0,0,0,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span style={{ fontSize: 11, color: '#787776' }}>2026 Vony, Inc. All rights reserved.</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+              <a href="https://www.vony-lending.com/terms" target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#787776', textDecoration: 'none' }}>Terms of Service</a>
+              <a href="https://www.vony-lending.com/privacy" target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#787776', textDecoration: 'none' }}>Privacy Center</a>
+              <a href="https://www.vony-lending.com/do-not-sell" target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#787776', textDecoration: 'none' }}>Do not sell or share my personal information</a>
+            </div>
+          </div>
+        </div>
+
+        {/* COL 3 - right panel */}
+        <div className="mesh-right" style={{ background: '#F5F4F0' }}>
+          <div style={{ position: 'sticky', top: 0, padding: '28px 28px 0' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 10, marginBottom: 28 }}>
+              <Link to={createPageUrl("Requests")} style={{ color: '#1A1918', textDecoration: 'none' }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              </Link>
+              <Link to={createPageUrl("Profile")} style={{ color: '#6B6A68', textDecoration: 'none' }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              </Link>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       {/* Warning Dialogs */}

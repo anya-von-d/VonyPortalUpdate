@@ -7,7 +7,6 @@ import { createPageUrl } from "@/utils";
 import { useAuth } from "@/lib/AuthContext";
 import BorrowerSignatureModal from "@/components/loans/BorrowerSignatureModal";
 
-const SHADOW = '0px 50px 40px rgba(0,0,0,0.02), 0px 50px 40px rgba(0,0,0,0.04), 0px 20px 40px rgba(0,0,0,0.08), 0px 3px 10px rgba(0,0,0,0.12)';
 
 const CATEGORY_OPTIONS = [
   { id: 'sent_offer', label: 'You sent a loan offer to' },
@@ -577,18 +576,6 @@ export default function RecentActivityPage() {
     </div>
   );
 
-  /* ── PageCard component ──────────────────────────────────── */
-  const PageCard = ({ title, headerRight, children, style }) => (
-    <div style={{ background: '#F4F4F5', borderRadius: 14, overflow: 'hidden', boxShadow: SHADOW, ...style }}>
-      <div style={{ padding: '6px 14px 5px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>{title}</span>
-        {headerRight && <div style={{ flexShrink: 0 }}>{headerRight}</div>}
-      </div>
-      <div style={{ background: '#ffffff', margin: '0 5px 5px', borderRadius: 10, overflow: style?.overflow ?? 'hidden' }}>
-        {children}
-      </div>
-    </div>
-  );
 
   /* ── Status badge renderer ───────────────────────────────── */
   const renderStatusBadge = (activity, status) => {
@@ -711,7 +698,11 @@ export default function RecentActivityPage() {
         </div>
 
         {/* Col 2: center content */}
-        <div className="mesh-center" style={{ background: 'white', borderRight: '1px solid rgba(0,0,0,0.08)', padding: '40px 40px 60px' }}>
+        <div className="mesh-center" style={{ background: 'white', borderRight: '1px solid rgba(0,0,0,0.08)', padding: '40px 48px 80px' }}>
+
+          {/* Page title */}
+          <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 26, fontWeight: 600, color: '#1A1918', marginBottom: 20 }}>Recent Activity</div>
+          <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 24 }} />
 
           {/* ── Search Bar + Sort + Export ───────────────────────── */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
@@ -742,8 +733,10 @@ export default function RecentActivityPage() {
           </div>
 
           {/* ── Filter Bar ─────────────────────────────────────── */}
-          <PageCard title="Filters" style={{ marginBottom: 20, overflow: 'visible', position: 'relative', zIndex: 20 }}>
-            <div style={{ padding: '11px 9px', display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+          <div style={{ marginBottom: 24, position: 'relative', zIndex: 20 }}>
+            <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 9 }}>Filters</div>
+            <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 14 }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
               <SingleSelectDropdown options={DATE_OPTIONS} selected={dateFilter} onChange={setDateFilter} />
               <MultiSelectDropdown label="All Categories" options={CATEGORY_OPTIONS} selected={categoryFilter} onChange={setCategoryFilter} />
               {friendOptions.length > 0 && (
@@ -767,78 +760,78 @@ export default function RecentActivityPage() {
                 Clear Filters
               </button>
             </div>
-          </PageCard>
+          </div>
 
           {/* ── Activity List ──────────────────────────────────── */}
-          <PageCard title="Activity">
-            <div style={{ padding: '14px 9px 9px' }}>
-              {filtered.length === 0 ? (
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 0', color: '#C7C6C4' }}>
-                  <Activity size={32} style={{ opacity: 0.4, marginBottom: 8 }} />
-                  <p style={{ fontSize: 13, color: '#787776', margin: 0 }}>No activity found</p>
-                  {hasAnyFilter && <p style={{ fontSize: 12, color: '#C7C6C4', margin: '4px 0 0' }}>Try adjusting your filters</p>}
+          <div>
+            <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 9 }}>Activity</div>
+            <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 14 }} />
+            {filtered.length === 0 ? (
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 0', color: '#C7C6C4' }}>
+                <Activity size={32} style={{ opacity: 0.4, marginBottom: 8 }} />
+                <p style={{ fontSize: 13, color: '#787776', margin: 0 }}>No activity found</p>
+                {hasAnyFilter && <p style={{ fontSize: 12, color: '#C7C6C4', margin: '4px 0 0' }}>Try adjusting your filters</p>}
+              </div>
+            ) : (
+              <>
+                {/* Table header */}
+                <div className="ra-table-header" style={{
+                  display: 'grid',
+                  gridTemplateColumns: '120px 1fr 200px',
+                  alignItems: 'center',
+                  padding: '0 0 12px',
+                  borderBottom: '1px solid rgba(0,0,0,0.06)',
+                  marginBottom: 8,
+                }}>
+                  <span style={{ fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Date</span>
+                  <span style={{ fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', textAlign: 'center' }}>Category</span>
+                  <span style={{ fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', textAlign: 'center' }}>Status</span>
                 </div>
-              ) : (
-                <>
-                  {/* Table header */}
-                  <div className="ra-table-header" style={{
-                    display: 'grid',
-                    gridTemplateColumns: '120px 1fr 200px',
-                    alignItems: 'center',
-                    padding: '0 5px 12px',
-                    borderBottom: '1px solid rgba(0,0,0,0.06)',
-                    marginBottom: 8,
-                  }}>
-                    <span style={{ fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Date</span>
-                    <span style={{ fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', textAlign: 'center' }}>Category</span>
-                    <span style={{ fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', textAlign: 'center' }}>Status</span>
-                  </div>
 
-                  <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    {filtered.map((activity, index) => {
-                      const { title, description, icon: Icon, status, friendName, amount, category } = getActivityInfo(activity);
-                      const { bg: iconBg, color: iconColor } = getIconStyle(Icon);
-                      const dateDisplay = activity.date ? format(new Date(activity.date), 'MMM d, yyyy') : '';
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  {filtered.map((activity, index) => {
+                    const { title, description, icon: Icon, status, friendName, amount, category } = getActivityInfo(activity);
+                    const { bg: iconBg, color: iconColor } = getIconStyle(Icon);
+                    const dateDisplay = activity.date ? format(new Date(activity.date), 'MMM d, yyyy') : '';
 
-                      return (
-                        <div
-                          key={`${activity.type}-${activity.id}-${index}`}
-                          className="ra-table-row"
-                          style={{
-                            display: 'grid',
-                            gridTemplateColumns: '120px 1fr 200px',
-                            alignItems: 'center',
-                            padding: '12px 5px',
-                            borderBottom: 'none',
-                          }}
-                        >
-                          {/* Col 1: Date */}
-                          <span className="ra-col-date" style={{ fontSize: 12, color: '#787776', fontWeight: 500 }}>
-                            {dateDisplay}
+                    return (
+                      <div
+                        key={`${activity.type}-${activity.id}-${index}`}
+                        className="ra-table-row"
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns: '120px 1fr 200px',
+                          alignItems: 'center',
+                          padding: '12px 0',
+                          borderBottom: 'none',
+                        }}
+                      >
+                        {/* Col 1: Date */}
+                        <span className="ra-col-date" style={{ fontSize: 12, color: '#787776', fontWeight: 500 }}>
+                          {dateDisplay}
+                        </span>
+
+                        {/* Col 2: Category — icon + title */}
+                        <div className="ra-col-main" style={{ display: 'flex', alignItems: 'center' }}>
+                          <div style={{ width: 24, height: 24, borderRadius: 6, background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginRight: 8 }}>
+                            <Icon size={12} style={{ color: iconColor }} />
+                          </div>
+                          <span style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {title}
                           </span>
-
-                          {/* Col 2: Category — icon + title */}
-                          <div className="ra-col-main" style={{ display: 'flex', alignItems: 'center' }}>
-                            <div style={{ width: 24, height: 24, borderRadius: 6, background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginRight: 8 }}>
-                              <Icon size={12} style={{ color: iconColor }} />
-                            </div>
-                            <span style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                              {title}
-                            </span>
-                          </div>
-
-                          {/* Col 3: Status badge */}
-                          <div className="ra-col-status" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            {renderStatusBadge(activity, status)}
-                          </div>
                         </div>
-                      );
-                    })}
-                  </div>
-                </>
-              )}
-            </div>
-          </PageCard>
+
+                        {/* Col 3: Status badge */}
+                        <div className="ra-col-status" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          {renderStatusBadge(activity, status)}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+          </div>
 
         </div>
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import { User, PublicProfile } from "@/entities/all";
 import { UploadFile } from "@/integrations/Core";
 import { Button } from "@/components/ui/button";
@@ -18,7 +19,7 @@ import {
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import DashboardSidebar from "@/components/DashboardSidebar";
+import { useAuth } from "@/lib/AuthContext";
 
 const SHADOW = '0px 50px 40px rgba(0,0,0,0.02), 0px 50px 40px rgba(0,0,0,0.04), 0px 20px 40px rgba(0,0,0,0.08), 0px 3px 10px rgba(0,0,0,0.12)';
 
@@ -51,6 +52,7 @@ const syncPublicProfile = async (userData) => {
 };
 
 export default function Profile() {
+  const { logout } = useAuth();
   const [user, setUser] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setSaving] = useState(false);
@@ -107,7 +109,6 @@ export default function Profile() {
         theme_preference: userData?.theme_preference || 'morning'
       });
 
-      // Sync Public Profile using the utility function
       await syncPublicProfile(userData);
     } catch (error) {
       console.error("Error loading user data:", error);
@@ -152,9 +153,7 @@ export default function Profile() {
       [field]: value
     }));
 
-    // Check username availability when username changes
     if (field === 'username') {
-      // Clear previous timeout if any
       if (handleInputChange.usernameCheckTimeout) {
         clearTimeout(handleInputChange.usernameCheckTimeout);
       }
@@ -162,7 +161,6 @@ export default function Profile() {
         checkUsernameAvailability(value);
       }, 500);
     }
-
   };
 
   const handleProfilePictureChange = async (e) => {
@@ -176,10 +174,7 @@ export default function Profile() {
         setFormData(prev => ({...prev, profile_picture_url: file_url }));
         setUser(prev => ({...prev, profile_picture_url: file_url }));
 
-        // Save the profile picture to the database immediately
         await User.updateMyUserData({ profile_picture_url: file_url });
-
-        // Sync to public profile
         await syncPublicProfile({ ...user, profile_picture_url: file_url });
       } catch (error) {
         console.error("Error uploading profile picture", error);
@@ -197,10 +192,7 @@ export default function Profile() {
       setFormData(prev => ({...prev, profile_picture_url: '' }));
       setUser(prev => ({...prev, profile_picture_url: '' }));
 
-      // Save to database
       await User.updateMyUserData({ profile_picture_url: '' });
-
-      // Sync to public profile
       await syncPublicProfile({ ...user, profile_picture_url: '' });
     } catch (error) {
       console.error("Error removing profile picture", error);
@@ -210,7 +202,6 @@ export default function Profile() {
   };
 
   const handleSave = async () => {
-    // Check username availability one more time before saving
     const isUsernameAvailable = await checkUsernameAvailability(formData.username);
     if (!isUsernameAvailable && formData.username !== user?.username) {
       return;
@@ -219,7 +210,6 @@ export default function Profile() {
     setSaving(true);
     setError(null);
     try {
-      // Only include fields that exist in the database schema (full_name is not editable)
       const updateData = {
         username: formData.username,
         phone: formData.phone,
@@ -229,10 +219,8 @@ export default function Profile() {
       };
 
       const updatedUser = await User.updateMyUserData(updateData);
-      // Sync public profile with all latest data including updatedUser and updateData
       await syncPublicProfile({ ...user, ...updatedUser, ...updateData });
       await loadUserData();
-      // Notify other components (Layout/AuthContext) that the profile was updated
       window.dispatchEvent(new Event('profileUpdated'));
       setIsEditing(false);
     } catch (error) {
@@ -267,7 +255,7 @@ export default function Profile() {
   // Loading state
   if (isLoading) {
     return (
-      <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ minHeight: '100vh', background: '#F5F4F0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{ width: 32, height: 32, border: '2px solid #03ACEA', borderTopColor: 'transparent', borderRadius: '50%', margin: '0 auto 16px' }} className="animate-spin" />
           <p style={{ fontSize: 14, color: '#787776', fontFamily: "'DM Sans', sans-serif" }}>Loading profile...</p>
@@ -279,7 +267,7 @@ export default function Profile() {
   // Error state for initial load failure
   if (error && !user) {
     return (
-      <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ minHeight: '100vh', background: '#F5F4F0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ background: '#F4F4F5', borderRadius: 14, overflow: 'hidden', boxShadow: SHADOW, padding: 32, maxWidth: 400 }}>
           <div style={{ textAlign: 'center' }}>
             <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -299,7 +287,8 @@ export default function Profile() {
   if (!user) return null;
 
   return (
-    <div className="home-with-sidebar" style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased', paddingTop: 0, background: 'transparent' }}>
+    <div style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", background: '#F5F4F0' }}>
+
       {/* Bank Account Coming Soon Modal */}
       {showComingSoonModal && (
         <div
@@ -313,12 +302,10 @@ export default function Profile() {
             onClick={e => e.stopPropagation()}
             style={{ background: '#F4F4F5', borderRadius: 20, maxWidth: 440, width: '100%', boxShadow: '0px 50px 40px rgba(0,0,0,0.02), 0px 50px 40px rgba(0,0,0,0.04), 0px 20px 40px rgba(0,0,0,0.08), 0px 3px 10px rgba(0,0,0,0.12)', overflow: 'hidden' }}
           >
-            {/* Header strip */}
             <div style={{ padding: '6px 14px 5px', display: 'flex', alignItems: 'center', gap: 6 }}>
               <Clock size={12} style={{ color: '#9B9A98' }} />
               <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>Bank Account</span>
             </div>
-            {/* White inner card */}
             <div style={{ background: '#ffffff', margin: '0 5px 5px', borderRadius: 14, padding: '28px 28px 24px' }}>
               <div style={{ width: 48, height: 48, borderRadius: 14, margin: '0 auto 20px', background: 'rgba(3,172,234,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Landmark size={24} style={{ color: '#03ACEA' }} />
@@ -342,318 +329,362 @@ export default function Profile() {
           </motion.div>
         </div>
       )}
-      <DashboardSidebar activePage="Profile" user={user} />
 
-      {/* Profile Hero — photo, name, member-since, edit button unboxed */}
-      <div style={{ margin: '8px 10px 0', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '32px 20px 28px', position: 'relative' }}>
-        <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0.15, pointerEvents: 'none', zIndex: 0 }} viewBox="0 0 1200 200" preserveAspectRatio="xMidYMid slice">
-          {[{cx:80,cy:40},{cx:200,cy:110},{cx:320,cy:25},{cx:430,cy:160},{cx:540,cy:70},{cx:660,cy:130},{cx:770,cy:35},{cx:890,cy:175},{cx:1000,cy:80},{cx:1100,cy:140},{cx:150,cy:185},{cx:480,cy:100},{cx:720,cy:180},{cx:950,cy:55},{cx:280,cy:195},{cx:620,cy:48},{cx:1050,cy:195}].map((s, i) => (
-            <circle key={i} cx={s.cx} cy={s.cy} r={i % 3 === 0 ? 2.5 : 1.5} fill="white" />
-          ))}
-        </svg>
+      <div style={{ display: 'grid', gridTemplateColumns: '180px 1fr 300px', gap: 0, minHeight: '100vh' }}>
 
-        {/* Error Alert */}
-        {error && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            style={{ marginBottom: 16, textAlign: 'left', background: 'rgba(232,114,110,0.08)', borderRadius: 10, padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 8, position: 'relative', zIndex: 1, maxWidth: 400, width: '100%' }}
-          >
-            <XCircle size={18} style={{ color: '#E8726E', flexShrink: 0 }} />
-            <p style={{ fontSize: 13, color: '#E8726E', margin: 0 }}>{error}</p>
-          </motion.div>
-        )}
+        {/* COL 1 - left nav */}
+        <div className="mesh-left" style={{ background: '#F5F4F0', borderRight: '1px solid rgba(0,0,0,0.08)' }}>
+          <div style={{ position: 'sticky', top: 0, padding: '32px 20px 0' }}>
+            <Link to="/" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, fontStyle: 'italic', fontSize: '1.75rem', color: '#1A1918', textDecoration: 'none', display: 'block', marginBottom: 28 }}>Vony</Link>
+            <nav style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              {[
+                { label: 'Home', to: '/' },
+                { label: 'Upcoming', to: createPageUrl("Upcoming") },
+                { label: 'Create Loan', to: createPageUrl("CreateOffer") },
+                { label: 'Record Payment', to: createPageUrl("RecordPayment") },
+                { label: 'My Loans', to: createPageUrl("YourLoans") },
+                { label: 'Friends', to: createPageUrl("Friends") },
+              ].map(({ label, to }) => {
+                const isActive = false;
+                return (
+                  <Link key={label} to={to} style={{ fontSize: 14, fontWeight: isActive ? 600 : 500, color: isActive ? '#1A1918' : '#6B6A68', textDecoration: 'none', padding: '8px 10px', borderRadius: 8, background: isActive ? 'rgba(0,0,0,0.05)' : 'transparent' }}>{label}</Link>
+                );
+              })}
+              <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', margin: '10px 0' }} />
+              {[
+                { label: 'Recent Activity', to: createPageUrl("RecentActivity") },
+                { label: 'Documents', to: createPageUrl("LoanAgreements") },
+              ].map(({ label, to }) => (
+                <Link key={label} to={to} style={{ fontSize: 14, fontWeight: 500, color: '#6B6A68', textDecoration: 'none', padding: '8px 10px', borderRadius: 8 }}>{label}</Link>
+              ))}
+              <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', margin: '10px 0' }} />
+              {[
+                { label: 'Learn', to: createPageUrl("ComingSoon") },
+                { label: 'Loan Help', to: createPageUrl("LoanHelp") },
+                { label: 'Help & Support', to: createPageUrl("ComingSoon") },
+              ].map(({ label, to }) => (
+                <Link key={label} to={to} style={{ fontSize: 14, fontWeight: 500, color: '#6B6A68', textDecoration: 'none', padding: '8px 10px', borderRadius: 8 }}>{label}</Link>
+              ))}
+              <button onClick={logout} style={{ fontSize: 14, fontWeight: 500, color: '#6B6A68', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', padding: '8px 10px', borderRadius: 8, fontFamily: 'inherit' }}>Log Out</button>
+            </nav>
+          </div>
+        </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, position: 'relative', zIndex: 1 }}>
-          {/* Photo + hover overlay */}
-          <div style={{ position: 'relative', display: 'inline-block' }}>
-            <img
-              src={formData.profile_picture_url || `https://ui-avatars.com/api/?name=${encodeURIComponent((user.full_name || 'User').charAt(0))}&background=678AFB&color=fff&size=128`}
-              alt="Profile"
-              style={{ width: 88, height: 88, borderRadius: '50%', objectFit: 'cover', border: '3px solid rgba(255,255,255,0.8)', boxShadow: '0 4px 16px rgba(0,0,0,0.12)', display: 'block' }}
-            />
+        {/* COL 2 - main content */}
+        <div className="mesh-center" style={{ background: 'white', borderRight: '1px solid rgba(0,0,0,0.08)', padding: '40px 48px 80px' }}>
+          <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 26, fontWeight: 600, color: '#1A1918', marginBottom: 20 }}>Profile</div>
+          <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 24 }} />
+
+          {/* Error Alert */}
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              style={{ marginBottom: 20, background: 'rgba(232,114,110,0.08)', borderRadius: 10, padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 8 }}
+            >
+              <XCircle size={18} style={{ color: '#E8726E', flexShrink: 0 }} />
+              <p style={{ fontSize: 13, color: '#E8726E', margin: 0 }}>{error}</p>
+            </motion.div>
+          )}
+
+          {/* Profile Hero — photo, name, member-since, edit button */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, marginBottom: 32 }}>
+            {/* Photo + hover overlay */}
+            <div style={{ position: 'relative', display: 'inline-block' }}>
+              <img
+                src={formData.profile_picture_url || `https://ui-avatars.com/api/?name=${encodeURIComponent((user.full_name || 'User').charAt(0))}&background=678AFB&color=fff&size=128`}
+                alt="Profile"
+                style={{ width: 88, height: 88, borderRadius: '50%', objectFit: 'cover', border: '3px solid rgba(0,0,0,0.08)', boxShadow: '0 4px 16px rgba(0,0,0,0.12)', display: 'block' }}
+              />
+              <button
+                onClick={() => setShowPhotoMenu(!showPhotoMenu)}
+                disabled={isSaving}
+                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.45)', borderRadius: '50%', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', cursor: 'pointer', opacity: 0, transition: 'opacity 0.2s' }}
+                onMouseEnter={e => e.currentTarget.style.opacity = '1'}
+                onMouseLeave={e => e.currentTarget.style.opacity = '0'}
+              >
+                <Camera size={22} />
+              </button>
+              <input type="file" ref={fileInputRef} onChange={handleProfilePictureChange} style={{ display: 'none' }} accept="image/*" />
+              <input type="file" ref={cameraInputRef} onChange={handleProfilePictureChange} style={{ display: 'none' }} accept="image/*" capture="environment" />
+
+              {showPhotoMenu && (
+                <motion.div
+                  ref={photoMenuRef}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  style={{ position: 'absolute', top: 'calc(100% + 8px)', left: '50%', transform: 'translateX(-50%)', background: 'white', borderRadius: 12, boxShadow: '0 8px 32px rgba(0,0,0,0.12)', border: '1px solid rgba(0,0,0,0.08)', overflow: 'hidden', zIndex: 10, minWidth: 200 }}
+                >
+                  <button onClick={() => fileInputRef.current?.click()} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '11px 16px', width: '100%', background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", textAlign: 'left' }}
+                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.03)'}
+                    onMouseLeave={e => e.currentTarget.style.background = 'none'}
+                  >
+                    <Image size={16} style={{ color: '#787776' }} /> Choose from Library
+                  </button>
+                  <button onClick={() => cameraInputRef.current?.click()} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '11px 16px', width: '100%', background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", textAlign: 'left', borderTop: '1px solid rgba(0,0,0,0.06)' }}
+                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.03)'}
+                    onMouseLeave={e => e.currentTarget.style.background = 'none'}
+                  >
+                    <Camera size={16} style={{ color: '#787776' }} /> Take Photo
+                  </button>
+                  {formData.profile_picture_url && (
+                    <button onClick={handleRemovePhoto} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '11px 16px', width: '100%', background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: '#E8726E', fontFamily: "'DM Sans', sans-serif", textAlign: 'left', borderTop: '1px solid rgba(0,0,0,0.06)' }}
+                      onMouseEnter={e => e.currentTarget.style.background = 'rgba(232,114,110,0.06)'}
+                      onMouseLeave={e => e.currentTarget.style.background = 'none'}
+                    >
+                      <Trash2 size={16} style={{ color: '#E8726E' }} /> Remove Profile Photo
+                    </button>
+                  )}
+                </motion.div>
+              )}
+            </div>
+
+            <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 28, fontWeight: 600, color: '#1A1918', margin: 0, lineHeight: 1 }}>
+              {formData.full_name || user.full_name}
+            </h2>
+
+            <p style={{ fontSize: 13, color: '#787776', margin: 0, fontFamily: "'DM Sans', sans-serif" }}>
+              Member since {user.created_at ? new Date(user.created_at).getFullYear() : new Date().getFullYear()}
+            </p>
+
             <button
               onClick={() => setShowPhotoMenu(!showPhotoMenu)}
               disabled={isSaving}
-              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.45)', borderRadius: '50%', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', cursor: 'pointer', opacity: 0, transition: 'opacity 0.2s' }}
-              onMouseEnter={e => e.currentTarget.style.opacity = '1'}
-              onMouseLeave={e => e.currentTarget.style.opacity = '0'}
+              style={{ background: 'rgba(0,0,0,0.05)', color: '#1A1918', border: '1px solid rgba(0,0,0,0.1)', borderRadius: 10, padding: '8px 20px', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}
             >
-              <Camera size={22} />
+              Edit Profile Photo
             </button>
-            <input type="file" ref={fileInputRef} onChange={handleProfilePictureChange} style={{ display: 'none' }} accept="image/*" />
-            <input type="file" ref={cameraInputRef} onChange={handleProfilePictureChange} style={{ display: 'none' }} accept="image/*" capture="environment" />
-
-            {showPhotoMenu && (
-              <motion.div
-                ref={photoMenuRef}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                style={{ position: 'absolute', top: 'calc(100% + 8px)', left: '50%', transform: 'translateX(-50%)', background: 'white', borderRadius: 12, boxShadow: '0 8px 32px rgba(0,0,0,0.12)', border: '1px solid rgba(0,0,0,0.08)', overflow: 'hidden', zIndex: 10, minWidth: 200 }}
-              >
-                <button onClick={() => fileInputRef.current?.click()} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '11px 16px', width: '100%', background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", textAlign: 'left' }}
-                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.03)'}
-                  onMouseLeave={e => e.currentTarget.style.background = 'none'}
-                >
-                  <Image size={16} style={{ color: '#787776' }} /> Choose from Library
-                </button>
-                <button onClick={() => cameraInputRef.current?.click()} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '11px 16px', width: '100%', background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", textAlign: 'left', borderTop: '1px solid rgba(0,0,0,0.06)' }}
-                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.03)'}
-                  onMouseLeave={e => e.currentTarget.style.background = 'none'}
-                >
-                  <Camera size={16} style={{ color: '#787776' }} /> Take Photo
-                </button>
-                {formData.profile_picture_url && (
-                  <button onClick={handleRemovePhoto} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '11px 16px', width: '100%', background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: '#E8726E', fontFamily: "'DM Sans', sans-serif", textAlign: 'left', borderTop: '1px solid rgba(0,0,0,0.06)' }}
-                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(232,114,110,0.06)'}
-                    onMouseLeave={e => e.currentTarget.style.background = 'none'}
-                  >
-                    <Trash2 size={16} style={{ color: '#E8726E' }} /> Remove Profile Photo
-                  </button>
-                )}
-              </motion.div>
-            )}
           </div>
 
-          {/* Name */}
-          <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 32, fontWeight: 600, color: '#1A1918', margin: 0, lineHeight: 1 }}>
-            {formData.full_name || user.full_name}
-          </h2>
-
-          {/* Member since */}
-          <p style={{ fontSize: 13, color: '#787776', margin: 0, fontFamily: "'DM Sans', sans-serif" }}>
-            Member since {user.created_at ? new Date(user.created_at).getFullYear() : new Date().getFullYear()}
-          </p>
-
-          {/* Edit Profile Photo button */}
-          <button
-            onClick={() => setShowPhotoMenu(!showPhotoMenu)}
-            disabled={isSaving}
-            style={{ background: 'rgba(0,0,0,0.05)', backdropFilter: 'blur(10px)', color: '#1A1918', border: '1px solid rgba(0,0,0,0.1)', borderRadius: 10, padding: '8px 20px', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}
-          >
-            Edit Profile Photo
-          </button>
-        </div>
-      </div>
-
-      <div className="dashboard-content-wrap" style={{ maxWidth: 1080, margin: '0 auto', padding: '20px 40px 0', position: 'relative', zIndex: 1 }}>
-        <div className="dashboard-grey-box" style={{ background: '#E5E2DF', borderRadius: 18, padding: 20 }}>
-
-        {/* Page Content */}
-        <div className="grid lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8 w-full" style={{ paddingBottom: 40 }}>
-          {/* Profile Info */}
-          <div className="lg:col-span-2 space-y-4 md:space-y-6 min-w-0 w-full">
-            {/* Personal Information */}
-            <PageCard
-              title="Personal Information"
-              headerRight={
-                isEditing ? (
-                  <div style={{ display: 'flex', gap: 8 }}>
+          {/* Page Content */}
+          <div className="grid lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8 w-full" style={{ paddingBottom: 40 }}>
+            {/* Profile Info */}
+            <div className="lg:col-span-2 space-y-4 md:space-y-6 min-w-0 w-full">
+              {/* Personal Information */}
+              <PageCard
+                title="Personal Information"
+                headerRight={
+                  isEditing ? (
+                    <div style={{ display: 'flex', gap: 8 }}>
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          setIsEditing(false);
+                          setFormData({
+                            full_name: user?.full_name || '',
+                            username: user?.username || '',
+                            phone: user?.phone || '',
+                            location: user?.location || '',
+                            profile_picture_url: user?.profile_picture_url || '',
+                            theme_preference: user?.theme_preference || 'morning'
+                          });
+                          setUsernameError(null);
+                        }}
+                        className="bg-white hover:bg-slate-50"
+                        style={{ fontSize: 12, padding: '4px 12px', height: 'auto' }}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        onClick={handleSave}
+                        disabled={isSaving || usernameError || isCheckingUsername}
+                        className="text-white font-semibold hover:opacity-90"
+                        style={{ background: '#03ACEA', fontSize: 12, padding: '4px 12px', height: 'auto' }}
+                      >
+                        {isSaving ? 'Saving...' : 'Save Changes'}
+                      </Button>
+                    </div>
+                  ) : (
                     <Button
-                      variant="outline"
-                      onClick={() => {
-                        setIsEditing(false);
-                        setFormData({
-                          full_name: user?.full_name || '',
-                          username: user?.username || '',
-                          phone: user?.phone || '',
-                          location: user?.location || '',
-                          profile_picture_url: user?.profile_picture_url || '',
-                          theme_preference: user?.theme_preference || 'morning'
-                        });
-                        setUsernameError(null);
-                      }}
-                      className="bg-white hover:bg-slate-50"
-                      style={{ fontSize: 12, padding: '4px 12px', height: 'auto' }}
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      onClick={handleSave}
-                      disabled={isSaving || usernameError || isCheckingUsername}
+                      onClick={() => setIsEditing(true)}
                       className="text-white font-semibold hover:opacity-90"
                       style={{ background: '#03ACEA', fontSize: 12, padding: '4px 12px', height: 'auto' }}
                     >
-                      {isSaving ? 'Saving...' : 'Save Changes'}
+                      Edit
                     </Button>
-                  </div>
-                ) : (
-                  <Button
-                    onClick={() => setIsEditing(true)}
-                    className="text-white font-semibold hover:opacity-90"
-                    style={{ background: '#03ACEA', fontSize: 12, padding: '4px 12px', height: 'auto' }}
-                  >
-                    Edit
-                  </Button>
-                )
-              }
-            >
-              <div style={{ padding: '16px 16px' }}>
-                {/* Inner box with fields */}
-                <div className="space-y-4" style={{ background: 'rgba(3,172,234,0.06)', borderRadius: 12, padding: 16 }}>
-                  <div className="grid md:grid-cols-2 gap-3 md:gap-4">
-                    <div className="space-y-1">
-                      <Label htmlFor="full_name" className="text-xs font-medium" style={{ color: '#787776' }}>
-                        Full Name
-                      </Label>
-                      <Input
-                        id="full_name"
-                        value={formData.full_name}
-                        disabled
-                        placeholder="Enter your full name"
-                        style={{ background: 'rgba(0,0,0,0.03)' }}
-                      />
+                  )
+                }
+              >
+                <div style={{ padding: '16px 16px' }}>
+                  <div className="space-y-4" style={{ background: 'rgba(3,172,234,0.06)', borderRadius: 12, padding: 16 }}>
+                    <div className="grid md:grid-cols-2 gap-3 md:gap-4">
+                      <div className="space-y-1">
+                        <Label htmlFor="full_name" className="text-xs font-medium" style={{ color: '#787776' }}>
+                          Full Name
+                        </Label>
+                        <Input
+                          id="full_name"
+                          value={formData.full_name}
+                          disabled
+                          placeholder="Enter your full name"
+                          style={{ background: 'rgba(0,0,0,0.03)' }}
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <Label className="text-xs font-medium" style={{ color: '#787776' }}>
+                          Email
+                        </Label>
+                        <Input
+                          value={user.email || 'Not provided'}
+                          disabled
+                          style={{ background: 'rgba(0,0,0,0.03)' }}
+                        />
+                      </div>
                     </div>
 
                     <div className="space-y-1">
-                      <Label className="text-xs font-medium" style={{ color: '#787776' }}>
-                        Email
+                      <Label htmlFor="username" className="text-xs font-medium" style={{ color: '#787776' }}>
+                        Username
                       </Label>
                       <Input
-                        value={user.email || 'Not provided'}
-                        disabled
-                        style={{ background: 'rgba(0,0,0,0.03)' }}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-1">
-                    <Label htmlFor="username" className="text-xs font-medium" style={{ color: '#787776' }}>
-                      Username
-                    </Label>
-                    <Input
-                      id="username"
-                      value={formData.username}
-                      onChange={(e) => handleInputChange('username', e.target.value)}
-                      disabled={!isEditing || isSaving}
-                      placeholder="Choose a unique username"
-                      className={usernameError ? 'border-red-300' : ''}
-                      style={!isEditing ? { background: 'rgba(0,0,0,0.03)' } : {}}
-                      required
-                    />
-                    {isCheckingUsername && (
-                      <p className="text-xs text-blue-600">Checking availability...</p>
-                    )}
-                    {usernameError && (
-                      <p className="text-xs text-red-600">{usernameError}</p>
-                    )}
-                    {isEditing && !usernameError && formData.username && formData.username !== user.username && !isCheckingUsername && (
-                      <p className="text-xs text-green-600">Username is available!</p>
-                    )}
-                  </div>
-
-                  <div className="grid md:grid-cols-2 gap-3 md:gap-4">
-                    <div className="space-y-1">
-                      <Label htmlFor="phone" className="text-xs font-medium" style={{ color: '#787776' }}>
-                        Phone Number
-                      </Label>
-                      <Input
-                        id="phone"
-                        value={formData.phone}
-                        onChange={(e) => handleInputChange('phone', e.target.value)}
+                        id="username"
+                        value={formData.username}
+                        onChange={(e) => handleInputChange('username', e.target.value)}
                         disabled={!isEditing || isSaving}
-                        placeholder="Enter your phone number"
+                        placeholder="Choose a unique username"
+                        className={usernameError ? 'border-red-300' : ''}
                         style={!isEditing ? { background: 'rgba(0,0,0,0.03)' } : {}}
+                        required
                       />
+                      {isCheckingUsername && (
+                        <p className="text-xs text-blue-600">Checking availability...</p>
+                      )}
+                      {usernameError && (
+                        <p className="text-xs text-red-600">{usernameError}</p>
+                      )}
+                      {isEditing && !usernameError && formData.username && formData.username !== user.username && !isCheckingUsername && (
+                        <p className="text-xs text-green-600">Username is available!</p>
+                      )}
                     </div>
 
-                    <div className="space-y-1">
-                      <Label htmlFor="location" className="text-xs font-medium" style={{ color: '#787776' }}>
-                        Location
-                      </Label>
-                      <Input
-                        id="location"
-                        value={formData.location}
-                        onChange={(e) => handleInputChange('location', e.target.value)}
-                        disabled={!isEditing || isSaving}
-                        placeholder="City, State"
-                        style={!isEditing ? { background: 'rgba(0,0,0,0.03)' } : {}}
-                      />
+                    <div className="grid md:grid-cols-2 gap-3 md:gap-4">
+                      <div className="space-y-1">
+                        <Label htmlFor="phone" className="text-xs font-medium" style={{ color: '#787776' }}>
+                          Phone Number
+                        </Label>
+                        <Input
+                          id="phone"
+                          value={formData.phone}
+                          onChange={(e) => handleInputChange('phone', e.target.value)}
+                          disabled={!isEditing || isSaving}
+                          placeholder="Enter your phone number"
+                          style={!isEditing ? { background: 'rgba(0,0,0,0.03)' } : {}}
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <Label htmlFor="location" className="text-xs font-medium" style={{ color: '#787776' }}>
+                          Location
+                        </Label>
+                        <Input
+                          id="location"
+                          value={formData.location}
+                          onChange={(e) => handleInputChange('location', e.target.value)}
+                          disabled={!isEditing || isSaving}
+                          placeholder="City, State"
+                          style={!isEditing ? { background: 'rgba(0,0,0,0.03)' } : {}}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </PageCard>
-          </div>
+              </PageCard>
+            </div>
 
-          {/* Stats & Verification */}
-          <div className="space-y-4 md:space-y-6 min-w-0 w-full">
-            {/* Bank Account Connection */}
-            <PageCard title="Bank Account">
-              <div style={{ padding: '16px 16px' }}>
-                <div className="space-y-4">
-                  <p className="text-sm" style={{ color: '#787776' }}>
-                    Securely connect your bank account using Plaid & Dwolla to enable bank transfers.
-                  </p>
-                  <Button
-                    className="w-full text-white hover:opacity-90"
-                    style={{ background: '#03ACEA' }}
-                    onClick={() => setShowComingSoonModal(true)}
-                  >
-                    <Landmark className="w-4 h-4 mr-2" />
-                    Connect Bank Account
-                  </Button>
-                  <p className="text-xs text-center" style={{ color: '#787776' }}>
-                    Powered by Plaid & Dwolla - Bank grade security
-                  </p>
+            {/* Stats & Verification */}
+            <div className="space-y-4 md:space-y-6 min-w-0 w-full">
+              {/* Bank Account Connection */}
+              <PageCard title="Bank Account">
+                <div style={{ padding: '16px 16px' }}>
+                  <div className="space-y-4">
+                    <p className="text-sm" style={{ color: '#787776' }}>
+                      Securely connect your bank account using Plaid & Dwolla to enable bank transfers.
+                    </p>
+                    <Button
+                      className="w-full text-white hover:opacity-90"
+                      style={{ background: '#03ACEA' }}
+                      onClick={() => setShowComingSoonModal(true)}
+                    >
+                      <Landmark className="w-4 h-4 mr-2" />
+                      Connect Bank Account
+                    </Button>
+                    <p className="text-xs text-center" style={{ color: '#787776' }}>
+                      Powered by Plaid & Dwolla - Bank grade security
+                    </p>
+                  </div>
                 </div>
-              </div>
-            </PageCard>
+              </PageCard>
 
-            {/* Verification Status */}
-            <PageCard title="Verification">
-              <div style={{ padding: '16px 16px' }}>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Email Verified</span>
-                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12, fontWeight: 600, padding: '3px 8px', borderRadius: 6, background: 'rgba(22,163,74,0.12)', color: '#16A34A', border: '1px solid rgba(22,163,74,0.2)', fontFamily: "'DM Sans', sans-serif" }}>
-                      <CheckCircle size={12} />
-                      Verified
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Phone Verified</span>
-                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12, fontWeight: 600, padding: '3px 8px', borderRadius: 6, background: 'rgba(0,0,0,0.05)', color: '#787776', border: '1px solid rgba(0,0,0,0.1)', fontFamily: "'DM Sans', sans-serif" }}>
-                      <XCircle size={12} />
-                      Not Verified
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Profile Complete</span>
-                    {user.full_name && user.username ? (
+              {/* Verification Status */}
+              <PageCard title="Verification">
+                <div style={{ padding: '16px 16px' }}>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">Email Verified</span>
                       <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12, fontWeight: 600, padding: '3px 8px', borderRadius: 6, background: 'rgba(22,163,74,0.12)', color: '#16A34A', border: '1px solid rgba(22,163,74,0.2)', fontFamily: "'DM Sans', sans-serif" }}>
                         <CheckCircle size={12} />
-                        Complete
+                        Verified
                       </span>
-                    ) : (
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">Phone Verified</span>
                       <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12, fontWeight: 600, padding: '3px 8px', borderRadius: 6, background: 'rgba(0,0,0,0.05)', color: '#787776', border: '1px solid rgba(0,0,0,0.1)', fontFamily: "'DM Sans', sans-serif" }}>
                         <XCircle size={12} />
-                        Incomplete
+                        Not Verified
                       </span>
-                    )}
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">Profile Complete</span>
+                      {user.full_name && user.username ? (
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12, fontWeight: 600, padding: '3px 8px', borderRadius: 6, background: 'rgba(22,163,74,0.12)', color: '#16A34A', border: '1px solid rgba(22,163,74,0.2)', fontFamily: "'DM Sans', sans-serif" }}>
+                          <CheckCircle size={12} />
+                          Complete
+                        </span>
+                      ) : (
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12, fontWeight: 600, padding: '3px 8px', borderRadius: 6, background: 'rgba(0,0,0,0.05)', color: '#787776', border: '1px solid rgba(0,0,0,0.1)', fontFamily: "'DM Sans', sans-serif" }}>
+                          <XCircle size={12} />
+                          Incomplete
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </PageCard>
+              </PageCard>
+            </div>
+          </div>
+
+          <div style={{ marginTop: 8, display: 'flex', justifyContent: 'center', paddingBottom: 24 }}>
+            <Button variant="ghost" onClick={handleLogout} className="hover:text-red-500" style={{ color: '#787776' }}>
+              <LogOut className="w-4 h-4 mr-2" />
+              Log Out
+            </Button>
+          </div>
+
+          <div style={{ paddingTop: 24, borderTop: '1px solid rgba(0,0,0,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span style={{ fontSize: 11, color: '#787776' }}>2026 Vony, Inc. All rights reserved.</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+              <a href="https://www.vony-lending.com/terms" target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#787776', textDecoration: 'none' }}>Terms of Service</a>
+              <a href="https://www.vony-lending.com/privacy" target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#787776', textDecoration: 'none' }}>Privacy Center</a>
+              <a href="https://www.vony-lending.com/do-not-sell" target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#787776', textDecoration: 'none' }}>Do not sell or share my personal information</a>
+            </div>
           </div>
         </div>
 
-        </div>
-        <div style={{ marginTop: 8, display: 'flex', justifyContent: 'center', paddingBottom: 24 }}>
-          <Button variant="ghost" onClick={handleLogout} className="hover:text-red-500" style={{ color: '#787776' }}>
-            <LogOut className="w-4 h-4 mr-2" />
-            Log Out
-          </Button>
-        </div>
-
-        <div className="dashboard-footer" style={{ padding: '12px 28px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: 11, color: '#787776' }}>2026 Vony, Inc. All rights reserved.</span>
-          <div className="dashboard-footer-links" style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-            <a href="https://www.vony-lending.com/terms" target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#787776', textDecoration: 'none' }}>Terms of Service</a>
-            <a href="https://www.vony-lending.com/privacy" target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#787776', textDecoration: 'none' }}>Privacy Center</a>
-            <a href="https://www.vony-lending.com/do-not-sell" target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#787776', textDecoration: 'none' }}>Do not sell or share my personal information</a>
+        {/* COL 3 - right panel */}
+        <div className="mesh-right" style={{ background: '#F5F4F0' }}>
+          <div style={{ position: 'sticky', top: 0, padding: '28px 28px 0' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 10, marginBottom: 28 }}>
+              <Link to={createPageUrl("Requests")} style={{ color: '#6B6A68', textDecoration: 'none' }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              </Link>
+              <Link to={createPageUrl("Profile")} style={{ color: '#1A1918', textDecoration: 'none' }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              </Link>
+            </div>
           </div>
         </div>
+
       </div>
     </div>
   );
