@@ -153,7 +153,11 @@ export default function ComingSoon() {
       </div>
 
       {/* ── CENTER: Category selector + articles ── */}
-      <div className="mesh-center" style={{ background: 'white', borderRight: '1px solid rgba(0,0,0,0.08)', padding: '40px 40px 60px' }}>
+      <div className="mesh-center" style={{ background: 'white', borderRight: '1px solid rgba(0,0,0,0.08)', padding: '40px 48px 80px' }}>
+
+        {/* Page title */}
+        <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 26, fontWeight: 600, color: '#1A1918', marginBottom: 20 }}>Learn</div>
+        <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 28 }} />
 
         {/* Category bar */}
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 28 }}>

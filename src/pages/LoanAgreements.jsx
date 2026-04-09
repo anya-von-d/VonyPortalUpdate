@@ -967,14 +967,13 @@ export default function LoanAgreements() {
      ══════════════════════════════════════════════════════════ */
 
   const PageCard = ({ title, headerRight, children, style }) => (
-    <div style={{ background: '#F4F4F5', borderRadius: 14, overflow: 'hidden', boxShadow: SHADOW, ...style }}>
-      <div style={{ padding: '6px 14px 5px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>{title}</span>
+    <div style={{ marginBottom: 24, ...style }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 9 }}>
+        <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{title}</div>
         {headerRight && <div style={{ flexShrink: 0 }}>{headerRight}</div>}
       </div>
-      <div style={{ background: '#ffffff', margin: '0 5px 5px', borderRadius: 10, overflow: style?.overflow ?? 'hidden' }}>
-        {children}
-      </div>
+      <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 14 }} />
+      <div style={{ overflow: 'visible' }}>{children}</div>
     </div>
   );
 
@@ -995,7 +994,7 @@ export default function LoanAgreements() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              style={{ background: '#F4F4F5', borderRadius: 18, maxWidth: activePopup === 'amortization' ? 'min(960px, calc(100vw - 32px))' : 520, width: '100%', maxHeight: '90vh', overflowY: 'auto', boxShadow: SHADOW }}
+              style={{ background: '#F5F4F0', borderRadius: 18, maxWidth: activePopup === 'amortization' ? 'min(960px, calc(100vw - 32px))' : 520, width: '100%', maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 8px 40px rgba(0,0,0,0.16)' }}
             >
               <div style={{ position: 'sticky', top: 0, background: '#F4F4F5', padding: '6px 14px 5px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderRadius: '18px 18px 0 0' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -1081,7 +1080,11 @@ export default function LoanAgreements() {
         </div>
 
         {/* Col 2: center content */}
-        <div className="mesh-center" style={{ background: 'white', borderRight: '1px solid rgba(0,0,0,0.08)', padding: '40px 40px 60px' }}>
+        <div className="mesh-center" style={{ background: 'white', borderRight: '1px solid rgba(0,0,0,0.08)', padding: '40px 48px 80px' }}>
+
+          {/* Page title */}
+          <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 26, fontWeight: 600, color: '#1A1918', marginBottom: 20 }}>Documents</div>
+          <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 24 }} />
 
           {/* ── Search Row ─────────────────────────────────────── */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
@@ -1105,8 +1108,8 @@ export default function LoanAgreements() {
           </div>
 
           {/* ── Filter Bar ─────────────────────────────────────── */}
-          <PageCard title="Filters" style={{ marginBottom: 20, overflow: 'visible', position: 'relative', zIndex: 20 }}>
-            <div style={{ padding: '12px 14px', display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+          <div style={{ marginBottom: 24, overflow: 'visible', position: 'relative', zIndex: 20 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
               <SingleSelectDropdown options={DATE_OPTIONS} selected={dateFilter} onChange={setDateFilter} />
               {friendOptions.length > 1 && (
                 <SingleSelectDropdown options={friendOptions} selected={friendFilter} onChange={setFriendFilter} />
@@ -1132,11 +1135,11 @@ export default function LoanAgreements() {
                 Clear Filters
               </button>
             </div>
-          </PageCard>
+          </div>
 
           {/* ── Agreements List ──────────────────────────────────── */}
-          <PageCard title="Agreements">
-            <div style={{ padding: '14px 16px 16px' }}>
+          <div>
+            <div>
               {filteredAgreements.length === 0 ? (
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 0', color: '#C7C6C4' }}>
                   <FileText size={32} style={{ opacity: 0.4, marginBottom: 8 }} />
@@ -1303,7 +1306,7 @@ export default function LoanAgreements() {
                 </>
               )}
             </div>
-          </PageCard>
+          </div>
 
           {/* Desktop table responsive styles */}
           <style>{`

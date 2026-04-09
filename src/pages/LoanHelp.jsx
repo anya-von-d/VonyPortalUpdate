@@ -6,8 +6,6 @@ import { useAuth } from "@/lib/AuthContext";
 import { Loan, Payment, PublicProfile } from "@/entities/all";
 import { formatMoney } from "@/components/utils/formatMoney";
 
-const SHADOW = '0px 50px 40px rgba(0,0,0,0.02), 0px 50px 40px rgba(0,0,0,0.04), 0px 20px 40px rgba(0,0,0,0.08), 0px 3px 10px rgba(0,0,0,0.12)';
-
 const CATEGORIES = [
   { id: 'student',  label: 'Student Loans' },
   { id: 'credit',   label: 'Credit Cards' },
@@ -158,7 +156,11 @@ export default function LoanHelp() {
       </div>
 
       {/* ── CENTER: Category selector + loan cards ── */}
-      <div className="mesh-center" style={{ background: 'white', borderRight: '1px solid rgba(0,0,0,0.08)', padding: '40px 40px 60px' }}>
+      <div className="mesh-center" style={{ background: 'white', borderRight: '1px solid rgba(0,0,0,0.08)', padding: '40px 48px 80px' }}>
+
+        {/* Page title */}
+        <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 26, fontWeight: 600, color: '#1A1918', marginBottom: 20 }}>Loan Help</div>
+        <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 28 }} />
 
         {/* Category selector bar */}
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 28 }}>
@@ -178,18 +180,18 @@ export default function LoanHelp() {
             const compareKey = `${category}-${loan.name}`;
             const isCompared = compared[compareKey] || false;
             return (
-              <motion.div key={loan.name} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }} style={{ background: isRecommended ? '#03ACEA' : '#F4F4F5', borderRadius: 18, boxShadow: SHADOW, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-                <div style={{ padding: '6px 14px 5px', display: 'flex', alignItems: 'center', gap: 5 }}>
+              <motion.div key={loan.name} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }} style={{ background: 'white', borderRadius: 14, border: isRecommended ? '1.5px solid rgba(3,172,234,0.3)' : '1px solid rgba(0,0,0,0.07)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+                <div style={{ padding: '8px 16px 7px', display: 'flex', alignItems: 'center', gap: 5, background: isRecommended ? 'rgba(3,172,234,0.06)' : 'rgba(0,0,0,0.02)', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
                   {isRecommended ? (
                     <>
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="rgba(255,255,255,0.9)" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                      <span style={{ fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.92)', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>Recommended for You</span>
+                      <svg width="9" height="9" viewBox="0 0 24 24" fill="#03ACEA" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                      <span style={{ fontSize: 10, fontWeight: 700, color: '#03ACEA', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>Recommended</span>
                     </>
                   ) : (
                     <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>{CATEGORIES.find(c => c.id === category)?.label}</span>
                   )}
                 </div>
-                <div style={{ background: '#ffffff', margin: '0 5px 5px', borderRadius: 14, padding: '16px 18px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                <div style={{ padding: '16px 18px', flex: 1, display: 'flex', flexDirection: 'column' }}>
                   <div style={{ marginBottom: 12 }}>
                     <div style={{ fontSize: 16, fontWeight: 700, color: '#1A1918', marginBottom: 2 }}>{loan.name}</div>
                     <div style={{ fontSize: 12, color: isRecommended ? '#03ACEA' : '#787776', fontWeight: 500 }}>{loan.tagline}</div>
@@ -203,7 +205,7 @@ export default function LoanHelp() {
                     ))}
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 12, borderTop: '1px solid rgba(0,0,0,0.06)' }}>
-                    <button style={{ padding: '6px 18px', borderRadius: 10, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 600, background: isRecommended ? '#03ACEA' : 'rgba(0,0,0,0.06)', color: isRecommended ? 'white' : '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>View</button>
+                    <button style={{ padding: '6px 14px', borderRadius: 8, border: 'none', cursor: 'pointer', fontSize: 12, fontWeight: 600, background: isRecommended ? 'rgba(3,172,234,0.1)' : 'rgba(0,0,0,0.05)', color: isRecommended ? '#03ACEA' : '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>View</button>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 7, cursor: 'pointer' }} onClick={() => toggleCompare(compareKey)}>
                       <span style={{ fontSize: 13, fontWeight: 500, color: '#787776' }}>Compare</span>
                       <div style={{ width: 18, height: 18, borderRadius: 5, flexShrink: 0, border: isCompared ? '2px solid #03ACEA' : '2px solid #C4C3C1', background: isCompared ? '#03ACEA' : 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s' }}>

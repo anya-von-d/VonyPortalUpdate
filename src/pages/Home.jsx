@@ -719,15 +719,12 @@ export default function Home() {
   const alertTotal = overdueReminders.length;
   overdueCountRef.current = alertTotal;
 
-  const SHADOW = '0px 50px 40px rgba(0,0,0,0.02), 0px 50px 40px rgba(0,0,0,0.04), 0px 20px 40px rgba(0,0,0,0.08), 0px 3px 10px rgba(0,0,0,0.12)';
   const LENDER_GREEN = '#52B788';
   const DashboardCard = ({ title, headerRight, children, style }) => (
     <div style={{
-      background: 'linear-gradient(160deg, rgba(255,255,255,0.97) 0%, rgba(246,249,252,0.92) 100%)',
-      backdropFilter: 'blur(10px) saturate(1.3)',
-      WebkitBackdropFilter: 'blur(10px) saturate(1.3)',
+      background: 'white',
       borderRadius: 11, overflow: 'hidden',
-      boxShadow: SHADOW + ', inset 0 1px 0 rgba(255,255,255,0.95), inset 0 0 0 1px rgba(255,255,255,0.5)',
+      border: '1px solid rgba(0,0,0,0.07)',
       ...style,
     }}>
       <div style={{ padding: '9px 14px 5px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>

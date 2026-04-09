@@ -21,8 +21,6 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 
-const SHADOW = '0px 50px 40px rgba(0,0,0,0.02), 0px 50px 40px rgba(0,0,0,0.04), 0px 20px 40px rgba(0,0,0,0.08), 0px 3px 10px rgba(0,0,0,0.12)';
-
 export default function Friends() {
   const { user: authUser, userProfile, logout } = useAuth();
   const user = userProfile ? { ...userProfile, id: authUser?.id } : null;
@@ -246,18 +244,6 @@ export default function Friends() {
   const defaultAvatarUrl = (name) =>
     `https://ui-avatars.com/api/?name=${encodeURIComponent((name || 'U').charAt(0))}&background=678AFB&color=fff&size=128`;
 
-  const PageCard = ({ title, headerRight, children, style, className }) => (
-    <div className={className} style={{ background: '#F4F4F5', borderRadius: 14, overflow: 'hidden', boxShadow: SHADOW, display: 'flex', flexDirection: 'column', ...style }}>
-      <div style={{ padding: '6px 14px 5px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
-        <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>{title}</span>
-        {headerRight && <div style={{ flexShrink: 0 }}>{headerRight}</div>}
-      </div>
-      <div style={{ background: '#ffffff', margin: '0 5px 5px', borderRadius: 10, overflow: 'hidden', flex: 1 }}>
-        {children}
-      </div>
-    </div>
-  );
-
   const RightSection = ({ title, children }) => (
     <div style={{ marginBottom: 40 }}>
       <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 9 }}>{title}</div>
@@ -311,80 +297,95 @@ export default function Friends() {
       </div>
 
       {/* ── CENTER: Search for Friends + Friend Requests ── */}
-      <div className="mesh-center" style={{ background: 'white', borderRight: '1px solid rgba(0,0,0,0.08)', padding: '40px 40px 60px' }}>
+      <div className="mesh-center" style={{ background: 'white', borderRight: '1px solid rgba(0,0,0,0.08)', padding: '40px 48px 80px' }}>
+
+        {/* Page title */}
+        <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 26, fontWeight: 600, color: '#1A1918', marginBottom: 20 }}>People</div>
+        <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 32 }} />
 
         {/* Search for Friends */}
-        <PageCard title="Search for Friends" style={{ marginBottom: 16 }}>
-          <div style={{ padding: '10px 16px 16px' }}>
-            <div style={{ position: 'relative', marginBottom: searchQuery.trim() ? 14 : 0 }}>
-              <Search size={18} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#C7C6C4' }} />
-              <input type="text" placeholder="Search by username..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
-                style={{ width: '100%', padding: '10px 36px 10px 38px', borderRadius: 12, border: '1px solid rgba(0,0,0,0.08)', background: 'rgba(0,0,0,0.03)', fontSize: 13, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", outline: 'none', boxSizing: 'border-box' }}
-                onFocus={(e) => e.target.style.borderColor = 'rgba(130,240,185,0.4)'} onBlur={(e) => e.target.style.borderColor = 'rgba(0,0,0,0.08)'} />
-              {searchQuery && <button onClick={() => setSearchQuery('')} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#787776', padding: 2 }}><X size={16} /></button>}
-            </div>
-            {searchQuery.trim() && (
-              <div>
-                {allSearchResults.length === 0 ? (
-                  <div style={{ textAlign: 'center', padding: '16px 0' }}><p style={{ fontSize: 13, color: '#787776', margin: 0 }}>No users found</p></div>
-                ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    {allSearchResults.map((profile) => {
-                      const receivedRequest = getReceivedRequestFrom(profile.user_id);
-                      const sentRequest = getSentRequestTo(profile.user_id);
-                      return (
-                        <div key={profile.user_id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '13px 0', borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
-                          <img src={profile.profile_picture_url || profile.avatar_url || defaultAvatarUrl(profile.full_name)} alt={profile.full_name || 'User'} style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
-                          <div style={{ flex: 1, minWidth: 0 }}>
-                            <p style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{profile.full_name || profile.username}</p>
-                            <p style={{ fontSize: 11, color: '#787776', margin: '2px 0 0' }}>@{profile.username}</p>
-                          </div>
-                          {receivedRequest ? (
-                            <button onClick={() => handleAcceptRequestFromSearch(receivedRequest.id)} disabled={processingId === receivedRequest.id} style={{ padding: '6px 12px', borderRadius: 10, border: 'none', background: '#82F0B9', fontSize: 11, fontWeight: 600, color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, fontFamily: "'DM Sans', sans-serif", opacity: processingId === receivedRequest.id ? 0.5 : 1 }}>
-                              <CheckCircle size={14} /> Accept
-                            </button>
-                          ) : sentRequest ? (
-                            <button onClick={() => handleCancelRequest(sentRequest.id)} disabled={processingId === sentRequest.id} style={{ padding: '6px 12px', borderRadius: 10, border: 'none', background: 'rgba(232,114,110,0.08)', fontSize: 11, fontWeight: 600, color: '#E8726E', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, fontFamily: "'DM Sans', sans-serif", opacity: processingId === sentRequest.id ? 0.5 : 1 }}>
-                              <UserMinus size={14} /> Unsend Request
-                            </button>
-                          ) : (
-                            <button onClick={() => handleSendRequest(profile.user_id)} disabled={processingId === profile.user_id} style={{ padding: '6px 12px', borderRadius: 10, border: 'none', background: '#82F0B9', fontSize: 11, fontWeight: 600, color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, fontFamily: "'DM Sans', sans-serif", opacity: processingId === profile.user_id ? 0.5 : 1 }}>
-                              <Send size={14} /> Send Request
-                            </button>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            )}
+        <div style={{ marginBottom: 32 }}>
+          <div style={{ position: 'relative', marginBottom: searchQuery.trim() ? 14 : 0 }}>
+            <Search size={15} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#C7C6C4' }} />
+            <input type="text" placeholder="Search by name or username..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
+              style={{ width: '100%', padding: '10px 36px 10px 36px', borderRadius: 10, border: '1px solid rgba(0,0,0,0.08)', background: 'rgba(0,0,0,0.02)', fontSize: 13, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", outline: 'none', boxSizing: 'border-box' }}
+              onFocus={(e) => e.target.style.borderColor = 'rgba(3,172,234,0.3)'} onBlur={(e) => e.target.style.borderColor = 'rgba(0,0,0,0.08)'} />
+            {searchQuery && <button onClick={() => setSearchQuery('')} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#C7C6C4', padding: 2 }}><X size={14} /></button>}
           </div>
-        </PageCard>
+          {searchQuery.trim() && (
+            <div>
+              {allSearchResults.length === 0 ? (
+                <div style={{ padding: '20px 0', color: '#9B9A98', fontSize: 13 }}>No users found</div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  {allSearchResults.map((profile) => {
+                    const receivedRequest = getReceivedRequestFrom(profile.user_id);
+                    const sentRequest = getSentRequestTo(profile.user_id);
+                    return (
+                      <div key={profile.user_id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 0', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+                        <div style={{ width: 36, height: 36, borderRadius: '50%', overflow: 'hidden', flexShrink: 0, background: 'rgba(3,172,234,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          {profile.profile_picture_url || profile.avatar_url
+                            ? <img src={profile.profile_picture_url || profile.avatar_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                            : <span style={{ fontSize: 13, fontWeight: 600, color: '#03ACEA' }}>{(profile.full_name || profile.username || '?').charAt(0).toUpperCase()}</span>
+                          }
+                        </div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <p style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', margin: 0 }}>{profile.full_name || profile.username}</p>
+                          <p style={{ fontSize: 11, color: '#9B9A98', margin: '1px 0 0' }}>@{profile.username}</p>
+                        </div>
+                        {receivedRequest ? (
+                          <button onClick={() => handleAcceptRequestFromSearch(receivedRequest.id)} disabled={processingId === receivedRequest.id} style={{ padding: '6px 14px', borderRadius: 8, border: 'none', background: 'rgba(82,183,136,0.12)', fontSize: 11, fontWeight: 600, color: '#52B788', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 5, fontFamily: "'DM Sans', sans-serif", opacity: processingId === receivedRequest.id ? 0.5 : 1 }}>
+                            <CheckCircle size={13} /> Accept
+                          </button>
+                        ) : sentRequest ? (
+                          <button onClick={() => handleCancelRequest(sentRequest.id)} disabled={processingId === sentRequest.id} style={{ padding: '6px 14px', borderRadius: 8, border: 'none', background: 'rgba(232,114,110,0.08)', fontSize: 11, fontWeight: 600, color: '#E8726E', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 5, fontFamily: "'DM Sans', sans-serif", opacity: processingId === sentRequest.id ? 0.5 : 1 }}>
+                            <UserMinus size={13} /> Unsend
+                          </button>
+                        ) : (
+                          <button onClick={() => handleSendRequest(profile.user_id)} disabled={processingId === profile.user_id} style={{ padding: '6px 14px', borderRadius: 8, border: 'none', background: 'rgba(3,172,234,0.08)', fontSize: 11, fontWeight: 600, color: '#03ACEA', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 5, fontFamily: "'DM Sans', sans-serif", opacity: processingId === profile.user_id ? 0.5 : 1 }}>
+                            <Send size={13} /> Add
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
 
         {/* Friend Requests (Received) */}
         {receivedRequests.length > 0 && (
-          <PageCard title="Friend Requests" headerRight={<span style={{ fontSize: 12, color: '#787776' }}>{receivedRequests.length} pending</span>}>
-            <div style={{ padding: '10px 16px 16px' }}>
-              {receivedRequests.map((request) => {
-                const profile = getProfileById(request.user_id);
-                if (!profile) return null;
-                return (
-                  <div key={request.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '13px 0', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
-                    <img src={profile.profile_picture_url || profile.avatar_url || defaultAvatarUrl(profile.full_name)} alt={profile.full_name || 'User'} style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <p style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{profile.full_name || profile.username}</p>
-                      <p style={{ fontSize: 11, color: '#787776', margin: '2px 0 0' }}>@{profile.username}</p>
-                    </div>
-                    <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
-                      <button onClick={() => handleAcceptRequestFromSearch(request.id)} disabled={processingId === request.id} style={{ padding: '6px 12px', borderRadius: 10, border: 'none', background: '#82F0B9', fontSize: 11, fontWeight: 600, color: 'white', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", opacity: processingId === request.id ? 0.5 : 1 }}>Confirm</button>
-                      <button onClick={() => handleCancelRequest(request.id)} disabled={processingId === request.id} style={{ padding: '6px 12px', borderRadius: 10, border: 'none', background: 'rgba(232,114,110,0.08)', fontSize: 11, fontWeight: 600, color: '#E8726E', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", opacity: processingId === request.id ? 0.5 : 1 }}>Delete</button>
-                    </div>
-                  </div>
-                );
-              })}
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 9 }}>
+              <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Friend Requests</div>
+              <span style={{ fontSize: 11, color: '#9B9A98' }}>{receivedRequests.length} pending</span>
             </div>
-          </PageCard>
+            <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 14 }} />
+            {receivedRequests.map((request) => {
+              const profile = getProfileById(request.user_id);
+              if (!profile) return null;
+              return (
+                <div key={request.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 0', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+                  <div style={{ width: 36, height: 36, borderRadius: '50%', overflow: 'hidden', flexShrink: 0, background: 'rgba(3,172,234,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    {profile.profile_picture_url || profile.avatar_url
+                      ? <img src={profile.profile_picture_url || profile.avatar_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      : <span style={{ fontSize: 13, fontWeight: 600, color: '#03ACEA' }}>{(profile.full_name || profile.username || '?').charAt(0).toUpperCase()}</span>
+                    }
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', margin: 0 }}>{profile.full_name || profile.username}</p>
+                    <p style={{ fontSize: 11, color: '#9B9A98', margin: '1px 0 0' }}>@{profile.username}</p>
+                  </div>
+                  <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
+                    <button onClick={() => handleAcceptRequestFromSearch(request.id)} disabled={processingId === request.id} style={{ padding: '6px 14px', borderRadius: 8, border: 'none', background: 'rgba(82,183,136,0.12)', fontSize: 11, fontWeight: 600, color: '#52B788', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", opacity: processingId === request.id ? 0.5 : 1 }}>Confirm</button>
+                    <button onClick={() => handleCancelRequest(request.id)} disabled={processingId === request.id} style={{ padding: '6px 14px', borderRadius: 8, border: 'none', background: 'rgba(232,114,110,0.08)', fontSize: 11, fontWeight: 600, color: '#E8726E', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", opacity: processingId === request.id ? 0.5 : 1 }}>Delete</button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         )}
       </div>
 

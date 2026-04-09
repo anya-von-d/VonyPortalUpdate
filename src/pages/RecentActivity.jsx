@@ -734,8 +734,6 @@ export default function RecentActivityPage() {
 
           {/* ── Filter Bar ─────────────────────────────────────── */}
           <div style={{ marginBottom: 24, position: 'relative', zIndex: 20 }}>
-            <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 9 }}>Filters</div>
-            <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 14 }} />
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
               <SingleSelectDropdown options={DATE_OPTIONS} selected={dateFilter} onChange={setDateFilter} />
               <MultiSelectDropdown label="All Categories" options={CATEGORY_OPTIONS} selected={categoryFilter} onChange={setCategoryFilter} />
@@ -764,8 +762,6 @@ export default function RecentActivityPage() {
 
           {/* ── Activity List ──────────────────────────────────── */}
           <div>
-            <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 9 }}>Activity</div>
-            <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 14 }} />
             {filtered.length === 0 ? (
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 0', color: '#C7C6C4' }}>
                 <Activity size={32} style={{ opacity: 0.4, marginBottom: 8 }} />

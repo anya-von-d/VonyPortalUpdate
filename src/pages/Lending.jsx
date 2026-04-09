@@ -1399,17 +1399,14 @@ export default function Lending({ initialTab }) {
     { id: 'active', label: 'Manage Loans' },
   ];
 
-  const SHADOW = '0px 50px 40px rgba(0,0,0,0.02), 0px 50px 40px rgba(0,0,0,0.04), 0px 20px 40px rgba(0,0,0,0.08), 0px 3px 10px rgba(0,0,0,0.12)';
-
   const PageCard = ({ title, headerRight, children, style, highlight }) => (
-    <div style={{ background: '#F4F4F5', borderRadius: 14, overflow: 'hidden', border: highlight ? '6px solid #03ACEA' : undefined, boxShadow: highlight ? `0 0 28px 2px rgba(3,172,234,0.7), ${SHADOW}` : SHADOW, ...style }}>
-      <div style={{ padding: '6px 14px 5px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>{title}</span>
+    <div style={{ marginBottom: 24, ...style }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 9 }}>
+        <div style={{ fontSize: 10, fontWeight: 700, color: highlight ? '#03ACEA' : '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{title}</div>
         {headerRight && <div style={{ flexShrink: 0 }}>{headerRight}</div>}
       </div>
-      <div style={{ background: '#ffffff', margin: '0 5px 5px', borderRadius: 10, overflow: 'hidden' }}>
-        {children}
-      </div>
+      <div style={{ height: 1, background: highlight ? 'rgba(3,172,234,0.2)' : 'rgba(0,0,0,0.07)', marginBottom: 14 }} />
+      <div style={{ overflow: 'visible' }}>{children}</div>
     </div>
   );
 
@@ -2009,13 +2006,10 @@ export default function Lending({ initialTab }) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                className="grid lg:grid-cols-3 gap-6 items-start"
               >
                 {/* Form */}
-                <div className="lg:col-span-2 order-2 lg:order-1">
-                  <PageCard title={loanType === 'flexible' ? 'Create Quick Payment Request' : (isUserBorrower ? 'Request a Loan' : 'Create Loan Offer')} style={{ overflow: 'visible' }}>
-                  <div style={{ padding: '14px 16px 20px' }}>
-                      <form onSubmit={handleSubmit} className="space-y-5">
+                <div>
+                  <form onSubmit={handleSubmit} className="space-y-5">
                         {/* No Friends Banner */}
                         {!isLoadingUsers && friends.length === 0 && (
                           <div className="bg-amber-50 border border-amber-200 rounded-xl p-5">
@@ -2487,145 +2481,6 @@ export default function Lending({ initialTab }) {
                           {isSubmitting ? "Sending..." : (loanType === 'flexible' ? "Send Quick Payment Request" : (isUserBorrower ? "Send Loan Request" : "Send Loan Offer"))}
                         </Button>
                       </form>
-                  </div>
-                  </PageCard>
-
-                  {/* Will Your Payment Request Repeat? Info Box - Only show for Quick Payment Request */}
-                  {loanType === 'flexible' && (
-                    <div className="bg-[#82F0B9]/10 rounded-2xl p-4 mt-4">
-                      <p className="text-base font-semibold text-slate-800 mb-2">
-                        {isUserBorrower ? 'Will This Payment Repeat?' : 'Will Your Payment Request Repeat?'}
-                      </p>
-                      <p className="text-sm text-slate-700 leading-relaxed">
-                        {isUserBorrower
-                          ? "If this is for a recurring expense (like rent, utilities, or streaming subscriptions) set up a repeating payment. Enter the details once, and we'll automatically send reminders and help you both stay on track for as long as you need."
-                          : "If you're requesting money for a recurring bill (like rent, utilities, or streaming subscriptions) set up a repeating request. Enter the details once, and we'll automatically send reminders and help you both stay on track for as long as you need."}
-                      </p>
-                    </div>
-                  )}
-                </div>
-
-                {/* Summary Sidebar */}
-                <div className="space-y-4 order-1 lg:order-2">
-                  {/* Loan Type Toggle - Always First */}
-                  <PageCard title="Loan Type">
-                  <div style={{ padding: '10px 16px 14px' }}>
-                    <div className="flex items-center justify-center gap-3">
-                      <span className={`text-xs font-medium ${loanType === 'scheduled' ? 'text-[#82F0B9]' : 'text-slate-400'}`}>
-                        Loan
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => setLoanType(loanType === 'flexible' ? 'scheduled' : 'flexible')}
-                        className={`relative w-14 h-7 rounded-full transition-all flex-shrink-0 ${
-                          loanType === 'flexible' ? 'bg-[#82F0B9]' : 'bg-slate-300'
-                        }`}
-                      >
-                        <div className={`absolute top-1 left-1 w-5 h-5 rounded-full bg-white shadow transition-all ${
-                          loanType === 'flexible' ? 'translate-x-7' : 'translate-x-0'
-                        }`}>
-                          {loanType === 'scheduled' ? (
-                            <ClipboardList className="w-3 h-3 text-slate-500 m-1" />
-                          ) : (
-                            <Zap className="w-3 h-3 text-[#82F0B9] m-1" />
-                          )}
-                        </div>
-                      </button>
-                      <span className={`text-xs font-medium text-center ${loanType === 'flexible' ? 'text-[#82F0B9]' : 'text-slate-400'}`}>
-                        Quick Payment Request
-                      </span>
-                    </div>
-                    <p className="text-xs text-slate-500 text-center mt-3">
-                      {loanType === 'flexible'
-                        ? (isUserBorrower
-                            ? "Request a one-time payment: perfect for splitting dinner, rent, or one-time expenses"
-                            : "Get paid back in one payment: perfect for splitting dinner with roommates or one-time expenses")
-                        : (isUserBorrower
-                            ? "Request money that you'll pay back gradually with a structured payment plan"
-                            : "Offer money that will be paid back gradually with a structured payment plan")}
-                    </p>
-                  </div>
-                  </PageCard>
-
-                  {/* Borrower Payment Box - Only for Loan type, always visible */}
-                  {loanType === 'scheduled' && (
-                    <PageCard title="Borrower Will Pay">
-                      <div style={{ padding: '10px 16px 12px' }}>
-                        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 8 }}>
-                          <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', lineHeight: 1 }}>
-                            {formData.amount && details.monthlyPayment > 0 ? `$${details.monthlyPayment.toFixed(2)}` : '$0.00'}
-                          </div>
-                        </div>
-                        <div style={{ fontSize: 12, color: '#787776', marginTop: 6 }}>
-                          {formData.payment_frequency || '_'} after interest
-                        </div>
-                      </div>
-                    </PageCard>
-                  )}
-
-                  {/* Loan Summary - Always Last */}
-                  <PageCard title="Loan Summary" highlight style={{ position: 'sticky', top: 6 }}>
-                  <div style={{ padding: '12px 16px 16px' }}>
-                    <div className="space-y-3">
-                      <div className="pb-2 border-b border-[#82F0B9]/20 flex items-baseline gap-1">
-                        <span className="text-slate-600 text-sm flex-shrink-0">For:</span>
-                        <p className="font-medium truncate text-black">{formData.purpose || ''}</p>
-                      </div>
-                      {/* For repeating payments, show per payment amount and number of payments */}
-                      {loanType === 'flexible' && formData.is_repeating && formData.repeating_num_payments ? (
-                        <>
-                          <div className="flex justify-between">
-                            <span className="text-slate-600">Per Payment:</span>
-                            <span className="font-bold text-black">{formData.amount ? `$${parseFloat(formData.amount).toLocaleString()}` : '$0.00'}</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-slate-600">Payments:</span>
-                            <span className="font-bold text-black">{formData.repeating_num_payments}</span>
-                          </div>
-                          <div className="border-t border-[#82F0B9]/20 pt-2">
-                            <div className="flex justify-between text-lg">
-                              <span className="text-slate-600">Total:</span>
-                              <span className="font-bold text-black">
-                                {formData.amount && formData.repeating_num_payments ? `$${(parseFloat(formData.amount) * parseInt(formData.repeating_num_payments)).toFixed(2)}` : '$0.00'}
-                              </span>
-                            </div>
-                          </div>
-                        </>
-                      ) : (
-                        <>
-                          <div className="flex justify-between">
-                            <span className="text-slate-600">Amount:</span>
-                            <span className="font-bold text-black">{formData.amount ? `$${parseFloat(formData.amount).toLocaleString()}` : '$0.00'}</span>
-                          </div>
-                          {loanType === 'scheduled' && (
-                            <div className="flex justify-between">
-                              <span className="text-slate-600">Interest:</span>
-                              <span className="font-bold text-black">{formData.amount && formData.interest_rate ? `$${details.totalInterest.toFixed(2)}` : '$0.00'}</span>
-                            </div>
-                          )}
-                          <div className="border-t border-[#82F0B9]/20 pt-2">
-                            <div className="flex justify-between text-lg">
-                              <span className="text-slate-600">Total:</span>
-                              <span className="font-bold text-black">
-                                {formData.amount
-                                  ? `$${loanType === 'flexible'
-                                      ? parseFloat(formData.amount).toFixed(2)
-                                      : details.totalAmount.toFixed(2)}`
-                                  : '$0.00'}
-                              </span>
-                            </div>
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                  </PageCard>
-
-                  {/* Friends-only message */}
-                  <p className="text-xs text-slate-500 flex items-center justify-center gap-1.5">
-                    <AlertCircle className="w-4 h-4" />
-                    You can only send offers to people in your friends list
-                  </p>
                 </div>
 
               </motion.div>
@@ -3088,6 +2943,108 @@ export default function Lending({ initialTab }) {
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                 </Link>
               </div>
+
+              {activeSection === 'create' && (
+                <>
+                  {/* Loan Type */}
+                  <div style={{ marginBottom: 32 }}>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 9 }}>Loan Type</div>
+                    <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 14 }} />
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginBottom: 10 }}>
+                      <span style={{ fontSize: 13, fontWeight: 500, color: loanType === 'scheduled' ? '#1A1918' : '#9B9A98' }}>Loan</span>
+                      <button
+                        type="button"
+                        onClick={() => setLoanType(loanType === 'flexible' ? 'scheduled' : 'flexible')}
+                        style={{
+                          position: 'relative', width: 44, height: 24, borderRadius: 12,
+                          border: 'none', cursor: 'pointer', flexShrink: 0,
+                          background: loanType === 'flexible' ? '#03ACEA' : 'rgba(0,0,0,0.12)',
+                          transition: 'background 0.2s',
+                        }}
+                      >
+                        <div style={{
+                          position: 'absolute', top: 3, left: loanType === 'flexible' ? 23 : 3,
+                          width: 18, height: 18, borderRadius: '50%', background: 'white',
+                          boxShadow: '0 1px 3px rgba(0,0,0,0.2)', transition: 'left 0.2s',
+                        }} />
+                      </button>
+                      <span style={{ fontSize: 13, fontWeight: 500, color: loanType === 'flexible' ? '#1A1918' : '#9B9A98' }}>Quick Pay</span>
+                    </div>
+                    <p style={{ fontSize: 12, color: '#9B9A98', lineHeight: 1.5 }}>
+                      {loanType === 'flexible'
+                        ? 'One-time payment — perfect for splitting expenses'
+                        : 'Structured repayment plan with interest'}
+                    </p>
+                  </div>
+
+                  {/* Borrower Will Pay */}
+                  {loanType === 'scheduled' && (
+                    <div style={{ marginBottom: 32 }}>
+                      <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 9 }}>Borrower Will Pay</div>
+                      <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 14 }} />
+                      <div style={{ fontSize: '1.6rem', fontWeight: 700, color: '#1A1918', letterSpacing: '-0.03em', lineHeight: 1, marginBottom: 4 }}>
+                        {formData.amount && details.monthlyPayment > 0 ? `$${details.monthlyPayment.toFixed(2)}` : '$0.00'}
+                      </div>
+                      <div style={{ fontSize: 12, color: '#9B9A98' }}>
+                        {formData.payment_frequency || 'monthly'} after interest
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Loan Summary */}
+                  <div style={{ marginBottom: 32 }}>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 9 }}>Loan Summary</div>
+                    <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 14 }} />
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                      {formData.purpose && (
+                        <div>
+                          <div style={{ fontSize: 11, color: '#9B9A98', marginBottom: 2 }}>For</div>
+                          <div style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{formData.purpose}</div>
+                        </div>
+                      )}
+                      {loanType === 'flexible' && formData.is_repeating && formData.repeating_num_payments ? (
+                        <>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                            <span style={{ fontSize: 12, color: '#9B9A98' }}>Per Payment</span>
+                            <span style={{ fontSize: 13, fontWeight: 600, color: '#1A1918' }}>{formData.amount ? `$${parseFloat(formData.amount).toLocaleString()}` : '$0.00'}</span>
+                          </div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                            <span style={{ fontSize: 12, color: '#9B9A98' }}>Payments</span>
+                            <span style={{ fontSize: 13, fontWeight: 600, color: '#1A1918' }}>{formData.repeating_num_payments}</span>
+                          </div>
+                          <div style={{ height: 1, background: 'rgba(0,0,0,0.07)' }} />
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                            <span style={{ fontSize: 12, color: '#9B9A98' }}>Total</span>
+                            <span style={{ fontSize: 15, fontWeight: 700, color: '#1A1918' }}>
+                              {formData.amount && formData.repeating_num_payments ? `$${(parseFloat(formData.amount) * parseInt(formData.repeating_num_payments)).toFixed(2)}` : '$0.00'}
+                            </span>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                            <span style={{ fontSize: 12, color: '#9B9A98' }}>Amount</span>
+                            <span style={{ fontSize: 13, fontWeight: 600, color: '#1A1918' }}>{formData.amount ? `$${parseFloat(formData.amount).toLocaleString()}` : '$0.00'}</span>
+                          </div>
+                          {loanType === 'scheduled' && (
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                              <span style={{ fontSize: 12, color: '#9B9A98' }}>Interest</span>
+                              <span style={{ fontSize: 13, fontWeight: 600, color: '#1A1918' }}>{formData.amount && formData.interest_rate ? `$${details.totalInterest.toFixed(2)}` : '$0.00'}</span>
+                            </div>
+                          )}
+                          <div style={{ height: 1, background: 'rgba(0,0,0,0.07)' }} />
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                            <span style={{ fontSize: 12, color: '#9B9A98' }}>Total</span>
+                            <span style={{ fontSize: 15, fontWeight: 700, color: '#1A1918' }}>
+                              {formData.amount ? `$${loanType === 'flexible' ? parseFloat(formData.amount).toFixed(2) : details.totalAmount.toFixed(2)}` : '$0.00'}
+                            </span>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>
