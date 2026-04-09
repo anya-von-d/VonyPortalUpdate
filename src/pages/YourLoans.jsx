@@ -637,78 +637,92 @@ export default function YourLoans() {
 
             {/* Next payment due — borrowing only (split into two side-by-side cards) */}
             {!isLending && (
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                {/* Card 1: Date + days badge */}
-                <PageCard title="Next Payment Due" highlight style={{ display: 'flex', flexDirection: 'column' }}>
-                  <div style={{ padding: '10px 16px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flex: 1 }}>
-                    {nextPaymentLoan ? (
-                      <>
-                        <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', lineHeight: 1 }}>
-                          {format(new Date(nextPaymentLoan.next_payment_date), 'MMM d')}
-                        </div>
-                        <span style={{ fontSize: 10, fontWeight: 700, color: nextPaymentDays < 0 ? '#E8726E' : accentColor, background: nextPaymentDays < 0 ? 'rgba(232,114,110,0.1)' : accentLight, borderRadius: 6, padding: '2px 6px', whiteSpace: 'nowrap' }}>
-                          {nextPaymentDays < 0 ? `${Math.abs(nextPaymentDays)}d late` : nextPaymentDays === 0 ? 'today' : `${nextPaymentDays}d`}
-                        </span>
-                      </>
-                    ) : (
-                      <div style={{ fontSize: 13, color: '#787776' }}>No upcoming</div>
-                    )}
-                  </div>
-                </PageCard>
-                {/* Card 2: Amount + to/from name */}
-                <PageCard title="Next Payment Amount" highlight style={{ display: 'flex', flexDirection: 'column' }}>
-                  <div style={{ padding: '10px 14px 14px', display: 'flex', alignItems: 'center', gap: 8, flex: 1 }}>
-                    {nextPaymentLoan ? (
-                      <>
-                        <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', lineHeight: 1 }}>
-                          {formatMoney(nextPaymentAmount)}
-                        </div>
-                        <div style={{ fontSize: 11, color: '#787776' }}>to {otherPartyUsername}</div>
-                      </>
-                    ) : (
-                      <div style={{ fontSize: 13, color: '#787776' }}>N/A</div>
-                    )}
-                  </div>
-                </PageCard>
-              </div>
+              <>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                  {/* Card 1: Date + days badge */}
+                  <PageCard title="Next Payment Due" highlight style={{ display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ padding: '10px 16px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flex: 1 }}>
+                      {nextPaymentLoan ? (
+                        <>
+                          <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', lineHeight: 1 }}>
+                            {format(new Date(nextPaymentLoan.next_payment_date), 'MMM d')}
+                          </div>
+                          <span style={{ fontSize: 10, fontWeight: 700, color: nextPaymentDays < 0 ? '#E8726E' : accentColor, background: nextPaymentDays < 0 ? 'rgba(232,114,110,0.1)' : accentLight, borderRadius: 6, padding: '2px 6px', whiteSpace: 'nowrap' }}>
+                            {nextPaymentDays < 0 ? `${Math.abs(nextPaymentDays)}d late` : nextPaymentDays === 0 ? 'today' : `${nextPaymentDays}d`}
+                          </span>
+                        </>
+                      ) : (
+                        <div style={{ fontSize: 13, color: '#787776' }}>No upcoming</div>
+                      )}
+                    </div>
+                  </PageCard>
+                  {/* Card 2: Amount + to/from name */}
+                  <PageCard title="Next Payment Amount" highlight style={{ display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ padding: '10px 14px 14px', display: 'flex', alignItems: 'center', gap: 8, flex: 1 }}>
+                      {nextPaymentLoan ? (
+                        <>
+                          <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', lineHeight: 1 }}>
+                            {formatMoney(nextPaymentAmount)}
+                          </div>
+                          <div style={{ fontSize: 11, color: '#787776' }}>to {otherPartyUsername}</div>
+                        </>
+                      ) : (
+                        <div style={{ fontSize: 13, color: '#787776' }}>N/A</div>
+                      )}
+                    </div>
+                  </PageCard>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                  <Link to={createPageUrl("RecordPayment")} style={{ display: 'inline-flex', alignItems: 'center', background: '#1A1918', borderRadius: 9, padding: '7px 12px', textDecoration: 'none' }}>
+                    <p style={{ fontSize: 11, fontWeight: 600, color: 'white', margin: 0 }}>Record Payment</p>
+                  </Link>
+                </div>
+              </>
             )}
 
             {/* Next payment incoming — lending only (split into two side-by-side cards) */}
             {isLending && (
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                {/* Card 1: Date + days badge */}
-                <PageCard title="Next Payment Incoming" highlight style={{ display: 'flex', flexDirection: 'column' }}>
-                  <div style={{ padding: '10px 16px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flex: 1 }}>
-                    {nextPaymentLoan ? (
-                      <>
-                        <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', lineHeight: 1 }}>
-                          {format(new Date(nextPaymentLoan.next_payment_date), 'MMM d')}
-                        </div>
-                        <span style={{ fontSize: 10, fontWeight: 700, color: nextPaymentDays < 0 ? '#E8726E' : accentColor, background: nextPaymentDays < 0 ? 'rgba(232,114,110,0.1)' : accentLight, borderRadius: 6, padding: '2px 6px', whiteSpace: 'nowrap' }}>
-                          {nextPaymentDays < 0 ? `${Math.abs(nextPaymentDays)}d late` : nextPaymentDays === 0 ? 'today' : `${nextPaymentDays}d`}
-                        </span>
-                      </>
-                    ) : (
-                      <div style={{ fontSize: 13, color: '#787776' }}>No incoming</div>
-                    )}
-                  </div>
-                </PageCard>
-                {/* Card 2: Amount + from name */}
-                <PageCard title="Next Payment Amount" highlight style={{ display: 'flex', flexDirection: 'column' }}>
-                  <div style={{ padding: '10px 14px 14px', display: 'flex', alignItems: 'center', gap: 8, flex: 1 }}>
-                    {nextPaymentLoan ? (
-                      <>
-                        <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', lineHeight: 1 }}>
-                          {formatMoney(nextPaymentAmount)}
-                        </div>
-                        <div style={{ fontSize: 11, color: '#787776' }}>from {otherPartyUsername}</div>
-                      </>
-                    ) : (
-                      <div style={{ fontSize: 13, color: '#787776' }}>N/A</div>
-                    )}
-                  </div>
-                </PageCard>
-              </div>
+              <>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                  {/* Card 1: Date + days badge */}
+                  <PageCard title="Next Payment Incoming" highlight style={{ display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ padding: '10px 16px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flex: 1 }}>
+                      {nextPaymentLoan ? (
+                        <>
+                          <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', lineHeight: 1 }}>
+                            {format(new Date(nextPaymentLoan.next_payment_date), 'MMM d')}
+                          </div>
+                          <span style={{ fontSize: 10, fontWeight: 700, color: nextPaymentDays < 0 ? '#E8726E' : accentColor, background: nextPaymentDays < 0 ? 'rgba(232,114,110,0.1)' : accentLight, borderRadius: 6, padding: '2px 6px', whiteSpace: 'nowrap' }}>
+                            {nextPaymentDays < 0 ? `${Math.abs(nextPaymentDays)}d late` : nextPaymentDays === 0 ? 'today' : `${nextPaymentDays}d`}
+                          </span>
+                        </>
+                      ) : (
+                        <div style={{ fontSize: 13, color: '#787776' }}>No incoming</div>
+                      )}
+                    </div>
+                  </PageCard>
+                  {/* Card 2: Amount + from name */}
+                  <PageCard title="Next Payment Amount" highlight style={{ display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ padding: '10px 14px 14px', display: 'flex', alignItems: 'center', gap: 8, flex: 1 }}>
+                      {nextPaymentLoan ? (
+                        <>
+                          <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', lineHeight: 1 }}>
+                            {formatMoney(nextPaymentAmount)}
+                          </div>
+                          <div style={{ fontSize: 11, color: '#787776' }}>from {otherPartyUsername}</div>
+                        </>
+                      ) : (
+                        <div style={{ fontSize: 13, color: '#787776' }}>N/A</div>
+                      )}
+                    </div>
+                  </PageCard>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                  <Link to={createPageUrl("RecordPayment")} style={{ display: 'inline-flex', alignItems: 'center', background: '#1A1918', borderRadius: 9, padding: '7px 12px', textDecoration: 'none' }}>
+                    <p style={{ fontSize: 11, fontWeight: 600, color: 'white', margin: 0 }}>Record Payment</p>
+                  </Link>
+                </div>
+              </>
             )}
 
             {/* Upcoming Payments — lending tab right column */}
@@ -1232,7 +1246,7 @@ export default function YourLoans() {
                       else status = 'upcoming';
                       const expectedAmount = pr.scheduledAmount || (loanAnalysis.recalcPayment > 0 ? loanAnalysis.recalcPayment : paymentAmt);
                       const paidAmount = pr.actualPaid || 0;
-                      const paidPercentage = expectedAmount > 0 ? Math.min(100, (paidAmount / expectedAmount) * 100) : 0;
+                      const paidPercentage = status === 'completed' ? 100 : (status === 'partial' && expectedAmount > 0) ? Math.min(99, (paidAmount / expectedAmount) * 100) : 0;
                       return { number: pr.period, date: pr.date, amount: expectedAmount, paidAmount, paidPercentage, status };
                     }) : [];
                     const statusConfig = {
