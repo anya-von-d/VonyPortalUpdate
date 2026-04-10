@@ -669,7 +669,7 @@ export default function YourLoans() {
 
         {/* 4. Active Loans (lending) / Loan Progress (borrowing) — with profile photos */}
         {activeLoans.length > 0 && (
-          <PageCard title={isLending ? "Active Loans" : "Loan Progress"}>
+          <PageCard title={isLending ? "Loan Progress" : "Loan Progress"}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               {activeLoans.slice(0, 5).map((loan) => {
                 const otherParty = publicProfiles.find(p => p.user_id === (isLending ? loan.borrower_id : loan.lender_id));
@@ -735,25 +735,15 @@ export default function YourLoans() {
                   const pct = totalAmt > 0 ? Math.round((paidAmt / totalAmt) * 100) : 0;
                   const name = otherParty?.full_name?.split(' ')[0] || otherParty?.username || 'User';
                   const purpose = loan.purpose ? ` for ${loan.purpose}` : '';
-                  const rankValue = rankingFilter === 'highest_interest' ? `${loan.interest_rate || 0}%` : rankingFilter === 'highest_payment' ? formatMoney(loan.payment_amount || 0) : loan.next_payment_date ? format(new Date(loan.next_payment_date), 'MMM d') : 'N/A';
                   return (
-                    <div key={loan.id} style={{ padding: '8px 0' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                        <div style={{ width: 20, height: 20, borderRadius: '50%', background: 'rgba(29,91,148,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                          <span style={{ fontSize: 10, fontWeight: 700, color: '#1D5B94' }}>{idx + 1}</span>
-                        </div>
-                        <div style={{ flex: 1, fontSize: 13, color: '#1A1918', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                          {name} lent you {formatMoney(totalAmt)}{purpose}
-                        </div>
-                        <span style={{ fontSize: 13, fontWeight: 700, color: '#1A1918', flexShrink: 0 }}>{rankValue}</span>
+                    <div key={loan.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '7px 0' }}>
+                      <div style={{ width: 20, height: 20, borderRadius: '50%', background: 'rgba(29,91,148,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <span style={{ fontSize: 10, fontWeight: 700, color: '#1D5B94' }}>{idx + 1}</span>
                       </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <div style={{ flex: 1, height: 6, borderRadius: 3, background: 'rgba(29,91,148,0.1)', overflow: 'hidden' }}>
-                          <div style={{ height: '100%', borderRadius: 3, background: '#1D5B94', width: `${pct}%`, transition: 'width 0.5s' }} />
-                        </div>
-                        <span style={{ fontSize: 11, fontWeight: 700, color: '#9B9A98', flexShrink: 0 }}>{pct}%</span>
+                      <div style={{ flex: 1, fontSize: 13, color: '#1A1918', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {name} lent you {formatMoney(totalAmt)}{purpose}
                       </div>
-                      <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 3 }}>{formatMoney(paidAmt)} of {formatMoney(totalAmt)} repaid</div>
+                      <span style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', flexShrink: 0 }}>{pct}% repaid</span>
                     </div>
                   );
                 });
