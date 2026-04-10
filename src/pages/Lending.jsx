@@ -1543,8 +1543,8 @@ export default function Lending({ initialTab }) {
 
           {/* COL 2 - main content */}
           <div className="mesh-center" style={{ background: 'white', borderRight: '1px solid rgba(0,0,0,0.06)', padding: '40px 48px 80px' }}>
-            <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 24, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', marginBottom: 20 }}>Create Loan</div>
-            <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 24 }} />
+            <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 24, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', marginBottom: 14 }}>Create Loan</div>
+            <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 16 }} />
 
           {/* Tab Navigation — hidden when accessed as standalone Create Loan page */}
           {!initialTab && (
@@ -2009,7 +2009,7 @@ export default function Lending({ initialTab }) {
               >
                 {/* Form */}
                 <div>
-                  <form onSubmit={handleSubmit} className="space-y-5">
+                  <form onSubmit={handleSubmit} className="space-y-3">
                         {/* No Friends Banner */}
                         {!isLoadingUsers && friends.length === 0 && (
                           <div className="bg-amber-50 border border-amber-200 rounded-xl p-5">
@@ -2471,7 +2471,7 @@ export default function Lending({ initialTab }) {
                         <Button
                           type="submit"
                           disabled={isSubmitting || !formData.lender_username || !formData.borrower_username || !formData.amount || !formData.purpose || (loanType === 'scheduled' && (!formData.interest_rate || !formData.repayment_period || !formData.lender_send_funds_date || !formData.first_payment_date)) || (loanType === 'flexible' && formData.is_repeating && (!formData.repeating_start_date || !formData.repeating_num_payments))}
-                          className={`w-full py-3 text-base font-semibold rounded-xl border-0 mt-4 transition-all duration-200 ${
+                          className={`w-full py-3 text-base font-semibold rounded-xl border-0 mt-2 transition-all duration-200 ${
                             isSubmitting || !formData.lender_username || !formData.borrower_username || !formData.amount || !formData.purpose || (loanType === 'scheduled' && (!formData.interest_rate || !formData.repayment_period || !formData.lender_send_funds_date || !formData.first_payment_date)) || (loanType === 'flexible' && formData.is_repeating && (!formData.repeating_start_date || !formData.repeating_num_payments))
                               ? 'bg-[#54A6CF]/40 text-white cursor-not-allowed'
                               : 'bg-[#54A6CF] text-white hover:bg-[#5a7ae0]'
@@ -2945,9 +2945,9 @@ export default function Lending({ initialTab }) {
               </div>
 
               {activeSection === 'create' && (
-                <>
+                <div style={{ background: 'rgba(0,0,0,0.025)', borderRadius: 16, padding: '20px 20px 4px', border: '1px solid rgba(0,0,0,0.04)' }}>
                   {/* Loan Type */}
-                  <div style={{ marginBottom: 32 }}>
+                  <div style={{ marginBottom: 24 }}>
                     <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 9 }}>Loan Type</div>
                     <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 14 }} />
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginBottom: 10 }}>
@@ -2979,10 +2979,10 @@ export default function Lending({ initialTab }) {
 
                   {/* Borrower Will Pay */}
                   {loanType === 'scheduled' && (
-                    <div style={{ marginBottom: 32 }}>
+                    <div style={{ marginBottom: 24 }}>
                       <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 9 }}>Borrower Will Pay</div>
                       <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 14 }} />
-                      <div style={{ fontSize: '1.6rem', fontWeight: 700, color: '#1A1918', letterSpacing: '-0.03em', lineHeight: 1, marginBottom: 4 }}>
+                      <div style={{ fontSize: '1.6rem', fontWeight: 700, color: '#03ACEA', letterSpacing: '-0.03em', lineHeight: 1, marginBottom: 4 }}>
                         {formData.amount && details.monthlyPayment > 0 ? `$${details.monthlyPayment.toFixed(2)}` : '$0.00'}
                       </div>
                       <div style={{ fontSize: 12, color: '#9B9A98' }}>
@@ -2992,7 +2992,7 @@ export default function Lending({ initialTab }) {
                   )}
 
                   {/* Loan Summary */}
-                  <div style={{ marginBottom: 32 }}>
+                  <div style={{ marginBottom: 20 }}>
                     <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 9 }}>Loan Summary</div>
                     <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 14 }} />
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -3015,7 +3015,7 @@ export default function Lending({ initialTab }) {
                           <div style={{ height: 1, background: 'rgba(0,0,0,0.06)' }} />
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
                             <span style={{ fontSize: 12, color: '#9B9A98' }}>Total</span>
-                            <span style={{ fontSize: 15, fontWeight: 700, color: '#1A1918' }}>
+                            <span style={{ fontSize: 15, fontWeight: 700, color: '#03ACEA' }}>
                               {formData.amount && formData.repeating_num_payments ? `$${(parseFloat(formData.amount) * parseInt(formData.repeating_num_payments)).toFixed(2)}` : '$0.00'}
                             </span>
                           </div>
@@ -3035,7 +3035,7 @@ export default function Lending({ initialTab }) {
                           <div style={{ height: 1, background: 'rgba(0,0,0,0.06)' }} />
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
                             <span style={{ fontSize: 12, color: '#9B9A98' }}>Total</span>
-                            <span style={{ fontSize: 15, fontWeight: 700, color: '#1A1918' }}>
+                            <span style={{ fontSize: 15, fontWeight: 700, color: '#03ACEA' }}>
                               {formData.amount ? `$${loanType === 'flexible' ? parseFloat(formData.amount).toFixed(2) : details.totalAmount.toFixed(2)}` : '$0.00'}
                             </span>
                           </div>
@@ -3043,7 +3043,7 @@ export default function Lending({ initialTab }) {
                       )}
                     </div>
                   </div>
-                </>
+                </div>
               )}
             </div>
           </div>

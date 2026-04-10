@@ -1178,7 +1178,7 @@ export default function Home() {
             </RightSection>
 
             {/* How [month] is going */}
-            <RightSection title={format(today, 'MMMM')}>
+            <RightSection title={`How ${format(today, 'MMMM')} is going`}>
               {/* Received */}
               <div style={{ marginBottom: 16 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 6 }}>
