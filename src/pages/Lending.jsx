@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Loan, LoanAgreement, User, PublicProfile, Friendship } from "@/entities/all";
+import { supabase } from '@/lib/supabaseClient';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -452,7 +453,7 @@ export default function Lending({ initialTab }) {
       const { repayment_unit, borrowerName, lenderName, ...loanPayload } = pendingLoanData;
       const createdLoan = await Loan.create(loanPayload);
 
-      await LoanAgreement.create({
+      const agreementPayload = {
         loan_id: createdLoan.id,
         lender_id: pendingLoanData.lender_id,
         lender_name: signature,
@@ -467,7 +468,11 @@ export default function Lending({ initialTab }) {
         total_amount: pendingLoanData.total_amount,
         payment_amount: pendingLoanData.payment_amount,
         is_fully_signed: false
+      };
+      const { error: agreementError } = await supabase.functions.invoke('create-loan-agreement', {
+        body: agreementPayload,
       });
+      if (agreementError) throw new Error(agreementError.message);
 
       setShowSignatureModal(false);
       setFormData({

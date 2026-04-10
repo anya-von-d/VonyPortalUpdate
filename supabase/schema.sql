@@ -155,9 +155,9 @@ create policy "loan_agreements read participants"
   on loan_agreements for select
   using (auth.uid() = lender_id or auth.uid() = borrower_id);
 
-create policy "loan_agreements insert lender"
+create policy "loan_agreements insert participants"
   on loan_agreements for insert
-  with check (auth.uid() = lender_id);
+  with check (auth.uid() = lender_id or auth.uid() = borrower_id);
 
 create policy "loan_agreements update participants"
   on loan_agreements for update
