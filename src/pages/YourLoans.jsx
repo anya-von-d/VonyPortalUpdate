@@ -533,39 +533,57 @@ export default function YourLoans() {
     const otherPartyUsername = isLending ? nextPaymentBorrowerUsername : nextPaymentLenderUsername;
     const rankingFilter = isLending ? rankingFilterLending : rankingFilterBorrowing;
     const setRankingFilter = isLending ? setRankingFilterLending : setRankingFilterBorrowing;
-    const accentColor = isLending ? '#54A6CF' : '#7EC0EA';
-    const accentLight = isLending ? 'rgba(84,166,207,0.10)' : 'rgba(126,192,234,0.10)';
+    const barColor = isLending ? '#03ACEA' : '#1D5B94';
+    const barBg = isLending ? 'rgba(3,172,234,0.1)' : 'rgba(29,91,148,0.1)';
+
+    const glowBox = {
+      padding: 16, borderRadius: 14, background: 'white',
+      boxShadow: '0 0 0 2px rgba(3,172,234,0.25), 0 0 16px rgba(3,172,234,0.12), 0 2px 12px rgba(0,0,0,0.04)',
+      border: '1.5px solid rgba(3,172,234,0.35)',
+    };
+    const isLate = nextPaymentDays !== null && nextPaymentDays < 0;
+    const daysLabel = nextPaymentDays === null ? null : isLate ? `${Math.abs(nextPaymentDays)}d late` : nextPaymentDays === 0 ? 'today' : `${nextPaymentDays}d`;
+    const badgeColor = isLate ? '#E8726E' : '#03ACEA';
+    const badgeBg = isLate ? 'rgba(232,114,110,0.08)' : 'rgba(3,172,234,0.10)';
 
     return (
       <>
-        {/* 1. Next Payment card (unified for lending/borrowing) */}
-        {(() => {
-          const isLate = nextPaymentDays !== null && nextPaymentDays < 0;
-          const daysLabel = nextPaymentDays === null ? null : isLate ? `${Math.abs(nextPaymentDays)}d late` : nextPaymentDays === 0 ? 'today' : `${nextPaymentDays}d`;
-          const badgeColor = isLate ? '#E8726E' : isLending ? '#52B788' : (nextPaymentDays !== null && nextPaymentDays <= 3 ? '#F59E0B' : accentColor);
-          const badgeBg = isLate ? 'rgba(232,114,110,0.08)' : isLending ? 'rgba(82,183,136,0.10)' : (nextPaymentDays !== null && nextPaymentDays <= 3 ? 'rgba(245,158,11,0.08)' : accentLight);
-          const iconBg = isLate ? 'rgba(232,114,110,0.10)' : isLending ? 'rgba(82,183,136,0.10)' : accentLight;
-          const iconColor = isLate ? '#E8726E' : isLending ? '#52B788' : accentColor;
-          const amountColor = isLending ? '#52B788' : '#1A1918';
-          return (
-            <div style={{ padding: '16px', borderRadius: 14, background: 'white', boxShadow: '0 0 0 2px rgba(3,172,234,0.25), 0 0 16px rgba(3,172,234,0.12), 0 2px 12px rgba(0,0,0,0.04)', border: '1.5px solid rgba(3,172,234,0.35)', marginBottom: 4 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-                <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase' }}>{isLending ? 'Next Payment Incoming' : 'Next Payment Due'}</span>
-              </div>
-              {nextPaymentLoan ? (
-                <>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
-                    <span style={{ fontSize: 26, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em' }}>{format(new Date(nextPaymentLoan.next_payment_date), 'MMM d')}</span>
-                    {daysLabel && <span style={{ fontSize: 10, fontWeight: 700, color: badgeColor, background: badgeBg, borderRadius: 6, padding: '2px 8px' }}>{daysLabel}</span>}
-                  </div>
-                  <div style={{ fontSize: 13, color: '#787776' }}>{formatMoney(nextPaymentAmount)} {isLending ? 'from' : 'to'} {otherPartyUsername}</div>
-                </>
-              ) : (
-                <div style={{ fontSize: 13, color: '#9B9A98' }}>{isLending ? 'No incoming payments' : 'No upcoming payments'}</div>
-              )}
+        {/* 1. Two boxes side by side: date + amount */}
+        <div style={{ display: 'flex', gap: 12, marginBottom: 4 }}>
+          <div style={{ ...glowBox, flex: 1 }}>
+            <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 12 }}>
+              {isLending ? 'Next Payment Incoming' : 'Next Payment Due'}
             </div>
-          );
-        })()}
+            {nextPaymentLoan ? (
+              <>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+                  <span style={{ fontSize: 26, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em' }}>
+                    {format(new Date(nextPaymentLoan.next_payment_date), 'MMM d')}
+                  </span>
+                  {daysLabel && <span style={{ fontSize: 10, fontWeight: 700, color: badgeColor, background: badgeBg, borderRadius: 6, padding: '2px 8px' }}>{daysLabel}</span>}
+                </div>
+                <div style={{ fontSize: 13, color: '#787776' }}>{isLending ? 'from' : 'to'} {otherPartyUsername}</div>
+              </>
+            ) : (
+              <div style={{ fontSize: 13, color: '#9B9A98' }}>{isLending ? 'No incoming payments' : 'No upcoming payments'}</div>
+            )}
+          </div>
+          <div style={{ ...glowBox, flex: 1 }}>
+            <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 12 }}>
+              {isLending ? 'Next Payment Amount' : 'Next Payment Amount'}
+            </div>
+            {nextPaymentLoan ? (
+              <>
+                <div style={{ fontSize: 26, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em', marginBottom: 6 }}>
+                  {formatMoney(nextPaymentAmount)}
+                </div>
+                <div style={{ fontSize: 13, color: '#787776' }}>{nextPaymentLoan.payment_frequency || 'monthly'} payment</div>
+              </>
+            ) : (
+              <div style={{ fontSize: 13, color: '#9B9A98' }}>—</div>
+            )}
+          </div>
+        </div>
 
         {/* 2. Record Payment button */}
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: 12, marginBottom: 8 }}>
@@ -574,67 +592,75 @@ export default function YourLoans() {
           </Link>
         </div>
 
-        {/* 3. Loan Progress */}
+        {/* 3. Loan Progress — per-loan bars, no profile photo */}
         <PageCard title="Loan Progress">
           <div style={{ padding: '10px 14px 14px' }}>
             {activeLoans.length === 0 ? (
               <p style={{ fontSize: 13, color: '#787776' }}>No active loans to track</p>
             ) : (
-              (() => {
-                const totalAll = activeLoans.reduce((s, l) => s + (l.total_amount || l.amount || 0), 0);
-                const paidAll = activeLoans.reduce((s, l) => s + (l.amount_paid || 0), 0);
-                const pctAll = totalAll > 0 ? Math.round((paidAll / totalAll) * 100) : 0;
-                return (
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                      <div style={{ flex: 1, height: 6, background: '#F0F0EE', borderRadius: 999, overflow: 'hidden' }}>
-                        <div style={{ height: '100%', borderRadius: 999, width: `${Math.max(pctAll, 2)}%`, background: accentColor, transition: 'width 0.5s' }} />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                {activeLoans.slice(0, 5).map((loan) => {
+                  const otherParty = publicProfiles.find(p => p.user_id === (isLending ? loan.borrower_id : loan.lender_id));
+                  const totalAmt = loan.total_amount || loan.amount || 0;
+                  const paidAmt = loan.amount_paid || 0;
+                  const pct = totalAmt > 0 ? Math.round((paidAmt / totalAmt) * 100) : 0;
+                  const name = otherParty?.full_name?.split(' ')[0] || otherParty?.username || 'User';
+                  const purpose = loan.purpose ? ` for ${loan.purpose}` : '';
+                  const headerText = isLending
+                    ? `You lent ${name} ${formatMoney(totalAmt)}${purpose}`
+                    : `${name} lent you ${formatMoney(totalAmt)}${purpose}`;
+                  return (
+                    <div key={loan.id} style={{ padding: '8px 0' }}>
+                      <div style={{ fontSize: 13, color: '#1A1918', fontWeight: 500, lineHeight: 1.4, marginBottom: 4 }}>{headerText}</div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <div style={{ flex: 1, height: 6, borderRadius: 3, background: barBg, overflow: 'hidden' }}>
+                          <div style={{ height: '100%', borderRadius: 3, background: barColor, width: `${pct}%`, transition: 'width 0.5s' }} />
+                        </div>
+                        <span style={{ fontSize: 11, fontWeight: 700, color: '#9B9A98', flexShrink: 0 }}>{pct}%</span>
                       </div>
-                      <span style={{ fontSize: 11, fontWeight: 700, color: '#1A1918', minWidth: 32, textAlign: 'right' }}>{pctAll}%</span>
+                      <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 3 }}>{formatMoney(paidAmt)} of {formatMoney(totalAmt)} {isLending ? 'paid back' : 'repaid'}</div>
                     </div>
-                    <p style={{ fontSize: 12, color: '#787776', margin: '6px 0 0' }}>{formatMoney(paidAll)} of {formatMoney(totalAll)} {isLending ? 'repaid' : 'paid back'}</p>
-                  </div>
-                );
-              })()
+                  );
+                })}
+              </div>
             )}
           </div>
         </PageCard>
 
-        {/* 4. Active Loans — feed-style rows */}
+        {/* 4. Active Loans — Home page style with profile photos */}
         {activeLoans.length > 0 && (
-          <PageCard title="Your Active Loans">
-            <div style={{ padding: '4px 0 8px' }}>
-              {activeLoans.slice(0, 5).map((loan, idx) => {
+          <PageCard title="Active Loans">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              {activeLoans.slice(0, 5).map((loan) => {
                 const otherParty = publicProfiles.find(p => p.user_id === (isLending ? loan.borrower_id : loan.lender_id));
-                const loanTotalOwed = loan.total_amount || loan.amount || 0;
-                const amountPaid = loan.amount_paid || 0;
-                const percentPaid = loanTotalOwed > 0 ? Math.round((amountPaid / loanTotalOwed) * 100) : 0;
-                const initial = otherParty?.full_name?.charAt(0) || '?';
+                const totalAmt = loan.total_amount || loan.amount || 0;
+                const paidAmt = loan.amount_paid || 0;
+                const pct = totalAmt > 0 ? Math.round((paidAmt / totalAmt) * 100) : 0;
+                const name = otherParty?.full_name?.split(' ')[0] || otherParty?.username || 'User';
+                const purpose = loan.purpose ? ` for ${loan.purpose}` : '';
+                const headerText = isLending
+                  ? `You lent ${name} ${formatMoney(totalAmt)}${purpose}`
+                  : `${name} lent you ${formatMoney(totalAmt)}${purpose}`;
+                const initial = (otherParty?.full_name || otherParty?.username || 'U').charAt(0).toUpperCase();
                 return (
-                  <div
-                    key={loan.id}
-                    onClick={() => { setManageLoanSelected(loan); setActiveTab('details'); }}
-                    style={{ padding: '12px 14px', cursor: 'pointer', borderBottom: idx < activeLoans.slice(0, 5).length - 1 ? '1px solid rgba(0,0,0,0.04)' : 'none', transition: 'background 0.15s' }}
-                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.02)'}
-                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
-                      <div style={{ width: 32, height: 32, borderRadius: '50%', background: accentLight, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                        <span style={{ fontSize: 13, fontWeight: 600, color: accentColor }}>{initial}</span>
+                  <div key={loan.id} style={{ padding: '8px 0' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                      <div style={{ width: 20, height: 20, borderRadius: '50%', flexShrink: 0, overflow: 'hidden', background: 'rgba(0,0,0,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        {otherParty?.profile_picture_url ? (
+                          <img src={otherParty.profile_picture_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        ) : (
+                          <span style={{ fontSize: 9, fontWeight: 700, color: '#787776' }}>{initial}</span>
+                        )}
                       </div>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <span style={{ fontSize: 13, fontWeight: 500, color: '#1A1918' }}>{otherParty?.full_name || 'User'}</span>
-                        <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 1 }}>{loan.purpose || 'Loan'}</div>
-                      </div>
-                      <span style={{ fontSize: 13, fontWeight: 700, color: '#1A1918', flexShrink: 0 }}>{formatMoney(loanTotalOwed)}</span>
+                      <div style={{ fontSize: 13, color: '#1A1918', fontWeight: 500, lineHeight: 1.4 }}>{headerText}</div>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                      <div style={{ flex: 1, height: 6, background: '#F0F0EE', borderRadius: 999, overflow: 'hidden' }}>
-                        <div style={{ height: '100%', borderRadius: 999, width: `${Math.max(percentPaid, 2)}%`, background: accentColor, transition: 'width 0.5s' }} />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <div style={{ flex: 1, height: 6, borderRadius: 3, background: barBg, overflow: 'hidden' }}>
+                        <div style={{ height: '100%', borderRadius: 3, background: barColor, width: `${pct}%`, transition: 'width 0.5s' }} />
                       </div>
-                      <span style={{ fontSize: 11, fontWeight: 700, color: '#1A1918', minWidth: 32, textAlign: 'right' }}>{percentPaid}%</span>
+                      <span style={{ fontSize: 11, fontWeight: 700, color: '#9B9A98', flexShrink: 0 }}>{pct}%</span>
                     </div>
-                    <p style={{ fontSize: 11, color: '#787776', margin: '5px 0 0' }}>{formatMoney(amountPaid)} of {formatMoney(loanTotalOwed)} {isLending ? 'repaid' : 'paid back'}</p>
+                    <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 3 }}>{formatMoney(paidAmt)} of {formatMoney(totalAmt)} {isLending ? 'paid back' : 'repaid'}</div>
                   </div>
                 );
               })}
@@ -669,7 +695,7 @@ export default function YourLoans() {
                   </div>
                 ) : (
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    {combinedLoans.map((loan, idx) => {
+                    {combinedLoans.map((loan) => {
                       const isOverdue = loan.days < 0;
                       const purpose = loan.purpose || 'loan';
                       const daysLbl = isOverdue ? `${Math.abs(loan.days)}d late` : loan.days === 0 ? 'today' : `${loan.days}d`;
@@ -699,11 +725,11 @@ export default function YourLoans() {
           );
         })()}
 
-        {/* 6. Loans Ranked By — shown for BOTH lending and borrowing */}
-        {activeLoans.length > 0 && (
+        {/* 6. Loans Ranked By — borrowing only, reformatted */}
+        {!isLending && activeLoans.length > 0 && (
           <PageCard title="Loans Ranked By" headerRight={
             <Select value={rankingFilter} onValueChange={setRankingFilter}>
-              <SelectTrigger className="w-auto h-7 px-2 border-0 text-xs font-medium rounded-lg" style={{ background: accentLight, color: accentColor }}><SelectValue /></SelectTrigger>
+              <SelectTrigger className="w-auto h-7 px-2 border-0 text-xs font-medium rounded-lg" style={{ background: 'rgba(29,91,148,0.10)', color: '#1D5B94' }}><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="highest_interest">Highest Interest</SelectItem>
                 <SelectItem value="highest_payment">Highest Payment</SelectItem>
@@ -711,7 +737,7 @@ export default function YourLoans() {
               </SelectContent>
             </Select>
           }>
-            <div style={{ padding: '10px 14px 14px', display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               {(() => {
                 const sorted = [...activeLoans].sort((a, b) => {
                   if (rankingFilter === 'highest_interest') return (b.interest_rate || 0) - (a.interest_rate || 0);
@@ -720,13 +746,31 @@ export default function YourLoans() {
                   return 0;
                 });
                 return sorted.slice(0, 5).map((loan, idx) => {
-                  const otherParty = publicProfiles.find(p => p.user_id === (isLending ? loan.borrower_id : loan.lender_id));
-                  const rankValue = rankingFilter === 'highest_interest' ? `${loan.interest_rate || 0}%` : rankingFilter === 'highest_payment' ? `$${(loan.payment_amount || 0).toLocaleString()}` : loan.next_payment_date ? format(new Date(loan.next_payment_date), 'MMM d') : 'N/A';
+                  const otherParty = publicProfiles.find(p => p.user_id === loan.lender_id);
+                  const totalAmt = loan.total_amount || loan.amount || 0;
+                  const paidAmt = loan.amount_paid || 0;
+                  const pct = totalAmt > 0 ? Math.round((paidAmt / totalAmt) * 100) : 0;
+                  const name = otherParty?.full_name?.split(' ')[0] || otherParty?.username || 'User';
+                  const purpose = loan.purpose ? ` for ${loan.purpose}` : '';
+                  const rankValue = rankingFilter === 'highest_interest' ? `${loan.interest_rate || 0}%` : rankingFilter === 'highest_payment' ? formatMoney(loan.payment_amount || 0) : loan.next_payment_date ? format(new Date(loan.next_payment_date), 'MMM d') : 'N/A';
                   return (
-                    <div key={loan.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 0' }}>
-                      <div style={{ flexShrink: 0, width: 28, height: 28, borderRadius: '50%', background: accentLight, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><span style={{ fontSize: 12, fontWeight: 700, color: accentColor }}>{idx + 1}</span></div>
-                      <div style={{ flex: 1, minWidth: 0 }}><p style={{ fontSize: 11, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', margin: 0 }}>{otherParty?.full_name || 'User'} · {loan.purpose || 'Loan'}</p></div>
-                      <span style={{ fontSize: 11, fontWeight: 700, color: '#1A1918', flexShrink: 0 }}>{rankValue}</span>
+                    <div key={loan.id} style={{ padding: '8px 0' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                        <div style={{ width: 20, height: 20, borderRadius: '50%', background: 'rgba(29,91,148,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                          <span style={{ fontSize: 10, fontWeight: 700, color: '#1D5B94' }}>{idx + 1}</span>
+                        </div>
+                        <div style={{ flex: 1, fontSize: 13, color: '#1A1918', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {name} lent you {formatMoney(totalAmt)}{purpose}
+                        </div>
+                        <span style={{ fontSize: 13, fontWeight: 700, color: '#1A1918', flexShrink: 0 }}>{rankValue}</span>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <div style={{ flex: 1, height: 6, borderRadius: 3, background: 'rgba(29,91,148,0.1)', overflow: 'hidden' }}>
+                          <div style={{ height: '100%', borderRadius: 3, background: '#1D5B94', width: `${pct}%`, transition: 'width 0.5s' }} />
+                        </div>
+                        <span style={{ fontSize: 11, fontWeight: 700, color: '#9B9A98', flexShrink: 0 }}>{pct}%</span>
+                      </div>
+                      <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 3 }}>{formatMoney(paidAmt)} of {formatMoney(totalAmt)} repaid</div>
                     </div>
                   );
                 });
