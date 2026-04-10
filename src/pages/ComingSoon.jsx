@@ -103,7 +103,7 @@ export default function ComingSoon() {
   const RightSection = ({ title, children }) => (
     <div style={{ marginBottom: 40 }}>
       <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 9 }}>{title}</div>
-      <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 14 }} />
+      <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 14 }} />
       {children}
     </div>
   );
@@ -249,8 +249,8 @@ export default function ComingSoon() {
               <div style={{ fontSize: 12, color: '#9B9A98' }}>No recent activity</div>
             ) : recentActivity.map((item) => (
               <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '7px 0' }}>
-                <div style={{ width: 26, height: 26, borderRadius: 7, background: item.isLender ? 'rgba(82,183,136,0.12)' : 'rgba(126,192,234,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={item.isLender ? '#52B788' : '#7EC0EA'} strokeWidth="2.5" strokeLinecap="round">
+                <div style={{ width: 26, height: 26, borderRadius: 7, background: item.isLender ? 'rgba(3,172,234,0.12)' : 'rgba(126,192,234,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={item.isLender ? '#03ACEA' : '#7EC0EA'} strokeWidth="2.5" strokeLinecap="round">
                     {item.isLender ? <polyline points="17 11 12 6 7 11"/> : <polyline points="7 13 12 18 17 13"/>}
                     <line x1="12" y1={item.isLender ? '6' : '18'} x2="12" y2={item.isLender ? '18' : '6'}/>
                   </svg>

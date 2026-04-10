@@ -126,7 +126,7 @@ export default function Friends() {
         particleCount: 80,
         spread: 70,
         origin: { y: 0.5 },
-        colors: ['#03ACEA', '#7C3AED', '#82F0B9', '#ffffff'],
+        colors: ['#03ACEA', '#7C3AED', '#03ACEA', '#ffffff'],
         zIndex: 9999,
       });
     } catch (error) {
@@ -247,7 +247,7 @@ export default function Friends() {
   const RightSection = ({ title, children }) => (
     <div style={{ marginBottom: 40 }}>
       <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 9 }}>{title}</div>
-      <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 14 }} />
+      <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 14 }} />
       {children}
     </div>
   );
@@ -353,7 +353,7 @@ export default function Friends() {
                           <p style={{ fontSize: 11, color: '#9B9A98', margin: '1px 0 0' }}>@{profile.username}</p>
                         </div>
                         {receivedRequest ? (
-                          <button onClick={() => handleAcceptRequestFromSearch(receivedRequest.id)} disabled={processingId === receivedRequest.id} style={{ padding: '6px 14px', borderRadius: 8, border: 'none', background: 'rgba(82,183,136,0.12)', fontSize: 11, fontWeight: 600, color: '#52B788', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 5, fontFamily: "'DM Sans', sans-serif", opacity: processingId === receivedRequest.id ? 0.5 : 1 }}>
+                          <button onClick={() => handleAcceptRequestFromSearch(receivedRequest.id)} disabled={processingId === receivedRequest.id} style={{ padding: '6px 14px', borderRadius: 8, border: 'none', background: 'rgba(3,172,234,0.12)', fontSize: 11, fontWeight: 600, color: '#03ACEA', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 5, fontFamily: "'DM Sans', sans-serif", opacity: processingId === receivedRequest.id ? 0.5 : 1 }}>
                             <CheckCircle size={13} /> Accept
                           </button>
                         ) : sentRequest ? (
@@ -398,7 +398,7 @@ export default function Friends() {
                     <p style={{ fontSize: 11, color: '#9B9A98', margin: '1px 0 0' }}>@{profile.username}</p>
                   </div>
                   <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
-                    <button onClick={() => handleAcceptRequestFromSearch(request.id)} disabled={processingId === request.id} style={{ padding: '6px 14px', borderRadius: 8, border: 'none', background: 'rgba(82,183,136,0.12)', fontSize: 11, fontWeight: 600, color: '#52B788', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", opacity: processingId === request.id ? 0.5 : 1 }}>Confirm</button>
+                    <button onClick={() => handleAcceptRequestFromSearch(request.id)} disabled={processingId === request.id} style={{ padding: '6px 14px', borderRadius: 8, border: 'none', background: 'rgba(3,172,234,0.12)', fontSize: 11, fontWeight: 600, color: '#03ACEA', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", opacity: processingId === request.id ? 0.5 : 1 }}>Confirm</button>
                     <button onClick={() => handleCancelRequest(request.id)} disabled={processingId === request.id} style={{ padding: '6px 14px', borderRadius: 8, border: 'none', background: 'rgba(232,114,110,0.08)', fontSize: 11, fontWeight: 600, color: '#E8726E', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", opacity: processingId === request.id ? 0.5 : 1 }}>Delete</button>
                   </div>
                 </div>
@@ -427,7 +427,7 @@ export default function Friends() {
         <RightSection title="Your Friends">
           {isLoading ? (
             <div style={{ display: 'flex', justifyContent: 'center', padding: '20px 0' }}>
-              <div style={{ width: 24, height: 24, border: '2px solid #82F0B9', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+              <div style={{ width: 24, height: 24, border: '2px solid #03ACEA', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
             </div>
           ) : sortedFriends.length === 0 ? (
             <div style={{ fontSize: 12, color: '#9B9A98', textAlign: 'center', padding: '12px 0' }}>No friends yet</div>
@@ -436,10 +436,10 @@ export default function Friends() {
             if (!friendProfile) return null;
             return (
               <div key={friendship.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '7px 0' }}>
-                <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'rgba(130,240,185,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden' }}>
+                <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'rgba(3,172,234,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden' }}>
                   {friendProfile.profile_picture_url || friendProfile.avatar_url
                     ? <img src={friendProfile.profile_picture_url || friendProfile.avatar_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    : <span style={{ fontSize: 11, fontWeight: 600, color: '#52B788' }}>{(friendProfile.full_name || friendProfile.username || '?').charAt(0)}</span>
+                    : <span style={{ fontSize: 11, fontWeight: 600, color: '#03ACEA' }}>{(friendProfile.full_name || friendProfile.username || '?').charAt(0)}</span>
                   }
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>

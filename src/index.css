@@ -251,6 +251,22 @@ input[type="date"] {
   background: transparent !important;
 }
 
+/* Decorative blue strip at right edge of Col 1 (inside col, along col1/col2 border) */
+.mesh-left {
+  position: relative;
+}
+.mesh-left::after {
+  content: '';
+  position: fixed;
+  left: 177px;
+  bottom: 0;
+  width: 3px;
+  height: 120vh;
+  background: linear-gradient(to top, #03ACEA 0%, #03ACEA 33%, rgba(250, 250, 250, 0) 100%);
+  pointer-events: none;
+  z-index: 5;
+}
+
 /* Mesh layout responsive */
 @media (max-width: 768px) {
   .mesh-layout {
@@ -269,6 +285,10 @@ input[type="date"] {
     min-width: 0 !important;
     width: 100% !important;
   }
+  /* Show mobile-only panels inside Col 2 */
+  .rp-mobile-loan-selector { display: block !important; }
+  .rp-empty-desktop { display: none !important; }
+  .lending-mobile-sidebar { display: block !important; }
 }
 
 /* Home + Dashboard pages responsive */

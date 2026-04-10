@@ -831,10 +831,10 @@ export default function LoanAgreements() {
                 {formatMoney(loan.amount_paid || 0)} / {formatMoney(agreement.total_amount)}
               </span>
             </div>
-            <div style={{ width: '100%', background: 'white', borderRadius: 999, height: 8 }}>
+            <div style={{ width: '100%', background: 'white', borderRadius: 3, height: 6 }}>
               <div
                 style={{
-                  background: '#03ACEA', height: 8, borderRadius: 999, transition: 'width 0.3s',
+                  background: '#03ACEA', height: 6, borderRadius: 3, transition: 'width 0.3s',
                   width: `${Math.min(100, ((loan.amount_paid || 0) / agreement.total_amount) * 100)}%`,
                 }}
               />
@@ -956,7 +956,7 @@ export default function LoanAgreements() {
   const RightSection = ({ title, children }) => (
     <div style={{ marginBottom: 40 }}>
       <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 9 }}>{title}</div>
-      <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 14 }} />
+      <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 14 }} />
       {children}
     </div>
   );

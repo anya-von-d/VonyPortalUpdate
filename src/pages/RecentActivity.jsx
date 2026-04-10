@@ -570,7 +570,7 @@ export default function RecentActivityPage() {
   const RightSection = ({ title, children }) => (
     <div style={{ marginBottom: 40 }}>
       <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 9 }}>{title}</div>
-      <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 14 }} />
+      <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 14 }} />
       {children}
     </div>
   );
@@ -749,7 +749,7 @@ export default function RecentActivityPage() {
                           display: 'grid',
                           gridTemplateColumns: '120px 1fr 200px',
                           alignItems: 'center',
-                          padding: '12px 0',
+                          padding: '9px 0',
                           borderBottom: 'none',
                         }}
                       >
@@ -760,8 +760,8 @@ export default function RecentActivityPage() {
 
                         {/* Col 2: Category — icon + title */}
                         <div className="ra-col-main" style={{ display: 'flex', alignItems: 'center' }}>
-                          <div style={{ width: 24, height: 24, borderRadius: 6, background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginRight: 8 }}>
-                            <Icon size={12} style={{ color: iconColor }} />
+                          <div style={{ width: 20, height: 20, borderRadius: 6, background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginRight: 8 }}>
+                            <Icon size={13} style={{ color: iconColor }} />
                           </div>
                           <span style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                             {title}
@@ -800,7 +800,7 @@ export default function RecentActivityPage() {
             </div>
           {/* ── Search + Filters ───────────────────────── */}
           <RightSection title="Search & Filters">
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
               <div style={{
                 flex: 1, display: 'flex', alignItems: 'center', gap: 8,
                 padding: '0 12px', background: 'white', borderRadius: 18,
@@ -818,6 +818,8 @@ export default function RecentActivityPage() {
                   }}
                 />
               </div>
+            </div>
+            <div style={{ marginBottom: 12 }}>
               <SortDropdown sortBy={sortBy} onChange={setSortBy} />
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8, position: 'relative', zIndex: 20 }}>
@@ -866,8 +868,8 @@ export default function RecentActivityPage() {
                   const initial = (borrower?.full_name || borrower?.username || 'U').charAt(0).toUpperCase();
                   return (
                     <div key={p.id} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
-                      <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'rgba(3,172,234,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                        <span style={{ fontSize: 12, fontWeight: 700, color: '#03ACEA' }}>{initial}</span>
+                      <div style={{ width: 22, height: 22, borderRadius: '50%', background: 'rgba(3,172,234,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <span style={{ fontSize: 10, fontWeight: 700, color: '#03ACEA' }}>{initial}</span>
                       </div>
                       <div>
                         <p style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', margin: 0 }}>{name} paid ${p.amount?.toFixed(2)}</p>

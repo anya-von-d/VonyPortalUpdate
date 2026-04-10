@@ -808,8 +808,8 @@ export default function Lending({ initialTab }) {
             disabled={!canSubmit}
             className={`h-8 px-4 rounded-lg text-sm font-medium border-0 transition-all ${
               !canSubmit
-                ? 'bg-[#82F0B9]/50 text-white/70 cursor-not-allowed'
-                : 'bg-[#82F0B9] text-white hover:bg-[#5a7ae0]'
+                ? 'bg-[#03ACEA]/50 text-white/70 cursor-not-allowed'
+                : 'bg-[#03ACEA] text-white hover:bg-[#5a7ae0]'
             }`}
           >
             Submit
@@ -1146,11 +1146,11 @@ export default function Lending({ initialTab }) {
         <div className="glass-card rounded-2xl p-4 space-y-3">
           <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500">Terms of Repayment</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="bg-[#82F0B9]/8 rounded-xl p-3">
+            <div className="bg-[#03ACEA]/8 rounded-xl p-3">
               <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-0.5">Total Due</p>
               <p className="font-bold text-slate-800">{formatMoney(agreement.total_amount)}</p>
             </div>
-            <div className="bg-[#82F0B9]/12 rounded-xl p-3">
+            <div className="bg-[#03ACEA]/12 rounded-xl p-3">
               <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-0.5">Interest</p>
               <p className="font-bold text-slate-800">{agreement.interest_rate}%</p>
             </div>
@@ -1159,7 +1159,7 @@ export default function Lending({ initialTab }) {
               <p className="font-bold text-slate-800">{formatMoney(agreement.payment_amount)}</p>
               <p className="text-xs text-slate-500 capitalize">{agreement.payment_frequency}</p>
             </div>
-            <div className="bg-[#82F0B9]/8 rounded-xl p-3">
+            <div className="bg-[#03ACEA]/8 rounded-xl p-3">
               <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-0.5">Term</p>
               <p className="font-bold text-slate-800">{agreement.repayment_period} {agreement.repayment_unit || 'months'}</p>
             </div>
@@ -1185,7 +1185,7 @@ export default function Lending({ initialTab }) {
 
         <Button
           onClick={() => downloadPromissoryNote(agreement)}
-          className="w-full bg-[#82F0B9] hover:bg-[#5a7ae0] text-white rounded-xl py-3"
+          className="w-full bg-[#03ACEA] hover:bg-[#5a7ae0] text-white rounded-xl py-3"
         >
           <Download className="w-4 h-4 mr-2" />
           Download PDF
@@ -1209,11 +1209,11 @@ export default function Lending({ initialTab }) {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div className="bg-[#82F0B9]/8 rounded-2xl p-3 text-center">
+          <div className="bg-[#03ACEA]/8 rounded-2xl p-3 text-center">
             <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-0.5">Principal</p>
             <p className="text-lg font-bold text-slate-800">{formatMoney(agreement.amount)}</p>
           </div>
-          <div className="bg-[#82F0B9]/12 rounded-2xl p-3 text-center">
+          <div className="bg-[#03ACEA]/12 rounded-2xl p-3 text-center">
             <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-0.5">Interest</p>
             <p className="text-lg font-bold text-slate-800">{formatMoney((agreement.total_amount || 0) - (agreement.amount || 0))}</p>
           </div>
@@ -1241,10 +1241,10 @@ export default function Lending({ initialTab }) {
               {schedule.map((row, index) => (
                 <tr
                   key={row.number}
-                  className={index < paidPayments ? 'bg-[#82F0B9]/8/40' : index % 2 === 0 ? 'bg-white/40' : ''}
+                  className={index < paidPayments ? 'bg-[#03ACEA]/8/40' : index % 2 === 0 ? 'bg-white/40' : ''}
                 >
                   <td className="px-2 py-2 text-slate-600">
-                    {index < paidPayments && <CheckCircle className="w-3 h-3 text-[#82F0B9] inline mr-1" />}
+                    {index < paidPayments && <CheckCircle className="w-3 h-3 text-[#03ACEA] inline mr-1" />}
                     {row.number}
                   </td>
                   <td className="px-2 py-2 text-slate-800">{format(row.date, 'MMM d, yyyy')}</td>
@@ -1262,7 +1262,7 @@ export default function Lending({ initialTab }) {
 
         <Button
           onClick={() => downloadAmortizationSchedule(agreement)}
-          className="w-full bg-[#82F0B9] hover:bg-[#5a7ae0] text-white rounded-xl py-3"
+          className="w-full bg-[#03ACEA] hover:bg-[#5a7ae0] text-white rounded-xl py-3"
         >
           <Download className="w-4 h-4 mr-2" />
           Download PDF
@@ -1296,7 +1296,7 @@ export default function Lending({ initialTab }) {
           <Badge className={`${getStatusColor(loan?.status)} capitalize`}>{loan?.status || 'active'}</Badge>
         </div>
 
-        <div className="bg-[#82F0B9]/8 rounded-xl p-4 mb-1">
+        <div className="bg-[#03ACEA]/8 rounded-xl p-4 mb-1">
           <p className="text-xs text-slate-600 mb-1">Purpose</p>
           <p className="text-sm font-semibold text-slate-800">{loan?.purpose || agreement.purpose || '_'}</p>
         </div>
@@ -1306,9 +1306,9 @@ export default function Lending({ initialTab }) {
             <p className="text-xs text-slate-600 mb-1">Loan Amount</p>
             <p className="text-2xl font-bold text-slate-800">{formatMoney(agreement.amount)}</p>
           </div>
-          <div className="bg-[#82F0B9]/8 rounded-xl p-4">
+          <div className="bg-[#03ACEA]/8 rounded-xl p-4">
             <p className="text-xs text-slate-600 mb-1">Total Due</p>
-            <p className="text-2xl font-bold text-[#82F0B9]">{formatMoney(agreement.total_amount)}</p>
+            <p className="text-2xl font-bold text-[#03ACEA]">{formatMoney(agreement.total_amount)}</p>
           </div>
         </div>
 
@@ -1320,9 +1320,9 @@ export default function Lending({ initialTab }) {
                 {formatMoney(loan.amount_paid || 0)} / {formatMoney(agreement.total_amount)}
               </span>
             </div>
-            <div className="w-full bg-white rounded-full h-2">
+            <div className="w-full bg-white rounded-full h-1.5">
               <div
-                className="bg-[#82F0B9] h-2 rounded-full transition-all"
+                className="bg-[#03ACEA] h-1.5 rounded-full transition-all"
                 style={{ width: `${Math.min(100, ((loan.amount_paid || 0) / agreement.total_amount) * 100)}%` }}
               />
             </div>
@@ -1425,8 +1425,8 @@ export default function Lending({ initialTab }) {
               transition={{ type: 'spring', stiffness: 320, damping: 28 }}
               style={{ background: 'white', borderRadius: 24, maxWidth: 400, width: '100%', padding: '40px 32px 32px', boxShadow: '0 24px 64px rgba(0,0,0,0.14)', textAlign: 'center', fontFamily: "'DM Sans', sans-serif" }}
             >
-              <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'rgba(130,240,185,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
-                <CheckCircle size={32} style={{ color: '#82F0B9' }} />
+              <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'rgba(3,172,234,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+                <CheckCircle size={32} style={{ color: '#03ACEA' }} />
               </div>
               <h3 style={{ fontSize: 22, fontWeight: 700, color: '#1A1918', margin: '0 0 8px', letterSpacing: '-0.02em' }}>Loan Sent!</h3>
               <p style={{ fontSize: 14, color: '#787776', margin: '0 0 28px', lineHeight: 1.6 }}>
@@ -1436,7 +1436,7 @@ export default function Lending({ initialTab }) {
                 onClick={() => setShowLoanSentModal(false)}
                 style={{
                   width: '100%', padding: '13px 0', borderRadius: 14, border: 'none',
-                  background: '#82F0B9', color: 'white', fontSize: 15, fontWeight: 600,
+                  background: '#03ACEA', color: 'white', fontSize: 15, fontWeight: 600,
                   cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.01em',
                 }}
               >
@@ -1466,8 +1466,8 @@ export default function Lending({ initialTab }) {
             >
               <div className="sticky top-0 bg-white border-b border-slate-100 p-4 flex justify-between items-center rounded-t-2xl z-10">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-[#82F0B9]/10 flex items-center justify-center">
-                    <FileText className="w-4 h-4 text-[#82F0B9]" />
+                  <div className="w-8 h-8 rounded-full bg-[#03ACEA]/10 flex items-center justify-center">
+                    <FileText className="w-4 h-4 text-[#03ACEA]" />
                   </div>
                   <span className="font-medium text-slate-800">
                     {activeDocPopup === 'promissory' && 'Promissory Note'}
@@ -1571,6 +1571,74 @@ export default function Lending({ initialTab }) {
             <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 17, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', marginBottom: 12 }}>Create Loan</div>
             <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 20 }} />
 
+          {/* ── Mobile: Loan Type + Summary (hidden on desktop) ── */}
+          {activeSection === 'create' && (
+            <div className="lending-mobile-sidebar" style={{ display: 'none', marginBottom: 24, background: 'rgba(0,0,0,0.025)', borderRadius: 16, padding: '16px 16px 4px', border: '1px solid rgba(0,0,0,0.04)' }}>
+              {/* Loan Type toggle */}
+              <div style={{ marginBottom: 20 }}>
+                <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 9 }}>Loan Type</div>
+                <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 14 }} />
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginBottom: 10 }}>
+                  <span style={{ fontSize: 13, fontWeight: 500, color: loanType === 'scheduled' ? '#1A1918' : '#9B9A98' }}>Loan</span>
+                  <button
+                    type="button"
+                    onClick={() => setLoanType(loanType === 'flexible' ? 'scheduled' : 'flexible')}
+                    style={{
+                      position: 'relative', width: 44, height: 24, borderRadius: 12,
+                      border: 'none', cursor: 'pointer', flexShrink: 0,
+                      background: loanType === 'flexible' ? '#03ACEA' : 'rgba(0,0,0,0.12)',
+                      transition: 'background 0.2s',
+                    }}
+                  >
+                    <div style={{
+                      position: 'absolute', top: 3, left: loanType === 'flexible' ? 23 : 3,
+                      width: 18, height: 18, borderRadius: '50%', background: 'white',
+                      boxShadow: '0 1px 3px rgba(0,0,0,0.2)', transition: 'left 0.2s',
+                    }} />
+                  </button>
+                  <span style={{ fontSize: 13, fontWeight: 500, color: loanType === 'flexible' ? '#1A1918' : '#9B9A98' }}>Quick Pay</span>
+                </div>
+                <p style={{ fontSize: 12, color: '#9B9A98', lineHeight: 1.5, margin: 0 }}>
+                  {loanType === 'flexible' ? 'One-time payment — perfect for splitting expenses' : 'Structured repayment plan with interest'}
+                </p>
+              </div>
+              {/* Borrower Will Pay */}
+              {loanType === 'scheduled' && (
+                <div style={{ marginBottom: 20 }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 9 }}>Borrower Will Pay</div>
+                  <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 14 }} />
+                  <div style={{ fontSize: '1.6rem', fontWeight: 700, color: '#03ACEA', letterSpacing: '-0.03em', lineHeight: 1, marginBottom: 4 }}>
+                    {formData.amount && details.monthlyPayment > 0 ? `$${details.monthlyPayment.toFixed(2)}` : '$0.00'}
+                  </div>
+                  <div style={{ fontSize: 12, color: '#9B9A98' }}>{formData.payment_frequency || 'monthly'} after interest</div>
+                </div>
+              )}
+              {/* Loan Summary */}
+              <div style={{ marginBottom: 16 }}>
+                <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 9 }}>Loan Summary</div>
+                <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 14 }} />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  {formData.purpose && (
+                    <div>
+                      <div style={{ fontSize: 11, color: '#9B9A98', marginBottom: 2 }}>For</div>
+                      <div style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{formData.purpose}</div>
+                    </div>
+                  )}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                    <span style={{ fontSize: 12, color: '#9B9A98' }}>Amount</span>
+                    <span style={{ fontSize: 13, fontWeight: 600, color: '#1A1918' }}>{formData.amount ? `$${parseFloat(formData.amount).toLocaleString()}` : '$0.00'}</span>
+                  </div>
+                  {loanType === 'scheduled' && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                      <span style={{ fontSize: 12, color: '#9B9A98' }}>Interest</span>
+                      <span style={{ fontSize: 13, fontWeight: 600, color: '#1A1918' }}>{formData.amount && formData.interest_rate ? `$${details.totalInterest.toFixed(2)}` : '$0.00'}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Tab Navigation — hidden when accessed as standalone Create Loan page */}
           {!initialTab && (
           <div className="flex gap-2 overflow-x-auto pb-4 mb-2">
@@ -1581,7 +1649,7 @@ export default function Lending({ initialTab }) {
                 variant={activeSection === tab.id ? 'default' : 'outline'}
                 className={`whitespace-nowrap rounded-full ${
                   activeSection === tab.id
-                    ? 'bg-[#82F0B9] hover:bg-[#5a7ae0] text-white border-0'
+                    ? 'bg-[#03ACEA] hover:bg-[#5a7ae0] text-white border-0'
                     : 'bg-white/90 backdrop-blur-sm border border-black/10 text-slate-600 hover:bg-white shadow-sm'
                 }`}
               >
@@ -1607,7 +1675,7 @@ export default function Lending({ initialTab }) {
                   <div className="p-4">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {/* Pie Chart */}
-                    <div className="rounded-xl p-3 flex flex-col items-center justify-center" style={{ backgroundColor: 'rgba(130,240,185,0.08)' }}>
+                    <div className="rounded-xl p-3 flex flex-col items-center justify-center" style={{ backgroundColor: 'rgba(3,172,234,0.08)' }}>
                       {(() => {
                         const totalOwed = activeLoans.reduce((sum, loan) => sum + (loan.total_amount || loan.amount || 0), 0);
                         const totalPaid = activeLoans.reduce((sum, loan) => sum + (loan.amount_paid || 0), 0);
@@ -1617,13 +1685,13 @@ export default function Lending({ initialTab }) {
                           <>
                             <div className="relative w-24 h-24">
                               <svg className="w-full h-full transform -rotate-90" viewBox="0 0 120 120">
-                                <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(130,240,185,0.15)" strokeWidth="7" />
+                                <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(3,172,234,0.15)" strokeWidth="7" />
                                 <circle
                                   cx="60"
                                   cy="60"
                                   r="52"
                                   fill="none"
-                                  stroke="#82F0B9"
+                                  stroke="#03ACEA"
                                   strokeWidth="7"
                                   strokeLinecap="round"
                                   strokeDasharray={2 * Math.PI * 52}
@@ -1647,7 +1715,7 @@ export default function Lending({ initialTab }) {
                     </div>
 
                     {/* Stats Card - Total Lent */}
-                    <Card className="backdrop-blur-sm hover:shadow-xl transition-all duration-300 h-full cursor-default border-0 rounded-xl" style={{ backgroundColor: 'rgba(130,240,185,0.08)' }}>
+                    <Card className="backdrop-blur-sm hover:shadow-xl transition-all duration-300 h-full cursor-default border-0 rounded-xl" style={{ backgroundColor: 'rgba(3,172,234,0.08)' }}>
                       <CardContent className="p-4 flex flex-col h-full">
                         <p className="text-sm font-medium text-slate-600 mb-2 text-left">Total Lent</p>
                         <p className="text-2xl font-bold text-slate-800 text-center flex-1 flex items-center justify-center">${totalLent.toLocaleString()}</p>
@@ -1656,7 +1724,7 @@ export default function Lending({ initialTab }) {
                     </Card>
 
                     {/* Stats Card - Expected Back */}
-                    <Card className="backdrop-blur-sm hover:shadow-xl transition-all duration-300 h-full cursor-default border-0 rounded-xl" style={{ backgroundColor: 'rgba(130,240,185,0.08)' }}>
+                    <Card className="backdrop-blur-sm hover:shadow-xl transition-all duration-300 h-full cursor-default border-0 rounded-xl" style={{ backgroundColor: 'rgba(3,172,234,0.08)' }}>
                       <CardContent className="p-4 flex flex-col h-full">
                         <p className="text-sm font-medium text-slate-600 mb-2 text-left">Expected Back</p>
                         <p className="text-2xl font-bold text-slate-800 text-center flex-1 flex items-center justify-center">${totalExpectedBack.toLocaleString()}</p>
@@ -1685,7 +1753,7 @@ export default function Lending({ initialTab }) {
                           .slice(0, 3)
                           .map((loan, index) => {
                             const borrower = publicProfiles.find(p => p.user_id === loan.borrower_id);
-                            const bgColors = ['rgba(130,240,185,0.06)', 'rgba(130,240,185,0.1)', 'rgba(37,99,235,0.08)', 'rgba(130,240,185,0.08)', 'rgba(130,240,185,0.12)', 'rgba(37,99,235,0.06)'];
+                            const bgColors = ['rgba(3,172,234,0.06)', 'rgba(3,172,234,0.1)', 'rgba(37,99,235,0.08)', 'rgba(3,172,234,0.08)', 'rgba(3,172,234,0.12)', 'rgba(37,99,235,0.06)'];
                             return (
                               <div key={loan.id} className="flex items-center justify-between p-3 rounded-xl" style={{ backgroundColor: bgColors[index % 6] }}>
                                 <div>
@@ -1724,8 +1792,8 @@ export default function Lending({ initialTab }) {
                               <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1918' }}>Lending</div>
                               <div style={{ fontSize: 12, color: '#787776' }}>{pctAll}%</div>
                             </div>
-                            <div style={{ width: '100%', height: 8, borderRadius: 4, background: 'rgba(130,240,185,0.15)', overflow: 'hidden' }}>
-                              <div style={{ height: '100%', borderRadius: 4, background: '#82F0B9', width: `${pctAll}%`, transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)' }} />
+                            <div style={{ width: '100%', height: 6, borderRadius: 3, background: 'rgba(3,172,234,0.15)', overflow: 'hidden' }}>
+                              <div style={{ height: '100%', borderRadius: 3, background: '#03ACEA', width: `${pctAll}%`, transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)' }} />
                             </div>
                             <div style={{ fontSize: 11, color: '#787776', marginTop: 6 }}>{formatMoney(paidAll)} of {formatMoney(totalAll)} repaid</div>
                           </div>
@@ -1754,8 +1822,8 @@ export default function Lending({ initialTab }) {
                                   </div>
                                   <div style={{ fontSize: 12, color: '#787776', flexShrink: 0, marginLeft: 8 }}>{percentPaid}%</div>
                                 </div>
-                                <div style={{ width: '100%', height: 8, borderRadius: 4, background: 'rgba(130,240,185,0.15)', overflow: 'hidden' }}>
-                                  <div style={{ height: '100%', borderRadius: 4, background: '#82F0B9', width: `${percentPaid}%`, transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)' }} />
+                                <div style={{ width: '100%', height: 6, borderRadius: 3, background: 'rgba(3,172,234,0.15)', overflow: 'hidden' }}>
+                                  <div style={{ height: '100%', borderRadius: 3, background: '#03ACEA', width: `${percentPaid}%`, transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)' }} />
                                 </div>
                                 <div style={{ fontSize: 11, color: '#787776', marginTop: 6 }}>{formatMoney(amountPaid)} of {formatMoney(totalOwed)} repaid</div>
                               </div>
@@ -1763,7 +1831,7 @@ export default function Lending({ initialTab }) {
                           })}
                           {activeLoans.length > 5 && (
                             <button
-                              style={{ width: '100%', padding: '8px 0', fontSize: 13, color: '#82F0B9', background: 'transparent', border: 'none', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}
+                              style={{ width: '100%', padding: '8px 0', fontSize: 13, color: '#03ACEA', background: 'transparent', border: 'none', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}
                               onClick={() => setActiveSection('active')}
                             >
                               View all {activeLoans.length} loans
@@ -1821,7 +1889,7 @@ export default function Lending({ initialTab }) {
                       });
 
                       return (
-                        <div className="bg-[#82F0B9]/12 rounded-xl p-3 flex items-center justify-between">
+                        <div className="bg-[#03ACEA]/12 rounded-xl p-3 flex items-center justify-between">
                           <p className="text-[11px] text-[#1A1918] uppercase tracking-[0.12em] font-medium" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                             {format(selectedMonth, 'MMMM')} Repayment Amount
                           </p>
@@ -1855,7 +1923,7 @@ export default function Lending({ initialTab }) {
                                       setShowMonthDropdown(false);
                                     }}
                                     className={`w-full px-4 py-2 text-left text-sm hover:bg-[#2563EB]/10 transition-colors ${
-                                      isSameMonth(monthDate, selectedMonth) ? 'bg-[#2563EB]/10 font-medium text-[#82F0B9]' : 'text-slate-700'
+                                      isSameMonth(monthDate, selectedMonth) ? 'bg-[#2563EB]/10 font-medium text-[#03ACEA]' : 'text-slate-700'
                                     }`}
                                   >
                                     {format(monthDate, 'MMMM')}
@@ -1928,7 +1996,7 @@ export default function Lending({ initialTab }) {
                         );
                       }
 
-                      const colors = ['rgba(130,240,185,0.06)', 'rgba(130,240,185,0.1)', 'rgba(37,99,235,0.08)', 'rgba(130,240,185,0.08)', 'rgba(130,240,185,0.12)', 'rgba(37,99,235,0.06)'];
+                      const colors = ['rgba(3,172,234,0.06)', 'rgba(3,172,234,0.1)', 'rgba(37,99,235,0.08)', 'rgba(3,172,234,0.08)', 'rgba(3,172,234,0.12)', 'rgba(37,99,235,0.06)'];
 
                       return events.map((event, index) => (
                         <div
@@ -1936,7 +2004,7 @@ export default function Lending({ initialTab }) {
                           className="flex items-center gap-3 p-3 rounded-xl"
                           style={{ backgroundColor: colors[index % 6] }}
                         >
-                          <div className="bg-[#82F0B9]/8 rounded-lg px-3 py-2 flex-shrink-0 text-center min-w-[50px]">
+                          <div className="bg-[#03ACEA]/8 rounded-lg px-3 py-2 flex-shrink-0 text-center min-w-[50px]">
                             <p className="text-xs text-slate-500 uppercase" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                               {format(event.date, 'MMM')}
                             </p>
@@ -1946,7 +2014,7 @@ export default function Lending({ initialTab }) {
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium text-slate-800">
-                              <span className="text-[#82F0B9]">Receive</span>
+                              <span className="text-[#03ACEA]">Receive</span>
                               {' '}
                               <span className="font-bold">${event.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                               {' '}
@@ -1956,7 +2024,7 @@ export default function Lending({ initialTab }) {
                             </p>
                           </div>
                           <div className="flex-shrink-0">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#82F0B9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                               <line x1="12" y1="19" x2="12" y2="5"></line>
                               <polyline points="5 12 12 5 19 12"></polyline>
                             </svg>
@@ -1974,7 +2042,7 @@ export default function Lending({ initialTab }) {
                     <div className="p-4">
                     <div className="space-y-3">
                       {/* Total Amount Lent */}
-                      <div className="rounded-xl p-4 flex items-center gap-3" style={{ backgroundColor: 'rgba(130,240,185,0.06)' }}>
+                      <div className="rounded-xl p-4 flex items-center gap-3" style={{ backgroundColor: 'rgba(3,172,234,0.06)' }}>
                         <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center flex-shrink-0">
                           <DollarSign className="w-4 h-4 text-[#1A1918]" />
                         </div>
@@ -1989,7 +2057,7 @@ export default function Lending({ initialTab }) {
                       </div>
 
                       {/* Number of Loans */}
-                      <div className="rounded-xl p-4 flex items-center gap-3" style={{ backgroundColor: 'rgba(130,240,185,0.1)' }}>
+                      <div className="rounded-xl p-4 flex items-center gap-3" style={{ backgroundColor: 'rgba(3,172,234,0.1)' }}>
                         <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center flex-shrink-0">
                           <FileText className="w-4 h-4 text-[#1A1918]" />
                         </div>
@@ -2043,7 +2111,7 @@ export default function Lending({ initialTab }) {
                               <button
                                 type="button"
                                 onClick={() => navigate(createPageUrl('Friends'))}
-                                className="flex items-center justify-center gap-2 px-4 py-2.5 bg-[#82F0B9] text-white text-sm font-medium rounded-xl hover:bg-[#5a7ae0] transition-colors"
+                                className="flex items-center justify-center gap-2 px-4 py-2.5 bg-[#03ACEA] text-white text-sm font-medium rounded-xl hover:bg-[#5a7ae0] transition-colors"
                               >
                                 <UserIcon className="w-4 h-4" />
                                 Find Your Friends
@@ -2152,7 +2220,7 @@ export default function Lending({ initialTab }) {
                                 type="button"
                                 onClick={() => handleInputChange('is_repeating', !formData.is_repeating)}
                                 className={`relative w-12 h-6 rounded-full transition-all ${
-                                  formData.is_repeating ? 'bg-[#82F0B9]' : 'bg-slate-300'
+                                  formData.is_repeating ? 'bg-[#03ACEA]' : 'bg-slate-300'
                                 }`}
                               >
                                 <div className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white shadow transition-all ${
@@ -2520,21 +2588,21 @@ export default function Lending({ initialTab }) {
               >
                 {isLoading ? (
                   <div className="text-center py-8">
-                    <div className="w-8 h-8 border-2 border-[#82F0B9] border-t-transparent rounded-full animate-spin mx-auto" />
+                    <div className="w-8 h-8 border-2 border-[#03ACEA] border-t-transparent rounded-full animate-spin mx-auto" />
                   </div>
                 ) : manageableLoans.length === 0 ? (
                   <PageCard title="Loans">
                   <div className="p-8">
                     <div className="flex flex-col items-center text-center">
-                      <div className="w-16 h-16 bg-[#82F0B9]/8 rounded-full flex items-center justify-center mb-4">
-                        <CheckCircle className="w-8 h-8 text-[#82F0B9]" />
+                      <div className="w-16 h-16 bg-[#03ACEA]/8 rounded-full flex items-center justify-center mb-4">
+                        <CheckCircle className="w-8 h-8 text-[#03ACEA]" />
                       </div>
                       <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-2">All Clear</p>
                       <p className="text-lg font-semibold text-slate-800 mb-1">No loans to manage</p>
                       <p className="text-sm text-slate-500 mb-5">You're all caught up! Create a new loan offer to get started.</p>
                       <Button
                         onClick={() => setActiveSection('create')}
-                        className="bg-[#82F0B9] hover:bg-[#5a7ae0] text-white rounded-xl px-6 h-11"
+                        className="bg-[#03ACEA] hover:bg-[#5a7ae0] text-white rounded-xl px-6 h-11"
                       >
                         <PlusCircle className="w-4 h-4 mr-2" />
                         Create a Loan Offer
@@ -2560,8 +2628,8 @@ export default function Lending({ initialTab }) {
                                 const borrower = publicProfiles.find(p => p.user_id === manageLoanSelected.borrower_id);
                                 return (
                                   <div className="flex items-center gap-2">
-                                    <div className="w-6 h-6 rounded-full bg-[#82F0B9]/20 flex items-center justify-center">
-                                      <span className="text-xs font-medium text-[#82F0B9]">
+                                    <div className="w-6 h-6 rounded-full bg-[#03ACEA]/20 flex items-center justify-center">
+                                      <span className="text-xs font-medium text-[#03ACEA]">
                                         {borrower?.full_name?.charAt(0) || '?'}
                                       </span>
                                     </div>
@@ -2569,7 +2637,7 @@ export default function Lending({ initialTab }) {
                                     <span className="text-slate-400">•</span>
                                     <span className="text-slate-500 truncate max-w-[120px]">{manageLoanSelected.purpose || 'Reason'}</span>
                                     <span className="text-slate-400">•</span>
-                                    <span className="text-[#82F0B9] font-medium">${manageLoanSelected.amount?.toLocaleString()}</span>
+                                    <span className="text-[#03ACEA] font-medium">${manageLoanSelected.amount?.toLocaleString()}</span>
                                     {manageLoanSelected.status === 'cancelled' && (
                                       <span className="text-red-500 text-xs font-medium">(Cancelled)</span>
                                     )}
@@ -2584,8 +2652,8 @@ export default function Lending({ initialTab }) {
                               return (
                                 <SelectItem key={loan.id} value={loan.id}>
                                   <div className="flex items-center gap-2">
-                                    <div className="w-6 h-6 rounded-full bg-[#82F0B9]/20 flex items-center justify-center">
-                                      <span className="text-xs font-medium text-[#82F0B9]">
+                                    <div className="w-6 h-6 rounded-full bg-[#03ACEA]/20 flex items-center justify-center">
+                                      <span className="text-xs font-medium text-[#03ACEA]">
                                         {borrower?.full_name?.charAt(0) || '?'}
                                       </span>
                                     </div>
@@ -2593,7 +2661,7 @@ export default function Lending({ initialTab }) {
                                     <span className="text-slate-400">•</span>
                                     <span className="text-slate-500 truncate max-w-[120px]">{loan.purpose || 'Reason'}</span>
                                     <span className="text-slate-400">•</span>
-                                    <span className="text-[#82F0B9] font-medium">${loan.amount?.toLocaleString()}</span>
+                                    <span className="text-[#03ACEA] font-medium">${loan.amount?.toLocaleString()}</span>
                                     {loan.status === 'cancelled' && (
                                       <span className="text-red-500 text-xs font-medium">(Cancelled)</span>
                                     )}
@@ -2622,13 +2690,13 @@ export default function Lending({ initialTab }) {
                           <PageCard title="Loan Information">
                           <div className="p-4">
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                              <div className="bg-[#82F0B9]/8 rounded-xl p-4">
+                              <div className="bg-[#03ACEA]/8 rounded-xl p-4">
                                 <p className="text-[10px] text-slate-600 uppercase tracking-wide font-medium mb-1" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>Amount</p>
                                 <p className="text-xl font-bold text-slate-800">
                                   ${(manageLoanSelected.amount || 0).toLocaleString()}
                                 </p>
                               </div>
-                              <div className="bg-[#82F0B9]/10 rounded-xl p-4">
+                              <div className="bg-[#03ACEA]/10 rounded-xl p-4">
                                 <p className="text-[10px] text-slate-600 uppercase tracking-wide font-medium mb-1" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>Interest</p>
                                 <p className="text-xl font-bold text-slate-800">
                                   {manageLoanSelected.interest_rate || 0}%
@@ -2653,7 +2721,7 @@ export default function Lending({ initialTab }) {
                           {/* Progress Pie Chart + Next Payment + Payment Amount */}
                           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             {/* Pie Chart - Left */}
-                            <div className="bg-[#82F0B9]/8 rounded-2xl p-5">
+                            <div className="bg-[#03ACEA]/8 rounded-2xl p-5">
                               <p className="text-[10px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                                 Payment Progress
                               </p>
@@ -2676,7 +2744,7 @@ export default function Lending({ initialTab }) {
                                             cy="64"
                                             r="45"
                                             fill="none"
-                                            stroke="#82F0B9"
+                                            stroke="#03ACEA"
                                             strokeWidth="12"
                                             strokeLinecap="round"
                                             strokeDasharray={circumference}
@@ -2701,7 +2769,7 @@ export default function Lending({ initialTab }) {
                             </div>
 
                             {/* Next Payment Date - Middle */}
-                            <div className="bg-[#82F0B9]/8 rounded-2xl p-5 flex flex-col">
+                            <div className="bg-[#03ACEA]/8 rounded-2xl p-5 flex flex-col">
                               <p className="text-[10px] text-slate-700 uppercase tracking-[0.12em] font-medium mb-2" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                                 Next Payment Date
                               </p>
@@ -2713,7 +2781,7 @@ export default function Lending({ initialTab }) {
                                 </p>
                                 {manageLoanSelected.next_payment_date && (
                                   <div className="mt-2 px-3 py-1 bg-white rounded-full">
-                                    <p className="text-sm font-semibold text-[#82F0B9]">
+                                    <p className="text-sm font-semibold text-[#03ACEA]">
                                       {(() => {
                                         const days = daysUntilDate(manageLoanSelected.next_payment_date);
                                         return days > 0 ? `${days} day${days !== 1 ? 's' : ''} away` : days === 0 ? 'Due today' : `${Math.abs(days)} day${Math.abs(days) !== 1 ? 's' : ''} overdue`;
@@ -2725,7 +2793,7 @@ export default function Lending({ initialTab }) {
                             </div>
 
                             {/* Payment Amount - Right */}
-                            <div className="bg-[#82F0B9]/8 rounded-2xl p-5 flex flex-col">
+                            <div className="bg-[#03ACEA]/8 rounded-2xl p-5 flex flex-col">
                               <p className="text-[10px] text-slate-700 uppercase tracking-[0.12em] font-medium mb-2" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                                 Payment Amount
                               </p>
@@ -2747,7 +2815,7 @@ export default function Lending({ initialTab }) {
                               <PageCard title="Interest">
                               <div className="p-4">
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                  <div className="bg-[#82F0B9]/8 rounded-xl p-4">
+                                  <div className="bg-[#03ACEA]/8 rounded-xl p-4">
                                     <p className="text-[10px] text-slate-600 uppercase tracking-wide font-medium mb-1" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>Interest Accrued</p>
                                     <p className="text-xl font-bold text-slate-800">
                                       ${(() => {
@@ -2757,7 +2825,7 @@ export default function Lending({ initialTab }) {
                                       })()}
                                     </p>
                                   </div>
-                                  <div className="bg-[#82F0B9]/8 rounded-xl p-4">
+                                  <div className="bg-[#03ACEA]/8 rounded-xl p-4">
                                     <p className="text-[10px] text-slate-600 uppercase tracking-wide font-medium mb-1" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>Predicted Interest</p>
                                     <p className="text-xl font-bold text-slate-800">
                                       ${(() => {
@@ -2777,13 +2845,13 @@ export default function Lending({ initialTab }) {
                               <PageCard title="Loan Progress">
                               <div className="p-4">
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                  <div className="bg-[#82F0B9]/10 rounded-xl p-4">
+                                  <div className="bg-[#03ACEA]/10 rounded-xl p-4">
                                     <p className="text-[10px] text-slate-600 uppercase tracking-wide font-medium mb-1" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>Amount Paid</p>
                                     <p className="text-xl font-bold text-black">
                                       ${(manageLoanSelected.amount_paid || 0).toLocaleString()}
                                     </p>
                                   </div>
-                                  <div className="bg-[#82F0B9]/10 rounded-xl p-4">
+                                  <div className="bg-[#03ACEA]/10 rounded-xl p-4">
                                     <p className="text-[10px] text-slate-600 uppercase tracking-wide font-medium mb-1" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>Completed Payments</p>
                                     <p className="text-xl font-bold text-slate-800">
                                       {(() => {
@@ -2820,9 +2888,9 @@ export default function Lending({ initialTab }) {
                                     {/* Loan Summary */}
                                     <button
                                       onClick={() => openDocPopup('summary', agreement)}
-                                      className="bg-[#82F0B9]/8 rounded-xl p-3 md:p-4 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-3"
+                                      className="bg-[#03ACEA]/8 rounded-xl p-3 md:p-4 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-3"
                                     >
-                                      <div className="w-9 h-9 rounded-full bg-[#82F0B9]/10 flex items-center justify-center flex-shrink-0">
+                                      <div className="w-9 h-9 rounded-full bg-[#03ACEA]/10 flex items-center justify-center flex-shrink-0">
                                         <FileText className="w-4 h-4 text-[#1A1918]" />
                                       </div>
                                       <p className="font-semibold text-[#1A1918] text-[14px] group-hover:text-[#5a7ae0] transition-colors">
@@ -2833,9 +2901,9 @@ export default function Lending({ initialTab }) {
                                     {/* Promissory Note */}
                                     <button
                                       onClick={() => openDocPopup('promissory', agreement)}
-                                      className="bg-[#82F0B9]/10 rounded-xl p-3 md:p-4 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-3"
+                                      className="bg-[#03ACEA]/10 rounded-xl p-3 md:p-4 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-3"
                                     >
-                                      <div className="w-9 h-9 rounded-full bg-[#82F0B9]/10 flex items-center justify-center flex-shrink-0">
+                                      <div className="w-9 h-9 rounded-full bg-[#03ACEA]/10 flex items-center justify-center flex-shrink-0">
                                         <ClipboardList className="w-4 h-4 text-[#1A1918]" />
                                       </div>
                                       <p className="font-semibold text-[#1A1918] text-[14px] group-hover:text-[#5a7ae0] transition-colors">
@@ -2864,7 +2932,7 @@ export default function Lending({ initialTab }) {
                                       onClick={() => openDocPopup('amortization', agreement)}
                                       className="bg-[#2563EB]/8 rounded-xl p-3 md:p-4 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-3"
                                     >
-                                      <div className="w-9 h-9 rounded-full bg-[#82F0B9]/10 flex items-center justify-center flex-shrink-0">
+                                      <div className="w-9 h-9 rounded-full bg-[#03ACEA]/10 flex items-center justify-center flex-shrink-0">
                                         <BarChart3 className="w-4 h-4 text-[#1A1918]" />
                                       </div>
                                       <p className="font-semibold text-[#1A1918] text-[14px] group-hover:text-[#5a7ae0] transition-colors">
@@ -2901,9 +2969,9 @@ export default function Lending({ initialTab }) {
                             <div className="flex flex-col sm:flex-row gap-3">
                               <button
                                 onClick={() => handleMakePayment(manageLoanSelected)}
-                                className="bg-[#82F0B9]/8 rounded-xl p-3 md:p-4 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-3 flex-1"
+                                className="bg-[#03ACEA]/8 rounded-xl p-3 md:p-4 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-3 flex-1"
                               >
-                                <div className="w-9 h-9 rounded-full bg-[#82F0B9]/10 flex items-center justify-center flex-shrink-0">
+                                <div className="w-9 h-9 rounded-full bg-[#03ACEA]/10 flex items-center justify-center flex-shrink-0">
                                   <DollarSign className="w-4 h-4 text-[#1A1918]" />
                                 </div>
                                 <p className="font-semibold text-[#1A1918] text-[14px] group-hover:text-[#5a7ae0] transition-colors">
@@ -2912,9 +2980,9 @@ export default function Lending({ initialTab }) {
                               </button>
                               <button
                                 onClick={() => handleEditLoan(manageLoanSelected)}
-                                className="bg-[#82F0B9]/10 rounded-xl p-3 md:p-4 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-3 flex-1"
+                                className="bg-[#03ACEA]/10 rounded-xl p-3 md:p-4 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-3 flex-1"
                               >
-                                <div className="w-9 h-9 rounded-full bg-[#82F0B9]/10 flex items-center justify-center flex-shrink-0">
+                                <div className="w-9 h-9 rounded-full bg-[#03ACEA]/10 flex items-center justify-center flex-shrink-0">
                                   <Pencil className="w-4 h-4 text-[#1A1918]" />
                                 </div>
                                 <p className="font-semibold text-[#1A1918] text-[14px] group-hover:text-[#5a7ae0] transition-colors">
@@ -2925,7 +2993,7 @@ export default function Lending({ initialTab }) {
                                 onClick={() => handleCancelLoan(manageLoanSelected)}
                                 className="bg-[#2563EB]/8 rounded-xl p-3 md:p-4 text-left hover:opacity-90 transition-all duration-200 cursor-pointer group flex items-center gap-3 flex-1"
                               >
-                                <div className="w-9 h-9 rounded-full bg-[#82F0B9]/10 flex items-center justify-center flex-shrink-0">
+                                <div className="w-9 h-9 rounded-full bg-[#03ACEA]/10 flex items-center justify-center flex-shrink-0">
                                   <X className="w-4 h-4 text-[#1A1918]" />
                                 </div>
                                 <p className="font-semibold text-[#1A1918] text-[14px] group-hover:text-[#5a7ae0] transition-colors">
@@ -2974,7 +3042,7 @@ export default function Lending({ initialTab }) {
                   {/* Loan Type */}
                   <div style={{ marginBottom: 24 }}>
                     <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 9 }}>Loan Type</div>
-                    <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 14 }} />
+                    <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 14 }} />
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginBottom: 10 }}>
                       <span style={{ fontSize: 13, fontWeight: 500, color: loanType === 'scheduled' ? '#1A1918' : '#9B9A98' }}>Loan</span>
                       <button
@@ -3006,7 +3074,7 @@ export default function Lending({ initialTab }) {
                   {loanType === 'scheduled' && (
                     <div style={{ marginBottom: 24 }}>
                       <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 9 }}>Borrower Will Pay</div>
-                      <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 14 }} />
+                      <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 14 }} />
                       <div style={{ fontSize: '1.6rem', fontWeight: 700, color: '#03ACEA', letterSpacing: '-0.03em', lineHeight: 1, marginBottom: 4 }}>
                         {formData.amount && details.monthlyPayment > 0 ? `$${details.monthlyPayment.toFixed(2)}` : '$0.00'}
                       </div>
@@ -3019,7 +3087,7 @@ export default function Lending({ initialTab }) {
                   {/* Loan Summary */}
                   <div style={{ marginBottom: 20 }}>
                     <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 9 }}>Loan Summary</div>
-                    <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 14 }} />
+                    <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 14 }} />
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                       {formData.purpose && (
                         <div>
@@ -3037,7 +3105,7 @@ export default function Lending({ initialTab }) {
                             <span style={{ fontSize: 12, color: '#9B9A98' }}>Payments</span>
                             <span style={{ fontSize: 13, fontWeight: 600, color: '#1A1918' }}>{formData.repeating_num_payments}</span>
                           </div>
-                          <div style={{ height: 1, background: 'rgba(0,0,0,0.06)' }} />
+                          <div style={{ height: 1, background: 'rgba(0,0,0,0.07)' }} />
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
                             <span style={{ fontSize: 12, color: '#9B9A98' }}>Total</span>
                             <span style={{ fontSize: 15, fontWeight: 700, color: '#03ACEA' }}>
@@ -3057,7 +3125,7 @@ export default function Lending({ initialTab }) {
                               <span style={{ fontSize: 13, fontWeight: 600, color: '#1A1918' }}>{formData.amount && formData.interest_rate ? `$${details.totalInterest.toFixed(2)}` : '$0.00'}</span>
                             </div>
                           )}
-                          <div style={{ height: 1, background: 'rgba(0,0,0,0.06)' }} />
+                          <div style={{ height: 1, background: 'rgba(0,0,0,0.07)' }} />
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
                             <span style={{ fontSize: 12, color: '#9B9A98' }}>Total</span>
                             <span style={{ fontSize: 15, fontWeight: 700, color: '#03ACEA' }}>
@@ -3110,10 +3178,10 @@ export default function Lending({ initialTab }) {
             </AlertDialogHeader>
           </div>
           <div className="px-6 pb-6 flex flex-col sm:flex-row gap-3">
-            <AlertDialogCancel className="flex-1 rounded-xl border-0 font-semibold text-[#1A1918] text-[14px] h-12 hover:opacity-90 transition-all" style={{ backgroundColor: 'rgba(130,240,185,0.1)' }}>
+            <AlertDialogCancel className="flex-1 rounded-xl border-0 font-semibold text-[#1A1918] text-[14px] h-12 hover:opacity-90 transition-all" style={{ backgroundColor: 'rgba(3,172,234,0.1)' }}>
               Keep Loan
             </AlertDialogCancel>
-            <AlertDialogAction onClick={confirmCancelLoan} className="flex-1 rounded-xl border-0 font-semibold text-[#1A1918] text-[14px] h-12 hover:opacity-90 transition-all" style={{ backgroundColor: 'rgba(130,240,185,0.12)' }}>
+            <AlertDialogAction onClick={confirmCancelLoan} className="flex-1 rounded-xl border-0 font-semibold text-[#1A1918] text-[14px] h-12 hover:opacity-90 transition-all" style={{ backgroundColor: 'rgba(3,172,234,0.12)' }}>
               Request Loan Cancellation
             </AlertDialogAction>
           </div>

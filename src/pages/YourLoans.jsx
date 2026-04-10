@@ -480,8 +480,8 @@ export default function YourLoans() {
               <span style={{ fontSize: 13, color: '#787776' }}>Payment Progress</span>
               <span style={{ fontSize: 13, fontWeight: 500, color: '#1A1918' }}>{formatMoney(loan.amount_paid || 0)} / {formatMoney(agreement.total_amount)}</span>
             </div>
-            <div style={{ width: '100%', background: 'white', borderRadius: 999, height: 8 }}>
-              <div style={{ background: '#03ACEA', height: 8, borderRadius: 999, transition: 'width 0.3s', width: `${Math.min(100, ((loan.amount_paid || 0) / agreement.total_amount) * 100)}%` }} />
+            <div style={{ width: '100%', background: 'white', borderRadius: 3, height: 6 }}>
+              <div style={{ background: '#03ACEA', height: 6, borderRadius: 3, transition: 'width 0.3s', width: `${Math.min(100, ((loan.amount_paid || 0) / agreement.total_amount) * 100)}%` }} />
             </div>
           </div>
         )}
@@ -718,7 +718,7 @@ export default function YourLoans() {
                               : <>Pay <strong>{loan.firstName}</strong></>}
                             <span style={{ color: '#9B9A98', fontWeight: 400 }}> · {purpose}</span>
                           </div>
-                          <span style={{ fontSize: 13, fontWeight: 700, flexShrink: 0, color: isLending ? '#52B788' : '#1A1918', letterSpacing: '-0.01em' }}>
+                          <span style={{ fontSize: 13, fontWeight: 700, flexShrink: 0, color: isLending ? '#03ACEA' : '#1A1918', letterSpacing: '-0.01em' }}>
                             {amtSign}{formatMoney(loan.payment_amount || 0)}
                           </span>
                         </div>
@@ -929,10 +929,10 @@ export default function YourLoans() {
                   {(() => {
                     const isLate = daysUntil !== null && daysUntil < 0;
                     const dLabel = daysUntil === null ? null : isLate ? `${Math.abs(daysUntil)}d late` : daysUntil === 0 ? 'today' : `${daysUntil}d`;
-                    const bColor = isLate ? '#E8726E' : isLending ? '#52B788' : '#54A6CF';
-                    const bBg = isLate ? 'rgba(232,114,110,0.08)' : isLending ? 'rgba(82,183,136,0.10)' : 'rgba(84,166,207,0.10)';
-                    const iColor = isLate ? '#E8726E' : isLending ? '#52B788' : '#54A6CF';
-                    const iBg = isLate ? 'rgba(232,114,110,0.10)' : isLending ? 'rgba(82,183,136,0.10)' : 'rgba(84,166,207,0.10)';
+                    const bColor = isLate ? '#E8726E' : isLending ? '#03ACEA' : '#54A6CF';
+                    const bBg = isLate ? 'rgba(232,114,110,0.08)' : isLending ? 'rgba(3,172,234,0.10)' : 'rgba(84,166,207,0.10)';
+                    const iColor = isLate ? '#E8726E' : isLending ? '#03ACEA' : '#54A6CF';
+                    const iBg = isLate ? 'rgba(232,114,110,0.10)' : isLending ? 'rgba(3,172,234,0.10)' : 'rgba(84,166,207,0.10)';
                     return (
                       <div style={{ padding: '14px 16px', borderRadius: 14, background: 'white', boxShadow: '0 0 0 2px rgba(3,172,234,0.25), 0 0 16px rgba(3,172,234,0.12), 0 2px 12px rgba(0,0,0,0.04)', border: '1.5px solid rgba(3,172,234,0.35)' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
@@ -1262,12 +1262,12 @@ export default function YourLoans() {
     );
   };
 
-  const LENDER_GREEN = '#52B788';
+  const LENDER_GREEN = '#03ACEA';
 
   const RightSection = ({ title, children }) => (
     <div style={{ marginBottom: 40 }}>
       <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 9 }}>{title}</div>
-      <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 14 }} />
+      <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 14 }} />
       {children}
     </div>
   );

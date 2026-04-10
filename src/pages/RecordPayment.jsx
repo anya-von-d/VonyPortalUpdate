@@ -352,7 +352,7 @@ export default function RecordPayment() {
   const RightSection = ({ title, children }) => (
     <div style={{ marginBottom: 40 }}>
       <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 9 }}>{title}</div>
-      <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 14 }} />
+      <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 14 }} />
       {children}
     </div>
   );
@@ -492,10 +492,73 @@ export default function RecordPayment() {
           <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 17, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', marginBottom: 12 }}>Record Payment</div>
           <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 20 }} />
 
+          {/* ── Mobile: Select Your Loan (hidden on desktop) ── */}
+          <div className="rp-mobile-loan-selector" style={{ display: 'none', marginBottom: 24 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 9 }}>
+              <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Select Your Loan</div>
+              <button onClick={clearFilters} style={{
+                padding: '2px 8px', borderRadius: 6, border: 'none', background: 'transparent',
+                fontSize: 11, fontWeight: 500, color: hasAnyFilter ? '#E8726E' : '#C7C6C4',
+                cursor: hasAnyFilter ? 'pointer' : 'default', fontFamily: "'DM Sans', sans-serif",
+              }}>Clear</button>
+            </div>
+            <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 12 }} />
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 10, overflow: 'visible', position: 'relative', zIndex: 20 }}>
+              <SingleSelectDropdown options={ROLE_OPTIONS} selected={roleFilter} onChange={setRoleFilter} />
+              <SingleSelectDropdown options={friendOptions} selected={friendFilter} onChange={setFriendFilter} />
+            </div>
+            <div>
+              {filteredLoans.length === 0 ? (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '24px 0', color: '#C7C6C4' }}>
+                  <FileText size={22} style={{ opacity: 0.3, marginBottom: 6 }} />
+                  <p style={{ fontSize: 12, color: '#787776', margin: 0 }}>No active loans found</p>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  {filteredLoans.map(loan => {
+                    const other = getOtherParty(loan);
+                    const remaining = getRemainingBalance(loan);
+                    const isSelected = selectedLoan?.id === loan.id;
+                    return (
+                      <button key={loan.id} onClick={() => handleSelectLoan(loan)} style={{
+                        display: 'block', width: '100%', textAlign: 'left', padding: '10px 0',
+                        background: 'transparent', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
+                        border: 'none',
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <div style={{
+                            width: 26, height: 26, borderRadius: '50%', flexShrink: 0, overflow: 'hidden',
+                            background: isSelected ? 'rgba(3,172,234,0.15)' : 'rgba(0,0,0,0.06)',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            outline: isSelected ? '2px solid #03ACEA' : 'none', outlineOffset: 1,
+                          }}>
+                            {other.profile_picture_url ? (
+                              <img src={other.profile_picture_url} alt="" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+                            ) : (
+                              <span style={{ fontSize: 11, fontWeight: 600, color: isSelected ? '#03ACEA' : '#787776' }}>{(other.full_name || '?').charAt(0).toUpperCase()}</span>
+                            )}
+                          </div>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <p style={{ fontSize: 12, fontWeight: isSelected ? 600 : 500, color: isSelected ? '#1A1918' : '#3A3938', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                              {other.full_name || other.username}
+                            </p>
+                            <p style={{ fontSize: 11, color: '#9B9A98', margin: '1px 0 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                              ${(loan.amount || 0).toLocaleString()} · ${remaining.toFixed(2)} left
+                            </p>
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+
           {/* ── Payment Form / Steps ── */}
           <div style={{ overflow: 'visible' }}>
                   {currentStep === 0 && !selectedLoan && (
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 0', color: '#C7C6C4' }}>
+                    <div className="rp-empty-desktop" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 0', color: '#C7C6C4' }}>
                       <p style={{ fontSize: 15, fontWeight: 500, color: '#787776', margin: 0 }}>Select a loan to get started</p>
                       <p style={{ fontSize: 12, color: '#C7C6C4', margin: '4px 0 0' }}>Choose from your active loans on the left</p>
                     </div>
@@ -761,7 +824,7 @@ export default function RecordPayment() {
                       <button key={loan.id} onClick={() => handleSelectLoan(loan)} style={{
                         display: 'block', width: '100%', textAlign: 'left', padding: '10px 0',
                         background: 'transparent', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
-                        border: 'none', borderBottom: '1px solid rgba(0,0,0,0.05)',
+                        border: 'none',
                       }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                           <div style={{
@@ -829,7 +892,7 @@ export default function RecordPayment() {
                     </div>
                     <span style={{ fontSize: 12, color: '#1A1918', fontWeight: 500, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{l.otherName}</span>
                     <span style={{ fontSize: 12, fontWeight: 600, color: l.isLender ? '#16A34A' : '#E8726E', flexShrink: 0 }}>
-                      {l.isLender ? '+' : '-'}${(l.payment_amount || 0).toLocaleString()}
+                      {l.isLender ? '+' : '-'}${(l.payment_amount || 0).toFixed(2)}
                     </span>
                   </div>
                 ))}

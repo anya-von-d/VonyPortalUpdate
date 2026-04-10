@@ -273,7 +273,7 @@ export default function Requests() {
         particleCount: 80,
         spread: 65,
         origin: { y: 0.5 },
-        colors: ['#35B276', '#82F0B9', '#03ACEA', '#ffffff'],
+        colors: ['#35B276', '#03ACEA', '#03ACEA', '#ffffff'],
         zIndex: 9999,
       });
       try {
@@ -465,7 +465,7 @@ export default function Requests() {
     return (
       <div style={{ minHeight: '100vh', background: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ width: 32, height: 32, border: '2px solid #82F0B9', borderTopColor: 'transparent', borderRadius: '50%', margin: '0 auto 16px' }} className="animate-spin" />
+          <div style={{ width: 32, height: 32, border: '2px solid #03ACEA', borderTopColor: 'transparent', borderRadius: '50%', margin: '0 auto 16px' }} className="animate-spin" />
           <p style={{ fontSize: 14, color: '#787776', fontFamily: "'DM Sans', sans-serif" }}>Loading notifications...</p>
         </div>
       </div>
@@ -847,7 +847,7 @@ export default function Requests() {
                           setViewingPayment(null);
                         }}
                         disabled={processingId === payment.id}
-                        style={{ flex: 1, padding: '8px 16px', borderRadius: 8, background: '#82F0B9', color: 'white', fontSize: 14, fontWeight: 600, border: 'none', cursor: 'pointer', opacity: processingId === payment.id ? 0.5 : 1 }}
+                        style={{ flex: 1, padding: '8px 16px', borderRadius: 8, background: '#03ACEA', color: 'white', fontSize: 14, fontWeight: 600, border: 'none', cursor: 'pointer', opacity: processingId === payment.id ? 0.5 : 1 }}
                       >
                         Confirm
                       </button>
@@ -880,7 +880,7 @@ export default function Requests() {
                       </button>
                       <button
                         onClick={() => setViewingPayment(null)}
-                        style={{ flex: 1, padding: '8px 16px', borderRadius: 8, background: '#82F0B9', color: 'white', fontSize: 14, fontWeight: 600, border: 'none', cursor: 'pointer' }}
+                        style={{ flex: 1, padding: '8px 16px', borderRadius: 8, background: '#03ACEA', color: 'white', fontSize: 14, fontWeight: 600, border: 'none', cursor: 'pointer' }}
                       >
                         Close
                       </button>
@@ -900,7 +900,7 @@ export default function Requests() {
                       @{otherName} wants to modify the terms of your ${loan.amount?.toLocaleString()} loan{loan.purpose ? ` for ${loan.purpose}` : ''}.
                     </p>
                     {loan.contract_modification_notes && (
-                      <div style={{ background: 'rgba(130,240,185,0.08)', borderRadius: 8, padding: 10, marginBottom: 16 }}>
+                      <div style={{ background: 'rgba(3,172,234,0.08)', borderRadius: 8, padding: 10, marginBottom: 16 }}>
                         <p style={{ fontSize: 12, fontWeight: 500, color: '#787776', marginBottom: 2 }}>Proposed changes:</p>
                         <p style={{ fontSize: 14, color: '#1A1918' }}>{loan.contract_modification_notes}</p>
                       </div>
@@ -922,7 +922,7 @@ export default function Requests() {
                           setViewingPayment(null);
                         }}
                         disabled={processingId === loan.id}
-                        style={{ flex: 1, padding: '8px 16px', borderRadius: 8, background: '#82F0B9', color: 'white', fontSize: 14, fontWeight: 600, border: 'none', cursor: 'pointer', opacity: processingId === loan.id ? 0.5 : 1 }}
+                        style={{ flex: 1, padding: '8px 16px', borderRadius: 8, background: '#03ACEA', color: 'white', fontSize: 14, fontWeight: 600, border: 'none', cursor: 'pointer', opacity: processingId === loan.id ? 0.5 : 1 }}
                       >
                         Approve
                       </button>
