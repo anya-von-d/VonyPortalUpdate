@@ -766,6 +766,8 @@ export default function Home() {
                 { label: 'Record Payment', to: createPageUrl("RecordPayment") },
                 { label: 'My Loans', to: createPageUrl("YourLoans") },
                 { label: 'Friends', to: createPageUrl("Friends") },
+                { label: 'Recent Activity', to: createPageUrl("RecentActivity") },
+                { label: 'Documents', to: createPageUrl("LoanAgreements") },
               ].map(({ label, to, active: isActive }) => (
                 <Link key={label} to={to} style={{
                   display: 'block', padding: '6px 12px', borderRadius: 9, textDecoration: 'none',
@@ -777,188 +779,149 @@ export default function Home() {
                   {label}
                 </Link>
               ))}
-              <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', margin: '6px 0' }} />
+              {/* Coming Soon section */}
+              <div style={{ marginTop: 16, marginBottom: 4, paddingLeft: 12 }}>
+                <span style={{ fontSize: 9, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Coming Soon</span>
+              </div>
               {[
-                { label: 'Recent Activity', to: createPageUrl("RecentActivity") },
-                { label: 'Documents', to: createPageUrl("LoanAgreements") },
+                { label: 'Learn', to: createPageUrl("ComingSoon") },
+                { label: 'Loan Help', to: createPageUrl("LoanHelp") },
               ].map(({ label, to }) => (
                 <Link key={label} to={to} style={{
-                  display: 'block', padding: '5px 12px', borderRadius: 9, textDecoration: 'none',
-                  fontSize: 12, fontWeight: 500, color: '#9B9A98',
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  padding: '6px 12px', borderRadius: 9, textDecoration: 'none',
+                  fontSize: 13, fontWeight: 500, color: '#787776',
                   background: 'transparent', fontFamily: "'DM Sans', sans-serif",
                   width: '100%', boxSizing: 'border-box',
                 }}>
                   {label}
+                  <span style={{ fontSize: 8, fontWeight: 700, color: '#9B9A98', background: 'rgba(0,0,0,0.05)', borderRadius: 4, padding: '2px 6px', letterSpacing: '0.05em', textTransform: 'uppercase', lineHeight: 1.2 }}>SOON</span>
                 </Link>
               ))}
-              {/* More dropdown */}
-              <div style={{ position: 'relative' }}
-                onMouseEnter={() => {
-                  if (moreNavCloseTimerRef.current) { clearTimeout(moreNavCloseTimerRef.current); moreNavCloseTimerRef.current = null; }
-                  setMoreNavOpen(true);
-                }}
-                onMouseLeave={() => { moreNavCloseTimerRef.current = setTimeout(() => setMoreNavOpen(false), 150); }}
-              >
-                <button style={{
-                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                  padding: '5px 12px', borderRadius: 9, border: 'none', cursor: 'pointer',
-                  fontSize: 12, fontWeight: 500, color: '#9B9A98',
-                  background: 'transparent', fontFamily: "'DM Sans', sans-serif",
-                  width: '100%', boxSizing: 'border-box',
-                }}>
-                  More
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="6 9 12 15 18 9" /></svg>
-                </button>
-                {moreNavOpen && (
-                  <div style={{
-                    position: 'absolute', top: 'calc(100% + 4px)', left: 0, right: 0,
-                    background: 'white', borderRadius: 10, padding: '4px 0',
-                    boxShadow: '0 4px 16px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06)',
-                    zIndex: 50,
-                  }}>
-                    {[
-                      { label: 'Learn', to: createPageUrl("ComingSoon") },
-                      { label: 'Loan Help', to: createPageUrl("LoanHelp") },
-                    ].map(({ label, to }) => (
-                      <Link key={label} to={to} onClick={() => setMoreNavOpen(false)} style={{
-                        display: 'block', padding: '8px 14px', fontSize: 13, fontWeight: 500,
-                        color: '#1A1918', textDecoration: 'none', fontFamily: "'DM Sans', sans-serif",
-                      }}
-                      onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.04)'}
-                      onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-                      >
-                        {label}
-                      </Link>
-                    ))}
-                    <a href="https://www.vony-lending.com/help" target="_blank" rel="noopener noreferrer"
-                      style={{ display: 'block', padding: '8px 14px', fontSize: 13, fontWeight: 500, color: '#1A1918', textDecoration: 'none', fontFamily: "'DM Sans', sans-serif" }}
-                      onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.04)'}
-                      onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-                    >
-                      Help & Support
-                    </a>
-                    <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', margin: '4px 14px' }} />
-                    <button onClick={() => { setMoreNavOpen(false); logout?.(); }} style={{
-                      display: 'block', width: '100%', padding: '8px 14px', fontSize: 13, fontWeight: 500,
-                      color: '#E8726E', background: 'transparent', border: 'none', cursor: 'pointer',
-                      textAlign: 'left', fontFamily: "'DM Sans', sans-serif",
-                    }}
-                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(232,114,110,0.06)'}
-                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-                    >
-                      Log Out
-                    </button>
-                  </div>
-                )}
-              </div>
             </nav>
+            {/* Help & Support + Log Out at bottom */}
+            <div style={{ marginTop: 24 }}>
+              <a href="https://www.vony-lending.com/help" target="_blank" rel="noopener noreferrer"
+                style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '6px 12px', borderRadius: 9, textDecoration: 'none', fontFamily: "'DM Sans', sans-serif" }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9B9A98" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                <span style={{ fontSize: 12, fontWeight: 500, color: '#9B9A98' }}>Help & Support</span>
+              </a>
+              <button onClick={() => logout?.()} style={{
+                display: 'flex', alignItems: 'center', gap: 7, padding: '6px 12px', borderRadius: 9,
+                border: 'none', cursor: 'pointer', background: 'transparent',
+                fontFamily: "'DM Sans', sans-serif", width: '100%', boxSizing: 'border-box',
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = 'rgba(232,114,110,0.06)'}
+              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+              >
+                <span style={{ fontSize: 12, fontWeight: 500, color: '#E8726E' }}>Log Out</span>
+              </button>
+            </div>
           </div>
         </div>
 
         {/* ── CENTER ── */}
-        <div className="mesh-center" style={{ background: '#ffffff', borderRight: '1px solid rgba(0,0,0,0.06)', padding: '40px 48px 80px' }}>
+        <div className="mesh-center" style={{ background: '#ffffff', borderRight: '1px solid rgba(0,0,0,0.06)', padding: '28px 48px 80px' }}>
 
           {/* Greeting */}
-          <div style={{ marginBottom: 20 }}>
-            <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 20, fontWeight: 600, letterSpacing: '-0.02em', lineHeight: 1.2, color: '#1A1918' }}>
+          <div style={{ marginBottom: 12 }}>
+            <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 17, fontWeight: 600, letterSpacing: '-0.02em', lineHeight: 1.2, color: '#1A1918' }}>
               {greeting}, {firstName}
             </div>
           </div>
-          <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 24 }} />
+          <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 20 }} />
 
-          {/* Three summary cards — glass style */}
-          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 12, marginBottom: 28 }}>
-            {/* Glow wrapper for Next Due + Incoming */}
-            <div style={{
-              display: 'flex', gap: 0, borderRadius: 16, overflow: 'hidden',
-              border: '1.5px solid rgba(3,172,234,0.35)',
-              boxShadow: '0 0 0 2px rgba(3,172,234,0.25), 0 0 16px rgba(3,172,234,0.12), 0 2px 12px rgba(0,0,0,0.04)',
-            }}>
-              {/* Next Payment Due */}
-              {(() => {
-                const days = nextBorrowerPayment ? Math.ceil((nextBorrowerPayment.date.getTime() - Date.now()) / 86400000) : null;
-                const isLate = days !== null && days < 0;
-                const daysLabel = days === null ? null : isLate ? `${Math.abs(days)}d late` : days === 0 ? 'today' : `${days}d`;
-                const badgeColor = isLate ? '#E8726E' : days !== null && days <= 3 ? '#F59E0B' : '#9B9A98';
-                const badgeBg = isLate ? 'rgba(232,114,110,0.08)' : days !== null && days <= 3 ? 'rgba(245,158,11,0.08)' : 'rgba(0,0,0,0.04)';
-                return (
-                  <div style={{ flex: 1, padding: '14px 16px', background: 'white' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-                      <div style={{ width: 28, height: 28, borderRadius: 8, background: 'rgba(29,91,148,0.10)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1D5B94" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="7 13 12 18 17 13"/><line x1="12" y1="18" x2="12" y2="6"/></svg>
-                      </div>
-                      <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Next Payment Due</span>
+          {/* Three summary cards */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10, marginBottom: 24 }}>
+            {/* Next Payment Due */}
+            {(() => {
+              const days = nextBorrowerPayment ? Math.ceil((nextBorrowerPayment.date.getTime() - Date.now()) / 86400000) : null;
+              const isLate = days !== null && days < 0;
+              const daysLabel = days === null ? null : isLate ? `${Math.abs(days)}d late` : days === 0 ? 'today' : `${days}d`;
+              const badgeColor = isLate ? '#E8726E' : days !== null && days <= 3 ? '#F59E0B' : '#9B9A98';
+              const badgeBg = isLate ? 'rgba(232,114,110,0.08)' : days !== null && days <= 3 ? 'rgba(245,158,11,0.08)' : 'rgba(0,0,0,0.04)';
+              return (
+                <div style={{
+                  padding: '12px 14px', borderRadius: 14, background: 'white',
+                  border: '1.5px solid rgba(3,172,234,0.40)',
+                  boxShadow: '0 0 0 3px rgba(3,172,234,0.18), 0 0 20px rgba(3,172,234,0.16), 0 0 40px rgba(3,172,234,0.06), 0 2px 12px rgba(0,0,0,0.04)',
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 10 }}>
+                    <div style={{ width: 20, height: 20, borderRadius: 6, background: 'rgba(29,91,148,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1D5B94" strokeWidth="2.5" strokeLinecap="round"><polyline points="7 13 12 18 17 13"/><line x1="12" y1="18" x2="12" y2="6"/></svg>
                     </div>
-                    {nextBorrowerPayment ? (
-                      <>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 8 }}>
-                          <span style={{ fontSize: 22, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em' }}>{format(nextBorrowerPayment.date, 'MMM d')}</span>
-                          {daysLabel && <span style={{ fontSize: 10, fontWeight: 700, color: badgeColor, background: badgeBg, borderRadius: 6, padding: '2px 7px', flexShrink: 0 }}>{daysLabel}</span>}
-                        </div>
-                        <div style={{ fontSize: 12, color: '#9B9A98', textAlign: 'right' }}>{formatMoney(nextBorrowerPayment.payment_amount || 0)} to {nextBorrowerPayment.firstName}</div>
-                      </>
-                    ) : (
-                      <>
-                        <div style={{ fontSize: 16, fontWeight: 700, color: '#C5C3C0', marginBottom: 5 }}>—</div>
-                        <div style={{ fontSize: 12, color: '#9B9A98' }}>Nothing due</div>
-                      </>
-                    )}
+                    <span style={{ fontSize: 9, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Next Payment Due</span>
                   </div>
-                );
-              })()}
-
-              {/* Divider */}
-              <div style={{ width: 1, background: 'rgba(0,0,0,0.06)', alignSelf: 'stretch' }} />
-
-              {/* Next Payment Incoming */}
-              {(() => {
-                const days = nextLenderPayment ? Math.ceil((nextLenderPayment.date.getTime() - Date.now()) / 86400000) : null;
-                const isLate = days !== null && days < 0;
-                const daysLabel = days === null ? null : isLate ? `${Math.abs(days)}d late` : days === 0 ? 'today' : `${days}d`;
-                const badgeColor = isLate ? '#E8726E' : '#03ACEA';
-                const badgeBg = isLate ? 'rgba(232,114,110,0.08)' : 'rgba(3,172,234,0.10)';
-                return (
-                  <div style={{ flex: 1, padding: '14px 16px', background: 'white' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-                      <div style={{ width: 28, height: 28, borderRadius: 8, background: 'rgba(3,172,234,0.10)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="17 11 12 6 7 11"/><line x1="12" y1="6" x2="12" y2="18"/></svg>
+                  {nextBorrowerPayment ? (
+                    <>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
+                        <span style={{ fontSize: 19, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em' }}>{format(nextBorrowerPayment.date, 'MMM d')}</span>
+                        {daysLabel && <span style={{ fontSize: 9, fontWeight: 700, color: badgeColor, background: badgeBg, borderRadius: 5, padding: '2px 6px', flexShrink: 0 }}>{daysLabel}</span>}
                       </div>
-                      <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Next Payment Incoming</span>
+                      <div style={{ fontSize: 11, color: '#9B9A98', textAlign: 'right' }}>{formatMoney(nextBorrowerPayment.payment_amount || 0)} to {nextBorrowerPayment.firstName}</div>
+                    </>
+                  ) : (
+                    <>
+                      <div style={{ fontSize: 15, fontWeight: 700, color: '#C5C3C0', marginBottom: 4 }}>—</div>
+                      <div style={{ fontSize: 11, color: '#9B9A98' }}>Nothing due</div>
+                    </>
+                  )}
+                </div>
+              );
+            })()}
+
+            {/* Next Payment Incoming */}
+            {(() => {
+              const days = nextLenderPayment ? Math.ceil((nextLenderPayment.date.getTime() - Date.now()) / 86400000) : null;
+              const isLate = days !== null && days < 0;
+              const daysLabel = days === null ? null : isLate ? `${Math.abs(days)}d late` : days === 0 ? 'today' : `${days}d`;
+              const badgeColor = isLate ? '#E8726E' : '#03ACEA';
+              const badgeBg = isLate ? 'rgba(232,114,110,0.08)' : 'rgba(3,172,234,0.10)';
+              return (
+                <div style={{
+                  padding: '12px 14px', borderRadius: 14, background: 'white',
+                  border: '1.5px solid rgba(3,172,234,0.40)',
+                  boxShadow: '0 0 0 3px rgba(3,172,234,0.18), 0 0 20px rgba(3,172,234,0.16), 0 0 40px rgba(3,172,234,0.06), 0 2px 12px rgba(0,0,0,0.04)',
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 10 }}>
+                    <div style={{ width: 20, height: 20, borderRadius: 6, background: 'rgba(3,172,234,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2.5" strokeLinecap="round"><polyline points="17 11 12 6 7 11"/><line x1="12" y1="6" x2="12" y2="18"/></svg>
                     </div>
-                    {nextLenderPayment ? (
-                      <>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 8 }}>
-                          <span style={{ fontSize: 22, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em' }}>{format(nextLenderPayment.date, 'MMM d')}</span>
-                          {daysLabel && <span style={{ fontSize: 10, fontWeight: 700, color: badgeColor, background: badgeBg, borderRadius: 6, padding: '2px 7px', flexShrink: 0 }}>{daysLabel}</span>}
-                        </div>
-                        <div style={{ fontSize: 12, color: '#9B9A98', textAlign: 'right' }}>{formatMoney(nextLenderPayment.payment_amount || 0)} from {nextLenderPayment.firstName}</div>
-                      </>
-                    ) : (
-                      <>
-                        <div style={{ fontSize: 16, fontWeight: 700, color: '#C5C3C0', marginBottom: 5 }}>—</div>
-                        <div style={{ fontSize: 12, color: '#9B9A98' }}>None incoming</div>
-                      </>
-                    )}
+                    <span style={{ fontSize: 9, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Next Incoming</span>
                   </div>
-                );
-              })()}
-            </div>
+                  {nextLenderPayment ? (
+                    <>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
+                        <span style={{ fontSize: 19, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em' }}>{format(nextLenderPayment.date, 'MMM d')}</span>
+                        {daysLabel && <span style={{ fontSize: 9, fontWeight: 700, color: badgeColor, background: badgeBg, borderRadius: 5, padding: '2px 6px', flexShrink: 0 }}>{daysLabel}</span>}
+                      </div>
+                      <div style={{ fontSize: 11, color: '#9B9A98', textAlign: 'right' }}>{formatMoney(nextLenderPayment.payment_amount || 0)} from {nextLenderPayment.firstName}</div>
+                    </>
+                  ) : (
+                    <>
+                      <div style={{ fontSize: 15, fontWeight: 700, color: '#C5C3C0', marginBottom: 4 }}>—</div>
+                      <div style={{ fontSize: 11, color: '#9B9A98' }}>None incoming</div>
+                    </>
+                  )}
+                </div>
+              );
+            })()}
 
             {/* Overview */}
-            <div style={{ padding: '14px 16px', borderRadius: 14, background: 'white', boxShadow: '0 2px 12px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04)', border: '1px solid rgba(0,0,0,0.05)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-                <div style={{ width: 28, height: 28, borderRadius: 8, background: 'rgba(3,172,234,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            <div style={{ padding: '12px 14px', borderRadius: 14, background: 'white', boxShadow: '0 2px 12px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04)', border: '1px solid rgba(0,0,0,0.05)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 10 }}>
+                <div style={{ width: 20, height: 20, borderRadius: 6, background: 'rgba(3,172,234,0.10)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
                 </div>
-                <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Overview</span>
+                <span style={{ fontSize: 9, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Overview</span>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 7 }}>
-                <span style={{ fontSize: 12, color: '#787776' }}>Owed to you</span>
-                <span style={{ fontSize: 15, fontWeight: 800, color: LENDER_GREEN, letterSpacing: '-0.02em' }}>{formatMoney(lentRemaining)}</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                <span style={{ fontSize: 11, color: '#787776' }}>Owed to you</span>
+                <span style={{ fontSize: 14, fontWeight: 800, color: '#03ACEA', letterSpacing: '-0.02em' }}>{formatMoney(lentRemaining)}</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: 12, color: '#787776' }}>You owe</span>
-                <span style={{ fontSize: 15, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em' }}>{formatMoney(borrowedRemaining)}</span>
+                <span style={{ fontSize: 11, color: '#787776' }}>You owe</span>
+                <span style={{ fontSize: 14, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em' }}>{formatMoney(borrowedRemaining)}</span>
               </div>
             </div>
           </div>
@@ -995,7 +958,7 @@ export default function Home() {
                     {event.purpose && <span style={{ color: '#9B9A98', fontWeight: 400 }}> · {event.purpose}</span>}
                   </div>
                   {/* Amount */}
-                  <span style={{ fontSize: 13, fontWeight: 700, flexShrink: 0, color: event.isLender ? LENDER_GREEN : '#1A1918', letterSpacing: '-0.01em' }}>
+                  <span style={{ fontSize: 13, fontWeight: 700, flexShrink: 0, color: event.isLender ? '#03ACEA' : '#1A1918', letterSpacing: '-0.01em' }}>
                     {amtSign}{formatMoney(event.remainingAmount)}
                   </span>
                 </div>

@@ -878,36 +878,59 @@ export default function Borrowing() {
                   { label: 'Record Payment', to: createPageUrl("RecordPayment") },
                   { label: 'My Loans', to: createPageUrl("YourLoans") },
                   { label: 'Friends', to: createPageUrl("Friends") },
+                  { label: 'Recent Activity', to: createPageUrl("RecentActivity") },
+                  { label: 'Documents', to: createPageUrl("LoanAgreements") },
                 ].map(({ label, to }) => {
                   const isActive = label === 'My Loans';
                   return (
                     <Link key={label} to={to} style={{ fontSize: 13, fontWeight: isActive ? 600 : 500, color: isActive ? '#1A1918' : '#6B6A68', textDecoration: 'none', padding: '6px 12px', borderRadius: 8, background: isActive ? 'rgba(0,0,0,0.05)' : 'transparent' }}>{label}</Link>
                   );
                 })}
-                <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', margin: '6px 0' }} />
-                {[
-                  { label: 'Recent Activity', to: createPageUrl("RecentActivity") },
-                  { label: 'Documents', to: createPageUrl("LoanAgreements") },
-                ].map(({ label, to }) => (
-                  <Link key={label} to={to} style={{ fontSize: 12, fontWeight: 500, color: '#6B6A68', textDecoration: 'none', padding: '5px 12px', borderRadius: 8 }}>{label}</Link>
-                ))}
-                <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', margin: '6px 0' }} />
+                {/* Coming Soon section */}
+                <div style={{ marginTop: 16, marginBottom: 4, paddingLeft: 12 }}>
+                  <span style={{ fontSize: 9, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Coming Soon</span>
+                </div>
                 {[
                   { label: 'Learn', to: createPageUrl("ComingSoon") },
                   { label: 'Loan Help', to: createPageUrl("LoanHelp") },
-                  { label: 'Help & Support', to: createPageUrl("ComingSoon") },
                 ].map(({ label, to }) => (
-                  <Link key={label} to={to} style={{ fontSize: 12, fontWeight: 500, color: '#6B6A68', textDecoration: 'none', padding: '5px 12px', borderRadius: 8 }}>{label}</Link>
+                  <Link key={label} to={to} style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                    padding: '6px 12px', borderRadius: 9, textDecoration: 'none',
+                    fontSize: 13, fontWeight: 500, color: '#787776',
+                    background: 'transparent', fontFamily: "'DM Sans', sans-serif",
+                    width: '100%', boxSizing: 'border-box',
+                  }}>
+                    {label}
+                    <span style={{ fontSize: 8, fontWeight: 700, color: '#9B9A98', background: 'rgba(0,0,0,0.05)', borderRadius: 4, padding: '2px 6px', letterSpacing: '0.05em', textTransform: 'uppercase', lineHeight: 1.2 }}>SOON</span>
+                  </Link>
                 ))}
-                <button onClick={logout} style={{ fontSize: 12, fontWeight: 500, color: '#6B6A68', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', padding: '5px 12px', borderRadius: 8, fontFamily: 'inherit' }}>Log Out</button>
               </nav>
+              {/* Help & Support + Log Out at bottom */}
+              <div style={{ marginTop: 24 }}>
+                <a href="https://www.vony-lending.com/help" target="_blank" rel="noopener noreferrer"
+                  style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '6px 12px', borderRadius: 9, textDecoration: 'none', fontFamily: "'DM Sans', sans-serif" }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9B9A98" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                  <span style={{ fontSize: 12, fontWeight: 500, color: '#9B9A98' }}>Help & Support</span>
+                </a>
+                <button onClick={() => logout?.()} style={{
+                  display: 'flex', alignItems: 'center', gap: 7, padding: '6px 12px', borderRadius: 9,
+                  border: 'none', cursor: 'pointer', background: 'transparent',
+                  fontFamily: "'DM Sans', sans-serif", width: '100%', boxSizing: 'border-box',
+                }}
+                onMouseEnter={e => e.currentTarget.style.background = 'rgba(232,114,110,0.06)'}
+                onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                >
+                  <span style={{ fontSize: 12, fontWeight: 500, color: '#E8726E' }}>Log Out</span>
+                </button>
+              </div>
             </div>
           </div>
 
           {/* COL 2 - main content */}
-          <div className="mesh-center" style={{ background: 'white', borderRight: '1px solid rgba(0,0,0,0.06)', padding: '40px 48px 80px' }}>
-            <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 20, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', marginBottom: 20 }}>My Loans</div>
-            <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 24 }} />
+          <div className="mesh-center" style={{ background: 'white', borderRight: '1px solid rgba(0,0,0,0.06)', padding: '28px 48px 80px' }}>
+            <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 17, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', marginBottom: 12 }}>My Loans</div>
+            <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 20 }} />
 
           {/* Tab bar — centered */}
           <div className="mobile-tab-bar" style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
