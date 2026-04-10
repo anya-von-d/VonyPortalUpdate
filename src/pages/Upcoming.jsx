@@ -340,7 +340,7 @@ export default function Upcoming() {
               <button key={tab.key} onClick={() => setActiveTab(tab.key)} style={{
                 position: 'relative', paddingBottom: 12,
                 border: 'none', background: 'transparent', cursor: 'pointer',
-                fontSize: 17, fontWeight: 600, fontFamily: "'DM Sans', system-ui, sans-serif",
+                fontSize: 14, fontWeight: 600, fontFamily: "'DM Sans', system-ui, sans-serif",
                 letterSpacing: '-0.02em',
                 color: activeTab === tab.key ? '#1A1918' : 'rgba(0,0,0,0.30)',
                 transition: 'color 0.2s',

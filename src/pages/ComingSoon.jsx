@@ -209,7 +209,7 @@ export default function ComingSoon() {
             <button key={cat.id} onClick={() => setLearnCategory(cat.id)} style={{
               position: 'relative', paddingBottom: 12,
               border: 'none', background: 'transparent', cursor: 'pointer',
-              fontSize: 17, fontWeight: 600, fontFamily: "'DM Sans', system-ui, sans-serif",
+              fontSize: 14, fontWeight: 600, fontFamily: "'DM Sans', system-ui, sans-serif",
               letterSpacing: '-0.02em',
               color: learnCategory === cat.id ? '#1A1918' : 'rgba(0,0,0,0.30)',
               transition: 'color 0.2s', whiteSpace: 'nowrap',
