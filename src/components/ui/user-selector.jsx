@@ -49,128 +49,111 @@ export function UserSelector({ users = [], value, onSelect, placeholder = "Choos
   };
 
   return (
-    <div className="relative">
-      <div className="relative">
-        <Input
+    <div style={{ position: 'relative', fontFamily: "'DM Sans', system-ui, sans-serif" }}>
+      {/* Input */}
+      <div style={{ position: 'relative' }}>
+        <input
           placeholder={placeholder}
           value={searchTerm || (selectedUser ? `${selectedUser.full_name} (@${selectedUser.username})` : '')}
-          onChange={(e) => {
-            setSearchTerm(e.target.value);
-            setIsOpen(true);
+          onChange={(e) => { setSearchTerm(e.target.value); setIsOpen(true); }}
+          onFocus={() => { setIsOpen(true); if (selectedUser) setSearchTerm(''); }}
+          style={{
+            width: '100%', boxSizing: 'border-box',
+            height: 38, padding: '0 36px 0 12px',
+            border: '1px solid rgba(0,0,0,0.12)', borderRadius: 10,
+            background: selectedUser ? 'rgba(3,172,234,0.04)' : 'white',
+            fontSize: 13, fontWeight: selectedUser ? 500 : 400,
+            color: '#1A1918', outline: 'none',
+            fontFamily: "'DM Sans', system-ui, sans-serif",
+            transition: 'border-color 0.15s',
           }}
-          onFocus={() => {
-            setIsOpen(true);
-            if (selectedUser) {
-              setSearchTerm('');
-            }
-          }}
-          className="pr-10"
+          onMouseEnter={e => e.target.style.borderColor = 'rgba(3,172,234,0.4)'}
+          onMouseLeave={e => e.target.style.borderColor = selectedUser ? 'rgba(3,172,234,0.4)' : 'rgba(0,0,0,0.12)'}
         />
-        <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+        <Search size={14} style={{ position: 'absolute', right: 11, top: '50%', transform: 'translateY(-50%)', color: 'rgba(0,0,0,0.28)', pointerEvents: 'none' }} />
       </div>
 
       {isOpen && (
         <>
-          <div
-            className="fixed inset-0 z-10"
-            onClick={() => {
-              setIsOpen(false);
-              setSearchTerm('');
-            }}
-          />
-          <Card className="absolute top-full left-0 right-0 z-20 mt-1 max-h-64 overflow-auto shadow-lg border-0 rounded-xl bg-white">
+          <div style={{ position: 'fixed', inset: 0, zIndex: 10 }} onClick={() => { setIsOpen(false); setSearchTerm(''); }} />
+          <div style={{
+            position: 'absolute', top: 'calc(100% + 4px)', left: 0, right: 0, zIndex: 20,
+            background: 'white', borderRadius: 12, overflow: 'auto', maxHeight: 256,
+            boxShadow: '0 4px 24px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06)',
+            border: '1px solid rgba(0,0,0,0.08)',
+          }}>
             {filteredUsers.length === 0 && !showAddFriends ? (
-              <div className="p-4 text-center text-slate-500 text-sm">
+              <div style={{ padding: '14px 16px', textAlign: 'center', fontSize: 13, color: '#9B9A98' }}>
                 {searchTerm ? 'No friends found' : 'No friends yet. Add friends to send loan offers.'}
               </div>
             ) : (
-              <div className="py-1">
-                {filteredUsers.map((user, index) => {
+              <div style={{ padding: '4px 0' }}>
+                {filteredUsers.map((user) => {
                   if (!user || !user.username) return null;
                   const isSelected = value === user.username;
-
                   return (
                     <div
                       key={user.username}
-                      className={`flex items-center gap-3 px-3 py-2.5 mx-2 my-1 rounded-xl cursor-pointer transition-all duration-200 ${
-                        isSelected ? 'bg-[#DBFFEB]' : 'bg-white hover:bg-[#DBFFEB]/50'
-                      }`}
                       onClick={() => handleSelect(user.username)}
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: 10,
+                        padding: '7px 10px', margin: '2px 6px', borderRadius: 9,
+                        cursor: 'pointer',
+                        background: isSelected ? 'rgba(3,172,234,0.08)' : 'transparent',
+                        transition: 'background 0.12s',
+                      }}
+                      onMouseEnter={e => { if (!isSelected) e.currentTarget.style.background = 'rgba(0,0,0,0.04)'; }}
+                      onMouseLeave={e => { e.currentTarget.style.background = isSelected ? 'rgba(3,172,234,0.08)' : 'transparent'; }}
                     >
-                      {/* Profile Picture */}
                       <img
                         src={user.profile_picture_url || user.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.full_name || 'User')}&background=678AFB&color=fff&size=32`}
                         alt={user.full_name || 'User'}
-                        className="w-9 h-9 rounded-full flex-shrink-0"
-                        onError={(e) => {
-                          e.target.src = `https://ui-avatars.com/api/?name=User&background=678AFB&color=fff&size=32`;
-                        }}
+                        style={{ width: 30, height: 30, borderRadius: '50%', flexShrink: 0 }}
+                        onError={e => { e.target.src = `https://ui-avatars.com/api/?name=User&background=678AFB&color=fff&size=32`; }}
                       />
-
-                      {/* Name and Username on one line */}
-                      <div className="flex-1 min-w-0 flex items-center gap-2">
-                        <span className="font-semibold text-[#0A1A10] text-[14px] truncate">
-                          {user.full_name || 'Unknown User'}
-                        </span>
-                        <span className="text-xs text-slate-500 truncate">
-                          @{user.username}
-                        </span>
+                      <div style={{ flex: 1, minWidth: 0, display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <span style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user.full_name || 'Unknown'}</span>
+                        <span style={{ fontSize: 11, color: '#9B9A98', whiteSpace: 'nowrap' }}>@{user.username}</span>
                       </div>
-
-                      {/* Star icon */}
-                      <Star
-                        className={`w-4 h-4 flex-shrink-0 ${
-                          user.is_starred
-                            ? 'text-yellow-500 fill-yellow-500'
-                            : 'text-slate-300'
-                        }`}
-                      />
-
-                      {/* Check if selected */}
-                      {isSelected && (
-                        <Check className="w-4 h-4 text-[#00A86B] flex-shrink-0" />
-                      )}
+                      {user.is_starred && <Star size={13} style={{ flexShrink: 0, color: '#F59E0B', fill: '#F59E0B' }} />}
+                      {isSelected && <Check size={13} style={{ flexShrink: 0, color: '#03ACEA' }} />}
                     </div>
                   );
                 })}
-
-                {/* Add Friends Option */}
-                {showAddFriends && (
+                {showAddFriends && filteredUsers.length > 0 && (
                   <div
-                    className="flex items-center gap-3 px-3 py-2.5 mx-2 my-1 rounded-xl cursor-pointer transition-all duration-200 bg-white hover:bg-[#DBFFEB]/50"
                     onClick={handleAddFriends}
+                    style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '7px 10px', margin: '2px 6px', borderRadius: 9, cursor: 'pointer', transition: 'background 0.12s' }}
+                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.04)'}
+                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                   >
-                    <div className="w-9 h-9 rounded-full bg-[#00A86B] flex items-center justify-center flex-shrink-0">
-                      <Plus className="w-4 h-4 text-white" />
+                    <div style={{ width: 30, height: 30, borderRadius: '50%', background: '#03ACEA', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <Plus size={14} color="white" />
                     </div>
-                    <span className="font-semibold text-[#00A86B] text-[14px]">
-                      Add more friends
-                    </span>
+                    <span style={{ fontSize: 13, fontWeight: 600, color: '#03ACEA' }}>Add more friends</span>
                   </div>
                 )}
               </div>
             )}
-
-            {/* Show Add Friends even when no results */}
             {filteredUsers.length === 0 && showAddFriends && (
-              <div className="py-1">
-                <div className="p-3 text-center text-slate-500 text-sm">
+              <div style={{ padding: '4px 0' }}>
+                <div style={{ padding: '10px 16px', textAlign: 'center', fontSize: 13, color: '#9B9A98' }}>
                   {searchTerm ? 'No friends found' : 'No friends yet'}
                 </div>
                 <div
-                  className="flex items-center gap-3 px-3 py-2.5 mx-2 my-1 rounded-xl cursor-pointer transition-all duration-200 bg-white hover:bg-[#DBFFEB]/50"
                   onClick={handleAddFriends}
+                  style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '7px 10px', margin: '2px 6px', borderRadius: 9, cursor: 'pointer', transition: 'background 0.12s' }}
+                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.04)'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                 >
-                  <div className="w-9 h-9 rounded-full bg-[#00A86B] flex items-center justify-center flex-shrink-0">
-                    <Plus className="w-4 h-4 text-white" />
+                  <div style={{ width: 30, height: 30, borderRadius: '50%', background: '#03ACEA', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <Plus size={14} color="white" />
                   </div>
-                  <span className="font-semibold text-[#00A86B] text-[14px]">
-                    Add more friends
-                  </span>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: '#03ACEA' }}>Add more friends</span>
                 </div>
               </div>
             )}
-          </Card>
+          </div>
         </>
       )}
     </div>

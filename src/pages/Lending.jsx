@@ -2133,68 +2133,66 @@ export default function Lending({ initialTab }) {
               >
                 {/* Form */}
                 <div>
-                  <form onSubmit={handleSubmit} className="space-y-3">
+                  <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                         {/* No Friends Banner */}
                         {!isLoadingUsers && friends.length === 0 && (
-                          <div className="bg-amber-50 border border-amber-200 rounded-xl p-5">
-                            <p className="text-sm font-semibold text-slate-800 mb-3">You can only send offers to people in your friends list</p>
-                            <div className="grid grid-cols-2 gap-3">
+                          <div style={{ background: 'rgba(251,191,36,0.08)', border: '1px solid rgba(251,191,36,0.25)', borderRadius: 12, padding: '16px 18px' }}>
+                            <p style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', marginBottom: 12 }}>You can only send offers to people in your friends list</p>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
                               <button
                                 type="button"
                                 onClick={() => navigate(createPageUrl('Friends'))}
-                                className="flex items-center justify-center gap-2 px-4 py-2.5 bg-[#03ACEA] text-white text-sm font-medium rounded-xl hover:bg-[#5a7ae0] transition-colors"
+                                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '8px 14px', background: '#03ACEA', color: 'white', fontSize: 13, fontWeight: 500, borderRadius: 10, border: 'none', cursor: 'pointer', fontFamily: "'DM Sans', system-ui, sans-serif" }}
                               >
-                                <UserIcon className="w-4 h-4" />
+                                <UserIcon size={14} />
                                 Find Your Friends
                               </button>
                               <button
                                 type="button"
                                 onClick={() => navigate(createPageUrl('Friends') + '?tab=add')}
-                                className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white text-slate-700 text-sm font-medium rounded-xl border border-slate-200 hover:bg-slate-50 transition-colors"
+                                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '8px 14px', background: 'white', color: '#1A1918', fontSize: 13, fontWeight: 500, borderRadius: 10, border: '1px solid rgba(0,0,0,0.10)', cursor: 'pointer', fontFamily: "'DM Sans', system-ui, sans-serif" }}
                               >
-                                <UserPlus className="w-4 h-4" />
+                                <UserPlus size={14} />
                                 Invite Your Friends
                               </button>
                             </div>
                           </div>
                         )}
 
-                        {/* Lender Selection */}
-                        <div className="space-y-2">
-                          <Label htmlFor="lender_username">
-                            Select the lender
-                          </Label>
-                          {isLoadingUsers ? (
-                            <div className="h-10 bg-slate-100 rounded-md animate-pulse" />
-                          ) : (
-                            <UserSelector
-                              users={lenderUsers}
-                              value={formData.lender_username}
-                              onSelect={handleLenderSelect}
-                              placeholder="Choose a person..."
-                              showAddFriends={true}
-                              onAddFriends={() => navigate(createPageUrl('Friends') + '?tab=add')}
-                            />
-                          )}
-                        </div>
-
-                        {/* Borrower Selection */}
-                        <div className="space-y-2">
-                          <Label htmlFor="borrower_username">
-                            Select the borrower
-                          </Label>
-                          {isLoadingUsers ? (
-                            <div className="h-10 bg-slate-100 rounded-md animate-pulse" />
-                          ) : (
-                            <UserSelector
-                              users={borrowerUsers}
-                              value={formData.borrower_username}
-                              onSelect={handleBorrowerSelect}
-                              placeholder="Choose a person..."
-                              showAddFriends={true}
-                              onAddFriends={() => navigate(createPageUrl('Friends') + '?tab=add')}
-                            />
-                          )}
+                        {/* Lender + Borrower — side by side with persistent labels */}
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+                          {/* Lender */}
+                          <div>
+                            <div style={{ fontSize: 11, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 7 }}>Lender</div>
+                            {isLoadingUsers ? (
+                              <div style={{ height: 38, background: 'rgba(0,0,0,0.05)', borderRadius: 10 }} />
+                            ) : (
+                              <UserSelector
+                                users={lenderUsers}
+                                value={formData.lender_username}
+                                onSelect={handleLenderSelect}
+                                placeholder="Choose a person..."
+                                showAddFriends={true}
+                                onAddFriends={() => navigate(createPageUrl('Friends') + '?tab=add')}
+                              />
+                            )}
+                          </div>
+                          {/* Borrower */}
+                          <div>
+                            <div style={{ fontSize: 11, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 7 }}>Borrower</div>
+                            {isLoadingUsers ? (
+                              <div style={{ height: 38, background: 'rgba(0,0,0,0.05)', borderRadius: 10 }} />
+                            ) : (
+                              <UserSelector
+                                users={borrowerUsers}
+                                value={formData.borrower_username}
+                                onSelect={handleBorrowerSelect}
+                                placeholder="Choose a person..."
+                                showAddFriends={true}
+                                onAddFriends={() => navigate(createPageUrl('Friends') + '?tab=add')}
+                              />
+                            )}
+                          </div>
                         </div>
 
                         {/* Amount and Purpose - Only for Quick Payment Request (non-repeating) */}
@@ -2262,7 +2260,7 @@ export default function Lending({ initialTab }) {
 
                             {/* Repeating Options */}
                             {formData.is_repeating && (
-                              <div className="px-5 pt-5 pb-1 rounded-xl overflow-hidden" style={{ background: '#DBEDFE' }}>
+                              <div style={{ padding: '18px 20px 6px', borderRadius: 14, background: 'linear-gradient(135deg, rgba(255,255,255,0.45) 0%, rgba(3,172,234,0.06) 60%, rgba(3,172,234,0.10) 100%)', backdropFilter: 'blur(10px) saturate(1.6)', WebkitBackdropFilter: 'blur(10px) saturate(1.6)', border: '2px solid rgba(3,172,234,0.55)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.6), inset 0 0 16px rgba(3,172,234,0.07), 0 0 0 4px rgba(3,172,234,0.15), 0 0 24px rgba(3,172,234,0.18), 0 2px 12px rgba(0,0,0,0.04)' }}>
                                 <p className="text-sm text-slate-700 leading-[4.2] [&_input]:inline-flex [&_input]:align-baseline [&_input]:my-[2px] [&_input[type=number]]:appearance-none [&_input[type=number]]:[-moz-appearance:textfield] [&_input[type=number]::-webkit-outer-spin-button]:appearance-none [&_input[type=number]::-webkit-inner-spin-button]:appearance-none [&_.inline-flex]:my-[2px]">
                                   Payments of ${' '}
                                   <Input
@@ -2382,7 +2380,7 @@ export default function Lending({ initialTab }) {
 
                         {/* Scheduled loan fields - Sentence format */}
                         {loanType === 'scheduled' && (
-                          <div className="px-5 pt-5 pb-1 rounded-xl overflow-hidden" style={{ background: '#DBEDFE' }}>
+                          <div style={{ padding: '18px 20px 6px', borderRadius: 14, background: 'linear-gradient(135deg, rgba(255,255,255,0.45) 0%, rgba(3,172,234,0.06) 60%, rgba(3,172,234,0.10) 100%)', backdropFilter: 'blur(10px) saturate(1.6)', WebkitBackdropFilter: 'blur(10px) saturate(1.6)', border: '2px solid rgba(3,172,234,0.55)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.6), inset 0 0 16px rgba(3,172,234,0.07), 0 0 0 4px rgba(3,172,234,0.15), 0 0 24px rgba(3,172,234,0.18), 0 2px 12px rgba(0,0,0,0.04)' }}>
                             <p className="text-sm text-slate-700 leading-[4.2] [&_input]:inline-flex [&_input]:align-baseline [&_input]:my-[2px] [&_input[type=number]]:appearance-none [&_input[type=number]]:[-moz-appearance:textfield] [&_input[type=number]::-webkit-outer-spin-button]:appearance-none [&_input[type=number]::-webkit-inner-spin-button]:appearance-none [&_.inline-flex]:my-[2px] [&:last-child]:mb-0">
                               {isUserBorrower ? (
                                 <>
@@ -2592,18 +2590,26 @@ export default function Lending({ initialTab }) {
                           </div>
                         )}
 
-                        <Button
-                          type="submit"
-                          disabled={isSubmitting || !formData.lender_username || !formData.borrower_username || !formData.amount || !formData.purpose || (loanType === 'scheduled' && (!formData.interest_rate || !formData.repayment_period || !formData.lender_send_funds_date || !formData.first_payment_date)) || (loanType === 'flexible' && formData.is_repeating && (!formData.repeating_start_date || !formData.repeating_num_payments))}
-                          className={`w-full py-3 text-base font-semibold rounded-xl border-0 mt-2 transition-all duration-200 ${
-                            isSubmitting || !formData.lender_username || !formData.borrower_username || !formData.amount || !formData.purpose || (loanType === 'scheduled' && (!formData.interest_rate || !formData.repayment_period || !formData.lender_send_funds_date || !formData.first_payment_date)) || (loanType === 'flexible' && formData.is_repeating && (!formData.repeating_start_date || !formData.repeating_num_payments))
-                              ? 'bg-[#54A6CF]/40 text-white cursor-not-allowed'
-                              : 'bg-[#54A6CF] text-white hover:bg-[#5a7ae0]'
-                          }`}
-                        >
-                          <Send className="w-4 h-4 mr-2" />
-                          {isSubmitting ? "Sending..." : (loanType === 'flexible' ? "Send Quick Payment Request" : (isUserBorrower ? "Send Loan Request" : "Send Loan Offer"))}
-                        </Button>
+                        {(() => {
+                          const isDisabled = isSubmitting || !formData.lender_username || !formData.borrower_username || !formData.amount || !formData.purpose || (loanType === 'scheduled' && (!formData.interest_rate || !formData.repayment_period || !formData.lender_send_funds_date || !formData.first_payment_date)) || (loanType === 'flexible' && formData.is_repeating && (!formData.repeating_start_date || !formData.repeating_num_payments));
+                          return (
+                            <button
+                              type="submit"
+                              disabled={isDisabled}
+                              style={{
+                                width: '100%', padding: '12px 20px',
+                                background: isDisabled ? 'rgba(3,172,234,0.35)' : '#03ACEA',
+                                color: 'white', border: 'none', borderRadius: 12, cursor: isDisabled ? 'not-allowed' : 'pointer',
+                                fontSize: 14, fontWeight: 600, fontFamily: "'DM Sans', system-ui, sans-serif",
+                                letterSpacing: '-0.01em', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                                transition: 'background 0.2s',
+                              }}
+                            >
+                              <Send size={14} />
+                              {isSubmitting ? "Sending…" : (loanType === 'flexible' ? "Send Quick Payment Request" : (isUserBorrower ? "Send Loan Request" : "Send Loan Offer"))}
+                            </button>
+                          );
+                        })()}
                       </form>
                 </div>
 
