@@ -976,24 +976,73 @@ export default function Borrowing() {
           {/* ═══ SUMMARY TAB ═══ */}
           {activeTab === 'summary' && (
             <>
-            {/* Two blue stat boxes */}
+            {/* Next Payment Due + Active Borrowing bar chart */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 20 }}>
-              <div style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.45) 0%, rgba(3,172,234,0.06) 60%, rgba(3,172,234,0.10) 100%)', backdropFilter: 'blur(10px) saturate(1.6)', WebkitBackdropFilter: 'blur(10px) saturate(1.6)', border: '2px solid rgba(3,172,234,0.55)', borderRadius: 14, padding: '12px 14px', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.6), inset 0 0 16px rgba(3,172,234,0.07), 0 0 0 4px rgba(3,172,234,0.15), 0 0 24px rgba(3,172,234,0.18), 0 0 48px rgba(3,172,234,0.08), 0 2px 12px rgba(0,0,0,0.04)', display: 'flex', flexDirection: 'column' }}>
-                <div style={{ width: 20, height: 20, borderRadius: 6, background: 'rgba(3,172,234,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 8 }}>
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                </div>
-                <div style={{ fontSize: 9, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 4 }}>Total Borrowed</div>
-                <div style={{ fontSize: 20, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em' }}>${totalBorrowed.toLocaleString()}</div>
-                <div style={{ fontSize: 10, color: '#9B9A98', marginTop: 4 }}>{activeLoans.length} active loans</div>
-              </div>
-              <div style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.45) 0%, rgba(3,172,234,0.06) 60%, rgba(3,172,234,0.10) 100%)', backdropFilter: 'blur(10px) saturate(1.6)', WebkitBackdropFilter: 'blur(10px) saturate(1.6)', border: '2px solid rgba(3,172,234,0.55)', borderRadius: 14, padding: '12px 14px', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.6), inset 0 0 16px rgba(3,172,234,0.07), 0 0 0 4px rgba(3,172,234,0.15), 0 0 24px rgba(3,172,234,0.18), 0 0 48px rgba(3,172,234,0.08), 0 2px 12px rgba(0,0,0,0.04)', display: 'flex', flexDirection: 'column' }}>
-                <div style={{ width: 20, height: 20, borderRadius: 6, background: 'rgba(3,172,234,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 8 }}>
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-                </div>
-                <div style={{ fontSize: 9, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 4 }}>Amount Paid</div>
-                <div style={{ fontSize: 20, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em' }}>${activeLoans.reduce((s, l) => s + (l.amount_paid || 0), 0).toLocaleString()}</div>
-                <div style={{ fontSize: 10, color: '#9B9A98', marginTop: 4 }}>across all loans</div>
-              </div>
+              {/* Next Payment Due — mirrors Home first box */}
+              {(() => {
+                const days = nextPaymentLoan ? Math.ceil((nextPaymentLoan.date.getTime() - Date.now()) / 86400000) : null;
+                const isLate = days !== null && days < 0;
+                const daysLabel = days === null ? null : isLate ? `${Math.abs(days)}d late` : days === 0 ? 'today' : `${days}d`;
+                const badgeColor = isLate ? '#E8726E' : days !== null && days <= 3 ? '#F59E0B' : '#9B9A98';
+                const badgeBg = isLate ? 'rgba(232,114,110,0.08)' : days !== null && days <= 3 ? 'rgba(245,158,11,0.08)' : 'rgba(0,0,0,0.04)';
+                const lender = nextPaymentLoan ? publicProfiles.find(p => p.user_id === nextPaymentLoan.lender_id) : null;
+                const firstName = lender?.full_name?.split(' ')[0] || 'User';
+                return (
+                  <div style={{
+                    padding: '12px 14px', borderRadius: 14,
+                    background: 'linear-gradient(135deg, rgba(255,255,255,0.45) 0%, rgba(3,172,234,0.06) 60%, rgba(3,172,234,0.10) 100%)',
+                    backdropFilter: 'blur(10px) saturate(1.6)', WebkitBackdropFilter: 'blur(10px) saturate(1.6)',
+                    border: '2px solid rgba(3,172,234,0.55)',
+                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.6), inset 0 0 16px rgba(3,172,234,0.07), 0 0 0 4px rgba(3,172,234,0.15), 0 0 24px rgba(3,172,234,0.18), 0 0 48px rgba(3,172,234,0.08), 0 2px 12px rgba(0,0,0,0.04)',
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 10 }}>
+                      <div style={{ width: 20, height: 20, borderRadius: 6, background: 'rgba(29,91,148,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1D5B94" strokeWidth="2.5" strokeLinecap="round"><polyline points="7 13 12 18 17 13"/><line x1="12" y1="18" x2="12" y2="6"/></svg>
+                      </div>
+                      <span style={{ fontSize: 9, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Next Payment Due</span>
+                    </div>
+                    {nextPaymentLoan ? (
+                      <>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
+                          <span style={{ fontSize: 19, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em' }}>{format(nextPaymentLoan.date, 'MMM d')}</span>
+                          {daysLabel && <span style={{ fontSize: 9, fontWeight: 700, color: badgeColor, background: badgeBg, borderRadius: 5, padding: '2px 6px', flexShrink: 0 }}>{daysLabel}</span>}
+                        </div>
+                        <div style={{ fontSize: 11, color: '#9B9A98', textAlign: 'right' }}>{formatMoney(nextPaymentLoan.payment_amount || 0)} to {firstName}</div>
+                      </>
+                    ) : (
+                      <>
+                        <div style={{ fontSize: 15, fontWeight: 700, color: '#C5C3C0', marginBottom: 4 }}>—</div>
+                        <div style={{ fontSize: 11, color: '#9B9A98' }}>Nothing due</div>
+                      </>
+                    )}
+                  </div>
+                );
+              })()}
+
+              {/* Active Borrowing bar chart */}
+              {(() => {
+                const totalOwed = activeLoans.reduce((s, l) => s + (l.total_amount || l.amount || 0), 0);
+                const totalPaid = activeLoans.reduce((s, l) => s + (l.amount_paid || 0), 0);
+                const pct = totalOwed > 0 ? Math.round((totalPaid / totalOwed) * 100) : 0;
+                return (
+                  <div style={{ padding: '12px 14px', borderRadius: 14, background: 'white', border: '1px solid rgba(0,0,0,0.05)', boxShadow: '0 2px 12px rgba(0,0,0,0.06)', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 12 }}>
+                      <div style={{ width: 20, height: 20, borderRadius: 6, background: 'rgba(3,172,234,0.10)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="7 13 12 18 17 13"/><line x1="12" y1="18" x2="12" y2="6"/></svg>
+                      </div>
+                      <span style={{ fontSize: 9, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Active Borrowing</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 6 }}>
+                      <span style={{ fontSize: 18, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em' }}>{formatMoney(totalOwed)}</span>
+                      <span style={{ fontSize: 11, fontWeight: 700, color: '#03ACEA' }}>{pct}%</span>
+                    </div>
+                    <div style={{ width: '100%', height: 6, borderRadius: 3, background: 'rgba(3,172,234,0.12)', overflow: 'hidden', marginBottom: 6 }}>
+                      <div style={{ height: '100%', borderRadius: 3, background: '#03ACEA', width: `${pct}%`, transition: 'width 1s cubic-bezier(0.4,0,0.2,1)' }} />
+                    </div>
+                    <div style={{ fontSize: 10, color: '#9B9A98' }}>{formatMoney(totalPaid)} of {formatMoney(totalOwed)} repaid</div>
+                  </div>
+                );
+              })()}
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }} className="borrowing-grid">
               {/* Left Column */}

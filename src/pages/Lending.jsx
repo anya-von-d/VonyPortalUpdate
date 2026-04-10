@@ -1672,8 +1672,7 @@ export default function Lending({ initialTab }) {
               >
                 {/* Lending Overview Section */}
                 <PageCard title="Lending Overview">
-                  <div className="p-4">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10 }}>
                     {/* Pie Chart */}
                     <div className="rounded-xl p-3 flex flex-col items-center justify-center" style={{ backgroundColor: 'rgba(3,172,234,0.08)' }}>
                       {(() => {
@@ -1779,7 +1778,6 @@ export default function Lending({ initialTab }) {
                         </div>
                       );
                     })()}
-                  </div>
                   </div>
                 </PageCard>
 
