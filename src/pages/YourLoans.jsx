@@ -597,7 +597,7 @@ export default function YourLoans() {
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
               </div>
               <span style={{ fontSize: 9, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-                {isLending ? 'Active Lending' : 'Active Borrowing'}
+                {isLending ? 'Total Active Lending' : 'Active Borrowing'}
               </span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 6 }}>
@@ -611,85 +611,7 @@ export default function YourLoans() {
           </div>
         </div>
 
-        {/* 3. Loan Progress — lending: per-loan bars without photos; borrowing: Home-style with photos */}
-        {isLending && (
-        <PageCard title="Loan Progress">
-          <div style={{ padding: '10px 14px 14px' }}>
-            {activeLoans.length === 0 ? (
-              <p style={{ fontSize: 13, color: '#787776' }}>No active loans to track</p>
-            ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                {activeLoans.slice(0, 5).map((loan) => {
-                  const otherParty = publicProfiles.find(p => p.user_id === (isLending ? loan.borrower_id : loan.lender_id));
-                  const totalAmt = loan.total_amount || loan.amount || 0;
-                  const paidAmt = loan.amount_paid || 0;
-                  const pct = totalAmt > 0 ? Math.round((paidAmt / totalAmt) * 100) : 0;
-                  const name = otherParty?.full_name?.split(' ')[0] || otherParty?.username || 'User';
-                  const purpose = loan.purpose ? ` for ${loan.purpose}` : '';
-                  const headerText = isLending
-                    ? `You lent ${name} ${formatMoney(totalAmt)}${purpose}`
-                    : `${name} lent you ${formatMoney(totalAmt)}${purpose}`;
-                  return (
-                    <div key={loan.id} style={{ padding: '8px 0' }}>
-                      <div style={{ fontSize: 13, color: '#1A1918', fontWeight: 500, lineHeight: 1.4, marginBottom: 4 }}>{headerText}</div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <div style={{ flex: 1, height: 6, borderRadius: 3, background: barBg, overflow: 'hidden' }}>
-                          <div style={{ height: '100%', borderRadius: 3, background: barColor, width: `${pct}%`, transition: 'width 0.5s' }} />
-                        </div>
-                        <span style={{ fontSize: 11, fontWeight: 700, color: '#9B9A98', flexShrink: 0 }}>{pct}%</span>
-                      </div>
-                      <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 3 }}>{formatMoney(paidAmt)} of {formatMoney(totalAmt)} paid back</div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        </PageCard>
-        )}
-
-        {/* 4. Loan Progress (borrowing) / Active Loans (lending) — Home page style with profile photos */}
-        {activeLoans.length > 0 && (
-          <PageCard title={isLending ? "Active Loans" : "Loan Progress"}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              {activeLoans.slice(0, 5).map((loan) => {
-                const otherParty = publicProfiles.find(p => p.user_id === (isLending ? loan.borrower_id : loan.lender_id));
-                const totalAmt = loan.total_amount || loan.amount || 0;
-                const paidAmt = loan.amount_paid || 0;
-                const pct = totalAmt > 0 ? Math.round((paidAmt / totalAmt) * 100) : 0;
-                const name = otherParty?.full_name?.split(' ')[0] || otherParty?.username || 'User';
-                const purpose = loan.purpose ? ` for ${loan.purpose}` : '';
-                const headerText = isLending
-                  ? `You lent ${name} ${formatMoney(totalAmt)}${purpose}`
-                  : `${name} lent you ${formatMoney(totalAmt)}${purpose}`;
-                const initial = (otherParty?.full_name || otherParty?.username || 'U').charAt(0).toUpperCase();
-                return (
-                  <div key={loan.id} style={{ padding: '8px 0' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                      <div style={{ width: 20, height: 20, borderRadius: '50%', flexShrink: 0, overflow: 'hidden', background: 'rgba(0,0,0,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        {otherParty?.profile_picture_url ? (
-                          <img src={otherParty.profile_picture_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                        ) : (
-                          <span style={{ fontSize: 9, fontWeight: 700, color: '#787776' }}>{initial}</span>
-                        )}
-                      </div>
-                      <div style={{ fontSize: 13, color: '#1A1918', fontWeight: 500, lineHeight: 1.4 }}>{headerText}</div>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <div style={{ flex: 1, height: 6, borderRadius: 3, background: barBg, overflow: 'hidden' }}>
-                        <div style={{ height: '100%', borderRadius: 3, background: barColor, width: `${pct}%`, transition: 'width 0.5s' }} />
-                      </div>
-                      <span style={{ fontSize: 11, fontWeight: 700, color: '#9B9A98', flexShrink: 0 }}>{pct}%</span>
-                    </div>
-                    <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 3 }}>{formatMoney(paidAmt)} of {formatMoney(totalAmt)} {isLending ? 'paid back' : 'repaid'}</div>
-                  </div>
-                );
-              })}
-            </div>
-          </PageCard>
-        )}
-
-        {/* 5. Upcoming Payments — Home style */}
+        {/* 3. Upcoming Payments — Home style (above Active Loans) */}
         {(() => {
           const sourceLoans = isLending ? activeLendingLoans : activeBorrowingLoans;
           const otherPartyKey = isLending ? 'borrower_id' : 'lender_id';
@@ -744,6 +666,47 @@ export default function YourLoans() {
             </div>
           );
         })()}
+
+        {/* 4. Active Loans (lending) / Loan Progress (borrowing) — with profile photos */}
+        {activeLoans.length > 0 && (
+          <PageCard title={isLending ? "Active Loans" : "Loan Progress"}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              {activeLoans.slice(0, 5).map((loan) => {
+                const otherParty = publicProfiles.find(p => p.user_id === (isLending ? loan.borrower_id : loan.lender_id));
+                const totalAmt = loan.total_amount || loan.amount || 0;
+                const paidAmt = loan.amount_paid || 0;
+                const pct = totalAmt > 0 ? Math.round((paidAmt / totalAmt) * 100) : 0;
+                const name = otherParty?.full_name?.split(' ')[0] || otherParty?.username || 'User';
+                const purpose = loan.purpose ? ` for ${loan.purpose}` : '';
+                const headerText = isLending
+                  ? `You lent ${name} ${formatMoney(totalAmt)}${purpose}`
+                  : `${name} lent you ${formatMoney(totalAmt)}${purpose}`;
+                const initial = (otherParty?.full_name || otherParty?.username || 'U').charAt(0).toUpperCase();
+                return (
+                  <div key={loan.id} style={{ padding: '8px 0' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                      <div style={{ width: 20, height: 20, borderRadius: '50%', flexShrink: 0, overflow: 'hidden', background: 'rgba(0,0,0,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        {otherParty?.profile_picture_url ? (
+                          <img src={otherParty.profile_picture_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        ) : (
+                          <span style={{ fontSize: 9, fontWeight: 700, color: '#787776' }}>{initial}</span>
+                        )}
+                      </div>
+                      <div style={{ fontSize: 13, color: '#1A1918', fontWeight: 500, lineHeight: 1.4 }}>{headerText}</div>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <div style={{ flex: 1, height: 6, borderRadius: 3, background: barBg, overflow: 'hidden' }}>
+                        <div style={{ height: '100%', borderRadius: 3, background: barColor, width: `${pct}%`, transition: 'width 0.5s' }} />
+                      </div>
+                      <span style={{ fontSize: 11, fontWeight: 700, color: '#9B9A98', flexShrink: 0 }}>{pct}%</span>
+                    </div>
+                    <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 3 }}>{formatMoney(paidAmt)} of {formatMoney(totalAmt)} {isLending ? 'paid back' : 'repaid'}</div>
+                  </div>
+                );
+              })}
+            </div>
+          </PageCard>
+        )}
 
         {/* 6. Loans Ranked By — borrowing only, reformatted */}
         {!isLending && activeLoans.length > 0 && (
