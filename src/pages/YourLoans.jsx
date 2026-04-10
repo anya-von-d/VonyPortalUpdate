@@ -558,7 +558,7 @@ export default function YourLoans() {
             padding: '12px 14px', borderRadius: 14,
             background: 'linear-gradient(135deg, rgba(255,255,255,0.45) 0%, rgba(3,172,234,0.06) 60%, rgba(3,172,234,0.10) 100%)',
             backdropFilter: 'blur(10px) saturate(1.6)', WebkitBackdropFilter: 'blur(10px) saturate(1.6)',
-            border: '2px solid rgba(3,172,234,0.55)',
+            border: '2px solid #03ACEA',
             boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.6), inset 0 0 16px rgba(3,172,234,0.07), 0 0 0 4px rgba(3,172,234,0.15), 0 0 24px rgba(3,172,234,0.18), 0 0 48px rgba(3,172,234,0.08), 0 2px 12px rgba(0,0,0,0.04)',
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 10 }}>
@@ -1420,7 +1420,7 @@ export default function YourLoans() {
               }}>
                 {tab.label}
                 {activeTab === tab.key && (
-                  <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 9, background: 'linear-gradient(to bottom, transparent 0%, #03ACEA 66.67%, #03ACEA 100%)', pointerEvents: 'none' }} />
+                  <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 6, background: 'linear-gradient(to bottom, transparent 0%, #03ACEA 66.67%, #03ACEA 100%)', pointerEvents: 'none' }} />
                 )}
               </button>
             ))}

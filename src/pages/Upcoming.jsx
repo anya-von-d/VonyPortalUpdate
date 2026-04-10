@@ -347,7 +347,7 @@ export default function Upcoming() {
               }}>
                 {tab.label}
                 {activeTab === tab.key && (
-                  <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 9, background: 'linear-gradient(to bottom, transparent 0%, #03ACEA 66.67%, #03ACEA 100%)', pointerEvents: 'none' }} />
+                  <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 6, background: 'linear-gradient(to bottom, transparent 0%, #03ACEA 66.67%, #03ACEA 100%)', pointerEvents: 'none' }} />
                 )}
               </button>
             ))}
