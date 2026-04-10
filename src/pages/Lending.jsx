@@ -1738,50 +1738,48 @@ export default function Lending({ initialTab }) {
                 {/* Quick Record Payment - only show when there are active loans */}
                 {renderRecordPaymentBox()}
 
-                {/* Upcoming Payments + Individual Loan Progress */}
-                <div className="grid md:grid-cols-2 gap-4">
-                  {/* Upcoming Payments - Left */}
+                {/* Upcoming Payments + Loan Progress */}
+                  {/* Upcoming Payments */}
                   <PageCard title="Upcoming Payments">
-                  <div className="p-4">
                     {activeLoans.filter(l => l.next_payment_date).length === 0 ? (
                       <p className="text-slate-500 text-sm">No upcoming payments</p>
                     ) : (
-                      <div className="space-y-3">
+                      <div style={{ display: 'flex', flexDirection: 'column' }}>
                         {activeLoans
                           .filter(l => l.next_payment_date)
                           .sort((a, b) => new Date(a.next_payment_date) - new Date(b.next_payment_date))
                           .slice(0, 3)
-                          .map((loan, index) => {
+                          .map((loan) => {
                             const borrower = publicProfiles.find(p => p.user_id === loan.borrower_id);
-                            const bgColors = ['rgba(3,172,234,0.06)', 'rgba(3,172,234,0.1)', 'rgba(37,99,235,0.08)', 'rgba(3,172,234,0.08)', 'rgba(3,172,234,0.12)', 'rgba(37,99,235,0.06)'];
                             return (
-                              <div key={loan.id} className="flex items-center justify-between p-3 rounded-xl" style={{ backgroundColor: bgColors[index % 6] }}>
-                                <div>
-                                  <p className="font-medium text-sm text-slate-800">
-                                    ${loan.payment_amount?.toLocaleString() || 0} from {borrower?.full_name || 'User'}
-                                  </p>
-                                  <p className="text-xs text-slate-600">
-                                    Due {format(new Date(loan.next_payment_date), 'MMM d, yyyy')}
-                                  </p>
-                                </div>
-                                <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center">
-                                  <span className="text-xs font-bold text-slate-800">
+                              <div key={loan.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '9px 0' }}>
+                                <div style={{
+                                  width: 28, height: 18, borderRadius: 5, flexShrink: 0,
+                                  background: daysUntilDate(loan.next_payment_date) <= 3 ? 'rgba(232,114,110,0.1)' : 'rgba(3,172,234,0.08)',
+                                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                }}>
+                                  <span style={{ fontSize: 10, fontWeight: 700, color: daysUntilDate(loan.next_payment_date) <= 3 ? '#E8726E' : '#03ACEA' }}>
                                     {daysUntilDate(loan.next_payment_date)}d
                                   </span>
                                 </div>
+                                <span style={{ fontSize: 12, color: '#1A1918', fontWeight: 500, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                  {borrower?.full_name?.split(' ')[0] || 'User'}
+                                </span>
+                                <span style={{ fontSize: 12, fontWeight: 600, color: '#16A34A', flexShrink: 0 }}>
+                                  +${(loan.payment_amount || 0).toFixed(2)}
+                                </span>
                               </div>
                             );
                           })}
                       </div>
                     )}
-                  </div>
                   </PageCard>
 
-                  {/* Total Active Lending */}
-                  <PageCard title="Total Active Lending">
-                    <div style={{ padding: '14px 22px 20px', display: 'flex', flexDirection: 'column', gap: 18 }}>
+                  {/* Loan Progress */}
+                  <PageCard title="Loan Progress">
+                    <div style={{ padding: '14px 0 4px' }}>
                       {activeLoans.length === 0 ? (
-                        <p style={{ fontSize: 13, color: '#787776' }}>No active loans</p>
+                        <p style={{ fontSize: 13, color: '#787776', margin: 0 }}>No active loans</p>
                       ) : (() => {
                         const totalAll = activeLoans.reduce((s, l) => s + (l.total_amount || l.amount || 0), 0);
                         const paidAll = activeLoans.reduce((s, l) => s + (l.amount_paid || 0), 0);
@@ -1789,7 +1787,7 @@ export default function Lending({ initialTab }) {
                         return (
                           <div>
                             <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 8 }}>
-                              <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1918' }}>Lending</div>
+                              <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1918' }}>Active Loans</div>
                               <div style={{ fontSize: 12, color: '#787776' }}>{pctAll}%</div>
                             </div>
                             <div style={{ width: '100%', height: 6, borderRadius: 3, background: 'rgba(3,172,234,0.15)', overflow: 'hidden' }}>
@@ -1801,47 +1799,6 @@ export default function Lending({ initialTab }) {
                       })()}
                     </div>
                   </PageCard>
-
-                  {/* Your Lending */}
-                  <PageCard title="Your Lending">
-                    <div style={{ padding: '14px 22px 20px', display: 'flex', flexDirection: 'column', gap: 16 }}>
-                      {activeLoans.length === 0 ? (
-                        <p style={{ fontSize: 13, color: '#787776' }}>No active loans to track</p>
-                      ) : (
-                        <>
-                          {activeLoans.slice(0, 5).map(loan => {
-                            const borrower = publicProfiles.find(p => p.user_id === loan.borrower_id);
-                            const totalOwed = loan.total_amount || loan.amount || 0;
-                            const amountPaid = loan.amount_paid || 0;
-                            const percentPaid = totalOwed > 0 ? Math.round((amountPaid / totalOwed) * 100) : 0;
-                            return (
-                              <div key={loan.id}>
-                                <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 8 }}>
-                                  <div style={{ fontSize: 13, fontWeight: 500, color: '#1A1918' }}>
-                                    {borrower?.full_name || 'User'}{loan.purpose ? <span style={{ fontSize: 12, color: '#787776', fontWeight: 400 }}> · {loan.purpose}</span> : ''}
-                                  </div>
-                                  <div style={{ fontSize: 12, color: '#787776', flexShrink: 0, marginLeft: 8 }}>{percentPaid}%</div>
-                                </div>
-                                <div style={{ width: '100%', height: 6, borderRadius: 3, background: 'rgba(3,172,234,0.15)', overflow: 'hidden' }}>
-                                  <div style={{ height: '100%', borderRadius: 3, background: '#03ACEA', width: `${percentPaid}%`, transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)' }} />
-                                </div>
-                                <div style={{ fontSize: 11, color: '#787776', marginTop: 6 }}>{formatMoney(amountPaid)} of {formatMoney(totalOwed)} repaid</div>
-                              </div>
-                            );
-                          })}
-                          {activeLoans.length > 5 && (
-                            <button
-                              style={{ width: '100%', padding: '8px 0', fontSize: 13, color: '#03ACEA', background: 'transparent', border: 'none', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}
-                              onClick={() => setActiveSection('active')}
-                            >
-                              View all {activeLoans.length} loans
-                            </button>
-                          )}
-                        </>
-                      )}
-                    </div>
-                  </PageCard>
-                </div>
 
                 {/* Month Repayment + Loan History */}
                 <div className="grid md:grid-cols-2 gap-4">

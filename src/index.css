@@ -289,6 +289,7 @@ input[type="date"] {
   .rp-mobile-loan-selector { display: block !important; }
   .rp-empty-desktop { display: none !important; }
   .lending-mobile-sidebar { display: block !important; }
+  .ra-mobile-filters { display: block !important; }
 }
 
 /* Home + Dashboard pages responsive */

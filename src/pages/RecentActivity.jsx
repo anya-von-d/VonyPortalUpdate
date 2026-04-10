@@ -294,6 +294,10 @@ export default function RecentActivityPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('date_desc');
 
+  // Mobile filter panel state
+  const [mobileSortOpen, setMobileSortOpen] = useState(false);
+  const [mobileDateOpen, setMobileDateOpen] = useState(false);
+
   // Loan offer view modal
   const [viewingLoanOffer, setViewingLoanOffer] = useState(null);
   const [showSignModal, setShowSignModal] = useState(false);
@@ -710,6 +714,64 @@ export default function RecentActivityPage() {
           {/* Page title */}
           <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 17, fontWeight: 600, letterSpacing: '-0.02em', color: '#1A1918', marginBottom: 12 }}>Recent Activity</div>
           <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 20 }} />
+
+          {/* Mobile-only filter rows */}
+          <div className="ra-mobile-filters" style={{ display: 'none', marginBottom: 16 }}>
+            {/* Sort row */}
+            <div style={{ position: 'relative' }}>
+              <button onClick={() => { setMobileSortOpen(o => !o); setMobileDateOpen(false); }} style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                width: '100%', padding: '12px 0', background: 'transparent', border: 'none',
+                borderBottom: mobileSortOpen ? 'none' : '1px solid rgba(0,0,0,0.06)', cursor: 'pointer',
+                fontFamily: "'DM Sans', sans-serif",
+              }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 1 }}>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Sort</span>
+                  <span style={{ fontSize: 13, fontWeight: 500, color: '#1A1918' }}>{SORT_OPTIONS.find(o => o.id === sortBy)?.label}</span>
+                </div>
+                <ChevronDown size={16} style={{ color: '#787776', transform: mobileSortOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s', flexShrink: 0 }} />
+              </button>
+              {mobileSortOpen && (
+                <div style={{ borderBottom: '1px solid rgba(0,0,0,0.06)', paddingBottom: 8 }}>
+                  {SORT_OPTIONS.map(opt => (
+                    <button key={opt.id} onClick={() => { setSortBy(opt.id); setMobileSortOpen(false); }} style={{
+                      display: 'block', width: '100%', textAlign: 'left', padding: '10px 16px',
+                      background: 'transparent', border: 'none', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
+                      fontSize: 13, fontWeight: sortBy === opt.id ? 600 : 400,
+                      color: sortBy === opt.id ? '#03ACEA' : '#1A1918',
+                    }}>{opt.label}</button>
+                  ))}
+                </div>
+              )}
+            </div>
+            {/* Date row */}
+            <div style={{ position: 'relative' }}>
+              <button onClick={() => { setMobileDateOpen(o => !o); setMobileSortOpen(false); }} style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                width: '100%', padding: '12px 0', background: 'transparent', border: 'none',
+                borderBottom: mobileDateOpen ? 'none' : '1px solid rgba(0,0,0,0.06)', cursor: 'pointer',
+                fontFamily: "'DM Sans', sans-serif",
+              }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 1 }}>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Date Range</span>
+                  <span style={{ fontSize: 13, fontWeight: 500, color: dateFilter !== 'all' ? '#03ACEA' : '#1A1918' }}>{DATE_OPTIONS.find(o => o.id === dateFilter)?.label}</span>
+                </div>
+                <ChevronDown size={16} style={{ color: '#787776', transform: mobileDateOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s', flexShrink: 0 }} />
+              </button>
+              {mobileDateOpen && (
+                <div style={{ borderBottom: '1px solid rgba(0,0,0,0.06)', paddingBottom: 8 }}>
+                  {DATE_OPTIONS.map(opt => (
+                    <button key={opt.id} onClick={() => { setDateFilter(opt.id); setMobileDateOpen(false); }} style={{
+                      display: 'block', width: '100%', textAlign: 'left', padding: '10px 16px',
+                      background: 'transparent', border: 'none', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
+                      fontSize: 13, fontWeight: dateFilter === opt.id ? 600 : 400,
+                      color: dateFilter === opt.id ? '#03ACEA' : '#1A1918',
+                    }}>{opt.label}</button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
 
           {/* ── Activity List ──────────────────────────────────── */}
           <div>

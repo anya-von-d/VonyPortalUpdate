@@ -157,10 +157,6 @@ export default function MeshMobileNav({ user, activePage }) {
               </div>
             ))}
 
-            {/* Coming soon section */}
-            <div style={{ marginTop: 20, marginBottom: 6 }}>
-              <span style={{ fontSize: 9, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Coming Soon</span>
-            </div>
             {SOON_ITEMS.map(({ label, to }) => (
               <div key={label} style={{ borderBottom: '0.5px solid rgba(0,0,0,0.06)' }}>
                 <Link
