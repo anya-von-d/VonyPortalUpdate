@@ -1562,36 +1562,6 @@ export default function YourLoans() {
             </div>
           </RightSection>
 
-          {/* Active Loans */}
-          {allLoans.filter(l => l.status === 'active').length > 0 && (
-            <RightSection title="Active Loans">
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 22 }}>
-                {allLoans.filter(l => l.status === 'active').slice(0, 5).map((loan) => {
-                  const isLender = loan.lender_id === user?.id;
-                  const otherId = isLender ? loan.borrower_id : loan.lender_id;
-                  const otherProfile = publicProfiles.find(p => p.user_id === otherId);
-                  const otherName = otherProfile?.full_name || 'User';
-                  const total = loan.total_amount || loan.amount || 0;
-                  const paid = loan.amount_paid || 0;
-                  const pct = total > 0 ? Math.min(Math.round((paid / total) * 100), 100) : 0;
-                  return (
-                    <div key={loan.id}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 5 }}>
-                        <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 140 }}>
-                          {isLender ? 'You lent' : 'You owe'} {otherName}{loan.purpose ? ` · ${loan.purpose}` : ''}
-                        </span>
-                        <span style={{ fontSize: 11, fontWeight: 700, color: '#787776', flexShrink: 0 }}>{pct}%</span>
-                      </div>
-                      <div style={{ height: 6, background: 'rgba(0,0,0,0.06)', borderRadius: 3, overflow: 'hidden' }}>
-                        <div style={{ height: '100%', borderRadius: 3, background: isLender ? LENDER_GREEN : '#7EC0EA', width: `${pct}%`, transition: 'width 0.8s ease-out' }} />
-                      </div>
-                      <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 4 }}>{formatMoney(paid)} of {formatMoney(total)} {isLender ? 'repaid' : 'paid back'}</div>
-                    </div>
-                  );
-                })}
-              </div>
-            </RightSection>
-          )}
           </div>
         </div>
       </div>

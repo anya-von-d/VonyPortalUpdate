@@ -1045,58 +1045,45 @@ export default function Borrowing() {
                 </PageCard>
 
                 {/* Upcoming Payments */}
-                {(() => {
-                  const allPaymentLoans = activeLoans
-                    .filter(l => l.next_payment_date)
-                    .map(l => {
-                      const lender = publicProfiles.find(p => p.user_id === l.lender_id);
-                      const days = daysUntilDate(l.next_payment_date);
-                      const payDate = toLocalDate(l.next_payment_date);
-                      return { ...l, lenderUsername: lender?.full_name || 'User', days, payDate };
-                    })
-                    .sort((a, b) => a.payDate - b.payDate);
-                  const overdueLoans = allPaymentLoans.filter(l => l.days < 0);
-                  const upcomingLoans = allPaymentLoans.filter(l => l.days >= 0).slice(0, 5);
-                  const combinedLoans = [...overdueLoans, ...upcomingLoans];
-                  return (
-                    <PageCard title="Upcoming Payments">
-                        {combinedLoans.length === 0 ? (
-                          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px 0', color: '#787776' }}>
-                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ opacity: 0.4, marginBottom: 6 }}>
-                              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
-                            </svg>
-                            <p style={{ fontSize: 12 }}>No upcoming payments</p>
+                <div style={{ marginBottom: 8 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 10, marginBottom: 4, borderBottom: '1px solid rgba(0,0,0,0.07)' }}>
+                    <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Upcoming</span>
+                    <Link to={createPageUrl("Upcoming")} style={{ fontSize: 11, fontWeight: 500, color: '#9B9A98', textDecoration: 'none' }}>Full schedule →</Link>
+                  </div>
+                  {(() => {
+                    const rows = activeLoans
+                      .filter(l => l.next_payment_date)
+                      .map(l => {
+                        const lender = publicProfiles.find(p => p.user_id === l.lender_id);
+                        const days = daysUntilDate(l.next_payment_date);
+                        return { ...l, lenderName: lender?.full_name?.split(' ')[0] || 'User', days };
+                      })
+                      .sort((a, b) => a.days - b.days)
+                      .slice(0, 5);
+                    if (rows.length === 0) return <div style={{ padding: '10px 0', fontSize: 13, color: '#9B9A98' }}>Nothing coming up.</div>;
+                    return rows.map((loan, idx) => {
+                      const isOverdue = loan.days < 0;
+                      const daysLabel = isOverdue ? `${Math.abs(loan.days)}d late` : loan.days === 0 ? 'today' : `${loan.days}d`;
+                      return (
+                        <div key={loan.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 0' }}>
+                          <div style={{
+                            minWidth: 42, textAlign: 'center', flexShrink: 0,
+                            fontSize: 10, fontWeight: 700, lineHeight: 1.2,
+                            color: isOverdue ? '#E8726E' : loan.days <= 3 ? '#F59E0B' : '#9B9A98',
+                            background: isOverdue ? 'rgba(232,114,110,0.08)' : loan.days <= 3 ? 'rgba(245,158,11,0.08)' : 'rgba(0,0,0,0.04)',
+                            borderRadius: 6, padding: '3px 6px',
+                          }}>{daysLabel}</div>
+                          <div style={{ flex: 1, minWidth: 0, fontSize: 13, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            Pay <strong>{loan.lenderName}</strong>{loan.purpose ? <span style={{ color: '#9B9A98', fontWeight: 400 }}> · {loan.purpose}</span> : ''}
                           </div>
-                        ) : (
-                          <div style={{ display: 'flex', flexDirection: 'column' }}>
-                            {combinedLoans.map(loan => {
-                              const isOverdue = loan.days < 0;
-                              const absDays = Math.abs(loan.days);
-                              return (
-                                <div key={loan.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '9px 0' }}>
-                                  <div style={{
-                                    width: 28, height: 18, borderRadius: 5, flexShrink: 0,
-                                    background: isOverdue ? 'rgba(232,114,110,0.1)' : (loan.days <= 3 ? 'rgba(232,114,110,0.1)' : 'rgba(3,172,234,0.08)'),
-                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                  }}>
-                                    <span style={{ fontSize: 10, fontWeight: 700, color: isOverdue ? '#E8726E' : (loan.days <= 3 ? '#E8726E' : '#03ACEA') }}>
-                                      {isOverdue ? `-${absDays}` : loan.days}d
-                                    </span>
-                                  </div>
-                                  <span style={{ fontSize: 12, color: '#1A1918', fontWeight: 500, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                    {loan.lenderUsername}
-                                  </span>
-                                  <span style={{ fontSize: 12, fontWeight: 600, color: '#E8726E', flexShrink: 0 }}>
-                                    -${(loan.payment_amount || 0).toFixed(2)}
-                                  </span>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        )}
-                    </PageCard>
-                  );
-                })()}
+                          <span style={{ fontSize: 13, fontWeight: 700, flexShrink: 0, color: '#1A1918', letterSpacing: '-0.01em' }}>
+                            -{formatMoney(loan.payment_amount || 0)}
+                          </span>
+                        </div>
+                      );
+                    });
+                  })()}
+                </div>
               </div>
 
               {/* Right Column */}
