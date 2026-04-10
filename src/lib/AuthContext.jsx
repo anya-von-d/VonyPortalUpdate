@@ -169,11 +169,11 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = (shouldRedirect = true) => {
+  const logout = async (shouldRedirect = true) => {
     setUser(null);
     setUserProfile(null);
     setIsAuthenticated(false);
-    supabase.auth.signOut();
+    await supabase.auth.signOut();
     if (shouldRedirect) {
       window.location.href = '/';
     }
