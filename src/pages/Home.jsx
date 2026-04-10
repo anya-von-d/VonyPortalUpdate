@@ -595,7 +595,7 @@ export default function Home() {
       if (loan.status === 'pending' || !loan.status) {
         description = isLender ? `Sent ${amount} loan offer to ${name}` : `Received ${amount} loan offer from ${name}`;
         icon = isLender ? 'send' : 'receive';
-        color = isLender ? '#54A6CF' : '#7C3AED';
+        color = isLender ? '#7C3AED' : '#03ACEA';
       } else if (loan.status === 'active') {
         description = isLender ? `${name} accepted your ${amount} loan` : `You accepted ${amount} loan from ${name}`;
         icon = 'check'; color = '#16A34A';
@@ -633,7 +633,7 @@ export default function Home() {
         description: isBorrower ? `You made a ${amount} payment to ${name}` : `Received ${amount} payment from ${name}`,
         detail: format(new Date(p.payment_date || p.created_at), 'MMM d'),
         icon: isBorrower ? 'send' : 'receive',
-        color: isBorrower ? '#54A6CF' : '#7C3AED',
+        color: isBorrower ? '#7C3AED' : '#03ACEA',
         amount: isBorrower ? `-${amount}` : `+${amount}`
       });
     });
@@ -867,74 +867,82 @@ export default function Home() {
           <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 24 }} />
 
           {/* Three summary cards — glass style */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, marginBottom: 28 }}>
-            {/* Next due */}
-            {(() => {
-              const days = nextBorrowerPayment ? Math.ceil((nextBorrowerPayment.date.getTime() - Date.now()) / 86400000) : null;
-              const isLate = days !== null && days < 0;
-              const daysLabel = days === null ? null : isLate ? `${Math.abs(days)}d late` : days === 0 ? 'today' : `${days}d`;
-              const badgeColor = isLate ? '#E8726E' : days !== null && days <= 3 ? '#F59E0B' : '#9B9A98';
-              const badgeBg = isLate ? 'rgba(232,114,110,0.08)' : days !== null && days <= 3 ? 'rgba(245,158,11,0.08)' : 'rgba(0,0,0,0.04)';
-              const iconBg = isLate ? 'rgba(232,114,110,0.10)' : 'rgba(245,158,11,0.10)';
-              const iconColor = isLate ? '#E8726E' : '#F59E0B';
-              return (
-                <div style={{ padding: '14px 16px', borderRadius: 14, background: 'white', boxShadow: '0 2px 12px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04)', border: '1px solid rgba(0,0,0,0.05)' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-                    <div style={{ width: 28, height: 28, borderRadius: 8, background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={iconColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                    </div>
-                    <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Next Due</span>
-                  </div>
-                  {nextBorrowerPayment ? (
-                    <>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 5 }}>
-                        <span style={{ fontSize: 18, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em' }}>{formatMoney(nextBorrowerPayment.payment_amount || 0)}</span>
-                        {daysLabel && <span style={{ fontSize: 10, fontWeight: 700, color: badgeColor, background: badgeBg, borderRadius: 6, padding: '2px 7px', flexShrink: 0 }}>{daysLabel}</span>}
+          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 12, marginBottom: 28 }}>
+            {/* Glow wrapper for Next Due + Incoming */}
+            <div style={{
+              display: 'flex', gap: 0, borderRadius: 16, overflow: 'hidden',
+              border: '1.5px solid rgba(3,172,234,0.35)',
+              boxShadow: '0 0 0 2px rgba(3,172,234,0.25), 0 0 16px rgba(3,172,234,0.12), 0 2px 12px rgba(0,0,0,0.04)',
+            }}>
+              {/* Next Payment Due */}
+              {(() => {
+                const days = nextBorrowerPayment ? Math.ceil((nextBorrowerPayment.date.getTime() - Date.now()) / 86400000) : null;
+                const isLate = days !== null && days < 0;
+                const daysLabel = days === null ? null : isLate ? `${Math.abs(days)}d late` : days === 0 ? 'today' : `${days}d`;
+                const badgeColor = isLate ? '#E8726E' : days !== null && days <= 3 ? '#F59E0B' : '#9B9A98';
+                const badgeBg = isLate ? 'rgba(232,114,110,0.08)' : days !== null && days <= 3 ? 'rgba(245,158,11,0.08)' : 'rgba(0,0,0,0.04)';
+                return (
+                  <div style={{ flex: 1, padding: '14px 16px', background: 'white' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                      <div style={{ width: 28, height: 28, borderRadius: 8, background: 'rgba(29,91,148,0.10)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1D5B94" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="7 13 12 18 17 13"/><line x1="12" y1="18" x2="12" y2="6"/></svg>
                       </div>
-                      <div style={{ fontSize: 12, color: '#9B9A98' }}>to {nextBorrowerPayment.firstName}</div>
-                    </>
-                  ) : (
-                    <>
-                      <div style={{ fontSize: 16, fontWeight: 700, color: '#C5C3C0', marginBottom: 5 }}>—</div>
-                      <div style={{ fontSize: 12, color: '#9B9A98' }}>Nothing due</div>
-                    </>
-                  )}
-                </div>
-              );
-            })()}
+                      <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Next Payment Due</span>
+                    </div>
+                    {nextBorrowerPayment ? (
+                      <>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 8 }}>
+                          <span style={{ fontSize: 22, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em' }}>{format(nextBorrowerPayment.date, 'MMM d')}</span>
+                          {daysLabel && <span style={{ fontSize: 10, fontWeight: 700, color: badgeColor, background: badgeBg, borderRadius: 6, padding: '2px 7px', flexShrink: 0 }}>{daysLabel}</span>}
+                        </div>
+                        <div style={{ fontSize: 12, color: '#9B9A98', textAlign: 'right' }}>{formatMoney(nextBorrowerPayment.payment_amount || 0)} to {nextBorrowerPayment.firstName}</div>
+                      </>
+                    ) : (
+                      <>
+                        <div style={{ fontSize: 16, fontWeight: 700, color: '#C5C3C0', marginBottom: 5 }}>—</div>
+                        <div style={{ fontSize: 12, color: '#9B9A98' }}>Nothing due</div>
+                      </>
+                    )}
+                  </div>
+                );
+              })()}
 
-            {/* Next incoming */}
-            {(() => {
-              const days = nextLenderPayment ? Math.ceil((nextLenderPayment.date.getTime() - Date.now()) / 86400000) : null;
-              const isLate = days !== null && days < 0;
-              const daysLabel = days === null ? null : isLate ? `${Math.abs(days)}d late` : days === 0 ? 'today' : `${days}d`;
-              const badgeColor = isLate ? '#E8726E' : LENDER_GREEN;
-              const badgeBg = isLate ? 'rgba(232,114,110,0.08)' : 'rgba(82,183,136,0.10)';
-              return (
-                <div style={{ padding: '14px 16px', borderRadius: 14, background: 'white', boxShadow: '0 2px 12px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04)', border: '1px solid rgba(0,0,0,0.05)' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-                    <div style={{ width: 28, height: 28, borderRadius: 8, background: 'rgba(82,183,136,0.10)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={LENDER_GREEN} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="17 11 12 6 7 11"/><line x1="12" y1="6" x2="12" y2="18"/></svg>
-                    </div>
-                    <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Incoming</span>
-                  </div>
-                  {nextLenderPayment ? (
-                    <>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 5 }}>
-                        <span style={{ fontSize: 18, fontWeight: 800, color: LENDER_GREEN, letterSpacing: '-0.02em' }}>{formatMoney(nextLenderPayment.payment_amount || 0)}</span>
-                        {daysLabel && <span style={{ fontSize: 10, fontWeight: 700, color: badgeColor, background: badgeBg, borderRadius: 6, padding: '2px 7px', flexShrink: 0 }}>{daysLabel}</span>}
+              {/* Divider */}
+              <div style={{ width: 1, background: 'rgba(0,0,0,0.06)', alignSelf: 'stretch' }} />
+
+              {/* Next Payment Incoming */}
+              {(() => {
+                const days = nextLenderPayment ? Math.ceil((nextLenderPayment.date.getTime() - Date.now()) / 86400000) : null;
+                const isLate = days !== null && days < 0;
+                const daysLabel = days === null ? null : isLate ? `${Math.abs(days)}d late` : days === 0 ? 'today' : `${days}d`;
+                const badgeColor = isLate ? '#E8726E' : '#03ACEA';
+                const badgeBg = isLate ? 'rgba(232,114,110,0.08)' : 'rgba(3,172,234,0.10)';
+                return (
+                  <div style={{ flex: 1, padding: '14px 16px', background: 'white' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                      <div style={{ width: 28, height: 28, borderRadius: 8, background: 'rgba(3,172,234,0.10)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="17 11 12 6 7 11"/><line x1="12" y1="6" x2="12" y2="18"/></svg>
                       </div>
-                      <div style={{ fontSize: 12, color: '#9B9A98' }}>from {nextLenderPayment.firstName}</div>
-                    </>
-                  ) : (
-                    <>
-                      <div style={{ fontSize: 16, fontWeight: 700, color: '#C5C3C0', marginBottom: 5 }}>—</div>
-                      <div style={{ fontSize: 12, color: '#9B9A98' }}>None incoming</div>
-                    </>
-                  )}
-                </div>
-              );
-            })()}
+                      <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Next Payment Incoming</span>
+                    </div>
+                    {nextLenderPayment ? (
+                      <>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 8 }}>
+                          <span style={{ fontSize: 22, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em' }}>{format(nextLenderPayment.date, 'MMM d')}</span>
+                          {daysLabel && <span style={{ fontSize: 10, fontWeight: 700, color: badgeColor, background: badgeBg, borderRadius: 6, padding: '2px 7px', flexShrink: 0 }}>{daysLabel}</span>}
+                        </div>
+                        <div style={{ fontSize: 12, color: '#9B9A98', textAlign: 'right' }}>{formatMoney(nextLenderPayment.payment_amount || 0)} from {nextLenderPayment.firstName}</div>
+                      </>
+                    ) : (
+                      <>
+                        <div style={{ fontSize: 16, fontWeight: 700, color: '#C5C3C0', marginBottom: 5 }}>—</div>
+                        <div style={{ fontSize: 12, color: '#9B9A98' }}>None incoming</div>
+                      </>
+                    )}
+                  </div>
+                );
+              })()}
+            </div>
 
             {/* Overview */}
             <div style={{ padding: '14px 16px', borderRadius: 14, background: 'white', boxShadow: '0 2px 12px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04)', border: '1px solid rgba(0,0,0,0.05)' }}>
@@ -971,7 +979,7 @@ export default function Home() {
                 <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 0' }}>
                   {/* Day badge */}
                   <div style={{
-                    minWidth: 46, textAlign: 'center', flexShrink: 0,
+                    minWidth: 42, textAlign: 'center', flexShrink: 0,
                     fontSize: 10, fontWeight: 700, lineHeight: 1.2,
                     color: isOverdue ? '#E8726E' : event.days <= 3 ? '#F59E0B' : '#9B9A98',
                     background: isOverdue ? 'rgba(232,114,110,0.08)' : event.days <= 3 ? 'rgba(245,158,11,0.08)' : 'rgba(0,0,0,0.04)',
@@ -1005,7 +1013,7 @@ export default function Home() {
               <div style={{ padding: '10px 0', fontSize: 13, color: '#9B9A98' }}>No recent activity yet.</div>
             ) : recentActivity.map((item, idx) => (
               <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 0' }}>
-                <div style={{ width: 22, height: 22, borderRadius: 6, background: `${item.color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <div style={{ width: 20, height: 20, borderRadius: 6, background: `${item.color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   {item.icon === 'send' ? (
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={item.color} strokeWidth="2.5" strokeLinecap="round"><polyline points="7 13 12 18 17 13"/><line x1="12" y1="18" x2="12" y2="6"/></svg>
                   ) : item.icon === 'receive' ? (
@@ -1101,7 +1109,7 @@ export default function Home() {
                     const name = recorder?.full_name?.split(' ')[0] || recorder?.username || 'User';
                     return (
                       <Link key={p.id} to={createPageUrl("Requests")} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 0', textDecoration: 'none' }}>
-                        <div style={{ width: 24, height: 24, borderRadius: '50%', background: 'rgba(3,172,234,0.10)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden' }}>
+                        <div style={{ width: 22, height: 22, borderRadius: '50%', background: 'rgba(3,172,234,0.10)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden' }}>
                           {recorder?.profile_picture_url ? <img src={recorder.profile_picture_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <span style={{ fontSize: 10, fontWeight: 700, color: '#03ACEA' }}>{(recorder?.full_name || 'U').charAt(0)}</span>}
                         </div>
                         <div style={{ flex: 1, minWidth: 0 }}>
@@ -1116,7 +1124,7 @@ export default function Home() {
                     const name = lender?.full_name?.split(' ')[0] || lender?.username || 'User';
                     return (
                       <Link key={loan.id} to={createPageUrl("Requests")} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 0', textDecoration: 'none' }}>
-                        <div style={{ width: 24, height: 24, borderRadius: '50%', background: 'rgba(124,58,237,0.10)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden' }}>
+                        <div style={{ width: 22, height: 22, borderRadius: '50%', background: 'rgba(124,58,237,0.10)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden' }}>
                           {lender?.profile_picture_url ? <img src={lender.profile_picture_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <span style={{ fontSize: 10, fontWeight: 700, color: '#7C3AED' }}>{(lender?.full_name || 'U').charAt(0)}</span>}
                         </div>
                         <div style={{ flex: 1, minWidth: 0 }}>
@@ -1131,7 +1139,7 @@ export default function Home() {
                     const name = sender?.full_name?.split(' ')[0] || sender?.username || 'User';
                     return (
                       <Link key={f.id} to={createPageUrl("Requests")} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 0', textDecoration: 'none' }}>
-                        <div style={{ width: 24, height: 24, borderRadius: '50%', background: 'rgba(82,183,136,0.10)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden' }}>
+                        <div style={{ width: 22, height: 22, borderRadius: '50%', background: 'rgba(82,183,136,0.10)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden' }}>
                           {sender?.profile_picture_url ? <img src={sender.profile_picture_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <span style={{ fontSize: 10, fontWeight: 700, color: '#52B788' }}>{(sender?.full_name || 'U').charAt(0)}</span>}
                         </div>
                         <div style={{ flex: 1, minWidth: 0 }}>
@@ -1146,7 +1154,7 @@ export default function Home() {
                     const name = lender?.full_name?.split(' ')[0] || lender?.username || 'User';
                     return (
                       <Link key={`tc-${loan.id}`} to={createPageUrl("Requests")} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 0', textDecoration: 'none' }}>
-                        <div style={{ width: 24, height: 24, borderRadius: '50%', background: 'rgba(245,158,11,0.10)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <div style={{ width: 22, height: 22, borderRadius: '50%', background: 'rgba(245,158,11,0.10)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                           <span style={{ fontSize: 10, fontWeight: 700, color: '#F59E0B' }}>!</span>
                         </div>
                         <div style={{ flex: 1, minWidth: 0 }}>
@@ -1161,7 +1169,7 @@ export default function Home() {
                     const name = requester?.full_name?.split(' ')[0] || requester?.username || 'User';
                     return (
                       <Link key={`ext-${loan.id}`} to={createPageUrl("Requests")} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 0', textDecoration: 'none' }}>
-                        <div style={{ width: 24, height: 24, borderRadius: '50%', background: 'rgba(245,158,11,0.10)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <div style={{ width: 22, height: 22, borderRadius: '50%', background: 'rgba(245,158,11,0.10)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" strokeWidth="2.5" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                         </div>
                         <div style={{ flex: 1, minWidth: 0 }}>

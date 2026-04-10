@@ -1086,57 +1086,6 @@ export default function LoanAgreements() {
           <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 24, fontWeight: 600, letterSpacing: '-0.02em', color: '#1A1918', marginBottom: 20 }}>Documents</div>
           <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 24 }} />
 
-          {/* ── Search Row ─────────────────────────────────────── */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-            <div style={{
-              flex: 1, display: 'flex', alignItems: 'center', gap: 10,
-              padding: '0 16px', background: 'white', borderRadius: 22,
-              border: '1px solid rgba(0,0,0,0.06)', height: 42,
-            }}>
-              <Search size={16} style={{ color: '#787776', flexShrink: 0 }} />
-              <input
-                type="text"
-                placeholder="Search..."
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                style={{
-                  flex: 1, border: 'none', outline: 'none', fontSize: 14,
-                  fontFamily: "'DM Sans', sans-serif", color: '#1A1918', background: 'transparent',
-                }}
-              />
-            </div>
-          </div>
-
-          {/* ── Filter Bar ─────────────────────────────────────── */}
-          <div style={{ marginBottom: 24, overflow: 'visible', position: 'relative', zIndex: 20 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-              <SingleSelectDropdown options={DATE_OPTIONS} selected={dateFilter} onChange={setDateFilter} />
-              {friendOptions.length > 1 && (
-                <SingleSelectDropdown options={friendOptions} selected={friendFilter} onChange={setFriendFilter} />
-              )}
-              <SingleSelectDropdown options={ROLE_OPTIONS} selected={roleFilter} onChange={setRoleFilter} />
-              <SingleSelectDropdown options={STATUS_OPTIONS} selected={statusFilter} onChange={setStatusFilter} />
-              <AmountFilterDropdown amountMode={amountMode} setAmountMode={setAmountMode} amountVal1={amountVal1} setAmountVal1={setAmountVal1} amountVal2={amountVal2} setAmountVal2={setAmountVal2} />
-              <button
-                onClick={clearFilters}
-                style={{
-                  marginLeft: 'auto',
-                  padding: '8px 14px', borderRadius: 10,
-                  border: hasAnyFilter ? '1px solid rgba(232,114,110,0.3)' : '1px solid rgba(0,0,0,0.08)',
-                  background: hasAnyFilter ? 'rgba(232,114,110,0.06)' : 'transparent',
-                  fontSize: 13, fontWeight: 500,
-                  color: hasAnyFilter ? '#E8726E' : '#787776',
-                  cursor: hasAnyFilter ? 'pointer' : 'default',
-                  opacity: hasAnyFilter ? 1 : 0.5,
-                  fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap',
-                  transition: 'background 0.15s, opacity 0.15s',
-                }}
-              >
-                Clear Filters
-              </button>
-            </div>
-          </div>
-
           {/* ── Agreements List ──────────────────────────────────── */}
           <div>
             <div>
@@ -1340,6 +1289,54 @@ export default function LoanAgreements() {
                 </div>
               </Link>
             </div>
+          {/* ── Search + Filters ───────────────────────── */}
+          <RightSection title="Search & Filters">
+            <div style={{ marginBottom: 12 }}>
+              <div style={{
+                display: 'flex', alignItems: 'center', gap: 8,
+                padding: '0 12px', background: 'white', borderRadius: 18,
+                border: '1px solid rgba(0,0,0,0.06)', height: 36,
+              }}>
+                <Search size={14} style={{ color: '#787776', flexShrink: 0 }} />
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  style={{
+                    flex: 1, border: 'none', outline: 'none', fontSize: 13,
+                    fontFamily: "'DM Sans', sans-serif", color: '#1A1918', background: 'transparent',
+                  }}
+                />
+              </div>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, position: 'relative', zIndex: 20 }}>
+              <SingleSelectDropdown options={DATE_OPTIONS} selected={dateFilter} onChange={setDateFilter} />
+              {friendOptions.length > 1 && (
+                <SingleSelectDropdown options={friendOptions} selected={friendFilter} onChange={setFriendFilter} />
+              )}
+              <SingleSelectDropdown options={ROLE_OPTIONS} selected={roleFilter} onChange={setRoleFilter} />
+              <SingleSelectDropdown options={STATUS_OPTIONS} selected={statusFilter} onChange={setStatusFilter} />
+              <AmountFilterDropdown amountMode={amountMode} setAmountMode={setAmountMode} amountVal1={amountVal1} setAmountVal1={setAmountVal1} amountVal2={amountVal2} setAmountVal2={setAmountVal2} />
+              <button
+                onClick={clearFilters}
+                style={{
+                  padding: '6px 10px', borderRadius: 8,
+                  border: hasAnyFilter ? '1px solid rgba(232,114,110,0.3)' : '1px solid rgba(0,0,0,0.08)',
+                  background: hasAnyFilter ? 'rgba(232,114,110,0.06)' : 'transparent',
+                  fontSize: 12, fontWeight: 500,
+                  color: hasAnyFilter ? '#E8726E' : '#787776',
+                  cursor: hasAnyFilter ? 'pointer' : 'default',
+                  opacity: hasAnyFilter ? 1 : 0.5,
+                  fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap',
+                  transition: 'background 0.15s, opacity 0.15s',
+                }}
+              >
+                Clear Filters
+              </button>
+            </div>
+          </RightSection>
+
           <RightSection title="Notifications">
             {pendingToConfirm.length === 0 ? (
               <p style={{ fontSize: 12, color: '#9B9A98', margin: 0 }}>All caught up</p>
