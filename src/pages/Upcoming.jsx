@@ -334,26 +334,25 @@ export default function Upcoming() {
         {/* ── CENTER ── */}
         <div className="mesh-center" style={{ background: 'white', borderRight: '1px solid rgba(0,0,0,0.06)', padding: '28px 48px 80px' }}>
 
-          {/* Title */}
-          <div style={{ marginBottom: 12 }}>
-            <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 17, fontWeight: 600, letterSpacing: '-0.02em', lineHeight: 1.1, color: '#1A1918' }}>Upcoming</div>
-          </div>
-          <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 20 }} />
-
-          {/* Glass tab selector */}
-          <div style={{ display: 'inline-flex', gap: 2, background: 'rgba(255,255,255,0.6)', borderRadius: 12, padding: 3, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 1px 6px rgba(0,0,0,0.05)', marginBottom: 8, backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}>
+          {/* Tab header */}
+          <div style={{ display: 'flex', gap: 24, alignItems: 'flex-end', marginLeft: -48, marginRight: -48, paddingLeft: 48, paddingRight: 48 }}>
             {[{ key: 'summary', label: 'Summary' }, { key: 'calendar', label: 'Calendar' }].map(tab => (
               <button key={tab.key} onClick={() => setActiveTab(tab.key)} style={{
-                padding: '7px 18px', borderRadius: 9, border: 'none', cursor: 'pointer',
-                fontSize: 13, fontFamily: "'DM Sans', sans-serif",
-                fontWeight: activeTab === tab.key ? 600 : 500,
-                color: activeTab === tab.key ? '#1A1918' : '#787776',
-                background: activeTab === tab.key ? 'white' : 'transparent',
-                boxShadow: activeTab === tab.key ? '0 1px 6px rgba(0,0,0,0.10)' : 'none',
-                transition: 'all 0.15s',
-              }}>{tab.label}</button>
+                position: 'relative', paddingBottom: 12,
+                border: 'none', background: 'transparent', cursor: 'pointer',
+                fontSize: 17, fontWeight: 600, fontFamily: "'DM Sans', system-ui, sans-serif",
+                letterSpacing: '-0.02em',
+                color: activeTab === tab.key ? '#1A1918' : 'rgba(0,0,0,0.30)',
+                transition: 'color 0.2s',
+              }}>
+                {tab.label}
+                {activeTab === tab.key && (
+                  <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 20, background: 'linear-gradient(to top, rgba(3,172,234,0.55) 0%, rgba(3,172,234,0) 100%)', pointerEvents: 'none' }} />
+                )}
+              </button>
             ))}
           </div>
+          <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginLeft: -48, marginRight: -48, marginBottom: 20 }} />
 
           {activeTab === 'summary' ? (
             /* ── SUMMARY VIEW ── */
