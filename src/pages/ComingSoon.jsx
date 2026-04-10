@@ -216,7 +216,7 @@ export default function ComingSoon() {
             }}>
               {cat.label}
               {learnCategory === cat.id && (
-                <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 20, background: 'linear-gradient(to top, rgba(3,172,234,0.55) 0%, rgba(3,172,234,0) 100%)', pointerEvents: 'none' }} />
+                <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 9, background: 'linear-gradient(to bottom, transparent 0%, #03ACEA 66.67%, #03ACEA 100%)', pointerEvents: 'none' }} />
               )}
             </button>
           ))}
