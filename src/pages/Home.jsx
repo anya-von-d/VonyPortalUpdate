@@ -835,30 +835,8 @@ export default function Home() {
           </div>
           <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 20 }} />
 
-          {/* Notification bar */}
-          {notifCount > 0 && (
-            <div style={{
-              display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderRadius: 10,
-              background: 'rgba(3,172,234,0.06)', border: '1px solid rgba(3,172,234,0.15)',
-              marginBottom: 16,
-            }}>
-              <div style={{ width: 24, height: 24, borderRadius: 7, background: 'rgba(3,172,234,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2" strokeLinecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-              </div>
-              <span style={{ flex: 1, fontSize: 13, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>
-                You have {notifCount} new notification{notifCount !== 1 ? 's' : ''}
-              </span>
-              <Link to={createPageUrl("Requests")} style={{
-                fontSize: 12, fontWeight: 600, color: '#03ACEA', textDecoration: 'none',
-                padding: '5px 12px', borderRadius: 7, background: 'white',
-                border: '1px solid rgba(3,172,234,0.2)', flexShrink: 0,
-                fontFamily: "'DM Sans', sans-serif",
-              }}>View</Link>
-            </div>
-          )}
-
           {/* Three summary cards */}
-          <div className="home-summary-cards" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10, marginBottom: 24, alignItems: 'stretch' }}>
+          <div className="home-summary-cards" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 24, marginBottom: 0, alignItems: 'stretch' }}>
             {/* Next Payment Due */}
             {(() => {
               const days = nextBorrowerPayment ? Math.ceil((nextBorrowerPayment.date.getTime() - Date.now()) / 86400000) : null;
@@ -954,7 +932,7 @@ export default function Home() {
                       <div style={{ width: 20, height: 20, borderRadius: 6, background: 'rgba(3,172,234,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2.5" strokeLinecap="round"><polyline points="17 11 12 6 7 11"/><line x1="12" y1="6" x2="12" y2="18"/></svg>
                       </div>
-                      <span style={{ fontSize: 9, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Next Incoming</span>
+                      <span style={{ fontSize: 9, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Next Payment Incoming</span>
                     </div>
                     {nextLenderPayment ? (
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'nowrap', overflow: 'hidden' }}>
@@ -994,6 +972,28 @@ export default function Home() {
               </div>
             </div>
           </div>
+
+          {/* Notification bar */}
+          {notifCount > 0 && (
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderRadius: 10,
+              background: 'rgba(3,172,234,0.06)', border: '1px solid rgba(3,172,234,0.15)',
+              marginTop: 24, marginBottom: 24,
+            }}>
+              <div style={{ width: 24, height: 24, borderRadius: 7, background: 'rgba(3,172,234,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2" strokeLinecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              </div>
+              <span style={{ flex: 1, fontSize: 13, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>
+                You have {notifCount} new notification{notifCount !== 1 ? 's' : ''}
+              </span>
+              <Link to={createPageUrl("Requests")} style={{
+                fontSize: 12, fontWeight: 600, color: '#03ACEA', textDecoration: 'none',
+                padding: '5px 12px', borderRadius: 7, background: 'white',
+                border: '1px solid rgba(3,172,234,0.2)', flexShrink: 0,
+                fontFamily: "'DM Sans', sans-serif",
+              }}>View</Link>
+            </div>
+          )}
 
           {/* New user onboarding */}
           {!hasLoans && (
@@ -1037,224 +1037,224 @@ export default function Home() {
             </div>
           )}
 
-          {/* UPCOMING + HOW MONTH IS GOING */}
-          <div className="home-two-col-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, marginBottom: 24, alignItems: 'start' }}>
-            {/* Upcoming */}
-            <div style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(12px) saturate(1.4)', WebkitBackdropFilter: 'blur(12px) saturate(1.4)', borderRadius: 14, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.05)', padding: '14px 18px' }}>
-              <SectionHeader title="Upcoming" linkTo={createPageUrl("Upcoming")} linkLabel="Full schedule →" />
-              {combinedPaymentEvents.length === 0 ? (
-                <div style={{ padding: '10px 0', fontSize: 13, color: '#9B9A98' }}>You're all clear! Nothing coming up yet.</div>
-              ) : combinedPaymentEvents.map((event, idx) => {
-                const isOverdue = event.days < 0;
-                const daysLabel = isOverdue ? `${Math.abs(event.days)}d late` : event.days === 0 ? 'today' : `${event.days}d`;
-                const amtSign = event.isLender ? '+' : '-';
-                return (
+          {/* Masonry two-column layout */}
+          <div className="home-two-col-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+            {/* Left column: Upcoming → Recent Activity → Active Lending */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+              {/* Upcoming */}
+              <div style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(12px) saturate(1.4)', WebkitBackdropFilter: 'blur(12px) saturate(1.4)', borderRadius: 14, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.05)', padding: '14px 18px' }}>
+                <SectionHeader title="Upcoming" linkTo={createPageUrl("Upcoming")} linkLabel="Full schedule →" />
+                {combinedPaymentEvents.length === 0 ? (
+                  <div style={{ padding: '10px 0', fontSize: 13, color: '#9B9A98' }}>You're all clear! Nothing coming up yet.</div>
+                ) : combinedPaymentEvents.map((event, idx) => {
+                  const isOverdue = event.days < 0;
+                  const daysLabel = isOverdue ? `${Math.abs(event.days)}d late` : event.days === 0 ? 'today' : `${event.days}d`;
+                  const amtSign = event.isLender ? '+' : '-';
+                  return (
+                    <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 0' }}>
+                      <div style={{
+                        minWidth: 42, textAlign: 'center', flexShrink: 0,
+                        fontSize: 10, fontWeight: 700, lineHeight: 1.2,
+                        color: isOverdue ? '#E8726E' : event.days <= 3 ? '#F59E0B' : '#9B9A98',
+                        background: isOverdue ? 'rgba(232,114,110,0.08)' : event.days <= 3 ? 'rgba(245,158,11,0.08)' : 'rgba(0,0,0,0.04)',
+                        borderRadius: 6, padding: '3px 6px',
+                      }}>
+                        {daysLabel}
+                      </div>
+                      <div style={{ flex: 1, minWidth: 0, fontSize: 13, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {event.isLender
+                          ? <>{event.firstName} pays you</>
+                          : <>Pay {event.firstName}</>}
+                        {event.purpose && <span style={{ color: '#9B9A98' }}> · {event.purpose}</span>}
+                      </div>
+                      <span style={{ fontSize: 13, fontWeight: 700, flexShrink: 0, color: event.isLender ? '#03ACEA' : '#1A1918', letterSpacing: '-0.01em' }}>
+                        {amtSign}{formatMoney(event.remainingAmount)}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Recent Activity */}
+              <div style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(12px) saturate(1.4)', WebkitBackdropFilter: 'blur(12px) saturate(1.4)', borderRadius: 14, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.05)', padding: '14px 18px' }}>
+                <SectionHeader title="Recent Activity" linkTo={createPageUrl("RecentActivity")} linkLabel="View all →" />
+                {recentActivity.length === 0 ? (
+                  <div style={{ padding: '10px 0', fontSize: 13, color: '#9B9A98' }}>No recent activity yet.</div>
+                ) : recentActivity.map((item, idx) => (
                   <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 0' }}>
-                    <div style={{
-                      minWidth: 42, textAlign: 'center', flexShrink: 0,
-                      fontSize: 10, fontWeight: 700, lineHeight: 1.2,
-                      color: isOverdue ? '#E8726E' : event.days <= 3 ? '#F59E0B' : '#9B9A98',
-                      background: isOverdue ? 'rgba(232,114,110,0.08)' : event.days <= 3 ? 'rgba(245,158,11,0.08)' : 'rgba(0,0,0,0.04)',
-                      borderRadius: 6, padding: '3px 6px',
-                    }}>
-                      {daysLabel}
+                    <div style={{ width: 20, height: 20, borderRadius: 6, background: `${item.color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      {item.icon === 'send' ? (
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={item.color} strokeWidth="2.5" strokeLinecap="round"><polyline points="7 13 12 18 17 13"/><line x1="12" y1="18" x2="12" y2="6"/></svg>
+                      ) : item.icon === 'receive' ? (
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={item.color} strokeWidth="2.5" strokeLinecap="round"><polyline points="17 11 12 6 7 11"/><line x1="12" y1="6" x2="12" y2="18"/></svg>
+                      ) : item.icon === 'check' ? (
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={item.color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                      ) : (
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={item.color} strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                      )}
                     </div>
-                    <div style={{ flex: 1, minWidth: 0, fontSize: 13, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {event.isLender
-                        ? <>{event.firstName} pays you</>
-                        : <>Pay {event.firstName}</>}
-                      {event.purpose && <span style={{ color: '#9B9A98' }}> · {event.purpose}</span>}
-                    </div>
-                    <span style={{ fontSize: 13, fontWeight: 700, flexShrink: 0, color: event.isLender ? '#03ACEA' : '#1A1918', letterSpacing: '-0.01em' }}>
-                      {amtSign}{formatMoney(event.remainingAmount)}
-                    </span>
+                    <div style={{ flex: 1, minWidth: 0, fontSize: 13, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.description}</div>
+                    <span style={{ fontSize: 11, color: '#9B9A98', flexShrink: 0 }}>{item.detail}</span>
                   </div>
-                );
-              })}
-            </div>
-
-            {/* How month is going */}
-            <div style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(12px) saturate(1.4)', WebkitBackdropFilter: 'blur(12px) saturate(1.4)', borderRadius: 14, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.05)', padding: '14px 18px' }}>
-              <SectionHeader title={`How ${format(today, 'MMMM')} is going`} />
-              {/* Received */}
-              <div style={{ padding: '9px 0' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 6 }}>
-                  <span style={{ fontSize: 13, color: '#1A1918' }}>Received</span>
-                  <span style={{ fontSize: 14, fontWeight: 700, color: '#03ACEA', letterSpacing: '-0.01em' }}>{formatMoney(monthlyReceived)}</span>
-                </div>
-                <div style={{ height: 6, borderRadius: 3, background: 'rgba(3,172,234,0.1)', overflow: 'hidden' }}>
-                  <div style={{ height: '100%', borderRadius: 3, background: '#03ACEA', width: `${monthlyExpectedReceive > 0 ? Math.min((monthlyReceived / monthlyExpectedReceive) * 100, 100) : 0}%`, transition: 'width 0.8s ease-out' }} />
-                </div>
-                <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 4 }}>of {formatMoney(monthlyExpectedReceive)} expected</div>
+                ))}
               </div>
-              {/* Paid out */}
-              <div style={{ padding: '9px 0' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 6 }}>
-                  <span style={{ fontSize: 13, color: '#1A1918' }}>Paid out</span>
-                  <span style={{ fontSize: 14, fontWeight: 700, color: '#1D5B94', letterSpacing: '-0.01em' }}>{formatMoney(monthlyPaidOut)}</span>
-                </div>
-                <div style={{ height: 6, borderRadius: 3, background: 'rgba(29,91,148,0.1)', overflow: 'hidden' }}>
-                  <div style={{ height: '100%', borderRadius: 3, background: '#1D5B94', width: `${monthlyExpectedPay > 0 ? Math.min((monthlyPaidOut / monthlyExpectedPay) * 100, 100) : 0}%`, transition: 'width 0.8s ease-out' }} />
-                </div>
-                <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 4 }}>of {formatMoney(monthlyExpectedPay)} expected</div>
-              </div>
-            </div>
-          </div>
 
-          {/* ROW 2: Recent Activity | Your Loans Over Time */}
-          <div className="home-two-col-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, marginBottom: 24, alignItems: 'start' }}>
-            {/* Recent Activity */}
-            <div style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(12px) saturate(1.4)', WebkitBackdropFilter: 'blur(12px) saturate(1.4)', borderRadius: 14, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.05)', padding: '14px 18px' }}>
-              <SectionHeader title="Recent Activity" linkTo={createPageUrl("RecentActivity")} linkLabel="View all →" />
-              {recentActivity.length === 0 ? (
-                <div style={{ padding: '10px 0', fontSize: 13, color: '#9B9A98' }}>No recent activity yet.</div>
-              ) : recentActivity.map((item, idx) => (
-                <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 0' }}>
-                  <div style={{ width: 20, height: 20, borderRadius: 6, background: `${item.color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    {item.icon === 'send' ? (
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={item.color} strokeWidth="2.5" strokeLinecap="round"><polyline points="7 13 12 18 17 13"/><line x1="12" y1="18" x2="12" y2="6"/></svg>
-                    ) : item.icon === 'receive' ? (
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={item.color} strokeWidth="2.5" strokeLinecap="round"><polyline points="17 11 12 6 7 11"/><line x1="12" y1="6" x2="12" y2="18"/></svg>
-                    ) : item.icon === 'check' ? (
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={item.color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                    ) : (
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={item.color} strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                    )}
-                  </div>
-                  <div style={{ flex: 1, minWidth: 0, fontSize: 13, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.description}</div>
-                  <span style={{ fontSize: 11, color: '#9B9A98', flexShrink: 0 }}>{item.detail}</span>
-                </div>
-              ))}
-            </div>
-
-            {/* Your Loans Over Time */}
-            <div style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(12px) saturate(1.4)', WebkitBackdropFilter: 'blur(12px) saturate(1.4)', borderRadius: 14, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.05)', padding: '14px 18px' }} ref={loansChartRef}>
-              <SectionHeader title="Your Loans Over Time" />
-              {!chartData ? (
-                <div style={{ padding: '10px 0', fontSize: 13, color: '#9B9A98' }}>No loan history yet.</div>
-              ) : (
-                <>
-                  {/* Legend */}
-                  <div style={{ display: 'flex', gap: 16, marginBottom: 16, marginTop: 4 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: '#787776' }}>
-                      <div style={{ width: 10, height: 10, borderRadius: 3, background: '#03ACEA' }} />
-                      Lending
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: '#787776' }}>
-                      <div style={{ width: 10, height: 10, borderRadius: 3, background: '#1D5B94' }} />
-                      Borrowing
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: '#9B9A98' }}>
-                      <div style={{ width: 10, height: 10, borderRadius: 3, background: 'rgba(3,172,234,0.25)', border: '1px dashed rgba(3,172,234,0.4)' }} />
-                      Predicted
-                    </div>
-                  </div>
-                  {/* Chart */}
-                  <div style={{ display: 'flex', alignItems: 'flex-end', gap: 14, height: 120 }}>
-                    {chartData.data.map((d, i) => {
-                      const lendPct = (d.owedToYou / chartData.maxVal) * 100;
-                      const borPct = (d.youOwe / chartData.maxVal) * 100;
+              {/* Active Lending */}
+              <div style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(12px) saturate(1.4)', WebkitBackdropFilter: 'blur(12px) saturate(1.4)', borderRadius: 14, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.05)', padding: '14px 18px' }}>
+                <SectionHeader title="Active Lending" linkTo={createPageUrl("YourLoans")} linkLabel="View all →" />
+                {lentLoans.length === 0 ? (
+                  <div style={{ padding: '10px 0', fontSize: 13, color: '#9B9A98' }}>No active lending.</div>
+                ) : (
+                  <div ref={activeLoansRef} style={{ display: 'flex', flexDirection: 'column' }}>
+                    {lentLoans.slice(0, 5).map((loan, idx) => {
+                      const otherProfile = safeAllProfiles.find(p => p.user_id === loan.borrower_id);
+                      const totalAmt = loan.total_amount || loan.amount || 0;
+                      const paidAmt = loan.amount_paid || 0;
+                      const pct = totalAmt > 0 ? Math.round((paidAmt / totalAmt) * 100) : 0;
+                      const name = otherProfile?.full_name?.split(' ')[0] || otherProfile?.username || 'User';
+                      const purpose = loan.purpose ? ` for ${loan.purpose}` : '';
+                      const initial = (otherProfile?.full_name || otherProfile?.username || 'U').charAt(0).toUpperCase();
                       return (
-                        <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'flex-end' }}>
-                          <div style={{ width: '100%', display: 'flex', gap: 3, alignItems: 'flex-end', height: '100%', justifyContent: 'center' }}>
-                            <div style={{ width: 8, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', height: '100%', flexShrink: 0 }}>
-                              <div style={{ width: '100%', height: `${Math.max(lendPct, 2)}%`, borderRadius: '3px 3px 0 0', background: d.isFuture ? 'rgba(3,172,234,0.25)' : '#03ACEA', border: d.isFuture ? '1px dashed rgba(3,172,234,0.5)' : 'none', transition: 'height 0.6s ease-out' }} />
+                        <div key={loan.id} style={{ padding: '9px 0' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                            <div style={{ width: 20, height: 20, borderRadius: 5, flexShrink: 0, overflow: 'hidden', background: 'rgba(0,0,0,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                              {otherProfile?.profile_picture_url ? <img src={otherProfile.profile_picture_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <span style={{ fontSize: 9, fontWeight: 700, color: '#787776' }}>{initial}</span>}
                             </div>
-                            <div style={{ width: 8, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', height: '100%', flexShrink: 0 }}>
-                              <div style={{ width: '100%', height: `${Math.max(borPct, 2)}%`, borderRadius: '3px 3px 0 0', background: d.isFuture ? 'rgba(29,91,148,0.2)' : '#1D5B94', border: d.isFuture ? '1px dashed rgba(29,91,148,0.4)' : 'none', transition: 'height 0.6s ease-out' }} />
-                            </div>
+                            <div style={{ fontSize: 13, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>You lent {name} {formatMoney(totalAmt)}{purpose}</div>
                           </div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <div style={{ flex: 1, height: 6, borderRadius: 3, background: 'rgba(3,172,234,0.1)', overflow: 'hidden' }}>
+                              <div key={`al-${idx}-${activeAnimKey}`} style={{ height: '100%', borderRadius: 3, background: '#03ACEA', width: `${pct}%`, animation: `barGrowRight 0.8s ease-out ${idx * 0.08}s both` }} />
+                            </div>
+                            <span style={{ fontSize: 11, fontWeight: 700, color: '#9B9A98', flexShrink: 0 }}>{pct}%</span>
+                          </div>
+                          <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 3 }}>{formatMoney(paidAmt)} of {formatMoney(totalAmt)} paid back</div>
                         </div>
                       );
                     })}
                   </div>
-                  {/* X-axis labels */}
-                  <div style={{ display: 'flex', gap: 6, marginTop: 6 }}>
-                    {chartData.data.map((d, i) => (
-                      <div key={i} style={{ flex: 1, textAlign: 'center', fontSize: 10, color: d.isFuture ? '#C5C3C0' : d.isCurrent ? '#03ACEA' : '#9B9A98', fontWeight: d.isCurrent ? 700 : 500 }}>
-                        {d.label}
-                      </div>
-                    ))}
+                )}
+              </div>
+            </div>
+
+            {/* Right column: How April → Your Loans Over Time → Active Borrowing */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+              {/* How month is going */}
+              <div style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(12px) saturate(1.4)', WebkitBackdropFilter: 'blur(12px) saturate(1.4)', borderRadius: 14, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.05)', padding: '14px 18px' }}>
+                <SectionHeader title={`How ${format(today, 'MMMM')} is going`} />
+                {/* Received */}
+                <div style={{ padding: '9px 0' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 6 }}>
+                    <span style={{ fontSize: 13, color: '#1A1918' }}>Received</span>
+                    <span style={{ fontSize: 14, fontWeight: 700, color: '#03ACEA', letterSpacing: '-0.01em' }}>{formatMoney(monthlyReceived)}</span>
                   </div>
-                </>
-              )}
-            </div>
-          </div>
-
-          {/* ROW 3: Active Lending | Active Borrowing */}
-          <div className="home-two-col-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, marginBottom: 24, alignItems: 'start' }}>
-            {/* Active Lending */}
-            <div style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(12px) saturate(1.4)', WebkitBackdropFilter: 'blur(12px) saturate(1.4)', borderRadius: 14, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.05)', padding: '14px 18px' }}>
-              <SectionHeader title="Active Lending" linkTo={createPageUrl("YourLoans")} linkLabel="View all →" />
-              {lentLoans.length === 0 ? (
-                <div style={{ padding: '10px 0', fontSize: 13, color: '#9B9A98' }}>No active lending.</div>
-              ) : (
-                <div ref={activeLoansRef} style={{ display: 'flex', flexDirection: 'column' }}>
-                  {lentLoans.slice(0, 5).map((loan, idx) => {
-                    const otherProfile = safeAllProfiles.find(p => p.user_id === loan.borrower_id);
-                    const totalAmt = loan.total_amount || loan.amount || 0;
-                    const paidAmt = loan.amount_paid || 0;
-                    const pct = totalAmt > 0 ? Math.round((paidAmt / totalAmt) * 100) : 0;
-                    const name = otherProfile?.full_name?.split(' ')[0] || otherProfile?.username || 'User';
-                    const purpose = loan.purpose ? ` for ${loan.purpose}` : '';
-                    const initial = (otherProfile?.full_name || otherProfile?.username || 'U').charAt(0).toUpperCase();
-                    return (
-                      <div key={loan.id} style={{ padding: '9px 0' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                          <div style={{ width: 20, height: 20, borderRadius: 5, flexShrink: 0, overflow: 'hidden', background: 'rgba(0,0,0,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            {otherProfile?.profile_picture_url ? <img src={otherProfile.profile_picture_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <span style={{ fontSize: 9, fontWeight: 700, color: '#787776' }}>{initial}</span>}
-                          </div>
-                          <div style={{ fontSize: 13, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>You lent {name} {formatMoney(totalAmt)}{purpose}</div>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <div style={{ flex: 1, height: 6, borderRadius: 3, background: 'rgba(3,172,234,0.1)', overflow: 'hidden' }}>
-                            <div key={`al-${idx}-${activeAnimKey}`} style={{ height: '100%', borderRadius: 3, background: '#03ACEA', width: `${pct}%`, animation: `barGrowRight 0.8s ease-out ${idx * 0.08}s both` }} />
-                          </div>
-                          <span style={{ fontSize: 11, fontWeight: 700, color: '#9B9A98', flexShrink: 0 }}>{pct}%</span>
-                        </div>
-                        <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 3 }}>{formatMoney(paidAmt)} of {formatMoney(totalAmt)} paid back</div>
-                      </div>
-                    );
-                  })}
+                  <div style={{ height: 6, borderRadius: 3, background: 'rgba(3,172,234,0.1)', overflow: 'hidden' }}>
+                    <div style={{ height: '100%', borderRadius: 3, background: '#03ACEA', width: `${monthlyExpectedReceive > 0 ? Math.min((monthlyReceived / monthlyExpectedReceive) * 100, 100) : 0}%`, transition: 'width 0.8s ease-out' }} />
+                  </div>
+                  <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 4 }}>of {formatMoney(monthlyExpectedReceive)} expected</div>
                 </div>
-              )}
-            </div>
-
-            {/* Active Borrowing */}
-            <div style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(12px) saturate(1.4)', WebkitBackdropFilter: 'blur(12px) saturate(1.4)', borderRadius: 14, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.05)', padding: '14px 18px' }}>
-              <SectionHeader title="Active Borrowing" linkTo={createPageUrl("YourLoans")} linkLabel="View all →" />
-              {borrowedLoans.length === 0 ? (
-                <div style={{ padding: '10px 0', fontSize: 13, color: '#9B9A98' }}>No active borrowing.</div>
-              ) : (
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  {borrowedLoans.slice(0, 5).map((loan, idx) => {
-                    const otherProfile = safeAllProfiles.find(p => p.user_id === loan.lender_id);
-                    const totalAmt = loan.total_amount || loan.amount || 0;
-                    const paidAmt = loan.amount_paid || 0;
-                    const pct = totalAmt > 0 ? Math.round((paidAmt / totalAmt) * 100) : 0;
-                    const name = otherProfile?.full_name?.split(' ')[0] || otherProfile?.username || 'User';
-                    const purpose = loan.purpose ? ` for ${loan.purpose}` : '';
-                    const initial = (otherProfile?.full_name || otherProfile?.username || 'U').charAt(0).toUpperCase();
-                    return (
-                      <div key={loan.id} style={{ padding: '9px 0' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                          <div style={{ width: 20, height: 20, borderRadius: 5, flexShrink: 0, overflow: 'hidden', background: 'rgba(0,0,0,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            {otherProfile?.profile_picture_url ? <img src={otherProfile.profile_picture_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <span style={{ fontSize: 9, fontWeight: 700, color: '#787776' }}>{initial}</span>}
-                          </div>
-                          <div style={{ fontSize: 13, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name} lent you {formatMoney(totalAmt)}{purpose}</div>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <div style={{ flex: 1, height: 6, borderRadius: 3, background: 'rgba(29,91,148,0.1)', overflow: 'hidden' }}>
-                            <div key={`ab-${idx}-${activeAnimKey}`} style={{ height: '100%', borderRadius: 3, background: '#1D5B94', width: `${pct}%`, animation: `barGrowRight 0.8s ease-out ${idx * 0.08}s both` }} />
-                          </div>
-                          <span style={{ fontSize: 11, fontWeight: 700, color: '#9B9A98', flexShrink: 0 }}>{pct}%</span>
-                        </div>
-                        <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 3 }}>{formatMoney(paidAmt)} of {formatMoney(totalAmt)} repaid</div>
-                      </div>
-                    );
-                  })}
+                {/* Paid out */}
+                <div style={{ padding: '9px 0' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 6 }}>
+                    <span style={{ fontSize: 13, color: '#1A1918' }}>Paid out</span>
+                    <span style={{ fontSize: 14, fontWeight: 700, color: '#1D5B94', letterSpacing: '-0.01em' }}>{formatMoney(monthlyPaidOut)}</span>
+                  </div>
+                  <div style={{ height: 6, borderRadius: 3, background: 'rgba(29,91,148,0.1)', overflow: 'hidden' }}>
+                    <div style={{ height: '100%', borderRadius: 3, background: '#1D5B94', width: `${monthlyExpectedPay > 0 ? Math.min((monthlyPaidOut / monthlyExpectedPay) * 100, 100) : 0}%`, transition: 'width 0.8s ease-out' }} />
+                  </div>
+                  <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 4 }}>of {formatMoney(monthlyExpectedPay)} expected</div>
                 </div>
-              )}
+              </div>
+
+              {/* Your Loans Over Time */}
+              <div style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(12px) saturate(1.4)', WebkitBackdropFilter: 'blur(12px) saturate(1.4)', borderRadius: 14, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.05)', padding: '14px 18px' }} ref={loansChartRef}>
+                <SectionHeader title="Your Loans Over Time" />
+                {!chartData ? (
+                  <div style={{ padding: '10px 0', fontSize: 13, color: '#9B9A98' }}>No loan history yet.</div>
+                ) : (
+                  <>
+                    {/* Legend */}
+                    <div style={{ display: 'flex', gap: 16, marginBottom: 16, marginTop: 4 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: '#787776' }}>
+                        <div style={{ width: 10, height: 10, borderRadius: 3, background: '#03ACEA' }} />
+                        Lending
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: '#787776' }}>
+                        <div style={{ width: 10, height: 10, borderRadius: 3, background: '#1D5B94' }} />
+                        Borrowing
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: '#9B9A98' }}>
+                        <div style={{ width: 10, height: 10, borderRadius: 3, background: 'rgba(3,172,234,0.25)', border: '1px dashed rgba(3,172,234,0.4)' }} />
+                        Predicted
+                      </div>
+                    </div>
+                    {/* Chart */}
+                    <div style={{ display: 'flex', alignItems: 'flex-end', gap: 14, height: 120 }}>
+                      {chartData.data.map((d, i) => {
+                        const lendPct = (d.owedToYou / chartData.maxVal) * 100;
+                        const borPct = (d.youOwe / chartData.maxVal) * 100;
+                        return (
+                          <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'flex-end' }}>
+                            <div style={{ width: '100%', display: 'flex', gap: 3, alignItems: 'flex-end', height: '100%', justifyContent: 'center' }}>
+                              <div style={{ width: 8, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', height: '100%', flexShrink: 0 }}>
+                                <div style={{ width: '100%', height: `${Math.max(lendPct, 2)}%`, borderRadius: '3px 3px 0 0', background: d.isFuture ? 'rgba(3,172,234,0.25)' : '#03ACEA', border: d.isFuture ? '1px dashed rgba(3,172,234,0.5)' : 'none', transition: 'height 0.6s ease-out' }} />
+                              </div>
+                              <div style={{ width: 8, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', height: '100%', flexShrink: 0 }}>
+                                <div style={{ width: '100%', height: `${Math.max(borPct, 2)}%`, borderRadius: '3px 3px 0 0', background: d.isFuture ? 'rgba(29,91,148,0.2)' : '#1D5B94', border: d.isFuture ? '1px dashed rgba(29,91,148,0.4)' : 'none', transition: 'height 0.6s ease-out' }} />
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                    {/* X-axis labels */}
+                    <div style={{ display: 'flex', gap: 6, marginTop: 6 }}>
+                      {chartData.data.map((d, i) => (
+                        <div key={i} style={{ flex: 1, textAlign: 'center', fontSize: 10, color: d.isFuture ? '#C5C3C0' : d.isCurrent ? '#03ACEA' : '#9B9A98', fontWeight: d.isCurrent ? 700 : 500 }}>
+                          {d.label}
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {/* Active Borrowing */}
+              <div style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(12px) saturate(1.4)', WebkitBackdropFilter: 'blur(12px) saturate(1.4)', borderRadius: 14, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.05)', padding: '14px 18px' }}>
+                <SectionHeader title="Active Borrowing" linkTo={createPageUrl("YourLoans")} linkLabel="View all →" />
+                {borrowedLoans.length === 0 ? (
+                  <div style={{ padding: '10px 0', fontSize: 13, color: '#9B9A98' }}>No active borrowing.</div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    {borrowedLoans.slice(0, 5).map((loan, idx) => {
+                      const otherProfile = safeAllProfiles.find(p => p.user_id === loan.lender_id);
+                      const totalAmt = loan.total_amount || loan.amount || 0;
+                      const paidAmt = loan.amount_paid || 0;
+                      const pct = totalAmt > 0 ? Math.round((paidAmt / totalAmt) * 100) : 0;
+                      const name = otherProfile?.full_name?.split(' ')[0] || otherProfile?.username || 'User';
+                      const purpose = loan.purpose ? ` for ${loan.purpose}` : '';
+                      const initial = (otherProfile?.full_name || otherProfile?.username || 'U').charAt(0).toUpperCase();
+                      return (
+                        <div key={loan.id} style={{ padding: '9px 0' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                            <div style={{ width: 20, height: 20, borderRadius: 5, flexShrink: 0, overflow: 'hidden', background: 'rgba(0,0,0,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                              {otherProfile?.profile_picture_url ? <img src={otherProfile.profile_picture_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <span style={{ fontSize: 9, fontWeight: 700, color: '#787776' }}>{initial}</span>}
+                            </div>
+                            <div style={{ fontSize: 13, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name} lent you {formatMoney(totalAmt)}{purpose}</div>
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <div style={{ flex: 1, height: 6, borderRadius: 3, background: 'rgba(29,91,148,0.1)', overflow: 'hidden' }}>
+                              <div key={`ab-${idx}-${activeAnimKey}`} style={{ height: '100%', borderRadius: 3, background: '#1D5B94', width: `${pct}%`, animation: `barGrowRight 0.8s ease-out ${idx * 0.08}s both` }} />
+                            </div>
+                            <span style={{ fontSize: 11, fontWeight: 700, color: '#9B9A98', flexShrink: 0 }}>{pct}%</span>
+                          </div>
+                          <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 3 }}>{formatMoney(paidAmt)} of {formatMoney(totalAmt)} repaid</div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
