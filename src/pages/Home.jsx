@@ -873,12 +873,12 @@ export default function Home() {
                     position: 'absolute',
                     top: '50%', left: '50%',
                     transform: 'translate(-50%, -50%)',
-                    width: 'calc(100% + 40px)',
-                    height: 'calc(100% + 40px)',
+                    width: 'calc(100% + 20px)',
+                    height: 'calc(100% + 20px)',
                     background: 'linear-gradient(135deg, rgb(3,172,234) 0%, rgb(99,102,241) 25%, rgb(139,92,246) 50%, rgb(124,58,237) 75%, rgb(29,91,148) 100%)',
-                    filter: 'blur(14px) saturate(1.3)',
+                    filter: 'blur(7px) saturate(1.3)',
                     opacity: 0.45,
-                    borderRadius: 20,
+                    borderRadius: 18,
                     zIndex: 0,
                     pointerEvents: 'none',
                   }} />
@@ -886,8 +886,10 @@ export default function Home() {
                   <div style={{
                     position: 'relative', zIndex: 1,
                     padding: '12px 14px', borderRadius: 14,
-                    background: 'white',
-                    border: '2px solid #1D5B94',
+                    background: 'rgba(255,255,255,0.82)',
+                    backdropFilter: 'blur(10px) saturate(1.5)',
+                    WebkitBackdropFilter: 'blur(10px) saturate(1.5)',
+                    border: '1.5px solid rgba(29,91,148,0.35)',
                     boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
                   }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 10 }}>
@@ -897,13 +899,11 @@ export default function Home() {
                       <span style={{ fontSize: 9, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Next Payment Due</span>
                     </div>
                     {nextBorrowerPayment ? (
-                      <>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
-                          <span style={{ fontSize: 19, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em' }}>{format(nextBorrowerPayment.date, 'MMM d')}</span>
-                          {daysLabel && <span style={{ fontSize: 9, fontWeight: 700, color: badgeColor, background: badgeBg, borderRadius: 5, padding: '2px 6px', flexShrink: 0 }}>{daysLabel}</span>}
-                        </div>
-                        <div style={{ fontSize: 11, color: '#9B9A98', textAlign: 'right' }}>{formatMoney(nextBorrowerPayment.payment_amount || 0)} to {nextBorrowerPayment.firstName}</div>
-                      </>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'nowrap', overflow: 'hidden' }}>
+                        <span style={{ fontSize: 15, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em', flexShrink: 0 }}>{format(nextBorrowerPayment.date, 'MMM d')}</span>
+                        {daysLabel && <span style={{ fontSize: 9, fontWeight: 700, color: badgeColor, background: badgeBg, borderRadius: 5, padding: '2px 6px', flexShrink: 0 }}>{daysLabel}</span>}
+                        <span style={{ fontSize: 11, color: '#9B9A98', flexShrink: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{formatMoney(nextBorrowerPayment.payment_amount || 0)} to {nextBorrowerPayment.firstName}</span>
+                      </div>
                     ) : (
                       <>
                         <div style={{ fontSize: 15, fontWeight: 700, color: '#C5C3C0', marginBottom: 4 }}>—</div>
