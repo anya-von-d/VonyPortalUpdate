@@ -1017,7 +1017,7 @@ export default function Home() {
           {/* UPCOMING + HOW MONTH IS GOING */}
           <div className="home-two-col-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48, marginBottom: 36 }}>
             {/* Upcoming */}
-            <div>
+            <div style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(12px) saturate(1.4)', WebkitBackdropFilter: 'blur(12px) saturate(1.4)', borderRadius: 14, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.05)', padding: '14px 18px' }}>
               <SectionHeader title="Upcoming" linkTo={createPageUrl("Upcoming")} linkLabel="Full schedule →" />
               {combinedPaymentEvents.length === 0 ? (
                 <div style={{ padding: '10px 0', fontSize: 13, color: '#9B9A98' }}>You're all clear! Nothing coming up yet.</div>
@@ -1038,9 +1038,9 @@ export default function Home() {
                     </div>
                     <div style={{ flex: 1, minWidth: 0, fontSize: 13, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {event.isLender
-                        ? <><strong>{event.firstName}</strong> pays you</>
-                        : <>Pay <strong>{event.firstName}</strong></>}
-                      {event.purpose && <span style={{ color: '#9B9A98', fontWeight: 400 }}> · {event.purpose}</span>}
+                        ? <>{event.firstName} pays you</>
+                        : <>Pay {event.firstName}</>}
+                      {event.purpose && <span style={{ color: '#9B9A98' }}> · {event.purpose}</span>}
                     </div>
                     <span style={{ fontSize: 13, fontWeight: 700, flexShrink: 0, color: event.isLender ? '#03ACEA' : '#1A1918', letterSpacing: '-0.01em' }}>
                       {amtSign}{formatMoney(event.remainingAmount)}
@@ -1051,7 +1051,7 @@ export default function Home() {
             </div>
 
             {/* How month is going */}
-            <div>
+            <div style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(12px) saturate(1.4)', WebkitBackdropFilter: 'blur(12px) saturate(1.4)', borderRadius: 14, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.05)', padding: '14px 18px' }}>
               <SectionHeader title={`How ${format(today, 'MMMM')} is going`} />
               {/* Received */}
               <div style={{ padding: '9px 0' }}>
@@ -1081,7 +1081,7 @@ export default function Home() {
           {/* RECENT ACTIVITY + ACTIVE LOANS */}
           <div className="home-two-col-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48, marginBottom: 36 }}>
             {/* Recent Activity */}
-            <div>
+            <div style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(12px) saturate(1.4)', WebkitBackdropFilter: 'blur(12px) saturate(1.4)', borderRadius: 14, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.05)', padding: '14px 18px' }}>
               <SectionHeader title="Recent Activity" linkTo={createPageUrl("RecentActivity")} linkLabel="View all →" />
               {recentActivity.length === 0 ? (
                 <div style={{ padding: '10px 0', fontSize: 13, color: '#9B9A98' }}>No recent activity yet.</div>
@@ -1105,7 +1105,7 @@ export default function Home() {
             </div>
 
             {/* Active Loans */}
-            <div>
+            <div style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(12px) saturate(1.4)', WebkitBackdropFilter: 'blur(12px) saturate(1.4)', borderRadius: 14, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.05)', padding: '14px 18px' }}>
               <SectionHeader title="Active Loans" linkTo={createPageUrl("YourLoans")} linkLabel="View all →" />
               {myLoans.filter(l => l && l.status === 'active').length === 0 ? (
                 <div style={{ padding: '10px 0', fontSize: 13, color: '#9B9A98' }}>No active loans yet.</div>
@@ -1133,7 +1133,7 @@ export default function Home() {
                               <span style={{ fontSize: 9, fontWeight: 700, color: '#787776' }}>{initial}</span>
                             )}
                           </div>
-                          <div style={{ fontSize: 13, color: '#1A1918', fontWeight: 500, lineHeight: 1.4 }}>{headerText}</div>
+                          <div style={{ fontSize: 13, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{headerText}</div>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                           <div style={{ flex: 1, height: 6, borderRadius: 3, background: isLender ? 'rgba(3,172,234,0.1)' : 'rgba(29,91,148,0.1)', overflow: 'hidden' }}>
