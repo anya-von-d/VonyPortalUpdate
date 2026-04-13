@@ -25,6 +25,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import BorrowerSignatureModal from "@/components/loans/BorrowerSignatureModal";
+import UserAvatar from "@/components/ui/UserAvatar";
 
 export default function MyLoanOffers({ offers, users, currentUser, onDelete, onSign, onDecline, hideHeader = false }) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -112,11 +113,7 @@ export default function MyLoanOffers({ offers, users, currentUser, onDelete, onS
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-3">
-                          <img
-                            src={otherParty?.profile_picture_url || `https://ui-avatars.com/api/?name=${otherParty?.full_name || 'User'}&background=678AFB&color=fff`}
-                            alt={otherParty?.full_name || 'User'}
-                            className="w-10 h-10 rounded-full"
-                          />
+                          <UserAvatar name={otherParty?.full_name || otherParty?.username} src={otherParty?.profile_picture_url} size={40} />
                           <div className="flex-1">
                             <p className="font-semibold text-slate-800">
                               {otherParty?.full_name || 'Unknown User'}

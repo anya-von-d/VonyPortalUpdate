@@ -12,6 +12,7 @@ import { toLocalDate, getLocalToday, daysUntil as daysUntilDate } from "@/compon
 
 import { CardEntrance, CountUp } from "@/components/ui/animations";
 import MeshMobileNav from "@/components/MeshMobileNav";
+import UserAvatar from "@/components/ui/UserAvatar";
 
 // SVG star field data — exact positions from mockup
 const STAR_CIRCLES = [
@@ -825,13 +826,7 @@ export default function Home() {
                 {notifCount > 0 && <div style={{ position: 'absolute', top: 2, right: 2, width: 7, height: 7, borderRadius: '50%', background: '#03ACEA', border: '1.5px solid #ffffff' }} />}
               </Link>
               <Link to={createPageUrl("Profile")} style={{ textDecoration: 'none' }}>
-                <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(3,172,234,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-                  {user.profile_picture_url ? (
-                    <img src={user.profile_picture_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  ) : (
-                    <span style={{ fontSize: 12, fontWeight: 700, color: '#03ACEA' }}>{avatarInitial}</span>
-                  )}
-                </div>
+                <UserAvatar name={user.full_name || user.username} src={user.profile_picture_url} size={32} />
               </Link>
             </div>
           </div>
@@ -1119,9 +1114,7 @@ export default function Home() {
                       return (
                         <div key={loan.id} style={{ padding: '9px 0' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                            <div style={{ width: 20, height: 20, borderRadius: 5, flexShrink: 0, overflow: 'hidden', background: 'rgba(0,0,0,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                              {otherProfile?.profile_picture_url ? <img src={otherProfile.profile_picture_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <span style={{ fontSize: 9, fontWeight: 700, color: '#787776' }}>{initial}</span>}
-                            </div>
+                            <UserAvatar name={otherProfile?.full_name || otherProfile?.username} src={otherProfile?.profile_picture_url} size={20} radius={5} />
                             <div style={{ fontSize: 13, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>You lent {name} {formatMoney(totalAmt)}{purpose}</div>
                           </div>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -1239,9 +1232,7 @@ export default function Home() {
                       return (
                         <div key={loan.id} style={{ padding: '9px 0' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                            <div style={{ width: 20, height: 20, borderRadius: 5, flexShrink: 0, overflow: 'hidden', background: 'rgba(0,0,0,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                              {otherProfile?.profile_picture_url ? <img src={otherProfile.profile_picture_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <span style={{ fontSize: 9, fontWeight: 700, color: '#787776' }}>{initial}</span>}
-                            </div>
+                            <UserAvatar name={otherProfile?.full_name || otherProfile?.username} src={otherProfile?.profile_picture_url} size={20} radius={5} />
                             <div style={{ fontSize: 13, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name} lent you {formatMoney(totalAmt)}{purpose}</div>
                           </div>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>

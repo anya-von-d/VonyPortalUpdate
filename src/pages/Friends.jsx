@@ -21,6 +21,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import MeshMobileNav from "@/components/MeshMobileNav";
+import UserAvatar from "@/components/ui/UserAvatar";
 
 export default function Friends() {
   const { user: authUser, userProfile, logout } = useAuth();
@@ -367,12 +368,7 @@ export default function Friends() {
             if (!friendProfile) return null;
             return (
               <div key={friendship.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '7px 0', borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
-                <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'rgba(3,172,234,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden' }}>
-                  {friendProfile.profile_picture_url || friendProfile.avatar_url
-                    ? <img src={friendProfile.profile_picture_url || friendProfile.avatar_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    : <span style={{ fontSize: 11, fontWeight: 600, color: '#03ACEA' }}>{(friendProfile.full_name || friendProfile.username || '?').charAt(0)}</span>
-                  }
-                </div>
+                <UserAvatar name={friendProfile.full_name || friendProfile.username} src={friendProfile.profile_picture_url || friendProfile.avatar_url} size={28} />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{friendProfile.full_name || friendProfile.username}</div>
                   <div style={{ fontSize: 11, color: '#9B9A98' }}>@{friendProfile.username}</div>
@@ -405,12 +401,7 @@ export default function Friends() {
                     const sentRequest = getSentRequestTo(profile.user_id);
                     return (
                       <div key={profile.user_id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 0', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
-                        <div style={{ width: 36, height: 36, borderRadius: '50%', overflow: 'hidden', flexShrink: 0, background: 'rgba(3,172,234,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          {profile.profile_picture_url || profile.avatar_url
-                            ? <img src={profile.profile_picture_url || profile.avatar_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                            : <span style={{ fontSize: 13, fontWeight: 600, color: '#03ACEA' }}>{(profile.full_name || profile.username || '?').charAt(0).toUpperCase()}</span>
-                          }
-                        </div>
+                        <UserAvatar name={profile.full_name || profile.username} src={profile.profile_picture_url || profile.avatar_url} size={36} />
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <p style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', margin: 0 }}>{profile.full_name || profile.username}</p>
                           <p style={{ fontSize: 11, color: '#9B9A98', margin: '1px 0 0' }}>@{profile.username}</p>
@@ -450,12 +441,7 @@ export default function Friends() {
               if (!profile) return null;
               return (
                 <div key={request.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 0', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
-                  <div style={{ width: 36, height: 36, borderRadius: '50%', overflow: 'hidden', flexShrink: 0, background: 'rgba(3,172,234,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    {profile.profile_picture_url || profile.avatar_url
-                      ? <img src={profile.profile_picture_url || profile.avatar_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                      : <span style={{ fontSize: 13, fontWeight: 600, color: '#03ACEA' }}>{(profile.full_name || profile.username || '?').charAt(0).toUpperCase()}</span>
-                    }
-                  </div>
+                  <UserAvatar name={profile.full_name || profile.username} src={profile.profile_picture_url || profile.avatar_url} size={36} />
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <p style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', margin: 0 }}>{profile.full_name || profile.username}</p>
                     <p style={{ fontSize: 11, color: '#9B9A98', margin: '1px 0 0' }}>@{profile.username}</p>

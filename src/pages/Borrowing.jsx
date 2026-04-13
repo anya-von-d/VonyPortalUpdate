@@ -27,6 +27,7 @@ import { formatMoney } from "@/components/utils/formatMoney";
 import { toLocalDate, getLocalToday, daysUntil as daysUntilDate } from "@/components/utils/dateUtils";
 import { useAuth } from "@/lib/AuthContext";
 import MeshMobileNav from "@/components/MeshMobileNav";
+import UserAvatar from "@/components/ui/UserAvatar";
 
 import LoanCard from "@/components/loans/LoanCard";
 
@@ -759,22 +760,14 @@ export default function Borrowing() {
           <h4 className="font-semibold text-slate-800 mb-3">Parties</h4>
           <div className="grid grid-cols-2 gap-4">
             <div className="flex items-center gap-3">
-              <img
-                src={lenderInfo.profile_picture_url || `https://ui-avatars.com/api/?name=${encodeURIComponent((lenderInfo.full_name || 'L').charAt(0))}&background=678AFB&color=fff&size=64`}
-                alt={lenderInfo.full_name}
-                className="w-10 h-10 rounded-full"
-              />
+              <UserAvatar name={lenderInfo.full_name} src={lenderInfo.profile_picture_url} size={40} />
               <div>
                 <p className="text-xs text-slate-500">Lender</p>
                 <p className="font-medium text-slate-800">{lenderInfo.full_name}</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <img
-                src={borrowerInfo.profile_picture_url || `https://ui-avatars.com/api/?name=${encodeURIComponent((borrowerInfo.full_name || 'B').charAt(0))}&background=678AFB&color=fff&size=64`}
-                alt={borrowerInfo.full_name}
-                className="w-10 h-10 rounded-full"
-              />
+              <UserAvatar name={borrowerInfo.full_name} src={borrowerInfo.profile_picture_url} size={40} />
               <div>
                 <p className="text-xs text-slate-500">Borrower</p>
                 <p className="font-medium text-slate-800">{borrowerInfo.full_name}</p>
@@ -1368,8 +1361,7 @@ export default function Borrowing() {
                             const selLender = publicProfiles.find(p => p.user_id === manageLoanSelected.lender_id);
                             return (
                               <div className="glass-hero-alert" style={{ padding: '12px 20px', display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-                                <img src={selLender?.profile_picture_url || selLender?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent((selLender?.full_name || 'U').charAt(0))}&background=678AFB&color=fff&size=64`}
-                                  alt={selLender?.full_name || 'Lender'} style={{ width: 28, height: 28, borderRadius: '50%', objectFit: 'cover', flexShrink: 0, background: 'white' }} />
+                                <UserAvatar name={selLender?.full_name || selLender?.username} src={selLender?.profile_picture_url || selLender?.avatar_url} size={28} />
                                 <p style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', margin: 0 }}>
                                   {selLender?.full_name || 'User'} lent you ${(manageLoanSelected.amount || 0).toLocaleString()} to help with {manageLoanSelected.purpose || 'personal expenses'}
                                 </p>

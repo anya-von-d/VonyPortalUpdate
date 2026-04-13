@@ -10,6 +10,7 @@ import { useAuth } from "@/lib/AuthContext";
 import LoanActivity from "../components/loans/LoanActivity";
 import { formatMoney } from "@/components/utils/formatMoney";
 import MeshMobileNav from "@/components/MeshMobileNav";
+import UserAvatar from "@/components/ui/UserAvatar";
 
 const ROLE_OPTIONS = [
   { id: 'all', label: 'All Categories' },
@@ -881,22 +882,14 @@ export default function LoanAgreements() {
           <h4 style={{ fontSize: 14, fontWeight: 600, color: '#1A1918', marginBottom: 12 }}>Parties</h4>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <img
-                src={lenderInfo.profile_picture_url || `https://ui-avatars.com/api/?name=${encodeURIComponent((lenderInfo.full_name || 'L').charAt(0))}&background=678AFB&color=fff&size=64`}
-                alt={lenderInfo.full_name}
-                style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover' }}
-              />
+              <UserAvatar name={lenderInfo.full_name} src={lenderInfo.profile_picture_url} size={40} />
               <div>
                 <p style={{ fontSize: 11, color: '#787776', margin: 0 }}>Lender</p>
                 <p style={{ fontWeight: 500, color: '#1A1918', margin: 0 }}>{lenderInfo.full_name}</p>
               </div>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <img
-                src={borrowerInfo.profile_picture_url || `https://ui-avatars.com/api/?name=${encodeURIComponent((borrowerInfo.full_name || 'B').charAt(0))}&background=678AFB&color=fff&size=64`}
-                alt={borrowerInfo.full_name}
-                style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover' }}
-              />
+              <UserAvatar name={borrowerInfo.full_name} src={borrowerInfo.profile_picture_url} size={40} />
               <div>
                 <p style={{ fontSize: 11, color: '#787776', margin: 0 }}>Borrower</p>
                 <p style={{ fontWeight: 500, color: '#1A1918', margin: 0 }}>{borrowerInfo.full_name}</p>

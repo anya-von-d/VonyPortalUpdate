@@ -38,6 +38,7 @@ import { jsPDF } from "jspdf";
 import { formatMoney } from "@/components/utils/formatMoney";
 import { toLocalDate, getLocalToday, daysUntil as daysUntilDate, daysBetween } from "@/components/utils/dateUtils";
 import MeshMobileNav from "@/components/MeshMobileNav";
+import UserAvatar from "@/components/ui/UserAvatar";
 
 const STAR_CIRCLES = [
   {cx:82,cy:45,o:0.7},{cx:195,cy:112,o:0.5},{cx:310,cy:28,o:0.8},{cx:420,cy:198,o:0.4},
@@ -1373,22 +1374,14 @@ export default function Lending({ initialTab }) {
           <h4 className="font-semibold text-slate-800 mb-3">Parties</h4>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex items-center gap-3">
-              <img
-                src={lenderInfo.profile_picture_url || `https://ui-avatars.com/api/?name=${encodeURIComponent((lenderInfo.full_name || 'L').charAt(0))}&background=678AFB&color=fff&size=64`}
-                alt={lenderInfo.full_name}
-                className="w-10 h-10 rounded-full"
-              />
+              <UserAvatar name={lenderInfo.full_name} src={lenderInfo.profile_picture_url} size={40} />
               <div>
                 <p className="text-xs text-slate-500">Lender</p>
                 <p className="font-medium text-slate-800">{lenderInfo.full_name}</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <img
-                src={borrowerInfo.profile_picture_url || `https://ui-avatars.com/api/?name=${encodeURIComponent((borrowerInfo.full_name || 'B').charAt(0))}&background=678AFB&color=fff&size=64`}
-                alt={borrowerInfo.full_name}
-                className="w-10 h-10 rounded-full"
-              />
+              <UserAvatar name={borrowerInfo.full_name} src={borrowerInfo.profile_picture_url} size={40} />
               <div>
                 <p className="text-xs text-slate-500">Borrower</p>
                 <p className="font-medium text-slate-800">{borrowerInfo.full_name}</p>

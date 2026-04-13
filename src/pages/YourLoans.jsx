@@ -22,6 +22,7 @@ import { formatMoney } from "@/components/utils/formatMoney";
 import { toLocalDate, getLocalToday, daysUntil as daysUntilDate } from "@/components/utils/dateUtils";
 import LoanDetailsModal from "@/components/loans/LoanDetailsModal";
 import MeshMobileNav from "@/components/MeshMobileNav";
+import UserAvatar from "@/components/ui/UserAvatar";
 
 export default function YourLoans() {
   const { logout } = useAuth();
@@ -512,7 +513,7 @@ export default function YourLoans() {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
             {[{ label: 'Lender', info: lenderInfo }, { label: 'Borrower', info: borrowerInfo }].map(({ label, info }) => (
               <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <img src={info.profile_picture_url || `https://ui-avatars.com/api/?name=${encodeURIComponent((info.full_name || 'U').charAt(0))}&background=678AFB&color=fff&size=64`} alt={info.full_name} style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover' }} />
+                <UserAvatar name={info.full_name} src={info.profile_picture_url} size={40} />
                 <div><p style={{ fontSize: 11, color: '#787776', margin: 0 }}>{label}</p><p style={{ fontWeight: 500, color: '#1A1918', margin: 0 }}>{info.full_name}</p></div>
               </div>
             ))}
@@ -685,13 +686,7 @@ export default function YourLoans() {
                 return (
                   <div key={loan.id} style={{ padding: '8px 0' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                      <div style={{ width: 20, height: 20, borderRadius: '50%', flexShrink: 0, overflow: 'hidden', background: 'rgba(0,0,0,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        {otherParty?.profile_picture_url ? (
-                          <img src={otherParty.profile_picture_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                        ) : (
-                          <span style={{ fontSize: 9, fontWeight: 700, color: '#787776' }}>{initial}</span>
-                        )}
-                      </div>
+                      <UserAvatar name={otherParty?.full_name || otherParty?.username} src={otherParty?.profile_picture_url} size={20} />
                       <div style={{ fontSize: 13, color: '#1A1918', fontWeight: 500, lineHeight: 1.4 }}>{headerText}</div>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Payment, Loan, Friendship } from "@/entities/all";
 import { useAuth } from "@/lib/AuthContext";
+import UserAvatar from "@/components/ui/UserAvatar";
 
 const NAV_ITEMS = [
   { label: 'Home',            to: '/' },
@@ -128,21 +129,7 @@ export default function MeshMobileNav({ user, activePage }) {
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             width: 36, height: 36, borderRadius: 10, textDecoration: 'none',
           }}>
-            {user?.avatar_url ? (
-              <img src={user.avatar_url} alt="Profile" style={{ width: 28, height: 28, borderRadius: '50%', objectFit: 'cover', border: '1.5px solid rgba(255,255,255,0.7)' }} />
-            ) : (
-              <div style={{
-                width: 28, height: 28, borderRadius: '50%',
-                background: 'rgba(255,255,255,0.25)',
-                border: '1.5px solid rgba(255,255,255,0.7)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                  <circle cx="12" cy="7" r="4"/>
-                </svg>
-              </div>
-            )}
+            <UserAvatar name={user?.full_name || user?.username} src={user?.avatar_url || user?.profile_picture_url} size={28} />
           </Link>
         </div>
       </div>

@@ -21,6 +21,7 @@ import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { useAuth } from "@/lib/AuthContext";
 import MeshMobileNav from "@/components/MeshMobileNav";
+import UserAvatar from "@/components/ui/UserAvatar";
 
 const SHADOW = '0px 50px 40px rgba(0,0,0,0.02), 0px 50px 40px rgba(0,0,0,0.04), 0px 20px 40px rgba(0,0,0,0.08), 0px 3px 10px rgba(0,0,0,0.12)';
 
@@ -442,11 +443,7 @@ export default function Profile() {
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, marginBottom: 32 }}>
             {/* Photo + hover overlay */}
             <div style={{ position: 'relative', display: 'inline-block' }}>
-              <img
-                src={formData.profile_picture_url || `https://ui-avatars.com/api/?name=${encodeURIComponent((user.full_name || 'User').charAt(0))}&background=678AFB&color=fff&size=128`}
-                alt="Profile"
-                style={{ width: 88, height: 88, borderRadius: '50%', objectFit: 'cover', border: '3px solid rgba(0,0,0,0.06)', boxShadow: '0 4px 16px rgba(0,0,0,0.12)', display: 'block' }}
-              />
+              <UserAvatar name={user.full_name || user.username} src={formData.profile_picture_url} size={88} style={{ border: '3px solid rgba(0,0,0,0.06)', boxShadow: '0 4px 16px rgba(0,0,0,0.12)', display: 'block' }} />
               <button
                 onClick={() => setShowPhotoMenu(!showPhotoMenu)}
                 disabled={isSaving}

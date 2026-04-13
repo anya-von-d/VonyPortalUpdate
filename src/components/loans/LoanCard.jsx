@@ -7,6 +7,7 @@ import { Calendar, DollarSign, Percent, Clock, Send, CircleDollarSign } from "lu
 import { PublicProfile } from "@/entities/all";
 import { format } from "date-fns";
 import { daysUntil as daysUntilDate } from "@/components/utils/dateUtils";
+import UserAvatar from "@/components/ui/UserAvatar";
 
 const statusColors = {
   pending: "bg-yellow-100 text-yellow-800 border-yellow-200",
@@ -60,11 +61,7 @@ export default function LoanCard({ loan, type, onMakePayment, onDetails }) {
           {/* Header with user info and amount */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <img
-                src={otherUser?.profile_picture_url || `https://ui-avatars.com/api/?name=${encodeURIComponent((otherUser?.full_name || 'User').charAt(0))}&background=678AFB&color=fff&size=128`}
-                alt={otherUser?.full_name}
-                className="w-10 h-10 rounded-full object-cover"
-              />
+              <UserAvatar name={otherUser?.full_name || otherUser?.username} src={otherUser?.profile_picture_url} size={40} />
               <div className="flex flex-col">
                 <h3 className="font-semibold text-slate-800">
                   {otherUser?.full_name || 'Loading...'}

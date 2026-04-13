@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Search, Check, User as UserIcon, Star, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
+import UserAvatar from "@/components/ui/UserAvatar";
 
 export function UserSelector({ users = [], value, onSelect, placeholder = "Choose a friend...", onAddFriends, showAddFriends = false }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -105,12 +106,7 @@ export function UserSelector({ users = [], value, onSelect, placeholder = "Choos
                       onMouseEnter={e => { if (!isSelected) e.currentTarget.style.background = 'rgba(0,0,0,0.04)'; }}
                       onMouseLeave={e => { e.currentTarget.style.background = isSelected ? 'rgba(3,172,234,0.08)' : 'transparent'; }}
                     >
-                      <img
-                        src={user.profile_picture_url || user.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.full_name || 'User')}&background=678AFB&color=fff&size=32`}
-                        alt={user.full_name || 'User'}
-                        style={{ width: 30, height: 30, borderRadius: '50%', flexShrink: 0 }}
-                        onError={e => { e.target.src = `https://ui-avatars.com/api/?name=User&background=678AFB&color=fff&size=32`; }}
-                      />
+                      <UserAvatar name={user.full_name || user.username} src={user.profile_picture_url || user.avatar_url} size={30} />
                       <div style={{ flex: 1, minWidth: 0, display: 'flex', alignItems: 'center', gap: 6 }}>
                         <span style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user.full_name || 'Unknown'}</span>
                         <span style={{ fontSize: 11, color: '#9B9A98', whiteSpace: 'nowrap' }}>@{user.username}</span>

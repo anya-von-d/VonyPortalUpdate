@@ -12,6 +12,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import { AnimatedCheckmark } from "@/components/ui/animations";
 import MeshMobileNav from "@/components/MeshMobileNav";
+import UserAvatar from "@/components/ui/UserAvatar";
 
 const SHADOW = '0px 50px 40px rgba(0,0,0,0.02), 0px 50px 40px rgba(0,0,0,0.04), 0px 20px 40px rgba(0,0,0,0.06), 0px 3px 10px rgba(0,0,0,0.12)';
 
@@ -550,18 +551,7 @@ export default function RecordPayment() {
                         border: 'none',
                       }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <div style={{
-                            width: 26, height: 26, borderRadius: '50%', flexShrink: 0, overflow: 'hidden',
-                            background: isSelected ? 'rgba(3,172,234,0.15)' : 'rgba(0,0,0,0.06)',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            outline: isSelected ? '2px solid #03ACEA' : 'none', outlineOffset: 1,
-                          }}>
-                            {other.profile_picture_url ? (
-                              <img src={other.profile_picture_url} alt="" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
-                            ) : (
-                              <span style={{ fontSize: 11, fontWeight: 600, color: isSelected ? '#03ACEA' : '#787776' }}>{(other.full_name || '?').charAt(0).toUpperCase()}</span>
-                            )}
-                          </div>
+                          <UserAvatar name={other.full_name || other.username} src={other.profile_picture_url} size={26} style={{ outline: isSelected ? '2px solid #03ACEA' : 'none', outlineOffset: 1, flexShrink: 0 }} />
                           <div style={{ flex: 1, minWidth: 0 }}>
                             <p style={{ fontSize: 12, fontWeight: isSelected ? 600 : 500, color: isSelected ? '#1A1918' : '#3A3938', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                               {other.full_name || other.username}
