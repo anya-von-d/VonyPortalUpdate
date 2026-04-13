@@ -705,7 +705,7 @@ export default function Home() {
   overdueCountRef.current = alertTotal;
 
   const SectionHeader = ({ title, linkTo, linkLabel }) => (
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 10, marginBottom: 4 }}>
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 10, marginBottom: 4, borderBottom: '1px solid rgba(0,0,0,0.07)' }}>
       <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{title}</span>
       {linkTo && <Link to={linkTo} style={{ fontSize: 11, fontWeight: 500, color: '#9B9A98', textDecoration: 'none' }}>{linkLabel}</Link>}
     </div>
@@ -871,14 +871,14 @@ export default function Home() {
                   {/* Aurora glow */}
                   <div style={{
                     position: 'absolute',
-                    bottom: 14, left: '50%',
-                    transform: 'translateX(-50%)',
-                    width: 'calc(100% + 36px)',
-                    height: 'calc(100% - 20px)',
-                    background: 'linear-gradient(225deg, rgb(3,172,234), rgb(29,91,148) 51%, rgb(124,58,237))',
-                    filter: 'blur(12px) saturate(1.18)',
-                    opacity: 0.4,
-                    borderRadius: 16,
+                    top: '50%', left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: 'calc(100% + 40px)',
+                    height: 'calc(100% + 40px)',
+                    background: 'linear-gradient(135deg, rgb(3,172,234) 0%, rgb(99,102,241) 25%, rgb(139,92,246) 50%, rgb(124,58,237) 75%, rgb(29,91,148) 100%)',
+                    filter: 'blur(14px) saturate(1.3)',
+                    opacity: 0.45,
+                    borderRadius: 20,
                     zIndex: 0,
                     pointerEvents: 'none',
                   }} />
@@ -1031,7 +1031,7 @@ export default function Home() {
           )}
 
           {/* UPCOMING + HOW MONTH IS GOING */}
-          <div className="home-two-col-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48, marginBottom: 36, alignItems: 'start' }}>
+          <div className="home-two-col-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48, marginBottom: 24, alignItems: 'start' }}>
             {/* Upcoming */}
             <div style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(12px) saturate(1.4)', WebkitBackdropFilter: 'blur(12px) saturate(1.4)', borderRadius: 14, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.05)', padding: '14px 18px' }}>
               <SectionHeader title="Upcoming" linkTo={createPageUrl("Upcoming")} linkLabel="Full schedule →" />
@@ -1095,7 +1095,7 @@ export default function Home() {
           </div>
 
           {/* RECENT ACTIVITY + ACTIVE LOANS (left) | YOUR LOANS OVER TIME (right) */}
-          <div className="home-two-col-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48, marginBottom: 36, alignItems: 'start' }}>
+          <div className="home-two-col-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48, marginBottom: 24, alignItems: 'start' }}>
             {/* Left: Recent Activity + Active Loans stacked */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 
