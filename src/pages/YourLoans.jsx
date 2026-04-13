@@ -1224,21 +1224,22 @@ export default function YourLoans() {
 
   const LENDER_GREEN = '#03ACEA';
 
-  const RightSection = ({ title, children }) => (
-    <div style={{ marginBottom: 40 }}>
-      <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 9 }}>{title}</div>
-      <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 14 }} />
-      {children}
-    </div>
-  );
-
   const PageCard = ({ title, headerRight, children, style, highlight }) => (
-    <div style={{ marginBottom: 24, ...style }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 9 }}>
+    <div style={{
+      marginBottom: 24,
+      background: 'rgba(255,255,255,0.85)',
+      backdropFilter: 'blur(12px) saturate(1.4)',
+      WebkitBackdropFilter: 'blur(12px) saturate(1.4)',
+      borderRadius: 14,
+      border: '1px solid rgba(0,0,0,0.07)',
+      boxShadow: '0 2px 16px rgba(0,0,0,0.05)',
+      ...style
+    }}>
+      <div style={{ padding: '14px 18px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 9 }}>
         <div style={{ fontSize: 10, fontWeight: 700, color: highlight ? '#03ACEA' : '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{title}</div>
         {headerRight && <div style={{ flexShrink: 0 }}>{headerRight}</div>}
       </div>
-      <div style={{ height: 1, background: highlight ? 'rgba(3,172,234,0.2)' : 'rgba(0,0,0,0.06)', marginBottom: 14 }} />
+      <div style={{ height: 1, background: highlight ? 'rgba(3,172,234,0.2)' : 'rgba(0,0,0,0.06)' }} />
       <div style={{ overflow: 'visible', ...(highlight ? { display: 'flex', flexDirection: 'column' } : {}) }}>
         {children}
       </div>
@@ -1307,7 +1308,7 @@ export default function YourLoans() {
       </AnimatePresence>
 
       {/* Three-column layout */}
-      <div className="mesh-layout" style={{ minHeight: '100vh', display: 'grid', gridTemplateColumns: '180px 1fr 300px', gap: 0, fontFamily: "'DM Sans', sans-serif" }}>
+      <div className="mesh-layout" style={{ minHeight: '100vh', display: 'grid', gridTemplateColumns: '180px 1fr', gap: 0, fontFamily: "'DM Sans', sans-serif" }}>
 
         {/* ── LEFT: Sidebar nav ── */}
         <div className="mesh-left" style={{ background: '#fafafa', borderRight: '1px solid rgba(0,0,0,0.06)' }}>
@@ -1398,7 +1399,7 @@ export default function YourLoans() {
         </div>
 
         {/* ── CENTER ── */}
-        <div className="mesh-center" style={{ background: 'white', borderRight: '1px solid rgba(0,0,0,0.06)', padding: '28px 48px 80px' }}>
+        <div className="mesh-center" style={{ background: 'white', padding: '28px 48px 80px' }}>
 
           {/* Tab header */}
           <div style={{ display: 'flex', gap: 24, alignItems: 'flex-end', marginLeft: -48, marginRight: -48, paddingLeft: 48, paddingRight: 48 }}>
@@ -1488,71 +1489,6 @@ export default function YourLoans() {
           {activeTab === 'details' && renderDetailsTab()}
         </div>
 
-        {/* ── RIGHT PANEL ── */}
-        <div className="mesh-right" style={{ background: '#fafafa' }}>
-          <div style={{ position: 'sticky', top: 0, padding: '28px 28px 0' }}>
-          {/* Bell + Profile icons */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 10, marginBottom: 24 }}>
-            <Link to={createPageUrl("Requests")} style={{ position: 'relative', textDecoration: 'none' }}>
-              <div style={{ width: 32, height: 32, borderRadius: 9, background: 'rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#787776" strokeWidth="2" strokeLinecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-              </div>
-            </Link>
-            <Link to={createPageUrl("Profile")} style={{ textDecoration: 'none' }}>
-              <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(3,172,234,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-              </div>
-            </Link>
-          </div>
-
-          {/* Pending confirmations */}
-          {pendingToConfirm.length > 0 && (
-            <RightSection title="Needs Attention">
-              {pendingToConfirm.slice(0, 5).map((p) => {
-                const loan = allLoans.find(l => l.id === p.loan_id);
-                const borrowerProfile = loan ? publicProfiles.find(pr => pr.user_id === loan.borrower_id) : null;
-                const name = borrowerProfile?.full_name?.split(' ')[0] || 'User';
-                return (
-                  <div key={p.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0' }}>
-                    <div style={{ width: 26, height: 26, borderRadius: 7, background: 'rgba(245,158,11,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-                    </div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name} paid {formatMoney(p.amount || 0)}</div>
-                      <div style={{ fontSize: 11, color: '#9B9A98' }}>Awaiting confirmation</div>
-                    </div>
-                  </div>
-                );
-              })}
-            </RightSection>
-          )}
-
-          {/* How month is going */}
-          <RightSection title={`How ${format(today, 'MMMM')} is going`}>
-            <div style={{ marginBottom: 16 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 6 }}>
-                <span style={{ fontSize: 13, color: '#787776' }}>Received</span>
-                <span style={{ fontSize: 14, fontWeight: 700, color: LENDER_GREEN, letterSpacing: '-0.01em' }}>{formatMoney(monthlyReceived)}</span>
-              </div>
-              <div style={{ height: 6, background: 'rgba(0,0,0,0.06)', borderRadius: 3, overflow: 'hidden' }}>
-                <div style={{ height: '100%', borderRadius: 3, background: LENDER_GREEN, width: `${monthlyExpectedReceive > 0 ? Math.min((monthlyReceived / monthlyExpectedReceive) * 100, 100) : 0}%`, transition: 'width 0.8s ease-out' }} />
-              </div>
-              <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 4 }}>of {formatMoney(monthlyExpectedReceive)} expected</div>
-            </div>
-            <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 6 }}>
-                <span style={{ fontSize: 13, color: '#787776' }}>Paid out</span>
-                <span style={{ fontSize: 14, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.01em' }}>{formatMoney(monthlyPaidOut)}</span>
-              </div>
-              <div style={{ height: 6, background: 'rgba(0,0,0,0.06)', borderRadius: 3, overflow: 'hidden' }}>
-                <div style={{ height: '100%', borderRadius: 3, background: '#7EC0EA', width: `${monthlyExpectedPay > 0 ? Math.min((monthlyPaidOut / monthlyExpectedPay) * 100, 100) : 0}%`, transition: 'width 0.8s ease-out' }} />
-              </div>
-              <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 4 }}>of {formatMoney(monthlyExpectedPay)} expected</div>
-            </div>
-          </RightSection>
-
-          </div>
-        </div>
       </div>
 
       {/* Modals */}
