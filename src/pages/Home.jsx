@@ -1153,7 +1153,7 @@ export default function Home() {
                         Borrowing
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: '#9B9A98' }}>
-                        <div style={{ width: 10, height: 10, borderRadius: 3, background: 'rgba(3,172,234,0.25)', border: '1px dashed rgba(3,172,234,0.4)' }} />
+                        <div style={{ width: 10, height: 10, borderRadius: 3, background: 'rgba(3,172,234,0.25)' }} />
                         Predicted
                       </div>
                     </div>
@@ -1166,10 +1166,10 @@ export default function Home() {
                           <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'flex-end' }}>
                             <div style={{ width: '100%', display: 'flex', gap: 3, alignItems: 'flex-end', height: '100%', justifyContent: 'center' }}>
                               <div style={{ width: 8, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', height: '100%', flexShrink: 0 }}>
-                                <div style={{ width: '100%', height: `${Math.max(lendPct, 2)}%`, borderRadius: '3px 3px 0 0', background: d.isFuture ? 'rgba(3,172,234,0.25)' : '#03ACEA', border: d.isFuture ? '1px dashed rgba(3,172,234,0.5)' : 'none', transition: 'height 0.6s ease-out' }} />
+                                <div style={{ width: '100%', height: `${Math.max(lendPct, 2)}%`, borderRadius: '3px 3px 0 0', background: d.isFuture ? 'rgba(3,172,234,0.25)' : '#03ACEA', transition: 'height 0.6s ease-out' }} />
                               </div>
                               <div style={{ width: 8, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', height: '100%', flexShrink: 0 }}>
-                                <div style={{ width: '100%', height: `${Math.max(borPct, 2)}%`, borderRadius: '3px 3px 0 0', background: d.isFuture ? 'rgba(29,91,148,0.2)' : '#1D5B94', border: d.isFuture ? '1px dashed rgba(29,91,148,0.4)' : 'none', transition: 'height 0.6s ease-out' }} />
+                                <div style={{ width: '100%', height: `${Math.max(borPct, 2)}%`, borderRadius: '3px 3px 0 0', background: d.isFuture ? 'rgba(29,91,148,0.2)' : '#1D5B94', transition: 'height 0.6s ease-out' }} />
                               </div>
                             </div>
                           </div>
