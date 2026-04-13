@@ -419,7 +419,7 @@ export default function RecordPayment() {
       </AnimatePresence>
 
       <MeshMobileNav user={user} activePage="Record Payment" />
-      <div className="mesh-layout" style={{ display: 'grid', gridTemplateColumns: '180px 1fr 300px', gap: 0, minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased' }}>
+      <div className="mesh-layout" style={{ display: 'grid', gridTemplateColumns: '180px 1fr', gap: 0, minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased' }}>
 
         {/* Col 1: left nav */}
         <div className="mesh-left" style={{ background: '#fafafa', borderRight: '1px solid rgba(0,0,0,0.06)' }}>
@@ -510,14 +510,14 @@ export default function RecordPayment() {
         </div>
 
         {/* Col 2: center content */}
-        <div className="mesh-center" style={{ background: 'white', borderRight: '1px solid rgba(0,0,0,0.06)', padding: '28px 48px 80px' }}>
+        <div className="mesh-center" style={{ background: 'white', padding: '28px 48px 80px' }}>
 
           {/* Page title */}
           <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', marginBottom: 12 }}>Record Payment</div>
           <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 20 }} />
 
           {/* ── Mobile: Select Your Loan (hidden on desktop) ── */}
-          <div className="rp-mobile-loan-selector" style={{ display: 'none', marginBottom: 24 }}>
+          <div className="rp-mobile-loan-selector" style={{ marginBottom: 24 }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 9 }}>
               <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Select Your Loan</div>
               <button onClick={clearFilters} style={{
@@ -799,157 +799,6 @@ export default function RecordPayment() {
 
         </div>
 
-        {/* Col 3: right panel */}
-        <div className="mesh-right" style={{ background: '#fafafa' }}>
-          <div style={{ position: 'sticky', top: 0, padding: '28px 28px 0' }}>
-            {/* Bell + Profile icons */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 10, marginBottom: 24 }}>
-              <Link to={createPageUrl("Requests")} style={{ position: 'relative', textDecoration: 'none' }}>
-                <div style={{ width: 32, height: 32, borderRadius: 9, background: 'rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#787776" strokeWidth="2" strokeLinecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-                </div>
-              </Link>
-              <Link to={createPageUrl("Profile")} style={{ textDecoration: 'none' }}>
-                <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(3,172,234,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-                </div>
-              </Link>
-            </div>
-          {/* ── Select Your Loan ── */}
-          <div style={{ marginBottom: 32 }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 9 }}>
-              <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Select Your Loan</div>
-              <button onClick={clearFilters} style={{
-                padding: '2px 8px', borderRadius: 6, border: 'none', background: 'transparent',
-                fontSize: 11, fontWeight: 500, color: hasAnyFilter ? '#E8726E' : '#C7C6C4',
-                cursor: hasAnyFilter ? 'pointer' : 'default', fontFamily: "'DM Sans', sans-serif",
-              }}>Clear</button>
-            </div>
-            <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 12 }} />
-            {/* Filters */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 10, overflow: 'visible', position: 'relative', zIndex: 20 }}>
-              <SingleSelectDropdown options={ROLE_OPTIONS} selected={roleFilter} onChange={setRoleFilter} />
-              <SingleSelectDropdown options={friendOptions} selected={friendFilter} onChange={setFriendFilter} />
-            </div>
-            {/* Loan List */}
-            <div style={{ maxHeight: 260, overflowY: 'auto' }}>
-              {filteredLoans.length === 0 ? (
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '24px 0', color: '#C7C6C4' }}>
-                  <FileText size={22} style={{ opacity: 0.3, marginBottom: 6 }} />
-                  <p style={{ fontSize: 12, color: '#787776', margin: 0 }}>No active loans found</p>
-                </div>
-              ) : (
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  {filteredLoans.map(loan => {
-                    const other = getOtherParty(loan);
-                    const remaining = getRemainingBalance(loan);
-                    const isSelected = selectedLoan?.id === loan.id;
-                    return (
-                      <button key={loan.id} onClick={() => handleSelectLoan(loan)} style={{
-                        display: 'block', width: '100%', textAlign: 'left', padding: '10px 0',
-                        background: 'transparent', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
-                        border: 'none',
-                      }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <div style={{
-                            width: 26, height: 26, borderRadius: '50%', flexShrink: 0, overflow: 'hidden',
-                            background: isSelected ? 'rgba(3,172,234,0.15)' : 'rgba(0,0,0,0.06)',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            outline: isSelected ? '2px solid #03ACEA' : 'none', outlineOffset: 1,
-                          }}>
-                            {other.profile_picture_url ? (
-                              <img src={other.profile_picture_url} alt="" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
-                            ) : (
-                              <span style={{ fontSize: 11, fontWeight: 600, color: isSelected ? '#03ACEA' : '#787776' }}>{(other.full_name || '?').charAt(0).toUpperCase()}</span>
-                            )}
-                          </div>
-                          <div style={{ flex: 1, minWidth: 0 }}>
-                            <p style={{ fontSize: 12, fontWeight: isSelected ? 600 : 500, color: isSelected ? '#1A1918' : '#3A3938', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                              {other.full_name || other.username}
-                            </p>
-                            <p style={{ fontSize: 11, color: '#9B9A98', margin: '1px 0 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                              ${(loan.amount || 0).toLocaleString()} · ${remaining.toFixed(2)} left
-                            </p>
-                          </div>
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* ── Recommended Payment ── */}
-          {selectedLoan && currentStep <= 1 && (
-            <div style={{ marginBottom: 32 }}>
-              <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 9 }}>Recommended Payment</div>
-              <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 14 }} />
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <div>
-                  <div style={{ fontSize: '1.5rem', fontWeight: 700, color: '#03ACEA', letterSpacing: '-0.03em', lineHeight: 1 }}>${getSuggestedPayment(selectedLoan).toFixed(2)}</div>
-                  {selectedLoan.next_payment_date && (
-                    <p style={{ fontSize: 11, color: '#9B9A98', margin: '4px 0 0' }}>Due {format(new Date(selectedLoan.next_payment_date + 'T12:00:00'), 'MMM d, yyyy')}</p>
-                  )}
-                </div>
-                <button onClick={() => { setAmount(getSuggestedPayment(selectedLoan).toFixed(2)); }} style={{
-                  padding: '7px 12px', borderRadius: 9, border: 'none',
-                  background: 'rgba(3,172,234,0.08)', fontSize: 11, fontWeight: 600,
-                  color: '#03ACEA', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
-                }}>Use</button>
-              </div>
-            </div>
-          )}
-
-          <RightSection title="Upcoming">
-            {upcomingPayments.length === 0 ? (
-              <p style={{ fontSize: 12, color: '#9B9A98', margin: 0 }}>No upcoming payments</p>
-            ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                {upcomingPayments.map(l => (
-                  <div key={l.id} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <div style={{
-                      width: 28, height: 18, borderRadius: 5, background: l.days <= 3 ? 'rgba(232,114,110,0.1)' : 'rgba(3,172,234,0.08)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-                    }}>
-                      <span style={{ fontSize: 10, fontWeight: 700, color: l.days <= 3 ? '#E8726E' : '#03ACEA' }}>{l.days}d</span>
-                    </div>
-                    <span style={{ fontSize: 12, color: '#1A1918', fontWeight: 500, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{l.otherName}</span>
-                    <span style={{ fontSize: 12, fontWeight: 600, color: l.isLender ? '#16A34A' : '#E8726E', flexShrink: 0 }}>
-                      {l.isLender ? '+' : '-'}${(l.payment_amount || 0).toFixed(2)}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </RightSection>
-
-          {paymentsToConfirm.length > 0 && (
-            <RightSection title="Pending Confirmations">
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                {paymentsToConfirm.map(payment => {
-                  const loan = getPaymentLoan(payment);
-                  if (!loan) return null;
-                  const recorder = getUserById(payment.recorded_by);
-                  const name = recorder?.full_name?.split(' ')[0] || recorder?.username || 'User';
-                  const initial = (recorder?.full_name || recorder?.username || 'U').charAt(0).toUpperCase();
-                  return (
-                    <div key={payment.id} style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
-                      <div style={{ width: 24, height: 24, borderRadius: '50%', background: 'rgba(139,92,246,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                        <span style={{ fontSize: 10, fontWeight: 700, color: '#8B5CF6' }}>{initial}</span>
-                      </div>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <p style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', margin: 0 }}>{name} paid ${payment.amount?.toFixed(2)}</p>
-                        <p style={{ fontSize: 11, color: '#9B9A98', margin: '2px 0 0' }}>Awaiting your confirmation</p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </RightSection>
-          )}
-          </div>
-        </div>
 
       </div>
     </>
