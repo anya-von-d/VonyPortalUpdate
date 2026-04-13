@@ -867,34 +867,50 @@ export default function Home() {
               const badgeColor = isLate ? '#E8726E' : days !== null && days <= 3 ? '#F59E0B' : '#9B9A98';
               const badgeBg = isLate ? 'rgba(232,114,110,0.08)' : days !== null && days <= 3 ? 'rgba(245,158,11,0.08)' : 'rgba(0,0,0,0.04)';
               return (
-                <div className="home-blue-card" style={{
-                  padding: '12px 14px', borderRadius: 14,
-                  background: 'linear-gradient(135deg, rgba(255,255,255,0.45) 0%, rgba(3,172,234,0.06) 60%, rgba(3,172,234,0.10) 100%)',
-                  backdropFilter: 'blur(10px) saturate(1.6)',
-                  WebkitBackdropFilter: 'blur(10px) saturate(1.6)',
-                  border: '2px solid #03ACEA',
-                  boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.6), inset 0 0 16px rgba(3,172,234,0.07), 0 0 0 4px rgba(3,172,234,0.15), 0 0 24px rgba(3,172,234,0.18), 0 0 48px rgba(3,172,234,0.08), 0 2px 12px rgba(0,0,0,0.04)',
-                }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 10 }}>
-                    <div style={{ width: 20, height: 20, borderRadius: 6, background: 'rgba(29,91,148,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1D5B94" strokeWidth="2.5" strokeLinecap="round"><polyline points="7 13 12 18 17 13"/><line x1="12" y1="18" x2="12" y2="6"/></svg>
-                    </div>
-                    <span style={{ fontSize: 9, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Next Payment Due</span>
-                  </div>
-                  {nextBorrowerPayment ? (
-                    <>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
-                        <span style={{ fontSize: 19, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em' }}>{format(nextBorrowerPayment.date, 'MMM d')}</span>
-                        {daysLabel && <span style={{ fontSize: 9, fontWeight: 700, color: badgeColor, background: badgeBg, borderRadius: 5, padding: '2px 6px', flexShrink: 0 }}>{daysLabel}</span>}
+                <div className="home-blue-card" style={{ position: 'relative' }}>
+                  {/* Aurora glow */}
+                  <div style={{
+                    position: 'absolute',
+                    bottom: 14, left: '50%',
+                    transform: 'translateX(-50%)',
+                    width: 'calc(100% + 36px)',
+                    height: 'calc(100% - 20px)',
+                    background: 'linear-gradient(225deg, rgb(50,197,255), rgb(182,32,224) 51%, rgb(247,181,0))',
+                    filter: 'blur(12px) saturate(1.18)',
+                    opacity: 0.4,
+                    borderRadius: 16,
+                    zIndex: 0,
+                    pointerEvents: 'none',
+                  }} />
+                  {/* Card */}
+                  <div style={{
+                    position: 'relative', zIndex: 1,
+                    padding: '12px 14px', borderRadius: 14,
+                    background: 'white',
+                    border: '1px solid rgba(0,0,0,0.07)',
+                    boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 10 }}>
+                      <div style={{ width: 20, height: 20, borderRadius: 6, background: 'rgba(29,91,148,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1D5B94" strokeWidth="2.5" strokeLinecap="round"><polyline points="7 13 12 18 17 13"/><line x1="12" y1="18" x2="12" y2="6"/></svg>
                       </div>
-                      <div style={{ fontSize: 11, color: '#9B9A98', textAlign: 'right' }}>{formatMoney(nextBorrowerPayment.payment_amount || 0)} to {nextBorrowerPayment.firstName}</div>
-                    </>
-                  ) : (
-                    <>
-                      <div style={{ fontSize: 15, fontWeight: 700, color: '#C5C3C0', marginBottom: 4 }}>—</div>
-                      <div style={{ fontSize: 11, color: '#9B9A98' }}>Nothing due</div>
-                    </>
-                  )}
+                      <span style={{ fontSize: 9, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Next Payment Due</span>
+                    </div>
+                    {nextBorrowerPayment ? (
+                      <>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
+                          <span style={{ fontSize: 19, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em' }}>{format(nextBorrowerPayment.date, 'MMM d')}</span>
+                          {daysLabel && <span style={{ fontSize: 9, fontWeight: 700, color: badgeColor, background: badgeBg, borderRadius: 5, padding: '2px 6px', flexShrink: 0 }}>{daysLabel}</span>}
+                        </div>
+                        <div style={{ fontSize: 11, color: '#9B9A98', textAlign: 'right' }}>{formatMoney(nextBorrowerPayment.payment_amount || 0)} to {nextBorrowerPayment.firstName}</div>
+                      </>
+                    ) : (
+                      <>
+                        <div style={{ fontSize: 15, fontWeight: 700, color: '#C5C3C0', marginBottom: 4 }}>—</div>
+                        <div style={{ fontSize: 11, color: '#9B9A98' }}>Nothing due</div>
+                      </>
+                    )}
+                  </div>
                 </div>
               );
             })()}
@@ -1015,7 +1031,7 @@ export default function Home() {
           )}
 
           {/* UPCOMING + HOW MONTH IS GOING */}
-          <div className="home-two-col-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48, marginBottom: 36 }}>
+          <div className="home-two-col-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48, marginBottom: 36, alignItems: 'start' }}>
             {/* Upcoming */}
             <div style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(12px) saturate(1.4)', WebkitBackdropFilter: 'blur(12px) saturate(1.4)', borderRadius: 14, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.05)', padding: '14px 18px' }}>
               <SectionHeader title="Upcoming" linkTo={createPageUrl("Upcoming")} linkLabel="Full schedule →" />
@@ -1078,8 +1094,11 @@ export default function Home() {
             </div>
           </div>
 
-          {/* RECENT ACTIVITY + ACTIVE LOANS */}
-          <div className="home-two-col-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48, marginBottom: 36 }}>
+          {/* RECENT ACTIVITY + ACTIVE LOANS (left) | YOUR LOANS OVER TIME (right) */}
+          <div className="home-two-col-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr', gap: 48, marginBottom: 36, alignItems: 'start' }}>
+            {/* Left: Recent Activity + Active Loans stacked */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+
             {/* Recent Activity */}
             <div style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(12px) saturate(1.4)', WebkitBackdropFilter: 'blur(12px) saturate(1.4)', borderRadius: 14, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.05)', padding: '14px 18px' }}>
               <SectionHeader title="Recent Activity" linkTo={createPageUrl("RecentActivity")} linkLabel="View all →" />
@@ -1148,6 +1167,78 @@ export default function Home() {
                 </div>
               )}
             </div>
+
+            </div>{/* end left stack */}
+
+            {/* Right: Your Loans Over Time */}
+            <div style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(12px) saturate(1.4)', WebkitBackdropFilter: 'blur(12px) saturate(1.4)', borderRadius: 14, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.05)', padding: '14px 18px' }} ref={loansChartRef}>
+              <SectionHeader title="Your Loans Over Time" />
+              {!chartData ? (
+                <div style={{ padding: '10px 0', fontSize: 13, color: '#9B9A98' }}>No loan history yet.</div>
+              ) : (
+                <>
+                  {/* Legend */}
+                  <div style={{ display: 'flex', gap: 16, marginBottom: 16, marginTop: 4 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: '#787776' }}>
+                      <div style={{ width: 10, height: 10, borderRadius: 3, background: '#03ACEA' }} />
+                      Lending
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: '#787776' }}>
+                      <div style={{ width: 10, height: 10, borderRadius: 3, background: '#1D5B94' }} />
+                      Borrowing
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: '#9B9A98' }}>
+                      <div style={{ width: 10, height: 10, borderRadius: 3, background: 'rgba(3,172,234,0.25)', border: '1px dashed rgba(3,172,234,0.4)' }} />
+                      Predicted
+                    </div>
+                  </div>
+                  {/* Chart */}
+                  <div style={{ display: 'flex', alignItems: 'flex-end', gap: 6, height: 120 }}>
+                    {chartData.data.map((d, i) => {
+                      const lendPct = (d.owedToYou / chartData.maxVal) * 100;
+                      const borPct = (d.youOwe / chartData.maxVal) * 100;
+                      return (
+                        <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, height: '100%', justifyContent: 'flex-end' }}>
+                          <div style={{ width: '100%', display: 'flex', gap: 2, alignItems: 'flex-end', height: '100%' }}>
+                            {/* Lending bar */}
+                            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', height: '100%' }}>
+                              <div style={{
+                                width: '100%',
+                                height: `${Math.max(lendPct, 2)}%`,
+                                borderRadius: '3px 3px 0 0',
+                                background: d.isFuture ? 'rgba(3,172,234,0.25)' : '#03ACEA',
+                                border: d.isFuture ? '1px dashed rgba(3,172,234,0.5)' : 'none',
+                                transition: 'height 0.6s ease-out',
+                              }} />
+                            </div>
+                            {/* Borrowing bar */}
+                            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', height: '100%' }}>
+                              <div style={{
+                                width: '100%',
+                                height: `${Math.max(borPct, 2)}%`,
+                                borderRadius: '3px 3px 0 0',
+                                background: d.isFuture ? 'rgba(29,91,148,0.2)' : '#1D5B94',
+                                border: d.isFuture ? '1px dashed rgba(29,91,148,0.4)' : 'none',
+                                transition: 'height 0.6s ease-out',
+                              }} />
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  {/* X-axis labels */}
+                  <div style={{ display: 'flex', gap: 6, marginTop: 6 }}>
+                    {chartData.data.map((d, i) => (
+                      <div key={i} style={{ flex: 1, textAlign: 'center', fontSize: 10, color: d.isFuture ? '#C5C3C0' : d.isCurrent ? '#03ACEA' : '#9B9A98', fontWeight: d.isCurrent ? 700 : 500 }}>
+                        {d.label}
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+
           </div>
         </div>
 
