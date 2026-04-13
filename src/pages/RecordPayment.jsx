@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Payment, Loan, User, PublicProfile, Friendship } from "@/entities/all";
+import { Payment, Loan, User, PublicProfile } from "@/entities/all";
 import { useAuth } from "@/lib/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";

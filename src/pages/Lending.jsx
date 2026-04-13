@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Loan, LoanAgreement, User, PublicProfile, Friendship } from "@/entities/all";
 import { supabase } from '@/lib/supabaseClient';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -76,7 +76,7 @@ export default function Lending({ initialTab }) {
     const tab = searchParams.get('tab');
     return ['lending', 'create', 'active'].includes(tab) ? tab : 'lending';
   }); // 'lending', 'create', 'active'
-  const [showCreateForm, setShowCreateForm] = useState(true);
+
   const [manageLoanSelected, setManageLoanSelected] = useState(null);
   const [showEditLoanModal, setShowEditLoanModal] = useState(false);
   const [editLoanData, setEditLoanData] = useState(null);
@@ -89,8 +89,6 @@ export default function Lending({ initialTab }) {
   const [selectedMonth, setSelectedMonth] = useState(new Date());
   const [showMonthDropdown, setShowMonthDropdown] = useState(false);
   const [quickPayAmount, setQuickPayAmount] = useState('');
-  const [quickPayMethod, setQuickPayMethod] = useState('');
-  const [quickPayLoanId, setQuickPayLoanId] = useState('');
   const [quickPayFromPerson, setQuickPayFromPerson] = useState('');
   const [quickPayToPerson, setQuickPayToPerson] = useState('');
   const [allUserLoans, setAllUserLoans] = useState([]);
@@ -545,15 +543,6 @@ export default function Lending({ initialTab }) {
       await loadData();
     } catch (error) {
       console.error("Error cancelling loan:", error);
-    }
-  };
-
-  const handleDeleteOffer = async (loanId) => {
-    try {
-      await Loan.delete(loanId);
-      loadData();
-    } catch (error) {
-      console.error("Error deleting loan offer:", error);
     }
   };
 

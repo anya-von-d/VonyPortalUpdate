@@ -242,13 +242,9 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false);
-  const [alertSlide, setAlertSlide] = useState(0);
-  const [moreNavOpen, setMoreNavOpen] = useState(false);
-  const moreNavCloseTimerRef = useRef(null);
   const overdueCountRef = useRef(0);
   const loansChartRef = useRef(null);
   const activeLoansRef = useRef(null);
-  const [loansAnimKey, setLoansAnimKey] = useState(0);
   const [activeAnimKey, setActiveAnimKey] = useState(0);
   const loansWasOut = useRef(true);
   const activeWasOut = useRef(true);
@@ -261,7 +257,7 @@ export default function Home() {
     const obs = new IntersectionObserver(([e]) => {
       if (e.isIntersecting && loansWasOut.current) {
         loansWasOut.current = false;
-        setLoansAnimKey(k => k + 1);
+        // viewport re-entry detected
       } else if (!e.isIntersecting) {
         loansWasOut.current = true;
       }
@@ -283,18 +279,6 @@ export default function Home() {
     }, { threshold: 0.1 });
     obs.observe(el);
     return () => obs.disconnect();
-  }, []);
-
-  // Alert carousel auto-advance timer
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setAlertSlide(prev => {
-        const count = overdueCountRef.current;
-        if (count <= 1) return 0;
-        return (prev + 1) % count;
-      });
-    }, 6000);
-    return () => clearInterval(interval);
   }, []);
 
   // Use profile from context

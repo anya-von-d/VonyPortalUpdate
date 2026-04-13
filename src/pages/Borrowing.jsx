@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Loan, Payment, User, LoanAgreement, PublicProfile, Friendship, VenmoConnection, PayPalConnection } from "@/entities/all";
+import { Loan, Payment, User, LoanAgreement, PublicProfile, Friendship } from "@/entities/all";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -55,7 +55,6 @@ export default function Borrowing() {
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [loanToCancel, setLoanToCancel] = useState(null);
   const [publicProfiles, setPublicProfiles] = useState([]);
-  const [activeSection, setActiveSection] = useState('overview');
   const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'summary');
   const [showSignModal, setShowSignModal] = useState(false);
@@ -66,8 +65,6 @@ export default function Borrowing() {
   const [loanAgreements, setLoanAgreements] = useState([]);
   const [activeDocPopup, setActiveDocPopup] = useState(null);
   const [docPopupAgreement, setDocPopupAgreement] = useState(null);
-  const [activeInfoTooltip, setActiveInfoTooltip] = useState(null);
-  const [allUserLoans, setAllUserLoans] = useState([]);
   const [allPayments, setAllPayments] = useState([]);
 
   useEffect(() => {
@@ -103,7 +100,6 @@ export default function Borrowing() {
       const allMyLoans = (allLoans || []).filter(loan =>
         loan.borrower_id === currentUser.id || loan.lender_id === currentUser.id
       );
-      setAllUserLoans(allMyLoans);
       setPublicProfiles(allProfiles || []);
       setLoanAgreements(allAgreements || []);
       setAllPayments(allPmts || []);

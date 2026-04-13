@@ -54,11 +54,8 @@ export default function Requests() {
   const user = userProfile ? { ...userProfile, id: authUser?.id } : null;
 
   const [paymentsToConfirm, setPaymentsToConfirm] = useState([]);
-  const [paymentsAwaitingConfirmation, setPaymentsAwaitingConfirmation] = useState([]);
   const [termChangeRequests, setTermChangeRequests] = useState([]);
-  const [extensionRequests, setExtensionRequests] = useState([]);
   const [loanOffersReceived, setLoanOffersReceived] = useState([]);
-  const [loanOffersSent, setLoanOffersSent] = useState([]);
   const [friendRequestsReceived, setFriendRequestsReceived] = useState([]);
   const [loans, setLoans] = useState([]);
   const [profiles, setProfiles] = useState([]);
@@ -140,11 +137,8 @@ export default function Requests() {
       );
 
       setPaymentsToConfirm(toConfirm);
-      setPaymentsAwaitingConfirmation(awaitingConfirmation);
       setTermChangeRequests(termChanges);
-      setExtensionRequests(extensions);
       setLoanOffersReceived(offersReceived);
-      setLoanOffersSent(offersSent);
       setFriendRequestsReceived(friendRequests);
       setLoans(allLoans);
       setProfiles(allProfiles);
@@ -322,7 +316,6 @@ export default function Requests() {
     setConfirmingCancel(null);
     try {
       await Payment.delete(payment.id);
-      setPaymentsAwaitingConfirmation(prev => prev.filter(p => p.id !== payment.id));
       loadRequests();
     } catch (error) {
       console.error("Error cancelling payment:", error);

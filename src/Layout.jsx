@@ -2,8 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { useAuth } from "@/lib/AuthContext";
-import TopNav from "@/components/TopNav";
-import Footer from "@/components/Footer";
 import { StatusBar, Style } from '@capacitor/status-bar';
 import { Keyboard } from '@capacitor/keyboard';
 import { motion, AnimatePresence } from "framer-motion";
@@ -102,9 +100,6 @@ export default function Layout({ children }) {
   return (
     <div className="min-h-screen flex flex-col w-full safe-area-inset-top safe-area-inset-bottom" style={isDashboardStyle ? { background: 'transparent' } : { background: `linear-gradient(to bottom right, rgb(var(--theme-bg-from)), rgb(var(--theme-bg-to)))` }}>
 
-      {/* TopNav handles its own fixed positioning and mobile menu — hidden on dashboard-style pages */}
-      {user && !isDashboardStyle && <TopNav location={location} />}
-
       {/* Main content container */}
       <main className="flex-1">
         <AnimatePresence mode="wait" initial={false}>
@@ -121,8 +116,6 @@ export default function Layout({ children }) {
         </AnimatePresence>
       </main>
 
-      {/* Footer — hidden on dashboard-style pages (they render their own) */}
-      {user && !isDashboardStyle && <Footer />}
     </div>
   );
 }
