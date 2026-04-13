@@ -869,11 +869,11 @@ export default function YourLoans() {
             const ringR = 54; const ringStroke = 9;
             const ringCirc = 2 * Math.PI * ringR; const ringDash = (paidPct / 100) * ringCirc;
             return (
-              <div style={{ display: 'flex', gap: 16, marginBottom: 16 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, marginBottom: 16 }}>
                 {/* Payment Progress circle card */}
-                <div style={{ flex: '0 0 auto' }}>
+                <div>
                   <PageCard title="Payment Progress" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <div style={{ padding: '10px 14px 12px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
                       <circle cx={dCx} cy={dCy} r={ringR} fill="none" stroke="#E5E4E2" strokeWidth={ringStroke} strokeLinecap="round" />
                       {paidPct > 0 && (
@@ -892,7 +892,7 @@ export default function YourLoans() {
                   </PageCard>
                 </div>
                 {/* Next Payment Date box */}
-                <div style={{ flex: 1, minWidth: 0 }}>
+                <div>
                   {(() => {
                     const isLate = daysUntil !== null && daysUntil < 0;
                     const dLabel = daysUntil === null ? null : isLate ? `${Math.abs(daysUntil)}d late` : daysUntil === 0 ? 'today' : `${daysUntil}d`;
@@ -914,7 +914,7 @@ export default function YourLoans() {
                   })()}
                 </div>
                 {/* Next Payment Amount box */}
-                <div style={{ flex: 1, minWidth: 0 }}>
+                <div>
                   <div style={{ padding: '14px 16px', borderRadius: 14, background: 'white', boxShadow: '0 0 0 2px rgba(3,172,234,0.25), 0 0 16px rgba(3,172,234,0.12), 0 2px 12px rgba(0,0,0,0.04)', border: '1.5px solid rgba(3,172,234,0.35)' }}>
                     {nextPmtDate ? (
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
@@ -932,7 +932,7 @@ export default function YourLoans() {
 
           {/* 5. Loan Terms */}
           <PageCard title="Loan Terms">
-            <div style={{ padding: '10px 14px 14px' }}>
+            <div>
             {(() => {
               const amount = manageLoanSelected.amount || 0;
               const interestRate = manageLoanSelected.interest_rate || 0;
@@ -954,10 +954,12 @@ export default function YourLoans() {
             </div>
           </PageCard>
 
-          {/* 7+9. Payment History | Payments row */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, alignItems: 'start', marginBottom: 24 }}>
-          <PageCard title="Payment History" style={{ marginBottom: 0 }}>
-            <div style={{ padding: '10px 14px 14px' }}>
+          {/* 2-col masonry: left = Payment History + Activity, right = Payments + Docs + Loan Progress */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, alignItems: 'start' }}>
+          {/* Left column */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+          <PageCard title="Payment History">
+            <div>
             {!manageLoanSelected ? (
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: chartHeight }}><p style={{ fontSize: 12, color: '#C7C6C4' }}>Select a loan to view chart</p></div>
             ) : chartData.length === 0 ? (
@@ -1012,75 +1014,9 @@ export default function YourLoans() {
             </div>
           </PageCard>
 
-          <PageCard title="Payments" style={{ marginBottom: 0 }}>
-            <div style={{ padding: '10px 14px 14px' }}>
-            {(() => {
-              const paymentAmt = manageLoanSelected.payment_amount || 0;
-              const paymentRows = loanAnalysis ? loanAnalysis.periodResults.map((pr) => {
-                let status;
-                if (pr.hasConfirmedPayments && pr.isFullPayment) status = 'completed';
-                else if (pr.hasAnyPayments && !pr.isPast) status = 'partial';
-                else if (pr.hasConfirmedPayments && !pr.isFullPayment) status = 'partial';
-                else if (pr.hasPendingPayments && !pr.hasConfirmedPayments) status = 'pending';
-                else if (pr.isPast && !pr.hasAnyPayments) status = 'missed';
-                else status = 'upcoming';
-                const expectedAmount = loanAnalysis.originalPaymentAmount || paymentAmt;
-                const paidAmount = pr.actualPaid || 0;
-                const paidPercentage = status === 'completed' ? 100 : (status === 'partial' && expectedAmount > 0) ? Math.min(99, (paidAmount / expectedAmount) * 100) : 0;
-                return { number: pr.period, date: pr.date, amount: expectedAmount, paidAmount, paidPercentage, status };
-              }) : [];
-              const statusConfig = {
-                completed:   { label: 'Completed',   bg: 'rgba(22,163,74,0.18)',  text: '#16A34A', ringColor: '#16A34A', fillColor: '#16A34A' },
-                partial:     { label: 'Partial',     bg: 'rgba(3,172,234,0.18)', text: '#0288CE', ringColor: '#0288CE', fillColor: '#0288CE' },
-                pending:     { label: 'Pending',     bg: 'rgba(0,0,0,0.05)',     text: '#9B9A98', ringColor: 'rgba(0,0,0,0.15)', fillColor: 'rgba(0,0,0,0.1)' },
-                missed:      { label: 'Missed',         bg: 'rgba(232,114,110,0.1)', text: '#E8726E', ringColor: '#E8726E', fillColor: '#E8726E' },
-                upcoming:    { label: 'Upcoming',       bg: 'rgba(0,0,0,0.03)',      text: '#787776', ringColor: 'rgba(0,0,0,0.12)', fillColor: 'rgba(0,0,0,0.06)' },
-              };
-              const PieCircle = ({ percentage, number, size = 32 }) => {
-                const pcx = size / 2; const pcy = size / 2; const r = (size / 2) - 3;
-                const circ = 2 * Math.PI * r; const dash = (percentage / 100) * circ; const sw = 4;
-                return (
-                  <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ flexShrink: 0 }}>
-                    <circle cx={pcx} cy={pcy} r={r} fill="none" stroke="#E5E4E2" strokeWidth={sw} />
-                    {percentage > 0 && (<circle cx={pcx} cy={pcy} r={r} fill="none" stroke="#03ACEA" strokeWidth={sw} strokeDasharray={`${dash} ${circ - dash}`} strokeLinecap="round" transform={`rotate(-90 ${pcx} ${pcy})`} />)}
-                    <text x={pcx} y={pcy} textAnchor="middle" dominantBaseline="central" fill="#1A1918" fontSize="11" fontWeight="bold" fontFamily="'DM Sans', sans-serif">{number}</text>
-                  </svg>
-                );
-              };
-              return (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 6, ...(paymentRows.length > 8 ? { maxHeight: 460, overflowY: 'auto', scrollbarWidth: 'thin' } : {}) }}>
-                  {paymentRows.map((row) => {
-                    const cfg = statusConfig[row.status];
-                    return (
-                      <div key={row.number} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: 8, borderRadius: 10, background: 'rgba(0,0,0,0.03)' }}>
-                        <PieCircle percentage={row.paidPercentage} number={row.number} />
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <p style={{ fontSize: 13, fontWeight: 500, color: '#4B4A48', margin: 0 }}>Amount Due for Payment {row.number}: ${row.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-                          {row.status === 'partial' && row.paidAmount > 0 && (
-                            <>
-                              <p style={{ fontSize: 12, fontWeight: 700, color: '#15803D', margin: '1px 0 0' }}>Paid: ${row.paidAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-                              <p style={{ fontSize: 11, fontWeight: 600, color: '#03ACEA', margin: '1px 0 0' }}>Remaining: ${Math.max(0, row.amount - row.paidAmount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-                            </>
-                          )}
-                          {row.status !== 'partial' && row.paidAmount > 0 && <p style={{ fontSize: 12, fontWeight: 700, color: '#15803D', margin: '1px 0 0' }}>Paid: ${row.paidAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>}
-                          <p style={{ fontSize: 11, color: '#4B4A48', margin: '1px 0 0' }}>Due: {format(row.date, 'MMM d, yyyy')}</p>
-                        </div>
-                        <span style={{ flexShrink: 0, padding: '4px 10px', borderRadius: 8, fontSize: 10, fontWeight: 600, background: cfg.bg, color: cfg.text }}>{cfg.label}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-              );
-            })()}
-            </div>
-          </PageCard>
-          </div>{/* end Payment History | Payments grid */}
-
-          {/* 10. Activity + right sidebar */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 210px', gap: 24, alignItems: 'start' }}>
-          {/* Activity Timeline */}
-          <PageCard title="Activity" style={{ marginBottom: 0 }}>
-            <div style={{ padding: '10px 14px 14px' }}>
+          {/* Activity — left column */}
+          <PageCard title="Activity">
+            <div>
             {(() => {
               const ag = loanAgreements.find(a => a.loan_id === manageLoanSelected.id);
               const loanPmts = allPayments.filter(p => p.loan_id === manageLoanSelected.id);
@@ -1145,74 +1081,138 @@ export default function YourLoans() {
             })()}
             </div>
           </PageCard>
+          </div>{/* end left column */}
 
-          {/* Right sidebar: doc boxes + Loan Progress */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {/* Promissory Note */}
-            <div style={{ position: 'relative' }}>
-              <div style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(12px) saturate(1.4)', WebkitBackdropFilter: 'blur(12px) saturate(1.4)', borderRadius: 12, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 12px' }}>
-                <button onClick={() => { const ag = loanAgreements.find(a => a.loan_id === manageLoanSelected.id); if (ag) openDocPopup('promissory', ag); }} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, textAlign: 'left', flex: 1 }}>
-                  <p style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', margin: 0 }}>Promissory Note</p>
-                </button>
-                <button onClick={(e) => { e.stopPropagation(); setInfoTooltip(infoTooltip === 'promissory' ? null : 'promissory'); }} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', marginLeft: 6 }}>
-                  <span style={{ width: 15, height: 15, borderRadius: '50%', background: 'rgba(0,0,0,0.08)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}><span style={{ fontSize: 9, fontWeight: 800, color: '#1A1918', lineHeight: 1 }}>i</span></span>
-                </button>
-              </div>
-              {infoTooltip === 'promissory' && (
-                <div style={{ position: 'absolute', top: 'calc(100% + 6px)', right: 0, background: 'white', borderRadius: 9, padding: '8px 11px', boxShadow: '0 4px 16px rgba(0,0,0,0.13)', width: 190, zIndex: 200, border: '1px solid rgba(0,0,0,0.06)' }}>
-                  <p style={{ fontSize: 11, color: '#1A1918', margin: 0, lineHeight: 1.55 }}>A signed legal document where the borrower promises to repay a specific amount under agreed terms.</p>
+          {/* Right column: Payments → Docs → Loan Progress */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+          <PageCard title="Payments">
+            <div>
+            {(() => {
+              const paymentAmt = manageLoanSelected.payment_amount || 0;
+              const paymentRows = loanAnalysis ? loanAnalysis.periodResults.map((pr) => {
+                let status;
+                if (pr.hasConfirmedPayments && pr.isFullPayment) status = 'completed';
+                else if (pr.hasAnyPayments && !pr.isPast) status = 'partial';
+                else if (pr.hasConfirmedPayments && !pr.isFullPayment) status = 'partial';
+                else if (pr.hasPendingPayments && !pr.hasConfirmedPayments) status = 'pending';
+                else if (pr.isPast && !pr.hasAnyPayments) status = 'missed';
+                else status = 'upcoming';
+                const expectedAmount = loanAnalysis.originalPaymentAmount || paymentAmt;
+                const paidAmount = pr.actualPaid || 0;
+                const paidPercentage = status === 'completed' ? 100 : (status === 'partial' && expectedAmount > 0) ? Math.min(99, (paidAmount / expectedAmount) * 100) : 0;
+                return { number: pr.period, date: pr.date, amount: expectedAmount, paidAmount, paidPercentage, status };
+              }) : [];
+              const statusConfig = {
+                completed:   { label: 'Completed',   bg: 'rgba(22,163,74,0.18)',  text: '#16A34A', ringColor: '#16A34A', fillColor: '#16A34A' },
+                partial:     { label: 'Partial',     bg: 'rgba(3,172,234,0.18)', text: '#0288CE', ringColor: '#0288CE', fillColor: '#0288CE' },
+                pending:     { label: 'Pending',     bg: 'rgba(0,0,0,0.05)',     text: '#9B9A98', ringColor: 'rgba(0,0,0,0.15)', fillColor: 'rgba(0,0,0,0.1)' },
+                missed:      { label: 'Missed',         bg: 'rgba(232,114,110,0.1)', text: '#E8726E', ringColor: '#E8726E', fillColor: '#E8726E' },
+                upcoming:    { label: 'Upcoming',       bg: 'rgba(0,0,0,0.03)',      text: '#787776', ringColor: 'rgba(0,0,0,0.12)', fillColor: 'rgba(0,0,0,0.06)' },
+              };
+              const PieCircle = ({ percentage, number, size = 32 }) => {
+                const pcx = size / 2; const pcy = size / 2; const r = (size / 2) - 3;
+                const circ = 2 * Math.PI * r; const dash = (percentage / 100) * circ; const sw = 4;
+                return (
+                  <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ flexShrink: 0 }}>
+                    <circle cx={pcx} cy={pcy} r={r} fill="none" stroke="#E5E4E2" strokeWidth={sw} />
+                    {percentage > 0 && (<circle cx={pcx} cy={pcy} r={r} fill="none" stroke="#03ACEA" strokeWidth={sw} strokeDasharray={`${dash} ${circ - dash}`} strokeLinecap="round" transform={`rotate(-90 ${pcx} ${pcy})`} />)}
+                    <text x={pcx} y={pcy} textAnchor="middle" dominantBaseline="central" fill="#1A1918" fontSize="11" fontWeight="bold" fontFamily="'DM Sans', sans-serif">{number}</text>
+                  </svg>
+                );
+              };
+              return (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6, ...(paymentRows.length > 8 ? { maxHeight: 460, overflowY: 'auto', scrollbarWidth: 'thin' } : {}) }}>
+                  {paymentRows.map((row) => {
+                    const cfg = statusConfig[row.status];
+                    return (
+                      <div key={row.number} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: 8, borderRadius: 10, background: 'rgba(0,0,0,0.03)' }}>
+                        <PieCircle percentage={row.paidPercentage} number={row.number} />
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <p style={{ fontSize: 13, fontWeight: 500, color: '#4B4A48', margin: 0 }}>Amount Due for Payment {row.number}: ${row.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                          {row.status === 'partial' && row.paidAmount > 0 && (
+                            <>
+                              <p style={{ fontSize: 12, fontWeight: 700, color: '#15803D', margin: '1px 0 0' }}>Paid: ${row.paidAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                              <p style={{ fontSize: 11, fontWeight: 600, color: '#03ACEA', margin: '1px 0 0' }}>Remaining: ${Math.max(0, row.amount - row.paidAmount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                            </>
+                          )}
+                          {row.status !== 'partial' && row.paidAmount > 0 && <p style={{ fontSize: 12, fontWeight: 700, color: '#15803D', margin: '1px 0 0' }}>Paid: ${row.paidAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>}
+                          <p style={{ fontSize: 11, color: '#4B4A48', margin: '1px 0 0' }}>Due: {format(row.date, 'MMM d, yyyy')}</p>
+                        </div>
+                        <span style={{ flexShrink: 0, padding: '4px 10px', borderRadius: 8, fontSize: 10, fontWeight: 600, background: cfg.bg, color: cfg.text }}>{cfg.label}</span>
+                      </div>
+                    );
+                  })}
                 </div>
-              )}
+              );
+            })()}
             </div>
-            {/* Amortization Schedule */}
-            <div style={{ position: 'relative' }}>
-              <div style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(12px) saturate(1.4)', WebkitBackdropFilter: 'blur(12px) saturate(1.4)', borderRadius: 12, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 12px' }}>
-                <button onClick={() => { const ag = loanAgreements.find(a => a.loan_id === manageLoanSelected.id); if (ag) openDocPopup('amortization', ag); }} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, textAlign: 'left', flex: 1 }}>
-                  <p style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', margin: 0 }}>Amortization Schedule</p>
-                </button>
-                <button onClick={(e) => { e.stopPropagation(); setInfoTooltip(infoTooltip === 'amortization' ? null : 'amortization'); }} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', marginLeft: 6 }}>
-                  <span style={{ width: 15, height: 15, borderRadius: '50%', background: 'rgba(0,0,0,0.08)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}><span style={{ fontSize: 9, fontWeight: 800, color: '#1A1918', lineHeight: 1 }}>i</span></span>
-                </button>
-              </div>
-              {infoTooltip === 'amortization' && (
-                <div style={{ position: 'absolute', top: 'calc(100% + 6px)', right: 0, background: 'white', borderRadius: 9, padding: '8px 11px', boxShadow: '0 4px 16px rgba(0,0,0,0.13)', width: 190, zIndex: 200, border: '1px solid rgba(0,0,0,0.06)' }}>
-                  <p style={{ fontSize: 11, color: '#1A1918', margin: 0, lineHeight: 1.55 }}>A table showing each scheduled payment broken down into principal and interest over the life of the loan.</p>
-                </div>
-              )}
-            </div>
-            {/* Loan Summary */}
-            <div style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(12px) saturate(1.4)', WebkitBackdropFilter: 'blur(12px) saturate(1.4)', borderRadius: 12, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}>
-              <button onClick={() => { const ag = loanAgreements.find(a => a.loan_id === manageLoanSelected.id); if (ag) openDocPopup('summary', ag); }} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '10px 12px', width: '100%', textAlign: 'left' }}>
-                <p style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', margin: 0 }}>Loan Summary</p>
+          </PageCard>
+
+          {/* Promissory Note */}
+          <div style={{ position: 'relative' }}>
+            <div style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(12px) saturate(1.4)', WebkitBackdropFilter: 'blur(12px) saturate(1.4)', borderRadius: 14, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 18px' }}>
+              <button onClick={() => { const ag = loanAgreements.find(a => a.loan_id === manageLoanSelected.id); if (ag) openDocPopup('promissory', ag); }} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, textAlign: 'left', flex: 1 }}>
+                <p style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', margin: 0 }}>Promissory Note</p>
+              </button>
+              <button onClick={(e) => { e.stopPropagation(); setInfoTooltip(infoTooltip === 'promissory' ? null : 'promissory'); }} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', marginLeft: 8 }}>
+                <span style={{ width: 16, height: 16, borderRadius: '50%', background: 'rgba(0,0,0,0.07)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}><span style={{ fontSize: 9, fontWeight: 800, color: '#787776', lineHeight: 1 }}>i</span></span>
               </button>
             </div>
-            {/* Loan Progress */}
-            <PageCard title="Loan Progress" style={{ marginBottom: 0 }}>
-              <div style={{ padding: '10px 10px 12px' }}>
-              {(() => {
-                const repaymentPeriod = manageLoanSelected.repayment_period || 0;
-                const paymentFrequency = manageLoanSelected.payment_frequency || 'monthly';
-                const totalOwedDisplay = loanAnalysis ? loanAnalysis.totalOwedNow : (manageLoanSelected.total_amount || manageLoanSelected.amount || 0);
-                const amountPaidDisplay = loanAnalysis ? loanAnalysis.totalPaid : (manageLoanSelected.amount_paid || 0);
-                const fullPayments = loanAnalysis ? loanAnalysis.fullPaymentCount : 0;
-                const paymentAmountDisplay = loanAnalysis ? loanAnalysis.nextPaymentAmount : (recalculatedPayment > 0 ? recalculatedPayment : (manageLoanSelected.payment_amount || 0));
-                const freqLabel = paymentFrequency.charAt(0).toUpperCase() + paymentFrequency.slice(1);
-                const lpItems = [
-                  { label: isLending ? 'Total Owed to You' : 'Total Owed', value: `$${totalOwedDisplay.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, sub: 'with interest' },
-                  { label: isLending ? 'Amount Received' : 'Amount Paid', value: `$${amountPaidDisplay.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, sub: null },
-                  { label: 'Payments Made', value: `${fullPayments}/${repaymentPeriod}`, sub: 'full payments' },
-                  { label: `${freqLabel} Payments`, value: `$${paymentAmountDisplay.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, sub: isLending ? `from ${otherPartyUsername}` : `to ${otherPartyUsername}` },
-                ];
-                return (
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-                    {lpItems.map((item, idx) => (<div key={idx} style={{ textAlign: 'center' }}><p style={{ fontSize: 9, color: '#787776', fontWeight: 500, marginBottom: 2 }}>{item.label}</p><p style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', margin: 0 }}>{item.value}</p>{item.sub && <p style={{ fontSize: 8, color: '#787776', marginTop: 1 }}>{item.sub}</p>}</div>))}
-                  </div>
-                );
-              })()}
+            {infoTooltip === 'promissory' && (
+              <div style={{ position: 'absolute', top: 'calc(100% + 6px)', right: 0, background: 'white', borderRadius: 9, padding: '8px 11px', boxShadow: '0 4px 16px rgba(0,0,0,0.13)', width: 200, zIndex: 200, border: '1px solid rgba(0,0,0,0.06)' }}>
+                <p style={{ fontSize: 11, color: '#1A1918', margin: 0, lineHeight: 1.55 }}>A signed legal document where the borrower promises to repay a specific amount under agreed terms.</p>
               </div>
-            </PageCard>
+            )}
           </div>
-          </div>{/* end Activity + sidebar grid */}
+          {/* Amortization Schedule */}
+          <div style={{ position: 'relative' }}>
+            <div style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(12px) saturate(1.4)', WebkitBackdropFilter: 'blur(12px) saturate(1.4)', borderRadius: 14, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 18px' }}>
+              <button onClick={() => { const ag = loanAgreements.find(a => a.loan_id === manageLoanSelected.id); if (ag) openDocPopup('amortization', ag); }} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, textAlign: 'left', flex: 1 }}>
+                <p style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', margin: 0 }}>Amortization Schedule</p>
+              </button>
+              <button onClick={(e) => { e.stopPropagation(); setInfoTooltip(infoTooltip === 'amortization' ? null : 'amortization'); }} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', marginLeft: 8 }}>
+                <span style={{ width: 16, height: 16, borderRadius: '50%', background: 'rgba(0,0,0,0.07)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}><span style={{ fontSize: 9, fontWeight: 800, color: '#787776', lineHeight: 1 }}>i</span></span>
+              </button>
+            </div>
+            {infoTooltip === 'amortization' && (
+              <div style={{ position: 'absolute', top: 'calc(100% + 6px)', right: 0, background: 'white', borderRadius: 9, padding: '8px 11px', boxShadow: '0 4px 16px rgba(0,0,0,0.13)', width: 200, zIndex: 200, border: '1px solid rgba(0,0,0,0.06)' }}>
+                <p style={{ fontSize: 11, color: '#1A1918', margin: 0, lineHeight: 1.55 }}>A table showing each scheduled payment broken down into principal and interest over the life of the loan.</p>
+              </div>
+            )}
+          </div>
+          {/* Loan Summary */}
+          <div style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(12px) saturate(1.4)', WebkitBackdropFilter: 'blur(12px) saturate(1.4)', borderRadius: 14, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.05)' }}>
+            <button onClick={() => { const ag = loanAgreements.find(a => a.loan_id === manageLoanSelected.id); if (ag) openDocPopup('summary', ag); }} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '12px 18px', width: '100%', textAlign: 'left' }}>
+              <p style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', margin: 0 }}>Loan Summary</p>
+            </button>
+          </div>
+          {/* Loan Progress */}
+          <PageCard title="Loan Progress">
+            <div>
+            {(() => {
+              const repaymentPeriod = manageLoanSelected.repayment_period || 0;
+              const paymentFrequency = manageLoanSelected.payment_frequency || 'monthly';
+              const totalOwedDisplay = loanAnalysis ? loanAnalysis.totalOwedNow : (manageLoanSelected.total_amount || manageLoanSelected.amount || 0);
+              const amountPaidDisplay = loanAnalysis ? loanAnalysis.totalPaid : (manageLoanSelected.amount_paid || 0);
+              const fullPayments = loanAnalysis ? loanAnalysis.fullPaymentCount : 0;
+              const paymentAmountDisplay = loanAnalysis ? loanAnalysis.nextPaymentAmount : (recalculatedPayment > 0 ? recalculatedPayment : (manageLoanSelected.payment_amount || 0));
+              const freqLabel = paymentFrequency.charAt(0).toUpperCase() + paymentFrequency.slice(1);
+              const lpItems = [
+                { label: isLending ? 'Total Owed to You' : 'Total Owed', value: `$${totalOwedDisplay.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, sub: 'with interest' },
+                { label: isLending ? 'Amount Received' : 'Amount Paid', value: `$${amountPaidDisplay.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, sub: null },
+                { label: 'Payments Made', value: `${fullPayments}/${repaymentPeriod}`, sub: 'full payments' },
+                { label: `${freqLabel} Payments`, value: `$${paymentAmountDisplay.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, sub: isLending ? `from ${otherPartyUsername}` : `to ${otherPartyUsername}` },
+              ];
+              return (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
+                  {lpItems.map((item, idx) => (<div key={idx} style={{ textAlign: 'center' }}><p style={{ fontSize: 10, color: '#787776', fontWeight: 500, marginBottom: 2 }}>{item.label}</p><p style={{ fontSize: 13, fontWeight: 700, color: '#1A1918', margin: 0 }}>{item.value}</p>{item.sub && <p style={{ fontSize: 9, color: '#787776', marginTop: 2 }}>{item.sub}</p>}</div>))}
+                </div>
+              );
+            })()}
+            </div>
+          </PageCard>
+          </div>{/* end right column */}
+          </div>{/* end 2-col masonry */}
 
           {/* 11. Cancelled notice */}
           {manageLoanSelected.status === 'cancelled' && (
@@ -1234,13 +1234,13 @@ export default function YourLoans() {
       borderRadius: 14,
       border: '1px solid rgba(0,0,0,0.07)',
       boxShadow: '0 2px 16px rgba(0,0,0,0.05)',
+      padding: '14px 18px',
       ...style
     }}>
-      <div style={{ padding: '14px 18px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 9 }}>
-        <div style={{ fontSize: 10, fontWeight: 700, color: highlight ? '#03ACEA' : '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{title}</div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 10, marginBottom: 4, borderBottom: highlight ? '1px solid rgba(3,172,234,0.2)' : '1px solid rgba(0,0,0,0.07)' }}>
+        <span style={{ fontSize: 10, fontWeight: 700, color: highlight ? '#03ACEA' : '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{title}</span>
         {headerRight && <div style={{ flexShrink: 0 }}>{headerRight}</div>}
       </div>
-      <div style={{ height: 1, background: highlight ? 'rgba(3,172,234,0.2)' : 'rgba(0,0,0,0.06)' }} />
       <div style={{ overflow: 'visible', ...(highlight ? { display: 'flex', flexDirection: 'column' } : {}) }}>
         {children}
       </div>
