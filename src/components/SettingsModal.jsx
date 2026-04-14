@@ -6,17 +6,78 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import UserAvatar from './ui/UserAvatar';
 
-const TABS = [
-  { id: 'general',       label: 'General' },
-  { id: 'notifications', label: 'Notifications' },
-  { id: 'invite',        label: 'Invite a Friend' },
-  { id: 'about',         label: 'About' },
-];
-
 const PORTAL_URL = 'https://www.vony-lending.com';
 const INVITE_MSG = `I think you'll get a lot of value from Vony and wanted to invite you to sign up. Here's the link to get started 🙂 ${PORTAL_URL}`;
 const EMAIL_SUBJECT = 'Join me on Vony';
 const EMAIL_BODY = `Hi,\n\nI think you'll get a lot of value from Vony — it's a great way to manage and track loans with friends.\n\nHere's the link to get started: ${PORTAL_URL}\n\nSee you there!`;
+
+/* ── Icons ────────────────────────────────────────────────── */
+const Icons = {
+  general: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="3"/>
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+    </svg>
+  ),
+  notifications: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+      <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+    </svg>
+  ),
+  invite: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="20 12 20 22 4 22 4 12"/>
+      <rect x="2" y="7" width="20" height="5"/>
+      <line x1="12" y1="22" x2="12" y2="7"/>
+      <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/>
+      <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/>
+    </svg>
+  ),
+  about: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="12" y1="8" x2="12" y2="12"/>
+      <line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+  ),
+  guide: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+      <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+    </svg>
+  ),
+  contact: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+    </svg>
+  ),
+  help: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10"/>
+      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+      <line x1="12" y1="17" x2="12.01" y2="17"/>
+    </svg>
+  ),
+  legal: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+    </svg>
+  ),
+};
+
+/* ── Nav config ───────────────────────────────────────────── */
+const NAV_ITEMS = [
+  { id: 'general',       label: 'General',        type: 'tab',  icon: Icons.general },
+  { id: 'notifications', label: 'Notifications',  type: 'tab',  icon: Icons.notifications },
+  { id: 'invite',        label: 'Invite a Friend', type: 'tab', icon: Icons.invite },
+  { id: 'about',         label: 'About',           type: 'tab', icon: Icons.about },
+  { id: '_divider',      type: 'divider' },
+  { id: 'guide',         label: 'Guide',           type: 'link', href: 'https://www.vony-lending.com/guide',    icon: Icons.guide },
+  { id: 'contactus',     label: 'Contact Us',      type: 'link', href: 'https://www.vony-lending.com/contact',  icon: Icons.contact },
+  { id: 'helpsupport',   label: 'Help & Support',  type: 'link', href: 'https://www.vony-lending.com/help',     icon: Icons.help },
+  { id: 'legal',         label: 'Legal',           type: 'tab',  icon: Icons.legal },
+];
 
 /* ── Shared helpers ───────────────────────────────────────── */
 function Row({ label, children }) {
@@ -55,16 +116,29 @@ function Toggle({ checked, onChange, label, sublabel }) {
 
 /* ── Tabs ─────────────────────────────────────────────────── */
 function GeneralTab({ user }) {
+  const nameParts = (user?.full_name || '').trim().split(/\s+/);
+  const firstName = nameParts[0] || '';
+  const lastName = nameParts.slice(1).join(' ') || '';
+
+  const inputStyle = {
+    width: '100%', padding: '9px 12px', borderRadius: 9,
+    border: '1px solid rgba(0,0,0,0.08)', background: '#fafafa',
+    fontSize: 13, color: '#1A1918', fontFamily: "'DM Sans', sans-serif",
+    outline: 'none', boxSizing: 'border-box',
+  };
+
   return (
     <>
-      <Row label="Full Name">
-        <input
-          type="text"
-          defaultValue={user?.full_name || ''}
-          readOnly
-          style={{ width: '100%', padding: '9px 12px', borderRadius: 9, border: '1px solid rgba(0,0,0,0.08)', background: '#fafafa', fontSize: 13, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", outline: 'none', boxSizing: 'border-box' }}
-        />
-      </Row>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 20 }}>
+        <div>
+          <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 6 }}>First Name</div>
+          <input type="text" defaultValue={firstName} readOnly style={inputStyle} />
+        </div>
+        <div>
+          <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 6 }}>Last Name</div>
+          <input type="text" defaultValue={lastName} readOnly style={inputStyle} />
+        </div>
+      </div>
       <Row label="Email"><Field value={user?.email} /></Row>
       <div style={{ marginTop: 4 }}>
         <Link to={createPageUrl('Profile')} style={{
@@ -114,9 +188,7 @@ function InviteTab() {
       ),
       label: 'Email',
       sublabel: 'Send an invite via email',
-      action: () => {
-        window.location.href = `mailto:?subject=${encodeURIComponent(EMAIL_SUBJECT)}&body=${encodeURIComponent(EMAIL_BODY)}`;
-      },
+      action: () => { window.location.href = `mailto:?subject=${encodeURIComponent(EMAIL_SUBJECT)}&body=${encodeURIComponent(EMAIL_BODY)}`; },
     },
     {
       id: 'message',
@@ -127,26 +199,15 @@ function InviteTab() {
       ),
       label: 'Message',
       sublabel: 'Send an invite via iMessage or SMS',
-      action: () => {
-        window.location.href = `sms:?body=${encodeURIComponent(INVITE_MSG)}`;
-      },
+      action: () => { window.location.href = `sms:?body=${encodeURIComponent(INVITE_MSG)}`; },
     },
     {
       id: 'copy',
       icon: copied
-        ? (
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="20 6 9 17 4 12"/>
-          </svg>
-        )
-        : (
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-          </svg>
-        ),
+        ? <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        : <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>,
       label: copied ? 'Copied!' : 'Copy Link',
-      sublabel: `${PORTAL_URL}`,
+      sublabel: PORTAL_URL,
       action: handleCopy,
     },
   ];
@@ -184,36 +245,10 @@ function InviteTab() {
 }
 
 function AboutTab() {
-  const links = [
-    { label: 'Guide',          href: 'https://www.vony-lending.com/guide' },
-    { label: 'Contact Us',     href: 'https://www.vony-lending.com/contact' },
-    { label: 'Help & Support', href: 'https://www.vony-lending.com/help' },
-  ];
-  const legal = [
-    { label: 'Privacy Policy',   href: 'https://www.vony-lending.com/privacy' },
-    { label: 'Terms of Service', href: 'https://www.vony-lending.com/terms' },
-  ];
-  const LinkItem = ({ label, href }) => (
-    <a key={label} href={href} target="_blank" rel="noopener noreferrer"
-      style={{ fontSize: 13, color: '#03ACEA', textDecoration: 'none', fontFamily: "'DM Sans', sans-serif" }}
-      onMouseEnter={e => e.currentTarget.style.textDecoration = 'underline'}
-      onMouseLeave={e => e.currentTarget.style.textDecoration = 'none'}
-    >{label} ↗</a>
-  );
   return (
     <>
       <Row label="App">
         <div style={{ fontSize: 13, color: '#787776' }}>Vony · Version 1.0</div>
-      </Row>
-      <Row label="About">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
-          {links.map(l => <LinkItem key={l.label} {...l} />)}
-        </div>
-      </Row>
-      <Row label="Legal">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
-          {legal.map(l => <LinkItem key={l.label} {...l} />)}
-        </div>
       </Row>
       <Row label="Danger Zone">
         <button
@@ -227,10 +262,36 @@ function AboutTab() {
   );
 }
 
+function LegalTab() {
+  const links = [
+    { label: 'Privacy Policy',                              href: 'https://www.vony-lending.com/privacy' },
+    { label: 'Terms of Service',                            href: 'https://www.vony-lending.com/terms' },
+    { label: 'Do Not Sell or Share My Private Information', href: 'https://www.vony-lending.com/do-not-sell' },
+  ];
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+      {links.map(({ label, href }) => (
+        <a
+          key={label}
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ fontSize: 13, color: '#03ACEA', textDecoration: 'none', fontFamily: "'DM Sans', sans-serif" }}
+          onMouseEnter={e => e.currentTarget.style.textDecoration = 'underline'}
+          onMouseLeave={e => e.currentTarget.style.textDecoration = 'none'}
+        >
+          {label}
+        </a>
+      ))}
+    </div>
+  );
+}
+
 /* ── Modal ────────────────────────────────────────────────── */
 export default function SettingsModal({ isOpen, onClose }) {
   const { user, logout } = useAuth();
   const [activeTab, setActiveTab] = useState('general');
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 560);
   const overlayRef = useRef(null);
 
   useEffect(() => {
@@ -240,7 +301,46 @@ export default function SettingsModal({ isOpen, onClose }) {
     return () => document.removeEventListener('keydown', handler);
   }, [isOpen, onClose]);
 
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 560);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   if (!isOpen) return null;
+
+  const firstName = (user?.full_name || user?.username || '').trim().split(/\s+/)[0] || '';
+  const activeLabel = NAV_ITEMS.find(t => t.type === 'tab' && t.id === activeTab)?.label || '';
+
+  const sidebarWidth = isMobile ? 136 : 180;
+  const sidebarPadH = isMobile ? 6 : 10;
+  const sidebarPadV = isMobile ? 14 : 18;
+
+  const navItemStyle = (id) => ({
+    display: 'flex', alignItems: 'center', gap: 7,
+    padding: `7px ${sidebarPadH + 4}px`,
+    borderRadius: 8, border: 'none', cursor: 'pointer',
+    background: activeTab === id ? 'rgba(0,0,0,0.07)' : 'transparent',
+    fontSize: 13, fontWeight: activeTab === id ? 600 : 500,
+    color: activeTab === id ? '#1A1918' : '#787776',
+    textAlign: 'left', width: '100%',
+    fontFamily: "'DM Sans', sans-serif",
+    marginBottom: 2, textDecoration: 'none',
+    whiteSpace: 'nowrap',
+  });
+
+  const linkNavItemStyle = {
+    display: 'flex', alignItems: 'center', gap: 7,
+    padding: `7px ${sidebarPadH + 4}px`,
+    borderRadius: 8, cursor: 'pointer',
+    background: 'transparent',
+    fontSize: 13, fontWeight: 500,
+    color: '#787776',
+    textAlign: 'left', width: '100%',
+    fontFamily: "'DM Sans', sans-serif",
+    marginBottom: 2, textDecoration: 'none',
+    whiteSpace: 'nowrap',
+  };
 
   return createPortal(
     <div
@@ -251,39 +351,67 @@ export default function SettingsModal({ isOpen, onClose }) {
       <div style={{ background: 'white', borderRadius: 16, width: 580, maxWidth: '92vw', height: 420, display: 'flex', overflow: 'hidden', boxShadow: '0 24px 64px rgba(0,0,0,0.16), 0 4px 16px rgba(0,0,0,0.08)', border: '1px solid rgba(0,0,0,0.07)', fontFamily: "'DM Sans', sans-serif" }}>
 
         {/* ── Left nav ── */}
-        <div style={{ width: 180, background: '#F7F6F3', borderRight: '1px solid rgba(0,0,0,0.06)', padding: '18px 10px 16px', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ width: sidebarWidth, flexShrink: 0, background: '#F7F6F3', borderRight: '1px solid rgba(0,0,0,0.06)', padding: `${sidebarPadV}px ${sidebarPadH}px ${sidebarPadV - 2}px`, display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
+
           {/* User header */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '0 6px 14px', borderBottom: '1px solid rgba(0,0,0,0.07)', marginBottom: 10 }}>
-            <UserAvatar name={user?.full_name || user?.username} src={user?.avatar_url || user?.profile_picture_url} size={30} />
-            <div style={{ minWidth: 0 }}>
-              <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.full_name || user?.username}</div>
-              <div style={{ fontSize: 10, color: '#9B9A98', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.email}</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: `0 ${sidebarPadH + 2}px 14px`, borderBottom: '1px solid rgba(0,0,0,0.07)', marginBottom: 10, minWidth: 0 }}>
+            {user?.profile_picture_url ? (
+              <div style={{ width: 30, height: 30, borderRadius: '50%', overflow: 'hidden', flexShrink: 0 }}>
+                <img src={user.profile_picture_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              </div>
+            ) : (
+              <UserAvatar name={user?.full_name || user?.username} size={30} />
+            )}
+            <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0 }}>
+              {firstName}
             </div>
           </div>
 
-          {/* Tab buttons */}
-          {TABS.map(tab => (
-            <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{
-              display: 'flex', alignItems: 'center', padding: '7px 10px', borderRadius: 8, border: 'none', cursor: 'pointer',
-              background: activeTab === tab.id ? 'rgba(0,0,0,0.07)' : 'transparent',
-              fontSize: 13, fontWeight: activeTab === tab.id ? 600 : 500,
-              color: activeTab === tab.id ? '#1A1918' : '#787776',
-              textAlign: 'left', width: '100%', fontFamily: "'DM Sans', sans-serif", marginBottom: 2,
-            }}>
-              {tab.label}
-            </button>
-          ))}
+          {/* Nav items */}
+          {NAV_ITEMS.map(item => {
+            if (item.type === 'divider') {
+              return <div key={item.id} style={{ height: 1, background: 'rgba(0,0,0,0.06)', margin: '6px 4px 8px' }} />;
+            }
+            if (item.type === 'link') {
+              return (
+                <a
+                  key={item.id}
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={linkNavItemStyle}
+                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.04)'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                >
+                  <span style={{ width: 14, height: 14, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{item.icon}</span>
+                  {item.label}
+                </a>
+              );
+            }
+            return (
+              <button
+                key={item.id}
+                onClick={() => setActiveTab(item.id)}
+                style={navItemStyle(item.id)}
+                onMouseEnter={e => { if (activeTab !== item.id) e.currentTarget.style.background = 'rgba(0,0,0,0.04)'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = activeTab === item.id ? 'rgba(0,0,0,0.07)' : 'transparent'; }}
+              >
+                <span style={{ width: 14, height: 14, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{item.icon}</span>
+                {item.label}
+              </button>
+            );
+          })}
 
-          {/* Log Out at bottom */}
+          {/* Log Out */}
           <div style={{ marginTop: 'auto', paddingTop: 12 }}>
             <button
               onClick={() => { onClose(); logout?.(); }}
               style={{
-                display: 'flex', alignItems: 'center', gap: 7, padding: '7px 10px',
+                display: 'flex', alignItems: 'center', gap: 7, padding: `7px ${sidebarPadH + 4}px`,
                 borderRadius: 8, border: 'none', cursor: 'pointer', background: 'transparent',
                 fontSize: 13, fontWeight: 500, color: '#E8726E',
                 textAlign: 'left', width: '100%', fontFamily: "'DM Sans', sans-serif",
-                transition: 'background 0.15s',
+                transition: 'background 0.15s', whiteSpace: 'nowrap',
               }}
               onMouseEnter={e => e.currentTarget.style.background = 'rgba(232,114,110,0.07)'}
               onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
@@ -298,8 +426,10 @@ export default function SettingsModal({ isOpen, onClose }) {
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
           {/* Panel header */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px 14px', borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
-            <span style={{ fontSize: 14, fontWeight: 700, color: '#1A1918' }}>{TABS.find(t => t.id === activeTab)?.label}</span>
-            <button onClick={onClose} style={{ width: 27, height: 27, borderRadius: 8, background: 'rgba(0,0,0,0.05)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            <span style={{ fontSize: 14, fontWeight: 700, color: '#1A1918' }}>{activeLabel}</span>
+            <button
+              onClick={onClose}
+              style={{ width: 27, height: 27, borderRadius: 8, background: 'rgba(0,0,0,0.05)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.09)'}
               onMouseLeave={e => e.currentTarget.style.background = 'rgba(0,0,0,0.05)'}
             >
@@ -313,6 +443,7 @@ export default function SettingsModal({ isOpen, onClose }) {
             {activeTab === 'notifications' && <NotificationsTab />}
             {activeTab === 'invite'        && <InviteTab />}
             {activeTab === 'about'         && <AboutTab />}
+            {activeTab === 'legal'         && <LegalTab />}
           </div>
         </div>
       </div>
