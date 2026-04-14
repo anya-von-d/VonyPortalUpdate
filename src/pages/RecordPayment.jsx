@@ -501,6 +501,36 @@ export default function RecordPayment() {
           <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', marginBottom: 12 }}>Record Payment</div>
           <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 20 }} />
 
+          {/* ── No loans onboarding banner ── */}
+          {!isLoading && loans.length === 0 && (
+            <div style={{
+              marginBottom: 28, padding: '20px 22px', borderRadius: 14,
+              background: 'white', border: '1px solid rgba(0,0,0,0.07)',
+              boxShadow: '0 1px 4px rgba(0,0,0,0.04)', textAlign: 'center',
+            }}>
+              <div style={{ fontSize: 16, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', marginBottom: 4, fontFamily: "'DM Sans', system-ui, sans-serif" }}>
+                💸 Nothing to record just yet!
+              </div>
+              <div style={{ fontSize: 13, color: '#787776', lineHeight: 1.55, marginBottom: 16 }}>
+                Add some friends and create a loan first, then you can come back here to record payments.
+              </div>
+              <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
+                <Link
+                  to={createPageUrl('Friends')}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 10, background: '#03ACEA', color: 'white', textDecoration: 'none', fontSize: 13, fontWeight: 600, fontFamily: "'DM Sans', system-ui, sans-serif" }}
+                >
+                  Find Friends
+                </Link>
+                <Link
+                  to={createPageUrl('CreateOffer')}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 10, background: 'white', color: '#1A1918', textDecoration: 'none', fontSize: 13, fontWeight: 600, fontFamily: "'DM Sans', system-ui, sans-serif", border: '1px solid rgba(0,0,0,0.10)' }}
+                >
+                  Create a Loan
+                </Link>
+              </div>
+            </div>
+          )}
+
           {/* ── Two-col: Select Your Loan | Payment Form ── */}
           <div className="rp-two-col" style={{ display: 'grid', gridTemplateColumns: '280px 1fr', gap: 20, alignItems: 'start' }}>
 

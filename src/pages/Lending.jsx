@@ -1583,37 +1583,29 @@ export default function Lending({ initialTab }) {
           {/* ── No Friends Banner at the very top ── */}
           {activeSection === 'create' && !isLoadingUsers && friends.length === 0 && (
             <div style={{
+              marginBottom: 28, padding: '20px 22px', borderRadius: 14,
               background: 'white', border: '1px solid rgba(0,0,0,0.07)',
-              borderRadius: 14, padding: '16px 20px', marginBottom: 20,
               boxShadow: '0 1px 4px rgba(0,0,0,0.04)', textAlign: 'center',
             }}>
-              <div style={{ fontSize: 14, fontWeight: 700, color: '#1A1918', marginBottom: 4, fontFamily: "'DM Sans', system-ui, sans-serif" }}>
-                You can only send offers to people in your friends list
+              <div style={{ fontSize: 16, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', marginBottom: 4, fontFamily: "'DM Sans', system-ui, sans-serif" }}>
+                👋 Loans are more fun with friends!
               </div>
-              <div style={{ fontSize: 12, color: '#787776', lineHeight: 1.55, marginBottom: 14 }}>
-                Add a friend first, then create your loan offer together.
+              <div style={{ fontSize: 13, color: '#787776', lineHeight: 1.55, marginBottom: 16 }}>
+                You can only send loan offers to people in your friends list. Add a friend first and you'll be ready to go.
               </div>
-              <div style={{ display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap' }}>
-                <button
-                  type="button"
-                  onClick={() => navigate(createPageUrl('Friends'))}
-                  style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '7px 12px', background: '#03ACEA', color: 'white', fontSize: 12, fontWeight: 600, borderRadius: 9, border: 'none', cursor: 'pointer', fontFamily: "'DM Sans', system-ui, sans-serif" }}
+              <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
+                <Link
+                  to={createPageUrl('Friends')}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 10, background: '#03ACEA', color: 'white', textDecoration: 'none', fontSize: 13, fontWeight: 600, fontFamily: "'DM Sans', system-ui, sans-serif" }}
                 >
-                  <UserIcon size={13} />
-                  Find Your Friends
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    navigator.clipboard.writeText('https://lend-with-vony.com').then(() => {
-                      alert('Link copied! Share it with your friends to invite them to Vony.');
-                    });
-                  }}
-                  style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '7px 12px', background: 'white', color: '#1A1918', fontSize: 12, fontWeight: 600, borderRadius: 9, border: '1px solid rgba(0,0,0,0.10)', cursor: 'pointer', fontFamily: "'DM Sans', system-ui, sans-serif" }}
+                  Find Friends
+                </Link>
+                <a
+                  href="sms:?body=Hey! Join me on Vony for easy peer-to-peer lending. Sign up here: https://lend-with-vony.com"
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 10, background: 'white', color: '#1A1918', textDecoration: 'none', fontSize: 13, fontWeight: 600, fontFamily: "'DM Sans', system-ui, sans-serif", border: '1px solid rgba(0,0,0,0.10)' }}
                 >
-                  <UserPlus size={13} />
-                  Invite Your Friends
-                </button>
+                  Invite a Friend
+                </a>
               </div>
             </div>
           )}

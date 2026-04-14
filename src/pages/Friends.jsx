@@ -341,25 +341,25 @@ export default function Friends() {
         {/* Invite box — shown only when you have no friends yet */}
         {!isLoading && friends.length === 0 && (
           <div style={{
-            marginBottom: 20, padding: '20px 24px', borderRadius: 14,
+            marginBottom: 28, padding: '20px 22px', borderRadius: 14,
             background: 'white', border: '1px solid rgba(0,0,0,0.07)',
             boxShadow: '0 1px 4px rgba(0,0,0,0.04)', textAlign: 'center',
           }}>
             <div style={{ fontSize: 16, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', marginBottom: 4, fontFamily: "'DM Sans', system-ui, sans-serif" }}>
-              You have no friends on Vony yet
+              👥 No friends on Vony yet!
             </div>
             <div style={{ fontSize: 13, color: '#787776', lineHeight: 1.55, marginBottom: 16 }}>
               Invite people you know and start lending or borrowing together.
             </div>
-            <div style={{ display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
               <a
-                href={`sms:?body=Hey! Join me on Vony for easy peer-to-peer lending. Sign up here: https://lend-with-vony.com`}
+                href="sms:?body=Hey! Join me on Vony for easy peer-to-peer lending. Sign up here: https://lend-with-vony.com"
                 style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 10, background: '#03ACEA', color: 'white', textDecoration: 'none', fontSize: 13, fontWeight: 600, fontFamily: "'DM Sans', system-ui, sans-serif" }}
               >
                 Message
               </a>
               <a
-                href={`mailto:?subject=Join me on Vony&body=Hey! I've been using Vony to manage peer lending between friends. Sign up here: https://lend-with-vony.com`}
+                href="mailto:?subject=Join me on Vony&body=Hey! I've been using Vony to manage peer lending between friends. Sign up here: https://lend-with-vony.com"
                 style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 10, background: 'white', color: '#1A1918', textDecoration: 'none', fontSize: 13, fontWeight: 600, fontFamily: "'DM Sans', system-ui, sans-serif", border: '1px solid rgba(0,0,0,0.10)' }}
               >
                 Email
@@ -374,7 +374,7 @@ export default function Friends() {
                 }}
                 style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 10, background: 'white', color: inviteLinkCopied ? '#16A34A' : '#1A1918', fontSize: 13, fontWeight: 600, fontFamily: "'DM Sans', system-ui, sans-serif", border: `1px solid ${inviteLinkCopied ? 'rgba(22,163,74,0.3)' : 'rgba(0,0,0,0.10)'}`, cursor: 'pointer', transition: 'color 0.2s, border-color 0.2s' }}
               >
-                {inviteLinkCopied ? 'Link Copied!' : 'Copy Link'}
+                {inviteLinkCopied ? 'Link Copied! ✓' : 'Copy Link'}
               </button>
             </div>
           </div>
