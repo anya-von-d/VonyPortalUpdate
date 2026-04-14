@@ -1005,9 +1005,7 @@ export default function Home() {
                   <div style={{
                     position: 'relative', zIndex: 1, flex: 1,
                     padding: '12px 14px', borderRadius: 14,
-                    background: 'linear-gradient(160deg, rgba(255,255,255,0.97) 0%, rgba(245,251,255,0.93) 100%)',
-                    backdropFilter: 'blur(16px) saturate(1.8) brightness(1.08)',
-                    WebkitBackdropFilter: 'blur(16px) saturate(1.8) brightness(1.08)',
+                    background: '#ffffff',
                     border: '1.5px solid rgba(255,255,255,0.9)',
                     boxShadow: '0 2px 16px rgba(29,91,148,0.10), inset 0 1px 0 rgba(255,255,255,1), inset 0 -1px 0 rgba(200,220,240,0.3)',
                     display: 'flex', flexDirection: 'column', justifyContent: 'center',
@@ -1062,9 +1060,7 @@ export default function Home() {
                   <div style={{
                     position: 'relative', zIndex: 1, flex: 1,
                     padding: '12px 14px', borderRadius: 14,
-                    background: 'linear-gradient(160deg, rgba(255,255,255,0.97) 0%, rgba(240,252,255,0.93) 100%)',
-                    backdropFilter: 'blur(16px) saturate(1.8) brightness(1.08)',
-                    WebkitBackdropFilter: 'blur(16px) saturate(1.8) brightness(1.08)',
+                    background: '#ffffff',
                     border: '1.5px solid rgba(255,255,255,0.9)',
                     boxShadow: '0 2px 16px rgba(3,172,234,0.10), inset 0 1px 0 rgba(255,255,255,1), inset 0 -1px 0 rgba(180,230,245,0.3)',
                     display: 'flex', flexDirection: 'column', justifyContent: 'center',
