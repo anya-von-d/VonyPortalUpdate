@@ -15,11 +15,11 @@ const LEARN_CATEGORIES = [
 ];
 
 const CAT_COLORS = {
-  lending:     { bg: '#F7FBFF', badge: 'rgba(37,99,235,0.08)',   badgeText: '#1D4ED8', title: '#1E3A8A', border: 'rgba(37,99,235,0.10)' },
-  basics:      { bg: '#F4FDF8', badge: 'rgba(5,150,105,0.08)',   badgeText: '#065F46', title: '#064E3B', border: 'rgba(5,150,105,0.10)' },
-  saving:      { bg: '#FAF7FF', badge: 'rgba(124,58,237,0.08)',  badgeText: '#6D28D9', title: '#4C1D95', border: 'rgba(124,58,237,0.10)' },
-  traditional: { bg: '#FFFEF5', badge: 'rgba(217,119,6,0.08)',   badgeText: '#92400E', title: '#78350F', border: 'rgba(217,119,6,0.10)' },
-  debt:        { bg: '#FFF9FA', badge: 'rgba(225,29,72,0.08)',   badgeText: '#9F1239', title: '#881337', border: 'rgba(225,29,72,0.10)' },
+  lending:     { bg: '#FBFDFF', badge: 'rgba(37,99,235,0.06)',   badgeText: '#1D4ED8', title: '#1E3A8A', border: 'rgba(37,99,235,0.07)' },
+  basics:      { bg: '#FAFEF9', badge: 'rgba(5,150,105,0.06)',   badgeText: '#065F46', title: '#064E3B', border: 'rgba(5,150,105,0.07)' },
+  saving:      { bg: '#FDFAFF', badge: 'rgba(124,58,237,0.06)',  badgeText: '#6D28D9', title: '#4C1D95', border: 'rgba(124,58,237,0.07)' },
+  traditional: { bg: '#FFFEFC', badge: 'rgba(217,119,6,0.06)',   badgeText: '#92400E', title: '#78350F', border: 'rgba(217,119,6,0.07)' },
+  debt:        { bg: '#FFFCFD', badge: 'rgba(225,29,72,0.06)',   badgeText: '#9F1239', title: '#881337', border: 'rgba(225,29,72,0.07)' },
 };
 
 const LEARN_ARTICLES = {
@@ -241,27 +241,23 @@ export default function ComingSoon() {
           <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', marginBottom: 16 }}>Learn</div>
           <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginLeft: -48, marginRight: -48, marginBottom: 20 }} />
 
-          {/* Glassmorphic pill nav — centered */}
+          {/* VonyHomePage-style glassmorphic nav — centered */}
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 28 }}>
             <div style={{
-              display: 'inline-flex',
-              background: 'rgba(255,255,255,0.65)',
-              backdropFilter: 'blur(16px) saturate(1.6)',
-              WebkitBackdropFilter: 'blur(16px) saturate(1.6)',
-              borderRadius: 999,
-              padding: 4,
-              gap: 2,
-              border: '1px solid rgba(255,255,255,0.9)',
-              boxShadow: '0 4px 24px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04)',
+              display: 'inline-flex', alignItems: 'center', gap: 2,
+              borderRadius: 16, padding: '5px 8px',
+              backdropFilter: 'blur(16px) saturate(1.5)',
+              WebkitBackdropFilter: 'blur(16px) saturate(1.5)',
+              background: 'rgba(255,255,255,0.75)',
+              boxShadow: '0px 2px 4px -2px rgba(0,0,0,0.08), 0px 8px 16px -8px rgba(0,0,0,0.03), inset 0px -5px 6px rgba(255,255,255,0.5), inset 0px -8px 24px rgba(255,255,255,0.12)',
             }}>
               {LEARN_CATEGORIES.map(cat => {
                 const active = learnCategory === cat.id;
                 return (
                   <button key={cat.id} onClick={() => setLearnCategory(cat.id)} style={{
-                    padding: '8px 18px', borderRadius: 999, border: 'none', cursor: 'pointer',
-                    background: active ? 'white' : 'transparent',
-                    boxShadow: active ? '0 1px 4px rgba(0,0,0,0.10)' : 'none',
-                    fontSize: 13, fontWeight: 600, fontFamily: "'DM Sans', system-ui, sans-serif",
+                    padding: '6px 16px', borderRadius: 10, border: 'none', cursor: 'pointer',
+                    background: active ? 'rgba(0,0,0,0.06)' : 'transparent',
+                    fontSize: 13, fontWeight: active ? 600 : 500, fontFamily: "'DM Sans', system-ui, sans-serif",
                     letterSpacing: '-0.01em', whiteSpace: 'nowrap',
                     color: active ? '#1A1918' : '#787776', transition: 'all 0.2s',
                   }}>
