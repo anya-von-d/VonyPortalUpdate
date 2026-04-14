@@ -45,7 +45,7 @@ input[type="date"] {
 @layer base {
   html {
     scroll-behavior: smooth;
-    background-color: #ffffff;
+    background-color: #F3F2EE;
   }
 
   /* Scrollbar styling */
@@ -269,6 +269,9 @@ input[type="date"] {
   background: transparent !important;
 }
 
+/* Main content area background */
+.mesh-center { background: #F3F2EE !important; }
+
 /* Decorative blue strip at right edge of Col 1 (inside col, along col1/col2 border) */
 .mesh-left {
   position: relative;
@@ -433,6 +436,9 @@ input[type="date"] {
 
 /* Hide mobile-only sentence on desktop */
 .la-friend-mobile { display: none; }
+/* Hide mobile-only date/chevron on desktop */
+.la-mobile-date { display: none; }
+.la-date-chevron { display: none; }
 
 
 /* ============================================================
@@ -505,10 +511,12 @@ input[type="date"] {
   .la-col-date {
     grid-area: date !important;
     width: auto !important;
-    font-size: 11px !important;
-    color: #787776 !important;
-    text-align: right !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
   }
+  .la-date-text { display: none !important; }
+  .la-date-chevron { display: inline-flex !important; align-items: center; }
   .la-col-friend { grid-area: friend !important; flex: none !important; }
   .la-col-category { display: none !important; }
   .la-col-status {
@@ -516,6 +524,7 @@ input[type="date"] {
     width: auto !important;
     justify-content: flex-start !important;
   }
+  .la-mobile-date { display: inline !important; }
   .la-col-amount { display: none !important; }
   .la-col-arrow { display: none !important; }
   .la-friend-desktop { display: none !important; }

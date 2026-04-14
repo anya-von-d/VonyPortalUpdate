@@ -37,6 +37,7 @@ import { addMonths, addWeeks, addDays, format, startOfMonth, endOfMonth, isSameM
 import { jsPDF } from "jspdf";
 import { formatMoney } from "@/components/utils/formatMoney";
 import { toLocalDate, getLocalToday, daysUntil as daysUntilDate, daysBetween } from "@/components/utils/dateUtils";
+import SidebarBottomSection from '../components/SidebarBottomSection';
 import MeshMobileNav from "@/components/MeshMobileNav";
 import UserAvatar from "@/components/ui/UserAvatar";
 
@@ -1500,7 +1501,7 @@ export default function Lending({ initialTab }) {
         signingAs="Lender"
       />
 
-      <div style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", background: '#ffffff' }}>
+      <div style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", background: '#F3F2EE' }}>
         <MeshMobileNav user={currentUser} activePage="Create Loan" />
         <div className="mesh-layout" style={{ display: 'grid', gridTemplateColumns: '180px 1fr', gap: 0, minHeight: '100vh' }}>
           {/* COL 1 - left nav */}
@@ -1538,7 +1539,7 @@ export default function Lending({ initialTab }) {
                       background: isActive ? 'rgba(0,0,0,0.05)' : 'transparent',
                       fontFamily: "'DM Sans', sans-serif", width: '100%', boxSizing: 'border-box',
                     }}>
-                      <span style={{ flexShrink: 0, opacity: isActive ? 1 : 0.6 }}>{navIcons[label]}</span>
+                      <span style={{ flexShrink: 0, width: 26, height: 26, borderRadius: 7, background: isActive ? 'rgba(0,0,0,0.07)' : 'rgba(0,0,0,0.04)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>{navIcons[label]}</span>
                       {label}
                     </Link>
                   );
@@ -1563,31 +1564,14 @@ export default function Lending({ initialTab }) {
                       background: 'transparent', fontFamily: "'DM Sans', sans-serif",
                       width: '100%', boxSizing: 'border-box',
                     }}>
-                      <span style={{ flexShrink: 0, opacity: 0.5 }}>{soonIcons[label]}</span>
+                      <span style={{ flexShrink: 0, width: 26, height: 26, borderRadius: 7, background: 'rgba(0,0,0,0.04)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>{soonIcons[label]}</span>
                       <span style={{ flex: 1 }}>{label}</span>
                       <span style={{ fontSize: 8, fontWeight: 700, color: '#9B9A98', background: 'rgba(0,0,0,0.05)', borderRadius: 4, padding: '2px 6px', letterSpacing: '0.05em', textTransform: 'uppercase', lineHeight: 1.2, flexShrink: 0 }}>SOON</span>
                     </Link>
                   );
                 })}
               </nav>
-              {/* Help & Support + Log Out at bottom */}
-              <div style={{ marginTop: 24 }}>
-                <a href="https://www.vony-lending.com/help" target="_blank" rel="noopener noreferrer"
-                  style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '6px 12px', borderRadius: 9, textDecoration: 'none', fontFamily: "'DM Sans', sans-serif" }}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9B9A98" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                  <span style={{ fontSize: 12, fontWeight: 500, color: '#9B9A98' }}>Help & Support</span>
-                </a>
-                <button onClick={() => logout?.()} style={{
-                  display: 'flex', alignItems: 'center', gap: 7, padding: '6px 12px', borderRadius: 9,
-                  border: 'none', cursor: 'pointer', background: 'transparent',
-                  fontFamily: "'DM Sans', sans-serif", width: '100%', boxSizing: 'border-box',
-                }}
-                onMouseEnter={e => e.currentTarget.style.background = 'rgba(232,114,110,0.06)'}
-                onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-                >
-                  <span style={{ fontSize: 12, fontWeight: 500, color: '#E8726E' }}>Log Out</span>
-                </button>
-              </div>
+              <SidebarBottomSection />
             </div>
           </div>
 
