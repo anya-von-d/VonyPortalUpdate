@@ -553,7 +553,7 @@ export default function YourLoans() {
     return (
       <>
         {/* 1. Three standalone top cards */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 24, marginBottom: 20 }}>
+        <div className="loans-top-cards" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 24, marginBottom: 20 }}>
           {/* Next Incoming / Next Payment Due — aurora card identical to Home page */}
           <div style={{ position: 'relative', display: 'flex', flexDirection: 'column' }}>
             {/* Aurora glow */}
@@ -701,7 +701,7 @@ export default function YourLoans() {
           const upcomingLoans = allPaymentLoans.filter(l => l.days >= 0).slice(0, 5);
           const combinedLoans = [...overdueLoans, ...upcomingLoans];
           return (
-            <div style={{ display: 'grid', gridTemplateColumns: activeLoans.length > 0 ? '1fr 1fr' : '1fr', gap: 20, marginBottom: 20, alignItems: 'start' }}>
+            <div className="loans-bottom-row" style={{ display: 'grid', gridTemplateColumns: activeLoans.length > 0 ? '1fr 1fr' : '1fr', gap: 20, marginBottom: 20, alignItems: 'start' }}>
               <PageCard title="Upcoming" headerRight={<Link to={createPageUrl("Upcoming")} style={{ fontSize: 11, fontWeight: 500, color: '#9B9A98', textDecoration: 'none' }}>Full schedule →</Link>} style={{ marginBottom: 0 }}>
                 {combinedLoans.length === 0 ? (
                   <div style={{ padding: '10px 0', fontSize: 13, color: '#9B9A98' }}>Nothing coming up.</div>

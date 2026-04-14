@@ -328,6 +328,9 @@ input[type="date"] {
   .lending-mobile-pay-summary { display: grid !important; }
   .lending-summary-cards { grid-template-columns: 1fr !important; }
   .ra-mobile-filters { display: block !important; }
+  /* YourLoans lending/borrowing tab: stack all cards */
+  .loans-top-cards { grid-template-columns: 1fr !important; }
+  .loans-bottom-row { grid-template-columns: 1fr !important; }
 }
 
 /* Home + Dashboard pages responsive */
