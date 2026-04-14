@@ -330,12 +330,15 @@ function LegalTab() {
 }
 
 /* ── Modal ────────────────────────────────────────────────── */
-export default function SettingsModal({ isOpen, onClose }) {
+export default function SettingsModal({ isOpen, onClose, initialTab = 'general' }) {
   const { user: authUser, userProfile, logout } = useAuth();
   const user = userProfile
     ? { ...userProfile, id: authUser?.id, email: authUser?.email }
     : authUser;
-  const [activeTab, setActiveTab] = useState('general');
+  const [activeTab, setActiveTab] = useState(initialTab);
+
+  // Sync activeTab if initialTab changes (e.g. opened from different entry points)
+  useEffect(() => { if (isOpen) setActiveTab(initialTab); }, [isOpen, initialTab]);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 560);
   const overlayRef = useRef(null);
 

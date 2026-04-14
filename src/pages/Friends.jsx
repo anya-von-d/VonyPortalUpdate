@@ -23,6 +23,7 @@ import confetti from "canvas-confetti";
 import SidebarBottomSection from '../components/SidebarBottomSection';
 import MeshMobileNav from "@/components/MeshMobileNav";
 import UserAvatar from "@/components/ui/UserAvatar";
+import SettingsModal from "@/components/SettingsModal";
 
 export default function Friends() {
   const { user: authUser, userProfile, logout } = useAuth();
@@ -39,6 +40,7 @@ export default function Friends() {
   const [processingId, setProcessingId] = useState(null);
   const [inviteLinkCopied, setInviteLinkCopied] = useState(false);
   const [inviteOpen, setInviteOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const inviteRef = useRef(null);
 
   useEffect(() => {
@@ -442,8 +444,14 @@ export default function Friends() {
 
           {/* Right: Find Your Friends */}
           <div className="friends-search-col" style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(12px) saturate(1.4)', WebkitBackdropFilter: 'blur(12px) saturate(1.4)', borderRadius: 14, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.05)', padding: '14px 18px' }}>
-            <div style={{ paddingBottom: 10, marginBottom: 12, borderBottom: '1px solid rgba(0,0,0,0.07)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: 10, marginBottom: 12, borderBottom: '1px solid rgba(0,0,0,0.07)' }}>
               <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Find Your Friends</span>
+              <button
+                onClick={() => setSettingsOpen(true)}
+                style={{ fontSize: 11, fontWeight: 500, color: '#03ACEA', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontFamily: "'DM Sans', sans-serif" }}
+              >
+                Invite Friends
+              </button>
             </div>
             {/* Search bar */}
             <div style={{ position: 'relative', marginBottom: 14 }}>
@@ -522,5 +530,7 @@ export default function Friends() {
 
     </div>
     </div>
+
+    <SettingsModal isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} initialTab="invite" />
   );
 }

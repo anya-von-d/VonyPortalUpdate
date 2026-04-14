@@ -703,7 +703,7 @@ export default function YourLoans() {
           const combinedLoans = [...overdueLoans, ...upcomingLoans];
           return (
             <div className="loans-bottom-row" style={{ display: 'grid', gridTemplateColumns: activeLoans.length > 0 ? '1fr 1fr' : '1fr', gap: 20, marginBottom: 20, alignItems: 'start' }}>
-              <PageCard title="Upcoming" headerRight={<Link to={createPageUrl("Upcoming")} style={{ fontSize: 11, fontWeight: 500, color: '#9B9A98', textDecoration: 'none' }}>Full schedule →</Link>} style={{ marginBottom: 0 }}>
+              <PageCard title="Upcoming" headerRight={<Link to={createPageUrl("Upcoming")} style={{ fontSize: 11, fontWeight: 500, color: '#03ACEA', textDecoration: 'none' }}>Full schedule →</Link>} style={{ marginBottom: 0 }}>
                 {combinedLoans.length === 0 ? (
                   <div style={{ padding: '10px 0', fontSize: 13, color: '#9B9A98', textAlign: 'center' }}>You're all clear! Nothing coming up yet 🎉</div>
                 ) : combinedLoans.map((loan) => {
@@ -737,7 +737,7 @@ export default function YourLoans() {
 
               {/* Active Lending / Active Borrowing — right of Upcoming */}
               {activeLoans.length > 0 && (
-                <PageCard title={isLending ? 'Active Lending' : 'Active Borrowing'} headerRight={<Link to={createPageUrl("YourLoans")} style={{ fontSize: 11, fontWeight: 500, color: '#9B9A98', textDecoration: 'none' }}>View all →</Link>} style={{ marginBottom: 0 }}>
+                <PageCard title={isLending ? 'Active Lending' : 'Active Borrowing'} headerRight={<Link to={createPageUrl("YourLoans")} style={{ fontSize: 11, fontWeight: 500, color: '#03ACEA', textDecoration: 'none' }}>View all →</Link>} style={{ marginBottom: 0 }}>
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
                     {activeLoans.slice(0, 5).map((loan) => {
                       const otherProfile = publicProfiles.find(p => p.user_id === (isLending ? loan.borrower_id : loan.lender_id));
