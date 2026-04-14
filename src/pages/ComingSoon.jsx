@@ -109,7 +109,7 @@ export default function ComingSoon() {
   );
 
   return (
-    <div className="mesh-layout" style={{ minHeight: '100vh', display: 'grid', gridTemplateColumns: '180px 1fr 300px', gap: 0, fontFamily: "'DM Sans', sans-serif" }}>
+    <div className="mesh-layout" style={{ minHeight: '100vh', display: 'grid', gridTemplateColumns: '180px 1fr', gap: 0, fontFamily: "'DM Sans', sans-serif" }}>
       <MeshMobileNav user={user} activePage="Learn" />
 
       {/* ── LEFT: Sidebar nav ── */}
@@ -232,71 +232,6 @@ export default function ComingSoon() {
               <div style={{ fontSize: 13, color: '#787776', lineHeight: 1.6 }}>{article.body}</div>
             </motion.div>
           ))}
-        </div>
-      </div>
-
-      {/* ── RIGHT: Notifications + Recent Activity ── */}
-      <div className="mesh-right" style={{ background: '#fafafa' }}>
-        <div style={{ position: 'sticky', top: 0, padding: '28px 28px 0' }}>
-          {/* Bell + Profile icons */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 10, marginBottom: 24 }}>
-            <Link to={createPageUrl("Requests")} style={{ position: 'relative', textDecoration: 'none' }}>
-              <div style={{ width: 32, height: 32, borderRadius: 9, background: 'rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#787776" strokeWidth="2" strokeLinecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-              </div>
-            </Link>
-            <Link to={createPageUrl("Profile")} style={{ textDecoration: 'none' }}>
-              <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(3,172,234,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-              </div>
-            </Link>
-          </div>
-
-          {pendingToConfirm.length > 0 && (
-            <RightSection title="Notifications">
-              {pendingToConfirm.slice(0, 5).map((p) => {
-                const loan = allLoans.find(l => l.id === p.loan_id);
-                const borrowerProfile = loan ? publicProfiles.find(pr => pr.user_id === loan.borrower_id) : null;
-                const name = borrowerProfile?.full_name?.split(' ')[0] || 'User';
-                return (
-                  <div key={p.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 0' }}>
-                    <div style={{ width: 26, height: 26, borderRadius: 7, background: 'rgba(245,158,11,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-                    </div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name} paid {formatMoney(p.amount || 0)}</div>
-                      <div style={{ fontSize: 11, color: '#9B9A98' }}>Awaiting confirmation</div>
-                    </div>
-                  </div>
-                );
-              })}
-            </RightSection>
-          )}
-
-          {pendingToConfirm.length === 0 && (
-            <RightSection title="Notifications">
-              <div style={{ fontSize: 12, color: '#9B9A98' }}>All caught up</div>
-            </RightSection>
-          )}
-
-          <RightSection title="Recent Activity">
-            {recentActivity.length === 0 ? (
-              <div style={{ fontSize: 12, color: '#9B9A98' }}>No recent activity</div>
-            ) : recentActivity.map((item) => (
-              <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '7px 0' }}>
-                <div style={{ width: 26, height: 26, borderRadius: 7, background: item.isLender ? 'rgba(3,172,234,0.12)' : 'rgba(126,192,234,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={item.isLender ? '#03ACEA' : '#7EC0EA'} strokeWidth="2.5" strokeLinecap="round">
-                    {item.isLender ? <polyline points="17 11 12 6 7 11"/> : <polyline points="7 13 12 18 17 13"/>}
-                    <line x1="12" y1={item.isLender ? '6' : '18'} x2="12" y2={item.isLender ? '18' : '6'}/>
-                  </svg>
-                </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.isLender ? `${item.name} paid you` : `You paid ${item.name}`}</div>
-                  <div style={{ fontSize: 11, color: '#9B9A98' }}>{formatMoney(item.amount)}</div>
-                </div>
-              </div>
-            ))}
-          </RightSection>
         </div>
       </div>
 
