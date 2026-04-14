@@ -326,69 +326,71 @@ export default function Upcoming() {
         {/* ── CENTER ── */}
         <div className="mesh-center" style={{ background: 'white', padding: '28px 48px 80px' }}>
 
-          {/* Tab header */}
-          <div style={{ display: 'flex', gap: 24, alignItems: 'flex-end', marginLeft: -48, marginRight: -48, paddingLeft: 48, paddingRight: 48 }}>
-            {[{ key: 'summary', label: 'Summary' }, { key: 'calendar', label: 'Calendar' }].map(tab => (
-              <button key={tab.key} onClick={() => setActiveTab(tab.key)} style={{
-                position: 'relative', paddingBottom: 12,
-                border: 'none', background: 'transparent', cursor: 'pointer',
-                fontSize: 14, fontWeight: 600, fontFamily: "'DM Sans', system-ui, sans-serif",
-                letterSpacing: '-0.02em',
-                color: activeTab === tab.key ? '#1A1918' : 'rgba(0,0,0,0.30)',
-                transition: 'color 0.2s',
-              }}>
-                {tab.label}
-                {activeTab === tab.key && (
-                  <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 6, background: 'linear-gradient(to bottom, transparent 0%, #03ACEA 66.67%, #03ACEA 100%)', pointerEvents: 'none' }} />
-                )}
-              </button>
-            ))}
+          {/* Page header */}
+          <div style={{ marginLeft: -48, marginRight: -48, paddingLeft: 48, paddingRight: 48, paddingBottom: 12 }}>
+            <span style={{ fontSize: 14, fontWeight: 600, fontFamily: "'DM Sans', system-ui, sans-serif", letterSpacing: '-0.02em', color: '#1A1918' }}>Upcoming</span>
           </div>
-          <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginLeft: -48, marginRight: -48, marginBottom: 20 }} />
+          <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginLeft: -48, marginRight: -48, marginBottom: 24 }} />
 
-          {activeTab === 'summary' ? (
-            /* ── SUMMARY VIEW ── */
-            <div>
-              {overdue.length > 0 ? (
-                <>
-                  <SectionHead label="Overdue" count={overdue.length} total={overdue.reduce((s, e) => s + e.amount, 0)} />
-                  {overdue.map((event, idx) => <PaymentRow key={event.loanId + '-ov'} event={event} isLast={idx === overdue.length - 1} />)}
-                </>
-              ) : null}
+          {/* Two-column: section boxes left, calendar right */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, alignItems: 'start' }}>
 
-              <SectionHead label="Next 7 Days" count={next7Days.length} total={next7Days.reduce((s, e) => s + e.amount, 0)} />
-              {next7Days.length === 0 ? (
-                <div style={{ padding: '12px 0', fontSize: 13, color: '#9B9A98' }}>No payments in the next 7 days.</div>
-              ) : next7Days.map((event, idx) => <PaymentRow key={event.loanId + '-7'} event={event} isLast={idx === next7Days.length - 1} />)}
+            {/* Left: Overdue + Next 7 Days + Coming Later */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              {/* Overdue */}
+              {overdue.length > 0 && (
+                <div style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(12px) saturate(1.4)', WebkitBackdropFilter: 'blur(12px) saturate(1.4)', borderRadius: 14, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.05)', padding: '14px 18px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 10, marginBottom: 4, borderBottom: '1px solid rgba(0,0,0,0.07)' }}>
+                    <span style={{ fontSize: 10, fontWeight: 700, color: '#E8726E', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Overdue</span>
+                    <span style={{ fontSize: 11, color: '#9B9A98' }}>{overdue.length} · {formatMoney(overdue.reduce((s, e) => s + e.amount, 0))}</span>
+                  </div>
+                  {overdue.map(event => <PaymentRow key={event.loanId + '-ov'} event={event} />)}
+                </div>
+              )}
 
-              <SectionHead label="Coming Later" count={comingLater.length} total={comingLater.reduce((s, e) => s + e.amount, 0)} />
-              {comingLater.length === 0 ? (
-                <div style={{ padding: '12px 0', fontSize: 13, color: '#9B9A98' }}>Nothing coming up after 7 days.</div>
-              ) : comingLater.map((event, idx) => <PaymentRow key={event.loanId + '-later'} event={event} isLast={idx === comingLater.length - 1} />)}
-            </div>
-          ) : (
-            /* ── CALENDAR VIEW ── */
-            <div style={{ marginTop: 16 }}>
-              {/* Month nav */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-                <button onClick={() => setCalendarMonth(addMonths(calendarMonth, -1))} style={{ width: 32, height: 32, borderRadius: '50%', border: '1px solid rgba(0,0,0,0.09)', background: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#787776" strokeWidth="2" strokeLinecap="round"><polyline points="15 18 9 12 15 6" /></svg>
-                </button>
-                <span style={{ fontSize: 15, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em' }}>{format(calendarMonth, 'MMMM yyyy')}</span>
-                <button onClick={() => setCalendarMonth(addMonths(calendarMonth, 1))} style={{ width: 32, height: 32, borderRadius: '50%', border: '1px solid rgba(0,0,0,0.09)', background: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#787776" strokeWidth="2" strokeLinecap="round"><polyline points="9 18 15 12 9 6" /></svg>
-                </button>
+              {/* Next 7 Days */}
+              <div style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(12px) saturate(1.4)', WebkitBackdropFilter: 'blur(12px) saturate(1.4)', borderRadius: 14, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.05)', padding: '14px 18px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 10, marginBottom: 4, borderBottom: '1px solid rgba(0,0,0,0.07)' }}>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Next 7 Days</span>
+                  {next7Days.length > 0 && <span style={{ fontSize: 11, color: '#9B9A98' }}>{next7Days.length} · {formatMoney(next7Days.reduce((s, e) => s + e.amount, 0))}</span>}
+                </div>
+                {next7Days.length === 0 ? (
+                  <div style={{ padding: '8px 0', fontSize: 13, color: '#9B9A98' }}>No payments in the next 7 days.</div>
+                ) : next7Days.map(event => <PaymentRow key={event.loanId + '-7'} event={event} />)}
               </div>
 
+              {/* Coming Later */}
+              <div style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(12px) saturate(1.4)', WebkitBackdropFilter: 'blur(12px) saturate(1.4)', borderRadius: 14, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.05)', padding: '14px 18px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 10, marginBottom: 4, borderBottom: '1px solid rgba(0,0,0,0.07)' }}>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Coming Later</span>
+                  {comingLater.length > 0 && <span style={{ fontSize: 11, color: '#9B9A98' }}>{comingLater.length} · {formatMoney(comingLater.reduce((s, e) => s + e.amount, 0))}</span>}
+                </div>
+                {comingLater.length === 0 ? (
+                  <div style={{ padding: '8px 0', fontSize: 13, color: '#9B9A98' }}>Nothing coming up after 7 days.</div>
+                ) : comingLater.map(event => <PaymentRow key={event.loanId + '-later'} event={event} />)}
+              </div>
+            </div>
+
+            {/* Right: Calendar */}
+            <div style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(12px) saturate(1.4)', WebkitBackdropFilter: 'blur(12px) saturate(1.4)', borderRadius: 14, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.05)', padding: '14px 18px' }}>
+              {/* Month nav */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+                <button onClick={() => setCalendarMonth(addMonths(calendarMonth, -1))} style={{ width: 28, height: 28, borderRadius: '50%', border: '1px solid rgba(0,0,0,0.09)', background: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#787776" strokeWidth="2" strokeLinecap="round"><polyline points="15 18 9 12 15 6" /></svg>
+                </button>
+                <span style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em' }}>{format(calendarMonth, 'MMMM yyyy')}</span>
+                <button onClick={() => setCalendarMonth(addMonths(calendarMonth, 1))} style={{ width: 28, height: 28, borderRadius: '50%', border: '1px solid rgba(0,0,0,0.09)', background: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#787776" strokeWidth="2" strokeLinecap="round"><polyline points="9 18 15 12 9 6" /></svg>
+                </button>
+              </div>
               {/* Day headers */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', borderBottom: '1px solid rgba(0,0,0,0.07)', marginBottom: 4 }}>
                 {['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d => (
-                  <div key={d} style={{ textAlign: 'center', fontSize: 11, fontWeight: 600, color: '#787776', padding: '8px 0' }}>{d}</div>
+                  <div key={d} style={{ textAlign: 'center', fontSize: 10, fontWeight: 600, color: '#787776', padding: '6px 0' }}>{d}</div>
                 ))}
               </div>
-
               {/* Calendar grid */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 3 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2 }}>
                 {calendarDays.map((day, i) => {
                   const inMonth = isSameMonth(day, calendarMonth);
                   const isToday = isSameDay(day, new Date());
@@ -398,44 +400,38 @@ export default function Upcoming() {
                   const hasOutgoing = dayEvents.some(e => !e.isLender);
                   return (
                     <div key={i} style={{
-                      minHeight: 84, padding: '7px 8px', borderRadius: 9,
+                      minHeight: 62, padding: '5px 6px', borderRadius: 7,
                       background: inMonth ? (hasIncoming ? 'rgba(3,172,234,0.06)' : hasOutgoing ? 'rgba(29,91,148,0.07)' : 'transparent') : 'transparent',
                       opacity: inMonth ? 1 : 0.3,
                       border: isToday ? '1.5px solid #03ACEA' : '1px solid transparent',
                     }}>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
-                        <span style={{
-                          display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                          width: isToday ? 22 : 'auto', height: isToday ? 22 : 'auto',
-                          borderRadius: '50%', fontSize: 12, fontWeight: isToday ? 700 : 500,
-                          color: isToday ? 'white' : inMonth ? '#1A1918' : '#C7C6C4',
-                          background: isToday ? '#03ACEA' : 'transparent',
-                        }}>{format(day, 'd')}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 3 }}>
+                        <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: isToday ? 18 : 'auto', height: isToday ? 18 : 'auto', borderRadius: '50%', fontSize: 11, fontWeight: isToday ? 700 : 500, color: isToday ? 'white' : inMonth ? '#1A1918' : '#C7C6C4', background: isToday ? '#03ACEA' : 'transparent' }}>{format(day, 'd')}</span>
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 1 }}>
-                          {hasIncoming && <span style={{ fontSize: 10, fontWeight: 600, color: '#03ACEA' }}>+{formatMoney(dayEvents.filter(e => e.isLender).reduce((s, e) => s + e.amount, 0))}</span>}
-                          {hasOutgoing && <span style={{ fontSize: 10, fontWeight: 600, color: '#1D5B94' }}>{formatMoney(dayEvents.filter(e => !e.isLender).reduce((s, e) => s + e.amount, 0))}</span>}
+                          {hasIncoming && <span style={{ fontSize: 8, fontWeight: 600, color: '#03ACEA' }}>+{formatMoney(dayEvents.filter(e => e.isLender).reduce((s, e) => s + e.amount, 0))}</span>}
+                          {hasOutgoing && <span style={{ fontSize: 8, fontWeight: 600, color: '#1D5B94' }}>{formatMoney(dayEvents.filter(e => !e.isLender).reduce((s, e) => s + e.amount, 0))}</span>}
                         </div>
                       </div>
                       {dayEvents.length > 0 && (
-                        <div style={{ display: 'flex', gap: 3, flexWrap: 'wrap' }}>
-                          {dayEvents.slice(0, 3).map((ev, j) => (
-                            <div key={j} style={{ width: 20, height: 20, borderRadius: '50%', fontSize: 9, fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', background: ev.isLender ? '#03ACEA' : '#1D5B94', color: 'white' }}>{ev.initial}</div>
+                        <div style={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+                          {dayEvents.slice(0, 2).map((ev, j) => (
+                            <div key={j} style={{ width: 16, height: 16, borderRadius: '50%', fontSize: 8, fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', background: ev.isLender ? '#03ACEA' : '#1D5B94', color: 'white' }}>{ev.initial}</div>
                           ))}
-                          {dayEvents.length > 3 && <div style={{ width: 20, height: 20, borderRadius: '50%', fontSize: 9, fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.06)', color: '#787776' }}>+{dayEvents.length - 3}</div>}
+                          {dayEvents.length > 2 && <div style={{ width: 16, height: 16, borderRadius: '50%', fontSize: 8, fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.06)', color: '#787776' }}>+{dayEvents.length - 2}</div>}
                         </div>
                       )}
                     </div>
                   );
                 })}
               </div>
-
               {/* Legend */}
-              <div style={{ display: 'flex', gap: 20, marginTop: 16, paddingTop: 14, borderTop: '1px solid rgba(0,0,0,0.06)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: '#787776' }}><div style={{ width: 8, height: 8, borderRadius: '50%', background: '#03ACEA' }} /> Owed to you</div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: '#787776' }}><div style={{ width: 8, height: 8, borderRadius: '50%', background: '#1D5B94' }} /> You owe</div>
+              <div style={{ display: 'flex', gap: 16, marginTop: 12, paddingTop: 12, borderTop: '1px solid rgba(0,0,0,0.06)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: '#787776' }}><div style={{ width: 8, height: 8, borderRadius: '50%', background: '#03ACEA' }} /> Owed to you</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: '#787776' }}><div style={{ width: 8, height: 8, borderRadius: '50%', background: '#1D5B94' }} /> You owe</div>
               </div>
             </div>
-          )}
+
+          </div>
         </div>
 
 
