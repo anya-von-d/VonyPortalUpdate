@@ -14,6 +14,14 @@ const LEARN_CATEGORIES = [
   { id: 'debt', label: 'Managing Debt' },
 ];
 
+const CAT_COLORS = {
+  lending:     { bg: '#EEF4FF', badge: 'rgba(37,99,235,0.10)',   badgeText: '#1D4ED8', title: '#1E3A8A', border: 'rgba(37,99,235,0.12)' },
+  basics:      { bg: '#EDFCF5', badge: 'rgba(5,150,105,0.10)',   badgeText: '#065F46', title: '#064E3B', border: 'rgba(5,150,105,0.12)' },
+  saving:      { bg: '#F5F0FF', badge: 'rgba(124,58,237,0.10)',  badgeText: '#6D28D9', title: '#4C1D95', border: 'rgba(124,58,237,0.12)' },
+  traditional: { bg: '#FFFBEB', badge: 'rgba(217,119,6,0.10)',   badgeText: '#92400E', title: '#78350F', border: 'rgba(217,119,6,0.12)' },
+  debt:        { bg: '#FFF1F2', badge: 'rgba(225,29,72,0.10)',   badgeText: '#9F1239', title: '#881337', border: 'rgba(225,29,72,0.12)' },
+};
+
 const LEARN_ARTICLES = {
   lending: [
     { title: 'How to Lend Money Without Damaging a Relationship', body: 'Setting expectations, using agreements, and protecting the friendship above all else.' },
@@ -203,7 +211,7 @@ export default function ComingSoon() {
                 }}>
                   <span style={{ flexShrink: 0, width: 26, height: 26, borderRadius: 7, background: isActive ? 'rgba(0,0,0,0.07)' : 'rgba(0,0,0,0.04)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>{soonIcons[label]}</span>
                   <span style={{ flex: 1 }}>{label}</span>
-                  {!isActive && <span style={{ fontSize: 8, fontWeight: 700, color: '#9B9A98', background: 'rgba(0,0,0,0.05)', borderRadius: 4, padding: '2px 6px', letterSpacing: '0.05em', textTransform: 'uppercase', lineHeight: 1.2, flexShrink: 0 }}>SOON</span>}
+                  <span style={{ fontSize: 8, fontWeight: 700, color: '#9B9A98', background: 'rgba(0,0,0,0.05)', borderRadius: 4, padding: '2px 6px', letterSpacing: '0.05em', textTransform: 'uppercase', lineHeight: 1.2, flexShrink: 0 }}>SOON</span>
                 </Link>
               );
             })}
@@ -266,17 +274,20 @@ export default function ComingSoon() {
 
           {/* Articles grid */}
           <div className="page-cards-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
-            {(LEARN_ARTICLES[learnCategory] || []).map((article, index) => (
-              <motion.div key={article.title} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }} style={{ background: 'white', borderRadius: 18, padding: '24px 22px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)', cursor: 'default', border: '1px solid rgba(0,0,0,0.05)', position: 'relative' }}>
-                {/* Star */}
-                <div style={{ position: 'absolute', top: 14, right: 14 }}>
-                  <StarButton saved={saved.has(article.title)} onToggle={() => toggleSave(article.title)} />
-                </div>
-                <div style={{ display: 'inline-block', fontSize: 10, fontWeight: 600, color: '#9B9A98', textTransform: 'uppercase', letterSpacing: '0.1em', background: 'rgba(0,0,0,0.05)', borderRadius: 6, padding: '3px 8px', marginBottom: 14 }}>Coming Soon</div>
-                <div style={{ fontSize: 16, fontWeight: 700, color: '#1A1918', lineHeight: 1.35, marginBottom: 12, paddingRight: 28 }}>{article.title}</div>
-                <div style={{ fontSize: 13, color: '#787776', lineHeight: 1.6 }}>{article.body}</div>
-              </motion.div>
-            ))}
+            {(LEARN_ARTICLES[learnCategory] || []).map((article, index) => {
+              const clr = CAT_COLORS[learnCategory];
+              return (
+                <motion.div key={article.title} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }} style={{ background: clr.bg, borderRadius: 18, padding: '24px 22px', boxShadow: '0 2px 12px rgba(0,0,0,0.04)', cursor: 'default', border: `1px solid ${clr.border}`, position: 'relative' }}>
+                  {/* Star */}
+                  <div style={{ position: 'absolute', top: 14, right: 14 }}>
+                    <StarButton saved={saved.has(article.title)} onToggle={() => toggleSave(article.title)} />
+                  </div>
+                  <div style={{ display: 'inline-block', fontSize: 10, fontWeight: 600, color: clr.badgeText, textTransform: 'uppercase', letterSpacing: '0.1em', background: clr.badge, borderRadius: 6, padding: '3px 8px', marginBottom: 14 }}>Coming Soon</div>
+                  <div style={{ fontSize: 16, fontWeight: 700, color: clr.title, lineHeight: 1.35, marginBottom: 12, paddingRight: 28 }}>{article.title}</div>
+                  <div style={{ fontSize: 13, color: '#787776', lineHeight: 1.6 }}>{article.body}</div>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
 
@@ -291,17 +302,20 @@ export default function ComingSoon() {
                 {cat.label}
               </h3>
               <div className="h-scroll-cards">
-                {(LEARN_ARTICLES[cat.id] || []).map((article) => (
-                  <div key={article.title} className="h-scroll-card" style={{ background: 'white', borderRadius: 18, padding: '20px 18px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)', border: '1px solid rgba(0,0,0,0.05)', position: 'relative' }}>
-                    {/* Star */}
-                    <div style={{ position: 'absolute', top: 12, right: 12 }}>
-                      <StarButton saved={saved.has(article.title)} onToggle={() => toggleSave(article.title)} />
+                {(LEARN_ARTICLES[cat.id] || []).map((article) => {
+                  const clr = CAT_COLORS[cat.id];
+                  return (
+                    <div key={article.title} className="h-scroll-card" style={{ background: clr.bg, borderRadius: 18, padding: '20px 18px', boxShadow: '0 2px 12px rgba(0,0,0,0.04)', border: `1px solid ${clr.border}`, position: 'relative' }}>
+                      {/* Star */}
+                      <div style={{ position: 'absolute', top: 12, right: 12 }}>
+                        <StarButton saved={saved.has(article.title)} onToggle={() => toggleSave(article.title)} />
+                      </div>
+                      <div style={{ display: 'inline-block', fontSize: 10, fontWeight: 600, color: clr.badgeText, textTransform: 'uppercase', letterSpacing: '0.1em', background: clr.badge, borderRadius: 6, padding: '3px 8px', marginBottom: 12 }}>Coming Soon</div>
+                      <div style={{ fontSize: 15, fontWeight: 700, color: clr.title, lineHeight: 1.35, marginBottom: 10, paddingRight: 24 }}>{article.title}</div>
+                      <div style={{ fontSize: 12, color: '#787776', lineHeight: 1.55 }}>{article.body}</div>
                     </div>
-                    <div style={{ display: 'inline-block', fontSize: 10, fontWeight: 600, color: '#9B9A98', textTransform: 'uppercase', letterSpacing: '0.1em', background: 'rgba(0,0,0,0.05)', borderRadius: 6, padding: '3px 8px', marginBottom: 12 }}>Coming Soon</div>
-                    <div style={{ fontSize: 15, fontWeight: 700, color: '#1A1918', lineHeight: 1.35, marginBottom: 10, paddingRight: 24 }}>{article.title}</div>
-                    <div style={{ fontSize: 12, color: '#787776', lineHeight: 1.55 }}>{article.body}</div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </section>
           ))}

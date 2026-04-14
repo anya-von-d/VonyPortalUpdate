@@ -164,6 +164,8 @@ export default function LoanHelp() {
               { label: 'Learn', to: createPageUrl("ComingSoon") },
               { label: 'Loan Help', to: createPageUrl("LoanHelp") },
             ].map(({ label, to }) => {
+              const currentPath = window.location.pathname;
+              const isActive = currentPath.includes(to.split('?')[0].replace('/app/', ''));
               const soonIcons = {
                 'Learn': <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>,
                 'Loan Help': <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>,
@@ -172,11 +174,13 @@ export default function LoanHelp() {
                 <Link key={label} to={to} style={{
                   display: 'flex', alignItems: 'center', gap: 8,
                   padding: '7px 12px', borderRadius: 9, textDecoration: 'none',
-                  fontSize: 13, fontWeight: 500, color: '#787776',
-                  background: 'transparent', fontFamily: "'DM Sans', sans-serif",
+                  fontSize: 13, fontWeight: isActive ? 600 : 500,
+                  color: isActive ? '#1A1918' : '#787776',
+                  background: isActive ? 'rgba(0,0,0,0.05)' : 'transparent',
+                  fontFamily: "'DM Sans', sans-serif",
                   width: '100%', boxSizing: 'border-box',
                 }}>
-                  <span style={{ flexShrink: 0, width: 26, height: 26, borderRadius: 7, background: 'rgba(0,0,0,0.04)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>{soonIcons[label]}</span>
+                  <span style={{ flexShrink: 0, width: 26, height: 26, borderRadius: 7, background: isActive ? 'rgba(0,0,0,0.07)' : 'rgba(0,0,0,0.04)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>{soonIcons[label]}</span>
                   <span style={{ flex: 1 }}>{label}</span>
                   <span style={{ fontSize: 8, fontWeight: 700, color: '#9B9A98', background: 'rgba(0,0,0,0.05)', borderRadius: 4, padding: '2px 6px', letterSpacing: '0.05em', textTransform: 'uppercase', lineHeight: 1.2, flexShrink: 0 }}>SOON</span>
                 </Link>
@@ -192,6 +196,9 @@ export default function LoanHelp() {
 
         {/* Desktop: pill nav + active-category grid */}
         <div className="learn-desktop-view">
+          {/* Page title */}
+          <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', marginBottom: 12 }}>Loan Help</div>
+          <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 20 }} />
           <div className="pill-nav-scroll" style={{ display: 'flex', marginBottom: 20 }}>
             <div style={{
               display: 'inline-flex', background: 'rgba(0,0,0,0.04)',
