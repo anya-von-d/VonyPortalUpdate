@@ -146,7 +146,7 @@ export default function ComingSoon() {
       <MeshMobileNav user={user} activePage="Learn" />
 
       {/* ── LEFT: Sidebar nav ── */}
-      <div className="mesh-left" style={{ background: '#FBFAF9', borderRight: '1px solid rgba(0,0,0,0.06)' }}>
+      <div className="mesh-left" style={{ background: '#F5F4F0', borderRight: '1px solid rgba(0,0,0,0.06)' }}>
         <div style={{ position: 'sticky', top: 0, padding: '24px 8px 0', display: 'flex', flexDirection: 'column', height: '100vh', overflowY: 'auto' }}>
           <Link to="/" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, fontStyle: 'italic', fontSize: '1.3rem', color: '#1A1918', textDecoration: 'none', display: 'block', marginBottom: 16, paddingLeft: 6 }}>Vony</Link>
           <nav style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
