@@ -15,11 +15,11 @@ const LEARN_CATEGORIES = [
 ];
 
 const CAT_COLORS = {
-  lending:     { bg: '#EEF4FF', badge: 'rgba(37,99,235,0.10)',   badgeText: '#1D4ED8', title: '#1E3A8A', border: 'rgba(37,99,235,0.12)' },
-  basics:      { bg: '#EDFCF5', badge: 'rgba(5,150,105,0.10)',   badgeText: '#065F46', title: '#064E3B', border: 'rgba(5,150,105,0.12)' },
-  saving:      { bg: '#F5F0FF', badge: 'rgba(124,58,237,0.10)',  badgeText: '#6D28D9', title: '#4C1D95', border: 'rgba(124,58,237,0.12)' },
-  traditional: { bg: '#FFFBEB', badge: 'rgba(217,119,6,0.10)',   badgeText: '#92400E', title: '#78350F', border: 'rgba(217,119,6,0.12)' },
-  debt:        { bg: '#FFF1F2', badge: 'rgba(225,29,72,0.10)',   badgeText: '#9F1239', title: '#881337', border: 'rgba(225,29,72,0.12)' },
+  lending:     { bg: '#F7FBFF', badge: 'rgba(37,99,235,0.08)',   badgeText: '#1D4ED8', title: '#1E3A8A', border: 'rgba(37,99,235,0.10)' },
+  basics:      { bg: '#F4FDF8', badge: 'rgba(5,150,105,0.08)',   badgeText: '#065F46', title: '#064E3B', border: 'rgba(5,150,105,0.10)' },
+  saving:      { bg: '#FAF7FF', badge: 'rgba(124,58,237,0.08)',  badgeText: '#6D28D9', title: '#4C1D95', border: 'rgba(124,58,237,0.10)' },
+  traditional: { bg: '#FFFEF5', badge: 'rgba(217,119,6,0.08)',   badgeText: '#92400E', title: '#78350F', border: 'rgba(217,119,6,0.10)' },
+  debt:        { bg: '#FFF9FA', badge: 'rgba(225,29,72,0.08)',   badgeText: '#9F1239', title: '#881337', border: 'rgba(225,29,72,0.10)' },
 };
 
 const LEARN_ARTICLES = {
@@ -277,14 +277,14 @@ export default function ComingSoon() {
             {(LEARN_ARTICLES[learnCategory] || []).map((article, index) => {
               const clr = CAT_COLORS[learnCategory];
               return (
-                <motion.div key={article.title} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }} style={{ background: clr.bg, borderRadius: 18, padding: '24px 22px', boxShadow: '0 2px 12px rgba(0,0,0,0.04)', cursor: 'default', border: `1px solid ${clr.border}`, position: 'relative' }}>
+                <motion.div key={article.title} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }} style={{ background: clr.bg, borderRadius: 14, padding: '14px 16px', boxShadow: '0 1px 6px rgba(0,0,0,0.04)', cursor: 'default', border: `1px solid ${clr.border}`, position: 'relative' }}>
                   {/* Star */}
-                  <div style={{ position: 'absolute', top: 14, right: 14 }}>
+                  <div style={{ position: 'absolute', top: 10, right: 10 }}>
                     <StarButton saved={saved.has(article.title)} onToggle={() => toggleSave(article.title)} />
                   </div>
-                  <div style={{ display: 'inline-block', fontSize: 10, fontWeight: 600, color: clr.badgeText, textTransform: 'uppercase', letterSpacing: '0.1em', background: clr.badge, borderRadius: 6, padding: '3px 8px', marginBottom: 14 }}>Coming Soon</div>
-                  <div style={{ fontSize: 16, fontWeight: 700, color: clr.title, lineHeight: 1.35, marginBottom: 12, paddingRight: 28 }}>{article.title}</div>
-                  <div style={{ fontSize: 13, color: '#787776', lineHeight: 1.6 }}>{article.body}</div>
+                  <div style={{ display: 'inline-block', fontSize: 9, fontWeight: 700, color: clr.badgeText, textTransform: 'uppercase', letterSpacing: '0.08em', background: clr.badge, borderRadius: 5, padding: '2px 7px', marginBottom: 8 }}>Coming Soon</div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: clr.title, lineHeight: 1.35, marginBottom: 6, paddingRight: 22 }}>{article.title}</div>
+                  <div style={{ fontSize: 12, color: '#787776', lineHeight: 1.5 }}>{article.body}</div>
                 </motion.div>
               );
             })}
@@ -305,14 +305,14 @@ export default function ComingSoon() {
                 {(LEARN_ARTICLES[cat.id] || []).map((article) => {
                   const clr = CAT_COLORS[cat.id];
                   return (
-                    <div key={article.title} className="h-scroll-card" style={{ background: clr.bg, borderRadius: 18, padding: '20px 18px', boxShadow: '0 2px 12px rgba(0,0,0,0.04)', border: `1px solid ${clr.border}`, position: 'relative' }}>
+                    <div key={article.title} className="h-scroll-card" style={{ background: clr.bg, borderRadius: 14, padding: '14px 15px', boxShadow: '0 1px 6px rgba(0,0,0,0.04)', border: `1px solid ${clr.border}`, position: 'relative' }}>
                       {/* Star */}
-                      <div style={{ position: 'absolute', top: 12, right: 12 }}>
+                      <div style={{ position: 'absolute', top: 10, right: 10 }}>
                         <StarButton saved={saved.has(article.title)} onToggle={() => toggleSave(article.title)} />
                       </div>
-                      <div style={{ display: 'inline-block', fontSize: 10, fontWeight: 600, color: clr.badgeText, textTransform: 'uppercase', letterSpacing: '0.1em', background: clr.badge, borderRadius: 6, padding: '3px 8px', marginBottom: 12 }}>Coming Soon</div>
-                      <div style={{ fontSize: 15, fontWeight: 700, color: clr.title, lineHeight: 1.35, marginBottom: 10, paddingRight: 24 }}>{article.title}</div>
-                      <div style={{ fontSize: 12, color: '#787776', lineHeight: 1.55 }}>{article.body}</div>
+                      <div style={{ display: 'inline-block', fontSize: 9, fontWeight: 700, color: clr.badgeText, textTransform: 'uppercase', letterSpacing: '0.08em', background: clr.badge, borderRadius: 5, padding: '2px 7px', marginBottom: 8 }}>Coming Soon</div>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: clr.title, lineHeight: 1.35, marginBottom: 6, paddingRight: 22 }}>{article.title}</div>
+                      <div style={{ fontSize: 12, color: '#787776', lineHeight: 1.5 }}>{article.body}</div>
                     </div>
                   );
                 })}

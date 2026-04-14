@@ -199,10 +199,15 @@ export default function LoanHelp() {
           {/* Page title */}
           <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', marginBottom: 12 }}>Loan Help</div>
           <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 20 }} />
-          <div className="pill-nav-scroll" style={{ display: 'flex', marginBottom: 20 }}>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 24 }}>
             <div style={{
-              display: 'inline-flex', background: 'rgba(0,0,0,0.04)',
+              display: 'inline-flex',
+              background: 'rgba(255,255,255,0.65)',
+              backdropFilter: 'blur(16px) saturate(1.6)',
+              WebkitBackdropFilter: 'blur(16px) saturate(1.6)',
               borderRadius: 999, padding: 4, gap: 2,
+              border: '1px solid rgba(255,255,255,0.9)',
+              boxShadow: '0 4px 24px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04)',
             }}>
               {CATEGORIES.map(cat => {
                 const active = category === cat.id;
@@ -210,7 +215,7 @@ export default function LoanHelp() {
                   <button key={cat.id} onClick={() => setCategory(cat.id)} style={{
                     padding: '8px 18px', borderRadius: 999, border: 'none', cursor: 'pointer',
                     background: active ? 'white' : 'transparent',
-                    boxShadow: active ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
+                    boxShadow: active ? '0 1px 4px rgba(0,0,0,0.10)' : 'none',
                     fontSize: 13, fontWeight: 600, fontFamily: "'DM Sans', system-ui, sans-serif",
                     letterSpacing: '-0.01em', whiteSpace: 'nowrap',
                     color: active ? '#1A1918' : '#787776', transition: 'all 0.2s',
