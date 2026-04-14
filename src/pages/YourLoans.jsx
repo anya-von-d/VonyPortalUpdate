@@ -554,7 +554,7 @@ export default function YourLoans() {
     return (
       <>
         {/* 1. Three standalone top cards */}
-        <div className="loans-top-cards" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 24, marginBottom: 20 }}>
+        <div className="loans-top-cards" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 24, marginBottom: 20, alignItems: 'center' }}>
           {/* Next Incoming / Next Payment Due — aurora card identical to Home page */}
           <div style={{ position: 'relative', display: 'flex', flexDirection: 'column' }}>
             {/* Aurora glow */}
@@ -570,8 +570,8 @@ export default function YourLoans() {
             }} />
             {/* Card */}
             <div style={{
-              position: 'relative', zIndex: 1, flex: 1,
-              padding: '12px 14px', borderRadius: 14,
+              position: 'relative', zIndex: 1,
+              padding: '10px 14px', borderRadius: 14,
               background: isLending
                 ? 'linear-gradient(160deg, rgba(255,255,255,0.97) 0%, rgba(240,252,255,0.93) 100%)'
                 : 'linear-gradient(160deg, rgba(255,255,255,0.97) 0%, rgba(245,251,255,0.93) 100%)',
@@ -583,7 +583,7 @@ export default function YourLoans() {
                 : '0 2px 16px rgba(29,91,148,0.10), inset 0 1px 0 rgba(255,255,255,1), inset 0 -1px 0 rgba(200,220,240,0.3)',
               display: 'flex', flexDirection: 'column', justifyContent: 'center',
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 8 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 6 }}>
                 <div style={{ width: 20, height: 20, borderRadius: 6, background: isLending ? 'rgba(3,172,234,0.12)' : 'rgba(29,91,148,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   {isLending
                     ? <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2.5" strokeLinecap="round"><polyline points="17 11 12 6 7 11"/><line x1="12" y1="6" x2="12" y2="18"/></svg>
@@ -626,8 +626,8 @@ export default function YourLoans() {
               borderRadius: 18, zIndex: 0, pointerEvents: 'none',
             }} />
             <div style={{
-              position: 'relative', zIndex: 1, flex: 1,
-              padding: '12px 14px', borderRadius: 14,
+              position: 'relative', zIndex: 1,
+              padding: '10px 14px', borderRadius: 14,
               background: isLending
                 ? 'linear-gradient(160deg, rgba(255,255,255,0.97) 0%, rgba(240,252,255,0.93) 100%)'
                 : 'linear-gradient(160deg, rgba(255,255,255,0.97) 0%, rgba(245,251,255,0.93) 100%)',
@@ -639,7 +639,7 @@ export default function YourLoans() {
                 : '0 2px 16px rgba(29,91,148,0.10), inset 0 1px 0 rgba(255,255,255,1), inset 0 -1px 0 rgba(200,220,240,0.3)',
               display: 'flex', flexDirection: 'column', justifyContent: 'center',
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 8 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 6 }}>
                 <div style={{ width: 20, height: 20, borderRadius: 6, background: isLending ? 'rgba(3,172,234,0.12)' : 'rgba(29,91,148,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={isLending ? '#03ACEA' : '#1D5B94'} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
                 </div>
@@ -1401,7 +1401,7 @@ export default function YourLoans() {
       </AnimatePresence>
 
       {/* Three-column layout */}
-      <div className="mesh-layout" style={{ minHeight: '100vh', display: 'grid', gridTemplateColumns: '180px 1fr', gap: 0, fontFamily: "'DM Sans', sans-serif" }}>
+      <div className="mesh-layout" style={{ minHeight: '100vh', display: 'grid', gridTemplateColumns: '200px 1fr', gap: 0, fontFamily: "'DM Sans', sans-serif" }}>
 
         {/* ── LEFT: Sidebar nav ── */}
         <div className="mesh-left" style={{ background: '#fafafa', borderRight: '1px solid rgba(0,0,0,0.06)' }}>

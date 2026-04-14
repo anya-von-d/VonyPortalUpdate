@@ -718,7 +718,7 @@ export default function Home() {
       <MeshMobileNav user={user} activePage="Home" />
 
       {/* ── MESH THREE-COLUMN LAYOUT ── */}
-      <div className="mesh-layout" style={{ display: 'grid', gridTemplateColumns: '180px 1fr', gap: 0 }}>
+      <div className="mesh-layout" style={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: 0 }}>
 
         {/* ── LEFT: Sidebar nav ── */}
         <div className="mesh-left" style={{ background: '#fafafa', borderRight: '1px solid rgba(0,0,0,0.06)' }}>

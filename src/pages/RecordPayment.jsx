@@ -421,7 +421,7 @@ export default function RecordPayment() {
       </AnimatePresence>
 
       <MeshMobileNav user={user} activePage="Record Payment" />
-      <div className="mesh-layout" style={{ display: 'grid', gridTemplateColumns: '180px 1fr', gap: 0, minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased' }}>
+      <div className="mesh-layout" style={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: 0, minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased' }}>
 
         {/* Col 1: left nav */}
         <div className="mesh-left" style={{ background: '#fafafa', borderRight: '1px solid rgba(0,0,0,0.06)' }}>
@@ -525,11 +525,15 @@ export default function RecordPayment() {
                     <p style={{ fontSize: 12, color: '#787776', margin: 0 }}>No active loans found</p>
                   </div>
                 ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <div className="rp-loan-list" style={{ display: 'flex', flexDirection: 'column' }}>
                     {filteredLoans.map(loan => {
                       const other = getOtherParty(loan);
                       const remaining = getRemainingBalance(loan);
                       const isSelected = selectedLoan?.id === loan.id;
+                      const isLender = isUserLender(loan);
+                      const firstName = other.full_name?.split(' ')[0] || other.username;
+                      const loanAmt = (loan.amount || 0).toLocaleString();
+                      const createdDate = loan.created_at ? format(new Date(loan.created_at), 'MMMM do yyyy') : '—';
                       return (
                         <button key={loan.id} onClick={() => handleSelectLoan(loan)} style={{
                           display: 'block', width: '100%', textAlign: 'left', padding: '10px 0',
@@ -540,10 +544,10 @@ export default function RecordPayment() {
                             <UserAvatar name={other.full_name || other.username} src={other.profile_picture_url} size={26} style={{ outline: isSelected ? '2px solid #03ACEA' : 'none', outlineOffset: 1, flexShrink: 0 }} />
                             <div style={{ flex: 1, minWidth: 0 }}>
                               <p style={{ fontSize: 12, fontWeight: isSelected ? 600 : 500, color: isSelected ? '#1A1918' : '#3A3938', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                {other.full_name || other.username}
+                                {isLender ? `You lent ${firstName} $${loanAmt}${loan.purpose ? ` for ${loan.purpose}` : ''}` : `${firstName} lent you $${loanAmt}${loan.purpose ? ` for ${loan.purpose}` : ''}`}
                               </p>
                               <p style={{ fontSize: 11, color: '#9B9A98', margin: '1px 0 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                ${(loan.amount || 0).toLocaleString()} · ${remaining.toFixed(2)} left
+                                Loan created: {createdDate} · ${loanAmt} · ${remaining.toFixed(2)} left
                               </p>
                             </div>
                           </div>

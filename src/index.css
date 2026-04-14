@@ -279,8 +279,8 @@ input[type="date"] {
 .mesh-left::after {
   content: '';
   position: fixed;
-  /* solid strip is 3px wide at right edge (x=177..180), gradient extends 6px left (x=171..177) */
-  left: 171px;
+  /* solid strip is 3px wide at right edge (x=197..200), gradient extends 6px left (x=191..197) */
+  left: 191px;
   bottom: 0;
   width: 9px;
   /* stops just below the Log Out button: leave ~480px at top */
@@ -349,7 +349,42 @@ input[type="date"] {
     padding-right: 0 !important;
   }
   .tab-nav-scroll::-webkit-scrollbar { display: none; }
+  /* Record Payment: show first 4 loans, rest scrollable */
+  .rp-loan-list {
+    max-height: 212px;
+    overflow-y: auto;
+    scrollbar-width: none;
+  }
+  .rp-loan-list::-webkit-scrollbar { display: none; }
+  /* Learn / Loan Help: hide desktop pill nav + grid, show mobile sections */
+  .learn-desktop-view { display: none !important; }
+  .learn-mobile-sections { display: block !important; }
+  .h-scroll-cards {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 12px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    margin-left: -20px;
+    margin-right: -20px;
+    padding: 4px 20px;
+  }
+  .h-scroll-cards::-webkit-scrollbar { display: none; }
+  .h-scroll-card {
+    flex-shrink: 0;
+    width: 280px;
+    scroll-snap-align: start;
+  }
 }
+/* Learn / Loan Help: mobile-only sections hidden on desktop */
+.learn-mobile-sections { display: none; }
+.pill-nav-scroll {
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.pill-nav-scroll::-webkit-scrollbar { display: none; }
 
 /* Home + Dashboard pages responsive */
 @media (max-width: 900px) {
@@ -433,6 +468,9 @@ input[type="date"] {
     grid-template-columns: 1fr !important;
   }
 }
+
+/* Filter row: scrollable on mobile */
+.filter-row-scroll { display: flex; flex-wrap: wrap; }
 
 /* Hide mobile-only sentence on desktop */
 .la-friend-mobile { display: none; }
@@ -551,6 +589,16 @@ input[type="date"] {
     width: 100% !important;
   }
   .lh-selector-wrap button { white-space: normal !important; }
+
+  /* ── Filter row: single-row scrollable on mobile ── */
+  .filter-row-scroll {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+  .filter-row-scroll::-webkit-scrollbar { display: none; }
 
   /* ── Home greeting icons: hidden on mobile (top bar has them) ── */
   .home-greeting-icons { display: none !important; }

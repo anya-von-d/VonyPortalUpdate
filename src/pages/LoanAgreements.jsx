@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { LoanAgreement, User, PublicProfile, Loan, Payment } from "@/entities/all";
-import { FileText, CheckCircle, Download, ChevronDown, ChevronRight, X, Calendar, DollarSign, Percent, Clock, Search } from "lucide-react";
+import { FileText, CheckCircle, Download, ChevronDown, ChevronRight, ChevronLeft, X, Calendar, DollarSign, Percent, Clock, Search } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format, addMonths, addWeeks, addDays } from "date-fns";
 import { jsPDF } from "jspdf";
@@ -224,6 +224,7 @@ export default function LoanAgreements() {
   const [activeInfoTooltip, setActiveInfoTooltip] = useState(null);
   const [expandedId, setExpandedId] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [laPage, setLaPage] = useState(0);
 
   const { logout } = useAuth();
 
@@ -959,6 +960,11 @@ export default function LoanAgreements() {
      RENDER
      ══════════════════════════════════════════════════════════ */
 
+  const LA_PAGE_SIZE = 20;
+  const laTotalPages = Math.max(1, Math.ceil(filteredAgreements.length / LA_PAGE_SIZE));
+  const laSafePage = Math.min(laPage, laTotalPages - 1);
+  const laPageItems = filteredAgreements.slice(laSafePage * LA_PAGE_SIZE, (laSafePage + 1) * LA_PAGE_SIZE);
+
   const PageCard = ({ title, headerRight, children, style }) => (
     <div style={{ marginBottom: 24, ...style }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 9 }}>
@@ -1014,7 +1020,7 @@ export default function LoanAgreements() {
         )}
       </AnimatePresence>
 
-      <div className="mesh-layout" style={{ display: 'grid', gridTemplateColumns: '180px 1fr', gap: 0, minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased' }}>
+      <div className="mesh-layout" style={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: 0, minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased' }}>
 
         {/* Col 1: left nav */}
         <div className="mesh-left" style={{ background: '#fafafa', borderRight: '1px solid rgba(0,0,0,0.06)' }}>
@@ -1094,10 +1100,8 @@ export default function LoanAgreements() {
           <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, fontWeight: 600, letterSpacing: '-0.02em', color: '#1A1918', marginBottom: 12 }}>Documents</div>
           <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 20 }} />
 
-          {/* Search & Filters */}
-          <div style={{ marginBottom: 20 }}>
-            <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 9 }}>Search & Filters</div>
-            <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 12 }} />
+          {/* Filters */}
+          <div style={{ marginBottom: 16 }}>
             <div style={{ marginBottom: 8 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '0 12px', background: 'rgba(0,0,0,0.03)', borderRadius: 18, border: '1px solid rgba(0,0,0,0.06)', height: 36 }}>
                 <Search size={14} style={{ color: '#787776', flexShrink: 0 }} />
@@ -1105,7 +1109,7 @@ export default function LoanAgreements() {
                   style={{ flex: 1, border: 'none', outline: 'none', fontSize: 13, fontFamily: "'DM Sans', sans-serif", color: '#1A1918', background: 'transparent' }} />
               </div>
             </div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, position: 'relative', zIndex: 20 }}>
+            <div className="filter-row-scroll" style={{ display: 'flex', flexWrap: 'wrap', gap: 8, position: 'relative', zIndex: 20 }}>
               <SingleSelectDropdown options={DATE_OPTIONS} selected={dateFilter} onChange={setDateFilter} />
               {friendOptions.length > 1 && (
                 <SingleSelectDropdown options={friendOptions} selected={friendFilter} onChange={setFriendFilter} />
@@ -1118,8 +1122,17 @@ export default function LoanAgreements() {
           </div>
 
           {/* ── Agreements List ──────────────────────────────────── */}
-          <div>
-            <div>
+          <div style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(12px) saturate(1.4)', WebkitBackdropFilter: 'blur(12px) saturate(1.4)', borderRadius: 14, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.05)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 6, padding: '10px 16px', borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
+              <span style={{ fontSize: 11, fontWeight: 500, color: '#787776', marginRight: 4 }}>Page {laSafePage + 1} of {laTotalPages}</span>
+              <button onClick={() => setLaPage(Math.max(0, laSafePage - 1))} disabled={laSafePage === 0} style={{ width: 26, height: 26, borderRadius: 7, border: '1px solid rgba(0,0,0,0.09)', background: 'white', cursor: laSafePage === 0 ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: laSafePage === 0 ? 0.3 : 1, flexShrink: 0 }}>
+                <ChevronLeft size={13} style={{ color: '#787776' }} />
+              </button>
+              <button onClick={() => setLaPage(Math.min(laTotalPages - 1, laSafePage + 1))} disabled={laSafePage >= laTotalPages - 1} style={{ width: 26, height: 26, borderRadius: 7, border: '1px solid rgba(0,0,0,0.09)', background: 'white', cursor: laSafePage >= laTotalPages - 1 ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: laSafePage >= laTotalPages - 1 ? 0.3 : 1, flexShrink: 0 }}>
+                <ChevronRight size={13} style={{ color: '#787776' }} />
+              </button>
+            </div>
+            <div style={{ padding: '0 16px' }}>
               {filteredAgreements.length === 0 ? (
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 0', color: '#C7C6C4' }}>
                   <FileText size={32} style={{ opacity: 0.4, marginBottom: 8 }} />
@@ -1146,7 +1159,7 @@ export default function LoanAgreements() {
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    {filteredAgreements.map((agreement) => {
+                    {laPageItems.map((agreement) => {
                       const isLender = agreement.lender_id === user?.id;
                       const otherPartyId = isLender ? agreement.borrower_id : agreement.lender_id;
                       const otherParty = getUserById(otherPartyId);

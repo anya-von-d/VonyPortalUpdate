@@ -113,7 +113,7 @@ export default function LoanHelp() {
   );
 
   return (
-    <div className="mesh-layout" style={{ minHeight: '100vh', display: 'grid', gridTemplateColumns: '180px 1fr', gap: 0, fontFamily: "'DM Sans', sans-serif" }}>
+    <div className="mesh-layout" style={{ minHeight: '100vh', display: 'grid', gridTemplateColumns: '200px 1fr', gap: 0, fontFamily: "'DM Sans', sans-serif" }}>
       <MeshMobileNav user={user} activePage="Loan Help" />
 
       {/* ── LEFT: Sidebar nav ── */}
@@ -190,70 +190,131 @@ export default function LoanHelp() {
       {/* ── CENTER: Category selector + loan cards ── */}
       <div className="mesh-center" style={{ background: 'white', borderRight: '1px solid rgba(0,0,0,0.06)', padding: '28px 48px 80px' }}>
 
-        {/* Tab header */}
-        <div className="tab-nav-scroll" style={{ display: 'flex', gap: 24, alignItems: 'flex-end', marginLeft: -48, marginRight: -48, paddingLeft: 48, paddingRight: 48 }}>
-          {CATEGORIES.map(cat => (
-            <button key={cat.id} onClick={() => setCategory(cat.id)} style={{
-              position: 'relative', paddingBottom: 12,
-              border: 'none', background: 'transparent', cursor: 'pointer',
-              fontSize: 14, fontWeight: 600, fontFamily: "'DM Sans', system-ui, sans-serif",
-              letterSpacing: '-0.02em',
-              color: category === cat.id ? '#1A1918' : 'rgba(0,0,0,0.30)',
-              transition: 'color 0.2s', whiteSpace: 'nowrap',
+        {/* Desktop: pill nav + active-category grid */}
+        <div className="learn-desktop-view">
+          <div className="pill-nav-scroll" style={{ display: 'flex', marginBottom: 20 }}>
+            <div style={{
+              display: 'inline-flex', background: 'rgba(0,0,0,0.04)',
+              borderRadius: 999, padding: 4, gap: 2,
             }}>
-              {cat.label}
-              {category === cat.id && (
-                <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 6, background: 'linear-gradient(to bottom, transparent 0%, #03ACEA 66.67%, #03ACEA 100%)', pointerEvents: 'none' }} />
-              )}
-            </button>
-          ))}
-        </div>
-        <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginLeft: -48, marginRight: -48, marginBottom: 20 }} />
+              {CATEGORIES.map(cat => {
+                const active = category === cat.id;
+                return (
+                  <button key={cat.id} onClick={() => setCategory(cat.id)} style={{
+                    padding: '8px 18px', borderRadius: 999, border: 'none', cursor: 'pointer',
+                    background: active ? 'white' : 'transparent',
+                    boxShadow: active ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
+                    fontSize: 13, fontWeight: 600, fontFamily: "'DM Sans', system-ui, sans-serif",
+                    letterSpacing: '-0.01em', whiteSpace: 'nowrap',
+                    color: active ? '#1A1918' : '#787776', transition: 'all 0.2s',
+                  }}>
+                    {cat.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
 
-        {/* Loan cards grid — 2 columns */}
-        <div className="page-cards-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-          {loans.map((loan, index) => {
-            const isRecommended = index === 0;
-            const compareKey = `${category}-${loan.name}`;
-            const isCompared = compared[compareKey] || false;
-            return (
-              <motion.div key={loan.name} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }} style={{ background: 'white', borderRadius: 14, border: isRecommended ? '1.5px solid rgba(3,172,234,0.3)' : '1px solid rgba(0,0,0,0.07)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-                <div style={{ padding: '8px 16px 7px', display: 'flex', alignItems: 'center', gap: 5, background: isRecommended ? 'rgba(3,172,234,0.06)' : 'rgba(0,0,0,0.02)', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
-                  {isRecommended ? (
-                    <>
-                      <svg width="9" height="9" viewBox="0 0 24 24" fill="#03ACEA" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                      <span style={{ fontSize: 10, fontWeight: 700, color: '#03ACEA', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>Recommended</span>
-                    </>
-                  ) : (
-                    <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>{CATEGORIES.find(c => c.id === category)?.label}</span>
-                  )}
-                </div>
-                <div style={{ padding: '16px 18px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                  <div style={{ marginBottom: 12 }}>
-                    <div style={{ fontSize: 16, fontWeight: 700, color: '#1A1918', marginBottom: 2 }}>{loan.name}</div>
-                    <div style={{ fontSize: 12, color: isRecommended ? '#03ACEA' : '#787776', fontWeight: 500 }}>{loan.tagline}</div>
+          {/* Loan cards grid — 2 columns */}
+          <div className="page-cards-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+            {loans.map((loan, index) => {
+              const isRecommended = index === 0;
+              const compareKey = `${category}-${loan.name}`;
+              const isCompared = compared[compareKey] || false;
+              return (
+                <motion.div key={loan.name} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }} style={{ background: 'white', borderRadius: 14, border: isRecommended ? '1.5px solid rgba(3,172,234,0.3)' : '1px solid rgba(0,0,0,0.07)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ padding: '8px 16px 7px', display: 'flex', alignItems: 'center', gap: 5, background: isRecommended ? 'rgba(3,172,234,0.06)' : 'rgba(0,0,0,0.02)', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+                    {isRecommended ? (
+                      <>
+                        <svg width="9" height="9" viewBox="0 0 24 24" fill="#03ACEA" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <span style={{ fontSize: 10, fontWeight: 700, color: '#03ACEA', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>Recommended</span>
+                      </>
+                    ) : (
+                      <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>{CATEGORIES.find(c => c.id === category)?.label}</span>
+                    )}
                   </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 7, flex: 1, marginBottom: 16 }}>
-                    {loan.details.map((line, i) => (
-                      <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
-                        <div style={{ width: 4, height: 4, borderRadius: '50%', flexShrink: 0, background: isRecommended ? '#03ACEA' : '#C4C3C1', marginTop: 6 }} />
-                        <span style={{ fontSize: 13, color: '#5C5B5A', lineHeight: 1.5 }}>{line}</span>
-                      </div>
-                    ))}
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 12, borderTop: '1px solid rgba(0,0,0,0.06)' }}>
-                    <button style={{ padding: '6px 14px', borderRadius: 8, border: 'none', cursor: 'pointer', fontSize: 12, fontWeight: 600, background: isRecommended ? 'rgba(3,172,234,0.1)' : 'rgba(0,0,0,0.05)', color: isRecommended ? '#03ACEA' : '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>View</button>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 7, cursor: 'pointer' }} onClick={() => toggleCompare(compareKey)}>
-                      <span style={{ fontSize: 13, fontWeight: 500, color: '#787776' }}>Compare</span>
-                      <div style={{ width: 18, height: 18, borderRadius: 5, flexShrink: 0, border: isCompared ? '2px solid #03ACEA' : '2px solid #C4C3C1', background: isCompared ? '#03ACEA' : 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s' }}>
-                        {isCompared && <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+                  <div style={{ padding: '16px 18px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ marginBottom: 12 }}>
+                      <div style={{ fontSize: 16, fontWeight: 700, color: '#1A1918', marginBottom: 2 }}>{loan.name}</div>
+                      <div style={{ fontSize: 12, color: isRecommended ? '#03ACEA' : '#787776', fontWeight: 500 }}>{loan.tagline}</div>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 7, flex: 1, marginBottom: 16 }}>
+                      {loan.details.map((line, i) => (
+                        <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+                          <div style={{ width: 4, height: 4, borderRadius: '50%', flexShrink: 0, background: isRecommended ? '#03ACEA' : '#C4C3C1', marginTop: 6 }} />
+                          <span style={{ fontSize: 13, color: '#5C5B5A', lineHeight: 1.5 }}>{line}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 12, borderTop: '1px solid rgba(0,0,0,0.06)' }}>
+                      <button style={{ padding: '6px 14px', borderRadius: 8, border: 'none', cursor: 'pointer', fontSize: 12, fontWeight: 600, background: isRecommended ? 'rgba(3,172,234,0.1)' : 'rgba(0,0,0,0.05)', color: isRecommended ? '#03ACEA' : '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>View</button>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 7, cursor: 'pointer' }} onClick={() => toggleCompare(compareKey)}>
+                        <span style={{ fontSize: 13, fontWeight: 500, color: '#787776' }}>Compare</span>
+                        <div style={{ width: 18, height: 18, borderRadius: 5, flexShrink: 0, border: isCompared ? '2px solid #03ACEA' : '2px solid #C4C3C1', background: isCompared ? '#03ACEA' : 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s' }}>
+                          {isCompared && <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </motion.div>
-            );
-          })}
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Mobile: all categories as titled sections with horizontal scroll */}
+        <div className="learn-mobile-sections">
+          {CATEGORIES.map(cat => (
+            <section key={cat.id} style={{ marginBottom: 28 }}>
+              <h3 style={{ fontSize: 16, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', margin: '0 0 12px 0' }}>
+                {cat.label}
+              </h3>
+              <div className="h-scroll-cards">
+                {(LOANS[cat.id] || []).map((loan, index) => {
+                  const isRecommended = index === 0;
+                  const compareKey = `${cat.id}-${loan.name}`;
+                  const isCompared = compared[compareKey] || false;
+                  return (
+                    <div key={loan.name} className="h-scroll-card" style={{ background: 'white', borderRadius: 14, border: isRecommended ? '1.5px solid rgba(3,172,234,0.3)' : '1px solid rgba(0,0,0,0.07)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+                      <div style={{ padding: '8px 16px 7px', display: 'flex', alignItems: 'center', gap: 5, background: isRecommended ? 'rgba(3,172,234,0.06)' : 'rgba(0,0,0,0.02)', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+                        {isRecommended ? (
+                          <>
+                            <svg width="9" height="9" viewBox="0 0 24 24" fill="#03ACEA" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                            <span style={{ fontSize: 10, fontWeight: 700, color: '#03ACEA', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>Recommended</span>
+                          </>
+                        ) : (
+                          <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>{cat.label}</span>
+                        )}
+                      </div>
+                      <div style={{ padding: '14px 16px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                        <div style={{ marginBottom: 10 }}>
+                          <div style={{ fontSize: 15, fontWeight: 700, color: '#1A1918', marginBottom: 2 }}>{loan.name}</div>
+                          <div style={{ fontSize: 11, color: isRecommended ? '#03ACEA' : '#787776', fontWeight: 500 }}>{loan.tagline}</div>
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 6, flex: 1, marginBottom: 14 }}>
+                          {loan.details.map((line, i) => (
+                            <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 7 }}>
+                              <div style={{ width: 4, height: 4, borderRadius: '50%', flexShrink: 0, background: isRecommended ? '#03ACEA' : '#C4C3C1', marginTop: 6 }} />
+                              <span style={{ fontSize: 12, color: '#5C5B5A', lineHeight: 1.5 }}>{line}</span>
+                            </div>
+                          ))}
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 10, borderTop: '1px solid rgba(0,0,0,0.06)' }}>
+                          <button style={{ padding: '6px 14px', borderRadius: 8, border: 'none', cursor: 'pointer', fontSize: 12, fontWeight: 600, background: isRecommended ? 'rgba(3,172,234,0.1)' : 'rgba(0,0,0,0.05)', color: isRecommended ? '#03ACEA' : '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>View</button>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 7, cursor: 'pointer' }} onClick={() => toggleCompare(compareKey)}>
+                            <span style={{ fontSize: 12, fontWeight: 500, color: '#787776' }}>Compare</span>
+                            <div style={{ width: 18, height: 18, borderRadius: 5, flexShrink: 0, border: isCompared ? '2px solid #03ACEA' : '2px solid #C4C3C1', background: isCompared ? '#03ACEA' : 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s' }}>
+                              {isCompared && <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+          ))}
         </div>
       </div>
 

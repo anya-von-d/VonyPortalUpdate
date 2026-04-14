@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Loan, Payment, User, PublicProfile, Friendship } from "@/entities/all";
-import { Activity, ArrowUpRight, ArrowDownRight, Send, Check, X, Ban, ChevronDown, Search, Download } from "lucide-react";
+import { Activity, ArrowUpRight, ArrowDownRight, Send, Check, X, Ban, ChevronDown, ChevronLeft, ChevronRight, Search, Download } from "lucide-react";
 import { format, subDays, subMonths, subYears } from "date-fns";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -302,6 +302,7 @@ export default function RecentActivityPage() {
   // Loan offer view modal
   const [viewingLoanOffer, setViewingLoanOffer] = useState(null);
   const [showSignModal, setShowSignModal] = useState(false);
+  const [raPage, setRaPage] = useState(0);
 
   const { logout } = useAuth();
 
@@ -637,13 +638,18 @@ export default function RecentActivityPage() {
     return null;
   };
 
+  const RA_PAGE_SIZE = 20;
+  const raTotalPages = Math.max(1, Math.ceil(filtered.length / RA_PAGE_SIZE));
+  const raSafePage = Math.min(raPage, raTotalPages - 1);
+  const raPageItems = filtered.slice(raSafePage * RA_PAGE_SIZE, (raSafePage + 1) * RA_PAGE_SIZE);
+
   /* ══════════════════════════════════════════════════════════
      RENDER
      ══════════════════════════════════════════════════════════ */
   return (
     <>
       <MeshMobileNav user={user} activePage="Recent Activity" />
-      <div className="mesh-layout" style={{ display: 'grid', gridTemplateColumns: '180px 1fr', gap: 0, minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased' }}>
+      <div className="mesh-layout" style={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: 0, minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased' }}>
 
         {/* Col 1: left nav */}
         <div className="mesh-left" style={{ background: '#fafafa', borderRight: '1px solid rgba(0,0,0,0.06)' }}>
@@ -723,10 +729,8 @@ export default function RecentActivityPage() {
           <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, fontWeight: 600, letterSpacing: '-0.02em', color: '#1A1918', marginBottom: 12 }}>Recent Activity</div>
           <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 20 }} />
 
-          {/* Search & Filters */}
-          <div style={{ marginBottom: 20 }}>
-            <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 9 }}>Search & Filters</div>
-            <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 12 }} />
+          {/* Filters */}
+          <div style={{ marginBottom: 16 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
               <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 8, padding: '0 12px', background: 'rgba(0,0,0,0.03)', borderRadius: 18, border: '1px solid rgba(0,0,0,0.06)', height: 36 }}>
                 <Search size={14} style={{ color: '#787776', flexShrink: 0 }} />
@@ -734,7 +738,7 @@ export default function RecentActivityPage() {
                   style={{ flex: 1, border: 'none', outline: 'none', fontSize: 13, fontFamily: "'DM Sans', sans-serif", color: '#1A1918', background: 'transparent' }} />
               </div>
             </div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, position: 'relative', zIndex: 20 }}>
+            <div className="filter-row-scroll" style={{ display: 'flex', flexWrap: 'wrap', gap: 8, position: 'relative', zIndex: 20 }}>
               <SortDropdown sortBy={sortBy} onChange={setSortBy} />
               <SingleSelectDropdown options={DATE_OPTIONS} selected={dateFilter} onChange={setDateFilter} />
               <MultiSelectDropdown label="All Categories" options={CATEGORY_OPTIONS} selected={categoryFilter} onChange={setCategoryFilter} />
@@ -747,7 +751,17 @@ export default function RecentActivityPage() {
           </div>
 
           {/* ── Activity List ──────────────────────────────────── */}
-          <div>
+          <div style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(12px) saturate(1.4)', WebkitBackdropFilter: 'blur(12px) saturate(1.4)', borderRadius: 14, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.05)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 6, padding: '10px 16px', borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
+              <span style={{ fontSize: 11, fontWeight: 500, color: '#787776', marginRight: 4 }}>Page {raSafePage + 1} of {raTotalPages}</span>
+              <button onClick={() => setRaPage(Math.max(0, raSafePage - 1))} disabled={raSafePage === 0} style={{ width: 26, height: 26, borderRadius: 7, border: '1px solid rgba(0,0,0,0.09)', background: 'white', cursor: raSafePage === 0 ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: raSafePage === 0 ? 0.3 : 1, flexShrink: 0 }}>
+                <ChevronLeft size={13} style={{ color: '#787776' }} />
+              </button>
+              <button onClick={() => setRaPage(Math.min(raTotalPages - 1, raSafePage + 1))} disabled={raSafePage >= raTotalPages - 1} style={{ width: 26, height: 26, borderRadius: 7, border: '1px solid rgba(0,0,0,0.09)', background: 'white', cursor: raSafePage >= raTotalPages - 1 ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: raSafePage >= raTotalPages - 1 ? 0.3 : 1, flexShrink: 0 }}>
+                <ChevronRight size={13} style={{ color: '#787776' }} />
+              </button>
+            </div>
+            <div style={{ padding: '0 16px' }}>
             {filtered.length === 0 ? (
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 0', color: '#C7C6C4' }}>
                 <Activity size={32} style={{ opacity: 0.4, marginBottom: 8 }} />
@@ -771,7 +785,7 @@ export default function RecentActivityPage() {
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  {filtered.map((activity, index) => {
+                  {raPageItems.map((activity, index) => {
                     const { title, description, icon: Icon, status, friendName, amount, category } = getActivityInfo(activity);
                     const { bg: iconBg, color: iconColor } = getIconStyle(Icon);
                     const dateDisplay = activity.date ? format(new Date(activity.date), 'MMM d, yyyy') : '';
@@ -813,6 +827,7 @@ export default function RecentActivityPage() {
                 </div>
               </>
             )}
+            </div>
           </div>
 
         </div>

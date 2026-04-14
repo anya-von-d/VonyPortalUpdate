@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/lib/AuthContext';
-import { X } from 'lucide-react';
+import { X, LogOut } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import UserAvatar from './ui/UserAvatar';
@@ -214,7 +214,7 @@ function AboutTab() {
 
 /* ── Modal ────────────────────────────────────────────────── */
 export default function SettingsModal({ isOpen, onClose }) {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const [activeTab, setActiveTab] = useState('general');
   const overlayRef = useRef(null);
 
@@ -231,7 +231,7 @@ export default function SettingsModal({ isOpen, onClose }) {
     <div
       ref={overlayRef}
       onClick={(e) => { if (e.target === overlayRef.current) onClose(); }}
-      style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.22)', backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+      style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.12)', backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
     >
       <div style={{ background: 'white', borderRadius: 16, width: 580, maxWidth: '92vw', height: 420, display: 'flex', overflow: 'hidden', boxShadow: '0 24px 64px rgba(0,0,0,0.16), 0 4px 16px rgba(0,0,0,0.08)', border: '1px solid rgba(0,0,0,0.07)', fontFamily: "'DM Sans', sans-serif" }}>
 
@@ -258,6 +258,25 @@ export default function SettingsModal({ isOpen, onClose }) {
               {tab.label}
             </button>
           ))}
+
+          {/* Log Out at bottom */}
+          <div style={{ marginTop: 'auto', paddingTop: 12 }}>
+            <button
+              onClick={() => { onClose(); logout?.(); }}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 7, padding: '7px 10px',
+                borderRadius: 8, border: 'none', cursor: 'pointer', background: 'transparent',
+                fontSize: 13, fontWeight: 500, color: '#E8726E',
+                textAlign: 'left', width: '100%', fontFamily: "'DM Sans', sans-serif",
+                transition: 'background 0.15s',
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = 'rgba(232,114,110,0.07)'}
+              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+            >
+              <LogOut size={13} strokeWidth={2} />
+              Log Out
+            </button>
+          </div>
         </div>
 
         {/* ── Right panel ── */}

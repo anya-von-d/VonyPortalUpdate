@@ -110,7 +110,7 @@ export default function ComingSoon() {
   );
 
   return (
-    <div className="mesh-layout" style={{ minHeight: '100vh', display: 'grid', gridTemplateColumns: '180px 1fr', gap: 0, fontFamily: "'DM Sans', sans-serif" }}>
+    <div className="mesh-layout" style={{ minHeight: '100vh', display: 'grid', gridTemplateColumns: '200px 1fr', gap: 0, fontFamily: "'DM Sans', sans-serif" }}>
       <MeshMobileNav user={user} activePage="Learn" />
 
       {/* ── LEFT: Sidebar nav ── */}
@@ -187,34 +187,60 @@ export default function ComingSoon() {
       {/* ── CENTER: Category selector + articles ── */}
       <div className="mesh-center" style={{ background: 'white', borderRight: '1px solid rgba(0,0,0,0.06)', padding: '28px 48px 80px' }}>
 
-        {/* Tab header */}
-        <div className="tab-nav-scroll" style={{ display: 'flex', gap: 24, alignItems: 'flex-end', marginLeft: -48, marginRight: -48, paddingLeft: 48, paddingRight: 48 }}>
-          {LEARN_CATEGORIES.map(cat => (
-            <button key={cat.id} onClick={() => setLearnCategory(cat.id)} style={{
-              position: 'relative', paddingBottom: 12,
-              border: 'none', background: 'transparent', cursor: 'pointer',
-              fontSize: 14, fontWeight: 600, fontFamily: "'DM Sans', system-ui, sans-serif",
-              letterSpacing: '-0.02em',
-              color: learnCategory === cat.id ? '#1A1918' : 'rgba(0,0,0,0.30)',
-              transition: 'color 0.2s', whiteSpace: 'nowrap',
+        {/* Desktop: pill nav + active-category grid */}
+        <div className="learn-desktop-view">
+          <div className="pill-nav-scroll" style={{ display: 'flex', marginBottom: 20 }}>
+            <div style={{
+              display: 'inline-flex', background: 'rgba(0,0,0,0.04)',
+              borderRadius: 999, padding: 4, gap: 2,
             }}>
-              {cat.label}
-              {learnCategory === cat.id && (
-                <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 6, background: 'linear-gradient(to bottom, transparent 0%, #03ACEA 66.67%, #03ACEA 100%)', pointerEvents: 'none' }} />
-              )}
-            </button>
-          ))}
-        </div>
-        <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginLeft: -48, marginRight: -48, marginBottom: 20 }} />
+              {LEARN_CATEGORIES.map(cat => {
+                const active = learnCategory === cat.id;
+                return (
+                  <button key={cat.id} onClick={() => setLearnCategory(cat.id)} style={{
+                    padding: '8px 18px', borderRadius: 999, border: 'none', cursor: 'pointer',
+                    background: active ? 'white' : 'transparent',
+                    boxShadow: active ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
+                    fontSize: 13, fontWeight: 600, fontFamily: "'DM Sans', system-ui, sans-serif",
+                    letterSpacing: '-0.01em', whiteSpace: 'nowrap',
+                    color: active ? '#1A1918' : '#787776', transition: 'all 0.2s',
+                  }}>
+                    {cat.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
 
-        {/* Articles grid */}
-        <div className="page-cards-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
-          {(LEARN_ARTICLES[learnCategory] || []).map((article, index) => (
-            <motion.div key={article.title} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }} style={{ background: 'white', borderRadius: 18, padding: '24px 22px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)', cursor: 'default', border: '1px solid rgba(0,0,0,0.05)' }}>
-              <div style={{ display: 'inline-block', fontSize: 10, fontWeight: 600, color: '#9B9A98', textTransform: 'uppercase', letterSpacing: '0.1em', background: 'rgba(0,0,0,0.05)', borderRadius: 6, padding: '3px 8px', marginBottom: 14 }}>Coming Soon</div>
-              <div style={{ fontSize: 16, fontWeight: 700, color: '#1A1918', lineHeight: 1.35, marginBottom: 12 }}>{article.title}</div>
-              <div style={{ fontSize: 13, color: '#787776', lineHeight: 1.6 }}>{article.body}</div>
-            </motion.div>
+          {/* Articles grid */}
+          <div className="page-cards-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
+            {(LEARN_ARTICLES[learnCategory] || []).map((article, index) => (
+              <motion.div key={article.title} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }} style={{ background: 'white', borderRadius: 18, padding: '24px 22px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)', cursor: 'default', border: '1px solid rgba(0,0,0,0.05)' }}>
+                <div style={{ display: 'inline-block', fontSize: 10, fontWeight: 600, color: '#9B9A98', textTransform: 'uppercase', letterSpacing: '0.1em', background: 'rgba(0,0,0,0.05)', borderRadius: 6, padding: '3px 8px', marginBottom: 14 }}>Coming Soon</div>
+                <div style={{ fontSize: 16, fontWeight: 700, color: '#1A1918', lineHeight: 1.35, marginBottom: 12 }}>{article.title}</div>
+                <div style={{ fontSize: 13, color: '#787776', lineHeight: 1.6 }}>{article.body}</div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+        {/* Mobile: all categories as titled sections with horizontal scroll */}
+        <div className="learn-mobile-sections">
+          {LEARN_CATEGORIES.map(cat => (
+            <section key={cat.id} style={{ marginBottom: 28 }}>
+              <h3 style={{ fontSize: 16, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', margin: '0 0 12px 0' }}>
+                {cat.label}
+              </h3>
+              <div className="h-scroll-cards">
+                {(LEARN_ARTICLES[cat.id] || []).map((article) => (
+                  <div key={article.title} className="h-scroll-card" style={{ background: 'white', borderRadius: 18, padding: '20px 18px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)', border: '1px solid rgba(0,0,0,0.05)' }}>
+                    <div style={{ display: 'inline-block', fontSize: 10, fontWeight: 600, color: '#9B9A98', textTransform: 'uppercase', letterSpacing: '0.1em', background: 'rgba(0,0,0,0.05)', borderRadius: 6, padding: '3px 8px', marginBottom: 12 }}>Coming Soon</div>
+                    <div style={{ fontSize: 15, fontWeight: 700, color: '#1A1918', lineHeight: 1.35, marginBottom: 10 }}>{article.title}</div>
+                    <div style={{ fontSize: 12, color: '#787776', lineHeight: 1.55 }}>{article.body}</div>
+                  </div>
+                ))}
+              </div>
+            </section>
           ))}
         </div>
       </div>
