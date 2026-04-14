@@ -68,14 +68,14 @@ const Icons = {
 
 /* ── Nav config ───────────────────────────────────────────── */
 const NAV_ITEMS = [
-  { id: 'general',       label: 'General',         type: 'tab',  icon: Icons.general },
-  { id: 'notifications', label: 'Notifications',   type: 'tab',  icon: Icons.notifications },
-  { id: 'invite',        label: 'Invite a Friend', type: 'tab',  icon: Icons.invite },
-  { id: 'helpsupport',   label: 'Help & Support',  type: 'link', href: 'https://www.vony-lending.com/help',    icon: Icons.help },
-  { id: 'contactus',     label: 'Contact Us',      type: 'link', href: 'https://www.vony-lending.com/contact', icon: Icons.contact },
-  { id: 'guide',         label: 'Guide',           type: 'link', href: 'https://www.vony-lending.com/guide',   icon: Icons.guide },
-  { id: 'about',         label: 'About',           type: 'tab',  icon: Icons.about },
-  { id: 'legal',         label: 'Legal',           type: 'tab',  icon: Icons.legal },
+  { id: 'general',       label: 'General',         type: 'tab', icon: Icons.general },
+  { id: 'notifications', label: 'Notifications',   type: 'tab', icon: Icons.notifications },
+  { id: 'invite',        label: 'Invite a Friend', type: 'tab', icon: Icons.invite },
+  { id: 'helpsupport',   label: 'Help & Support',  type: 'tab', icon: Icons.help },
+  { id: 'contactus',     label: 'Contact Us',       type: 'tab', icon: Icons.contact },
+  { id: 'guide',         label: 'Guide',            type: 'tab', icon: Icons.guide },
+  { id: 'about',         label: 'About',            type: 'tab', icon: Icons.about },
+  { id: 'legal',         label: 'Legal',            type: 'tab', icon: Icons.legal },
 ];
 
 /* ── Shared helpers ───────────────────────────────────────── */
@@ -243,6 +243,43 @@ function InviteTab() {
   );
 }
 
+/* ── Clickable link card ──────────────────────────────────── */
+function LinkCard({ title, sublabel, href }) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        padding: '14px 16px', borderRadius: 12,
+        background: '#F7F6F3', border: '1px solid rgba(0,0,0,0.07)',
+        textDecoration: 'none', marginBottom: 10,
+      }}
+      onMouseEnter={e => e.currentTarget.style.background = '#EDECEA'}
+      onMouseLeave={e => e.currentTarget.style.background = '#F7F6F3'}
+    >
+      <div>
+        <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', marginBottom: 2, fontFamily: "'DM Sans', sans-serif" }}>{title}</div>
+        <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>{sublabel}</div>
+      </div>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C5C3C0" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+  );
+}
+
+function HelpSupportTab() {
+  return <LinkCard title="Help & Support" sublabel="Find answers to common questions and get help." href="https://www.vony-lending.com/help" />;
+}
+
+function ContactUsTab() {
+  return <LinkCard title="Contact Us" sublabel="Send us a message and we'll get back to you." href="https://www.vony-lending.com/contact" />;
+}
+
+function GuideTab() {
+  return <LinkCard title="Vony Guide" sublabel="Your introduction to Vony — learn how it all works." href="https://www.vony-lending.com/guide" />;
+}
+
 function AboutTab() {
   return (
     <>
@@ -262,27 +299,12 @@ function AboutTab() {
 }
 
 function LegalTab() {
-  const links = [
-    { label: 'Privacy Policy',                              href: 'https://www.vony-lending.com/privacy' },
-    { label: 'Terms of Service',                            href: 'https://www.vony-lending.com/terms' },
-    { label: 'Do Not Sell or Share My Private Information', href: 'https://www.vony-lending.com/do-not-sell' },
-  ];
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-      {links.map(({ label, href }) => (
-        <a
-          key={label}
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{ fontSize: 13, color: '#03ACEA', textDecoration: 'none', fontFamily: "'DM Sans', sans-serif" }}
-          onMouseEnter={e => e.currentTarget.style.textDecoration = 'underline'}
-          onMouseLeave={e => e.currentTarget.style.textDecoration = 'none'}
-        >
-          {label}
-        </a>
-      ))}
-    </div>
+    <>
+      <LinkCard title="Privacy Policy"    sublabel="How we collect and use your data."              href="https://www.vony-lending.com/privacy" />
+      <LinkCard title="Terms of Service"  sublabel="The rules and terms for using Vony."            href="https://www.vony-lending.com/terms" />
+      <LinkCard title="Do Not Sell or Share My Personal Information" sublabel="Manage your data sharing preferences." href="https://www.vony-lending.com/do-not-sell" />
+    </>
   );
 }
 
@@ -332,18 +354,6 @@ export default function SettingsModal({ isOpen, onClose }) {
     whiteSpace: 'nowrap',
   });
 
-  const linkNavItemStyle = {
-    display: 'flex', alignItems: 'center', gap: isMobile ? 0 : 7,
-    padding: isMobile ? '7px 12px' : `7px ${sidebarPadH + 4}px`,
-    borderRadius: 8, cursor: 'pointer',
-    background: 'transparent',
-    fontSize: 13, fontWeight: 500,
-    color: '#787776',
-    textAlign: 'left', width: '100%',
-    fontFamily: "'DM Sans', sans-serif",
-    marginBottom: 2, textDecoration: 'none',
-    whiteSpace: 'nowrap',
-  };
 
   return createPortal(
     <div
@@ -365,39 +375,18 @@ export default function SettingsModal({ isOpen, onClose }) {
           </div>
 
           {/* Nav items */}
-          {NAV_ITEMS.map(item => {
-            if (item.type === 'divider') {
-              return <div key={item.id} style={{ height: 1, background: 'rgba(0,0,0,0.06)', margin: '6px 4px 8px' }} />;
-            }
-            if (item.type === 'link') {
-              return (
-                <a
-                  key={item.id}
-                  href={item.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={linkNavItemStyle}
-                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.04)'}
-                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-                >
-                  {!isMobile && <span style={{ width: 14, height: 14, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{item.icon}</span>}
-                  {item.label}
-                </a>
-              );
-            }
-            return (
-              <button
-                key={item.id}
-                onClick={() => setActiveTab(item.id)}
-                style={navItemStyle(item.id)}
-                onMouseEnter={e => { if (activeTab !== item.id) e.currentTarget.style.background = 'rgba(0,0,0,0.04)'; }}
-                onMouseLeave={e => { e.currentTarget.style.background = activeTab === item.id ? 'rgba(0,0,0,0.07)' : 'transparent'; }}
-              >
-                {!isMobile && <span style={{ width: 14, height: 14, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{item.icon}</span>}
-                {item.label}
-              </button>
-            );
-          })}
+          {NAV_ITEMS.map(item => (
+            <button
+              key={item.id}
+              onClick={() => setActiveTab(item.id)}
+              style={navItemStyle(item.id)}
+              onMouseEnter={e => { if (activeTab !== item.id) e.currentTarget.style.background = 'rgba(0,0,0,0.04)'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = activeTab === item.id ? 'rgba(0,0,0,0.07)' : 'transparent'; }}
+            >
+              {!isMobile && <span style={{ width: 14, height: 14, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{item.icon}</span>}
+              {item.label}
+            </button>
+          ))}
 
           {/* Log Out */}
           <div style={{ marginTop: 'auto', paddingTop: 12 }}>
@@ -440,6 +429,9 @@ export default function SettingsModal({ isOpen, onClose }) {
             {activeTab === 'general'       && <GeneralTab user={user} />}
             {activeTab === 'notifications' && <NotificationsTab />}
             {activeTab === 'invite'        && <InviteTab />}
+            {activeTab === 'helpsupport'   && <HelpSupportTab />}
+            {activeTab === 'contactus'     && <ContactUsTab />}
+            {activeTab === 'guide'         && <GuideTab />}
             {activeTab === 'about'         && <AboutTab />}
             {activeTab === 'legal'         && <LegalTab />}
           </div>
