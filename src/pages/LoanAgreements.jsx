@@ -282,10 +282,10 @@ export default function LoanAgreements() {
 
   const getStatusBadgeStyle = (status) => {
     switch(status) {
-      case 'active': return { background: 'rgba(22,163,74,0.18)', color: '#16A34A', border: '1px solid rgba(22,163,74,0.2)' };
-      case 'completed': return { background: 'rgba(0,0,0,0.03)', color: '#787776', border: '1px solid rgba(0,0,0,0.1)' };
-      case 'cancelled': return { background: 'rgba(232,114,110,0.08)', color: '#E8726E', border: '1px solid rgba(232,114,110,0.2)' };
-      default: return { background: 'rgba(120,119,118,0.08)', color: '#787776', border: '1px solid rgba(120,119,118,0.15)' };
+      case 'active':    return { background: 'rgba(22,163,74,0.12)',   color: '#16A34A', border: '1px solid rgba(22,163,74,0.25)' };
+      case 'completed': return { background: 'rgba(120,119,118,0.10)', color: '#5C5B5A', border: '1px solid rgba(120,119,118,0.22)' };
+      case 'cancelled': return { background: 'rgba(232,114,110,0.12)', color: '#D94F4B', border: '1px solid rgba(232,114,110,0.28)' };
+      default:          return { background: 'rgba(120,119,118,0.08)', color: '#787776', border: '1px solid rgba(120,119,118,0.15)' };
     }
   };
 
@@ -1194,7 +1194,7 @@ export default function LoanAgreements() {
 
           {/* ── Agreements List ──────────────────────────────────── */}
           <div style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(12px) saturate(1.4)', WebkitBackdropFilter: 'blur(12px) saturate(1.4)', borderRadius: 14, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.05)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 6, padding: '10px 16px', borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 6, padding: '10px 16px' }}>
               <span style={{ fontSize: 11, fontWeight: 500, color: '#787776', marginRight: 4 }}>Page {laSafePage + 1} of {laTotalPages}</span>
               <button onClick={() => setLaPage(Math.max(0, laSafePage - 1))} disabled={laSafePage === 0} style={{ width: 26, height: 26, borderRadius: 7, border: '1px solid rgba(0,0,0,0.09)', background: 'white', cursor: laSafePage === 0 ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: laSafePage === 0 ? 0.3 : 1, flexShrink: 0 }}>
                 <ChevronLeft size={13} style={{ color: '#787776' }} />
@@ -1221,10 +1221,10 @@ export default function LoanAgreements() {
                     display: 'flex', alignItems: 'center', gap: 12, padding: '0 0 12px',
                     borderBottom: '1px solid rgba(0,0,0,0.06)', marginBottom: 4,
                   }}>
-                    <span style={{ width: 72, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', flexShrink: 0 }}>Date</span>
+                    <span style={{ width: 90, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', flexShrink: 0 }}>Date</span>
                     <span style={{ flex: 1.5, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', minWidth: 0 }}>Friend</span>
-                    <span style={{ flex: 1.2, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', minWidth: 0 }}>Category</span>
-                    <span style={{ width: 110, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', textAlign: 'center', flexShrink: 0 }}>Status</span>
+                    <span style={{ flex: 1.4, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', minWidth: 0 }}>Category</span>
+                    <span style={{ width: 90, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', textAlign: 'center', flexShrink: 0 }}>Status</span>
                     <span style={{ width: 100, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', textAlign: 'right', flexShrink: 0 }}>Amount</span>
                     <div style={{ width: 28, flexShrink: 0 }} />
                   </div>
@@ -1237,25 +1237,20 @@ export default function LoanAgreements() {
                       const loanStatus = getLoanStatus(agreement.loan_id);
                       const badgeStyle = getStatusBadgeStyle(loanStatus);
                       const isExpanded = expandedId === agreement.id;
-                      const categoryLabel = isLender ? 'Borrowed from you' : 'Lent to you';
-                      const dateDisplay = agreement.created_at ? format(new Date(agreement.created_at), 'M/dd') : '';
-                      const dateYear = agreement.created_at ? new Date(agreement.created_at).getFullYear() : null;
-                      const dateFormatted = dateYear && dateYear < new Date().getFullYear()
-                        ? format(new Date(agreement.created_at), 'M/d/yyyy')
-                        : dateDisplay;
+                      const dateFormatted = agreement.created_at ? format(new Date(agreement.created_at), 'MMM d, yyyy') : '';
 
                       return (
-                        <div key={agreement.id} style={{ borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+                        <div key={agreement.id}>
                           <div
                             onClick={() => setExpandedId(isExpanded ? null : agreement.id)}
                             className="la-table-row"
                             style={{
-                              display: 'flex', alignItems: 'center', gap: 12, padding: '16px 0',
+                              display: 'flex', alignItems: 'center', gap: 12, padding: '9px 0',
                               transition: 'background 0.15s', cursor: 'pointer',
                             }}
                           >
                             {/* Date */}
-                            <span className="la-col-date" style={{ width: 72, fontSize: 12, fontWeight: 500, color: '#787776', flexShrink: 0 }}>
+                            <span className="la-col-date" style={{ width: 90, fontSize: 12, fontWeight: 500, color: '#787776', flexShrink: 0 }}>
                               <span className="la-date-text">{dateFormatted}</span>
                               <ChevronDown className="la-date-chevron" size={16} style={{ color: '#9B9A98' }} />
                             </span>
@@ -1271,14 +1266,25 @@ export default function LoanAgreements() {
                               </span>
                             </div>
                             {/* Category */}
-                            <div className="la-col-category" style={{ display: 'flex', flex: 1.2, minWidth: 0, alignItems: 'center' }}>
-                              <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918' }}>{categoryLabel}</span>
+                            <div className="la-col-category" style={{ display: 'flex', flex: 1.4, minWidth: 0, alignItems: 'center' }}>
+                              <span style={{
+                                display: 'inline-flex', alignItems: 'center',
+                                padding: '3px 8px', borderRadius: 7,
+                                fontSize: 11, fontWeight: 600, whiteSpace: 'nowrap',
+                                ...(isLender
+                                  ? { background: 'rgba(3,172,234,0.10)', color: '#03ACEA', border: '1px solid rgba(3,172,234,0.25)' }
+                                  : { background: 'rgba(29,91,148,0.10)', color: '#1D5B94', border: '1px solid rgba(29,91,148,0.25)' }
+                                ),
+                              }}>
+                                {isLender ? 'You are the Lender' : 'You are the Borrower'}
+                              </span>
                             </div>
                             {/* Status */}
-                            <div className="la-col-status" style={{ display: 'flex', width: 110, justifyContent: 'center', flexShrink: 0, alignItems: 'center', gap: 6 }}>
+                            <div className="la-col-status" style={{ display: 'flex', width: 90, justifyContent: 'center', flexShrink: 0, alignItems: 'center', gap: 6 }}>
                               <span style={{
-                                ...badgeStyle, display: 'inline-flex', alignItems: 'center', padding: '4px 10px', borderRadius: 8,
-                                fontSize: 11, fontWeight: 600, textTransform: 'capitalize',
+                                ...badgeStyle, display: 'inline-flex', alignItems: 'center',
+                                padding: '3px 8px', borderRadius: 7,
+                                fontSize: 11, fontWeight: 600, textTransform: 'capitalize', whiteSpace: 'nowrap',
                               }}>
                                 {loanStatus}
                               </span>
