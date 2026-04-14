@@ -981,6 +981,7 @@ export default function Home() {
               background: 'white',
               border: '1px solid rgba(0,0,0,0.07)',
               boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
+              textAlign: 'center',
             }}>
               <div style={{ fontSize: 16, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', marginBottom: 4, fontFamily: "'DM Sans', system-ui, sans-serif" }}>
                 🎉 Welcome to Vony!
