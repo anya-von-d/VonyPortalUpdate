@@ -233,7 +233,7 @@ export default function ComingSoon() {
       </div>
 
       {/* ── CENTER: articles ── */}
-      <div className="mesh-center" style={{ background: 'white', borderRight: '1px solid rgba(0,0,0,0.06)', padding: '28px 48px 80px' }}>
+      <div className="mesh-center" style={{ background: 'white', borderRight: '1px solid rgba(0,0,0,0.06)', padding: '24px 48px 80px' }}>
 
         {/* Desktop view */}
         <div className="learn-desktop-view">

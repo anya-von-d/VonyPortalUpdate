@@ -1475,7 +1475,7 @@ export default function YourLoans() {
         </div>
 
         {/* ── CENTER ── */}
-        <div className="mesh-center" style={{ background: 'white', padding: '28px 48px 80px' }}>
+        <div className="mesh-center" style={{ background: 'white', padding: '24px 48px 80px' }}>
 
           {/* Tab header */}
           <div style={{ display: 'flex', gap: 24, alignItems: 'flex-end', marginLeft: -48, marginRight: -48, paddingLeft: 48, paddingRight: 48 }}>

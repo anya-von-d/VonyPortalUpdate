@@ -192,7 +192,7 @@ export default function LoanHelp() {
       </div>
 
       {/* ── CENTER: Category selector + loan cards ── */}
-      <div className="mesh-center" style={{ background: 'white', borderRight: '1px solid rgba(0,0,0,0.06)', padding: '28px 48px 80px' }}>
+      <div className="mesh-center" style={{ background: 'white', borderRight: '1px solid rgba(0,0,0,0.06)', padding: '24px 48px 80px' }}>
 
         {/* Desktop: pill nav + active-category grid */}
         <div className="learn-desktop-view">

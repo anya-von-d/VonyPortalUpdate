@@ -870,7 +870,7 @@ export default function Home() {
         </div>
 
         {/* ── CENTER ── */}
-        <div className="mesh-center" style={{ background: '#ffffff', padding: '28px 48px 80px' }}>
+        <div className="mesh-center" style={{ background: '#ffffff', padding: '24px 48px 80px' }}>
 
           {/* Greeting + icons */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>

@@ -62,10 +62,42 @@ export default function MeshMobileNav({ user, activePage }) {
     fetchCounts();
   }, [user?.id]);
 
-  if (!isMobile) return null;
-
   return (
     <>
+      {/* ── Desktop: top-right notification + profile icons ── */}
+      {!isMobile && (
+        <div style={{
+          position: 'fixed', top: 0, right: 0, zIndex: 100,
+          display: 'flex', alignItems: 'center', gap: 2,
+          padding: '13px 20px',
+        }}>
+          <Link to={createPageUrl("Requests")} style={{
+            position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center',
+            width: 32, height: 32, borderRadius: 9, textDecoration: 'none',
+          }}>
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#787776" strokeWidth="1.8" strokeLinecap="round">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+            {notifCount > 0 && (
+              <span style={{
+                position: 'absolute', top: 5, right: 5,
+                width: 7, height: 7, borderRadius: '50%',
+                background: '#03ACEA',
+              }} />
+            )}
+          </Link>
+          <Link to={createPageUrl("Profile")} style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            width: 32, height: 32, borderRadius: 9, textDecoration: 'none',
+          }}>
+            <UserAvatar name={user?.full_name || user?.username} src={user?.avatar_url || user?.profile_picture_url} size={26} />
+          </Link>
+        </div>
+      )}
+
+      {/* ── Mobile: fixed top bar + slide-out menu ── */}
+      {isMobile && <>
       {/* Fixed top bar */}
       <div style={{
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200,
@@ -209,6 +241,8 @@ export default function MeshMobileNav({ user, activePage }) {
           </div>
         </div>
       )}
+
+      </>}
 
       <SettingsModal isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
     </>

@@ -308,7 +308,7 @@ export default function Upcoming() {
         </div>
 
         {/* ── CENTER ── */}
-        <div className="mesh-center" style={{ background: 'white', padding: '28px 48px 80px' }}>
+        <div className="mesh-center" style={{ background: 'white', padding: '24px 48px 80px' }}>
 
           {/* Page header */}
           <div style={{ marginLeft: -48, marginRight: -48, paddingLeft: 48, paddingRight: 48, paddingBottom: 12 }}>
