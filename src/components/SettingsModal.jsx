@@ -57,7 +57,14 @@ function Toggle({ checked, onChange, label, sublabel }) {
 function GeneralTab({ user }) {
   return (
     <>
-      <Row label="Full Name"><Field value={user?.full_name} /></Row>
+      <Row label="Full Name">
+        <input
+          type="text"
+          defaultValue={user?.full_name || ''}
+          readOnly
+          style={{ width: '100%', padding: '9px 12px', borderRadius: 9, border: '1px solid rgba(0,0,0,0.08)', background: '#fafafa', fontSize: 13, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", outline: 'none', boxSizing: 'border-box' }}
+        />
+      </Row>
       <Row label="Email"><Field value={user?.email} /></Row>
       <div style={{ marginTop: 4 }}>
         <Link to={createPageUrl('Profile')} style={{
@@ -177,28 +184,35 @@ function InviteTab() {
 }
 
 function AboutTab() {
+  const links = [
+    { label: 'Guide',          href: 'https://www.vony-lending.com/guide' },
+    { label: 'Contact Us',     href: 'https://www.vony-lending.com/contact' },
+    { label: 'Help & Support', href: 'https://www.vony-lending.com/help' },
+  ];
+  const legal = [
+    { label: 'Privacy Policy',   href: 'https://www.vony-lending.com/privacy' },
+    { label: 'Terms of Service', href: 'https://www.vony-lending.com/terms' },
+  ];
+  const LinkItem = ({ label, href }) => (
+    <a key={label} href={href} target="_blank" rel="noopener noreferrer"
+      style={{ fontSize: 13, color: '#03ACEA', textDecoration: 'none', fontFamily: "'DM Sans', sans-serif" }}
+      onMouseEnter={e => e.currentTarget.style.textDecoration = 'underline'}
+      onMouseLeave={e => e.currentTarget.style.textDecoration = 'none'}
+    >{label} ↗</a>
+  );
   return (
     <>
       <Row label="App">
         <div style={{ fontSize: 13, color: '#787776' }}>Vony · Version 1.0</div>
       </Row>
-      <Row label="Links">
+      <Row label="About">
         <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
-          {[
-            { label: 'Guide',           href: 'https://www.vony-lending.com/guide' },
-            { label: 'Contact Us',      href: 'https://www.vony-lending.com/contact' },
-            { label: 'Help & Support',  href: 'https://www.vony-lending.com/help' },
-            { label: 'Privacy Policy',  href: 'https://www.vony-lending.com/privacy' },
-            { label: 'Terms of Service', href: 'https://www.vony-lending.com/terms' },
-          ].map(({ label, href }) => (
-            <a key={label} href={href} target="_blank" rel="noopener noreferrer"
-              style={{ fontSize: 13, color: '#03ACEA', textDecoration: 'none', fontFamily: "'DM Sans', sans-serif" }}
-              onMouseEnter={e => e.currentTarget.style.textDecoration = 'underline'}
-              onMouseLeave={e => e.currentTarget.style.textDecoration = 'none'}
-            >
-              {label} ↗
-            </a>
-          ))}
+          {links.map(l => <LinkItem key={l.label} {...l} />)}
+        </div>
+      </Row>
+      <Row label="Legal">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
+          {legal.map(l => <LinkItem key={l.label} {...l} />)}
         </div>
       </Row>
       <Row label="Danger Zone">
@@ -240,7 +254,7 @@ export default function SettingsModal({ isOpen, onClose }) {
         <div style={{ width: 180, background: '#F7F6F3', borderRight: '1px solid rgba(0,0,0,0.06)', padding: '18px 10px 16px', display: 'flex', flexDirection: 'column' }}>
           {/* User header */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '0 6px 14px', borderBottom: '1px solid rgba(0,0,0,0.07)', marginBottom: 10 }}>
-            <UserAvatar name={user?.full_name || user?.username} src={user?.profile_picture_url} size={30} />
+            <UserAvatar name={user?.full_name || user?.username} src={user?.avatar_url || user?.profile_picture_url} size={30} />
             <div style={{ minWidth: 0 }}>
               <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.full_name || user?.username}</div>
               <div style={{ fontSize: 10, color: '#9B9A98', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.email}</div>

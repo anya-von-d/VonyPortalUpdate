@@ -1501,7 +1501,7 @@ export default function Lending({ initialTab }) {
         signingAs="Lender"
       />
 
-      <div style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", background: '#F3F2EE' }}>
+      <div style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", background: '#ffffff' }}>
         <MeshMobileNav user={currentUser} activePage="Create Loan" />
         <div className="mesh-layout" style={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: 0, minHeight: '100vh' }}>
           {/* COL 1 - left nav */}

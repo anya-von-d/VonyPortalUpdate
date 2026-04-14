@@ -45,7 +45,7 @@ input[type="date"] {
 @layer base {
   html {
     scroll-behavior: smooth;
-    background-color: #F3F2EE;
+    background-color: #ffffff;
   }
 
   /* Scrollbar styling */
@@ -269,8 +269,6 @@ input[type="date"] {
   background: transparent !important;
 }
 
-/* Main content area background */
-.mesh-center { background: #F3F2EE !important; }
 
 /* Decorative blue strip at right edge of Col 1 (inside col, along col1/col2 border) */
 .mesh-left {
