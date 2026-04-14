@@ -553,7 +553,7 @@ export default function YourLoans() {
     return (
       <>
         {/* 1. Three standalone top cards */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, marginBottom: 20 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 24, marginBottom: 20 }}>
           {/* Next Incoming / Next Payment Due — aurora card identical to Home page */}
           <div style={{ position: 'relative', display: 'flex', flexDirection: 'column' }}>
             {/* Aurora glow */}
@@ -590,7 +590,7 @@ export default function YourLoans() {
                   }
                 </div>
                 <span style={{ fontSize: 9, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-                  {isLending ? 'Next Incoming' : 'Next Payment Due'}
+                  {isLending ? 'Next Payment Incoming' : 'Next Payment Due'}
                 </span>
               </div>
               {nextPaymentLoan ? (
@@ -701,7 +701,7 @@ export default function YourLoans() {
           const upcomingLoans = allPaymentLoans.filter(l => l.days >= 0).slice(0, 5);
           const combinedLoans = [...overdueLoans, ...upcomingLoans];
           return (
-            <div style={{ display: 'grid', gridTemplateColumns: activeLoans.length > 0 ? '1fr 1fr' : '1fr', gap: 20, marginBottom: 20 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: activeLoans.length > 0 ? '1fr 1fr' : '1fr', gap: 20, marginBottom: 20, alignItems: 'start' }}>
               <PageCard title="Upcoming" headerRight={<Link to={createPageUrl("Upcoming")} style={{ fontSize: 11, fontWeight: 500, color: '#9B9A98', textDecoration: 'none' }}>Full schedule →</Link>} style={{ marginBottom: 0 }}>
                 {combinedLoans.length === 0 ? (
                   <div style={{ padding: '10px 0', fontSize: 13, color: '#9B9A98' }}>Nothing coming up.</div>
@@ -734,29 +734,29 @@ export default function YourLoans() {
                 })}
               </PageCard>
 
-              {/* Loan Progress — right of Upcoming */}
+              {/* Active Lending / Active Borrowing — right of Upcoming */}
               {activeLoans.length > 0 && (
-                <PageCard title="Loan Progress" style={{ marginBottom: 0 }}>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                <PageCard title={isLending ? 'Active Lending' : 'Active Borrowing'} headerRight={<Link to={createPageUrl("YourLoans")} style={{ fontSize: 11, fontWeight: 500, color: '#9B9A98', textDecoration: 'none' }}>View all →</Link>} style={{ marginBottom: 0 }}>
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
                     {activeLoans.slice(0, 5).map((loan) => {
-                      const otherParty = publicProfiles.find(p => p.user_id === (isLending ? loan.borrower_id : loan.lender_id));
+                      const otherProfile = publicProfiles.find(p => p.user_id === (isLending ? loan.borrower_id : loan.lender_id));
                       const totalAmt = loan.total_amount || loan.amount || 0;
                       const paidAmt = loan.amount_paid || 0;
                       const pct = totalAmt > 0 ? Math.round((paidAmt / totalAmt) * 100) : 0;
-                      const name = otherParty?.full_name?.split(' ')[0] || otherParty?.username || 'User';
+                      const name = otherProfile?.full_name?.split(' ')[0] || otherProfile?.username || 'User';
                       const purpose = loan.purpose ? ` for ${loan.purpose}` : '';
-                      const headerText = isLending
+                      const loanDesc = isLending
                         ? `You lent ${name} ${formatMoney(totalAmt)}${purpose}`
                         : `${name} lent you ${formatMoney(totalAmt)}${purpose}`;
                       return (
-                        <div key={loan.id} style={{ padding: '8px 0' }}>
+                        <div key={loan.id} style={{ padding: '9px 0' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                            <UserAvatar name={otherParty?.full_name || otherParty?.username} src={otherParty?.profile_picture_url} size={20} />
-                            <div style={{ fontSize: 13, color: '#1A1918', fontWeight: 500, lineHeight: 1.4 }}>{headerText}</div>
+                            <UserAvatar name={otherProfile?.full_name || otherProfile?.username} src={otherProfile?.profile_picture_url} size={20} radius={5} />
+                            <div style={{ fontSize: 13, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{loanDesc}</div>
                           </div>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                            <div style={{ flex: 1, height: 6, borderRadius: 3, background: barBg, overflow: 'hidden' }}>
-                              <div style={{ height: '100%', borderRadius: 3, background: barColor, width: `${pct}%`, transition: 'width 0.5s' }} />
+                            <div style={{ flex: 1, height: 6, borderRadius: 3, background: isLending ? 'rgba(3,172,234,0.1)' : 'rgba(29,91,148,0.1)', overflow: 'hidden' }}>
+                              <div style={{ height: '100%', borderRadius: 3, background: isLending ? '#03ACEA' : '#1D5B94', width: `${pct}%`, transition: 'width 0.5s' }} />
                             </div>
                             <span style={{ fontSize: 11, fontWeight: 700, color: '#9B9A98', flexShrink: 0 }}>{pct}%</span>
                           </div>
