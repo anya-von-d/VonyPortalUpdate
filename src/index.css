@@ -323,6 +323,9 @@ input[type="date"] {
   }
   /* Record Payment: stack loan selector above form on mobile */
   .rp-two-col { grid-template-columns: 1fr !important; }
+  /* Create Loan: hide Borrower Will Pay + Loan Summary from top row; show below blue box */
+  .lending-pay-card, .lending-loan-summary-card { display: none !important; }
+  .lending-mobile-pay-summary { display: grid !important; }
   .lending-summary-cards { grid-template-columns: 1fr !important; }
   .ra-mobile-filters { display: block !important; }
 }
