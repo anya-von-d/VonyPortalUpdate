@@ -1,11 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { motion } from "framer-motion";
 import { useAuth } from "@/lib/AuthContext";
-import { Loan, Payment, PublicProfile } from "@/entities/all";
-import { format } from "date-fns";
-import { formatMoney } from "@/components/utils/formatMoney";
 import SidebarBottomSection from '../components/SidebarBottomSection';
 import MeshMobileNav from "@/components/MeshMobileNav";
 
@@ -36,7 +33,7 @@ const LEARN_ARTICLES = {
   ],
   saving: [
     { title: 'The 50/30/20 Rule, Explained', body: 'A simple framework for splitting your income into needs, wants, and savings.' },
-    { title: 'Building an Emergency Fund from Scratch', body: 'How to start saving when money is tight, and why 3–6 months of expenses is the target.' },
+    { title: 'Building an Emergency Fund from Scratch', body: 'How to start saving when money is tight, and why 3-6 months of expenses is the target.' },
     { title: 'The Psychology of Saving', body: 'Why saving feels hard even when we know we should, and how to rewire that instinct.' },
     { title: 'High-Yield Savings Accounts, Explained', body: 'What they are, how they work, and whether you should move your money there.' },
     { title: 'Setting Financial Goals That Actually Stick', body: 'How to make goals specific, time-bound, and woven into your everyday habits.' },
@@ -60,54 +57,81 @@ const LEARN_ARTICLES = {
   ],
 };
 
-export default function ComingSoon() {
-  const { user: authUser, userProfile, logout } = useAuth();
-  const user = userProfile ? { ...userProfile, id: authUser?.id } : null;
-  const [learnCategory, setLearnCategory] = useState('lending');
-
-  const [allLoans, setAllLoans] = useState([]);
-  const [allPayments, setAllPayments] = useState([]);
-  const [publicProfiles, setPublicProfiles] = useState([]);
-
-  useEffect(() => {
-    if (!user?.id) return;
-    Promise.all([
-      Loan.list('-created_at').catch(() => []),
-      Payment.list('-created_at').catch(() => []),
-      PublicProfile.list().catch(() => []),
-    ]).then(([loans, payments, profiles]) => {
-      setAllLoans((loans || []).filter(l => l.lender_id === user.id || l.borrower_id === user.id));
-      setAllPayments(payments || []);
-      setPublicProfiles(profiles || []);
-    });
-  }, [user?.id]);
-
-  const pendingToConfirm = allPayments.filter(p => {
-    const loan = allLoans.find(l => l.id === p.loan_id);
-    return loan && loan.lender_id === user?.id && p.status === 'pending_confirmation';
-  });
-
-  const recentActivity = allPayments
-    .filter(p => p.status === 'confirmed' || p.status === 'completed')
-    .slice(0, 5)
-    .map(p => {
-      const loan = allLoans.find(l => l.id === p.loan_id);
-      if (!loan) return null;
-      const isLender = loan.lender_id === user?.id;
-      const otherId = isLender ? loan.borrower_id : loan.lender_id;
-      const otherProfile = publicProfiles.find(pr => pr.user_id === otherId);
-      const name = otherProfile?.full_name?.split(' ')[0] || 'User';
-      return { id: p.id, isLender, name, amount: p.amount || 0, date: p.payment_date || p.created_at };
-    })
-    .filter(Boolean);
-
-  const RightSection = ({ title, children }) => (
-    <div style={{ marginBottom: 40 }}>
-      <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 9 }}>{title}</div>
-      <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 14 }} />
-      {children}
+/* ── Star button ─────────────────────────────────────────── */
+function StarButton({ saved, onToggle }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+      {saved && (
+        <span style={{
+          background: '#FEF9C3', border: '1px solid #FDE68A',
+          borderRadius: 6, padding: '2px 8px',
+          fontSize: 11, fontWeight: 600, color: '#92400E',
+          whiteSpace: 'nowrap', lineHeight: 1.4,
+        }}>Saved</span>
+      )}
+      <button
+        onClick={onToggle}
+        style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        aria-label={saved ? 'Unsave' : 'Save'}
+      >
+        {saved ? (
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#F59E0B" stroke="#F59E0B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
+        ) : (
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9B9A98" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
+        )}
+      </button>
     </div>
   );
+}
+
+/* ── Your Picks list ─────────────────────────────────────── */
+function YourPicksList({ savedSet, onRemove }) {
+  const picks = [];
+  LEARN_CATEGORIES.forEach(cat => {
+    (LEARN_ARTICLES[cat.id] || []).forEach(article => {
+      const key = article.title;
+      if (savedSet.has(key)) picks.push({ ...article, catLabel: cat.label });
+    });
+  });
+  if (picks.length === 0) return (
+    <p style={{ fontSize: 12, color: '#C5C3C0', margin: 0, paddingLeft: 4 }}>Nothing saved yet.</p>
+  );
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      {picks.map(p => (
+        <div key={p.title} style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+          <button onClick={() => onRemove(p.title)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px 0', flexShrink: 0 }}>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="#F59E0B" stroke="#F59E0B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </svg>
+          </button>
+          <div style={{ minWidth: 0 }}>
+            <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', lineHeight: 1.3, marginBottom: 1 }}>{p.title}</div>
+            <div style={{ fontSize: 10, color: '#9B9A98' }}>{p.catLabel}</div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default function ComingSoon() {
+  const { user: authUser, userProfile } = useAuth();
+  const user = userProfile ? { ...userProfile, id: authUser?.id } : null;
+  const [learnCategory, setLearnCategory] = useState('lending');
+  const [saved, setSaved] = useState(new Set());
+
+  const toggleSave = (title) => {
+    setSaved(prev => {
+      const next = new Set(prev);
+      if (next.has(title)) next.delete(title); else next.add(title);
+      return next;
+    });
+  };
 
   return (
     <div className="mesh-layout" style={{ minHeight: '100vh', display: 'grid', gridTemplateColumns: '200px 1fr', gap: 0, fontFamily: "'DM Sans', sans-serif" }}>
@@ -115,7 +139,7 @@ export default function ComingSoon() {
 
       {/* ── LEFT: Sidebar nav ── */}
       <div className="mesh-left" style={{ background: '#fafafa', borderRight: '1px solid rgba(0,0,0,0.06)' }}>
-        <div style={{ position: 'sticky', top: 0, padding: '24px 8px 0' }}>
+        <div style={{ position: 'sticky', top: 0, padding: '24px 8px 0', display: 'flex', flexDirection: 'column', height: '100vh', overflowY: 'auto' }}>
           <Link to="/" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, fontStyle: 'italic', fontSize: '1.3rem', color: '#1A1918', textDecoration: 'none', display: 'block', marginBottom: 16, paddingLeft: 6 }}>Vony</Link>
           <nav style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             {[
@@ -153,6 +177,7 @@ export default function ComingSoon() {
                 </Link>
               );
             })}
+
             {/* Coming Soon section */}
             <div style={{ marginTop: 16, marginBottom: 4, paddingLeft: 12 }}>
               <span style={{ fontSize: 9, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Coming Soon</span>
@@ -161,6 +186,8 @@ export default function ComingSoon() {
               { label: 'Learn', to: createPageUrl("ComingSoon") },
               { label: 'Loan Help', to: createPageUrl("LoanHelp") },
             ].map(({ label, to }) => {
+              const currentPath = window.location.pathname;
+              const isActive = currentPath.includes(to.split('?')[0].replace('/app/', ''));
               const soonIcons = {
                 'Learn': <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>,
                 'Loan Help': <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>,
@@ -169,30 +196,55 @@ export default function ComingSoon() {
                 <Link key={label} to={to} style={{
                   display: 'flex', alignItems: 'center', gap: 8,
                   padding: '7px 12px', borderRadius: 9, textDecoration: 'none',
-                  fontSize: 13, fontWeight: 500, color: '#787776',
-                  background: 'transparent', fontFamily: "'DM Sans', sans-serif",
-                  width: '100%', boxSizing: 'border-box',
+                  fontSize: 13, fontWeight: isActive ? 600 : 500,
+                  color: isActive ? '#1A1918' : '#787776',
+                  background: isActive ? 'rgba(0,0,0,0.05)' : 'transparent',
+                  fontFamily: "'DM Sans', sans-serif", width: '100%', boxSizing: 'border-box',
                 }}>
-                  <span style={{ flexShrink: 0, width: 26, height: 26, borderRadius: 7, background: 'rgba(0,0,0,0.04)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>{soonIcons[label]}</span>
+                  <span style={{ flexShrink: 0, width: 26, height: 26, borderRadius: 7, background: isActive ? 'rgba(0,0,0,0.07)' : 'rgba(0,0,0,0.04)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>{soonIcons[label]}</span>
                   <span style={{ flex: 1 }}>{label}</span>
-                  <span style={{ fontSize: 8, fontWeight: 700, color: '#9B9A98', background: 'rgba(0,0,0,0.05)', borderRadius: 4, padding: '2px 6px', letterSpacing: '0.05em', textTransform: 'uppercase', lineHeight: 1.2, flexShrink: 0 }}>SOON</span>
+                  {!isActive && <span style={{ fontSize: 8, fontWeight: 700, color: '#9B9A98', background: 'rgba(0,0,0,0.05)', borderRadius: 4, padding: '2px 6px', letterSpacing: '0.05em', textTransform: 'uppercase', lineHeight: 1.2, flexShrink: 0 }}>SOON</span>}
                 </Link>
               );
             })}
+
+            {/* Your Picks */}
+            {saved.size > 0 && (
+              <>
+                <div style={{ marginTop: 20, marginBottom: 6, paddingLeft: 12 }}>
+                  <span style={{ fontSize: 9, fontWeight: 700, color: '#F59E0B', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Your Picks</span>
+                </div>
+                <div style={{ paddingLeft: 4, paddingRight: 4 }}>
+                  <YourPicksList savedSet={saved} onRemove={title => toggleSave(title)} />
+                </div>
+              </>
+            )}
           </nav>
           <SidebarBottomSection />
         </div>
       </div>
 
-      {/* ── CENTER: Category selector + articles ── */}
+      {/* ── CENTER: articles ── */}
       <div className="mesh-center" style={{ background: 'white', borderRight: '1px solid rgba(0,0,0,0.06)', padding: '28px 48px 80px' }}>
 
-        {/* Desktop: pill nav + active-category grid */}
+        {/* Desktop view */}
         <div className="learn-desktop-view">
-          <div className="pill-nav-scroll" style={{ display: 'flex', marginBottom: 20 }}>
+          {/* Page title */}
+          <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', marginBottom: 16 }}>Learn</div>
+          <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 20 }} />
+
+          {/* Glassmorphic pill nav — centered */}
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 28 }}>
             <div style={{
-              display: 'inline-flex', background: 'rgba(0,0,0,0.04)',
-              borderRadius: 999, padding: 4, gap: 2,
+              display: 'inline-flex',
+              background: 'rgba(255,255,255,0.65)',
+              backdropFilter: 'blur(16px) saturate(1.6)',
+              WebkitBackdropFilter: 'blur(16px) saturate(1.6)',
+              borderRadius: 999,
+              padding: 4,
+              gap: 2,
+              border: '1px solid rgba(255,255,255,0.9)',
+              boxShadow: '0 4px 24px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04)',
             }}>
               {LEARN_CATEGORIES.map(cat => {
                 const active = learnCategory === cat.id;
@@ -200,7 +252,7 @@ export default function ComingSoon() {
                   <button key={cat.id} onClick={() => setLearnCategory(cat.id)} style={{
                     padding: '8px 18px', borderRadius: 999, border: 'none', cursor: 'pointer',
                     background: active ? 'white' : 'transparent',
-                    boxShadow: active ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
+                    boxShadow: active ? '0 1px 4px rgba(0,0,0,0.10)' : 'none',
                     fontSize: 13, fontWeight: 600, fontFamily: "'DM Sans', system-ui, sans-serif",
                     letterSpacing: '-0.01em', whiteSpace: 'nowrap',
                     color: active ? '#1A1918' : '#787776', transition: 'all 0.2s',
@@ -215,9 +267,13 @@ export default function ComingSoon() {
           {/* Articles grid */}
           <div className="page-cards-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
             {(LEARN_ARTICLES[learnCategory] || []).map((article, index) => (
-              <motion.div key={article.title} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }} style={{ background: 'white', borderRadius: 18, padding: '24px 22px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)', cursor: 'default', border: '1px solid rgba(0,0,0,0.05)' }}>
+              <motion.div key={article.title} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }} style={{ background: 'white', borderRadius: 18, padding: '24px 22px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)', cursor: 'default', border: '1px solid rgba(0,0,0,0.05)', position: 'relative' }}>
+                {/* Star */}
+                <div style={{ position: 'absolute', top: 14, right: 14 }}>
+                  <StarButton saved={saved.has(article.title)} onToggle={() => toggleSave(article.title)} />
+                </div>
                 <div style={{ display: 'inline-block', fontSize: 10, fontWeight: 600, color: '#9B9A98', textTransform: 'uppercase', letterSpacing: '0.1em', background: 'rgba(0,0,0,0.05)', borderRadius: 6, padding: '3px 8px', marginBottom: 14 }}>Coming Soon</div>
-                <div style={{ fontSize: 16, fontWeight: 700, color: '#1A1918', lineHeight: 1.35, marginBottom: 12 }}>{article.title}</div>
+                <div style={{ fontSize: 16, fontWeight: 700, color: '#1A1918', lineHeight: 1.35, marginBottom: 12, paddingRight: 28 }}>{article.title}</div>
                 <div style={{ fontSize: 13, color: '#787776', lineHeight: 1.6 }}>{article.body}</div>
               </motion.div>
             ))}
@@ -226,6 +282,9 @@ export default function ComingSoon() {
 
         {/* Mobile: all categories as titled sections with horizontal scroll */}
         <div className="learn-mobile-sections">
+          <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', marginBottom: 16 }}>Learn</div>
+          <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 20 }} />
+
           {LEARN_CATEGORIES.map(cat => (
             <section key={cat.id} style={{ marginBottom: 28 }}>
               <h3 style={{ fontSize: 16, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', margin: '0 0 12px 0' }}>
@@ -233,18 +292,54 @@ export default function ComingSoon() {
               </h3>
               <div className="h-scroll-cards">
                 {(LEARN_ARTICLES[cat.id] || []).map((article) => (
-                  <div key={article.title} className="h-scroll-card" style={{ background: 'white', borderRadius: 18, padding: '20px 18px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)', border: '1px solid rgba(0,0,0,0.05)' }}>
+                  <div key={article.title} className="h-scroll-card" style={{ background: 'white', borderRadius: 18, padding: '20px 18px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)', border: '1px solid rgba(0,0,0,0.05)', position: 'relative' }}>
+                    {/* Star */}
+                    <div style={{ position: 'absolute', top: 12, right: 12 }}>
+                      <StarButton saved={saved.has(article.title)} onToggle={() => toggleSave(article.title)} />
+                    </div>
                     <div style={{ display: 'inline-block', fontSize: 10, fontWeight: 600, color: '#9B9A98', textTransform: 'uppercase', letterSpacing: '0.1em', background: 'rgba(0,0,0,0.05)', borderRadius: 6, padding: '3px 8px', marginBottom: 12 }}>Coming Soon</div>
-                    <div style={{ fontSize: 15, fontWeight: 700, color: '#1A1918', lineHeight: 1.35, marginBottom: 10 }}>{article.title}</div>
+                    <div style={{ fontSize: 15, fontWeight: 700, color: '#1A1918', lineHeight: 1.35, marginBottom: 10, paddingRight: 24 }}>{article.title}</div>
                     <div style={{ fontSize: 12, color: '#787776', lineHeight: 1.55 }}>{article.body}</div>
                   </div>
                 ))}
               </div>
             </section>
           ))}
-        </div>
-      </div>
 
+          {/* Mobile Your Picks */}
+          {saved.size > 0 && (
+            <section style={{ marginTop: 8, paddingTop: 24, borderTop: '1px solid rgba(0,0,0,0.07)' }}>
+              <h3 style={{ fontSize: 13, fontWeight: 700, color: '#F59E0B', letterSpacing: '0.06em', textTransform: 'uppercase', margin: '0 0 14px 0' }}>
+                Your Picks
+              </h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {(() => {
+                  const picks = [];
+                  LEARN_CATEGORIES.forEach(cat => {
+                    (LEARN_ARTICLES[cat.id] || []).forEach(article => {
+                      if (saved.has(article.title)) picks.push({ ...article, catLabel: cat.label });
+                    });
+                  });
+                  return picks.map(p => (
+                    <div key={p.title} style={{ background: '#FFFBEB', border: '1px solid #FDE68A', borderRadius: 12, padding: '12px 14px', display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                      <button onClick={() => toggleSave(p.title)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px 0', flexShrink: 0 }}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="#F59E0B" stroke="#F59E0B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                        </svg>
+                      </button>
+                      <div>
+                        <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', lineHeight: 1.3, marginBottom: 2 }}>{p.title}</div>
+                        <div style={{ fontSize: 11, color: '#92400E' }}>{p.catLabel}</div>
+                      </div>
+                    </div>
+                  ));
+                })()}
+              </div>
+            </section>
+          )}
+        </div>
+
+      </div>
     </div>
   );
 }
