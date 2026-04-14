@@ -795,7 +795,26 @@ export default function Home() {
         {/* ── CENTER ── */}
         <div className="mesh-center" style={{ background: '#ffffff', padding: '28px 48px 80px' }}>
 
-          {/* New user onboarding — top of page */}
+          {/* Greeting + icons */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+            <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, fontWeight: 600, letterSpacing: '-0.02em', lineHeight: 1.2, color: '#1A1918' }}>
+              {greeting}, {firstName}
+            </div>
+            <div className="home-greeting-icons" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <Link to={createPageUrl("Requests")} style={{ position: 'relative', textDecoration: 'none' }}>
+                <div style={{ width: 32, height: 32, borderRadius: 9, background: 'rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#787776" strokeWidth="2" strokeLinecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                </div>
+                {notifCount > 0 && <div style={{ position: 'absolute', top: 2, right: 2, width: 7, height: 7, borderRadius: '50%', background: '#03ACEA', border: '1.5px solid #ffffff' }} />}
+              </Link>
+              <Link to={createPageUrl("Profile")} style={{ textDecoration: 'none' }}>
+                <UserAvatar name={user.full_name || user.username} src={user.profile_picture_url} size={32} />
+              </Link>
+            </div>
+          </div>
+          <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 20 }} />
+
+          {/* New user onboarding — below greeting */}
           {!hasLoans && (
             <div style={{
               marginBottom: 28, padding: '20px 22px', borderRadius: 14,
@@ -851,25 +870,6 @@ export default function Home() {
               </div>
             </div>
           )}
-
-          {/* Greeting + icons */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-            <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, fontWeight: 600, letterSpacing: '-0.02em', lineHeight: 1.2, color: '#1A1918' }}>
-              {greeting}, {firstName}
-            </div>
-            <div className="home-greeting-icons" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <Link to={createPageUrl("Requests")} style={{ position: 'relative', textDecoration: 'none' }}>
-                <div style={{ width: 32, height: 32, borderRadius: 9, background: 'rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#787776" strokeWidth="2" strokeLinecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-                </div>
-                {notifCount > 0 && <div style={{ position: 'absolute', top: 2, right: 2, width: 7, height: 7, borderRadius: '50%', background: '#03ACEA', border: '1.5px solid #ffffff' }} />}
-              </Link>
-              <Link to={createPageUrl("Profile")} style={{ textDecoration: 'none' }}>
-                <UserAvatar name={user.full_name || user.username} src={user.profile_picture_url} size={32} />
-              </Link>
-            </div>
-          </div>
-          <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 20 }} />
 
           {/* Notification bar */}
           {notifCount > 0 && (

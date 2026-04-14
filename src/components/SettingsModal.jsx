@@ -214,7 +214,7 @@ function InviteTab() {
   return (
     <>
       <p style={{ fontSize: 13, color: '#787776', marginBottom: 18, lineHeight: 1.5 }}>
-        Invite your friends to Vony — track loans and payments together.
+        Invite your friends to Vony and start lending or borrowing together.
       </p>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         {options.map(({ id, icon, label, sublabel, action }) => (

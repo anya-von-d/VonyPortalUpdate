@@ -353,7 +353,7 @@ export default function Friends() {
             marginBottom: 28, padding: '16px 22px', borderRadius: 14,
             background: 'white', border: '1px solid rgba(0,0,0,0.07)',
             boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
-            display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16, flexWrap: 'wrap',
           }}>
             <div style={{ fontSize: 13, color: '#787776', fontFamily: "'DM Sans', system-ui, sans-serif" }}>
               Don't see your friends on Vony? Invite them to join you.
