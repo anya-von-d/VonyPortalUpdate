@@ -233,35 +233,41 @@ export default function LoanHelp() {
               const isCompared = compared[compareKey] || false;
               const catLabel = CATEGORIES.find(c => c.id === category)?.label?.toUpperCase();
               return (
-                <motion.div key={loan.name} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }} style={{ background: 'white', borderRadius: 14, boxShadow: '0 4px 20px rgba(0,0,0,0.10)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-                  {/* Category strip */}
-                  <div style={{ padding: '5px 12px', display: 'flex', alignItems: 'center', gap: 5, background: isRecommended ? '#03ACEA' : '#F2F2F2' }}>
+                <motion.div key={loan.name} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }} style={{
+                  background: 'white',
+                  borderRadius: 16,
+                  border: isRecommended ? '2px solid #03ACEA' : '1.5px solid rgba(0,0,0,0.08)',
+                  boxShadow: isRecommended ? '0 4px 20px rgba(3,172,234,0.13)' : '0 2px 12px rgba(0,0,0,0.07)',
+                  display: 'flex', flexDirection: 'column',
+                }}>
+                  {/* Card top */}
+                  <div style={{ padding: '14px 16px 0' }}>
                     {isRecommended && (
-                      <svg width="8" height="8" viewBox="0 0 24 24" fill="white" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: '#03ACEA', borderRadius: 6, padding: '3px 9px', marginBottom: 9 }}>
+                        <svg width="8" height="8" viewBox="0 0 24 24" fill="white"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <span style={{ fontSize: 9, fontWeight: 700, color: 'white', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>Recommended for you</span>
+                      </div>
                     )}
-                    <span style={{ fontSize: 9, fontWeight: 700, color: isRecommended ? 'white' : '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>
-                      {catLabel}
-                    </span>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: '#B0AFA D', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 6, fontFamily: "'DM Sans', sans-serif" }}>{catLabel}</div>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: '#1A1918', marginBottom: 3, fontFamily: "'DM Sans', sans-serif" }}>{loan.name}</div>
+                    <div style={{ fontSize: 12, color: '#5C5B5A', marginBottom: 12, fontFamily: "'DM Sans', sans-serif" }}>{loan.tagline}</div>
                   </div>
-                  {/* Body */}
-                  <div style={{ padding: '11px 13px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: '#1A1918', marginBottom: 2 }}>{loan.name}</div>
-                    <div style={{ fontSize: 11, color: '#03ACEA', fontWeight: 500, marginBottom: 9 }}>{loan.tagline}</div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 5, flex: 1, marginBottom: 10 }}>
-                      {loan.details.map((line, i) => (
-                        <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 7 }}>
-                          <div style={{ width: 5, height: 5, borderRadius: '50%', flexShrink: 0, background: '#03ACEA', marginTop: 4 }} />
-                          <span style={{ fontSize: 11, color: '#5C5B5A', lineHeight: 1.5 }}>{line}</span>
-                        </div>
-                      ))}
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 8, borderTop: '1px solid rgba(0,0,0,0.06)' }}>
-                      <button style={{ padding: '5px 14px', borderRadius: 18, border: 'none', cursor: 'pointer', fontSize: 12, fontWeight: 600, background: '#03ACEA', color: 'white', fontFamily: "'DM Sans', sans-serif" }}>View</button>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer' }} onClick={() => toggleCompare(compareKey)}>
-                        <span style={{ fontSize: 12, fontWeight: 500, color: '#787776' }}>Compare</span>
-                        <div style={{ width: 15, height: 15, borderRadius: 4, flexShrink: 0, border: isCompared ? '2px solid #03ACEA' : '1.5px solid #C4C3C1', background: isCompared ? '#03ACEA' : 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s' }}>
-                          {isCompared && <svg width="8" height="8" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>}
-                        </div>
+                  {/* Bullets */}
+                  <div style={{ padding: '0 16px', flex: 1, display: 'flex', flexDirection: 'column', gap: 7, marginBottom: 14 }}>
+                    {loan.details.map((line, i) => (
+                      <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+                        <div style={{ width: 6, height: 6, borderRadius: '50%', flexShrink: 0, background: '#C4C3C1', marginTop: 5 }} />
+                        <span style={{ fontSize: 12, color: '#5C5B5A', lineHeight: 1.5, fontFamily: "'DM Sans', sans-serif" }}>{line}</span>
+                      </div>
+                    ))}
+                  </div>
+                  {/* Footer */}
+                  <div style={{ padding: '10px 16px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <button style={{ padding: '6px 18px', borderRadius: 20, border: '1.5px solid rgba(0,0,0,0.15)', cursor: 'pointer', fontSize: 13, fontWeight: 600, background: 'white', color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>View</button>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer' }} onClick={() => toggleCompare(compareKey)}>
+                      <span style={{ fontSize: 12, fontWeight: 500, color: '#787776', fontFamily: "'DM Sans', sans-serif" }}>Compare</span>
+                      <div style={{ width: 15, height: 15, borderRadius: 3, flexShrink: 0, border: isCompared ? '2px solid #03ACEA' : '1.5px solid #C4C3C1', background: isCompared ? '#03ACEA' : 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s' }}>
+                        {isCompared && <svg width="8" height="8" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>}
                       </div>
                     </div>
                   </div>
@@ -284,35 +290,40 @@ export default function LoanHelp() {
                   const compareKey = `${cat.id}-${loan.name}`;
                   const isCompared = compared[compareKey] || false;
                   return (
-                    <div key={loan.name} className="h-scroll-card" style={{ background: 'white', borderRadius: 14, boxShadow: '0 2px 14px rgba(0,0,0,0.09)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-                      {/* Category strip */}
-                      <div style={{ padding: '7px 14px', display: 'flex', alignItems: 'center', gap: 5, background: isRecommended ? '#03ACEA' : '#F2F2F2' }}>
+                    <div key={loan.name} className="h-scroll-card" style={{
+                      background: 'white', borderRadius: 16,
+                      border: isRecommended ? '2px solid #03ACEA' : '1.5px solid rgba(0,0,0,0.08)',
+                      boxShadow: isRecommended ? '0 4px 20px rgba(3,172,234,0.13)' : '0 2px 12px rgba(0,0,0,0.07)',
+                      display: 'flex', flexDirection: 'column',
+                    }}>
+                      {/* Card top */}
+                      <div style={{ padding: '14px 16px 0' }}>
                         {isRecommended && (
-                          <svg width="9" height="9" viewBox="0 0 24 24" fill="white" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: '#03ACEA', borderRadius: 6, padding: '3px 9px', marginBottom: 9 }}>
+                            <svg width="8" height="8" viewBox="0 0 24 24" fill="white"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                            <span style={{ fontSize: 9, fontWeight: 700, color: 'white', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>Recommended for you</span>
+                          </div>
                         )}
-                        <span style={{ fontSize: 9, fontWeight: 700, color: isRecommended ? 'white' : '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>
-                          {cat.label.toUpperCase()}
-                        </span>
+                        <div style={{ fontSize: 10, fontWeight: 700, color: '#B0AFAD', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 6, fontFamily: "'DM Sans', sans-serif" }}>{cat.label.toUpperCase()}</div>
+                        <div style={{ fontSize: 15, fontWeight: 700, color: '#1A1918', marginBottom: 3, fontFamily: "'DM Sans', sans-serif" }}>{loan.name}</div>
+                        <div style={{ fontSize: 13, color: '#5C5B5A', marginBottom: 12, fontFamily: "'DM Sans', sans-serif" }}>{loan.tagline}</div>
                       </div>
-                      {/* Body */}
-                      <div style={{ padding: '14px 16px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                        <div style={{ fontSize: 15, fontWeight: 700, color: '#1A1918', marginBottom: 3 }}>{loan.name}</div>
-                        <div style={{ fontSize: 12, color: '#03ACEA', fontWeight: 500, marginBottom: 12 }}>{loan.tagline}</div>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 7, flex: 1, marginBottom: 14 }}>
-                          {loan.details.map((line, i) => (
-                            <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
-                              <div style={{ width: 6, height: 6, borderRadius: '50%', flexShrink: 0, background: '#03ACEA', marginTop: 5 }} />
-                              <span style={{ fontSize: 12, color: '#5C5B5A', lineHeight: 1.5 }}>{line}</span>
-                            </div>
-                          ))}
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 10, borderTop: '1px solid rgba(0,0,0,0.06)' }}>
-                          <button style={{ padding: '7px 18px', borderRadius: 20, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 600, background: '#03ACEA', color: 'white', fontFamily: "'DM Sans', sans-serif" }}>View</button>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 7, cursor: 'pointer' }} onClick={() => toggleCompare(compareKey)}>
-                            <span style={{ fontSize: 12, fontWeight: 500, color: '#787776' }}>Compare</span>
-                            <div style={{ width: 16, height: 16, borderRadius: 4, flexShrink: 0, border: isCompared ? '2px solid #03ACEA' : '1.5px solid #C4C3C1', background: isCompared ? '#03ACEA' : 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s' }}>
-                              {isCompared && <svg width="9" height="9" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>}
-                            </div>
+                      {/* Bullets */}
+                      <div style={{ padding: '0 16px', flex: 1, display: 'flex', flexDirection: 'column', gap: 7, marginBottom: 14 }}>
+                        {loan.details.map((line, i) => (
+                          <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+                            <div style={{ width: 6, height: 6, borderRadius: '50%', flexShrink: 0, background: '#C4C3C1', marginTop: 5 }} />
+                            <span style={{ fontSize: 12, color: '#5C5B5A', lineHeight: 1.5, fontFamily: "'DM Sans', sans-serif" }}>{line}</span>
+                          </div>
+                        ))}
+                      </div>
+                      {/* Footer */}
+                      <div style={{ padding: '10px 16px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <button style={{ padding: '7px 18px', borderRadius: 20, border: '1.5px solid rgba(0,0,0,0.15)', cursor: 'pointer', fontSize: 13, fontWeight: 600, background: 'white', color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>View</button>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 7, cursor: 'pointer' }} onClick={() => toggleCompare(compareKey)}>
+                          <span style={{ fontSize: 12, fontWeight: 500, color: '#787776', fontFamily: "'DM Sans', sans-serif" }}>Compare</span>
+                          <div style={{ width: 16, height: 16, borderRadius: 3, flexShrink: 0, border: isCompared ? '2px solid #03ACEA' : '1.5px solid #C4C3C1', background: isCompared ? '#03ACEA' : 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s' }}>
+                            {isCompared && <svg width="9" height="9" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>}
                           </div>
                         </div>
                       </div>
