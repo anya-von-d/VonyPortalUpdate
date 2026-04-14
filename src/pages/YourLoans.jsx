@@ -553,7 +553,8 @@ export default function YourLoans() {
     return (
       <>
         {/* 1. Home-style single card + bar chart */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 20 }}>
+        <PageCard title={isLending ? 'Lending Overview' : 'Borrowing Overview'} style={{ marginBottom: 20 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
           {/* Left: Next Incoming / Next Payment Due — Home style glassmorphism */}
           <div style={{
             padding: '12px 14px', borderRadius: 14,
@@ -611,6 +612,7 @@ export default function YourLoans() {
             <div style={{ fontSize: 10, color: '#9B9A98' }}>{formatMoney(totalPaidAll)} of {formatMoney(totalOwedAll)} repaid</div>
           </div>
         </div>
+        </PageCard>
 
         {/* 3. Upcoming Payments — Home style (above Active Loans) */}
         {(() => {
@@ -630,11 +632,7 @@ export default function YourLoans() {
           const upcomingLoans = allPaymentLoans.filter(l => l.days >= 0).slice(0, 5);
           const combinedLoans = [...overdueLoans, ...upcomingLoans];
           return (
-            <div style={{ marginBottom: 8 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 10, marginBottom: 4, borderBottom: '1px solid rgba(0,0,0,0.07)' }}>
-                <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Upcoming</span>
-                <Link to={createPageUrl("Upcoming")} style={{ fontSize: 11, fontWeight: 500, color: '#9B9A98', textDecoration: 'none' }}>Full schedule →</Link>
-              </div>
+            <PageCard title="Upcoming" headerRight={<Link to={createPageUrl("Upcoming")} style={{ fontSize: 11, fontWeight: 500, color: '#9B9A98', textDecoration: 'none' }}>Full schedule →</Link>} style={{ marginBottom: 20 }}>
               {combinedLoans.length === 0 ? (
                 <div style={{ padding: '10px 0', fontSize: 13, color: '#9B9A98' }}>Nothing coming up.</div>
               ) : combinedLoans.map((loan) => {
@@ -664,7 +662,7 @@ export default function YourLoans() {
                   </div>
                 );
               })}
-            </div>
+            </PageCard>
           );
         })()}
 

@@ -321,9 +321,8 @@ input[type="date"] {
     min-width: 0 !important;
     width: 100% !important;
   }
-  /* Show mobile-only panels inside Col 2 */
-  .rp-mobile-loan-selector { display: block !important; }
-  .rp-empty-desktop { display: none !important; }
+  /* Record Payment: stack loan selector above form on mobile */
+  .rp-two-col { grid-template-columns: 1fr !important; }
   .lending-summary-cards { grid-template-columns: 1fr !important; }
   .ra-mobile-filters { display: block !important; }
 }
