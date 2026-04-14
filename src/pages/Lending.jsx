@@ -1598,7 +1598,7 @@ export default function Lending({ initialTab }) {
               background: 'white', border: '1px solid rgba(0,0,0,0.07)',
               boxShadow: '0 1px 4px rgba(0,0,0,0.04)', textAlign: 'center',
             }}>
-              <div style={{ fontSize: 16, fontWeight: 400, color: '#1A1918', marginBottom: 4, fontFamily: "'DM Sans', system-ui, sans-serif" }}>
+              <div style={{ fontSize: 16, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', marginBottom: 4, fontFamily: "'DM Sans', system-ui, sans-serif" }}>
                 👋 Loans are more fun with friends!
               </div>
               <div style={{ fontSize: 13, color: '#787776', lineHeight: 1.55, marginBottom: 16 }}>

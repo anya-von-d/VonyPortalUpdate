@@ -1073,7 +1073,7 @@ export default function Home() {
               <div style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(12px) saturate(1.4)', WebkitBackdropFilter: 'blur(12px) saturate(1.4)', borderRadius: 14, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.05)', padding: '14px 18px' }}>
                 <SectionHeader title="Recent Activity" linkTo={createPageUrl("RecentActivity")} linkLabel="View all →" />
                 {recentActivity.length === 0 ? (
-                  <div style={{ padding: '8px 0', fontSize: 13, color: '#9B9A98', textAlign: 'center' }}>No activity yet — it'll show up here 🕊️</div>
+                  <div style={{ padding: '8px 0', fontSize: 13, color: '#9B9A98', textAlign: 'center' }}>No activity just yet 🕊️</div>
                 ) : recentActivity.map((item, idx) => (
                   <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 0' }}>
                     <div style={{ width: 20, height: 20, borderRadius: 6, background: `${item.color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -1097,7 +1097,7 @@ export default function Home() {
               <div style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(12px) saturate(1.4)', WebkitBackdropFilter: 'blur(12px) saturate(1.4)', borderRadius: 14, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.05)', padding: '14px 18px' }}>
                 <SectionHeader title="Active Lending" linkTo={createPageUrl("YourLoans")} linkLabel="View all →" />
                 {lentLoans.length === 0 ? (
-                  <div style={{ padding: '8px 0', fontSize: 13, color: '#9B9A98', textAlign: 'center' }}>No active lending yet 🌱</div>
+                  <div style={{ padding: '8px 0', fontSize: 13, color: '#9B9A98', textAlign: 'center' }}>Start a loan to see it here 🌱</div>
                 ) : (
                   <div ref={activeLoansRef} style={{ display: 'flex', flexDirection: 'column' }}>
                     {lentLoans.slice(0, 5).map((loan, idx) => {
@@ -1162,7 +1162,7 @@ export default function Home() {
               <div style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(12px) saturate(1.4)', WebkitBackdropFilter: 'blur(12px) saturate(1.4)', borderRadius: 14, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.05)', padding: '14px 18px' }} ref={loansChartRef}>
                 <SectionHeader title="Your Loans Over Time" />
                 {!chartData ? (
-                  <div style={{ padding: '8px 0', fontSize: 13, color: '#9B9A98', textAlign: 'center' }}>No loan history yet 📊</div>
+                  <div style={{ padding: '8px 0', fontSize: 13, color: '#9B9A98', textAlign: 'center' }}>Your loan history will appear here 📊</div>
                 ) : (
                   <>
                     {/* Legend */}
@@ -1215,7 +1215,7 @@ export default function Home() {
               <div style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(12px) saturate(1.4)', WebkitBackdropFilter: 'blur(12px) saturate(1.4)', borderRadius: 14, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.05)', padding: '14px 18px' }}>
                 <SectionHeader title="Active Borrowing" linkTo={createPageUrl("YourLoans")} linkLabel="View all →" />
                 {borrowedLoans.length === 0 ? (
-                  <div style={{ padding: '8px 0', fontSize: 13, color: '#9B9A98', textAlign: 'center' }}>No active borrowing yet 🤝</div>
+                  <div style={{ padding: '8px 0', fontSize: 13, color: '#9B9A98', textAlign: 'center' }}>Nothing borrowed just yet 🤝</div>
                 ) : (
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
                     {borrowedLoans.slice(0, 5).map((loan, idx) => {
