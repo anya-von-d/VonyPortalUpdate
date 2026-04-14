@@ -88,16 +88,24 @@ const Icons = {
 };
 
 /* ── Nav config ───────────────────────────────────────────── */
-const NAV_ITEMS = [
-  { id: 'general',       label: 'General',         type: 'tab', icon: Icons.general },
-  { id: 'notifications', label: 'Notifications',   type: 'tab', icon: Icons.notifications },
-  { id: 'invite',        label: 'Invite a Friend', type: 'tab', icon: Icons.invite },
-  { id: 'helpsupport',   label: 'Help & Support',  type: 'tab', icon: Icons.help },
-  { id: 'contactus',     label: 'Contact Us',       type: 'tab', icon: Icons.contact },
-  { id: 'guide',         label: 'Guide',            type: 'tab', icon: Icons.guide },
-  { id: 'about',         label: 'About',            type: 'tab', icon: Icons.about },
-  { id: 'legal',         label: 'Legal',            type: 'tab', icon: Icons.legal },
+const NAV_GROUPS = [
+  [
+    { id: 'general',       label: 'General',         icon: Icons.general },
+    { id: 'notifications', label: 'Notifications',   icon: Icons.notifications },
+    { id: 'invite',        label: 'Invite a Friend', icon: Icons.invite },
+  ],
+  [
+    { id: 'helpsupport',   label: 'Help & Support',  icon: Icons.help },
+    { id: 'contactus',     label: 'Contact Us',      icon: Icons.contact },
+    { id: 'guide',         label: 'Guide',           icon: Icons.guide },
+  ],
+  [
+    { id: 'about',         label: 'About',           icon: Icons.about },
+    { id: 'legal',         label: 'Legal',           icon: Icons.legal },
+  ],
 ];
+// Flat list for lookups
+const NAV_ITEMS = NAV_GROUPS.flat();
 
 /* ── Shared helpers ───────────────────────────────────────── */
 function Row({ label, children }) {
@@ -366,15 +374,15 @@ export default function SettingsModal({ isOpen, onClose, initialTab = 'general' 
   const sidebarPadV = isMobile ? 14 : 18;
 
   const navItemStyle = (id) => ({
-    display: 'flex', alignItems: 'center', gap: isMobile ? 0 : 7,
-    padding: isMobile ? '7px 12px' : `7px ${sidebarPadH + 4}px`,
+    display: 'flex', alignItems: 'center', gap: 8,
+    padding: '6px 10px',
     borderRadius: 8, border: 'none', cursor: 'pointer',
     background: activeTab === id ? 'rgba(0,0,0,0.07)' : 'transparent',
     fontSize: 13, fontWeight: activeTab === id ? 600 : 500,
     color: activeTab === id ? '#1A1918' : '#787776',
     textAlign: 'left', width: '100%',
     fontFamily: "'DM Sans', sans-serif",
-    marginBottom: 2, textDecoration: 'none',
+    marginBottom: 1, textDecoration: 'none',
     whiteSpace: 'nowrap',
   });
 
@@ -388,37 +396,45 @@ export default function SettingsModal({ isOpen, onClose, initialTab = 'general' 
       <div style={{ background: 'white', borderRadius: 16, width: 580, maxWidth: '92vw', height: 420, display: 'flex', overflow: 'hidden', boxShadow: '0 24px 64px rgba(0,0,0,0.16), 0 4px 16px rgba(0,0,0,0.08)', border: '1px solid rgba(0,0,0,0.07)', fontFamily: "'DM Sans', sans-serif" }}>
 
         {/* ── Left nav ── */}
-        <div style={{ width: sidebarWidth, flexShrink: 0, background: '#F7F6F3', borderRight: '1px solid rgba(0,0,0,0.06)', padding: `${sidebarPadV}px ${isMobile ? 0 : sidebarPadH}px ${sidebarPadV - 2}px`, display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
+        <div style={{ width: sidebarWidth, flexShrink: 0, background: '#F7F6F3', borderRight: '1px solid rgba(0,0,0,0.06)', padding: `${sidebarPadV}px 10px ${sidebarPadV - 2}px`, display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
 
           {/* User header */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: isMobile ? '0 12px 14px' : `0 ${sidebarPadH + 2}px 14px`, borderBottom: '1px solid rgba(0,0,0,0.07)', marginBottom: 10, minWidth: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '0 2px 14px', borderBottom: '1px solid rgba(0,0,0,0.07)', marginBottom: 10, minWidth: 0 }}>
             <UserAvatar name={user?.full_name || user?.username} src={user?.profile_picture_url} size={30} />
             <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0 }}>
               {firstName}
             </div>
           </div>
 
-          {/* Nav items */}
-          {NAV_ITEMS.map(item => (
-            <button
-              key={item.id}
-              onClick={() => setActiveTab(item.id)}
-              style={navItemStyle(item.id)}
-              onMouseEnter={e => { if (activeTab !== item.id) e.currentTarget.style.background = 'rgba(0,0,0,0.04)'; }}
-              onMouseLeave={e => { e.currentTarget.style.background = activeTab === item.id ? 'rgba(0,0,0,0.07)' : 'transparent'; }}
-            >
-              {!isMobile && <span style={{ width: 14, height: 14, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{item.icon}</span>}
-              {item.label}
-            </button>
+          {/* Nav items — grouped with small gaps */}
+          {NAV_GROUPS.map((group, gi) => (
+            <div key={gi} style={{ marginBottom: gi < NAV_GROUPS.length - 1 ? 10 : 0 }}>
+              {group.map(item => (
+                <button
+                  key={item.id}
+                  onClick={() => setActiveTab(item.id)}
+                  style={navItemStyle(item.id)}
+                  onMouseEnter={e => { if (activeTab !== item.id) e.currentTarget.style.background = 'rgba(0,0,0,0.04)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = activeTab === item.id ? 'rgba(0,0,0,0.07)' : 'transparent'; }}
+                >
+                  {!isMobile && (
+                    <span style={{ width: 22, height: 22, borderRadius: 6, background: activeTab === item.id ? 'rgba(0,0,0,0.08)' : 'rgba(0,0,0,0.05)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <span style={{ width: 13, height: 13, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{item.icon}</span>
+                    </span>
+                  )}
+                  {item.label}
+                </button>
+              ))}
+            </div>
           ))}
 
           {/* Log Out */}
-          <div style={{ marginTop: 'auto', paddingTop: 12 }}>
+          <div style={{ marginTop: 'auto', paddingTop: 10 }}>
             <button
               onClick={() => { onClose(); logout?.(); }}
               style={{
-                display: 'flex', alignItems: 'center', gap: isMobile ? 0 : 7,
-                padding: isMobile ? '7px 12px' : `7px ${sidebarPadH + 4}px`,
+                display: 'flex', alignItems: 'center', gap: 8,
+                padding: '6px 10px',
                 borderRadius: 8, border: 'none', cursor: 'pointer', background: 'transparent',
                 fontSize: 13, fontWeight: 500, color: '#E8726E',
                 textAlign: 'left', width: '100%', fontFamily: "'DM Sans', sans-serif",
@@ -427,7 +443,11 @@ export default function SettingsModal({ isOpen, onClose, initialTab = 'general' 
               onMouseEnter={e => e.currentTarget.style.background = 'rgba(232,114,110,0.07)'}
               onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
             >
-              {!isMobile && <LogOut size={13} strokeWidth={2} />}
+              {!isMobile && (
+                <span style={{ width: 22, height: 22, borderRadius: 6, background: 'rgba(232,114,110,0.08)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <LogOut size={13} strokeWidth={2} style={{ color: '#E8726E' }} />
+                </span>
+              )}
               Log Out
             </button>
           </div>
