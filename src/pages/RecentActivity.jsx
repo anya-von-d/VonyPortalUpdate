@@ -726,7 +726,8 @@ export default function RecentActivityPage() {
         <div className="mesh-center" style={{ background: 'transparent', padding: '24px 32px 80px' }}>
 
           {/* Page title */}
-          <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, fontWeight: 600, letterSpacing: '-0.02em', color: '#1A1918', marginBottom: 32 }}>Recent Activity</div>
+          <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, fontWeight: 600, letterSpacing: '-0.02em', color: '#1A1918', marginBottom: 12 }}>Recent Activity</div>
+          <div style={{ height: 1, background: '#03ACEA', marginLeft: -32, marginRight: -32, marginBottom: 20 }} />
 
           {/* Filters */}
           <div style={{ marginBottom: 16 }}>

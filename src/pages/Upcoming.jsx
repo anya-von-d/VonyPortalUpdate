@@ -311,7 +311,8 @@ export default function Upcoming() {
         <div className="mesh-center" style={{ background: 'transparent', padding: '24px 32px 80px' }}>
 
           {/* Page header */}
-          <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', marginBottom: 32 }}>Upcoming</div>
+          <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', marginBottom: 12 }}>Upcoming</div>
+          <div style={{ height: 1, background: '#03ACEA', marginLeft: -32, marginRight: -32, marginBottom: 20 }} />
 
           {/* Two-column: section boxes left, calendar right */}
           <div className="upcoming-two-col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, alignItems: 'start' }}>
