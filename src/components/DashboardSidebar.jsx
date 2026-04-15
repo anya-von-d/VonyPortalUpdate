@@ -82,13 +82,18 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
 
   const isActive = (page) => activePage === page;
   const linkStyle = (page) => ({
-    display: 'flex', alignItems: 'center', gap: 12, padding: '11px 14px', borderRadius: 10,
+    display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px', borderRadius: 10,
     textDecoration: 'none', fontSize: 14, transition: 'background 0.15s, color 0.15s',
     color: isActive(page) ? '#678AFB' : '#5C5B5A',
     background: isActive(page) ? 'rgba(103,138,251,0.08)' : 'transparent',
     fontWeight: isActive(page) ? 600 : 500,
   });
   const ic = (page) => isActive(page) ? '#678AFB' : '#5C5B5A';
+  const ib = (page) => ({
+    width: 22, height: 22, borderRadius: 6, flexShrink: 0,
+    background: isActive(page) ? 'rgba(103,138,251,0.14)' : 'rgba(0,0,0,0.07)',
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+  });
 
   const bellIcon = (color) => (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -106,36 +111,60 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
 
   const navLinks = (
     <>
+      {/* Dashboard — filled grid */}
       <Link to="/" onClick={() => setMobileMenuOpen(false)} style={linkStyle('Dashboard')}>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={ic('Dashboard')} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" /></svg>
+        <div style={ib('Dashboard')}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill={ic('Dashboard')}><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/></svg>
+        </div>
         Dashboard
       </Link>
+      {/* Create Loan — filled circle + white plus */}
       <Link to={createPageUrl("CreateOffer")} onClick={() => setMobileMenuOpen(false)} style={linkStyle('CreateOffer')}>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={ic('CreateOffer')} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="16" /><line x1="8" y1="12" x2="16" y2="12" /></svg>
+        <div style={ib('CreateOffer')}>
+          <svg width="13" height="13" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill={ic('CreateOffer')}/><path d="M12 7v10M7 12h10" stroke="white" strokeWidth="2.5" strokeLinecap="round"/></svg>
+        </div>
         Create Loan
       </Link>
+      {/* Record Payment — filled card */}
       <Link to={createPageUrl("RecordPayment")} onClick={() => setMobileMenuOpen(false)} style={linkStyle('RecordPayment')}>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={ic('RecordPayment')} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /><polyline points="7 17 12 22 17 17" /></svg>
+        <div style={ib('RecordPayment')}>
+          <svg width="13" height="13" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2.5" fill={ic('RecordPayment')}/><rect x="2" y="9" width="20" height="4" fill="rgba(0,0,0,0.22)"/><rect x="5" y="15.5" width="5" height="1.5" rx="0.75" fill="rgba(255,255,255,0.65)"/></svg>
+        </div>
         Record Payment
       </Link>
+      {/* Upcoming — filled calendar */}
       <Link to={createPageUrl("Upcoming")} onClick={() => setMobileMenuOpen(false)} style={linkStyle('Upcoming')}>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={ic('Upcoming')} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>
+        <div style={ib('Upcoming')}>
+          <svg width="13" height="13" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="16" rx="2.5" fill={ic('Upcoming')}/><rect x="3" y="6" width="18" height="6.5" rx="2.5" fill="rgba(0,0,0,0.2)"/><rect x="8" y="2.5" width="2" height="5" rx="1" fill={ic('Upcoming')}/><rect x="14" y="2.5" width="2" height="5" rx="1" fill={ic('Upcoming')}/><rect x="7" y="15" width="2.5" height="2.5" rx="0.5" fill="rgba(255,255,255,0.8)"/><rect x="11.5" y="15" width="2.5" height="2.5" rx="0.5" fill="rgba(255,255,255,0.8)"/><rect x="16" y="15" width="2.5" height="2.5" rx="0.5" fill="rgba(255,255,255,0.5)"/></svg>
+        </div>
         Upcoming
       </Link>
+      {/* Lending & Borrowing — filled bar chart */}
       <Link to={createPageUrl("YourLoans")} onClick={() => setMobileMenuOpen(false)} style={linkStyle('YourLoans')}>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={ic('YourLoans')} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" /><polyline points="17 6 23 6 23 12" /></svg>
+        <div style={ib('YourLoans')}>
+          <svg width="13" height="13" viewBox="0 0 24 24"><rect x="2" y="13" width="5" height="9" rx="1.5" fill={ic('YourLoans')} opacity="0.45"/><rect x="9.5" y="8" width="5" height="14" rx="1.5" fill={ic('YourLoans')} opacity="0.7"/><rect x="17" y="3" width="5" height="19" rx="1.5" fill={ic('YourLoans')}/></svg>
+        </div>
         Lending & Borrowing
       </Link>
+      {/* Friends — filled silhouettes */}
       <Link to={createPageUrl("Friends")} onClick={() => setMobileMenuOpen(false)} style={linkStyle('Friends')}>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={ic('Friends')} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>
+        <div style={ib('Friends')}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill={ic('Friends')}><circle cx="8.5" cy="6.5" r="4"/><path d="M0 21c0-5 3.8-8 8.5-8s8.5 3 8.5 8H0z"/><circle cx="19" cy="7.5" r="3" opacity="0.55"/><path d="M14.5 21c0-3.5 2-5.5 4.5-5.5S24 17.5 24 21h-9.5" opacity="0.55"/></svg>
+        </div>
         Friends
       </Link>
+      {/* Recent Activity — filled clock */}
       <Link to={createPageUrl("RecentActivity")} onClick={() => setMobileMenuOpen(false)} style={linkStyle('RecentActivity')}>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={ic('RecentActivity')} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
+        <div style={ib('RecentActivity')}>
+          <svg width="13" height="13" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill={ic('RecentActivity')}/><path d="M12 6.5v5.5l3.5 2.5" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" fill="none"/></svg>
+        </div>
         Recent Activity
       </Link>
+      {/* Loan Documents — filled document */}
       <Link to={createPageUrl("LoanAgreements")} onClick={() => setMobileMenuOpen(false)} style={linkStyle('LoanAgreements')}>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={ic('LoanAgreements')} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" /></svg>
+        <div style={ib('LoanAgreements')}>
+          <svg width="13" height="13" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" fill={ic('LoanAgreements')}/><path d="M14 2v6h6" fill="rgba(0,0,0,0.2)"/><line x1="8" y1="13" x2="16" y2="13" stroke="white" strokeWidth="1.6" strokeLinecap="round"/><line x1="8" y1="17" x2="16" y2="17" stroke="white" strokeWidth="1.6" strokeLinecap="round"/><line x1="8" y1="9" x2="11" y2="9" stroke="white" strokeWidth="1.6" strokeLinecap="round"/></svg>
+        </div>
         Loan Documents
       </Link>
     </>
