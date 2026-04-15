@@ -268,10 +268,14 @@ input[type="date"] {
 /* Content area: offset for fixed desktop top bar */
 @media (min-width: 901px) {
   .mesh-center {
-    padding-top: 66px !important;
+    padding-top: 80px !important;
   }
   /* Page title shown in top bar on desktop — hide in-content version */
   .mobile-page-title {
+    display: none !important;
+  }
+  /* Elements only needed on mobile — hidden on desktop */
+  .desktop-hide {
     display: none !important;
   }
   /* Sidebar: slightly darker than main background */
