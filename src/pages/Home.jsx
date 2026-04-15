@@ -978,12 +978,9 @@ export default function Home() {
                 <span style={{ flex: 1, fontSize: 12, fontWeight: 600, color: 'white', fontFamily: "'DM Sans', sans-serif" }}>
                   You have {notifCount} new notification{notifCount !== 1 ? 's' : ''}
                 </span>
-                <Link to={createPageUrl("Requests")} style={{
-                  fontSize: 11, fontWeight: 600, color: '#1A1918', textDecoration: 'none',
-                  padding: '3px 10px', borderRadius: 6, background: 'white',
-                  border: 'none', flexShrink: 0,
-                  fontFamily: "'DM Sans', sans-serif",
-                }}>View</Link>
+                <Link to={createPageUrl("Requests")} style={{ display: 'flex', alignItems: 'center', flexShrink: 0, textDecoration: 'none' }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                </Link>
               </div>
             </div>
           )}
@@ -1066,16 +1063,9 @@ export default function Home() {
                     zIndex: 0,
                     pointerEvents: 'none',
                   }} />
-                  {/* Gradient border wrapper — matches sidebar line: transparent → #03ACEA */}
-                  <div style={{
-                    position: 'relative', zIndex: 1, flex: 1,
-                    background: 'linear-gradient(to right, rgba(3,172,234,0) 0%, #03ACEA 67%, #03ACEA 100%)',
-                    padding: 1, borderRadius: 11,
-                    display: 'flex', flexDirection: 'column',
-                  }}>
                   {/* Card */}
                   <div style={{
-                    flex: 1,
+                    position: 'relative', zIndex: 1, flex: 1,
                     padding: '12px 14px', borderRadius: 10,
                     background: '#ffffff',
                     display: 'flex', flexDirection: 'column', justifyContent: 'center',
@@ -1098,7 +1088,6 @@ export default function Home() {
                         <span style={{ fontSize: 11, color: '#9B9A98' }}>None incoming ✨</span>
                       </div>
                     )}
-                  </div>
                   </div>
                 </div>
               );
