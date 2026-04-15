@@ -1051,7 +1051,7 @@ export default function Home() {
                     height: 'calc(100% + 10px)',
                     background: 'linear-gradient(135deg, rgb(3,172,234) 0%, rgb(6,182,212) 30%, rgb(20,184,166) 60%, rgb(3,172,234) 100%)',
                     filter: 'blur(5px) saturate(1.2)',
-                    opacity: 0.52,
+                    opacity: 0.35,
                     borderRadius: 18,
                     zIndex: 0,
                     pointerEvents: 'none',
