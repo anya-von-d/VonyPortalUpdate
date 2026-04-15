@@ -261,23 +261,8 @@ input[type="date"] {
 }
 
 
-/* Decorative blue strip at right edge of Col 1 (inside col, along col1/col2 border) */
 .mesh-left {
   position: relative;
-}
-.mesh-left::after {
-  content: '';
-  position: fixed;
-  /* solid strip is 3px wide at right edge (x=197..200), gradient extends 6px left (x=191..197) */
-  left: 191px;
-  bottom: 0;
-  width: 9px;
-  /* stops just below the Log Out button: leave ~480px at top */
-  height: calc(100vh - 480px);
-  /* left 67% = gradient fade, right 33% = solid #03ACEA */
-  background: linear-gradient(to right, rgba(0,0,0,0) 0%, #03ACEA 67%, #03ACEA 100%);
-  pointer-events: none;
-  z-index: 5;
 }
 
 /* Loan details responsive */

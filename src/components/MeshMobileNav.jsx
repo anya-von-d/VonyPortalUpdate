@@ -103,7 +103,7 @@ export default function MeshMobileNav({ user, activePage }) {
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200,
         height: 56, display: 'flex', alignItems: 'center',
         padding: '0 16px',
-        background: '#03ACEA',
+        background: '#1A1918',
         fontFamily: "'DM Sans', sans-serif",
       }}>
         {/* Left: Hamburger */}
@@ -153,7 +153,7 @@ export default function MeshMobileNav({ user, activePage }) {
               <span style={{
                 position: 'absolute', top: 4, right: 4,
                 width: 8, height: 8, borderRadius: '50%',
-                background: 'white', border: '1.5px solid #03ACEA',
+                background: 'white', border: '1.5px solid #1A1918',
               }} />
             )}
           </Link>
