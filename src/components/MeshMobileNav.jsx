@@ -91,7 +91,12 @@ export default function MeshMobileNav({ user, activePage }) {
           fontFamily: "'DM Sans', sans-serif",
         }}>
           <div style={{ fontSize: 14, fontWeight: 600, color: 'white', letterSpacing: '-0.01em' }}>
-            {PAGE_LABELS[activePage] || activePage}
+            {activePage === 'Home' ? (() => {
+              const h = new Date().getHours();
+              const g = h >= 5 && h < 12 ? 'Good morning' : h >= 12 && h < 18 ? 'Good afternoon' : 'Good night';
+              const name = user?.full_name?.split(' ')[0] || user?.username || '';
+              return `${g}, ${name}`;
+            })() : (PAGE_LABELS[activePage] || activePage)}
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
             <Link to={createPageUrl("Requests")} style={{
