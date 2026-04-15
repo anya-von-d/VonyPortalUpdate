@@ -184,14 +184,36 @@ export default function MeshMobileNav({ user, activePage }) {
           )}
         </button>
 
-        {/* Center: Vony logo */}
-        <Link to="/" onClick={() => setMenuOpen(false)} style={{
-          flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontFamily: "'Cormorant Garamond', Georgia, serif",
-          fontWeight: 600, fontStyle: 'italic', fontSize: '1.4rem',
-          color: 'white', textDecoration: 'none', lineHeight: 1,
-          letterSpacing: '-0.02em',
-        }}>Vony</Link>
+        {/* Center: Vony logo or My Loans tabs */}
+        {activePage === 'My Loans' ? (
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16 }}>
+            {[{key:'lending',label:'Lending'},{key:'borrowing',label:'Borrowing'},{key:'details',label:'Loan Details'}].map(tab => {
+              const currentTab = new URLSearchParams(location.search).get('tab') || 'lending';
+              const isActive = currentTab === tab.key;
+              return (
+                <Link key={tab.key} to={`?tab=${tab.key}`} onClick={() => setMenuOpen(false)} style={{
+                  color: isActive ? 'white' : 'rgba(255,255,255,0.45)',
+                  fontWeight: isActive ? 600 : 500,
+                  fontSize: 12, textDecoration: 'none',
+                  fontFamily: "'DM Sans', sans-serif",
+                  letterSpacing: '-0.01em',
+                  paddingBottom: 3,
+                  borderBottom: isActive ? '1.5px solid white' : '1.5px solid transparent',
+                }}>
+                  {tab.label}
+                </Link>
+              );
+            })}
+          </div>
+        ) : (
+          <Link to="/" onClick={() => setMenuOpen(false)} style={{
+            flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontFamily: "'Cormorant Garamond', Georgia, serif",
+            fontWeight: 600, fontStyle: 'italic', fontSize: '1.4rem',
+            color: 'white', textDecoration: 'none', lineHeight: 1,
+            letterSpacing: '-0.02em',
+          }}>Vony</Link>
+        )}
 
         {/* Right: bell + profile */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
