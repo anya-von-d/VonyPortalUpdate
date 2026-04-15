@@ -498,7 +498,7 @@ export default function RecordPayment() {
         <div className="mesh-center" style={{ background: 'transparent', padding: '24px 32px 80px' }}>
 
           {/* Page title */}
-          <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', marginBottom: 32 }}>Record Payment</div>
+          <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 17, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', marginBottom: 32 }}>Record Payment</div>
 
           {/* ── No loans onboarding banner ── */}
           {!isLoading && loans.length === 0 && (

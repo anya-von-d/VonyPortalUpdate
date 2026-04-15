@@ -238,7 +238,7 @@ export default function ComingSoon() {
         {/* Desktop view */}
         <div className="learn-desktop-view">
           {/* Page title */}
-          <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', marginBottom: 32 }}>Learn</div>
+          <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 17, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', marginBottom: 32 }}>Learn</div>
 
           {/* VonyHomePage-style glassmorphic nav — centered */}
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 28 }}>
@@ -288,7 +288,7 @@ export default function ComingSoon() {
 
         {/* Mobile: all categories as titled sections with horizontal scroll */}
         <div className="learn-mobile-sections">
-          <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', marginBottom: 32 }}>Learn</div>
+          <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 17, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', marginBottom: 32 }}>Learn</div>
 
           {LEARN_CATEGORIES.map(cat => (
             <section key={cat.id} style={{ marginBottom: 28 }}>

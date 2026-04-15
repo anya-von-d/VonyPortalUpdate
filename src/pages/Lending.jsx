@@ -1512,7 +1512,7 @@ export default function Lending({ initialTab }) {
         signingAs="Lender"
       />
 
-      <div style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", background: '#ffffff' }}>
+      <div style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", background: 'transparent' }}>
         <MeshMobileNav user={currentUser} activePage="Create Loan" />
         <div className="mesh-layout" style={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: 0, minHeight: '100vh' }}>
           {/* COL 1 - left nav */}
@@ -1588,7 +1588,7 @@ export default function Lending({ initialTab }) {
 
           {/* COL 2 - main content */}
           <div className="mesh-center" style={{ background: 'transparent', padding: '24px 32px 80px' }}>
-            <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', marginBottom: 32 }}>Create Loan</div>
+            <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 17, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', marginBottom: 32 }}>Create Loan</div>
   
           {/* ── No Friends Banner at the very top ── */}
           {activeSection === 'create' && !isLoadingUsers && friends.length === 0 && (

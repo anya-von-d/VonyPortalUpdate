@@ -347,7 +347,7 @@ export default function Friends() {
       <div className="mesh-center" style={{ background: 'transparent', padding: '24px 32px 80px' }}>
 
         {/* Page title */}
-        <div style={{        }}>Friends</div>
+        <div style={{ fontSize: 17, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', marginBottom: 32 }}>Friends</div>
 
         {/* Invite box — always visible at the top */}
         {!isLoading && (
