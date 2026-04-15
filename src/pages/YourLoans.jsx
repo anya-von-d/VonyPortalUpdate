@@ -29,8 +29,9 @@ export default function YourLoans() {
   const { logout } = useAuth();
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [searchParams] = useSearchParams();
-  const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'lending');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = searchParams.get('tab') || 'lending';
+  const setActiveTab = (tab) => setSearchParams({ tab });
   const [allLoans, setAllLoans] = useState([]);
   const [allPayments, setAllPayments] = useState([]);
   const [publicProfiles, setPublicProfiles] = useState([]);
@@ -1474,22 +1475,6 @@ export default function YourLoans() {
             <div style={{ height: 1, background: 'rgba(0,0,0,0.08)', marginLeft: -32, marginRight: -32, marginBottom: 20 }} />
           </div>
 
-          {/* Tab header */}
-          <div style={{ display: 'flex', gap: 24, alignItems: 'flex-end', marginLeft: -32, marginRight: -32, paddingLeft: 32, paddingRight: 32, marginBottom: 0 }}>
-            {[{key:'lending',label:'Lending'},{key:'borrowing',label:'Borrowing'},{key:'details',label:'Loan Details'}].map(tab => (
-              <button key={tab.key} onClick={() => setActiveTab(tab.key)} style={{
-                position: 'relative', paddingBottom: 12,
-                border: 'none', background: 'transparent', cursor: 'pointer',
-                fontSize: 17, fontWeight: 600, fontFamily: "'DM Sans', system-ui, sans-serif",
-                letterSpacing: '-0.02em',
-                color: activeTab === tab.key ? '#1A1918' : 'rgba(0,0,0,0.30)',
-                transition: 'color 0.2s',
-              }}>
-                {tab.label}
-              </button>
-            ))}
-          </div>
-          <div style={{ height: 1, background: 'rgba(0,0,0,0.08)', marginLeft: -32, marginRight: -32, marginBottom: 20 }} />
 
           {/* Overdue reminder carousel */}
           {activeTab !== 'details' && (() => {
