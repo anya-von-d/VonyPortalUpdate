@@ -82,11 +82,11 @@ export default function MeshMobileNav({ user, activePage }) {
 
   return (
     <>
-      {/* ── Desktop: full-width black top bar ── */}
+      {/* ── Desktop: top bar ── */}
       {!isMobile && (
         <div style={{
           position: 'fixed', top: 0, left: 200, right: 0, zIndex: 100, height: 54,
-          background: 'linear-gradient(to bottom, #1A1918 0%, #1A1918 58%, rgba(26,25,24,0.91) 62%, rgba(26,25,24,0.82) 66%, rgba(26,25,24,0.73) 70%, rgba(26,25,24,0.64) 74%, rgba(26,25,24,0.55) 78%, rgba(26,25,24,0.45) 82%, rgba(26,25,24,0.36) 86%, rgba(26,25,24,0.27) 90%, rgba(26,25,24,0.18) 94%, rgba(26,25,24,0.09) 97%, transparent 100%)',
+          background: '#FDFCFA',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           padding: '0 24px 0 28px',
           fontFamily: "'DM Sans', sans-serif",
@@ -98,13 +98,13 @@ export default function MeshMobileNav({ user, activePage }) {
                 const isActive = currentTab === tab.key;
                 return (
                   <Link key={tab.key} to={`?tab=${tab.key}`} style={{
-                    color: isActive ? 'white' : 'rgba(255,255,255,0.45)',
+                    color: isActive ? '#1A1918' : 'rgba(0,0,0,0.35)',
                     fontWeight: isActive ? 600 : 500,
                     fontSize: 14, textDecoration: 'none',
                     fontFamily: "'DM Sans', sans-serif",
                     letterSpacing: '-0.01em',
                     paddingBottom: 4,
-                    borderBottom: isActive ? '2px solid white' : '2px solid transparent',
+                    borderBottom: isActive ? '2px solid #1A1918' : '2px solid transparent',
                     transition: 'color 0.15s',
                   }}>
                     {tab.label}
@@ -113,7 +113,7 @@ export default function MeshMobileNav({ user, activePage }) {
               })}
             </div>
           ) : (
-            <div style={{ fontSize: 14, fontWeight: 600, color: 'white', letterSpacing: '-0.01em' }}>
+            <div style={{ fontSize: 14, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em' }}>
               {activePage === 'Home' ? (() => {
                 const h = new Date().getHours();
                 const g = h >= 5 && h < 12 ? 'Good morning' : h >= 12 && h < 18 ? 'Good afternoon' : 'Good night';
@@ -127,7 +127,7 @@ export default function MeshMobileNav({ user, activePage }) {
               position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center',
               width: 32, height: 32, borderRadius: 9, textDecoration: 'none',
             }}>
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.75)" strokeWidth="1.8" strokeLinecap="round">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#787776" strokeWidth="1.8" strokeLinecap="round">
                 <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
                 <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
               </svg>
