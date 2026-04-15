@@ -956,23 +956,35 @@ export default function Home() {
 
           {/* Notification bar */}
           {notifCount > 0 && (
-            <div style={{
-              display: 'flex', alignItems: 'center', gap: 8, padding: '6px 12px', borderRadius: 9,
-              background: 'rgba(3,172,234,0.06)', border: '1px solid rgba(3,172,234,0.15)',
-              marginBottom: 16,
-            }}>
-              <div style={{ width: 20, height: 20, borderRadius: 6, background: 'rgba(3,172,234,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2" strokeLinecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <div style={{ position: 'relative', marginBottom: 16, paddingBottom: 8 }}>
+              {/* Rainbow aura */}
+              <div style={{
+                position: 'absolute', bottom: 0, left: '50%',
+                transform: 'translateX(-50%)',
+                width: 'calc(100% + 36px)', height: '100%',
+                background: 'linear-gradient(225deg, rgb(50,197,255), rgb(182,32,224) 51%, rgb(247,181,0))',
+                filter: 'blur(12px) saturate(1.18)',
+                opacity: 0.4,
+                borderRadius: 16, zIndex: 0, pointerEvents: 'none',
+              }} />
+              <div style={{
+                position: 'relative', zIndex: 1,
+                display: 'flex', alignItems: 'center', gap: 8, padding: '6px 12px', borderRadius: 9,
+                background: '#1A1918', border: 'none',
+              }}>
+                <div style={{ width: 20, height: 20, borderRadius: 6, background: 'rgba(255,255,255,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                </div>
+                <span style={{ flex: 1, fontSize: 12, fontWeight: 600, color: 'white', fontFamily: "'DM Sans', sans-serif" }}>
+                  You have {notifCount} new notification{notifCount !== 1 ? 's' : ''}
+                </span>
+                <Link to={createPageUrl("Requests")} style={{
+                  fontSize: 11, fontWeight: 600, color: '#1A1918', textDecoration: 'none',
+                  padding: '3px 10px', borderRadius: 6, background: 'white',
+                  border: 'none', flexShrink: 0,
+                  fontFamily: "'DM Sans', sans-serif",
+                }}>View</Link>
               </div>
-              <span style={{ flex: 1, fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>
-                You have {notifCount} new notification{notifCount !== 1 ? 's' : ''}
-              </span>
-              <Link to={createPageUrl("Requests")} style={{
-                fontSize: 11, fontWeight: 600, color: '#03ACEA', textDecoration: 'none',
-                padding: '3px 10px', borderRadius: 6, background: 'white',
-                border: '1px solid rgba(3,172,234,0.2)', flexShrink: 0,
-                fontFamily: "'DM Sans', sans-serif",
-              }}>View</Link>
             </div>
           )}
 
