@@ -1061,8 +1061,8 @@ export default function Home() {
                     position: 'relative', zIndex: 1, flex: 1,
                     padding: '12px 14px', borderRadius: 10,
                     background: '#ffffff',
-                    border: '1.5px solid rgba(255,255,255,0.9)',
-                    boxShadow: '0 2px 16px rgba(3,172,234,0.10), inset 0 1px 0 rgba(255,255,255,1), inset 0 -1px 0 rgba(180,230,245,0.3)',
+                    border: '1px solid #03ACEA',
+                    boxShadow: '0 0 0 3px rgba(3,172,234,0.13), 0 0 0 2px rgba(3,172,234,0.22), inset 0 1px 0 rgba(255,255,255,1), inset 0 -1px 0 rgba(180,230,245,0.3)',
                     display: 'flex', flexDirection: 'column', justifyContent: 'center',
                   }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 8 }}>
