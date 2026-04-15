@@ -424,7 +424,7 @@ export default function RecordPayment() {
       <div className="mesh-layout" style={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: 0, minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased' }}>
 
         {/* Col 1: left nav */}
-        <div className="mesh-left" style={{ background: 'rgba(0,0,0,0.03)', borderRight: '1px solid rgba(0,0,0,0.06)' }}>
+        <div className="mesh-left" style={{ background: 'rgba(255,255,255,0.18)', borderRight: '1px solid rgba(0,0,0,0.06)' }}>
           <div style={{ position: 'sticky', top: 0, padding: '24px 8px 0' }}>
             <Link to="/" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, fontStyle: 'italic', fontSize: '1.3rem', color: '#1A1918', textDecoration: 'none', display: 'block', marginBottom: 16, paddingLeft: 6, lineHeight: 1, letterSpacing: '-0.02em' }}>Vony</Link>
             <nav style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -485,7 +485,7 @@ export default function RecordPayment() {
                   }}>
                     <span style={{ flexShrink: 0, width: 26, height: 26, borderRadius: 7, background: 'rgba(0,0,0,0.04)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>{soonIcons[label]}</span>
                     <span style={{ flex: 1 }}>{label}</span>
-                    <span style={{ fontSize: 8, fontWeight: 700, color: '#9B9A98', background: 'rgba(0,0,0,0.03)', borderRadius: 4, padding: '2px 6px', letterSpacing: '0.05em', textTransform: 'uppercase', lineHeight: 1.2, flexShrink: 0 }}>SOON</span>
+                    <span style={{ fontSize: 8, fontWeight: 700, color: '#9B9A98', background: 'rgba(255,255,255,0.18)', borderRadius: 4, padding: '2px 6px', letterSpacing: '0.05em', textTransform: 'uppercase', lineHeight: 1.2, flexShrink: 0 }}>SOON</span>
                   </Link>
                 );
               })}
@@ -787,7 +787,7 @@ export default function RecordPayment() {
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           transition={{ delay: 0.55 }}
-                          style={{ background: 'rgba(0,0,0,0.03)', borderRadius: 10, padding: '8px 16px' }}
+                          style={{ background: 'rgba(255,255,255,0.18)', borderRadius: 10, padding: '8px 16px' }}
                         >
                           <span style={{ fontSize: 11, color: '#787776' }}>Ref: </span>
                           <span style={{ fontSize: 11, fontWeight: 600, color: '#1A1918', fontFamily: 'monospace' }}>{transactionId}</span>

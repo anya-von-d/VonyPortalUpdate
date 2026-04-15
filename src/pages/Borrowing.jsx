@@ -859,7 +859,7 @@ export default function Borrowing() {
         <MeshMobileNav user={user} activePage="My Loans" />
         <div className="mesh-layout" style={{ display: 'grid', gridTemplateColumns: '180px 1fr 300px', gap: 0, minHeight: '100vh' }}>
           {/* COL 1 - left nav */}
-          <div className="mesh-left" style={{ background: 'rgba(0,0,0,0.03)', borderRight: '1px solid rgba(0,0,0,0.06)' }}>
+          <div className="mesh-left" style={{ background: 'rgba(255,255,255,0.18)', borderRight: '1px solid rgba(0,0,0,0.06)' }}>
             <div style={{ position: 'sticky', top: 0, padding: '24px 8px 0' }}>
               <Link to="/" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, fontStyle: 'italic', fontSize: '1.3rem', color: '#1A1918', textDecoration: 'none', display: 'block', marginBottom: 16, paddingLeft: 6 }}>Vony</Link>
               <nav style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -920,7 +920,7 @@ export default function Borrowing() {
                     }}>
                       <span style={{ flexShrink: 0, width: 26, height: 26, borderRadius: 7, background: 'rgba(0,0,0,0.04)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>{soonIcons[label]}</span>
                       <span style={{ flex: 1 }}>{label}</span>
-                      <span style={{ fontSize: 8, fontWeight: 700, color: '#9B9A98', background: 'rgba(0,0,0,0.03)', borderRadius: 4, padding: '2px 6px', letterSpacing: '0.05em', textTransform: 'uppercase', lineHeight: 1.2, flexShrink: 0 }}>SOON</span>
+                      <span style={{ fontSize: 8, fontWeight: 700, color: '#9B9A98', background: 'rgba(255,255,255,0.18)', borderRadius: 4, padding: '2px 6px', letterSpacing: '0.05em', textTransform: 'uppercase', lineHeight: 1.2, flexShrink: 0 }}>SOON</span>
                     </Link>
                   );
                 })}
@@ -935,7 +935,7 @@ export default function Borrowing() {
   
           {/* Tab bar — centered */}
           <div className="mobile-tab-bar" style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
-            <div style={{ display: 'inline-flex', gap: 2, background: 'rgba(0,0,0,0.03)', borderRadius: 10, padding: 3 }}>
+            <div style={{ display: 'inline-flex', gap: 2, background: 'rgba(255,255,255,0.18)', borderRadius: 10, padding: 3 }}>
               {[{key:'summary',label:'Summary'},{key:'details',label:'Individual Loan Details'}].map(tab => (
                 <button key={tab.key} onClick={() => setActiveTab(tab.key)} style={{
                   padding: '6px 16px', borderRadius: 8, border: 'none', cursor: 'pointer',
@@ -1229,7 +1229,7 @@ export default function Borrowing() {
                               ? `$${(loan.payment_amount || 0).toLocaleString()}`
                               : loan.next_payment_date ? format(new Date(loan.next_payment_date), 'MMM d') : 'N/A';
                           return (
-                            <div key={loan.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: 10, borderRadius: 10, background: 'rgba(0,0,0,0.03)' }}>
+                            <div key={loan.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: 10, borderRadius: 10, background: 'rgba(255,255,255,0.18)' }}>
                               <div style={{ flexShrink: 0, width: 28, height: 28, borderRadius: '50%', background: 'rgba(3,172,234,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                 <span style={{ fontSize: 12, fontWeight: 700, color: '#03ACEA' }}>{idx + 1}</span>
                               </div>
@@ -1653,7 +1653,7 @@ export default function Borrowing() {
                                           {paymentRows.map((row) => {
                                             const cfg = statusConfig[row.status];
                                             return (
-                                              <div key={row.number} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: 8, borderRadius: 10, background: 'rgba(0,0,0,0.03)' }}>
+                                              <div key={row.number} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: 8, borderRadius: 10, background: 'rgba(255,255,255,0.18)' }}>
                                                 <PieCircle percentage={row.paidPercentage} ringColor={cfg.ringColor} fillColor={cfg.fillColor} number={row.number} />
                                                 <div style={{ flex: 1, minWidth: 0 }}>
                                                   <p style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', margin: 0 }}>${row.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>

@@ -336,7 +336,7 @@ export default function Profile() {
       <div className="mesh-layout" style={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: 0, minHeight: '100vh' }}>
 
         {/* COL 1 - left nav */}
-        <div className="mesh-left" style={{ background: 'rgba(0,0,0,0.03)', borderRight: '1px solid rgba(0,0,0,0.06)' }}>
+        <div className="mesh-left" style={{ background: 'rgba(255,255,255,0.18)', borderRight: '1px solid rgba(0,0,0,0.06)' }}>
           <div style={{ position: 'sticky', top: 0, padding: '24px 8px 0' }}>
             <Link to="/" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, fontStyle: 'italic', fontSize: '1.3rem', color: '#1A1918', textDecoration: 'none', display: 'block', marginBottom: 16, paddingLeft: 6 }}>Vony</Link>
             <nav style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -397,7 +397,7 @@ export default function Profile() {
                   }}>
                     <span style={{ flexShrink: 0, width: 26, height: 26, borderRadius: 7, background: 'rgba(0,0,0,0.04)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>{soonIcons[label]}</span>
                     <span style={{ flex: 1 }}>{label}</span>
-                    <span style={{ fontSize: 8, fontWeight: 700, color: '#9B9A98', background: 'rgba(0,0,0,0.03)', borderRadius: 4, padding: '2px 6px', letterSpacing: '0.05em', textTransform: 'uppercase', lineHeight: 1.2, flexShrink: 0 }}>SOON</span>
+                    <span style={{ fontSize: 8, fontWeight: 700, color: '#9B9A98', background: 'rgba(255,255,255,0.18)', borderRadius: 4, padding: '2px 6px', letterSpacing: '0.05em', textTransform: 'uppercase', lineHeight: 1.2, flexShrink: 0 }}>SOON</span>
                   </Link>
                 );
               })}
@@ -537,7 +537,7 @@ export default function Profile() {
                         value={formData.full_name}
                         disabled
                         placeholder="Enter your full name"
-                        style={{ background: 'rgba(0,0,0,0.03)' }}
+                        style={{ background: 'rgba(255,255,255,0.18)' }}
                       />
                     </div>
 
@@ -548,7 +548,7 @@ export default function Profile() {
                       <Input
                         value={user.email || 'Not provided'}
                         disabled
-                        style={{ background: 'rgba(0,0,0,0.03)' }}
+                        style={{ background: 'rgba(255,255,255,0.18)' }}
                       />
                     </div>
                   </div>
@@ -564,7 +564,7 @@ export default function Profile() {
                       disabled={!isEditing || isSaving}
                       placeholder="Choose a unique username"
                       className={usernameError ? 'border-red-300' : ''}
-                      style={!isEditing ? { background: 'rgba(0,0,0,0.03)' } : {}}
+                      style={!isEditing ? { background: 'rgba(255,255,255,0.18)' } : {}}
                       required
                     />
                     {isCheckingUsername && (
@@ -589,7 +589,7 @@ export default function Profile() {
                         onChange={(e) => handleInputChange('phone', e.target.value)}
                         disabled={!isEditing || isSaving}
                         placeholder="Enter your phone number"
-                        style={!isEditing ? { background: 'rgba(0,0,0,0.03)' } : {}}
+                        style={!isEditing ? { background: 'rgba(255,255,255,0.18)' } : {}}
                       />
                     </div>
 
@@ -603,7 +603,7 @@ export default function Profile() {
                         onChange={(e) => handleInputChange('location', e.target.value)}
                         disabled={!isEditing || isSaving}
                         placeholder="City, State"
-                        style={!isEditing ? { background: 'rgba(0,0,0,0.03)' } : {}}
+                        style={!isEditing ? { background: 'rgba(255,255,255,0.18)' } : {}}
                       />
                     </div>
                   </div>
@@ -658,7 +658,7 @@ export default function Profile() {
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-medium">Phone Verified</span>
-                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12, fontWeight: 600, padding: '3px 8px', borderRadius: 6, background: 'rgba(0,0,0,0.03)', color: '#787776', border: '1px solid rgba(0,0,0,0.1)', fontFamily: "'DM Sans', sans-serif" }}>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12, fontWeight: 600, padding: '3px 8px', borderRadius: 6, background: 'rgba(255,255,255,0.18)', color: '#787776', border: '1px solid rgba(0,0,0,0.1)', fontFamily: "'DM Sans', sans-serif" }}>
                         <XCircle size={12} />
                         Not Verified
                       </span>
@@ -671,7 +671,7 @@ export default function Profile() {
                           Complete
                         </span>
                       ) : (
-                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12, fontWeight: 600, padding: '3px 8px', borderRadius: 6, background: 'rgba(0,0,0,0.03)', color: '#787776', border: '1px solid rgba(0,0,0,0.1)', fontFamily: "'DM Sans', sans-serif" }}>
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12, fontWeight: 600, padding: '3px 8px', borderRadius: 6, background: 'rgba(255,255,255,0.18)', color: '#787776', border: '1px solid rgba(0,0,0,0.1)', fontFamily: "'DM Sans', sans-serif" }}>
                           <XCircle size={12} />
                           Incomplete
                         </span>
