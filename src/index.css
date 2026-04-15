@@ -33,7 +33,7 @@ input[type="date"] {
 @layer base {
   html {
     scroll-behavior: smooth;
-    background-color: #FBFAF9;
+    background-color: #F5F4F0;
   }
 
   /* Scrollbar styling */

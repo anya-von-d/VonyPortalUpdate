@@ -273,7 +273,7 @@ export default function Friends() {
       <div className="mesh-layout" style={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: 0, minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased' }}>
 
       {/* Col 1: left nav */}
-      <div className="mesh-left" style={{ background: '#F3F2F0', borderRight: '1px solid rgba(0,0,0,0.06)' }}>
+      <div className="mesh-left" style={{ background: '#F5F4F0', borderRight: '1px solid rgba(0,0,0,0.06)' }}>
         <div style={{ position: 'sticky', top: 0, padding: '24px 8px 0' }}>
           <Link to="/" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, fontStyle: 'italic', fontSize: '1.3rem', color: '#1A1918', textDecoration: 'none', display: 'block', marginBottom: 16, paddingLeft: 6, lineHeight: 1, letterSpacing: '-0.02em' }}>Vony</Link>
           <nav style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -344,7 +344,7 @@ export default function Friends() {
       </div>
 
       {/* ── CENTER ── */}
-      <div className="mesh-center" style={{ background: '#FBFAF9', padding: '24px 48px 80px' }}>
+      <div className="mesh-center" style={{ background: '#F5F4F0', padding: '24px 48px 80px' }}>
 
         {/* Page title */}
         <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, fontWeight: 600, color: '#1A1918', marginBottom: 32, letterSpacing: '-0.02em' }}>Friends</div>

@@ -757,7 +757,7 @@ export default function LoanAgreements() {
 
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-        <div style={{ background: '#FBFAF9', borderRadius: 16, padding: 16 }}>
+        <div style={{ background: '#F5F4F0', borderRadius: 16, padding: 16 }}>
           <p style={{ fontSize: 12, color: '#787776', marginBottom: 4 }}>Principal Amount</p>
           <p style={{ fontSize: 28, fontWeight: 700, color: '#1A1918', margin: 0 }}>{formatMoney(agreement.amount)}</p>
         </div>
@@ -766,7 +766,7 @@ export default function LoanAgreements() {
           The lender agrees to lend <strong>{borrowerInfo.full_name}</strong> <strong>{formatMoney(agreement.amount)}</strong> before <strong>{format(sendFundsDate, 'MMM d, yyyy')}</strong> at an interest rate of <strong>{agreement.interest_rate}%</strong>. The loan will be repaid over <strong>{repaymentPeriod} {repaymentUnit}</strong> in <strong>{paymentFrequency}</strong> payments of <strong>{formatMoney(agreement.payment_amount)}</strong>. Payments will be due {paymentFrequency === 'weekly' ? <>on <strong>{dayOfWeekLabel}</strong></> : <>on the <strong>{dayOfMonth}{daySuffix}</strong></>} at <strong>{formattedTime} {timezone}</strong>, with the first of the <strong>{numPayments}</strong> payments due on <strong>{format(firstPaymentDate, 'MMM d, yyyy')}</strong> and the last payment due on <strong>{lastPaymentDate ? format(lastPaymentDate, 'MMM d, yyyy') : '—'}</strong>.{agreement.purpose ? <> This loan is for <strong>{agreement.purpose}</strong>.</> : ''}
         </p>
 
-        <div style={{ background: '#FBFAF9', borderRadius: 16, padding: 16 }}>
+        <div style={{ background: '#F5F4F0', borderRadius: 16, padding: 16 }}>
           <h3 style={{ fontSize: 14, fontWeight: 600, color: '#1A1918', marginBottom: 12 }}>Terms of Repayment</h3>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, fontSize: 13 }}>
             <div><span style={{ color: '#787776' }}>Total Amount Due:</span> <span style={{ fontWeight: 500 }}>{formatMoney(agreement.total_amount)}</span></div>
@@ -777,12 +777,12 @@ export default function LoanAgreements() {
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-          <div style={{ background: '#FBFAF9', borderRadius: 10, padding: 16 }}>
+          <div style={{ background: '#F5F4F0', borderRadius: 10, padding: 16 }}>
             <p style={{ fontSize: 11, color: '#787776', marginBottom: 4 }}>Borrower</p>
             <p style={{ fontSize: 18, fontStyle: 'italic', fontFamily: 'Georgia, serif', color: '#1A1918', margin: 0 }}>{agreement.borrower_name || borrowerInfo.full_name}</p>
             <p style={{ fontSize: 11, color: '#787776', marginTop: 4 }}>Signed {format(new Date(agreement.borrower_signed_date), 'MMM d, yyyy')}</p>
           </div>
-          <div style={{ background: '#FBFAF9', borderRadius: 10, padding: 16 }}>
+          <div style={{ background: '#F5F4F0', borderRadius: 10, padding: 16 }}>
             <p style={{ fontSize: 11, color: '#787776', marginBottom: 4 }}>Lender</p>
             <p style={{ fontSize: 18, fontStyle: 'italic', fontFamily: 'Georgia, serif', color: '#1A1918', margin: 0 }}>{agreement.lender_name || lenderInfo.full_name}</p>
             <p style={{ fontSize: 11, color: '#787776', marginTop: 4 }}>Signed {format(new Date(agreement.lender_signed_date), 'MMM d, yyyy')}</p>
@@ -889,18 +889,18 @@ export default function LoanAgreements() {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-          <div style={{ background: '#FBFAF9', borderRadius: 16, padding: 16 }}>
+          <div style={{ background: '#F5F4F0', borderRadius: 16, padding: 16 }}>
             <p style={{ fontSize: 11, color: '#787776', marginBottom: 4 }}>Loan Amount</p>
             <p style={{ fontSize: 24, fontWeight: 700, color: '#1A1918', margin: 0 }}>{formatMoney(agreement.amount)}</p>
           </div>
-          <div style={{ background: '#FBFAF9', borderRadius: 16, padding: 16 }}>
+          <div style={{ background: '#F5F4F0', borderRadius: 16, padding: 16 }}>
             <p style={{ fontSize: 11, color: '#787776', marginBottom: 4 }}>Total Due</p>
             <p style={{ fontSize: 24, fontWeight: 700, color: '#1A1918', margin: 0 }}>{formatMoney(agreement.total_amount)}</p>
           </div>
         </div>
 
         {loan && (
-          <div style={{ background: '#FBFAF9', borderRadius: 16, padding: 16 }}>
+          <div style={{ background: '#F5F4F0', borderRadius: 16, padding: 16 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
               <span style={{ fontSize: 13, color: '#787776' }}>Payment Progress</span>
               <span style={{ fontSize: 13, fontWeight: 500, color: '#1A1918' }}>
@@ -974,7 +974,7 @@ export default function LoanAgreements() {
         </div>
 
         {agreement.purpose && (
-          <div style={{ background: '#FBFAF9', borderRadius: 16, padding: 16 }}>
+          <div style={{ background: '#F5F4F0', borderRadius: 16, padding: 16 }}>
             <p style={{ fontSize: 11, color: '#787776', marginBottom: 4 }}>Purpose</p>
             <p style={{ color: '#1A1918', margin: 0 }}>{agreement.purpose}</p>
           </div>
@@ -1067,9 +1067,9 @@ export default function LoanAgreements() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              style={{ background: '#FBFAF9', borderRadius: 18, maxWidth: activePopup === 'amortization' ? 'min(960px, calc(100vw - 32px))' : 520, width: '100%', maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 8px 40px rgba(0,0,0,0.16)' }}
+              style={{ background: '#F5F4F0', borderRadius: 18, maxWidth: activePopup === 'amortization' ? 'min(960px, calc(100vw - 32px))' : 520, width: '100%', maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 8px 40px rgba(0,0,0,0.16)' }}
             >
-              <div style={{ position: 'sticky', top: 0, background: '#FBFAF9', padding: '6px 14px 5px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderRadius: '18px 18px 0 0' }}>
+              <div style={{ position: 'sticky', top: 0, background: '#F5F4F0', padding: '6px 14px 5px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderRadius: '18px 18px 0 0' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                   <FileText size={14} style={{ color: '#9B9A98' }} />
                   <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>
@@ -1096,7 +1096,7 @@ export default function LoanAgreements() {
       <div className="mesh-layout" style={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: 0, minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased' }}>
 
         {/* Col 1: left nav */}
-        <div className="mesh-left" style={{ background: '#F3F2F0', borderRight: '1px solid rgba(0,0,0,0.06)' }}>
+        <div className="mesh-left" style={{ background: '#F5F4F0', borderRight: '1px solid rgba(0,0,0,0.06)' }}>
           <div style={{ position: 'sticky', top: 0, padding: '24px 8px 0' }}>
             <Link to="/" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, fontStyle: 'italic', fontSize: '1.3rem', color: '#1A1918', textDecoration: 'none', display: 'block', marginBottom: 16, paddingLeft: 6, lineHeight: 1, letterSpacing: '-0.02em' }}>Vony</Link>
             <nav style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -1167,7 +1167,7 @@ export default function LoanAgreements() {
         </div>
 
         {/* Col 2: center content */}
-        <div className="mesh-center" style={{ background: '#FBFAF9', padding: '24px 48px 80px' }}>
+        <div className="mesh-center" style={{ background: '#F5F4F0', padding: '24px 48px 80px' }}>
 
           {/* Page title */}
           <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, fontWeight: 600, letterSpacing: '-0.02em', color: '#1A1918', marginBottom: 32 }}>Documents</div>
