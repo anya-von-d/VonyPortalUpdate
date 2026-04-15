@@ -86,7 +86,8 @@ export default function MeshMobileNav({ user, activePage }) {
       {!isMobile && (
         <div style={{
           position: 'fixed', top: 0, left: 200, right: 0, zIndex: 100, height: 54,
-          background: '#FDFCFA',
+          background: '#FAF9F7',
+          borderBottom: '1px solid rgba(0,0,0,0.08)',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           padding: '0 24px 0 28px',
           fontFamily: "'DM Sans', sans-serif",
