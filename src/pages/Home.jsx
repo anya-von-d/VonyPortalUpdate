@@ -806,7 +806,7 @@ export default function Home() {
 
         {/* ── LEFT: Sidebar nav ── */}
         <div className="mesh-left" style={{ background: 'transparent', borderRight: '1px solid rgba(0,0,0,0.06)' }}>
-          <div style={{ position: 'sticky', top: 0, height: '100vh', padding: '24px 8px 16px', display: 'flex', flexDirection: 'column' }}>
+          <div style={{ position: 'sticky', top: 0, height: '100vh', padding: '14px 8px 16px', display: 'flex', flexDirection: 'column' }}>
             {/* Vony logo */}
             <Link to="/" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, fontStyle: 'italic', fontSize: '1.6rem', color: '#1A1918', textDecoration: 'none', display: 'block', marginBottom: 16, lineHeight: 1, letterSpacing: '-0.02em', paddingLeft: 6 }}>Vony</Link>
             {(() => {
