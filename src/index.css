@@ -302,6 +302,16 @@ input[type="date"] {
   }
 }
 
+/* Home aura glow — smaller on mobile */
+@media (max-width: 768px) {
+  .home-aura-glow {
+    inset: -3px !important;
+    filter: blur(4px) !important;
+    border-radius: 12px !important;
+    opacity: 0.45 !important;
+  }
+}
+
 /* Mesh layout responsive */
 @media (max-width: 768px) {
   .mesh-layout {
