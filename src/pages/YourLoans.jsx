@@ -969,14 +969,13 @@ export default function YourLoans({ defaultTab }) {
             <div style={{
               position: 'relative', zIndex: 1, flex: 1,
               borderRadius: 11, display: 'flex', flexDirection: 'column',
-              boxShadow: '0 0 22px rgba(3,172,234,0.35), 0 0 45px rgba(3,172,234,0.15)',
+              boxShadow: '0 -3px 7px rgba(22,68,148,0.6), 0 -10px 20px rgba(16,52,130,0.38), 0 -18px 35px rgba(10,40,110,0.18), 0 4px 9px rgba(3,172,234,0.65), 0 10px 22px rgba(55,170,238,0.38), 0 18px 38px rgba(90,200,250,0.18), 0 0 40px rgba(10,105,210,0.18), 0 0 65px rgba(3,172,234,0.1)',
             }}>
             {/* Card */}
             <div style={{
               flex: 1,
               padding: '10px 14px', borderRadius: 10,
               background: '#ffffff',
-              boxShadow: 'inset 0 4px 8px rgba(20,60,148,0.26), inset 0 7px 16px rgba(15,90,180,0.12), inset 0 -4px 9px rgba(3,172,234,0.32), inset 0 -9px 18px rgba(80,180,240,0.12), inset 3px 0 8px rgba(10,100,195,0.14), inset -3px 0 8px rgba(10,100,195,0.14)',
               display: 'flex', flexDirection: 'column', justifyContent: 'center',
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 6 }}>
@@ -1016,14 +1015,13 @@ export default function YourLoans({ defaultTab }) {
             <div style={{
               position: 'relative', zIndex: 1, flex: 1,
               borderRadius: 11, display: 'flex', flexDirection: 'column',
-              boxShadow: '0 0 22px rgba(3,172,234,0.35), 0 0 45px rgba(3,172,234,0.15)',
+              boxShadow: '0 -3px 7px rgba(22,68,148,0.6), 0 -10px 20px rgba(16,52,130,0.38), 0 -18px 35px rgba(10,40,110,0.18), 0 4px 9px rgba(3,172,234,0.65), 0 10px 22px rgba(55,170,238,0.38), 0 18px 38px rgba(90,200,250,0.18), 0 0 40px rgba(10,105,210,0.18), 0 0 65px rgba(3,172,234,0.1)',
             }}>
             {/* Card */}
             <div style={{
               flex: 1,
               padding: '10px 14px', borderRadius: 10,
               background: '#ffffff',
-              boxShadow: 'inset 0 4px 8px rgba(20,60,148,0.26), inset 0 7px 16px rgba(15,90,180,0.12), inset 0 -4px 9px rgba(3,172,234,0.32), inset 0 -9px 18px rgba(80,180,240,0.12), inset 3px 0 8px rgba(10,100,195,0.14), inset -3px 0 8px rgba(10,100,195,0.14)',
               display: 'flex', flexDirection: 'column', justifyContent: 'center',
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 6 }}>
@@ -1056,13 +1054,12 @@ export default function YourLoans({ defaultTab }) {
             <div style={{
               position: 'relative', zIndex: 1, flex: 1,
               borderRadius: 11, display: 'flex', flexDirection: 'column',
-              boxShadow: '0 0 22px rgba(3,172,234,0.35), 0 0 45px rgba(3,172,234,0.15)',
+              boxShadow: '0 -3px 7px rgba(22,68,148,0.6), 0 -10px 20px rgba(16,52,130,0.38), 0 -18px 35px rgba(10,40,110,0.18), 0 4px 9px rgba(3,172,234,0.65), 0 10px 22px rgba(55,170,238,0.38), 0 18px 38px rgba(90,200,250,0.18), 0 0 40px rgba(10,105,210,0.18), 0 0 65px rgba(3,172,234,0.1)',
             }}>
             <div style={{
               flex: 1,
               padding: '10px 14px', borderRadius: 10,
               background: '#ffffff',
-              boxShadow: 'inset 0 4px 8px rgba(20,60,148,0.26), inset 0 7px 16px rgba(15,90,180,0.12), inset 0 -4px 9px rgba(3,172,234,0.32), inset 0 -9px 18px rgba(80,180,240,0.12), inset 3px 0 8px rgba(10,100,195,0.14), inset -3px 0 8px rgba(10,100,195,0.14)',
               display: 'flex', flexDirection: 'column', justifyContent: 'center',
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 6 }}>
