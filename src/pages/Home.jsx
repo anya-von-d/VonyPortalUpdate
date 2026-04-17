@@ -927,7 +927,7 @@ export default function Home() {
                 position: 'absolute', bottom: 0, left: '50%',
                 transform: 'translateX(-50%)',
                 width: 'calc(100% + 36px)', height: '100%',
-                background: 'linear-gradient(225deg, rgb(99,102,241) 0%, rgb(79,70,229) 18%, rgb(37,99,235) 38%, rgb(59,130,246) 55%, rgb(14,165,233) 72%, rgb(6,182,212) 88%, rgb(20,184,166) 100%)',
+                background: 'linear-gradient(225deg, rgb(129,140,248) 0%, rgb(99,102,241) 10%, rgb(67,56,202) 20%, rgb(79,70,229) 30%, rgb(37,99,235) 42%, rgb(96,165,250) 52%, rgb(59,130,246) 62%, rgb(14,165,233) 72%, rgb(56,189,248) 82%, rgb(6,182,212) 92%, rgb(20,184,166) 100%)',
                 filter: 'blur(12px) saturate(1.18)',
                 opacity: 0.4,
                 borderRadius: 16, zIndex: 0, pointerEvents: 'none',
