@@ -142,7 +142,7 @@ export default function SidebarBottomSection() {
             letterSpacing: '0.1em', textTransform: 'uppercase',
             fontFamily: "'DM Sans', sans-serif",
           }}>
-            Key Alerts
+            What Needs Attention
           </span>
         </div>
 
