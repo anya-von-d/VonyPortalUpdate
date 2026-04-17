@@ -790,9 +790,9 @@ export default function Home() {
   const alertTotal = overdueReminders.length;
   overdueCountRef.current = alertTotal;
 
-  const SectionHeader = ({ title, linkTo, linkLabel }) => (
+  const SectionHeader = ({ title, linkTo, linkLabel, titleColor }) => (
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 5, marginBottom: 2 }}>
-      <span style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>{title}</span>
+      <span style={{ fontSize: 13, fontWeight: 600, color: titleColor || '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>{title}</span>
       {linkTo && <Link to={linkTo} style={{ fontSize: 11, fontWeight: 500, color: '#03ACEA', textDecoration: 'none' }}>{linkLabel}</Link>}
     </div>
   );
@@ -983,7 +983,7 @@ export default function Home() {
                     border: '1px solid #2563EB',
                     display: 'flex', flexDirection: 'column', justifyContent: 'center',
                   }}>
-                    <SectionHeader title="Next Payment Due" />
+                    <SectionHeader title="Next Payment Due" titleColor="#2563EB" />
                     {nextBorrowerPayment ? (
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'nowrap', overflow: 'hidden' }}>
                         <span style={{ fontSize: 15, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em', flexShrink: 0 }}>{format(nextBorrowerPayment.date, 'MMM d')}</span>
