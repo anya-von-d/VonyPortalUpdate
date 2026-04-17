@@ -666,10 +666,10 @@ export default function Home() {
       if (loan.status === 'pending' || !loan.status) {
         description = isLender ? `Sent ${amount} loan offer to ${name}` : `Received ${amount} loan offer from ${name}`;
         icon = isLender ? 'send' : 'receive';
-        color = isLender ? '#7C3AED' : '#03ACEA';
+        color = isLender ? '#6366F1' : '#03ACEA';
       } else if (loan.status === 'active') {
         description = isLender ? `${name} accepted your ${amount} loan` : `You accepted ${amount} loan from ${name}`;
-        icon = 'check'; color = '#16A34A';
+        icon = 'check'; color = '#14B8A6';
       } else if (loan.status === 'declined') {
         description = isLender ? `${name} declined your ${amount} loan` : `You declined ${amount} loan from ${name}`;
         icon = 'x'; color = '#DC2626';
@@ -678,7 +678,7 @@ export default function Home() {
         icon = 'x'; color = '#DC2626';
       } else if (loan.status === 'completed') {
         description = isLender ? `${name} fully repaid your ${amount} loan` : `You fully repaid ${amount} loan to ${name}`;
-        icon = 'check'; color = '#16A34A';
+        icon = 'check'; color = '#14B8A6';
       } else {
         description = isLender ? `${amount} loan to ${name}` : `${amount} loan from ${name}`;
       }
@@ -704,7 +704,7 @@ export default function Home() {
         description: isBorrower ? `You made a ${amount} payment to ${name}` : `Received ${amount} payment from ${name}`,
         detail: format(new Date(p.payment_date || p.created_at), 'MMM d'),
         icon: isBorrower ? 'send' : 'receive',
-        color: isBorrower ? '#7C3AED' : '#03ACEA',
+        color: isBorrower ? '#6366F1' : '#03ACEA',
         amount: isBorrower ? `-${amount}` : `+${amount}`
       });
     });
@@ -938,13 +938,30 @@ export default function Home() {
                     border: '1px solid rgba(37,99,235,0.35)',
                     display: 'flex', flexDirection: 'column', justifyContent: 'center',
                   }}>
+                    {/* Top-right day badge */}
+                    {daysLabel && (
+                      <span style={{ position: 'absolute', top: 10, right: 10, fontSize: 9, fontWeight: 700, color: badgeColor, background: badgeBg, borderRadius: 5, padding: '2px 6px' }}>{daysLabel}</span>
+                    )}
                     <SectionHeader title="Next Payment Due" titleColor="#2563EB" />
                     {nextBorrowerPayment ? (
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'nowrap', overflow: 'hidden' }}>
-                        <span style={{ fontSize: 15, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em', flexShrink: 0 }}>{format(nextBorrowerPayment.date, 'MMM d')}</span>
-                        {daysLabel && <span style={{ fontSize: 9, fontWeight: 700, color: badgeColor, background: badgeBg, borderRadius: 5, padding: '2px 6px', flexShrink: 0 }}>{daysLabel}</span>}
-                        <span style={{ fontSize: 11, color: '#9B9A98', marginLeft: 'auto', flexShrink: 0, whiteSpace: 'nowrap' }}>{formatMoney(nextBorrowerPayment.payment_amount || 0)} to {nextBorrowerPayment.firstName}</span>
-                      </div>
+                      <>
+                        <div style={{ display: 'flex', alignItems: 'baseline', gap: 4, flexWrap: 'nowrap', overflow: 'hidden' }}>
+                          <span style={{ fontSize: 15, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em', flexShrink: 0 }}>{format(nextBorrowerPayment.date, 'MMM d')}</span>
+                          <span style={{ fontSize: 11, color: '#9B9A98', flexShrink: 0 }}>,</span>
+                          <span style={{ fontSize: 11, color: '#9B9A98', marginLeft: 'auto', flexShrink: 0, whiteSpace: 'nowrap' }}>{formatMoney(nextBorrowerPayment.payment_amount || 0)} to {nextBorrowerPayment.firstName}</span>
+                        </div>
+                        <Link
+                          to={`${createPageUrl("RecordPayment")}?loanId=${nextBorrowerPayment.id}`}
+                          style={{
+                            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                            marginTop: 10, padding: '6px 10px', borderRadius: 7,
+                            background: '#2563EB', color: 'white',
+                            fontSize: 11, fontWeight: 600, textDecoration: 'none',
+                            alignSelf: 'flex-start',
+                            fontFamily: "'DM Sans', sans-serif",
+                          }}
+                        >Log Payment</Link>
+                      </>
                     ) : (
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <span style={{ fontSize: 15, fontWeight: 700, color: '#C5C3C0' }}>—</span>
@@ -986,13 +1003,30 @@ export default function Home() {
                     background: '#ffffff',
                     display: 'flex', flexDirection: 'column', justifyContent: 'center',
                   }}>
+                    {/* Top-right day badge */}
+                    {daysLabel && (
+                      <span style={{ position: 'absolute', top: 10, right: 10, fontSize: 9, fontWeight: 700, color: badgeColor, background: badgeBg, borderRadius: 5, padding: '2px 6px' }}>{daysLabel}</span>
+                    )}
                     <SectionHeader title="Next Payment Incoming" />
                     {nextLenderPayment ? (
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'nowrap', overflow: 'hidden' }}>
-                        <span style={{ fontSize: 15, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em', flexShrink: 0 }}>{format(nextLenderPayment.date, 'MMM d')}</span>
-                        {daysLabel && <span style={{ fontSize: 9, fontWeight: 700, color: badgeColor, background: badgeBg, borderRadius: 5, padding: '2px 6px', flexShrink: 0 }}>{daysLabel}</span>}
-                        <span style={{ fontSize: 11, color: '#9B9A98', marginLeft: 'auto', flexShrink: 0, whiteSpace: 'nowrap' }}>{formatMoney(nextLenderPayment.payment_amount || 0)} from {nextLenderPayment.firstName}</span>
-                      </div>
+                      <>
+                        <div style={{ display: 'flex', alignItems: 'baseline', gap: 4, flexWrap: 'nowrap', overflow: 'hidden' }}>
+                          <span style={{ fontSize: 15, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em', flexShrink: 0 }}>{format(nextLenderPayment.date, 'MMM d')}</span>
+                          <span style={{ fontSize: 11, color: '#9B9A98', flexShrink: 0 }}>,</span>
+                          <span style={{ fontSize: 11, color: '#9B9A98', marginLeft: 'auto', flexShrink: 0, whiteSpace: 'nowrap' }}>{formatMoney(nextLenderPayment.payment_amount || 0)} from {nextLenderPayment.firstName}</span>
+                        </div>
+                        <Link
+                          to={`${createPageUrl("RecordPayment")}?loanId=${nextLenderPayment.id}`}
+                          style={{
+                            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                            marginTop: 10, padding: '6px 10px', borderRadius: 7,
+                            background: '#03ACEA', color: 'white',
+                            fontSize: 11, fontWeight: 600, textDecoration: 'none',
+                            alignSelf: 'flex-start',
+                            fontFamily: "'DM Sans', sans-serif",
+                          }}
+                        >Log Payment</Link>
+                      </>
                     ) : (
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <span style={{ fontSize: 15, fontWeight: 700, color: '#C5C3C0' }}>—</span>

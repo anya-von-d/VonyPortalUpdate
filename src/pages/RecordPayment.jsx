@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Payment, Loan, User, PublicProfile } from "@/entities/all";
 import { useAuth } from "@/lib/AuthContext";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import {
   DollarSign, CheckCircle, CreditCard, Banknote, Smartphone, ChevronDown,
@@ -89,6 +89,7 @@ export default function RecordPayment() {
   const { user: authUser, userProfile, logout } = useAuth();
   const user = userProfile ? { ...userProfile, id: authUser?.id } : null;
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Data
   const [loans, setLoans] = useState([]);
@@ -125,6 +126,22 @@ export default function RecordPayment() {
 
 
   useEffect(() => { if (user?.id) loadData(); }, [user?.id]);
+
+  // Pre-select a loan if ?loanId=... is in the URL (e.g. coming from the
+  // Next Payment Due / Incoming cards on Home). Waits for loans to be loaded,
+  // and only fires once so the user can still navigate back to the picker.
+  const didPreselectRef = useRef(false);
+  useEffect(() => {
+    if (didPreselectRef.current) return;
+    if (!loans.length) return;
+    const params = new URLSearchParams(location.search);
+    const loanId = params.get('loanId');
+    if (!loanId) return;
+    const loan = loans.find(l => l.id === loanId);
+    if (!loan) return;
+    didPreselectRef.current = true;
+    handleSelectLoan(loan);
+  }, [loans, location.search]);
 
   // Confetti when payment is successfully recorded
   useEffect(() => {
