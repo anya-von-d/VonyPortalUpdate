@@ -1162,7 +1162,7 @@ export default function YourLoans({ defaultTab }) {
                     </div>
                   </PageCard>
                 ) : (
-                  <PageCard title="Loans Ranked By" style={{ marginBottom: 0 }} headerRight={
+                  <PageCard title="Active Borrowing Summary" style={{ marginBottom: 0 }} headerRight={
                     <Select value={rankingFilter} onValueChange={setRankingFilter}>
                       <SelectTrigger className="w-auto h-7 px-2 border-0 text-xs font-medium rounded-lg" style={{ background: 'rgba(29,91,148,0.10)', color: '#1D5B94' }}><SelectValue /></SelectTrigger>
                       <SelectContent>
@@ -1223,8 +1223,7 @@ export default function YourLoans({ defaultTab }) {
                             <div key={loan.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '6px 0', borderBottom: idx < 4 ? '1px solid rgba(0,0,0,0.04)' : 'none' }}>
                               <RPC percentage={pct} number={idx + 1} size={32} />
                               <div style={{ flex: 1, minWidth: 0 }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
-                                  <UserAvatar name={op?.full_name || op?.username} src={op?.profile_picture_url} size={16} radius={3} />
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: 2 }}>
                                   <div style={{ fontSize: 13, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name} lent you {formatMoney(totalAmt)}{purpose}</div>
                                 </div>
                                 <div style={{ fontSize: 11, color: '#9B9A98' }}>{formatMoney(paidAmt)} of {formatMoney(totalAmt)} repaid</div>
@@ -1343,36 +1342,6 @@ export default function YourLoans({ defaultTab }) {
           </div>
         )}
 
-        {/* Active Borrowing Summary — borrowing only */}
-        {!isLending && activeLoans.length > 0 && (
-          <PageCard title="Active Borrowing Summary">
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              {activeLoans.slice(0, 5).map((loan) => {
-                const otherProfile = publicProfiles.find(p => p.user_id === loan.lender_id);
-                const totalAmt = loan.total_amount || loan.amount || 0;
-                const paidAmt = loan.amount_paid || 0;
-                const pct = totalAmt > 0 ? Math.round((paidAmt / totalAmt) * 100) : 0;
-                const name = otherProfile?.full_name?.split(' ')[0] || otherProfile?.username || 'User';
-                const purpose = loan.purpose ? ` for ${loan.purpose}` : '';
-                return (
-                  <div key={loan.id} style={{ padding: '9px 0', borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                      <UserAvatar name={otherProfile?.full_name || otherProfile?.username} src={otherProfile?.profile_picture_url} size={20} radius={5} />
-                      <div style={{ fontSize: 13, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name} lent you {formatMoney(totalAmt)}{purpose}</div>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <div style={{ flex: 1, height: 6, borderRadius: 3, background: 'rgba(29,91,148,0.1)', overflow: 'hidden' }}>
-                        <div style={{ height: '100%', borderRadius: 3, background: '#1D5B94', width: `${pct}%`, transition: 'width 0.5s' }} />
-                      </div>
-                      <span style={{ fontSize: 11, fontWeight: 700, color: '#9B9A98', flexShrink: 0 }}>{pct}%</span>
-                    </div>
-                    <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 3 }}>{formatMoney(paidAmt)} of {formatMoney(totalAmt)} repaid</div>
-                  </div>
-                );
-              })}
-            </div>
-          </PageCard>
-        )}
       </>
     );
   };
