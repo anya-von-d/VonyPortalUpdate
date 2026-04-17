@@ -791,7 +791,7 @@ export default function Home() {
   overdueCountRef.current = alertTotal;
 
   const SectionHeader = ({ title, linkTo, linkLabel }) => (
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 10, marginBottom: 4, borderBottom: '1px solid rgba(0,0,0,0.07)' }}>
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 10, marginBottom: 4 }}>
       <span style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>{title}</span>
       {linkTo && <Link to={linkTo} style={{ fontSize: 11, fontWeight: 500, color: '#03ACEA', textDecoration: 'none' }}>{linkLabel}</Link>}
     </div>
@@ -1119,7 +1119,18 @@ export default function Home() {
               </div>
 
               {/* Recent Activity */}
-              <div style={{ background: '#ffffff', borderRadius: 10, border: '1px solid rgba(0,0,0,0.07)', padding: '14px 18px' }}>
+              <div style={{ position: 'relative' }}>
+                {/* Thin aurora glow — #CFDCE7 → background */}
+                <div style={{
+                  position: 'absolute', inset: -3,
+                  background: '#CFDCE7',
+                  borderRadius: 14,
+                  filter: 'blur(5px)',
+                  opacity: 0.55,
+                  zIndex: 0,
+                  pointerEvents: 'none',
+                }} />
+              <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: '1px solid rgba(207,220,231,0.6)', padding: '14px 18px' }}>
                 <SectionHeader title="Recent Activity" linkTo={createPageUrl("RecentActivity")} linkLabel="View all →" />
                 {recentActivity.length === 0 ? (
                   <div style={{ padding: '8px 0', fontSize: 13, color: '#9B9A98', textAlign: 'center' }}>No activity just yet 🕊️</div>
@@ -1141,6 +1152,7 @@ export default function Home() {
                   </div>
                 ))}
               </div>
+              </div>{/* end Recent Activity aurora wrapper */}
 
               {/* Active Lending */}
               <div style={{ background: '#ffffff', borderRadius: 10, border: '1px solid rgba(0,0,0,0.07)', padding: '14px 18px' }}>
@@ -1214,21 +1226,6 @@ export default function Home() {
                   <div style={{ padding: '8px 0', fontSize: 13, color: '#9B9A98', textAlign: 'center' }}>Your loan history will appear here 📊</div>
                 ) : (
                   <>
-                    {/* Legend */}
-                    <div style={{ display: 'flex', gap: 16, marginBottom: 16, marginTop: 4 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: '#787776' }}>
-                        <div style={{ width: 10, height: 10, borderRadius: 3, background: '#03ACEA' }} />
-                        Lending
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: '#787776' }}>
-                        <div style={{ width: 10, height: 10, borderRadius: 3, background: '#1D5B94' }} />
-                        Borrowing
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: '#9B9A98' }}>
-                        <div style={{ width: 10, height: 10, borderRadius: 3, background: 'rgba(3,172,234,0.25)' }} />
-                        Predicted
-                      </div>
-                    </div>
                     {/* Chart */}
                     <div style={{ display: 'flex', alignItems: 'flex-end', gap: 14, height: 120 }}>
                       {chartData.data.map((d, i) => {
@@ -1255,6 +1252,21 @@ export default function Home() {
                           {d.label}
                         </div>
                       ))}
+                    </div>
+                    {/* Legend — centered below chart */}
+                    <div style={{ display: 'flex', gap: 16, justifyContent: 'center', marginTop: 12 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: '#787776' }}>
+                        <div style={{ width: 10, height: 10, borderRadius: 3, background: '#03ACEA' }} />
+                        Lending
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: '#787776' }}>
+                        <div style={{ width: 10, height: 10, borderRadius: 3, background: '#1D5B94' }} />
+                        Borrowing
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: '#9B9A98' }}>
+                        <div style={{ width: 10, height: 10, borderRadius: 3, background: 'rgba(3,172,234,0.25)' }} />
+                        Predicted
+                      </div>
                     </div>
                   </>
                 )}
