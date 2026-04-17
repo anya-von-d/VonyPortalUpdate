@@ -968,15 +968,16 @@ export default function YourLoans({ defaultTab }) {
             {/* Gradient border wrapper */}
             <div style={{
               position: 'relative', zIndex: 1, flex: 1,
-              background: 'linear-gradient(to right, rgba(3,172,234,0) 0%, #03ACEA 67%, #03ACEA 100%)',
-              padding: 1, borderRadius: 11, display: 'flex', flexDirection: 'column',
+              border: '1px solid #03ACEA',
+              borderRadius: 11, display: 'flex', flexDirection: 'column',
+              boxShadow: '0 0 10px rgba(3,172,234,0.5), 0 0 22px rgba(3,172,234,0.25)',
             }}>
             {/* Card */}
             <div style={{
               flex: 1,
               padding: '10px 14px', borderRadius: 10,
               background: '#ffffff',
-              boxShadow: 'inset 0 0 22px rgba(3,172,234,0.13)',
+              boxShadow: 'inset 0 0 28px rgba(3,172,234,0.2)',
               display: 'flex', flexDirection: 'column', justifyContent: 'center',
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 6 }}>
@@ -1015,15 +1016,16 @@ export default function YourLoans({ defaultTab }) {
             {/* Gradient border wrapper */}
             <div style={{
               position: 'relative', zIndex: 1, flex: 1,
-              background: 'linear-gradient(to right, rgba(3,172,234,0) 0%, #03ACEA 67%, #03ACEA 100%)',
-              padding: 1, borderRadius: 11, display: 'flex', flexDirection: 'column',
+              border: '1px solid #03ACEA',
+              borderRadius: 11, display: 'flex', flexDirection: 'column',
+              boxShadow: '0 0 10px rgba(3,172,234,0.5), 0 0 22px rgba(3,172,234,0.25)',
             }}>
             {/* Card */}
             <div style={{
               flex: 1,
               padding: '10px 14px', borderRadius: 10,
               background: '#ffffff',
-              boxShadow: 'inset 0 0 22px rgba(3,172,234,0.13)',
+              boxShadow: 'inset 0 0 28px rgba(3,172,234,0.2)',
               display: 'flex', flexDirection: 'column', justifyContent: 'center',
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 6 }}>
@@ -1055,14 +1057,15 @@ export default function YourLoans({ defaultTab }) {
           <div style={{ position: 'relative', display: 'flex', flexDirection: 'column' }}>
             <div style={{
               position: 'relative', zIndex: 1, flex: 1,
-              background: 'linear-gradient(to right, rgba(3,172,234,0) 0%, #03ACEA 67%, #03ACEA 100%)',
-              padding: 1, borderRadius: 11, display: 'flex', flexDirection: 'column',
+              border: '1px solid #03ACEA',
+              borderRadius: 11, display: 'flex', flexDirection: 'column',
+              boxShadow: '0 0 10px rgba(3,172,234,0.5), 0 0 22px rgba(3,172,234,0.25)',
             }}>
             <div style={{
               flex: 1,
               padding: '10px 14px', borderRadius: 10,
               background: '#ffffff',
-              boxShadow: 'inset 0 0 22px rgba(3,172,234,0.13)',
+              boxShadow: 'inset 0 0 28px rgba(3,172,234,0.2)',
               display: 'flex', flexDirection: 'column', justifyContent: 'center',
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 6 }}>
