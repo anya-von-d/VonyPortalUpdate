@@ -965,14 +965,6 @@ export default function YourLoans({ defaultTab }) {
           {/* Next Incoming / Next Payment Due — aurora card */}
           <div style={{ position: 'relative', display: 'flex', flexDirection: 'column' }}>
             {/* Aurora glow — cyan/teal palette */}
-            <div style={{
-              position: 'absolute', top: '50%', left: '50%',
-              transform: 'translate(-50%, -50%)',
-              width: 'calc(100% + 10px)', height: 'calc(100% + 10px)',
-              background: 'linear-gradient(135deg, rgb(3,172,234) 0%, rgb(6,182,212) 30%, rgb(20,184,166) 60%, rgb(3,172,234) 100%)',
-              filter: 'blur(5px) saturate(1.2)', opacity: 0.35,
-              borderRadius: 18, zIndex: 0, pointerEvents: 'none',
-            }} />
             {/* Gradient border wrapper */}
             <div style={{
               position: 'relative', zIndex: 1, flex: 1,
@@ -984,6 +976,7 @@ export default function YourLoans({ defaultTab }) {
               flex: 1,
               padding: '10px 14px', borderRadius: 10,
               background: '#ffffff',
+              boxShadow: 'inset 0 0 22px rgba(3,172,234,0.13)',
               display: 'flex', flexDirection: 'column', justifyContent: 'center',
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 6 }}>
@@ -1019,14 +1012,6 @@ export default function YourLoans({ defaultTab }) {
 
           {/* Next Payment Amount — aurora style */}
           <div style={{ position: 'relative', display: 'flex', flexDirection: 'column' }}>
-            <div style={{
-              position: 'absolute', top: '50%', left: '50%',
-              transform: 'translate(-50%, -50%)',
-              width: 'calc(100% + 10px)', height: 'calc(100% + 10px)',
-              background: 'linear-gradient(135deg, rgb(3,172,234) 0%, rgb(6,182,212) 30%, rgb(20,184,166) 60%, rgb(3,172,234) 100%)',
-              filter: 'blur(5px) saturate(1.2)', opacity: 0.35,
-              borderRadius: 18, zIndex: 0, pointerEvents: 'none',
-            }} />
             {/* Gradient border wrapper */}
             <div style={{
               position: 'relative', zIndex: 1, flex: 1,
@@ -1038,6 +1023,7 @@ export default function YourLoans({ defaultTab }) {
               flex: 1,
               padding: '10px 14px', borderRadius: 10,
               background: '#ffffff',
+              boxShadow: 'inset 0 0 22px rgba(3,172,234,0.13)',
               display: 'flex', flexDirection: 'column', justifyContent: 'center',
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 6 }}>
@@ -1068,14 +1054,6 @@ export default function YourLoans({ defaultTab }) {
           {/* You Owe / Owed to You — aurora card matching the other two */}
           <div style={{ position: 'relative', display: 'flex', flexDirection: 'column' }}>
             <div style={{
-              position: 'absolute', top: '50%', left: '50%',
-              transform: 'translate(-50%, -50%)',
-              width: 'calc(100% + 10px)', height: 'calc(100% + 10px)',
-              background: 'linear-gradient(135deg, rgb(3,172,234) 0%, rgb(6,182,212) 30%, rgb(20,184,166) 60%, rgb(3,172,234) 100%)',
-              filter: 'blur(5px) saturate(1.2)', opacity: 0.35,
-              borderRadius: 18, zIndex: 0, pointerEvents: 'none',
-            }} />
-            <div style={{
               position: 'relative', zIndex: 1, flex: 1,
               background: 'linear-gradient(to right, rgba(3,172,234,0) 0%, #03ACEA 67%, #03ACEA 100%)',
               padding: 1, borderRadius: 11, display: 'flex', flexDirection: 'column',
@@ -1084,6 +1062,7 @@ export default function YourLoans({ defaultTab }) {
               flex: 1,
               padding: '10px 14px', borderRadius: 10,
               background: '#ffffff',
+              boxShadow: 'inset 0 0 22px rgba(3,172,234,0.13)',
               display: 'flex', flexDirection: 'column', justifyContent: 'center',
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 6 }}>

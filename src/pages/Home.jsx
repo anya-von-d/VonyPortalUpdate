@@ -1122,10 +1122,10 @@ export default function Home() {
               <div style={{ position: 'relative' }}>
                 {/* Thin aurora glow — #CFDCE7 → background */}
                 <div style={{
-                  position: 'absolute', inset: -3,
+                  position: 'absolute', inset: -7,
                   background: '#CFDCE7',
-                  borderRadius: 14,
-                  filter: 'blur(5px)',
+                  borderRadius: 16,
+                  filter: 'blur(8px)',
                   opacity: 0.55,
                   zIndex: 0,
                   pointerEvents: 'none',
