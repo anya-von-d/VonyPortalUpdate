@@ -968,7 +968,7 @@ export default function Home() {
                     transform: 'translate(-50%, -50%)',
                     width: 'calc(100% + 10px)',
                     height: 'calc(100% + 10px)',
-                    background: 'linear-gradient(135deg, rgb(30,64,175) 0%, rgb(59,130,246) 18%, rgb(96,165,250) 34%, rgb(99,102,241) 52%, rgb(79,70,229) 70%, rgb(67,56,202) 85%, rgb(37,99,235) 100%)',
+                    background: 'linear-gradient(135deg, rgb(30,58,138) 0%, rgb(29,78,216) 10%, rgb(37,99,235) 20%, rgb(59,130,246) 30%, rgb(96,165,250) 40%, rgb(129,140,248) 50%, rgb(99,102,241) 60%, rgb(79,70,229) 70%, rgb(67,56,202) 80%, rgb(49,46,129) 90%, rgb(30,64,175) 100%)',
                     filter: 'blur(5px) saturate(1.2)',
                     opacity: 0.35,
                     borderRadius: 18,
@@ -980,7 +980,7 @@ export default function Home() {
                     position: 'relative', zIndex: 1, flex: 1,
                     padding: '12px 14px', borderRadius: 10,
                     background: '#ffffff',
-                    border: '1px solid #2563EB',
+                    border: '1px solid rgba(37,99,235,0.35)',
                     display: 'flex', flexDirection: 'column', justifyContent: 'center',
                   }}>
                     <SectionHeader title="Next Payment Due" titleColor="#2563EB" />
