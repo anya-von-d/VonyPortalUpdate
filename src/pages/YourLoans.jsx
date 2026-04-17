@@ -969,7 +969,7 @@ export default function YourLoans({ defaultTab }) {
             <div style={{
               position: 'relative', zIndex: 1, flex: 1,
               borderRadius: 11, display: 'flex', flexDirection: 'column',
-              boxShadow: '0 -1px 3px rgba(65,100,135,0.55), 0 -4px 8px rgba(105,145,180,0.4), 0 -8px 14px rgba(38,60,88,0.22), 0 1px 3px rgba(205,222,235,0.6), 0 4px 8px rgba(160,190,215,0.45), 0 8px 14px rgba(105,145,180,0.25), 0 0 10px rgba(105,145,180,0.3), 0 0 18px rgba(65,100,135,0.12)',
+              boxShadow: '0 -1px 3px rgba(78,108,135,0.6), 0 -5px 11px rgba(125,155,180,0.42), 0 -12px 22px rgba(48,68,88,0.22), 0 2px 4px rgba(215,228,238,0.65), 0 6px 13px rgba(168,195,215,0.48), 0 13px 24px rgba(125,155,180,0.26), 0 0 18px rgba(125,155,180,0.3), 0 0 30px rgba(78,108,135,0.14)',
             }}>
             {/* Card */}
             <div style={{
@@ -1015,7 +1015,7 @@ export default function YourLoans({ defaultTab }) {
             <div style={{
               position: 'relative', zIndex: 1, flex: 1,
               borderRadius: 11, display: 'flex', flexDirection: 'column',
-              boxShadow: '0 -1px 3px rgba(65,100,135,0.55), 0 -4px 8px rgba(105,145,180,0.4), 0 -8px 14px rgba(38,60,88,0.22), 0 1px 3px rgba(205,222,235,0.6), 0 4px 8px rgba(160,190,215,0.45), 0 8px 14px rgba(105,145,180,0.25), 0 0 10px rgba(105,145,180,0.3), 0 0 18px rgba(65,100,135,0.12)',
+              boxShadow: '0 -1px 3px rgba(78,108,135,0.6), 0 -5px 11px rgba(125,155,180,0.42), 0 -12px 22px rgba(48,68,88,0.22), 0 2px 4px rgba(215,228,238,0.65), 0 6px 13px rgba(168,195,215,0.48), 0 13px 24px rgba(125,155,180,0.26), 0 0 18px rgba(125,155,180,0.3), 0 0 30px rgba(78,108,135,0.14)',
             }}>
             {/* Card */}
             <div style={{
@@ -1054,7 +1054,7 @@ export default function YourLoans({ defaultTab }) {
             <div style={{
               position: 'relative', zIndex: 1, flex: 1,
               borderRadius: 11, display: 'flex', flexDirection: 'column',
-              boxShadow: '0 -1px 3px rgba(65,100,135,0.55), 0 -4px 8px rgba(105,145,180,0.4), 0 -8px 14px rgba(38,60,88,0.22), 0 1px 3px rgba(205,222,235,0.6), 0 4px 8px rgba(160,190,215,0.45), 0 8px 14px rgba(105,145,180,0.25), 0 0 10px rgba(105,145,180,0.3), 0 0 18px rgba(65,100,135,0.12)',
+              boxShadow: '0 -1px 3px rgba(78,108,135,0.6), 0 -5px 11px rgba(125,155,180,0.42), 0 -12px 22px rgba(48,68,88,0.22), 0 2px 4px rgba(215,228,238,0.65), 0 6px 13px rgba(168,195,215,0.48), 0 13px 24px rgba(125,155,180,0.26), 0 0 18px rgba(125,155,180,0.3), 0 0 30px rgba(78,108,135,0.14)',
             }}>
             <div style={{
               flex: 1,
