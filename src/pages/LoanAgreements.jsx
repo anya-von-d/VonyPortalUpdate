@@ -1052,7 +1052,7 @@ export default function LoanAgreements() {
 
   return (
     <>
-      <MeshMobileNav user={user} activePage="Documents" />
+      <MeshMobileNav user={user} activePage="Records" />
       {/* Popup Modal */}
       <AnimatePresence>
         {activePopup && popupAgreement && (
@@ -1104,7 +1104,7 @@ export default function LoanAgreements() {
 
           {/* Mobile-only page title (desktop shows it in top bar) */}
           <div className="mobile-page-title">
-            <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 17, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', marginBottom: 12 }}>Documents</div>
+            <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 17, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', marginBottom: 12 }}>Records</div>
             <div style={{ height: 1, background: 'rgba(0,0,0,0.08)', marginLeft: -32, marginRight: -32, marginBottom: 20 }} />
           </div>
 
