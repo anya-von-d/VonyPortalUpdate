@@ -260,8 +260,7 @@ export default function Friends() {
 
   const RightSection = ({ title, children }) => (
     <div style={{ marginBottom: 40 }}>
-      <div style={{ fontSize: 9, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 9 }}>{title}</div>
-      <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 14 }} />
+      <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif", paddingBottom: 5, marginBottom: 2 }}>{title}</div>
       {children}
     </div>
   );
@@ -484,7 +483,7 @@ export default function Friends() {
             {receivedRequests.length > 0 && (
               <div style={{ marginTop: searchQuery.trim() ? 20 : 0 }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10, paddingTop: searchQuery.trim() ? 10 : 0, borderTop: searchQuery.trim() ? '1px solid rgba(0,0,0,0.06)' : 'none' }}>
-                  <span style={{ fontSize: 9, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Friend Requests</span>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>Friend Requests</span>
                   <span style={{ fontSize: 11, color: '#9B9A98' }}>{receivedRequests.length} pending</span>
                 </div>
                 {receivedRequests.map((request) => {

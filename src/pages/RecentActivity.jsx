@@ -575,8 +575,7 @@ export default function RecentActivityPage() {
   /* ── RightSection component ──────────────────────────────── */
   const RightSection = ({ title, children }) => (
     <div style={{ marginBottom: 40 }}>
-      <div style={{ fontSize: 9, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 9 }}>{title}</div>
-      <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 14 }} />
+      <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif", paddingBottom: 5, marginBottom: 2 }}>{title}</div>
       {children}
     </div>
   );

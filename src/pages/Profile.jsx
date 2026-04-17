@@ -461,10 +461,12 @@ export default function Profile() {
           {/* Page Content */}
           <div style={{ paddingBottom: 40 }}>
             {/* Personal Information — full width */}
-            <div style={{ background: 'white', borderRadius: 10, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 10px rgba(0,0,0,0.08), 0 6px 24px rgba(0,0,0,0.06)', marginBottom: 20, overflow: 'hidden' }}>
+            <div style={{ position: 'relative', marginBottom: 20 }}>
+              <div className="home-aura-glow" style={{ position: 'absolute', inset: -7, background: '#CFDCE7', borderRadius: 16, filter: 'blur(8px)', opacity: 0.55, zIndex: 0, pointerEvents: 'none' }} />
+            <div style={{ position: 'relative', zIndex: 1, background: 'white', borderRadius: 10, border: '1px solid rgba(207,220,231,0.6)', overflow: 'hidden' }}>
               {/* Header */}
-              <div style={{ padding: '14px 18px 12px', borderBottom: '1px solid rgba(0,0,0,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: 9, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>PERSONAL INFORMATION</span>
+              <div style={{ padding: '14px 18px 7px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>Personal Information</span>
                 {isEditing ? (
                   <div style={{ display: 'flex', gap: 8 }}>
                     <Button
@@ -591,14 +593,17 @@ export default function Profile() {
                 </div>
               </div>
             </div>
+            </div>
 
             {/* Bank + Verification — 2 columns */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
               {/* Bank Account */}
-              <div style={{ background: 'white', borderRadius: 10, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 10px rgba(0,0,0,0.08), 0 6px 24px rgba(0,0,0,0.06)', marginBottom: 20, overflow: 'hidden' }}>
+              <div style={{ position: 'relative', marginBottom: 20 }}>
+                <div className="home-aura-glow" style={{ position: 'absolute', inset: -7, background: '#CFDCE7', borderRadius: 16, filter: 'blur(8px)', opacity: 0.55, zIndex: 0, pointerEvents: 'none' }} />
+              <div style={{ position: 'relative', zIndex: 1, background: 'white', borderRadius: 10, border: '1px solid rgba(207,220,231,0.6)', overflow: 'hidden' }}>
                 {/* Header */}
-                <div style={{ padding: '14px 18px 12px', borderBottom: '1px solid rgba(0,0,0,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span style={{ fontSize: 9, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>BANK ACCOUNT</span>
+                <div style={{ padding: '14px 18px 7px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>Bank Account</span>
                 </div>
                 {/* Body */}
                 <div style={{ padding: '16px 18px' }}>
@@ -620,12 +625,15 @@ export default function Profile() {
                   </div>
                 </div>
               </div>
+              </div>
 
               {/* Verification Status */}
-              <div style={{ background: 'white', borderRadius: 10, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 10px rgba(0,0,0,0.08), 0 6px 24px rgba(0,0,0,0.06)', marginBottom: 20, overflow: 'hidden' }}>
+              <div style={{ position: 'relative', marginBottom: 20 }}>
+                <div className="home-aura-glow" style={{ position: 'absolute', inset: -7, background: '#CFDCE7', borderRadius: 16, filter: 'blur(8px)', opacity: 0.55, zIndex: 0, pointerEvents: 'none' }} />
+              <div style={{ position: 'relative', zIndex: 1, background: 'white', borderRadius: 10, border: '1px solid rgba(207,220,231,0.6)', overflow: 'hidden' }}>
                 {/* Header */}
-                <div style={{ padding: '14px 18px 12px', borderBottom: '1px solid rgba(0,0,0,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span style={{ fontSize: 9, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>VERIFICATION</span>
+                <div style={{ padding: '14px 18px 7px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>Verification</span>
                 </div>
                 {/* Body */}
                 <div style={{ padding: '16px 18px' }}>
@@ -660,6 +668,7 @@ export default function Profile() {
                     </div>
                   </div>
                 </div>
+              </div>
               </div>
             </div>
           </div>
