@@ -976,7 +976,7 @@ export default function YourLoans({ defaultTab }) {
               flex: 1,
               padding: '10px 14px', borderRadius: 10,
               background: '#ffffff',
-              boxShadow: 'inset 0 7px 22px rgba(18,75,160,0.22), inset 0 -9px 26px rgba(3,172,234,0.3), inset 6px 0 18px rgba(3,172,234,0.16), inset -6px 0 18px rgba(3,172,234,0.16)',
+              boxShadow: 'inset 0 4px 8px rgba(20,60,148,0.26), inset 0 7px 16px rgba(15,90,180,0.12), inset 0 -4px 9px rgba(3,172,234,0.32), inset 0 -9px 18px rgba(80,180,240,0.12), inset 3px 0 8px rgba(10,100,195,0.14), inset -3px 0 8px rgba(10,100,195,0.14)',
               display: 'flex', flexDirection: 'column', justifyContent: 'center',
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 6 }}>
@@ -1023,7 +1023,7 @@ export default function YourLoans({ defaultTab }) {
               flex: 1,
               padding: '10px 14px', borderRadius: 10,
               background: '#ffffff',
-              boxShadow: 'inset 0 7px 22px rgba(18,75,160,0.22), inset 0 -9px 26px rgba(3,172,234,0.3), inset 6px 0 18px rgba(3,172,234,0.16), inset -6px 0 18px rgba(3,172,234,0.16)',
+              boxShadow: 'inset 0 4px 8px rgba(20,60,148,0.26), inset 0 7px 16px rgba(15,90,180,0.12), inset 0 -4px 9px rgba(3,172,234,0.32), inset 0 -9px 18px rgba(80,180,240,0.12), inset 3px 0 8px rgba(10,100,195,0.14), inset -3px 0 8px rgba(10,100,195,0.14)',
               display: 'flex', flexDirection: 'column', justifyContent: 'center',
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 6 }}>
@@ -1062,7 +1062,7 @@ export default function YourLoans({ defaultTab }) {
               flex: 1,
               padding: '10px 14px', borderRadius: 10,
               background: '#ffffff',
-              boxShadow: 'inset 0 7px 22px rgba(18,75,160,0.22), inset 0 -9px 26px rgba(3,172,234,0.3), inset 6px 0 18px rgba(3,172,234,0.16), inset -6px 0 18px rgba(3,172,234,0.16)',
+              boxShadow: 'inset 0 4px 8px rgba(20,60,148,0.26), inset 0 7px 16px rgba(15,90,180,0.12), inset 0 -4px 9px rgba(3,172,234,0.32), inset 0 -9px 18px rgba(80,180,240,0.12), inset 3px 0 8px rgba(10,100,195,0.14), inset -3px 0 8px rgba(10,100,195,0.14)',
               display: 'flex', flexDirection: 'column', justifyContent: 'center',
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 6 }}>
