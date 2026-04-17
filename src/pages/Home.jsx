@@ -845,32 +845,6 @@ export default function Home() {
                   </Link>
                 );
               })}
-              {/* Coming Soon section */}
-              <div style={{ marginTop: 16, marginBottom: 4, paddingLeft: 12 }}>
-                <span style={{ fontSize: 9, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Coming Soon</span>
-              </div>
-              {[
-                { label: 'Learn', to: createPageUrl("ComingSoon") },
-                { label: 'Loan Help', to: createPageUrl("LoanHelp") },
-              ].map(({ label, to }) => {
-                const soonIcons = {
-                  'Learn': <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>,
-                  'Loan Help': <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>,
-                  };
-                return (
-                  <Link key={label} to={to} style={{
-                    display: 'flex', alignItems: 'center', gap: 8,
-                    padding: '7px 12px', borderRadius: 9, textDecoration: 'none',
-                    fontSize: 13, fontWeight: 500, color: '#787776',
-                    background: 'transparent', fontFamily: "'DM Sans', sans-serif",
-                    width: '100%', boxSizing: 'border-box',
-                  }}>
-                    <span style={{ flexShrink: 0, width: 26, height: 26, borderRadius: 7, background: 'rgba(0,0,0,0.04)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>{soonIcons[label]}</span>
-                    <span style={{ flex: 1 }}>{label}</span>
-                    <span style={{ fontSize: 8, fontWeight: 700, color: '#9B9A98', background: 'transparent', borderRadius: 4, padding: '2px 6px', letterSpacing: '0.05em', textTransform: 'uppercase', lineHeight: 1.2, flexShrink: 0 }}>SOON</span>
-                  </Link>
-                );
-              })}
             </nav>
             <SidebarBottomSection />
           </div>
@@ -959,16 +933,16 @@ export default function Home() {
               <div style={{
                 position: 'relative', zIndex: 1,
                 display: 'flex', alignItems: 'center', gap: 8, padding: '6px 12px', borderRadius: 9,
-                background: 'white', border: 'none',
+                background: '#1A1918', border: 'none',
               }}>
-                <div style={{ width: 20, height: 20, borderRadius: 6, background: 'rgba(0,0,0,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#1A1918" strokeWidth="2" strokeLinecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                <div style={{ width: 20, height: 20, borderRadius: 6, background: 'rgba(255,255,255,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
                 </div>
-                <span style={{ flex: 1, fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>
+                <span style={{ flex: 1, fontSize: 12, fontWeight: 600, color: 'white', fontFamily: "'DM Sans', sans-serif" }}>
                   You have {notifCount} new notification{notifCount !== 1 ? 's' : ''}
                 </span>
                 <Link to={createPageUrl("Requests")} style={{ display: 'flex', alignItems: 'center', flexShrink: 0, textDecoration: 'none' }}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1A1918" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
                 </Link>
               </div>
             </div>

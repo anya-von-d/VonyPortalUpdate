@@ -65,6 +65,12 @@ const Icons = {
       <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
     </svg>
   ),
+  comingsoon: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" style={S}>
+      <circle cx="12" cy="12" r="10"/>
+      <polyline points="12 6 12 12 16 14"/>
+    </svg>
+  ),
   file: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" style={S}>
       <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -102,6 +108,7 @@ const NAV_GROUPS = [
   [
     { id: 'about',         label: 'About',           icon: Icons.about },
     { id: 'legal',         label: 'Legal',           icon: Icons.legal },
+    { id: 'comingsoon',    label: 'Coming Soon',     icon: Icons.comingsoon },
   ],
 ];
 // Flat list for lookups
@@ -337,6 +344,58 @@ function LegalTab() {
   );
 }
 
+function ComingSoonTab() {
+  return (
+    <>
+      <p style={{ fontSize: 13, color: '#787776', marginBottom: 18, lineHeight: 1.5 }}>
+        These features are coming soon to Vony.
+      </p>
+      <Link
+        to={createPageUrl('ComingSoon')}
+        style={{
+          display: 'flex', alignItems: 'center', gap: 14, padding: '12px 14px',
+          borderRadius: 11, border: '1px solid rgba(0,0,0,0.08)',
+          background: 'white', textDecoration: 'none', marginBottom: 8,
+          fontFamily: "'DM Sans', sans-serif", transition: 'background 0.15s',
+        }}
+        onMouseEnter={e => e.currentTarget.style.background = '#fafafa'}
+        onMouseLeave={e => e.currentTarget.style.background = 'white'}
+      >
+        <span style={{ width: 18, height: 18, flexShrink: 0, color: '#787776', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ width: '100%', height: '100%' }}>
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+          </svg>
+        </span>
+        <div>
+          <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', marginBottom: 1 }}>Learn</div>
+          <div style={{ fontSize: 11, color: '#9B9A98' }}>Educational content about lending and borrowing.</div>
+        </div>
+      </Link>
+      <Link
+        to={createPageUrl('LoanHelp')}
+        style={{
+          display: 'flex', alignItems: 'center', gap: 14, padding: '12px 14px',
+          borderRadius: 11, border: '1px solid rgba(0,0,0,0.08)',
+          background: 'white', textDecoration: 'none', marginBottom: 8,
+          fontFamily: "'DM Sans', sans-serif", transition: 'background 0.15s',
+        }}
+        onMouseEnter={e => e.currentTarget.style.background = '#fafafa'}
+        onMouseLeave={e => e.currentTarget.style.background = 'white'}
+      >
+        <span style={{ width: 18, height: 18, flexShrink: 0, color: '#787776', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ width: '100%', height: '100%' }}>
+            <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+        </span>
+        <div>
+          <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', marginBottom: 1 }}>Loan Help</div>
+          <div style={{ fontSize: 11, color: '#9B9A98' }}>Get guidance on structuring and managing loans.</div>
+        </div>
+      </Link>
+    </>
+  );
+}
+
 /* ── Modal ────────────────────────────────────────────────── */
 export default function SettingsModal({ isOpen, onClose, initialTab = 'general' }) {
   const { user: authUser, userProfile, logout } = useAuth();
@@ -366,7 +425,7 @@ export default function SettingsModal({ isOpen, onClose, initialTab = 'general' 
   if (!isOpen) return null;
 
   const firstName = (user?.full_name || user?.username || '').trim().split(/\s+/)[0] || '';
-  const activeLabel = NAV_ITEMS.find(t => t.type === 'tab' && t.id === activeTab)?.label || '';
+  const activeLabel = NAV_ITEMS.find(t => t.id === activeTab)?.label || '';
 
   // Mobile: no icons, flush left, minimum width to fit "Invite a Friend" at 13px
   const sidebarWidth = isMobile ? 132 : 180;
@@ -478,6 +537,7 @@ export default function SettingsModal({ isOpen, onClose, initialTab = 'general' 
             {activeTab === 'guide'         && <GuideTab />}
             {activeTab === 'about'         && <AboutTab />}
             {activeTab === 'legal'         && <LegalTab />}
+            {activeTab === 'comingsoon'    && <ComingSoonTab />}
           </div>
         </div>
       </div>
