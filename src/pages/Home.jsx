@@ -968,7 +968,7 @@ export default function Home() {
                     transform: 'translate(-50%, -50%)',
                     width: 'calc(100% + 10px)',
                     height: 'calc(100% + 10px)',
-                    background: 'linear-gradient(135deg, rgb(30,64,175) 0%, rgb(59,130,246) 18%, rgb(96,165,250) 34%, rgb(99,102,241) 52%, rgb(79,70,229) 70%, rgb(67,56,202) 85%, rgb(37,99,235) 100%)',
+                    background: 'linear-gradient(135deg, rgb(30,58,138) 0%, rgb(37,99,235) 16%, rgb(59,130,246) 32%, rgb(96,165,250) 48%, rgb(29,78,216) 64%, rgb(30,64,175) 80%, rgb(59,130,246) 100%)',
                     filter: 'blur(5px) saturate(1.2)',
                     opacity: 0.35,
                     borderRadius: 18,
