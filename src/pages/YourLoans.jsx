@@ -1,19 +1,14 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Loan, Payment, User, LoanAgreement, PublicProfile, Friendship } from "@/entities/all";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Loan, Payment, User, LoanAgreement, PublicProfile } from "@/entities/all";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import {
-  Clock, Calendar, DollarSign, AlertCircle, FileText, BarChart3,
-  Pencil, X, Save, FolderOpen, ClipboardList, Info, Percent, History
+  Clock, Calendar, DollarSign, FileText, X
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format, addDays, addMonths, addWeeks, startOfMonth, endOfMonth } from "date-fns";
@@ -25,12 +20,12 @@ import SidebarBottomSection from '../components/SidebarBottomSection';
 import MeshMobileNav from "@/components/MeshMobileNav";
 import UserAvatar from "@/components/ui/UserAvatar";
 
-export default function YourLoans() {
+export default function YourLoans({ defaultTab }) {
   const { logout } = useAuth();
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
-  const activeTab = searchParams.get('tab') || 'lending';
+  const activeTab = defaultTab || searchParams.get('tab') || 'lending';
   const setActiveTab = (tab) => setSearchParams({ tab });
   const [allLoans, setAllLoans] = useState([]);
   const [allPayments, setAllPayments] = useState([]);
@@ -41,14 +36,10 @@ export default function YourLoans() {
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [loanToCancel, setLoanToCancel] = useState(null);
   const [manageLoanSelected, setManageLoanSelected] = useState(null);
-  const [manageLoanInitialized, setManageLoanInitialized] = useState(false);
-  const [loanDropdownOpen, setLoanDropdownOpen] = useState(false);
   const [rankingFilterLending, setRankingFilterLending] = useState('highest_interest');
   const [rankingFilterBorrowing, setRankingFilterBorrowing] = useState('highest_interest');
   const [activeDocPopup, setActiveDocPopup] = useState(null);
   const [docPopupAgreement, setDocPopupAgreement] = useState(null);
-  const [showEditLoanModal, setShowEditLoanModal] = useState(false);
-  const [editLoanData, setEditLoanData] = useState(null);
   const [reminderSlide, setReminderSlide] = useState(0);
   const [infoTooltip, setInfoTooltip] = useState(null);
   const [selectedScrollLoan, setSelectedScrollLoan] = useState(null);
@@ -94,6 +85,11 @@ export default function YourLoans() {
     else if (activeTab === 'borrowing') setSelectedScrollLoan(activeBorrowingLoans[0] || null);
   }, [activeTab, activeLendingLoans.length, activeBorrowingLoans.length]);
 
+  // Keep manageLoanSelected in sync with selectedScrollLoan for doc popups
+  useEffect(() => {
+    setManageLoanSelected(selectedScrollLoan || null);
+  }, [selectedScrollLoan]);
+
   const allOverdueForEffect = activeTab === 'lending'
     ? activeLendingLoans.filter(l => l.next_payment_date && daysUntilDate(l.next_payment_date) < 0)
     : activeBorrowingLoans.filter(l => l.next_payment_date && daysUntilDate(l.next_payment_date) < 0);
@@ -106,17 +102,8 @@ export default function YourLoans() {
     return () => clearInterval(timer);
   }, [allOverdueForEffect.length]);
 
-  // All manageable loans for details tab (both lending and borrowing)
+  // All manageable loans (both lending and borrowing)
   const allManageableLoans = allLoans.filter(l => l.status === 'active' || l.status === 'cancelled');
-
-  useEffect(() => {
-    if (!manageLoanInitialized && allManageableLoans.length > 0) {
-      setManageLoanInitialized(true);
-    }
-  }, [allManageableLoans, manageLoanInitialized]);
-
-  // Determine if selected loan is lending or borrowing
-  const isLendingLoan = manageLoanSelected ? manageLoanSelected.lender_id === user?.id : false;
 
   // --- Lending summary stats ---
   const totalLent = activeLendingLoans.reduce((s, l) => s + (l.amount || 0), 0);
@@ -190,59 +177,6 @@ export default function YourLoans() {
 
   const openDocPopup = (type, agreement) => { setActiveDocPopup(type); setDocPopupAgreement(agreement); };
   const closeDocPopup = () => { setActiveDocPopup(null); setDocPopupAgreement(null); };
-
-  const handleEditLoan = (loan) => {
-    if (loan.lender_id === user?.id) {
-      setEditLoanData({
-        id: loan.id, amount: loan.amount || 0, interest_rate: loan.interest_rate || 0,
-        repayment_period: loan.repayment_period || 0, payment_frequency: loan.payment_frequency || 'monthly',
-        due_date: loan.due_date || '', payment_amount: loan.payment_amount || 0,
-        purpose: loan.purpose || '', notes: ''
-      });
-      setShowEditLoanModal(true);
-    } else {
-      alert('Loan edit request functionality coming soon');
-    }
-  };
-
-  const handleSaveEditLoan = async () => {
-    if (!editLoanData || !manageLoanSelected) return;
-    try {
-      const amount = parseFloat(editLoanData.amount) || 0;
-      const interestRate = parseFloat(editLoanData.interest_rate) || 0;
-      const period = parseInt(editLoanData.repayment_period) || 0;
-      const totalAmount = amount * (1 + (interestRate / 100) * (period / 12));
-      let paymentAmount = editLoanData.payment_amount;
-      if (editLoanData.payment_frequency !== 'none' && period > 0) {
-        switch (editLoanData.payment_frequency) {
-          case 'daily': paymentAmount = totalAmount / (period * 30); break;
-          case 'weekly': paymentAmount = totalAmount / (period * (52 / 12)); break;
-          case 'biweekly': paymentAmount = totalAmount / (period * (26 / 12)); break;
-          default: paymentAmount = totalAmount / period;
-        }
-      }
-      const changes = [];
-      if (parseFloat(editLoanData.amount) !== manageLoanSelected.amount) changes.push(`Amount: $${manageLoanSelected.amount} → $${editLoanData.amount}`);
-      if (parseFloat(editLoanData.interest_rate) !== manageLoanSelected.interest_rate) changes.push(`Interest Rate: ${manageLoanSelected.interest_rate}% → ${editLoanData.interest_rate}%`);
-      if (parseInt(editLoanData.repayment_period) !== manageLoanSelected.repayment_period) changes.push(`Repayment Period: ${manageLoanSelected.repayment_period} → ${editLoanData.repayment_period} months`);
-      if (editLoanData.payment_frequency !== manageLoanSelected.payment_frequency) changes.push(`Payment Frequency: ${manageLoanSelected.payment_frequency} → ${editLoanData.payment_frequency}`);
-      const changeLog = changes.length > 0 ? changes.join('; ') : 'No changes';
-      await Loan.update(editLoanData.id, {
-        amount: parseFloat(editLoanData.amount), interest_rate: parseFloat(editLoanData.interest_rate),
-        repayment_period: parseInt(editLoanData.repayment_period), payment_frequency: editLoanData.payment_frequency,
-        due_date: editLoanData.due_date, total_amount: totalAmount, payment_amount: paymentAmount,
-        purpose: editLoanData.purpose, contract_modified: true,
-        contract_modified_date: new Date().toISOString(),
-        contract_modification_notes: editLoanData.notes || changeLog,
-        status: 'pending_borrower_approval'
-      });
-      setShowEditLoanModal(false);
-      setEditLoanData(null);
-      await loadData();
-    } catch (error) {
-      console.error("Error saving loan edit:", error);
-    }
-  };
 
   // --- Financial analysis functions ---
   function generateAmortizationSchedule(agreement) {
@@ -531,7 +465,7 @@ export default function YourLoans() {
     );
   };
 
-  // --- Shared loan detail body (used by renderDetailsTab and inline scroll row) ---
+  // --- Shared loan detail body (used inline below the scroll card row) ---
   const renderLoanDetailBody = (selectedLoan) => {
     const isLending = selectedLoan.lender_id === user?.id;
     const agreement = loanAgreements.find(a => a.loan_id === selectedLoan.id);
@@ -1335,78 +1269,6 @@ export default function YourLoans() {
     );
   };
 
-  // --- Individual Loan Details Tab ---
-  const renderDetailsTab = () => {
-    if (allManageableLoans.length === 0) {
-      return (
-        <PageCard title="Loan Details">
-          <div style={{ textAlign: 'center', padding: '24px 0', fontSize: 13, color: '#787776' }}>No loans to display yet 🌱</div>
-        </PageCard>
-      );
-    }
-
-    const getLoanDescription = (loan) => {
-      const isLend = loan.lender_id === user?.id;
-      const other = publicProfiles.find(p => p.user_id === (isLend ? loan.borrower_id : loan.lender_id));
-      const name = other?.full_name || 'User';
-      const amt = `$${(loan.amount || 0).toLocaleString()}`;
-      const reason = loan.purpose ? ` for ${loan.purpose}` : '';
-      return isLend ? `Lent ${amt} to ${name}${reason}` : `Borrowed ${amt} from ${name}${reason}`;
-    };
-
-    return (
-      <div>
-        {/* Select a Loan */}
-        <div style={{ marginBottom: manageLoanSelected ? 8 : 16 }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 9 }}>
-            <span style={{ fontSize: 9, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>Select a Loan</span>
-          </div>
-          <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 14 }} />
-          <div style={{ position: 'relative' }}>
-            <div
-              onClick={() => setLoanDropdownOpen(o => !o)}
-              style={{ width: '100%', borderRadius: 10, padding: '10px 36px 10px 14px', fontSize: 13, fontWeight: 500, color: manageLoanSelected ? '#1A1918' : '#9B9A98', background: 'white', cursor: 'pointer', border: '1px solid rgba(0,0,0,0.09)', minHeight: 40, userSelect: 'none', boxSizing: 'border-box', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}
-            >
-              {manageLoanSelected ? getLoanDescription(manageLoanSelected) : 'Choose a loan to view details…'}
-            </div>
-            <div style={{ pointerEvents: 'none', position: 'absolute', top: 0, bottom: 0, right: 12, display: 'flex', alignItems: 'center' }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9B9A98" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-            </div>
-            {loanDropdownOpen && (
-              <>
-                <div style={{ position: 'fixed', inset: 0, zIndex: 90 }} onClick={() => setLoanDropdownOpen(false)} />
-                <div style={{ position: 'absolute', top: 'calc(100% + 4px)', left: 0, right: 0, background: '#ffffff', borderRadius: 10, boxShadow: '0 4px 20px rgba(0,0,0,0.12)', zIndex: 100, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.06)' }}>
-                  {allManageableLoans.map((loan) => (
-                    <div key={loan.id} onClick={() => { setManageLoanSelected(loan); setLoanDropdownOpen(false); }}
-                      style={{ padding: '10px 14px', fontSize: 13, fontWeight: 500, color: '#1A1918', cursor: 'pointer', background: manageLoanSelected?.id === loan.id ? 'rgba(0,0,0,0.04)' : 'transparent', borderBottom: '1px solid rgba(0,0,0,0.04)' }}
-                      onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.03)'}
-                      onMouseLeave={e => e.currentTarget.style.background = manageLoanSelected?.id === loan.id ? 'rgba(0,0,0,0.04)' : 'transparent'}
-                    >
-                      {getLoanDescription(loan)}{loan.status === 'cancelled' ? <span style={{ fontSize: 11, color: '#E8726E', marginLeft: 8 }}>Cancelled</span> : ''}
-                    </div>
-                  ))}
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-
-        {/* Selected loan description */}
-        {manageLoanSelected && (
-          <div style={{ background: '#ffffff', borderRadius: 10, display: 'flex', alignItems: 'center', gap: 10, padding: '8px 14px', marginBottom: 16, boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
-            <div style={{ width: 24, height: 24, borderRadius: 6, background: 'rgba(3,172,234,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-            </div>
-            <span style={{ fontSize: 13, fontWeight: 500, color: '#1A1918' }}>{getLoanDescription(manageLoanSelected)}{manageLoanSelected.status === 'cancelled' ? <span style={{ fontSize: 11, color: '#E8726E', marginLeft: 8 }}>Cancelled</span> : null}</span>
-          </div>
-        )}
-
-
-        {/* Single-column flow */}
-        {manageLoanSelected && renderLoanDetailBody(manageLoanSelected)}
-      </div>
-    );
-  };
 
   const LENDER_GREEN = '#03ACEA';
 
@@ -1466,7 +1328,7 @@ export default function YourLoans() {
 
   return (
     <>
-      <MeshMobileNav user={user} activePage="My Loans" />
+      <MeshMobileNav user={user} activePage={defaultTab === 'lending' ? 'Lending' : defaultTab === 'borrowing' ? 'Borrowing' : 'My Loans'} />
       {/* Document Popup Modal */}
       <AnimatePresence>
         {activeDocPopup && docPopupAgreement && (
@@ -1506,7 +1368,8 @@ export default function YourLoans() {
                 { label: 'Upcoming', to: createPageUrl("Upcoming") },
                 { label: 'Create Loan', to: createPageUrl("CreateOffer") },
                 { label: 'Record Payment', to: createPageUrl("RecordPayment") },
-                { label: 'My Loans', to: createPageUrl("YourLoans") },
+                { label: 'Lending', to: createPageUrl("Lending") },
+                { label: 'Borrowing', to: createPageUrl("Borrowing") },
                 { label: 'Friends', to: createPageUrl("Friends") },
                 { label: 'Recent Activity', to: createPageUrl("RecentActivity") },
                 { label: 'Documents', to: createPageUrl("LoanAgreements") },
@@ -1518,7 +1381,8 @@ export default function YourLoans() {
                   'Upcoming': <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>,
                   'Create Loan': <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>,
                   'Record Payment': <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>,
-                  'My Loans': <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>,
+                  'Lending': <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>,
+                  'Borrowing': <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="7 13 12 18 17 13"/><line x1="12" y1="18" x2="12" y2="6"/><circle cx="12" cy="6" r="3"/></svg>,
                   'Friends': <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
                   'Recent Activity': <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>,
                   'Documents': <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>,
@@ -1545,9 +1409,10 @@ export default function YourLoans() {
         <div className="mesh-center" style={{ background: 'transparent', padding: '24px 32px 80px' }}>
 
           {/* Mobile-only page title (desktop shows it in top bar) */}
+          {!defaultTab && (
           <div className="mobile-page-title">
             <div style={{ display: 'flex', gap: 24, alignItems: 'flex-end', marginBottom: 0 }}>
-              {[{key:'lending',label:'Lending'},{key:'borrowing',label:'Borrowing'},{key:'details',label:'Loan Details'}].map(tab => (
+              {[{key:'lending',label:'Lending'},{key:'borrowing',label:'Borrowing'}].map(tab => (
                 <button key={tab.key} onClick={() => setActiveTab(tab.key)} style={{
                   paddingBottom: 10, border: 'none', background: 'transparent', cursor: 'pointer',
                   fontSize: 17, fontWeight: 600, fontFamily: "'DM Sans', system-ui, sans-serif",
@@ -1561,10 +1426,11 @@ export default function YourLoans() {
             </div>
             <div style={{ height: 1, background: 'rgba(0,0,0,0.08)', marginLeft: -32, marginRight: -32, marginBottom: 20 }} />
           </div>
+          )}
 
 
           {/* Overdue reminder carousel */}
-          {activeTab !== 'details' && (() => {
+          {(() => {
             const isLendingTab = activeTab === 'lending';
             const allOverdue = isLendingTab
               ? activeLendingLoans.filter(l => l.next_payment_date && daysUntilDate(l.next_payment_date) < 0).map(l => ({ ...l, role: 'lending' }))
@@ -1628,7 +1494,6 @@ export default function YourLoans() {
 
           {activeTab === 'lending' && renderSummaryTab('lending')}
           {activeTab === 'borrowing' && renderSummaryTab('borrowing')}
-          {activeTab === 'details' && renderDetailsTab()}
         </div>
 
       </div>
@@ -1653,44 +1518,6 @@ export default function YourLoans() {
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Edit Loan Modal */}
-      {showEditLoanModal && editLoanData && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="bg-white rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center"><Pencil className="w-5 h-5 text-amber-600" /></div>
-                  <div><h2 className="text-xl font-bold text-slate-800">Edit Loan Contract</h2><p className="text-sm text-slate-500">Changes will be sent to borrower for approval</p></div>
-                </div>
-                <button onClick={() => { setShowEditLoanModal(false); setEditLoanData(null); }} className="text-slate-400 hover:text-slate-600"><X className="w-6 h-6" /></button>
-              </div>
-              <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-6">
-                <div className="flex items-start gap-2"><AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" /><div className="text-sm text-amber-800"><p className="font-medium">Contract Modification Notice</p><p className="text-amber-700">All changes will be recorded in the loan history and the borrower will need to approve the new terms.</p></div></div>
-              </div>
-              <div className="space-y-4">
-                <div className="space-y-2"><Label htmlFor="edit-amount" className="flex items-center gap-2"><DollarSign className="w-4 h-4 text-amber-600" />Loan Amount</Label><Input id="edit-amount" type="number" step="0.01" min="0" value={editLoanData.amount} onChange={(e) => setEditLoanData(prev => ({ ...prev, amount: e.target.value }))} /></div>
-                <div className="space-y-2"><Label htmlFor="edit-interest" className="flex items-center gap-2"><Percent className="w-4 h-4 text-amber-600" />Interest Rate (% per year)</Label><Input id="edit-interest" type="number" step="0.1" min="0" max="100" value={editLoanData.interest_rate} onChange={(e) => setEditLoanData(prev => ({ ...prev, interest_rate: e.target.value }))} /></div>
-                <div className="space-y-2"><Label htmlFor="edit-period" className="flex items-center gap-2"><Clock className="w-4 h-4 text-amber-600" />Repayment Period (months)</Label><Input id="edit-period" type="number" min="1" value={editLoanData.repayment_period} onChange={(e) => setEditLoanData(prev => ({ ...prev, repayment_period: e.target.value }))} /></div>
-                <div className="space-y-2">
-                  <Label className="flex items-center gap-2"><Calendar className="w-4 h-4 text-amber-600" />Payment Frequency</Label>
-                  <Select value={editLoanData.payment_frequency} onValueChange={(value) => setEditLoanData(prev => ({ ...prev, payment_frequency: value }))}><SelectTrigger><SelectValue placeholder="Select frequency" /></SelectTrigger><SelectContent><SelectItem value="none">None</SelectItem><SelectItem value="daily">Daily</SelectItem><SelectItem value="weekly">Weekly</SelectItem><SelectItem value="biweekly">Bi-weekly</SelectItem><SelectItem value="monthly">Monthly</SelectItem></SelectContent></Select>
-                </div>
-                <div className="space-y-2"><Label htmlFor="edit-due-date" className="flex items-center gap-2"><Calendar className="w-4 h-4 text-amber-600" />Due Date</Label><Input id="edit-due-date" type="date" value={editLoanData.due_date || ''} onChange={(e) => setEditLoanData(prev => ({ ...prev, due_date: e.target.value }))} /></div>
-                <div className="space-y-2"><Label htmlFor="edit-purpose" className="flex items-center gap-2"><FileText className="w-4 h-4 text-amber-600" />Purpose</Label><Input id="edit-purpose" type="text" value={editLoanData.purpose} onChange={(e) => setEditLoanData(prev => ({ ...prev, purpose: e.target.value }))} maxLength={100} /></div>
-                <div className="space-y-2">
-                  <Label htmlFor="edit-notes" className="flex items-center gap-2"><History className="w-4 h-4 text-amber-600" />Notes for Borrower (optional)</Label>
-                  <textarea id="edit-notes" className="w-full px-3 py-2 border border-slate-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent" rows={3} placeholder="Explain why you're making these changes..." value={editLoanData.notes} onChange={(e) => setEditLoanData(prev => ({ ...prev, notes: e.target.value }))} maxLength={500} />
-                </div>
-              </div>
-              <div className="flex gap-3 mt-6 pt-4 border-t border-slate-200">
-                <Button onClick={() => { setShowEditLoanModal(false); setEditLoanData(null); }} variant="outline" className="flex-1">Cancel</Button>
-                <Button onClick={handleSaveEditLoan} className="flex-1 bg-amber-500 hover:bg-amber-600 text-white"><Save className="w-4 h-4 mr-2" />Save & Send to Borrower</Button>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      )}
     </>
   );
 }

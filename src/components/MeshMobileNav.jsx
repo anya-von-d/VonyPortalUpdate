@@ -11,15 +11,14 @@ const PAGE_LABELS = {
   'Upcoming': 'Upcoming',
   'CreateOffer': 'Create Loan',
   'RecordPayment': 'Record Payment',
-  'YourLoans': 'My Loans',
+  'Lending': 'Lending',
+  'Borrowing': 'Borrowing',
   'Friends': 'Friends',
   'RecentActivity': 'Recent Activity',
   'LoanAgreements': 'Documents',
   'Requests': 'Notifications',
   'ComingSoon': 'Learn',
   'LoanHelp': 'Loan Help',
-  'Borrowing': 'Borrowing',
-  'Lending': 'Lending',
   'Profile': 'Profile',
 };
 
@@ -28,7 +27,8 @@ const NAV_ITEMS = [
   { label: 'Upcoming',        to: createPageUrl("Upcoming") },
   { label: 'Create Loan',     to: createPageUrl("CreateOffer") },
   { label: 'Record Payment',  to: createPageUrl("RecordPayment") },
-  { label: 'My Loans',        to: createPageUrl("YourLoans") },
+  { label: 'Lending',         to: createPageUrl("Lending") },
+  { label: 'Borrowing',       to: createPageUrl("Borrowing") },
   { label: 'Friends',         to: createPageUrl("Friends") },
   { label: 'Recent Activity', to: createPageUrl("RecentActivity") },
   { label: 'Documents',       to: createPageUrl("LoanAgreements") },
@@ -93,37 +93,14 @@ export default function MeshMobileNav({ user, activePage }) {
           padding: '0 24px 0 28px',
           fontFamily: "'DM Sans', sans-serif",
         }}>
-          {activePage === 'My Loans' ? (
-            <div style={{ display: 'flex', gap: 22, alignItems: 'center' }}>
-              {[{key:'lending',label:'Lending'},{key:'borrowing',label:'Borrowing'},{key:'details',label:'Loan Details'}].map(tab => {
-                const currentTab = new URLSearchParams(location.search).get('tab') || 'lending';
-                const isActive = currentTab === tab.key;
-                return (
-                  <Link key={tab.key} to={`?tab=${tab.key}`} style={{
-                    color: isActive ? '#1A1918' : 'rgba(0,0,0,0.35)',
-                    fontWeight: isActive ? 600 : 500,
-                    fontSize: 14, textDecoration: 'none',
-                    fontFamily: "'DM Sans', sans-serif",
-                    letterSpacing: '-0.01em',
-                    paddingBottom: 4,
-                    borderBottom: isActive ? '2px solid #1A1918' : '2px solid transparent',
-                    transition: 'color 0.15s',
-                  }}>
-                    {tab.label}
-                  </Link>
-                );
-              })}
-            </div>
-          ) : (
-            <div style={{ fontSize: 14, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em' }}>
-              {activePage === 'Home' ? (() => {
-                const h = new Date().getHours();
-                const g = h >= 5 && h < 12 ? 'Good morning' : h >= 12 && h < 18 ? 'Good afternoon' : 'Good night';
-                const name = user?.full_name?.split(' ')[0] || user?.username || '';
-                return `${g}, ${name}`;
-              })() : (PAGE_LABELS[activePage] || activePage)}
-            </div>
-          )}
+          <div style={{ fontSize: 14, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em' }}>
+            {activePage === 'Home' ? (() => {
+              const h = new Date().getHours();
+              const g = h >= 5 && h < 12 ? 'Good morning' : h >= 12 && h < 18 ? 'Good afternoon' : 'Good night';
+              const name = user?.full_name?.split(' ')[0] || user?.username || '';
+              return `${g}, ${name}`;
+            })() : (PAGE_LABELS[activePage] || activePage)}
+          </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
             <Link to={createPageUrl("Requests")} style={{
               position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center',
