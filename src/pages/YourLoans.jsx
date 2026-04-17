@@ -791,14 +791,22 @@ export default function YourLoans() {
                 const statusBg = isOverdue ? 'rgba(232,114,110,0.12)' : 'rgba(3,172,234,0.12)';
                 const statusColor = isOverdue ? '#B94040' : '#0A7AB0';
                 return (
-                  <div key={loan.id} style={{
-                    flexShrink: 0, width: 148,
-                    background: 'white', borderRadius: 12,
-                    border: '1px solid rgba(0,0,0,0.07)',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
-                    padding: '10px 12px 14px',
-                    display: 'flex', flexDirection: 'column', alignItems: 'center',
-                  }}>
+                  <div
+                    key={loan.id}
+                    onClick={() => { setManageLoanSelected(loan); setActiveTab('details'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                    style={{
+                      flexShrink: 0, width: 148,
+                      background: 'white', borderRadius: 12,
+                      border: '1px solid rgba(0,0,0,0.07)',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+                      padding: '10px 12px 14px',
+                      display: 'flex', flexDirection: 'column', alignItems: 'center',
+                      cursor: 'pointer',
+                      transition: 'box-shadow 0.15s, transform 0.15s',
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.10)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.04)'; e.currentTarget.style.transform = 'none'; }}
+                  >
                     {/* Status badge - top left */}
                     <div style={{
                       alignSelf: 'flex-start',
