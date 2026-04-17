@@ -903,12 +903,61 @@ export default function YourLoans({ defaultTab }) {
     const totalPaidAll = activeLoans.reduce((s, l) => s + (l.amount_paid || 0), 0);
     const pctAll = totalOwedAll > 0 ? Math.round((totalPaidAll / totalOwedAll) * 100) : 0;
 
+    // Aurora card helper for mobile section
+    const MobileAuroraCard = ({ label, icon, children }) => (
+      <div style={{ position: 'relative', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 'calc(100% + 10px)', height: 'calc(100% + 10px)', background: 'linear-gradient(135deg, rgb(3,172,234) 0%, rgb(6,182,212) 30%, rgb(20,184,166) 60%, rgb(3,172,234) 100%)', filter: 'blur(5px) saturate(1.2)', opacity: 0.35, borderRadius: 18, zIndex: 0, pointerEvents: 'none' }} />
+        <div style={{ position: 'relative', zIndex: 1, flex: 1, background: 'linear-gradient(to right, rgba(3,172,234,0) 0%, #03ACEA 67%, #03ACEA 100%)', padding: 1, borderRadius: 11, display: 'flex', flexDirection: 'column' }}>
+          <div style={{ flex: 1, padding: '10px 14px', borderRadius: 10, background: '#ffffff', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 6 }}>
+              <div style={{ width: 20, height: 20, borderRadius: 6, background: isLending ? 'rgba(3,172,234,0.12)' : 'rgba(29,91,148,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>{icon}</div>
+              <span style={{ fontSize: 9, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase' }}>{label}</span>
+            </div>
+            {children}
+          </div>
+        </div>
+      </div>
+    );
+
     return (
       <>
+        {/* Mobile-only: consolidated Next Payment Due + Payment Progress */}
+        <div className="loans-mobile-pay-top">
+          <MobileAuroraCard
+            label="Next Payment Due"
+            icon={isLending
+              ? <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2.5" strokeLinecap="round"><polyline points="17 11 12 6 7 11"/><line x1="12" y1="6" x2="12" y2="18"/></svg>
+              : <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1D5B94" strokeWidth="2.5" strokeLinecap="round"><polyline points="7 13 12 18 17 13"/><line x1="12" y1="18" x2="12" y2="6"/></svg>
+            }
+          >
+            {nextPaymentLoan ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'nowrap', overflow: 'hidden' }}>
+                <span style={{ fontSize: 15, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em', flexShrink: 0 }}>{format(new Date(nextPaymentLoan.next_payment_date), 'MMM d')}</span>
+                {daysLabel && <span style={{ fontSize: 9, fontWeight: 700, color: badgeColor, background: badgeBg, borderRadius: 5, padding: '2px 6px', flexShrink: 0 }}>{daysLabel}</span>}
+                <span style={{ fontSize: 11, color: '#9B9A98', marginLeft: 'auto', flexShrink: 0, whiteSpace: 'nowrap' }}>{formatMoney(nextPaymentAmount)} {isLending ? 'from' : 'to'} {otherPartyUsername}</span>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: 15, fontWeight: 700, color: '#C5C3C0' }}>—</span>
+                <span style={{ fontSize: 11, color: '#9B9A98' }}>{isLending ? 'None incoming ✨' : 'Nothing due 🎉'}</span>
+              </div>
+            )}
+          </MobileAuroraCard>
+          <MobileAuroraCard
+            label="Payment Progress"
+            icon={<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={isLending ? '#03ACEA' : '#1D5B94'} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'nowrap', overflow: 'hidden' }}>
+              <span style={{ fontSize: 15, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em', flexShrink: 0 }}>{pctAll}% {isLending ? 'paid back' : 'repaid'}</span>
+              <span style={{ fontSize: 11, color: '#9B9A98', marginLeft: 'auto', flexShrink: 0, whiteSpace: 'nowrap' }}>{formatMoney(totalPaidAll)} of {formatMoney(totalOwedAll)} {isLending ? 'paid back' : 'repaid'}</span>
+            </div>
+          </MobileAuroraCard>
+        </div>
+
         {/* 1. Three standalone top cards */}
         <div className="loans-top-cards" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 24, marginBottom: 20, alignItems: 'center' }}>
           {/* Next Incoming / Next Payment Due — aurora card identical to Home page */}
-          <div style={{ position: 'relative', display: 'flex', flexDirection: 'column' }}>
+          <div className="loans-pay-card-desktop" style={{ position: 'relative', display: 'flex', flexDirection: 'column' }}>
             {/* Aurora glow — cyan/teal palette */}
             <div style={{
               position: 'absolute', top: '50%', left: '50%',
@@ -962,8 +1011,8 @@ export default function YourLoans({ defaultTab }) {
             </div>
           </div>
 
-          {/* Next Payment Amount — aurora style (lending only) */}
-          <div style={{ position: 'relative', display: 'flex', flexDirection: 'column' }}>
+          {/* Next Payment Amount — aurora style */}
+          <div className="loans-pay-card-desktop" style={{ position: 'relative', display: 'flex', flexDirection: 'column' }}>
             <div style={{
               position: 'absolute', top: '50%', left: '50%',
               transform: 'translate(-50%, -50%)',
@@ -1082,38 +1131,112 @@ export default function YourLoans({ defaultTab }) {
                 })}
               </PageCard>
 
-              {/* Active Lending / Active Borrowing — right of Upcoming */}
+              {/* Active Lending (lending) / Loans Ranked By (borrowing) — right of Upcoming */}
               {activeLoans.length > 0 && (
-                <PageCard title={isLending ? 'Active Lending' : 'Active Borrowing'} headerRight={<Link to={createPageUrl("YourLoans")} style={{ fontSize: 11, fontWeight: 500, color: '#03ACEA', textDecoration: 'none' }}>View all →</Link>} style={{ marginBottom: 0 }}>
-                  <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    {activeLoans.slice(0, 5).map((loan) => {
-                      const otherProfile = publicProfiles.find(p => p.user_id === (isLending ? loan.borrower_id : loan.lender_id));
-                      const totalAmt = loan.total_amount || loan.amount || 0;
-                      const paidAmt = loan.amount_paid || 0;
-                      const pct = totalAmt > 0 ? Math.round((paidAmt / totalAmt) * 100) : 0;
-                      const name = otherProfile?.full_name?.split(' ')[0] || otherProfile?.username || 'User';
-                      const purpose = loan.purpose ? ` for ${loan.purpose}` : '';
-                      const loanDesc = isLending
-                        ? `You lent ${name} ${formatMoney(totalAmt)}${purpose}`
-                        : `${name} lent you ${formatMoney(totalAmt)}${purpose}`;
-                      return (
-                        <div key={loan.id} style={{ padding: '9px 0' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                            <UserAvatar name={otherProfile?.full_name || otherProfile?.username} src={otherProfile?.profile_picture_url} size={20} radius={5} />
-                            <div style={{ fontSize: 13, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{loanDesc}</div>
-                          </div>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                            <div style={{ flex: 1, height: 6, borderRadius: 3, background: isLending ? 'rgba(3,172,234,0.1)' : 'rgba(29,91,148,0.1)', overflow: 'hidden' }}>
-                              <div style={{ height: '100%', borderRadius: 3, background: isLending ? '#03ACEA' : '#1D5B94', width: `${pct}%`, transition: 'width 0.5s' }} />
+                isLending ? (
+                  <PageCard title="Active Lending" headerRight={<Link to={createPageUrl("YourLoans")} style={{ fontSize: 11, fontWeight: 500, color: '#03ACEA', textDecoration: 'none' }}>View all →</Link>} style={{ marginBottom: 0 }}>
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                      {activeLoans.slice(0, 5).map((loan) => {
+                        const otherProfile = publicProfiles.find(p => p.user_id === loan.borrower_id);
+                        const totalAmt = loan.total_amount || loan.amount || 0;
+                        const paidAmt = loan.amount_paid || 0;
+                        const pct = totalAmt > 0 ? Math.round((paidAmt / totalAmt) * 100) : 0;
+                        const name = otherProfile?.full_name?.split(' ')[0] || otherProfile?.username || 'User';
+                        const purpose = loan.purpose ? ` for ${loan.purpose}` : '';
+                        return (
+                          <div key={loan.id} style={{ padding: '9px 0' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                              <UserAvatar name={otherProfile?.full_name || otherProfile?.username} src={otherProfile?.profile_picture_url} size={20} radius={5} />
+                              <div style={{ fontSize: 13, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{`You lent ${name} ${formatMoney(totalAmt)}${purpose}`}</div>
                             </div>
-                            <span style={{ fontSize: 11, fontWeight: 700, color: '#9B9A98', flexShrink: 0 }}>{pct}%</span>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                              <div style={{ flex: 1, height: 6, borderRadius: 3, background: 'rgba(3,172,234,0.1)', overflow: 'hidden' }}>
+                                <div style={{ height: '100%', borderRadius: 3, background: '#03ACEA', width: `${pct}%`, transition: 'width 0.5s' }} />
+                              </div>
+                              <span style={{ fontSize: 11, fontWeight: 700, color: '#9B9A98', flexShrink: 0 }}>{pct}%</span>
+                            </div>
+                            <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 3 }}>{formatMoney(paidAmt)} of {formatMoney(totalAmt)} paid back</div>
                           </div>
-                          <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 3 }}>{formatMoney(paidAmt)} of {formatMoney(totalAmt)} {isLending ? 'paid back' : 'repaid'}</div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </PageCard>
+                        );
+                      })}
+                    </div>
+                  </PageCard>
+                ) : (
+                  <PageCard title="Loans Ranked By" style={{ marginBottom: 0 }} headerRight={
+                    <Select value={rankingFilter} onValueChange={setRankingFilter}>
+                      <SelectTrigger className="w-auto h-7 px-2 border-0 text-xs font-medium rounded-lg" style={{ background: 'rgba(29,91,148,0.10)', color: '#1D5B94' }}><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="highest_interest">Highest Interest Rate</SelectItem>
+                        <SelectItem value="lowest_interest">Lowest Interest Rate</SelectItem>
+                        <SelectItem value="highest_payment">Highest Payment</SelectItem>
+                        <SelectItem value="lowest_payment">Lowest Payment</SelectItem>
+                        <SelectItem value="soonest_deadline">Soonest Deadline</SelectItem>
+                        <SelectItem value="largest_amount">Largest Amount</SelectItem>
+                        <SelectItem value="smallest_amount">Smallest Amount</SelectItem>
+                        <SelectItem value="most_repaid">Most Repaid</SelectItem>
+                        <SelectItem value="least_repaid">Least Repaid</SelectItem>
+                        <SelectItem value="most_recent">Most Recently Created</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  }>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                      {(() => {
+                        const RPC = ({ percentage, number, size = 32 }) => {
+                          const cx = size / 2; const r = cx - 3; const circ = 2 * Math.PI * r;
+                          const dash = (percentage / 100) * circ; const sw = 4;
+                          return (
+                            <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ flexShrink: 0 }}>
+                              <circle cx={cx} cy={cx} r={r} fill="none" stroke="#E5E4E2" strokeWidth={sw} />
+                              {percentage > 0 && <circle cx={cx} cy={cx} r={r} fill="none" stroke="#1D5B94" strokeWidth={sw} strokeDasharray={`${dash} ${circ - dash}`} strokeLinecap="round" transform={`rotate(-90 ${cx} ${cx})`} />}
+                              <text x={cx} y={cx} textAnchor="middle" dominantBaseline="central" fill="#1A1918" fontSize="11" fontWeight="bold" fontFamily="'DM Sans', sans-serif">{number}</text>
+                            </svg>
+                          );
+                        };
+                        const sorted = [...activeLoans].sort((a, b) => {
+                          if (rankingFilter === 'highest_interest') return (b.interest_rate || 0) - (a.interest_rate || 0);
+                          if (rankingFilter === 'lowest_interest') return (a.interest_rate || 0) - (b.interest_rate || 0);
+                          if (rankingFilter === 'highest_payment') return (b.payment_amount || 0) - (a.payment_amount || 0);
+                          if (rankingFilter === 'lowest_payment') return (a.payment_amount || 0) - (b.payment_amount || 0);
+                          if (rankingFilter === 'soonest_deadline') { const dA = a.next_payment_date ? new Date(a.next_payment_date) : new Date('2099-01-01'); const dB = b.next_payment_date ? new Date(b.next_payment_date) : new Date('2099-01-01'); return dA - dB; }
+                          if (rankingFilter === 'largest_amount') return (b.total_amount || b.amount || 0) - (a.total_amount || a.amount || 0);
+                          if (rankingFilter === 'smallest_amount') return (a.total_amount || a.amount || 0) - (b.total_amount || b.amount || 0);
+                          if (rankingFilter === 'most_repaid') { const pA = (a.total_amount||a.amount||0)>0?(a.amount_paid||0)/(a.total_amount||a.amount||1):0; const pB = (b.total_amount||b.amount||0)>0?(b.amount_paid||0)/(b.total_amount||b.amount||1):0; return pB-pA; }
+                          if (rankingFilter === 'least_repaid') { const pA = (a.total_amount||a.amount||0)>0?(a.amount_paid||0)/(a.total_amount||a.amount||1):0; const pB = (b.total_amount||b.amount||0)>0?(b.amount_paid||0)/(b.total_amount||b.amount||1):0; return pA-pB; }
+                          if (rankingFilter === 'most_recent') return new Date(b.created_at) - new Date(a.created_at);
+                          return 0;
+                        });
+                        return sorted.slice(0, 5).map((loan, idx) => {
+                          const op = publicProfiles.find(p => p.user_id === loan.lender_id);
+                          const totalAmt = loan.total_amount || loan.amount || 0;
+                          const paidAmt = loan.amount_paid || 0;
+                          const pct = totalAmt > 0 ? Math.round((paidAmt / totalAmt) * 100) : 0;
+                          const name = op?.full_name?.split(' ')[0] || op?.username || 'User';
+                          const purpose = loan.purpose ? ` for ${loan.purpose}` : '';
+                          let lv = '';
+                          if (rankingFilter === 'highest_interest' || rankingFilter === 'lowest_interest') lv = `${loan.interest_rate || 0}%`;
+                          else if (rankingFilter === 'highest_payment' || rankingFilter === 'lowest_payment') lv = formatMoney(loan.payment_amount || 0);
+                          else if (rankingFilter === 'soonest_deadline') { const d = loan.next_payment_date ? daysUntilDate(loan.next_payment_date) : null; lv = d === null ? '—' : d < 0 ? `${Math.abs(d)}d late` : d === 0 ? 'today' : `${d}d`; }
+                          else if (rankingFilter === 'largest_amount' || rankingFilter === 'smallest_amount') lv = formatMoney(totalAmt);
+                          else if (rankingFilter === 'most_repaid' || rankingFilter === 'least_repaid') lv = `${pct}%`;
+                          else if (rankingFilter === 'most_recent') lv = loan.created_at ? format(new Date(loan.created_at), 'MMM d') : '—';
+                          return (
+                            <div key={loan.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '6px 0', borderBottom: idx < 4 ? '1px solid rgba(0,0,0,0.04)' : 'none' }}>
+                              <RPC percentage={pct} number={idx + 1} size={32} />
+                              <div style={{ flex: 1, minWidth: 0 }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
+                                  <UserAvatar name={op?.full_name || op?.username} src={op?.profile_picture_url} size={16} radius={3} />
+                                  <div style={{ fontSize: 13, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name} lent you {formatMoney(totalAmt)}{purpose}</div>
+                                </div>
+                                <div style={{ fontSize: 11, color: '#9B9A98' }}>{formatMoney(paidAmt)} of {formatMoney(totalAmt)} repaid</div>
+                              </div>
+                              <span style={{ fontSize: 12, fontWeight: 700, color: '#1D5B94', flexShrink: 0 }}>{lv}</span>
+                            </div>
+                          );
+                        });
+                      })()}
+                    </div>
+                  </PageCard>
+                )
               )}
             </div>
           );
@@ -1225,92 +1348,33 @@ export default function YourLoans({ defaultTab }) {
           </div>
         )}
 
-        {/* 6. Loans Ranked By — borrowing only, reformatted */}
+        {/* Active Borrowing Summary — borrowing only */}
         {!isLending && activeLoans.length > 0 && (
-          <PageCard title="Loans Ranked By" headerRight={
-            <Select value={rankingFilter} onValueChange={setRankingFilter}>
-              <SelectTrigger className="w-auto h-7 px-2 border-0 text-xs font-medium rounded-lg" style={{ background: 'rgba(29,91,148,0.10)', color: '#1D5B94' }}><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="highest_interest">Highest Interest Rate</SelectItem>
-                <SelectItem value="lowest_interest">Lowest Interest Rate</SelectItem>
-                <SelectItem value="highest_payment">Highest Payment</SelectItem>
-                <SelectItem value="lowest_payment">Lowest Payment</SelectItem>
-                <SelectItem value="soonest_deadline">Soonest Deadline</SelectItem>
-                <SelectItem value="largest_amount">Largest Amount</SelectItem>
-                <SelectItem value="smallest_amount">Smallest Amount</SelectItem>
-                <SelectItem value="most_repaid">Most Repaid</SelectItem>
-                <SelectItem value="least_repaid">Least Repaid</SelectItem>
-                <SelectItem value="most_recent">Most Recently Created</SelectItem>
-              </SelectContent>
-            </Select>
-          }>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-              {(() => {
-                const RankedPieCircle = ({ percentage, number, size = 32 }) => {
-                  const pcx = size / 2; const pcy = size / 2; const r = (size / 2) - 3;
-                  const circ = 2 * Math.PI * r; const dash = (percentage / 100) * circ; const sw = 4;
-                  return (
-                    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ flexShrink: 0 }}>
-                      <circle cx={pcx} cy={pcy} r={r} fill="none" stroke="#E5E4E2" strokeWidth={sw} />
-                      {percentage > 0 && (<circle cx={pcx} cy={pcy} r={r} fill="none" stroke="#1D5B94" strokeWidth={sw} strokeDasharray={`${dash} ${circ - dash}`} strokeLinecap="round" transform={`rotate(-90 ${pcx} ${pcy})`} />)}
-                      <text x={pcx} y={pcy} textAnchor="middle" dominantBaseline="central" fill="#1A1918" fontSize="11" fontWeight="bold" fontFamily="'DM Sans', sans-serif">{number}</text>
-                    </svg>
-                  );
-                };
-                const sorted = [...activeLoans].sort((a, b) => {
-                  if (rankingFilter === 'highest_interest') return (b.interest_rate || 0) - (a.interest_rate || 0);
-                  if (rankingFilter === 'lowest_interest') return (a.interest_rate || 0) - (b.interest_rate || 0);
-                  if (rankingFilter === 'highest_payment') return (b.payment_amount || 0) - (a.payment_amount || 0);
-                  if (rankingFilter === 'lowest_payment') return (a.payment_amount || 0) - (b.payment_amount || 0);
-                  if (rankingFilter === 'soonest_deadline') { const dateA = a.next_payment_date ? new Date(a.next_payment_date) : new Date('2099-01-01'); const dateB = b.next_payment_date ? new Date(b.next_payment_date) : new Date('2099-01-01'); return dateA - dateB; }
-                  if (rankingFilter === 'largest_amount') return (b.total_amount || b.amount || 0) - (a.total_amount || a.amount || 0);
-                  if (rankingFilter === 'smallest_amount') return (a.total_amount || a.amount || 0) - (b.total_amount || b.amount || 0);
-                  if (rankingFilter === 'most_repaid') { const pctA = (a.total_amount || a.amount || 0) > 0 ? (a.amount_paid || 0) / (a.total_amount || a.amount || 1) : 0; const pctB = (b.total_amount || b.amount || 0) > 0 ? (b.amount_paid || 0) / (b.total_amount || b.amount || 1) : 0; return pctB - pctA; }
-                  if (rankingFilter === 'least_repaid') { const pctA = (a.total_amount || a.amount || 0) > 0 ? (a.amount_paid || 0) / (a.total_amount || a.amount || 1) : 0; const pctB = (b.total_amount || b.amount || 0) > 0 ? (b.amount_paid || 0) / (b.total_amount || b.amount || 1) : 0; return pctA - pctB; }
-                  if (rankingFilter === 'most_recent') return new Date(b.created_at) - new Date(a.created_at);
-                  return 0;
-                });
-                return sorted.slice(0, 5).map((loan, idx) => {
-                  const otherParty = publicProfiles.find(p => p.user_id === loan.lender_id);
-                  const totalAmt = loan.total_amount || loan.amount || 0;
-                  const paidAmt = loan.amount_paid || 0;
-                  const pct = totalAmt > 0 ? Math.round((paidAmt / totalAmt) * 100) : 0;
-                  const name = otherParty?.full_name?.split(' ')[0] || otherParty?.username || 'User';
-                  const purpose = loan.purpose ? ` for ${loan.purpose}` : '';
-                  // Left column value based on ranking filter
-                  let leftValue = '';
-                  if (rankingFilter === 'highest_interest' || rankingFilter === 'lowest_interest') {
-                    leftValue = `${loan.interest_rate || 0}%`;
-                  } else if (rankingFilter === 'highest_payment' || rankingFilter === 'lowest_payment') {
-                    leftValue = formatMoney(loan.payment_amount || 0);
-                  } else if (rankingFilter === 'soonest_deadline') {
-                    if (loan.next_payment_date) {
-                      const d = daysUntilDate(loan.next_payment_date);
-                      leftValue = d < 0 ? `${Math.abs(d)}d late` : d === 0 ? 'today' : `${d}d`;
-                    } else { leftValue = '—'; }
-                  } else if (rankingFilter === 'largest_amount' || rankingFilter === 'smallest_amount') {
-                    leftValue = formatMoney(totalAmt);
-                  } else if (rankingFilter === 'most_repaid' || rankingFilter === 'least_repaid') {
-                    leftValue = `${pct}%`;
-                  } else if (rankingFilter === 'most_recent') {
-                    leftValue = loan.created_at ? format(new Date(loan.created_at), 'MMM d') : '—';
-                  }
-                  return (
-                    <div key={loan.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '6px 0', borderBottom: idx < 4 ? '1px solid rgba(0,0,0,0.04)' : 'none' }}>
-                      <RankedPieCircle percentage={pct} number={idx + 1} size={32} />
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontSize: 13, color: '#1A1918', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                          {name} lent you {formatMoney(totalAmt)}{purpose}
-                        </div>
-                        <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 3 }}>
-                          {formatMoney(paidAmt)} of {formatMoney(totalAmt)} repaid
-                        </div>
-                      </div>
-                      <span style={{ fontSize: 12, fontWeight: 700, color: '#1D5B94', flexShrink: 0 }}>{leftValue}</span>
+          <PageCard title="Active Borrowing Summary">
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              {activeLoans.slice(0, 5).map((loan) => {
+                const otherProfile = publicProfiles.find(p => p.user_id === loan.lender_id);
+                const totalAmt = loan.total_amount || loan.amount || 0;
+                const paidAmt = loan.amount_paid || 0;
+                const pct = totalAmt > 0 ? Math.round((paidAmt / totalAmt) * 100) : 0;
+                const name = otherProfile?.full_name?.split(' ')[0] || otherProfile?.username || 'User';
+                const purpose = loan.purpose ? ` for ${loan.purpose}` : '';
+                return (
+                  <div key={loan.id} style={{ padding: '9px 0', borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                      <UserAvatar name={otherProfile?.full_name || otherProfile?.username} src={otherProfile?.profile_picture_url} size={20} radius={5} />
+                      <div style={{ fontSize: 13, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name} lent you {formatMoney(totalAmt)}{purpose}</div>
                     </div>
-                  );
-                });
-              })()}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <div style={{ flex: 1, height: 6, borderRadius: 3, background: 'rgba(29,91,148,0.1)', overflow: 'hidden' }}>
+                        <div style={{ height: '100%', borderRadius: 3, background: '#1D5B94', width: `${pct}%`, transition: 'width 0.5s' }} />
+                      </div>
+                      <span style={{ fontSize: 11, fontWeight: 700, color: '#9B9A98', flexShrink: 0 }}>{pct}%</span>
+                    </div>
+                    <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 3 }}>{formatMoney(paidAmt)} of {formatMoney(totalAmt)} repaid</div>
+                  </div>
+                );
+              })}
             </div>
           </PageCard>
         )}

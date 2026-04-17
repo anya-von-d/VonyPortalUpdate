@@ -382,6 +382,13 @@ input[type="date"] {
 .pill-nav-scroll::-webkit-scrollbar { display: none; }
 .loan-card-scroll::-webkit-scrollbar { display: none; }
 
+/* YourLoans: mobile-only consolidated payment cards */
+.loans-mobile-pay-top { display: none; }
+@media (max-width: 768px) {
+  .loans-mobile-pay-top { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
+  .loans-pay-card-desktop { display: none !important; }
+}
+
 /* Home + Dashboard pages responsive */
 @media (max-width: 900px) {
   .home-sidebar {
