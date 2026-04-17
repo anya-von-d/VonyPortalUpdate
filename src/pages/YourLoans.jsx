@@ -81,9 +81,8 @@ export default function YourLoans({ defaultTab }) {
   const activeBorrowingLoans = borrowingLoans.filter(l => l.status === 'active');
 
   useEffect(() => {
-    if (activeTab === 'lending') setSelectedScrollLoan(activeLendingLoans[0] || null);
-    else if (activeTab === 'borrowing') setSelectedScrollLoan(activeBorrowingLoans[0] || null);
-  }, [activeTab, activeLendingLoans.length, activeBorrowingLoans.length]);
+    setSelectedScrollLoan(null);
+  }, [activeTab]);
 
   // Keep manageLoanSelected in sync with selectedScrollLoan for doc popups
   useEffect(() => {
@@ -1319,7 +1318,7 @@ export default function YourLoans({ defaultTab }) {
         {activeLoans.length > 0 && (
           <div style={{ marginBottom: 24, background: 'rgba(3,172,234,0.05)', border: '1px solid rgba(3,172,234,0.18)', borderRadius: 12, padding: '14px 16px' }}>
             <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif", marginBottom: 12 }}>
-              Your Loans
+              Select a Loan to View Details
             </div>
             <div className="loan-card-scroll" style={{
               display: 'flex', gap: 12, overflowX: 'auto', paddingBottom: 8,
@@ -1406,13 +1405,40 @@ export default function YourLoans({ defaultTab }) {
                 );
               })}
             </div>
-          </div>
-        )}
 
-        {/* Inline loan detail body — rendered OUTSIDE the blue box */}
-        {selectedScrollLoan && (
-          <div style={{ marginTop: 8 }}>
-            {renderLoanDetailBody(selectedScrollLoan)}
+            {/* Loan details — inside the blue box, shown when a loan is selected */}
+            {selectedScrollLoan && (() => {
+              const detailProfile = publicProfiles.find(p => p.user_id === (isLending ? selectedScrollLoan.borrower_id : selectedScrollLoan.lender_id));
+              const detailFullName = detailProfile?.full_name || 'User';
+              const detailAmt = selectedScrollLoan.total_amount || selectedScrollLoan.amount || 0;
+              const detailPurpose = selectedScrollLoan.purpose;
+              return (
+                <>
+                  {/* Full-width loan header banner */}
+                  <div style={{
+                    marginTop: 16, marginBottom: 20,
+                    padding: '13px 16px',
+                    background: 'rgba(3,172,234,0.08)',
+                    borderRadius: 10,
+                    border: '1px solid rgba(3,172,234,0.15)',
+                    width: '100%', boxSizing: 'border-box',
+                  }}>
+                    <span style={{ fontSize: 14, fontWeight: 700, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>
+                      {isLending ? 'You lent' : 'You borrowed'}{' '}
+                      {formatMoney(detailAmt)}{' '}
+                      {isLending ? 'to' : 'from'}{' '}
+                      {detailFullName}
+                    </span>
+                    {detailPurpose && (
+                      <span style={{ fontSize: 14, fontWeight: 400, color: '#787776', fontFamily: "'DM Sans', sans-serif" }}>
+                        {' '}for {detailPurpose}
+                      </span>
+                    )}
+                  </div>
+                  {renderLoanDetailBody(selectedScrollLoan)}
+                </>
+              );
+            })()}
           </div>
         )}
 
