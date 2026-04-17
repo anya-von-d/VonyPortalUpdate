@@ -3,10 +3,17 @@ import SettingsModal from './SettingsModal';
 import { Loan, User, PublicProfile } from '@/entities/all';
 import { daysUntil as daysUntilDate } from '@/components/utils/dateUtils';
 
+// Module-level cache so notifications persist across sidebar remounts
+// (each page swap creates a new DesktopSidebar → new SidebarBottomSection).
+// Without this, the "What Needs Attention" list briefly empties and grows
+// back in, which shifts the whole sidebar layout on every page nav.
+let cachedNotifications = null;
+let cachedLoaded = false;
+
 export default function SidebarBottomSection() {
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [notifications, setNotifications] = useState([]);
-  const [loaded, setLoaded] = useState(false);
+  const [notifications, setNotifications] = useState(cachedNotifications || []);
+  const [loaded, setLoaded] = useState(cachedLoaded);
 
   useEffect(() => {
     loadNotifications();
@@ -85,9 +92,13 @@ export default function SidebarBottomSection() {
       });
 
       notifs.sort((a, b) => b.priority - a.priority);
-      setNotifications(notifs.slice(0, 3));
+      const top = notifs.slice(0, 3);
+      cachedNotifications = top;
+      cachedLoaded = true;
+      setNotifications(top);
       setLoaded(true);
     } catch {
+      cachedLoaded = true;
       setLoaded(true);
     }
   };
@@ -134,8 +145,11 @@ export default function SidebarBottomSection() {
 
   return (
     <>
-      {/* ── Key Alerts section ── */}
-      <div>
+      {/* ── Key Alerts section ──
+          Reserved min-height keeps the sidebar layout (esp. the vertically
+          centered Document Center group above) from shifting as notifications
+          load or change count. Fits header + up to 3 notification rows. */}
+      <div style={{ minHeight: 120 }}>
         <div style={{ paddingLeft: 12, marginBottom: 8 }}>
           <span style={{
             fontSize: 9, fontWeight: 700, color: '#03ACEA',

@@ -52,7 +52,7 @@ export default function DesktopSidebar() {
   };
 
   return (
-    <div className="mesh-left" style={{ background: 'transparent', borderRight: '1px solid rgba(0,0,0,0.06)' }}>
+    <div className="mesh-left" style={{ background: 'transparent', borderRight: '1px solid rgba(0,0,0,0.06)', fontFamily: "'DM Sans', system-ui, sans-serif", color: '#1A1918', WebkitFontSmoothing: 'antialiased', MozOsxFontSmoothing: 'grayscale' }}>
       <div style={{ position: 'sticky', top: 0, height: '100vh', padding: '14px 8px 16px', display: 'flex', flexDirection: 'column' }}>
         <Link to="/" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, fontStyle: 'italic', fontSize: '1.6rem', color: '#1A1918', textDecoration: 'none', display: 'block', marginBottom: 16, lineHeight: 1, letterSpacing: '-0.02em', paddingLeft: 6 }}>Vony</Link>
         <nav style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
