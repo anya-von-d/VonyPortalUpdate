@@ -76,7 +76,7 @@ function LoanCarousel({ notifications, onRecordPayment }) {
                   onClick={notif.action.onClick}
                   style={{
                     padding: '11px 24px', borderRadius: 20, background: 'white', color: '#1A1918',
-                    fontSize: 13, fontWeight: 600, border: 'none', cursor: 'pointer',
+                    fontSize: 13, fontWeight: 600, border: '1px solid #CFDCE7', cursor: 'pointer',
                     fontFamily: "'DM Sans', sans-serif", boxShadow: '0 4px 0 rgba(0,0,0,0.1)',
                     flexShrink: 0, whiteSpace: 'nowrap', transition: 'background 0.15s, transform 0.1s, box-shadow 0.1s'
                   }}
@@ -92,7 +92,7 @@ function LoanCarousel({ notifications, onRecordPayment }) {
           <>
             <button onClick={() => goTo(currentSlide - 1)} style={{
               position: 'absolute', top: '50%', left: 12, transform: 'translateY(-50%)',
-              width: 32, height: 32, borderRadius: '50%', border: 'none', background: 'white',
+              width: 32, height: 32, borderRadius: '50%', border: '1px solid #CFDCE7', background: 'white',
               boxShadow: '0 1px 6px rgba(0,0,0,0.08), 0 2px 12px rgba(0,0,0,0.04)',
               cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
               zIndex: 2, opacity: 0.7
@@ -101,7 +101,7 @@ function LoanCarousel({ notifications, onRecordPayment }) {
             </button>
             <button onClick={() => goTo(currentSlide + 1)} style={{
               position: 'absolute', top: '50%', right: 12, transform: 'translateY(-50%)',
-              width: 32, height: 32, borderRadius: '50%', border: 'none', background: 'white',
+              width: 32, height: 32, borderRadius: '50%', border: '1px solid #CFDCE7', background: 'white',
               boxShadow: '0 1px 6px rgba(0,0,0,0.08), 0 2px 12px rgba(0,0,0,0.04)',
               cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
               zIndex: 2, opacity: 0.7
@@ -117,7 +117,7 @@ function LoanCarousel({ notifications, onRecordPayment }) {
               <button key={i} onClick={() => setCurrentSlide(i)} style={{
                 width: i === currentSlide ? 22 : 7, height: 7, borderRadius: i === currentSlide ? 10 : '50%',
                 background: i === currentSlide ? 'white' : 'rgba(255,255,255,0.4)',
-                border: 'none', padding: 0, cursor: 'pointer',
+                border: '1px solid #CFDCE7', padding: 0, cursor: 'pointer',
                 boxShadow: i === currentSlide ? '0 0 8px rgba(255,255,255,0.4)' : 'none',
                 transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
               }} />
@@ -180,16 +180,16 @@ function WeekStrip({ allPaymentEvents, today, formatMoney }) {
   return (
     <div className="glass-card" style={{ overflow: 'hidden', userSelect: 'none' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px 0' }}>
-        <button onClick={() => setWeekOffset(w => w - 1)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, color: '#787776', display: 'flex', alignItems: 'center' }}>
+        <button onClick={() => setWeekOffset(w => w - 1)} style={{ background: 'none', border: '1px solid #CFDCE7', cursor: 'pointer', padding: 4, color: '#787776', display: 'flex', alignItems: 'center' }}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polyline points="15 18 9 12 15 6" /></svg>
         </button>
         <div style={{ fontSize: 12, fontWeight: 600, color: '#0D0D0C', letterSpacing: '-0.01em' }}>
           {monthLabel}
           {!showingCurrentWeek && (
-            <button onClick={() => setWeekOffset(0)} style={{ marginLeft: 8, background: 'none', border: 'none', cursor: 'pointer', fontSize: 10, color: '#82F0B9', fontWeight: 600, fontFamily: "'DM Sans', sans-serif" }}>Today</button>
+            <button onClick={() => setWeekOffset(0)} style={{ marginLeft: 8, background: 'none', border: '1px solid #CFDCE7', cursor: 'pointer', fontSize: 10, color: '#82F0B9', fontWeight: 600, fontFamily: "'DM Sans', sans-serif" }}>Today</button>
           )}
         </div>
-        <button onClick={() => setWeekOffset(w => w + 1)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, color: '#787776', display: 'flex', alignItems: 'center' }}>
+        <button onClick={() => setWeekOffset(w => w + 1)} style={{ background: 'none', border: '1px solid #CFDCE7', cursor: 'pointer', padding: 4, color: '#787776', display: 'flex', alignItems: 'center' }}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polyline points="9 18 15 12 9 6" /></svg>
         </button>
       </div>
@@ -935,7 +935,7 @@ export default function Home() {
               <div style={{
                 position: 'relative', zIndex: 1,
                 display: 'flex', alignItems: 'center', gap: 8, padding: '6px 12px', borderRadius: 9,
-                background: '#1A1918', border: 'none',
+                background: '#1A1918', border: '1px solid #CFDCE7',
               }}>
                 <div style={{ width: 20, height: 20, borderRadius: 6, background: 'rgba(255,255,255,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
@@ -1050,8 +1050,8 @@ export default function Home() {
 
             {/* Overview */}
             <div style={{ position: 'relative' }}>
-              <div className="home-aura-glow" style={{ position: 'absolute', inset: -5, background: '#CFDCE7', borderRadius: 14, filter: 'blur(6px)', opacity: 0.52, zIndex: 0, pointerEvents: 'none' }} />
-            <div className="home-overview-card" style={{ position: 'relative', zIndex: 1, padding: '12px 14px', borderRadius: 10, background: 'white', border: 'none' }}>
+              <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
+            <div className="home-overview-card" style={{ position: 'relative', zIndex: 1, padding: '12px 14px', borderRadius: 10, background: 'white', border: '1px solid #CFDCE7' }}>
               <SectionHeader title="Overview" />
               {/* One-line centered: Owed to you $x   You owe $y */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 20 }}>
@@ -1074,8 +1074,8 @@ export default function Home() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
               {/* Upcoming */}
               <div style={{ position: 'relative' }}>
-              <div className="home-aura-glow" style={{ position: 'absolute', inset: -5, background: '#CFDCE7', borderRadius: 14, filter: 'blur(6px)', opacity: 0.52, zIndex: 0, pointerEvents: 'none' }} />
-              <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', padding: '14px 18px' }}>
+              <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
+              <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: '1px solid #CFDCE7', padding: '14px 18px' }}>
                 <SectionHeader title="Upcoming" linkTo={createPageUrl("Upcoming")} linkLabel="Full schedule →" />
                 {combinedPaymentEvents.length === 0 ? (
                   <div style={{ padding: '8px 0', fontSize: 13, color: '#9B9A98', textAlign: 'center' }}>You're all caught up ✨</div>
@@ -1113,15 +1113,15 @@ export default function Home() {
               <div style={{ position: 'relative' }}>
                 {/* Thin aurora glow — #CFDCE7 → background */}
                 <div className="home-aura-glow" style={{
-                  position: 'absolute', inset: -5,
+                  position: 'absolute', inset: -3,
                   background: '#CFDCE7',
-                  borderRadius: 14,
-                  filter: 'blur(6px)',
-                  opacity: 0.52,
+                  borderRadius: 12,
+                  filter: 'blur(4px)',
+                  opacity: 0.5,
                   zIndex: 0,
                   pointerEvents: 'none',
                 }} />
-              <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', padding: '14px 18px' }}>
+              <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: '1px solid #CFDCE7', padding: '14px 18px' }}>
                 <SectionHeader title="Recent Activity" linkTo={createPageUrl("RecentActivity")} linkLabel="View all →" />
                 {recentActivity.length === 0 ? (
                   <div style={{ padding: '8px 0', fontSize: 13, color: '#9B9A98', textAlign: 'center' }}>No activity just yet 🕊️</div>
@@ -1147,8 +1147,8 @@ export default function Home() {
 
               {/* Active Lending */}
               <div style={{ position: 'relative' }}>
-              <div className="home-aura-glow" style={{ position: 'absolute', inset: -5, background: '#CFDCE7', borderRadius: 14, filter: 'blur(6px)', opacity: 0.52, zIndex: 0, pointerEvents: 'none' }} />
-              <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', padding: '14px 18px' }}>
+              <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
+              <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: '1px solid #CFDCE7', padding: '14px 18px' }}>
                 <SectionHeader title="Active Lending" linkTo={createPageUrl("YourLoans")} linkLabel="View all →" />
                 {lentLoans.length === 0 ? (
                   <div style={{ padding: '8px 0', fontSize: 13, color: '#9B9A98', textAlign: 'center' }}>Start a loan to see it here 🌱</div>
@@ -1188,8 +1188,8 @@ export default function Home() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
               {/* How month is going */}
               <div style={{ position: 'relative' }}>
-              <div className="home-aura-glow" style={{ position: 'absolute', inset: -5, background: '#CFDCE7', borderRadius: 14, filter: 'blur(6px)', opacity: 0.52, zIndex: 0, pointerEvents: 'none' }} />
-              <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', padding: '14px 18px' }}>
+              <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
+              <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: '1px solid #CFDCE7', padding: '14px 18px' }}>
                 <SectionHeader title={`How ${format(today, 'MMMM')} is going`} />
                 {/* Received */}
                 <div style={{ padding: '9px 0' }}>
@@ -1218,8 +1218,8 @@ export default function Home() {
 
               {/* Your Loans Over Time */}
               <div style={{ position: 'relative' }}>
-              <div className="home-aura-glow" style={{ position: 'absolute', inset: -5, background: '#CFDCE7', borderRadius: 14, filter: 'blur(6px)', opacity: 0.52, zIndex: 0, pointerEvents: 'none' }} />
-              <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', padding: '14px 18px' }} ref={loansChartRef}>
+              <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
+              <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: '1px solid #CFDCE7', padding: '14px 18px' }} ref={loansChartRef}>
                 <SectionHeader title="Your Loans Over Time" />
                 {!chartData ? (
                   <div style={{ padding: '8px 0', fontSize: 13, color: '#9B9A98', textAlign: 'center' }}>Your loan history will appear here 📊</div>
@@ -1274,8 +1274,8 @@ export default function Home() {
 
               {/* Active Borrowing */}
               <div style={{ position: 'relative' }}>
-              <div className="home-aura-glow" style={{ position: 'absolute', inset: -5, background: '#CFDCE7', borderRadius: 14, filter: 'blur(6px)', opacity: 0.52, zIndex: 0, pointerEvents: 'none' }} />
-              <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', padding: '14px 18px' }}>
+              <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
+              <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: '1px solid #CFDCE7', padding: '14px 18px' }}>
                 <SectionHeader title="Active Borrowing" linkTo={createPageUrl("YourLoans")} linkLabel="View all →" />
                 {borrowedLoans.length === 0 ? (
                   <div style={{ padding: '8px 0', fontSize: 13, color: '#9B9A98', textAlign: 'center' }}>Nothing borrowed just yet 🤝</div>
