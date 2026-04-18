@@ -1003,17 +1003,14 @@ export default function Home() {
                     border: '1px solid rgba(37,99,235,0.35)',
                     display: 'flex', flexDirection: 'column', justifyContent: 'center',
                   }}>
-                    {/* Top-right Log Payment button */}
+                    {/* Top-right Log Payment link (View all → style) */}
                     {nextBorrowerPayment && (
                       <Link
                         to={`${createPageUrl("RecordPayment")}?loanId=${nextBorrowerPayment.id}`}
                         style={{
-                          position: 'absolute', top: 10, right: 10,
-                          display: 'inline-flex', alignItems: 'center', gap: 4,
-                          padding: '4px 8px', borderRadius: 6,
-                          background: '#ECF4FA', color: '#328AB6',
-                          fontSize: 11, fontWeight: 600, textDecoration: 'none',
-                          fontFamily: "'DM Sans', sans-serif",
+                          position: 'absolute', top: 12, right: 14,
+                          fontSize: 11, fontWeight: 500, color: '#03ACEA',
+                          textDecoration: 'none', fontFamily: "'DM Sans', sans-serif",
                         }}
                       >Log Payment →</Link>
                     )}
@@ -1065,17 +1062,14 @@ export default function Home() {
                     background: '#ffffff',
                     display: 'flex', flexDirection: 'column', justifyContent: 'center',
                   }}>
-                    {/* Top-right Log Payment button */}
+                    {/* Top-right Log Payment link (View all → style) */}
                     {nextLenderPayment && (
                       <Link
                         to={`${createPageUrl("RecordPayment")}?loanId=${nextLenderPayment.id}`}
                         style={{
-                          position: 'absolute', top: 10, right: 10,
-                          display: 'inline-flex', alignItems: 'center', gap: 4,
-                          padding: '4px 8px', borderRadius: 6,
-                          background: '#ECF4FA', color: '#328AB6',
-                          fontSize: 11, fontWeight: 600, textDecoration: 'none',
-                          fontFamily: "'DM Sans', sans-serif",
+                          position: 'absolute', top: 12, right: 14,
+                          fontSize: 11, fontWeight: 500, color: '#03ACEA',
+                          textDecoration: 'none', fontFamily: "'DM Sans', sans-serif",
                         }}
                       >Log Payment →</Link>
                     )}
@@ -1239,15 +1233,15 @@ export default function Home() {
               <div style={{ position: 'relative' }}>
               <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
               <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', padding: '14px 18px' }}>
-                <SectionHeader title={`How ${format(today, 'MMMM')} is going`} />
+                <SectionHeader title={`How ${format(today, 'MMMM')} is Going`} />
                 {/* Received */}
                 <div style={{ padding: '9px 0' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 6 }}>
                     <span style={{ fontSize: 13, color: '#1A1918' }}>Received</span>
                     <span style={{ fontSize: 14, fontWeight: 700, color: '#03ACEA', letterSpacing: '-0.01em' }}>{formatMoney(monthlyReceived)}</span>
                   </div>
-                  <div style={{ height: 6, borderRadius: 3, background: 'rgba(3,172,234,0.1)', overflow: 'hidden' }}>
-                    <div style={{ height: '100%', borderRadius: 3, background: '#03ACEA', width: `${monthlyExpectedReceive > 0 ? Math.min((monthlyReceived / monthlyExpectedReceive) * 100, 100) : 0}%`, transition: 'width 0.8s ease-out' }} />
+                  <div style={{ height: 6, borderRadius: 3, background: 'rgba(3,172,234,0.1)', overflow: 'visible' }}>
+                    <div style={{ height: '100%', borderRadius: 3, background: '#03ACEA', width: `${monthlyExpectedReceive > 0 ? Math.min((monthlyReceived / monthlyExpectedReceive) * 100, 100) : 0}%`, transition: 'width 0.8s ease-out', boxShadow: '0 0 6px rgba(3,172,234,0.65), 0 0 12px rgba(3,172,234,0.35)' }} />
                   </div>
                   <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 4 }}>of {formatMoney(monthlyExpectedReceive)} expected</div>
                 </div>
@@ -1257,8 +1251,8 @@ export default function Home() {
                     <span style={{ fontSize: 13, color: '#1A1918' }}>Paid out</span>
                     <span style={{ fontSize: 14, fontWeight: 700, color: '#1D5B94', letterSpacing: '-0.01em' }}>{formatMoney(monthlyPaidOut)}</span>
                   </div>
-                  <div style={{ height: 6, borderRadius: 3, background: 'rgba(29,91,148,0.1)', overflow: 'hidden' }}>
-                    <div style={{ height: '100%', borderRadius: 3, background: '#1D5B94', width: `${monthlyExpectedPay > 0 ? Math.min((monthlyPaidOut / monthlyExpectedPay) * 100, 100) : 0}%`, transition: 'width 0.8s ease-out' }} />
+                  <div style={{ height: 6, borderRadius: 3, background: 'rgba(29,91,148,0.1)', overflow: 'visible' }}>
+                    <div style={{ height: '100%', borderRadius: 3, background: '#1D5B94', width: `${monthlyExpectedPay > 0 ? Math.min((monthlyPaidOut / monthlyExpectedPay) * 100, 100) : 0}%`, transition: 'width 0.8s ease-out', boxShadow: '0 0 6px rgba(29,91,148,0.6), 0 0 12px rgba(29,91,148,0.3)' }} />
                   </div>
                   <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 4 }}>of {formatMoney(monthlyExpectedPay)} expected</div>
                 </div>
@@ -1287,29 +1281,43 @@ export default function Home() {
                 <SectionHeader title="Your Loans Over Time" />
                 {!chartData ? (
                   <div style={{ padding: '8px 0', fontSize: 13, color: '#9B9A98', textAlign: 'center' }}>Your loan history will appear here 📊</div>
-                ) : (
+                ) : (() => {
+                  // Compact money label for the y-axis ticks
+                  const compactMoney = v => {
+                    if (v >= 1_000_000) return `$${(v/1_000_000).toFixed(v >= 10_000_000 ? 0 : 1)}M`;
+                    if (v >= 1_000) return `$${(v/1_000).toFixed(v >= 10_000 ? 0 : 1)}k`;
+                    return `$${Math.round(v)}`;
+                  };
+                  const yTicks = [chartData.maxVal, chartData.maxVal * 0.75, chartData.maxVal * 0.5, chartData.maxVal * 0.25, 0];
+                  const Y_AXIS_WIDTH = 34;
+                  return (
                   <>
-                    {/* Chart */}
-                    <div style={{ display: 'flex', alignItems: 'flex-end', gap: 14, height: 120 }}>
-                      {chartData.data.map((d, i) => {
-                        const lendPct = (d.owedToYou / chartData.maxVal) * 100;
-                        const borPct = (d.youOwe / chartData.maxVal) * 100;
-                        return (
-                          <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'flex-end' }}>
-                            <div style={{ width: '100%', display: 'flex', gap: 3, alignItems: 'flex-end', height: '100%', justifyContent: 'center' }}>
-                              <div style={{ width: 8, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', height: '100%', flexShrink: 0 }}>
-                                <div style={{ width: '100%', height: `${Math.max(lendPct, 2)}%`, borderRadius: '3px 3px 0 0', background: d.isFuture ? 'rgba(3,172,234,0.25)' : '#03ACEA', transition: 'height 0.6s ease-out' }} />
-                              </div>
-                              <div style={{ width: 8, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', height: '100%', flexShrink: 0 }}>
-                                <div style={{ width: '100%', height: `${Math.max(borPct, 2)}%`, borderRadius: '3px 3px 0 0', background: d.isFuture ? 'rgba(29,91,148,0.2)' : '#1D5B94', transition: 'height 0.6s ease-out' }} />
+                    {/* Chart — y-axis ticks + bars */}
+                    <div style={{ display: 'flex', alignItems: 'stretch', gap: 6, height: 120 }}>
+                      <div style={{ width: Y_AXIS_WIDTH, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', fontSize: 9, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", textAlign: 'right', lineHeight: 1, paddingRight: 2 }}>
+                        {yTicks.map((v, i) => <span key={i}>{compactMoney(v)}</span>)}
+                      </div>
+                      <div style={{ flex: 1, display: 'flex', alignItems: 'flex-end', gap: 14, height: '100%' }}>
+                        {chartData.data.map((d, i) => {
+                          const lendPct = (d.owedToYou / chartData.maxVal) * 100;
+                          const borPct = (d.youOwe / chartData.maxVal) * 100;
+                          return (
+                            <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'flex-end' }}>
+                              <div style={{ width: '100%', display: 'flex', gap: 3, alignItems: 'flex-end', height: '100%', justifyContent: 'center' }}>
+                                <div style={{ width: 8, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', height: '100%', flexShrink: 0 }}>
+                                  <div style={{ width: '100%', height: `${Math.max(lendPct, 2)}%`, borderRadius: '3px 3px 0 0', background: d.isFuture ? 'rgba(3,172,234,0.25)' : '#03ACEA', transition: 'height 0.6s ease-out' }} />
+                                </div>
+                                <div style={{ width: 8, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', height: '100%', flexShrink: 0 }}>
+                                  <div style={{ width: '100%', height: `${Math.max(borPct, 2)}%`, borderRadius: '3px 3px 0 0', background: d.isFuture ? 'rgba(29,91,148,0.2)' : '#1D5B94', transition: 'height 0.6s ease-out' }} />
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        );
-                      })}
+                          );
+                        })}
+                      </div>
                     </div>
-                    {/* X-axis labels */}
-                    <div style={{ display: 'flex', gap: 6, marginTop: 6 }}>
+                    {/* X-axis labels — offset to align under bars */}
+                    <div style={{ display: 'flex', gap: 6, marginTop: 6, paddingLeft: Y_AXIS_WIDTH + 6 }}>
                       {chartData.data.map((d, i) => (
                         <div key={i} style={{ flex: 1, textAlign: 'center', fontSize: 10, color: d.isFuture ? '#C5C3C0' : d.isCurrent ? '#03ACEA' : '#9B9A98', fontWeight: d.isCurrent ? 700 : 500 }}>
                           {d.label}
@@ -1332,7 +1340,8 @@ export default function Home() {
                       </div>
                     </div>
                   </>
-                )}
+                  );
+                })()}
               </div>
               </div>{/* end loans-chart aurora wrapper */}
 
