@@ -1663,7 +1663,7 @@ export default function Lending({ initialTab }) {
                             {nextPaymentLoan ? (
                               <>
                                 <div style={{ textAlign: 'center', fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                  <span style={{ fontSize: 12, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em', marginRight: 4 }}>
+                                  <span style={{ fontSize: 13, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em', marginRight: 4 }}>
                                     {formatMoney(nextPaymentLoan.payment_amount || 0)}
                                   </span>
                                   <span style={{ fontSize: 12, fontWeight: 400, color: '#1A1918' }}>from {firstName}</span>
@@ -1674,7 +1674,7 @@ export default function Lending({ initialTab }) {
                               </>
                             ) : (
                               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <span style={{ fontSize: 12, fontWeight: 700, color: '#C5C3C0' }}>—</span>
+                                <span style={{ fontSize: 15, fontWeight: 700, color: '#C5C3C0' }}>—</span>
                                 <span style={{ fontSize: 11, color: '#9B9A98' }}>None incoming ✨</span>
                               </div>
                             )}
