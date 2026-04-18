@@ -1005,12 +1005,14 @@ export default function Home() {
                     border: '1px solid rgba(50,138,182,0.65)',
                     display: 'flex', flexDirection: 'column', justifyContent: 'center',
                   }}>
-                    <SectionHeader title="Next Payment Due" titleColor="#1F5A78" />
+                    {daysLabel && nextBorrowerPayment && (
+                      <span style={{ position: 'absolute', top: 10, right: 12, fontSize: 9, fontWeight: 700, color: badgeColor, background: badgeBg, borderRadius: 5, padding: '2px 6px' }}>{daysLabel}</span>
+                    )}
+                    <SectionHeader title="Next Payment Due" titleColor="#1A1918" />
                     {nextBorrowerPayment ? (
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'nowrap', overflow: 'hidden' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, flexWrap: 'nowrap', overflow: 'hidden' }}>
                         <span style={{ fontSize: 13, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em', flexShrink: 0 }}>{format(nextBorrowerPayment.date, 'MMM d')}</span>
-                        {daysLabel && <span style={{ fontSize: 9, fontWeight: 700, color: badgeColor, background: badgeBg, borderRadius: 5, padding: '2px 6px', flexShrink: 0 }}>{daysLabel}</span>}
-                        <span style={{ fontSize: 11, color: '#9B9A98', marginLeft: 'auto', flexShrink: 0, whiteSpace: 'nowrap' }}>{formatMoney(nextBorrowerPayment.payment_amount || 0)} to {nextBorrowerPayment.firstName}</span>
+                        <span style={{ fontSize: 11, color: '#9B9A98', flexShrink: 0, whiteSpace: 'nowrap' }}>{formatMoney(nextBorrowerPayment.payment_amount || 0)} to {nextBorrowerPayment.firstName}</span>
                       </div>
                     ) : (
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -1053,12 +1055,14 @@ export default function Home() {
                     background: '#ffffff',
                     display: 'flex', flexDirection: 'column', justifyContent: 'center',
                   }}>
+                    {daysLabel && nextLenderPayment && (
+                      <span style={{ position: 'absolute', top: 10, right: 12, fontSize: 9, fontWeight: 700, color: badgeColor, background: badgeBg, borderRadius: 5, padding: '2px 6px' }}>{daysLabel}</span>
+                    )}
                     <SectionHeader title="Next Payment Incoming" />
                     {nextLenderPayment ? (
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'nowrap', overflow: 'hidden' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, flexWrap: 'nowrap', overflow: 'hidden' }}>
                         <span style={{ fontSize: 13, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em', flexShrink: 0 }}>{format(nextLenderPayment.date, 'MMM d')}</span>
-                        {daysLabel && <span style={{ fontSize: 9, fontWeight: 700, color: badgeColor, background: badgeBg, borderRadius: 5, padding: '2px 6px', flexShrink: 0 }}>{daysLabel}</span>}
-                        <span style={{ fontSize: 11, color: '#9B9A98', marginLeft: 'auto', flexShrink: 0, whiteSpace: 'nowrap' }}>{formatMoney(nextLenderPayment.payment_amount || 0)} from {nextLenderPayment.firstName}</span>
+                        <span style={{ fontSize: 11, color: '#9B9A98', flexShrink: 0, whiteSpace: 'nowrap' }}>{formatMoney(nextLenderPayment.payment_amount || 0)} from {nextLenderPayment.firstName}</span>
                       </div>
                     ) : (
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -1220,7 +1224,7 @@ export default function Home() {
                     <span style={{ fontSize: 13, color: '#1A1918' }}>Received</span>
                     <span style={{ fontSize: 14, fontWeight: 700, color: '#03ACEA', letterSpacing: '-0.01em' }}>{formatMoney(monthlyReceived)}</span>
                   </div>
-                  <div style={{ height: 6, borderRadius: 3, background: 'rgba(3,172,234,0.1)', overflow: 'hidden' }}>
+                  <div style={{ height: 6, borderRadius: 3, background: '#D9EAF4', overflow: 'hidden' }}>
                     <div style={{ height: '100%', borderRadius: 3, background: '#03ACEA', width: `${monthlyExpectedReceive > 0 ? Math.min((monthlyReceived / monthlyExpectedReceive) * 100, 100) : 0}%`, transition: 'width 0.8s ease-out' }} />
                   </div>
                   <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 4 }}>of {formatMoney(monthlyExpectedReceive)} expected</div>
@@ -1231,8 +1235,8 @@ export default function Home() {
                     <span style={{ fontSize: 13, color: '#1A1918' }}>Paid out</span>
                     <span style={{ fontSize: 14, fontWeight: 700, color: '#1D5B94', letterSpacing: '-0.01em' }}>{formatMoney(monthlyPaidOut)}</span>
                   </div>
-                  <div style={{ height: 6, borderRadius: 3, background: 'rgba(29,91,148,0.1)', overflow: 'hidden' }}>
-                    <div style={{ height: '100%', borderRadius: 3, background: '#1D5B94', width: `${monthlyExpectedPay > 0 ? Math.min((monthlyPaidOut / monthlyExpectedPay) * 100, 100) : 0}%`, transition: 'width 0.8s ease-out' }} />
+                  <div style={{ height: 6, borderRadius: 3, background: '#D9EAF4', overflow: 'hidden' }}>
+                    <div style={{ height: '100%', borderRadius: 3, background: '#328AB6', width: `${monthlyExpectedPay > 0 ? Math.min((monthlyPaidOut / monthlyExpectedPay) * 100, 100) : 0}%`, transition: 'width 0.8s ease-out' }} />
                   </div>
                   <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 4 }}>of {formatMoney(monthlyExpectedPay)} expected</div>
                 </div>
