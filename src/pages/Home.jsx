@@ -248,6 +248,7 @@ export default function Home() {
   const loansChartRef = useRef(null);
   const activeLoansRef = useRef(null);
   const [activeAnimKey, setActiveAnimKey] = useState(0);
+  const [progressTab, setProgressTab] = useState('lending'); // 'lending' | 'borrowing'
   const loansWasOut = useRef(true);
   const activeWasOut = useRef(true);
   const [bigScreen, setBigScreen] = useState(window.innerWidth > 900);
@@ -1222,43 +1223,72 @@ export default function Home() {
               </div>
               </div>{/* end Recent Activity aurora wrapper */}
 
-              {/* Active Lending */}
+              {/* Lending / Borrowing Progress — combined card */}
+              {(() => {
+                const isLending = progressTab === 'lending';
+                const activeLoans = isLending ? lentLoans : borrowedLoans;
+                const tabBtnStyle = (active) => ({
+                  fontSize: 12, fontWeight: active ? 700 : 500,
+                  color: active ? '#03ACEA' : '#9B9A98',
+                  letterSpacing: '-0.01em',
+                  background: 'transparent', border: 'none', padding: 0,
+                  cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
+                });
+                return (
               <div className="home-card-lending" style={{ position: 'relative' }}>
               <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
               <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', padding: '14px 18px' }}>
-                <SectionHeader title="Active Lending" linkTo={createPageUrl("YourLoans")} linkLabel="View all →" />
-                {lentLoans.length === 0 ? (
-                  <div style={{ padding: '8px 0', fontSize: 12, color: '#9B9A98', textAlign: 'center' }}>Start a loan to see it here 🌱</div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 5, marginBottom: 2, gap: 12 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                    <button type="button" onClick={() => { setProgressTab('lending'); setActiveAnimKey(k => k + 1); }} style={tabBtnStyle(isLending)}>Lending Progress</button>
+                    <button type="button" onClick={() => { setProgressTab('borrowing'); setActiveAnimKey(k => k + 1); }} style={tabBtnStyle(!isLending)}>Borrowing Progress</button>
+                  </div>
+                  <Link className="home-progress-viewall" to={createPageUrl("YourLoans")} style={{ fontSize: 11, fontWeight: 500, color: '#03ACEA', textDecoration: 'none' }}>View all →</Link>
+                </div>
+                {activeLoans.length === 0 ? (
+                  <div style={{ padding: '8px 0', fontSize: 12, color: '#9B9A98', textAlign: 'center' }}>
+                    {isLending ? 'Start a loan to see it here 🌱' : 'Nothing borrowed just yet 🤝'}
+                  </div>
                 ) : (
-                  <div ref={activeLoansRef} style={{ display: 'flex', flexDirection: 'column' }}>
-                    {lentLoans.slice(0, 5).map((loan, idx) => {
-                      const otherProfile = safeAllProfiles.find(p => p.user_id === loan.borrower_id);
+                  <div ref={isLending ? activeLoansRef : undefined} style={{ display: 'flex', flexDirection: 'column' }}>
+                    {activeLoans.slice(0, 5).map((loan, idx) => {
+                      const otherId = isLending ? loan.borrower_id : loan.lender_id;
+                      const otherProfile = safeAllProfiles.find(p => p.user_id === otherId);
                       const totalAmt = loan.total_amount || loan.amount || 0;
                       const paidAmt = loan.amount_paid || 0;
                       const pct = totalAmt > 0 ? Math.round((paidAmt / totalAmt) * 100) : 0;
                       const name = otherProfile?.full_name?.split(' ')[0] || otherProfile?.username || 'User';
                       const purpose = loan.purpose ? ` for ${loan.purpose}` : '';
-                      const initial = (otherProfile?.full_name || otherProfile?.username || 'U').charAt(0).toUpperCase();
+                      const barColor = isLending ? '#03ACEA' : '#1D5B94';
+                      const trackColor = isLending ? 'rgba(3,172,234,0.1)' : 'rgba(29,91,148,0.1)';
+                      const label = isLending
+                        ? `You lent ${name} ${formatMoney(totalAmt)}${purpose}`
+                        : `${name} lent you ${formatMoney(totalAmt)}${purpose}`;
+                      const footer = isLending
+                        ? `${formatMoney(paidAmt)} of ${formatMoney(totalAmt)} paid back`
+                        : `${formatMoney(paidAmt)} of ${formatMoney(totalAmt)} repaid`;
                       return (
                         <div key={loan.id} style={{ padding: '9px 0' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
                             <UserAvatar name={otherProfile?.full_name || otherProfile?.username} src={otherProfile?.profile_picture_url} size={20} radius={5} />
-                            <div style={{ fontSize: 12, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>You lent {name} {formatMoney(totalAmt)}{purpose}</div>
+                            <div style={{ fontSize: 12, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{label}</div>
                           </div>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                            <div style={{ flex: 1, height: 6, borderRadius: 3, background: 'rgba(3,172,234,0.1)', overflow: 'hidden' }}>
-                              <div key={`al-${idx}-${activeAnimKey}`} style={{ height: '100%', borderRadius: 3, background: '#03ACEA', width: `${pct}%`, animation: `barGrowRight 0.8s ease-out ${idx * 0.08}s both` }} />
+                            <div style={{ flex: 1, height: 6, borderRadius: 3, background: trackColor, overflow: 'hidden' }}>
+                              <div key={`progress-${idx}-${activeAnimKey}`} style={{ height: '100%', borderRadius: 3, background: barColor, width: `${pct}%`, animation: `barGrowRight 0.8s ease-out ${idx * 0.08}s both` }} />
                             </div>
                             <span style={{ fontSize: 11, fontWeight: 700, color: '#9B9A98', flexShrink: 0 }}>{pct}%</span>
                           </div>
-                          <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 3 }}>{formatMoney(paidAmt)} of {formatMoney(totalAmt)} paid back</div>
+                          <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 3 }}>{footer}</div>
                         </div>
                       );
                     })}
                   </div>
                 )}
               </div>
-              </div>{/* end active lending aurora wrapper */}
+              </div>{/* end progress aurora wrapper */}
+                );
+              })()}
             </div>
 
             {/* Right column: How April → Your Loans Over Time → Active Borrowing */}
@@ -1381,43 +1411,6 @@ export default function Home() {
               </div>
               </div>{/* end loans-chart aurora wrapper */}
 
-              {/* Active Borrowing */}
-              <div className="home-card-borrowing" style={{ position: 'relative' }}>
-              <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
-              <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', padding: '14px 18px' }}>
-                <SectionHeader title="Active Borrowing" linkTo={createPageUrl("YourLoans")} linkLabel="View all →" />
-                {borrowedLoans.length === 0 ? (
-                  <div style={{ padding: '8px 0', fontSize: 12, color: '#9B9A98', textAlign: 'center' }}>Nothing borrowed just yet 🤝</div>
-                ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    {borrowedLoans.slice(0, 5).map((loan, idx) => {
-                      const otherProfile = safeAllProfiles.find(p => p.user_id === loan.lender_id);
-                      const totalAmt = loan.total_amount || loan.amount || 0;
-                      const paidAmt = loan.amount_paid || 0;
-                      const pct = totalAmt > 0 ? Math.round((paidAmt / totalAmt) * 100) : 0;
-                      const name = otherProfile?.full_name?.split(' ')[0] || otherProfile?.username || 'User';
-                      const purpose = loan.purpose ? ` for ${loan.purpose}` : '';
-                      const initial = (otherProfile?.full_name || otherProfile?.username || 'U').charAt(0).toUpperCase();
-                      return (
-                        <div key={loan.id} style={{ padding: '9px 0' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                            <UserAvatar name={otherProfile?.full_name || otherProfile?.username} src={otherProfile?.profile_picture_url} size={20} radius={5} />
-                            <div style={{ fontSize: 12, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name} lent you {formatMoney(totalAmt)}{purpose}</div>
-                          </div>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                            <div style={{ flex: 1, height: 6, borderRadius: 3, background: 'rgba(29,91,148,0.1)', overflow: 'hidden' }}>
-                              <div key={`ab-${idx}-${activeAnimKey}`} style={{ height: '100%', borderRadius: 3, background: '#1D5B94', width: `${pct}%`, animation: `barGrowRight 0.8s ease-out ${idx * 0.08}s both` }} />
-                            </div>
-                            <span style={{ fontSize: 11, fontWeight: 700, color: '#9B9A98', flexShrink: 0 }}>{pct}%</span>
-                          </div>
-                          <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 3 }}>{formatMoney(paidAmt)} of {formatMoney(totalAmt)} repaid</div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-              </div>{/* end active-borrowing aurora wrapper */}
             </div>
           </div>
         </div>

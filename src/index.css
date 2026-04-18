@@ -303,8 +303,7 @@ input[type="date"] {
   .home-card-chart     { order: 2 !important; }
   .home-card-howmonth  { order: 3 !important; }
   .home-card-recent    { order: 4 !important; }
-  .home-card-lending   { order: 5 !important; grid-column: span 2 !important; }
-  .home-card-borrowing { order: 6 !important; grid-column: span 2 !important; }
+  .home-card-lending   { order: 5 !important; grid-column: span 4 !important; }
   /* Overview: stack amount over label, label centered under its amount */
   .home-overview-stats {
     gap: 40px !important;
@@ -376,9 +375,10 @@ input[type="date"] {
   .home-card-upcoming  { order: 4 !important; }
   .home-card-howmonth  { order: 5 !important; }
   .home-card-lending   { order: 6 !important; }
-  .home-card-borrowing { order: 7 !important; }
-  .home-card-recent    { order: 8 !important; }
-  .home-card-chart     { order: 9 !important; }
+  .home-card-recent    { order: 7 !important; }
+  .home-card-chart     { order: 8 !important; }
+  /* Hide the View all link on mobile inside the Lending/Borrowing Progress card */
+  .home-progress-viewall { display: none !important; }
   /* Record Payment: stack loan selector above form on mobile */
   .rp-two-col { grid-template-columns: 1fr !important; }
   /* Create Loan: hide Borrower Will Pay + Loan Summary from top row; show below blue box */
