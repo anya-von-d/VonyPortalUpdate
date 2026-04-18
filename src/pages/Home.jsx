@@ -957,7 +957,7 @@ export default function Home() {
               <div style={{
                 position: 'relative', zIndex: 1,
                 display: 'flex', alignItems: 'center', gap: 8, padding: '6px 12px', borderRadius: 9,
-                background: '#2D5777', border: 'none',
+                background: '#14324D', border: 'none',
               }}>
                 <div style={{ width: 20, height: 20, borderRadius: 6, background: 'rgba(255,255,255,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
@@ -1001,7 +1001,9 @@ export default function Home() {
                   <div style={{
                     position: 'relative', zIndex: 1, flex: 1,
                     padding: '12px 14px', borderRadius: 10,
-                    background: '#ffffff',
+                    background: 'rgba(255,255,255,0.55)',
+                    backdropFilter: 'blur(12px) saturate(1.3)',
+                    WebkitBackdropFilter: 'blur(12px) saturate(1.3)',
                     border: '1px solid rgba(50,138,182,0.65)',
                     display: 'flex', flexDirection: 'column', justifyContent: 'center',
                   }}>
