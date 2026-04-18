@@ -982,7 +982,7 @@ export default function Home() {
               const badgeColor = isLate ? '#E8726E' : days !== null && days <= 3 ? '#F59E0B' : '#9B9A98';
               const badgeBg = isLate ? 'rgba(232,114,110,0.08)' : days !== null && days <= 3 ? 'rgba(245,158,11,0.08)' : 'rgba(0,0,0,0.04)';
               return (
-                <div className="home-blue-card" style={{ position: 'relative', display: 'flex', flexDirection: 'column' }}>
+                <div className="home-blue-card home-card-npd" style={{ position: 'relative', display: 'flex', flexDirection: 'column' }}>
                   {/* Aurora glow — blue/purple palette */}
                   <div style={{
                     position: 'absolute',
@@ -1015,15 +1015,15 @@ export default function Home() {
                           <polyline points="12 6 12 12 16 14"/>
                         </svg>
                       </span>
-                      <span style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>Next Payment</span>
+                      <span style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>Next Payment Due</span>
                     </div>
                     {nextBorrowerPayment ? (
                       <>
-                        <div style={{ textAlign: 'center', fontSize: 12, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                          <span style={{ display: 'inline-block', background: '#EBF4FA', color: '#03ACEA', padding: '2px 6px', marginRight: 4, fontWeight: 600 }}>
+                        <div style={{ textAlign: 'center', fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          <span style={{ fontSize: 13, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em', marginRight: 4 }}>
                             {formatMoney(nextBorrowerPayment.payment_amount || 0)}
                           </span>
-                          <span style={{ fontWeight: 400 }}>due to {nextBorrowerPayment.firstName}</span>
+                          <span style={{ fontSize: 12, fontWeight: 400, color: '#1A1918' }}>to {nextBorrowerPayment.firstName}</span>
                         </div>
                         <div style={{ textAlign: 'left', marginTop: 6, fontSize: 8, fontWeight: 700, color: '#03ACEA', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>
                           Send before {format(nextBorrowerPayment.date, 'MMMM do')}
@@ -1048,7 +1048,7 @@ export default function Home() {
               const badgeColor = isLate ? '#E8726E' : '#03ACEA';
               const badgeBg = isLate ? 'rgba(232,114,110,0.08)' : 'rgba(3,172,234,0.10)';
               return (
-                <div className="home-blue-card" style={{ position: 'relative', display: 'flex', flexDirection: 'column' }}>
+                <div className="home-blue-card home-card-npi" style={{ position: 'relative', display: 'flex', flexDirection: 'column' }}>
                   {/* Aurora glow — cyan/teal palette */}
                   <div style={{
                     position: 'absolute',
@@ -1068,17 +1068,30 @@ export default function Home() {
                     position: 'relative', zIndex: 1, flex: 1,
                     padding: '12px 14px', borderRadius: 10,
                     background: '#ffffff',
+                    border: '1px solid rgba(50,138,182,0.65)',
                     display: 'flex', flexDirection: 'column', justifyContent: 'center',
                   }}>
-                    {daysLabel && nextLenderPayment && (
-                      <span style={{ position: 'absolute', top: 10, right: 12, fontSize: 9, fontWeight: 700, color: badgeColor, background: badgeBg, borderRadius: 5, padding: '3px 9px' }}>{daysLabel}</span>
-                    )}
-                    <SectionHeader title="Next Payment Incoming" />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 5, paddingBottom: 5, marginBottom: 2 }}>
+                      <span style={{ width: 20, height: 20, borderRadius: 6, background: '#EBF4FA', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <circle cx="12" cy="12" r="10"/>
+                          <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                      </span>
+                      <span style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>Next Payment Incoming</span>
+                    </div>
                     {nextLenderPayment ? (
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14, flexWrap: 'nowrap', overflow: 'hidden' }}>
-                        <span style={{ fontSize: 13, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em', flexShrink: 0 }}>{format(nextLenderPayment.date, 'MMM d')}</span>
-                        <span style={{ fontSize: 11, color: '#9B9A98', flexShrink: 0, whiteSpace: 'nowrap' }}>{formatMoney(nextLenderPayment.payment_amount || 0)} from {nextLenderPayment.firstName}</span>
-                      </div>
+                      <>
+                        <div style={{ textAlign: 'center', fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          <span style={{ fontSize: 13, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em', marginRight: 4 }}>
+                            {formatMoney(nextLenderPayment.payment_amount || 0)}
+                          </span>
+                          <span style={{ fontSize: 12, fontWeight: 400, color: '#1A1918' }}>from {nextLenderPayment.firstName}</span>
+                        </div>
+                        <div style={{ textAlign: 'left', marginTop: 6, fontSize: 8, fontWeight: 700, color: '#03ACEA', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>
+                          Expect before {format(nextLenderPayment.date, 'MMMM do')}
+                        </div>
+                      </>
                     ) : (
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <span style={{ fontSize: 15, fontWeight: 700, color: '#C5C3C0' }}>—</span>
@@ -1091,7 +1104,7 @@ export default function Home() {
             })()}
 
             {/* Overview */}
-            <div style={{ position: 'relative' }}>
+            <div className="home-card-overview" style={{ position: 'relative' }}>
               <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
             <div className="home-overview-card" style={{ position: 'relative', zIndex: 1, padding: '12px 14px', borderRadius: 10, background: 'white', border: 'none' }}>
               <SectionHeader title="Overview" />
@@ -1115,7 +1128,7 @@ export default function Home() {
             {/* Left column: Upcoming → Recent Activity → Active Lending */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
               {/* Upcoming */}
-              <div style={{ position: 'relative' }}>
+              <div className="home-card-upcoming" style={{ position: 'relative' }}>
               <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
               <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', padding: '14px 18px' }}>
                 <SectionHeader title="Upcoming" linkTo={createPageUrl("Upcoming")} linkLabel="Full schedule →" />
@@ -1152,7 +1165,7 @@ export default function Home() {
               </div>{/* end upcoming aurora wrapper */}
 
               {/* Recent Activity */}
-              <div style={{ position: 'relative' }}>
+              <div className="home-card-recent" style={{ position: 'relative' }}>
                 {/* Thin aurora glow — #CFDCE7 → background */}
                 <div className="home-aura-glow" style={{
                   position: 'absolute', inset: -3,
@@ -1188,7 +1201,7 @@ export default function Home() {
               </div>{/* end Recent Activity aurora wrapper */}
 
               {/* Active Lending */}
-              <div style={{ position: 'relative' }}>
+              <div className="home-card-lending" style={{ position: 'relative' }}>
               <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
               <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', padding: '14px 18px' }}>
                 <SectionHeader title="Active Lending" linkTo={createPageUrl("YourLoans")} linkLabel="View all →" />
@@ -1229,7 +1242,7 @@ export default function Home() {
             {/* Right column: How April → Your Loans Over Time → Active Borrowing */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
               {/* How month is going */}
-              <div style={{ position: 'relative' }}>
+              <div className="home-card-howmonth" style={{ position: 'relative' }}>
               <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
               <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', padding: '14px 18px' }}>
                 <SectionHeader title={`How ${format(today, 'MMMM')} is Going`} />
@@ -1275,7 +1288,7 @@ export default function Home() {
               </div>{/* end how-month aurora wrapper */}
 
               {/* Your Loans Over Time */}
-              <div style={{ position: 'relative' }}>
+              <div className="home-card-chart" style={{ position: 'relative' }}>
               <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
               <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', padding: '14px 18px' }} ref={loansChartRef}>
                 <SectionHeader title="Your Loans Over Time" />
@@ -1347,7 +1360,7 @@ export default function Home() {
               </div>{/* end loans-chart aurora wrapper */}
 
               {/* Active Borrowing */}
-              <div style={{ position: 'relative' }}>
+              <div className="home-card-borrowing" style={{ position: 'relative' }}>
               <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
               <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', padding: '14px 18px' }}>
                 <SectionHeader title="Active Borrowing" linkTo={createPageUrl("YourLoans")} linkLabel="View all →" />

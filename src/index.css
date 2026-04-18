@@ -336,7 +336,27 @@ input[type="date"] {
     padding: 72px 20px 60px !important;
     min-width: 0 !important;
     width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 20px !important;
   }
+  /* Flatten Home card containers so all 9 cards become direct children of
+     .mesh-center and can be reordered via `order`. */
+  .home-summary-cards,
+  .home-two-col-row,
+  .home-two-col-row > div {
+    display: contents !important;
+  }
+  /* Mobile card order */
+  .home-card-npd       { order: 1 !important; }
+  .home-card-npi       { order: 2 !important; }
+  .home-card-overview  { order: 3 !important; }
+  .home-card-upcoming  { order: 4 !important; }
+  .home-card-howmonth  { order: 5 !important; }
+  .home-card-lending   { order: 6 !important; }
+  .home-card-borrowing { order: 7 !important; }
+  .home-card-recent    { order: 8 !important; }
+  .home-card-chart     { order: 9 !important; }
   /* Record Payment: stack loan selector above form on mobile */
   .rp-two-col { grid-template-columns: 1fr !important; }
   /* Create Loan: hide Borrower Will Pay + Loan Summary from top row; show below blue box */
