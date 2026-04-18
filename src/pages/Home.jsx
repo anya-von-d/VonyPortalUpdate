@@ -943,10 +943,10 @@ export default function Home() {
 
           {/* Notification bar */}
           {notifCount > 0 && (
-            <div style={{ position: 'relative', marginBottom: 16, paddingBottom: 8 }}>
+            <div style={{ position: 'relative', marginBottom: 16, paddingTop: 8 }}>
               {/* Rainbow aura */}
               <div style={{
-                position: 'absolute', bottom: 0, left: '50%',
+                position: 'absolute', top: 0, left: '50%',
                 transform: 'translateX(-50%)',
                 width: 'calc(100% + 36px)', height: '100%',
                 background: 'linear-gradient(225deg, rgb(167,139,250) 0%, rgb(139,92,246) 10%, rgb(124,58,237) 20%, rgb(99,102,241) 32%, rgb(79,70,229) 42%, rgb(67,56,202) 52%, rgb(37,99,235) 62%, rgb(59,130,246) 72%, rgb(96,165,250) 82%, rgb(56,189,248) 92%, rgb(14,165,233) 100%)',
@@ -1242,18 +1242,23 @@ export default function Home() {
                     <span style={{ fontSize: 13, color: '#1A1918' }}>Received</span>
                     <span style={{ fontSize: 14, fontWeight: 700, color: '#03ACEA', letterSpacing: '-0.01em' }}>{formatMoney(monthlyReceived)}</span>
                   </div>
-                  {/* Track renders the full aurora gradient (greeny-blue -> blue, same
-                      shades + transparency as the notification bar glow). The cover div
-                      clips the unfilled portion from the right so the gradient crops —
-                      it never compresses. */}
-                  <div style={{ position: 'relative', height: 6, borderRadius: 3, overflow: 'hidden', background: 'linear-gradient(to right, rgba(14,165,233,0.55) 0%, rgba(56,189,248,0.55) 25%, rgba(96,165,250,0.55) 50%, rgba(59,130,246,0.55) 75%, rgba(37,99,235,0.55) 100%)' }}>
-                    <div style={{
-                      position: 'absolute', top: 0, bottom: 0,
-                      left: `${monthlyExpectedReceive > 0 ? Math.min((monthlyReceived / monthlyExpectedReceive) * 100, 100) : 0}%`,
-                      right: 0, background: 'rgba(3,172,234,0.1)',
-                      transition: 'left 0.8s ease-out',
-                    }} />
-                  </div>
+                  {/* Track shows the unfilled color. A full-width gradient div is
+                      overlaid and clip-path crops it to the filled percentage —
+                      so the gradient is sampled from the left of a fixed full-bar
+                      palette, never compressed into the fill width. */}
+                  {(() => {
+                    const pct = monthlyExpectedReceive > 0 ? Math.min((monthlyReceived / monthlyExpectedReceive) * 100, 100) : 0;
+                    return (
+                      <div style={{ position: 'relative', height: 6, borderRadius: 3, overflow: 'hidden', background: 'rgba(3,172,234,0.1)' }}>
+                        <div style={{
+                          position: 'absolute', inset: 0,
+                          background: 'linear-gradient(to right, rgba(14,165,233,0.55) 0%, rgba(56,189,248,0.55) 25%, rgba(96,165,250,0.55) 50%, rgba(59,130,246,0.55) 75%, rgba(37,99,235,0.55) 100%)',
+                          clipPath: `inset(0 ${100 - pct}% 0 0)`,
+                          transition: 'clip-path 0.8s ease-out',
+                        }} />
+                      </div>
+                    );
+                  })()}
                   <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 4 }}>of {formatMoney(monthlyExpectedReceive)} expected</div>
                 </div>
                 {/* Paid out */}
@@ -1262,15 +1267,20 @@ export default function Home() {
                     <span style={{ fontSize: 13, color: '#1A1918' }}>Paid out</span>
                     <span style={{ fontSize: 14, fontWeight: 700, color: '#1D5B94', letterSpacing: '-0.01em' }}>{formatMoney(monthlyPaidOut)}</span>
                   </div>
-                  {/* Purply-blue -> blue, same cropping behavior */}
-                  <div style={{ position: 'relative', height: 6, borderRadius: 3, overflow: 'hidden', background: 'linear-gradient(to right, rgba(167,139,250,0.55) 0%, rgba(139,92,246,0.55) 20%, rgba(124,58,237,0.55) 40%, rgba(99,102,241,0.55) 60%, rgba(79,70,229,0.55) 80%, rgba(37,99,235,0.55) 100%)' }}>
-                    <div style={{
-                      position: 'absolute', top: 0, bottom: 0,
-                      left: `${monthlyExpectedPay > 0 ? Math.min((monthlyPaidOut / monthlyExpectedPay) * 100, 100) : 0}%`,
-                      right: 0, background: 'rgba(29,91,148,0.1)',
-                      transition: 'left 0.8s ease-out',
-                    }} />
-                  </div>
+                  {/* Plain track + clipped gradient overlay (blue -> purply-blue), cropped not compressed */}
+                  {(() => {
+                    const pct = monthlyExpectedPay > 0 ? Math.min((monthlyPaidOut / monthlyExpectedPay) * 100, 100) : 0;
+                    return (
+                      <div style={{ position: 'relative', height: 6, borderRadius: 3, overflow: 'hidden', background: 'rgba(29,91,148,0.1)' }}>
+                        <div style={{
+                          position: 'absolute', inset: 0,
+                          background: 'linear-gradient(to right, rgba(37,99,235,0.55) 0%, rgba(59,130,246,0.55) 25%, rgba(79,70,229,0.55) 50%, rgba(99,102,241,0.55) 75%, rgba(129,140,248,0.55) 100%)',
+                          clipPath: `inset(0 ${100 - pct}% 0 0)`,
+                          transition: 'clip-path 0.8s ease-out',
+                        }} />
+                      </div>
+                    );
+                  })()}
                   <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 4 }}>of {formatMoney(monthlyExpectedPay)} expected</div>
                 </div>
                 {/* Status message */}
