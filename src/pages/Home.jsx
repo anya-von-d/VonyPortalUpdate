@@ -588,6 +588,71 @@ export default function Home() {
   const monthlyExpectedReceive = lentLoans.reduce((sum, l) => sum + (l.payment_amount || 0), 0);
   const monthlyExpectedPay = borrowedLoans.reduce((sum, l) => sum + (l.payment_amount || 0), 0);
 
+  // Helper message for "How {month} is going" card — prioritized status line.
+  // Overdue cases win; otherwise we pick one of several positive variants
+  // based on whichever condition is true.
+  const howMonthMessage = (() => {
+    if (myLoans.length === 0) {
+      return { text: "No loans yet, create one when you're ready", emoji: '' };
+    }
+    const overdueOwedCount = overdueYouOwe.length;
+    if (overdueOwedCount > 1) {
+      return { text: `${overdueOwedCount} payments need your attention`, emoji: '' };
+    }
+    if (overdueOwedCount === 1) {
+      return { text: "One quick payment and you're back on track", emoji: '' };
+    }
+
+    const EMOJIS = ['💫', '🏆', '🎉', '⚡', '🚀', '🎯', '🥇'];
+    // Stable per-day pick so the emoji doesn't reshuffle on every render
+    const dayKey = today.getDate() + today.getMonth() * 31;
+    const pickEmoji = () => EMOJIS[dayKey % EMOJIS.length];
+
+    // Outgoing ahead of schedule: paid out exceeds what was expected this month
+    if (monthlyExpectedPay > 0 && monthlyPaidOut > monthlyExpectedPay) {
+      return { text: 'Your outgoing payments are ahead of schedule', emoji: pickEmoji() };
+    }
+
+    // Paid back more than newly borrowed this month
+    const borrowedThisMonth = myLoans
+      .filter(l => l && l.borrower_id === user.id && l.created_at && new Date(l.created_at) >= currentMonth && new Date(l.created_at) <= currentMonthEnd)
+      .reduce((sum, l) => sum + (l.amount || 0), 0);
+    if (borrowedThisMonth > 0 && monthlyPaidOut > borrowedThisMonth) {
+      return { text: "You've paid back more than you've borrowed this month", emoji: pickEmoji() };
+    }
+
+    // Only 1 or 2 payments left this month
+    const paymentsLeftThisMonth = myLoans.filter(l =>
+      l && l.borrower_id === user.id && l.status === 'active' && l.next_payment_date &&
+      new Date(l.next_payment_date) >= today && new Date(l.next_payment_date) <= currentMonthEnd
+    ).length;
+    if (paymentsLeftThisMonth === 1 || paymentsLeftThisMonth === 2) {
+      return {
+        text: `Only ${paymentsLeftThisMonth} payment${paymentsLeftThisMonth === 1 ? '' : 's'} left to make this month`,
+        emoji: pickEmoji(),
+      };
+    }
+
+    // Any completed payments this month with no overdue → all on time
+    const hasPaymentsThisMonth = safePayments.some(p => {
+      if (!p || p.status !== 'completed') return false;
+      const loan = myLoans.find(l => l.id === p.loan_id);
+      if (!loan || loan.borrower_id !== user.id) return false;
+      const pDate = new Date(p.payment_date || p.created_at);
+      return pDate >= currentMonth && pDate <= currentMonthEnd;
+    });
+    if (hasPaymentsThisMonth) {
+      return { text: 'All your payments this month have been on time', emoji: pickEmoji() };
+    }
+
+    // Default positive fallback — alternates based on day for subtle variety
+    const DEFAULTS = [
+      "You're on track with your payments this month",
+      'Nice work, everything is on track',
+    ];
+    return { text: DEFAULTS[dayKey % DEFAULTS.length], emoji: pickEmoji() };
+  })();
+
   // Overdue count for tags
   const overdueFromBorrowers = myLoans.filter(l =>
     l && l.lender_id === user.id && l.status === 'active' && l.next_payment_date && new Date(l.next_payment_date) < today
@@ -1196,6 +1261,20 @@ export default function Home() {
                     <div style={{ height: '100%', borderRadius: 3, background: '#1D5B94', width: `${monthlyExpectedPay > 0 ? Math.min((monthlyPaidOut / monthlyExpectedPay) * 100, 100) : 0}%`, transition: 'width 0.8s ease-out' }} />
                   </div>
                   <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 4 }}>of {formatMoney(monthlyExpectedPay)} expected</div>
+                </div>
+                {/* Status message */}
+                <div style={{
+                  marginTop: 10,
+                  background: '#D9EAF4',
+                  color: '#328AB6',
+                  borderRadius: 8,
+                  padding: '8px 12px',
+                  fontSize: 12,
+                  fontWeight: 500,
+                  lineHeight: 1.4,
+                  fontFamily: "'DM Sans', sans-serif",
+                }}>
+                  {howMonthMessage.text}{howMonthMessage.emoji ? ` ${howMonthMessage.emoji}` : ''}
                 </div>
               </div>
               </div>{/* end how-month aurora wrapper */}
