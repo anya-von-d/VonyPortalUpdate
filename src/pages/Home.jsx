@@ -929,7 +929,7 @@ export default function Home() {
       <MeshMobileNav user={user} activePage="Home" />
 
       {/* ── MESH THREE-COLUMN LAYOUT ── */}
-      <div className="mesh-layout" style={{ display: 'grid', gridTemplateColumns: '176px 1fr', gap: 0 }}>
+      <div className="mesh-layout home-mesh" style={{ display: 'grid', gridTemplateColumns: '176px 1fr', gap: 0 }}>
 
         {/* ── LEFT: Sidebar nav ── */}
         <DesktopSidebar />
@@ -1251,7 +1251,7 @@ export default function Home() {
                   <div className="home-card-tasks" style={{ position: 'relative' }}>
                     <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
                     <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', padding: '14px 18px' }}>
-                      <SectionHeader title="Tasks for the Week" />
+                      <SectionHeader title="Coming Up this Week" />
                       {/* Day strip */}
                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4, marginTop: 2, marginBottom: 10 }}>
                         {days.map((d, i) => {

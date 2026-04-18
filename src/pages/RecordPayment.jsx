@@ -607,9 +607,25 @@ export default function RecordPayment() {
                               onBlur={e => e.target.style.borderColor = 'rgba(0,0,0,0.06)'}
                             />
                           </div>
-                          {selectedLoan && (
-                            <p style={{ fontSize: 11, color: '#787776', margin: '6px 0 0', fontFamily: "'DM Sans', sans-serif" }}>Remaining balance: ${getRemainingBalance(selectedLoan).toFixed(2)}</p>
-                          )}
+                          {selectedLoan && (() => {
+                            const payAmt = selectedLoan.payment_amount || selectedLoan.next_payment_amount || getRemainingBalance(selectedLoan);
+                            const payAmtStr = `$${Number(payAmt).toFixed(2)}`;
+                            if (selectedLoan.next_payment_date) {
+                              const due = new Date(selectedLoan.next_payment_date);
+                              const today = new Date();
+                              today.setHours(0, 0, 0, 0);
+                              const days = Math.ceil((due - today) / 86400000);
+                              if (days < 0) {
+                                const n = Math.abs(days);
+                                return <p style={{ fontSize: 11, color: '#E8726E', margin: '6px 0 0', fontFamily: "'DM Sans', sans-serif" }}>{payAmtStr} overdue by {n} day{n === 1 ? '' : 's'}</p>;
+                              }
+                              if (days === 0) {
+                                return <p style={{ fontSize: 11, color: '#787776', margin: '6px 0 0', fontFamily: "'DM Sans', sans-serif" }}>{payAmtStr} due today</p>;
+                              }
+                              return <p style={{ fontSize: 11, color: '#787776', margin: '6px 0 0', fontFamily: "'DM Sans', sans-serif" }}>{payAmtStr} due in {days} day{days === 1 ? '' : 's'}</p>;
+                            }
+                            return null;
+                          })()}
                         </div>
                         <div>
                           <label style={{ fontSize: 12, fontWeight: 600, color: '#787776', marginBottom: 6, display: 'block', fontFamily: "'DM Sans', sans-serif" }}>Payment Date</label>

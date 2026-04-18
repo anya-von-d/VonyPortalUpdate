@@ -282,6 +282,18 @@ input[type="date"] {
   .mesh-left {
     background: rgba(0,0,0,0.028) !important;
   }
+  /* Home variant: sidebar shares the page background (texture shows through),
+     no divider line, and a #7EC0EA wash at the top that fades out before the
+     main-content cards begin. */
+  .home-mesh .mesh-left {
+    background: linear-gradient(to bottom,
+      #7EC0EA 0px,
+      #7EC0EA 40px,
+      rgba(126, 192, 234, 0) 120px,
+      transparent 100%
+    ) !important;
+    border-right: none !important;
+  }
   /* Home: summary row — gaps and edge padding match the other cards. */
   .home-summary-cards {
     gap: 24px !important;
