@@ -1081,38 +1081,62 @@ export default function YourLoans({ defaultTab }) {
             </div>
           </div>
 
-          {/* You Owe / Owed to You — aurora card matching the other two */}
-          <div style={{ position: 'relative', display: 'flex', flexDirection: 'column' }}>
-            <div style={{
-              position: 'relative', zIndex: 1, flex: 1,
-              borderRadius: 11, display: 'flex', flexDirection: 'column',
-              boxShadow: '0 -1px 3px rgba(78,108,135,0.6), 0 -5px 11px rgba(125,155,180,0.42), 0 -12px 22px rgba(48,68,88,0.22), 0 2px 4px rgba(215,228,238,0.65), 0 6px 13px rgba(168,195,215,0.48), 0 13px 24px rgba(125,155,180,0.26), 0 0 18px rgba(125,155,180,0.3), 0 0 30px rgba(78,108,135,0.14)',
-            }}>
-            <div style={{
-              flex: 1,
-              padding: '10px 14px', borderRadius: 10,
-              background: '#ffffff',
-              display: 'flex', flexDirection: 'column', justifyContent: 'center',
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 6 }}>
-                <div style={{ width: 20, height: 20, borderRadius: 6, background: isLending ? 'rgba(3,172,234,0.12)' : 'rgba(29,91,148,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={isLending ? '#03ACEA' : '#1D5B94'} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          {/* Overview — exact Home two-ring card */}
+          {(() => {
+            const Ring = ({ percent, color, label }) => {
+              const C = 2 * Math.PI * 45;
+              const offset = C - (percent / 100) * C;
+              return (
+                <div style={{ position: 'relative', width: 80, height: 80, flexShrink: 0 }}>
+                  <svg width="80" height="80" viewBox="0 0 128 128" style={{ transform: 'rotate(-90deg)' }}>
+                    <circle cx="64" cy="64" r="45" fill="none" stroke={`${color}26`} strokeWidth="12" />
+                    <circle cx="64" cy="64" r="45" fill="none" stroke={color} strokeWidth="12" strokeLinecap="round" strokeDasharray={C} strokeDashoffset={offset} />
+                  </svg>
+                  <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none', gap: 1 }}>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>{percent}%</span>
+                    <span style={{ fontSize: 9, fontWeight: 500, color: '#787776', fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>{label}</span>
+                  </div>
                 </div>
-                <span style={{ fontSize: 9, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-                  {isLending ? 'Owed to You' : 'You Owe'}
-                </span>
+              );
+            };
+            const borrowLoans = activeBorrowingLoans;
+            const lendLoans = activeLendingLoans;
+            const totalBorrowedAmount = borrowLoans.reduce((s, l) => s + (l.total_amount || l.amount || 0), 0);
+            const totalPaidBack = borrowLoans.reduce((s, l) => s + (l.amount_paid || 0), 0);
+            const totalLentAmount = lendLoans.reduce((s, l) => s + (l.total_amount || l.amount || 0), 0);
+            const totalRepaid = lendLoans.reduce((s, l) => s + (l.amount_paid || 0), 0);
+            const percentPaid = totalBorrowedAmount > 0 ? Math.round((totalPaidBack / totalBorrowedAmount) * 100) : 0;
+            const percentRepaid = totalLentAmount > 0 ? Math.round((totalRepaid / totalLentAmount) * 100) : 0;
+            const borrowOwed = Math.max(0, totalBorrowedAmount - totalPaidBack);
+            const lentOwed = Math.max(0, totalLentAmount - totalRepaid);
+            const textBlockStyle = { flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 2 };
+            const bigLineStyle  = { fontSize: 12, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" };
+            const subLineStyle  = { fontSize: 12, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" };
+            return (
+              <div style={{ position: 'relative' }}>
+                <div style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
+                <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', padding: '14px 18px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 5, marginBottom: 2 }}>
+                    <span style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>Overview</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginTop: 4 }}>
+                    <Ring percent={percentPaid} color="#1D5B94" label="Paid back" />
+                    <div style={textBlockStyle}>
+                      <div style={bigLineStyle}>You owe <span style={{ color: '#1D5B94' }}>{formatMoney(borrowOwed)}</span></div>
+                      <div style={subLineStyle}>{formatMoney(totalPaidBack)} of {formatMoney(totalBorrowedAmount)} paid back</div>
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginTop: 6 }}>
+                    <div style={textBlockStyle}>
+                      <div style={bigLineStyle}>You're owed <span style={{ color: '#03ACEA' }}>{formatMoney(lentOwed)}</span></div>
+                      <div style={subLineStyle}>{formatMoney(totalRepaid)} of {formatMoney(totalLentAmount)} repaid to you</div>
+                    </div>
+                    <Ring percent={percentRepaid} color="#03ACEA" label="Repaid" />
+                  </div>
+                </div>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'nowrap', overflow: 'hidden' }}>
-                <span style={{ fontSize: 13, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em', flexShrink: 0 }}>
-                  {formatMoney(Math.max(0, totalOwedAll - totalPaidAll))}
-                </span>
-                <span style={{ fontSize: 11, color: '#9B9A98', flexShrink: 0, whiteSpace: 'nowrap' }}>
-                  outstanding
-                </span>
-              </div>
-            </div>
-            </div>
-          </div>
+            );
+          })()}
         </div>
 
         {/* 2. Upcoming + Loan Progress side by side */}
