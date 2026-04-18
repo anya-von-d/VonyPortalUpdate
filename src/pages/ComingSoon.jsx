@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { createPageUrl } from "@/utils";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { motion } from "framer-motion";
+import { ChevronDown } from "lucide-react";
 import { useAuth } from "@/lib/AuthContext";
 import MeshMobileNav from "@/components/MeshMobileNav";
 import DesktopSidebar from '../components/DesktopSidebar';
 
 const LEARN_CATEGORIES = [
+  { id: 'using', label: 'Using Vony' },
   { id: 'lending', label: 'Lending with Friends' },
   { id: 'basics', label: 'The Basics' },
   { id: 'saving', label: 'Saving & Budgeting' },
@@ -15,14 +15,20 @@ const LEARN_CATEGORIES = [
 ];
 
 const CAT_COLORS = {
-  lending:     { bg: '#FBFDFF', badge: 'rgba(37,99,235,0.06)',   badgeText: '#1D4ED8', title: '#1E3A8A', border: 'rgba(30,58,138,0.28)' },
-  basics:      { bg: '#FAFEF9', badge: 'rgba(5,150,105,0.06)',   badgeText: '#065F46', title: '#064E3B', border: 'rgba(6,78,59,0.28)' },
-  saving:      { bg: '#FDFAFF', badge: 'rgba(124,58,237,0.06)',  badgeText: '#6D28D9', title: '#4C1D95', border: 'rgba(76,29,149,0.28)' },
-  traditional: { bg: '#FFFEFC', badge: 'rgba(217,119,6,0.06)',   badgeText: '#92400E', title: '#78350F', border: 'rgba(120,53,15,0.28)' },
-  debt:        { bg: '#FFFCFD', badge: 'rgba(225,29,72,0.06)',   badgeText: '#9F1239', title: '#881337', border: 'rgba(136,19,55,0.28)' },
+  using:       { pill: '#EBF4FA', text: '#03ACEA' },
+  lending:     { pill: '#E0E7FF', text: '#1D4ED8' },
+  basics:      { pill: '#D1FAE5', text: '#065F46' },
+  saving:      { pill: '#EDE9FE', text: '#6D28D9' },
+  traditional: { pill: '#FEF3C7', text: '#92400E' },
+  debt:        { pill: '#FFE4E6', text: '#9F1239' },
 };
 
 const LEARN_ARTICLES = {
+  using: [
+    { title: 'Promissory Notes Explained', body: 'What a promissory note actually is, what it should contain, and why every loan on Vony comes with one.' },
+    { title: 'How to Use an Amortization Table', body: 'Reading your payment schedule: principal vs. interest, remaining balance, and why each line matters.' },
+    { title: "What to do if you don't get paid back on vony", body: 'Your options when a loan goes sideways, from gentle reminders to formal steps, all built into the platform.' },
+  ],
   lending: [
     { title: 'How to Lend Money Without Damaging a Relationship', body: 'Setting expectations, using agreements, and protecting the friendship above all else.' },
     { title: 'Tax implications of peer lending', body: 'What the IRS expects when you lend or borrow over $10k, how gift rules apply, and when interest income matters.' },
@@ -68,69 +74,155 @@ const LEARN_ARTICLES = {
 /* ── Star button ─────────────────────────────────────────── */
 function StarButton({ saved, onToggle }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-      {saved && (
-        <span style={{
-          background: '#FEF9C3', border: '1px solid #FDE68A',
-          borderRadius: 6, padding: '2px 8px',
-          fontSize: 11, fontWeight: 600, color: '#92400E',
-          whiteSpace: 'nowrap', lineHeight: 1.4,
-        }}>Saved</span>
+    <button
+      onClick={onToggle}
+      style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+      aria-label={saved ? 'Unsave' : 'Save'}
+    >
+      {saved ? (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="#F59E0B" stroke="#F59E0B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+        </svg>
+      ) : (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9B9A98" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+        </svg>
       )}
+    </button>
+  );
+}
+
+/* ── Multi-select dropdown ─────────────────────────────────── */
+function MultiSelectDropdown({ label, options, selected, onChange }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  const toggle = (id) => {
+    if (selected.includes(id)) onChange(selected.filter(s => s !== id));
+    else onChange([...selected, id]);
+  };
+
+  const displayLabel = selected.length === 0
+    ? label
+    : selected.length === 1
+      ? options.find(o => o.id === selected[0])?.label || label
+      : `${selected.length} selected`;
+
+  return (
+    <div ref={ref} style={{ position: 'relative' }}>
       <button
-        onClick={onToggle}
-        style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-        aria-label={saved ? 'Unsave' : 'Save'}
+        onClick={() => setOpen(!open)}
+        style={{
+          display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 10,
+          border: '1px solid rgba(0,0,0,0.06)', background: selected.length > 0 ? 'rgba(3,172,234,0.08)' : 'white',
+          fontSize: 13, fontWeight: 500, color: '#1A1918', cursor: 'pointer',
+          fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap', transition: 'background 0.15s',
+        }}
       >
-        {saved ? (
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="#F59E0B" stroke="#F59E0B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-          </svg>
-        ) : (
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9B9A98" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-          </svg>
-        )}
+        {displayLabel}
+        <ChevronDown size={14} style={{ opacity: 0.5, transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
       </button>
+      {open && (
+        <div style={{
+          position: 'absolute', top: 'calc(100% + 6px)', left: 0, minWidth: 220,
+          background: 'white', borderRadius: 12, border: '1px solid rgba(0,0,0,0.06)',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.08)', zIndex: 50, padding: 6, maxHeight: 280, overflowY: 'auto',
+        }}>
+          {options.map(opt => (
+            <label
+              key={opt.id}
+              onClick={() => toggle(opt.id)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px', borderRadius: 8,
+                cursor: 'pointer', fontSize: 13, color: '#1A1918', transition: 'background 0.1s',
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.03)'}
+              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+            >
+              <div style={{
+                width: 18, height: 18, borderRadius: 5, border: selected.includes(opt.id) ? 'none' : '1.5px solid rgba(0,0,0,0.2)',
+                background: selected.includes(opt.id) ? '#03ACEA' : 'white', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                transition: 'all 0.15s', flexShrink: 0,
+              }}>
+                {selected.includes(opt.id) && (
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+                )}
+              </div>
+              {opt.label}
+            </label>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
 
-/* ── Your Picks list ─────────────────────────────────────── */
-function YourPicksList({ savedSet, onRemove }) {
-  const picks = [];
-  LEARN_CATEGORIES.forEach(cat => {
-    (LEARN_ARTICLES[cat.id] || []).forEach(article => {
-      const key = article.title;
-      if (savedSet.has(key)) picks.push({ ...article, catLabel: cat.label });
-    });
-  });
-  if (picks.length === 0) return (
-    <p style={{ fontSize: 12, color: '#C5C3C0', margin: 0, paddingLeft: 4 }}>Nothing saved yet.</p>
-  );
+/* ── Shuffle helper ───────────────────────────────────────── */
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/* ── Article card ─────────────────────────────────────────── */
+function ArticleCard({ article, catId, catLabel, saved, onToggle, index }) {
+  const clr = CAT_COLORS[catId];
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-      {picks.map(p => (
-        <div key={p.title} style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
-          <button onClick={() => onRemove(p.title)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px 0', flexShrink: 0 }}>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="#F59E0B" stroke="#F59E0B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-            </svg>
-          </button>
-          <div style={{ minWidth: 0 }}>
-            <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', lineHeight: 1.3, marginBottom: 1 }}>{p.title}</div>
-            <div style={{ fontSize: 10, color: '#9B9A98' }}>{p.catLabel}</div>
-          </div>
-        </div>
-      ))}
-    </div>
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: Math.min(index * 0.03, 0.3) }}
+      style={{
+        background: '#ffffff', borderRadius: 10, padding: '14px 16px',
+        boxShadow: '0 1px 6px rgba(0,0,0,0.04)', cursor: 'default',
+        border: 'none', position: 'relative', minHeight: 140,
+        display: 'flex', flexDirection: 'column',
+      }}
+    >
+      {/* Star */}
+      <div style={{ position: 'absolute', top: 10, right: 10 }}>
+        <StarButton saved={saved} onToggle={onToggle} />
+      </div>
+      {/* Category pill */}
+      <div style={{
+        display: 'inline-block', alignSelf: 'flex-start',
+        fontSize: 10, fontWeight: 700, color: clr.text,
+        textTransform: 'uppercase', letterSpacing: '0.08em',
+        background: clr.pill, borderRadius: 5, padding: '3px 8px',
+        marginBottom: 10, marginRight: 30,
+      }}>{catLabel}</div>
+      {/* Title */}
+      <div style={{ fontSize: 13, fontWeight: 700, color: '#1A1918', lineHeight: 1.35, marginBottom: 6, paddingRight: 22 }}>
+        {article.title}
+      </div>
+      {/* Body */}
+      <div style={{ fontSize: 12, color: '#787776', lineHeight: 1.5, marginBottom: 22 }}>
+        {article.body}
+      </div>
+      {/* Coming Soon footer */}
+      <span style={{
+        position: 'absolute', bottom: 12, right: 14,
+        fontSize: 9, fontWeight: 700, color: '#787776',
+        letterSpacing: '0.1em', textTransform: 'uppercase',
+        fontFamily: "'DM Sans', sans-serif",
+      }}>Coming Soon</span>
+    </motion.div>
   );
 }
 
 export default function ComingSoon() {
   const { user: authUser, userProfile } = useAuth();
   const user = userProfile ? { ...userProfile, id: authUser?.id } : null;
-  const [learnCategory, setLearnCategory] = useState('lending');
+  const [categoryFilter, setCategoryFilter] = useState([]); // array of ids; 'saved' is a pseudo-id
   const [saved, setSaved] = useState(new Set());
 
   const toggleSave = (title) => {
@@ -140,6 +232,51 @@ export default function ComingSoon() {
       return next;
     });
   };
+
+  // Build flat list of all articles with metadata
+  const allArticles = useMemo(() => {
+    const list = [];
+    LEARN_CATEGORIES.forEach(cat => {
+      (LEARN_ARTICLES[cat.id] || []).forEach(article => {
+        list.push({ ...article, catId: cat.id, catLabel: cat.label });
+      });
+    });
+    return list;
+  }, []);
+
+  // Shuffled order (stable per mount) for when no filter is applied
+  const shuffledNonUsing = useMemo(() => {
+    const nonUsing = allArticles.filter(a => a.catId !== 'using');
+    return shuffleArray(nonUsing);
+  }, [allArticles]);
+
+  const hasAnyFilter = categoryFilter.length > 0;
+  const savedSelected = categoryFilter.includes('saved');
+  const selectedCats = categoryFilter.filter(id => id !== 'saved');
+
+  const displayedArticles = useMemo(() => {
+    if (!hasAnyFilter) {
+      // Using Vony pinned to top, rest shuffled
+      const using = allArticles.filter(a => a.catId === 'using');
+      return [...using, ...shuffledNonUsing];
+    }
+    let list = allArticles;
+    if (savedSelected && selectedCats.length === 0) {
+      list = list.filter(a => saved.has(a.title));
+    } else if (savedSelected && selectedCats.length > 0) {
+      list = list.filter(a => selectedCats.includes(a.catId) && saved.has(a.title));
+    } else {
+      list = list.filter(a => selectedCats.includes(a.catId));
+    }
+    return list;
+  }, [hasAnyFilter, savedSelected, selectedCats, allArticles, shuffledNonUsing, saved]);
+
+  const clearFilters = () => setCategoryFilter([]);
+
+  const CATEGORY_FILTER_OPTIONS = [
+    ...LEARN_CATEGORIES.map(c => ({ id: c.id, label: c.label })),
+    { id: 'saved', label: 'Saved' },
+  ];
 
   return (
     <div className="mesh-layout" style={{ minHeight: '100vh', display: 'grid', gridTemplateColumns: '200px 1fr', gap: 0, fontFamily: "'DM Sans', sans-serif" }}>
@@ -157,114 +294,32 @@ export default function ComingSoon() {
             <div style={{ height: 1, background: 'rgba(0,0,0,0.08)', marginLeft: -32, marginRight: -32, marginBottom: 20 }} />
           </div>
 
-        {/* Desktop view */}
-        <div className="learn-desktop-view">
-
-          {/* VonyHomePage-style glassmorphic nav — centered */}
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 28 }}>
-            <div style={{
-              display: 'inline-flex', alignItems: 'center', gap: 2,
-              borderRadius: 12, padding: '5px 8px',
-              backdropFilter: 'blur(16px) saturate(1.5)',
-              WebkitBackdropFilter: 'blur(16px) saturate(1.5)',
-              background: 'rgba(255,255,255,0.75)',
-              boxShadow: '0px 2px 4px -2px rgba(0,0,0,0.08), 0px 8px 16px -8px rgba(0,0,0,0.03), inset 0px -5px 6px rgba(255,255,255,0.5), inset 0px -8px 24px rgba(255,255,255,0.12)',
-            }}>
-              {LEARN_CATEGORIES.map(cat => {
-                const active = learnCategory === cat.id;
-                return (
-                  <button key={cat.id} onClick={() => setLearnCategory(cat.id)} style={{
-                    padding: '6px 16px', borderRadius: 10, border: 'none', cursor: 'pointer',
-                    background: active ? 'rgba(0,0,0,0.06)' : 'transparent',
-                    fontSize: 13, fontWeight: active ? 600 : 500, fontFamily: "'DM Sans', system-ui, sans-serif",
-                    letterSpacing: '-0.01em', whiteSpace: 'nowrap',
-                    color: active ? '#1A1918' : '#787776', transition: 'all 0.2s',
-                  }}>
-                    {cat.label}
-                  </button>
-                );
-              })}
-            </div>
+          {/* Filter bar */}
+          <div className="filter-row-scroll" style={{ display: 'flex', flexWrap: 'wrap', gap: 8, position: 'relative', zIndex: 20, marginBottom: 20 }}>
+            <MultiSelectDropdown label="All Categories" options={CATEGORY_FILTER_OPTIONS} selected={categoryFilter} onChange={setCategoryFilter} />
+            <button onClick={clearFilters} style={{ padding: '6px 10px', borderRadius: 8, border: hasAnyFilter ? '1px solid rgba(232,114,110,0.3)' : '1px solid rgba(0,0,0,0.08)', background: hasAnyFilter ? 'rgba(232,114,110,0.06)' : 'transparent', fontSize: 12, fontWeight: 500, color: hasAnyFilter ? '#E8726E' : '#787776', cursor: hasAnyFilter ? 'pointer' : 'default', opacity: hasAnyFilter ? 1 : 0.5, fontFamily: "'DM Sans', sans-serif" }}>Clear Filters</button>
           </div>
 
           {/* Articles grid */}
-          <div className="page-cards-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
-            {(LEARN_ARTICLES[learnCategory] || []).map((article, index) => {
-              const clr = CAT_COLORS[learnCategory];
-              return (
-                <motion.div key={article.title} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }} style={{ background: clr.bg, borderRadius: 10, padding: '14px 16px', boxShadow: '0 1px 6px rgba(0,0,0,0.04)', cursor: 'default', border: '1px solid rgba(0,0,0,0.06)', position: 'relative' }}>
-                  {/* Star */}
-                  <div style={{ position: 'absolute', top: 10, right: 10 }}>
-                    <StarButton saved={saved.has(article.title)} onToggle={() => toggleSave(article.title)} />
-                  </div>
-                  <div style={{ display: 'inline-block', fontSize: 9, fontWeight: 700, color: clr.badgeText, textTransform: 'uppercase', letterSpacing: '0.08em', background: clr.badge, borderRadius: 5, padding: '2px 7px', marginBottom: 8 }}>Coming Soon</div>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: clr.title, lineHeight: 1.35, marginBottom: 6, paddingRight: 22 }}>{article.title}</div>
-                  <div style={{ fontSize: 12, color: '#787776', lineHeight: 1.5 }}>{article.body}</div>
-                </motion.div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Mobile: all categories as titled sections with horizontal scroll */}
-        <div className="learn-mobile-sections">
-
-          {LEARN_CATEGORIES.map(cat => (
-            <section key={cat.id} style={{ marginBottom: 28 }}>
-              <h3 style={{ fontSize: 16, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', margin: '0 0 12px 0' }}>
-                {cat.label}
-              </h3>
-              <div className="h-scroll-cards">
-                {(LEARN_ARTICLES[cat.id] || []).map((article) => {
-                  const clr = CAT_COLORS[cat.id];
-                  return (
-                    <div key={article.title} className="h-scroll-card" style={{ background: clr.bg, borderRadius: 10, padding: '14px 15px', boxShadow: '0 1px 6px rgba(0,0,0,0.04)', border: '1px solid rgba(0,0,0,0.06)', position: 'relative' }}>
-                      {/* Star */}
-                      <div style={{ position: 'absolute', top: 10, right: 10 }}>
-                        <StarButton saved={saved.has(article.title)} onToggle={() => toggleSave(article.title)} />
-                      </div>
-                      <div style={{ display: 'inline-block', fontSize: 9, fontWeight: 700, color: clr.badgeText, textTransform: 'uppercase', letterSpacing: '0.08em', background: clr.badge, borderRadius: 5, padding: '2px 7px', marginBottom: 8 }}>Coming Soon</div>
-                      <div style={{ fontSize: 13, fontWeight: 700, color: clr.title, lineHeight: 1.35, marginBottom: 6, paddingRight: 22 }}>{article.title}</div>
-                      <div style={{ fontSize: 12, color: '#787776', lineHeight: 1.5 }}>{article.body}</div>
-                    </div>
-                  );
-                })}
-              </div>
-            </section>
-          ))}
-
-          {/* Mobile Your Picks */}
-          {saved.size > 0 && (
-            <section style={{ marginTop: 8, paddingTop: 24, borderTop: '1px solid rgba(0,0,0,0.07)' }}>
-              <h3 style={{ fontSize: 13, fontWeight: 700, color: '#F59E0B', letterSpacing: '0.06em', textTransform: 'uppercase', margin: '0 0 14px 0' }}>
-                Your Picks
-              </h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                {(() => {
-                  const picks = [];
-                  LEARN_CATEGORIES.forEach(cat => {
-                    (LEARN_ARTICLES[cat.id] || []).forEach(article => {
-                      if (saved.has(article.title)) picks.push({ ...article, catLabel: cat.label });
-                    });
-                  });
-                  return picks.map(p => (
-                    <div key={p.title} style={{ background: '#FFFBEB', border: '1px solid #FDE68A', borderRadius: 12, padding: '12px 14px', display: 'flex', alignItems: 'flex-start', gap: 10 }}>
-                      <button onClick={() => toggleSave(p.title)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px 0', flexShrink: 0 }}>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="#F59E0B" stroke="#F59E0B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-                        </svg>
-                      </button>
-                      <div>
-                        <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', lineHeight: 1.3, marginBottom: 2 }}>{p.title}</div>
-                        <div style={{ fontSize: 11, color: '#92400E' }}>{p.catLabel}</div>
-                      </div>
-                    </div>
-                  ));
-                })()}
-              </div>
-            </section>
+          {displayedArticles.length === 0 ? (
+            <div style={{ padding: '40px 20px', textAlign: 'center', fontSize: 13, color: '#9B9A98' }}>
+              No articles match your filters.
+            </div>
+          ) : (
+            <div className="learn-articles-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 16 }}>
+              {displayedArticles.map((article, index) => (
+                <ArticleCard
+                  key={article.title}
+                  article={article}
+                  catId={article.catId}
+                  catLabel={article.catLabel}
+                  saved={saved.has(article.title)}
+                  onToggle={() => toggleSave(article.title)}
+                  index={index}
+                />
+              ))}
+            </div>
           )}
-        </div>
 
       </div>
     </div>
