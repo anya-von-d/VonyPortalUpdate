@@ -1008,11 +1008,22 @@ export default function Home() {
                     {daysLabel && nextBorrowerPayment && (
                       <span style={{ position: 'absolute', top: 10, right: 12, fontSize: 9, fontWeight: 700, color: badgeColor, background: badgeBg, borderRadius: 5, padding: '3px 9px' }}>{daysLabel}</span>
                     )}
-                    <SectionHeader title="Next Payment" titleColor="#1A1918" />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, paddingBottom: 5, marginBottom: 2 }}>
+                      <span style={{ width: 20, height: 20, borderRadius: 6, background: '#EBF4FA', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <circle cx="12" cy="12" r="10"/>
+                          <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                      </span>
+                      <span style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>Next Payment</span>
+                    </div>
                     {nextBorrowerPayment ? (
                       <>
-                        <div style={{ textAlign: 'center', fontSize: 13, color: '#1A1918', fontWeight: 500, letterSpacing: '-0.01em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                          {formatMoney(nextBorrowerPayment.payment_amount || 0)} due to {nextBorrowerPayment.firstName}
+                        <div style={{ textAlign: 'center', fontSize: 12, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          <span style={{ display: 'inline-block', background: '#EBF4FA', color: '#03ACEA', padding: '2px 6px', marginRight: 4 }}>
+                            {formatMoney(nextBorrowerPayment.payment_amount || 0)}
+                          </span>
+                          due to {nextBorrowerPayment.firstName}
                         </div>
                         <div style={{ textAlign: 'left', marginTop: 6, fontSize: 9, fontWeight: 700, color: '#03ACEA', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>
                           Send before {format(nextBorrowerPayment.date, 'MMMM do')}
