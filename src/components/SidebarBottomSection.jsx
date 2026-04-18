@@ -156,7 +156,7 @@ export default function SidebarBottomSection() {
             letterSpacing: '0.1em', textTransform: 'uppercase',
             fontFamily: "'DM Sans', sans-serif",
           }}>
-            What Needs Attention
+            {loaded && notifications.length === 0 ? 'Key Alerts' : 'What Needs Attention'}
           </span>
         </div>
 
@@ -167,7 +167,7 @@ export default function SidebarBottomSection() {
               fontFamily: "'DM Sans', sans-serif",
               margin: 0, lineHeight: 1.45,
             }}>
-              All clear — nothing needs attention right now 🎉
+              All clear, nothing needs attention right now 🎉
             </p>
           </div>
         ) : (

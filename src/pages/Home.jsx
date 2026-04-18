@@ -951,7 +951,7 @@ export default function Home() {
                 width: 'calc(100% + 36px)', height: '100%',
                 background: 'linear-gradient(225deg, rgb(167,139,250) 0%, rgb(139,92,246) 10%, rgb(124,58,237) 20%, rgb(99,102,241) 32%, rgb(79,70,229) 42%, rgb(67,56,202) 52%, rgb(37,99,235) 62%, rgb(59,130,246) 72%, rgb(96,165,250) 82%, rgb(56,189,248) 92%, rgb(14,165,233) 100%)',
                 filter: 'blur(12px) saturate(1.18)',
-                opacity: 0.4,
+                opacity: 0.55,
                 borderRadius: 16, zIndex: 0, pointerEvents: 'none',
               }} />
               <div style={{
@@ -1261,7 +1261,7 @@ export default function Home() {
                 {/* Status message */}
                 <div style={{
                   marginTop: 10,
-                  background: '#D9EAF4',
+                  background: 'rgba(0,0,0,0.04)',
                   color: '#328AB6',
                   borderRadius: 8,
                   padding: '8px 12px',
