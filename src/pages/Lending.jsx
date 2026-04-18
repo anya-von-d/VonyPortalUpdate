@@ -1683,7 +1683,7 @@ export default function Lending({ initialTab }) {
                       );
                     })()}
 
-                    {/* Overview — lending ring */}
+                    {/* Overview — Home style */}
                     {(() => {
                       const C = 2 * Math.PI * 45;
                       const totalOwed = activeLoans.reduce((s, l) => s + (l.total_amount || l.amount || 0), 0);
@@ -1694,22 +1694,24 @@ export default function Lending({ initialTab }) {
                       return (
                         <div style={{ position: 'relative' }}>
                           <div style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
-                          <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', padding: '12px 14px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                            <div style={{ fontSize: 9, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 8, fontFamily: "'DM Sans', sans-serif" }}>Overview</div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                              <div style={{ position: 'relative', width: 64, height: 64, flexShrink: 0 }}>
-                                <svg width="64" height="64" viewBox="0 0 128 128" style={{ transform: 'rotate(-90deg)' }}>
-                                  <circle cx="64" cy="64" r="45" fill="none" stroke="rgba(3,172,234,0.15)" strokeWidth="12" />
+                          <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', padding: '14px 18px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 5, marginBottom: 2 }}>
+                              <span style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>Overview</span>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginTop: 4 }}>
+                              <div style={{ position: 'relative', width: 80, height: 80, flexShrink: 0 }}>
+                                <svg width="80" height="80" viewBox="0 0 128 128" style={{ transform: 'rotate(-90deg)' }}>
+                                  <circle cx="64" cy="64" r="45" fill="none" stroke="#03ACEA26" strokeWidth="12" />
                                   <circle cx="64" cy="64" r="45" fill="none" stroke="#03ACEA" strokeWidth="12" strokeLinecap="round" strokeDasharray={C} strokeDashoffset={offset} />
                                 </svg>
-                                <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
-                                  <span style={{ fontSize: 11, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>{pct}%</span>
-                                  <span style={{ fontSize: 8, fontWeight: 500, color: '#787776', fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>Repaid</span>
+                                <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none', gap: 1 }}>
+                                  <span style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>{pct}%</span>
+                                  <span style={{ fontSize: 9, fontWeight: 500, color: '#787776', fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>Repaid</span>
                                 </div>
                               </div>
-                              <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 3 }}>
-                                <div style={{ fontSize: 12, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>You're owed <span style={{ color: '#03ACEA', fontWeight: 600 }}>{formatMoney(remaining)}</span></div>
-                                <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(totalPaidL)} of {formatMoney(totalOwed)} repaid to you</div>
+                              <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                <div style={{ fontSize: 12, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>You're owed <span style={{ color: '#03ACEA' }}>{formatMoney(remaining)}</span></div>
+                                <div style={{ fontSize: 12, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(totalPaidL)} of {formatMoney(totalOwed)} repaid to you</div>
                               </div>
                             </div>
                           </div>
