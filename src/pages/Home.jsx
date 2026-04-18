@@ -1001,21 +1001,23 @@ export default function Home() {
                   <div style={{
                     position: 'relative', zIndex: 1, flex: 1,
                     padding: '12px 14px', borderRadius: 10,
-                    background: 'radial-gradient(ellipse at center, rgba(255,255,255,1) 75%, rgba(255,255,255,0.55) 100%)',
-                    backdropFilter: 'blur(8px)',
-                    WebkitBackdropFilter: 'blur(8px)',
+                    background: '#ffffff',
                     border: '1px solid rgba(50,138,182,0.65)',
                     display: 'flex', flexDirection: 'column', justifyContent: 'center',
                   }}>
                     {daysLabel && nextBorrowerPayment && (
                       <span style={{ position: 'absolute', top: 10, right: 12, fontSize: 9, fontWeight: 700, color: badgeColor, background: badgeBg, borderRadius: 5, padding: '3px 9px' }}>{daysLabel}</span>
                     )}
-                    <SectionHeader title="Next Payment Due" titleColor="#1A1918" />
+                    <SectionHeader title="Next Payment" titleColor="#1A1918" />
                     {nextBorrowerPayment ? (
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14, flexWrap: 'nowrap', overflow: 'hidden' }}>
-                        <span style={{ fontSize: 13, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em', flexShrink: 0 }}>{format(nextBorrowerPayment.date, 'MMM d')}</span>
-                        <span style={{ fontSize: 11, color: '#9B9A98', flexShrink: 0, whiteSpace: 'nowrap' }}>{formatMoney(nextBorrowerPayment.payment_amount || 0)} to {nextBorrowerPayment.firstName}</span>
-                      </div>
+                      <>
+                        <div style={{ textAlign: 'center', fontSize: 13, color: '#1A1918', fontWeight: 500, letterSpacing: '-0.01em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          {formatMoney(nextBorrowerPayment.payment_amount || 0)} due to {nextBorrowerPayment.firstName}
+                        </div>
+                        <div style={{ textAlign: 'left', marginTop: 6, fontSize: 9, fontWeight: 700, color: '#03ACEA', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>
+                          Send before {format(nextBorrowerPayment.date, 'MMMM do')}
+                        </div>
+                      </>
                     ) : (
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <span style={{ fontSize: 15, fontWeight: 700, color: '#C5C3C0' }}>—</span>
