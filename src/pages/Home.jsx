@@ -875,7 +875,7 @@ export default function Home() {
         <DesktopSidebar />
 
         {/* ── CENTER ── */}
-        <div className="mesh-center" style={{ background: 'transparent', padding: '24px 72px 80px' }}>
+        <div className="mesh-center" style={{ background: 'transparent', padding: '24px 32px 80px' }}>
 
           {/* Mobile-only page title (desktop shows it in top bar) */}
           <div className="mobile-page-title">
@@ -1011,8 +1011,8 @@ export default function Home() {
                     <div style={{ display: 'flex', alignItems: 'center', gap: 5, paddingBottom: 5, marginBottom: 2 }}>
                       <span style={{ width: 20, height: 20, borderRadius: 6, background: '#EBF4FA', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                          <circle cx="12" cy="12" r="10"/>
-                          <polyline points="12 6 12 12 16 14"/>
+                          <path d="M12 19V5"/>
+                          <polyline points="5 12 12 5 19 12"/>
                         </svg>
                       </span>
                       <span style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>Next Payment Due</span>
@@ -1020,7 +1020,7 @@ export default function Home() {
                     {nextBorrowerPayment ? (
                       <>
                         <div style={{ textAlign: 'center', fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                          <span style={{ fontSize: 13, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em', marginRight: 4 }}>
+                          <span style={{ fontSize: 13, fontWeight: 800, color: '#03ACEA', letterSpacing: '-0.02em', marginRight: 6, background: '#EBF4FA', padding: '2px 7px', borderRadius: 5, display: 'inline-block' }}>
                             {formatMoney(nextBorrowerPayment.payment_amount || 0)}
                           </span>
                           <span style={{ fontSize: 12, fontWeight: 400, color: '#1A1918' }}>to {nextBorrowerPayment.firstName}</span>
@@ -1071,11 +1071,14 @@ export default function Home() {
                     border: '1px solid rgba(50,138,182,0.65)',
                     display: 'flex', flexDirection: 'column', justifyContent: 'center',
                   }}>
+                    {daysLabel && nextLenderPayment && (
+                      <span style={{ position: 'absolute', top: 10, right: 12, fontSize: 9, fontWeight: 700, color: badgeColor, background: badgeBg, borderRadius: 5, padding: '3px 9px' }}>{daysLabel}</span>
+                    )}
                     <div style={{ display: 'flex', alignItems: 'center', gap: 5, paddingBottom: 5, marginBottom: 2 }}>
                       <span style={{ width: 20, height: 20, borderRadius: 6, background: '#EBF4FA', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                          <circle cx="12" cy="12" r="10"/>
-                          <polyline points="12 6 12 12 16 14"/>
+                          <path d="M12 5v14"/>
+                          <polyline points="19 12 12 19 5 12"/>
                         </svg>
                       </span>
                       <span style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>Next Payment Incoming</span>
@@ -1107,16 +1110,24 @@ export default function Home() {
             <div className="home-card-overview" style={{ position: 'relative' }}>
               <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
             <div className="home-overview-card" style={{ position: 'relative', zIndex: 1, padding: '12px 14px', borderRadius: 10, background: 'white', border: 'none' }}>
-              <SectionHeader title="Overview" />
-              {/* One-line centered: Owed to you $x   You owe $y */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 20 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                  <span style={{ fontSize: 11, color: '#787776' }}>Owed to you</span>
-                  <span style={{ fontSize: 13, fontWeight: 800, color: '#03ACEA', letterSpacing: '-0.02em' }}>{formatMoney(lentRemaining)}</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 5, paddingBottom: 5, marginBottom: 2 }}>
+                <span style={{ width: 20, height: 20, borderRadius: 6, background: '#EBF4FA', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M3 3v18h18"/>
+                    <path d="M7 14l4-4 4 4 5-5"/>
+                  </svg>
+                </span>
+                <span style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>Overview</span>
+              </div>
+              {/* Desktop: stacked (amount over label) • Mobile: inline */}
+              <div className="home-overview-stats" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 20 }}>
+                <div className="home-overview-stat" style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                  <span className="home-overview-amount" style={{ fontSize: 13, fontWeight: 800, color: '#03ACEA', letterSpacing: '-0.02em' }}>{formatMoney(lentRemaining)}</span>
+                  <span className="home-overview-label" style={{ fontSize: 11, color: '#787776' }}>Owed to you</span>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                  <span style={{ fontSize: 11, color: '#787776' }}>You owe</span>
-                  <span style={{ fontSize: 13, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em' }}>{formatMoney(borrowedRemaining)}</span>
+                <div className="home-overview-stat" style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                  <span className="home-overview-amount" style={{ fontSize: 13, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em' }}>{formatMoney(borrowedRemaining)}</span>
+                  <span className="home-overview-label" style={{ fontSize: 11, color: '#787776' }}>You owe</span>
                 </div>
               </div>
             </div>

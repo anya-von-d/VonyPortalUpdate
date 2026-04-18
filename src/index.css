@@ -282,15 +282,15 @@ input[type="date"] {
   .mesh-left {
     background: rgba(0,0,0,0.028) !important;
   }
-  /* Home: wider gutters between cards on desktop (mobile unchanged) */
+  /* Home: gutters between cards on desktop (mobile unchanged) */
   .home-summary-cards {
-    gap: 36px !important;
-    margin-bottom: 36px !important;
+    gap: 24px !important;
+    margin-bottom: 24px !important;
   }
   /* Desktop: flatten two-column wrappers into a single 3-column grid */
   .home-two-col-row {
     grid-template-columns: 1fr 1fr 1fr !important;
-    gap: 36px !important;
+    gap: 24px !important;
     grid-auto-flow: row !important;
   }
   .home-two-col-row > div {
@@ -304,6 +304,16 @@ input[type="date"] {
   .home-card-recent    { order: 4 !important; }
   .home-card-chart     { order: 5 !important; }
   .home-card-borrowing { order: 6 !important; }
+  /* Overview: stack amount over label, label centered under its amount */
+  .home-overview-stats {
+    gap: 40px !important;
+  }
+  .home-overview-stat {
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 2px !important;
+    text-align: center;
+  }
 }
 
 /* Loan details responsive */
