@@ -1286,7 +1286,7 @@ export default function Home() {
                   </div>
                 )}
               </div>
-              </div>{/* end progress aurora wrapper */}
+              </div>
                 );
               })()}
             </div>
