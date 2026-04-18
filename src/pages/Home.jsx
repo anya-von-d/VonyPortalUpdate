@@ -1252,7 +1252,7 @@ export default function Home() {
                       <div style={{ position: 'relative', height: 6, borderRadius: 3, overflow: 'hidden', background: 'rgba(3,172,234,0.1)' }}>
                         <div style={{
                           position: 'absolute', inset: 0,
-                          background: 'linear-gradient(to right, rgba(14,165,233,0.55) 0%, rgba(56,189,248,0.55) 25%, rgba(96,165,250,0.55) 50%, rgba(59,130,246,0.55) 75%, rgba(37,99,235,0.55) 100%)',
+                          background: 'linear-gradient(to right, rgb(14,165,233) 0%, rgb(56,189,248) 25%, rgb(96,165,250) 50%, rgb(59,130,246) 75%, rgb(37,99,235) 100%)',
                           clipPath: `inset(0 ${100 - pct}% 0 0)`,
                           transition: 'clip-path 0.8s ease-out',
                         }} />
@@ -1274,7 +1274,7 @@ export default function Home() {
                       <div style={{ position: 'relative', height: 6, borderRadius: 3, overflow: 'hidden', background: 'rgba(29,91,148,0.1)' }}>
                         <div style={{
                           position: 'absolute', inset: 0,
-                          background: 'linear-gradient(to right, rgba(37,99,235,0.55) 0%, rgba(59,130,246,0.55) 25%, rgba(79,70,229,0.55) 50%, rgba(99,102,241,0.55) 75%, rgba(129,140,248,0.55) 100%)',
+                          background: 'linear-gradient(to right, rgb(37,99,235) 0%, rgb(59,130,246) 25%, rgb(79,70,229) 50%, rgb(99,102,241) 75%, rgb(129,140,248) 100%)',
                           clipPath: `inset(0 ${100 - pct}% 0 0)`,
                           transition: 'clip-path 0.8s ease-out',
                         }} />
