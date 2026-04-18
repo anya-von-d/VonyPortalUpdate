@@ -14,13 +14,15 @@ const LEARN_CATEGORIES = [
   { id: 'debt', label: 'Managing Debt' },
 ];
 
+// Pastel backgrounds with matching mid-tone text — all complementary to the
+// Using Vony accent (#EBF4FA bg / #03ACEA text).
 const CAT_COLORS = {
-  using:       { pill: '#EBF4FA', text: '#03ACEA' },
-  lending:     { pill: '#E0E7FF', text: '#1D4ED8' },
-  basics:      { pill: '#D1FAE5', text: '#065F46' },
-  saving:      { pill: '#EDE9FE', text: '#6D28D9' },
-  traditional: { pill: '#FEF3C7', text: '#92400E' },
-  debt:        { pill: '#FFE4E6', text: '#9F1239' },
+  using:       { pill: '#EBF4FA', text: '#03ACEA' }, // sky
+  lending:     { pill: '#EAF0FB', text: '#5B8BD6' }, // soft periwinkle blue
+  basics:      { pill: '#E8F5EE', text: '#4FAE87' }, // mint green
+  saving:      { pill: '#F0ECFB', text: '#8B7ED1' }, // lavender
+  traditional: { pill: '#FBF0E8', text: '#D39266' }, // peach
+  debt:        { pill: '#FBEAEE', text: '#D47A8E' }, // rose
 };
 
 const LEARN_ARTICLES = {
@@ -196,9 +198,9 @@ function ArticleCard({ article, catId, catLabel, saved, onToggle, index }) {
       <div style={{
         display: 'inline-block', alignSelf: 'flex-start',
         fontSize: 10, fontWeight: 700, color: clr.text,
-        textTransform: 'uppercase', letterSpacing: '0.08em',
-        background: clr.pill, borderRadius: 5, padding: '3px 8px',
-        marginBottom: 10, marginRight: 30,
+        textTransform: 'uppercase', letterSpacing: '0.06em',
+        background: clr.pill, borderRadius: 4, padding: '2px 6px',
+        marginBottom: 10, marginRight: 30, lineHeight: 1.2,
       }}>{catLabel}</div>
       {/* Title */}
       <div style={{ fontSize: 13, fontWeight: 700, color: '#1A1918', lineHeight: 1.35, marginBottom: 6, paddingRight: 22 }}>

@@ -1366,31 +1366,51 @@ export default function Home() {
                 <SectionHeader title={`How ${format(today, 'MMMM')} is Going`} />
                 {/* Summary lines — each gets a leading bullet colored to match the numeric accent */}
                 {(() => {
-                  // Bullet helper: colored dot + line text, flex-aligned.
-                  const Bullet = ({ color }) => (
-                    <span style={{
-                      width: 5, height: 5, borderRadius: '50%', background: color,
-                      flexShrink: 0, display: 'inline-block', marginTop: 7,
-                    }} />
+                  // Icon helpers: background-less symbol glyphs, color-matched to the line accent.
+                  const iconWrap = { flexShrink: 0, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginTop: 2 };
+                  const OverdueIcon = ({ color }) => (
+                    <span style={iconWrap}>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="12" y1="8" x2="12" y2="12" />
+                        <line x1="12" y1="16" x2="12.01" y2="16" />
+                      </svg>
+                    </span>
+                  );
+                  const OutIcon = ({ color }) => (
+                    <span style={iconWrap}>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="7" y1="17" x2="17" y2="7" />
+                        <polyline points="7 7 17 7 17 17" />
+                      </svg>
+                    </span>
+                  );
+                  const InIcon = ({ color }) => (
+                    <span style={iconWrap}>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="17" y1="7" x2="7" y2="17" />
+                        <polyline points="17 17 7 17 7 7" />
+                      </svg>
+                    </span>
                   );
                   const rowStyle = { display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 12, color: '#1A1918' };
                   return (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 2 }}>
                       {overdueYouOwe.length > 0 && (
                         <div style={rowStyle}>
-                          <Bullet color="#E8726E" />
+                          <OverdueIcon color="#E8726E" />
                           <span>You have <strong style={{ color: '#E8726E' }}>{overdueYouOwe.length}</strong> overdue payment{overdueYouOwe.length === 1 ? '' : 's'}</span>
                         </div>
                       )}
                       {overdueOwedToYou.length > 0 && (
                         <div style={rowStyle}>
-                          <Bullet color="#E8726E" />
+                          <OverdueIcon color="#E8726E" />
                           <span><strong style={{ color: '#E8726E' }}>{overdueOwedToYou.length}</strong> payment{overdueOwedToYou.length === 1 ? '' : 's'} to you {overdueOwedToYou.length === 1 ? 'is' : 'are'} overdue</span>
                         </div>
                       )}
                       {outScheduledTotal > 0 && (
                         <div style={rowStyle}>
-                          <Bullet color="#1D5B94" />
+                          <OutIcon color="#1D5B94" />
                           <span>
                             {outCompletedCount > 0
                               ? <>You've completed <strong style={{ color: '#1D5B94' }}>{outCompletedCount}</strong> of <strong style={{ color: '#1D5B94' }}>{outScheduledTotal}</strong> scheduled payments</>
@@ -1400,13 +1420,13 @@ export default function Home() {
                       )}
                       {leftToPay > 0 && (
                         <div style={rowStyle}>
-                          <Bullet color="#1D5B94" />
+                          <OutIcon color="#1D5B94" />
                           <span><strong style={{ color: '#1D5B94' }}>{formatMoney(leftToPay)}</strong> left to pay this month</span>
                         </div>
                       )}
                       {inScheduledTotal > 0 && (
                         <div style={rowStyle}>
-                          <Bullet color="#03ACEA" />
+                          <InIcon color="#03ACEA" />
                           <span>
                             {inCompletedCount > 0
                               ? <>You've received <strong style={{ color: '#03ACEA' }}>{inCompletedCount}</strong> of <strong style={{ color: '#03ACEA' }}>{inScheduledTotal}</strong> payments</>
@@ -1416,7 +1436,7 @@ export default function Home() {
                       )}
                       {leftToReceive > 0 && (
                         <div style={rowStyle}>
-                          <Bullet color="#03ACEA" />
+                          <InIcon color="#03ACEA" />
                           <span>You're expected to receive <strong style={{ color: '#03ACEA' }}>{formatMoney(leftToReceive)}</strong> before the end of the month</span>
                         </div>
                       )}
@@ -1448,21 +1468,22 @@ export default function Home() {
                 // Ring pie helper matching the "loan details" style in Lending.jsx:
                 // thin circumference ring with a tinted track and a colored arc
                 // proportional to the percent paid/repaid.
-                const Ring = ({ percent, color }) => {
+                const Ring = ({ percent, color, label }) => {
                   const C = 2 * Math.PI * 45;
                   const offset = C - (percent / 100) * C;
                   return (
-                    <div style={{ position: 'relative', width: 110, height: 110, flexShrink: 0 }}>
-                      <svg width="110" height="110" viewBox="0 0 128 128" style={{ transform: 'rotate(-90deg)' }}>
-                        <circle cx="64" cy="64" r="45" fill="none" stroke={`${color}26`} strokeWidth="12" />
+                    <div style={{ position: 'relative', width: 80, height: 80, flexShrink: 0 }}>
+                      <svg width="80" height="80" viewBox="0 0 128 128" style={{ transform: 'rotate(-90deg)' }}>
+                        <circle cx="64" cy="64" r="45" fill="none" stroke={`${color}26`} strokeWidth="6" />
                         <circle
                           cx="64" cy="64" r="45" fill="none"
-                          stroke={color} strokeWidth="12" strokeLinecap="round"
+                          stroke={color} strokeWidth="6" strokeLinecap="round"
                           strokeDasharray={C} strokeDashoffset={offset}
                         />
                       </svg>
-                      <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
-                        <span style={{ fontSize: 18, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em', fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>{percent}%</span>
+                      <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none', gap: 1 }}>
+                        <span style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>{percent}%</span>
+                        <span style={{ fontSize: 8, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.06em', fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>{label}</span>
                       </div>
                     </div>
                   );
@@ -1485,8 +1506,8 @@ export default function Home() {
                       <SectionHeader title="Borrowing Overview" />
 
                       {/* Borrowing row: ring on LEFT, text on RIGHT */}
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 18, marginTop: 4 }}>
-                        <Ring percent={percentPaid} color="#1D5B94" />
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginTop: 4 }}>
+                        <Ring percent={percentPaid} color="#1D5B94" label="Paid back" />
                         <div style={textBlockStyle}>
                           <div style={bigLineStyle}>You owe <span style={{ color: '#1D5B94' }}>{formatMoney(borrowOwed)}</span></div>
                           <div style={subLineStyle}>{formatMoney(totalPaidBack)} of {formatMoney(totalBorrowedAmount)} paid back</div>
@@ -1494,17 +1515,14 @@ export default function Home() {
                         </div>
                       </div>
 
-                      {/* Thin divider between the two halves */}
-                      <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', margin: '14px 0' }} />
-
                       {/* Lending row: text on LEFT, ring on RIGHT (mirrored) */}
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginTop: 6 }}>
                         <div style={textBlockStyle}>
                           <div style={bigLineStyle}>You're owed <span style={{ color: '#03ACEA' }}>{formatMoney(lentOwed)}</span></div>
                           <div style={subLineStyle}>{formatMoney(totalRepaid)} of {formatMoney(totalLentAmount)} repaid to you</div>
                           <div style={mutedLineStyle}>Across {lentLoans.length} active loan{lentLoans.length === 1 ? '' : 's'}</div>
                         </div>
-                        <Ring percent={percentRepaid} color="#03ACEA" />
+                        <Ring percent={percentRepaid} color="#03ACEA" label="Repaid" />
                       </div>
                     </div>
                   </div>
