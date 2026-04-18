@@ -1002,10 +1002,10 @@ export default function Home() {
                     position: 'relative', zIndex: 1, flex: 1,
                     padding: '12px 14px', borderRadius: 10,
                     background: '#ffffff',
-                    border: '1px solid rgba(37,99,235,0.35)',
+                    border: '1px solid #328AB6',
                     display: 'flex', flexDirection: 'column', justifyContent: 'center',
                   }}>
-                    <SectionHeader title="Next Payment Due" titleColor="#2563EB" />
+                    <SectionHeader title="Next Payment Due" titleColor="#328AB6" />
                     {nextBorrowerPayment ? (
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'nowrap', overflow: 'hidden' }}>
                         <span style={{ fontSize: 13, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em', flexShrink: 0 }}>{format(nextBorrowerPayment.date, 'MMM d')}</span>
@@ -1220,23 +1220,9 @@ export default function Home() {
                     <span style={{ fontSize: 13, color: '#1A1918' }}>Received</span>
                     <span style={{ fontSize: 14, fontWeight: 700, color: '#03ACEA', letterSpacing: '-0.01em' }}>{formatMoney(monthlyReceived)}</span>
                   </div>
-                  {/* Track shows the unfilled color. A full-width gradient div is
-                      overlaid and clip-path crops it to the filled percentage —
-                      so the gradient is sampled from the left of a fixed full-bar
-                      palette, never compressed into the fill width. */}
-                  {(() => {
-                    const pct = monthlyExpectedReceive > 0 ? Math.min((monthlyReceived / monthlyExpectedReceive) * 100, 100) : 0;
-                    return (
-                      <div style={{ position: 'relative', height: 6, borderRadius: 3, overflow: 'hidden', background: 'rgba(3,172,234,0.1)' }}>
-                        <div style={{
-                          position: 'absolute', inset: 0,
-                          background: 'linear-gradient(to right, rgb(14,165,233) 0%, rgb(56,189,248) 25%, rgb(96,165,250) 50%, rgb(59,130,246) 75%, rgb(37,99,235) 100%)',
-                          clipPath: `inset(0 ${100 - pct}% 0 0)`,
-                          transition: 'clip-path 0.8s ease-out',
-                        }} />
-                      </div>
-                    );
-                  })()}
+                  <div style={{ height: 6, borderRadius: 3, background: 'rgba(3,172,234,0.1)', overflow: 'hidden' }}>
+                    <div style={{ height: '100%', borderRadius: 3, background: '#03ACEA', width: `${monthlyExpectedReceive > 0 ? Math.min((monthlyReceived / monthlyExpectedReceive) * 100, 100) : 0}%`, transition: 'width 0.8s ease-out' }} />
+                  </div>
                   <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 4 }}>of {formatMoney(monthlyExpectedReceive)} expected</div>
                 </div>
                 {/* Paid out */}
@@ -1245,20 +1231,9 @@ export default function Home() {
                     <span style={{ fontSize: 13, color: '#1A1918' }}>Paid out</span>
                     <span style={{ fontSize: 14, fontWeight: 700, color: '#1D5B94', letterSpacing: '-0.01em' }}>{formatMoney(monthlyPaidOut)}</span>
                   </div>
-                  {/* Plain track + clipped gradient overlay (blue -> purply-blue), cropped not compressed */}
-                  {(() => {
-                    const pct = monthlyExpectedPay > 0 ? Math.min((monthlyPaidOut / monthlyExpectedPay) * 100, 100) : 0;
-                    return (
-                      <div style={{ position: 'relative', height: 6, borderRadius: 3, overflow: 'hidden', background: 'rgba(29,91,148,0.1)' }}>
-                        <div style={{
-                          position: 'absolute', inset: 0,
-                          background: 'linear-gradient(to right, rgb(37,99,235) 0%, rgb(59,130,246) 25%, rgb(79,70,229) 50%, rgb(99,102,241) 75%, rgb(129,140,248) 100%)',
-                          clipPath: `inset(0 ${100 - pct}% 0 0)`,
-                          transition: 'clip-path 0.8s ease-out',
-                        }} />
-                      </div>
-                    );
-                  })()}
+                  <div style={{ height: 6, borderRadius: 3, background: 'rgba(29,91,148,0.1)', overflow: 'hidden' }}>
+                    <div style={{ height: '100%', borderRadius: 3, background: '#1D5B94', width: `${monthlyExpectedPay > 0 ? Math.min((monthlyPaidOut / monthlyExpectedPay) * 100, 100) : 0}%`, transition: 'width 0.8s ease-out' }} />
+                  </div>
                   <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 4 }}>of {formatMoney(monthlyExpectedPay)} expected</div>
                 </div>
                 {/* Status message */}
