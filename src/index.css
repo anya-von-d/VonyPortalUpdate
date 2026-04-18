@@ -297,6 +297,7 @@ input[type="date"] {
   .home-two-col-row > div {
     display: contents !important;
   }
+  .home-two-col-row .home-card-tasks,
   .home-two-col-row .home-card-upcoming,
   .home-two-col-row .home-card-howmonth,
   .home-two-col-row .home-card-recent,
@@ -366,11 +367,12 @@ input[type="date"] {
   .home-card-npd       { order: 1 !important; }
   .home-card-npi       { order: 2 !important; }
   .home-card-overview  { order: 3 !important; }
-  .home-card-upcoming  { order: 4 !important; }
-  .home-card-howmonth  { order: 5 !important; }
-  .home-card-lending   { order: 6 !important; }
-  .home-card-recent    { order: 7 !important; }
-  .home-card-chart     { order: 8 !important; }
+  .home-card-tasks     { order: 4 !important; }
+  .home-card-upcoming  { order: 5 !important; }
+  .home-card-howmonth  { order: 6 !important; }
+  .home-card-lending   { order: 7 !important; }
+  .home-card-recent    { order: 8 !important; }
+  .home-card-chart     { order: 9 !important; }
   /* Hide the View all link on mobile inside the Lending/Borrowing Progress card */
   .home-progress-viewall { display: none !important; }
   /* Record Payment: stack loan selector above form on mobile */

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Loan, Payment, PublicProfile, Friendship } from "@/entities/all";
 import { useAuth } from "@/lib/AuthContext";
@@ -249,6 +249,30 @@ export default function Home() {
   const activeLoansRef = useRef(null);
   const [activeAnimKey, setActiveAnimKey] = useState(0);
   const [progressTab, setProgressTab] = useState('lending'); // 'lending' | 'borrowing'
+  const navigate = useNavigate();
+  // Tasks-for-the-Week: checked IDs keyed by ISO date of week start (Monday).
+  const weekStartKey = (() => {
+    const d = new Date();
+    const day = d.getDay(); // 0=Sun..6=Sat
+    const diff = day === 0 ? -6 : 1 - day; // shift to Monday
+    d.setDate(d.getDate() + diff);
+    d.setHours(0, 0, 0, 0);
+    return d.toISOString().slice(0, 10);
+  })();
+  const [checkedTasks, setCheckedTasks] = useState(() => {
+    try {
+      const raw = localStorage.getItem(`vony.tasks.${weekStartKey}`);
+      return raw ? new Set(JSON.parse(raw)) : new Set();
+    } catch { return new Set(); }
+  });
+  const toggleTask = (id) => {
+    setCheckedTasks(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      try { localStorage.setItem(`vony.tasks.${weekStartKey}`, JSON.stringify([...next])); } catch {}
+      return next;
+    });
+  };
   const loansWasOut = useRef(true);
   const activeWasOut = useRef(true);
   const [bigScreen, setBigScreen] = useState(window.innerWidth > 900);
@@ -1139,6 +1163,127 @@ export default function Home() {
           <div className="home-two-col-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
             {/* Left column: Upcoming → Recent Activity → Active Lending */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+              {/* Tasks for the Week */}
+              {(() => {
+                // Build the 7-day strip (Mon..Sun) for this week.
+                const now = new Date();
+                const todayDow = now.getDay(); // 0=Sun..6=Sat
+                const mondayOffset = todayDow === 0 ? -6 : 1 - todayDow;
+                const weekMonday = new Date(now);
+                weekMonday.setDate(now.getDate() + mondayOffset);
+                weekMonday.setHours(0, 0, 0, 0);
+                const weekEnd = new Date(weekMonday);
+                weekEnd.setDate(weekMonday.getDate() + 6);
+                weekEnd.setHours(23, 59, 59, 999);
+                const days = Array.from({ length: 7 }, (_, i) => {
+                  const d = new Date(weekMonday);
+                  d.setDate(weekMonday.getDate() + i);
+                  return d;
+                });
+                const dayLabels = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+
+                // Build task list.
+                const tasks = [];
+                pendingOffers.forEach(offer => {
+                  const otherProfile = safeAllProfiles.find(p => p.user_id === offer.lender_id);
+                  const name = otherProfile?.full_name?.split(' ')[0] || otherProfile?.username || 'a friend';
+                  tasks.push({ id: `offer-${offer.id}`, label: `Respond to ${name}'s loan offer` });
+                });
+                borrowedLoans.forEach(loan => {
+                  if (!loan.next_payment_date) return;
+                  const due = new Date(loan.next_payment_date);
+                  if (due > weekEnd) return; // only if due before end of week
+                  const otherProfile = safeAllProfiles.find(p => p.user_id === loan.lender_id);
+                  const name = otherProfile?.full_name?.split(' ')[0] || otherProfile?.username || 'them';
+                  const amt = formatMoney(loan.payment_amount || loan.next_payment_amount || 0);
+                  tasks.push({
+                    id: `pay-${loan.id}`,
+                    label: `Send ${amt} to ${name}`,
+                    onCheck: () => navigate(createPageUrl('RecordPayment') + `?loanId=${loan.id}`),
+                  });
+                });
+                // New-user onboarding tasks.
+                const isNewUser = !hasFriends && !hasLoans && pendingOffers.length === 0;
+                if (isNewUser) {
+                  tasks.push({ id: 'new-connect', label: 'Connect with friends', onCheck: () => navigate(createPageUrl('Friends')) });
+                  tasks.push({ id: 'new-loan', label: 'Create your first loan', onCheck: () => navigate(createPageUrl('CreateOffer')) });
+                }
+
+                // Show unchecked first, checked last; hide empty state if nothing.
+                const sortedTasks = [...tasks].sort((a, b) => Number(checkedTasks.has(a.id)) - Number(checkedTasks.has(b.id)));
+
+                return (
+                  <div className="home-card-tasks" style={{ position: 'relative' }}>
+                    <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
+                    <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', padding: '14px 18px' }}>
+                      <SectionHeader title="Tasks for the Week" />
+                      {/* Day strip */}
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4, marginTop: 2, marginBottom: 10 }}>
+                        {days.map((d, i) => {
+                          const isToday = isSameDay(d, now);
+                          return (
+                            <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
+                              <span style={{ fontSize: 10, fontWeight: 500, color: isToday ? '#03ACEA' : '#9B9A98', letterSpacing: '-0.01em' }}>{dayLabels[i]}</span>
+                              <span style={{
+                                fontSize: 11, fontWeight: isToday ? 700 : 500,
+                                color: isToday ? '#03ACEA' : '#1A1918',
+                                width: 22, height: 22, borderRadius: '50%',
+                                display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                                background: isToday ? '#EBF4FA' : 'transparent',
+                                border: isToday ? '1.5px solid #03ACEA' : '1.5px solid transparent',
+                              }}>{d.getDate()}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                      {sortedTasks.length === 0 ? (
+                        <div style={{ padding: '8px 0', fontSize: 12, color: '#9B9A98', textAlign: 'center' }}>Nothing on the list right now 🌿</div>
+                      ) : (
+                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                          {sortedTasks.map(task => {
+                            const checked = checkedTasks.has(task.id);
+                            const handleClick = () => {
+                              if (!checked && task.onCheck) { task.onCheck(); return; }
+                              toggleTask(task.id);
+                            };
+                            return (
+                              <button
+                                key={task.id}
+                                type="button"
+                                onClick={handleClick}
+                                style={{
+                                  display: 'flex', alignItems: 'center', gap: 10, padding: '7px 0',
+                                  background: 'transparent', border: 'none', cursor: 'pointer',
+                                  textAlign: 'left', fontFamily: "'DM Sans', sans-serif", width: '100%',
+                                }}
+                              >
+                                <span style={{
+                                  width: 18, height: 18, borderRadius: 5, flexShrink: 0,
+                                  border: checked ? '1.5px solid #03ACEA' : '1.5px solid #D9D8D6',
+                                  background: checked ? '#03ACEA' : 'transparent',
+                                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                                  transition: 'background 0.15s, border-color 0.15s',
+                                }}>
+                                  {checked && (
+                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+                                      <polyline points="20 6 9 17 4 12"/>
+                                    </svg>
+                                  )}
+                                </span>
+                                <span style={{
+                                  fontSize: 12, color: checked ? '#9B9A98' : '#1A1918',
+                                  textDecoration: checked ? 'line-through' : 'none',
+                                  overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                                }}>{task.label}</span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })()}
               {/* Upcoming */}
               <div className="home-card-upcoming" style={{ position: 'relative' }}>
               <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
