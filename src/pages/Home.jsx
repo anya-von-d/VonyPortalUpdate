@@ -1242,8 +1242,17 @@ export default function Home() {
                     <span style={{ fontSize: 13, color: '#1A1918' }}>Received</span>
                     <span style={{ fontSize: 14, fontWeight: 700, color: '#03ACEA', letterSpacing: '-0.01em' }}>{formatMoney(monthlyReceived)}</span>
                   </div>
-                  <div style={{ height: 6, borderRadius: 3, background: 'rgba(3,172,234,0.1)', overflow: 'hidden' }}>
-                    <div style={{ height: '100%', borderRadius: 3, background: '#03ACEA', width: `${monthlyExpectedReceive > 0 ? Math.min((monthlyReceived / monthlyExpectedReceive) * 100, 100) : 0}%`, transition: 'width 0.8s ease-out' }} />
+                  {/* Track renders the full aurora gradient (greeny-blue -> blue, same
+                      shades + transparency as the notification bar glow). The cover div
+                      clips the unfilled portion from the right so the gradient crops —
+                      it never compresses. */}
+                  <div style={{ position: 'relative', height: 6, borderRadius: 3, overflow: 'hidden', background: 'linear-gradient(to right, rgba(14,165,233,0.55) 0%, rgba(56,189,248,0.55) 25%, rgba(96,165,250,0.55) 50%, rgba(59,130,246,0.55) 75%, rgba(37,99,235,0.55) 100%)' }}>
+                    <div style={{
+                      position: 'absolute', top: 0, bottom: 0,
+                      left: `${monthlyExpectedReceive > 0 ? Math.min((monthlyReceived / monthlyExpectedReceive) * 100, 100) : 0}%`,
+                      right: 0, background: 'rgba(3,172,234,0.1)',
+                      transition: 'left 0.8s ease-out',
+                    }} />
                   </div>
                   <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 4 }}>of {formatMoney(monthlyExpectedReceive)} expected</div>
                 </div>
@@ -1253,8 +1262,14 @@ export default function Home() {
                     <span style={{ fontSize: 13, color: '#1A1918' }}>Paid out</span>
                     <span style={{ fontSize: 14, fontWeight: 700, color: '#1D5B94', letterSpacing: '-0.01em' }}>{formatMoney(monthlyPaidOut)}</span>
                   </div>
-                  <div style={{ height: 6, borderRadius: 3, background: 'rgba(29,91,148,0.1)', overflow: 'hidden' }}>
-                    <div style={{ height: '100%', borderRadius: 3, background: '#1D5B94', width: `${monthlyExpectedPay > 0 ? Math.min((monthlyPaidOut / monthlyExpectedPay) * 100, 100) : 0}%`, transition: 'width 0.8s ease-out' }} />
+                  {/* Purply-blue -> blue, same cropping behavior */}
+                  <div style={{ position: 'relative', height: 6, borderRadius: 3, overflow: 'hidden', background: 'linear-gradient(to right, rgba(167,139,250,0.55) 0%, rgba(139,92,246,0.55) 20%, rgba(124,58,237,0.55) 40%, rgba(99,102,241,0.55) 60%, rgba(79,70,229,0.55) 80%, rgba(37,99,235,0.55) 100%)' }}>
+                    <div style={{
+                      position: 'absolute', top: 0, bottom: 0,
+                      left: `${monthlyExpectedPay > 0 ? Math.min((monthlyPaidOut / monthlyExpectedPay) * 100, 100) : 0}%`,
+                      right: 0, background: 'rgba(29,91,148,0.1)',
+                      transition: 'left 0.8s ease-out',
+                    }} />
                   </div>
                   <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 4 }}>of {formatMoney(monthlyExpectedPay)} expected</div>
                 </div>
