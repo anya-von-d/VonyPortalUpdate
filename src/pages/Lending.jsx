@@ -2070,7 +2070,9 @@ export default function Lending({ initialTab }) {
                   {/* Left column: Loan Type + Loan Summary + Borrower Will Pay */}
                   <div className="lending-summary-cards" style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 16 }}>
                     {/* Loan Type */}
-                    <div style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(12px) saturate(1.4)', WebkitBackdropFilter: 'blur(12px) saturate(1.4)', borderRadius: 10, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.05)', padding: '14px 18px' }}>
+                    <div style={{ position: 'relative' }}>
+                      <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
+                      <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', padding: '14px 18px' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 5, marginBottom: 2 }}>
                         <span style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>Loan Type</span>
                       </div>
@@ -2088,10 +2090,13 @@ export default function Lending({ initialTab }) {
                       <p style={{ fontSize: 11, color: '#9B9A98', lineHeight: 1.5, margin: 0 }}>
                         {loanType === 'flexible' ? 'One-time payment, perfect for splitting expenses' : 'Structured repayment plan with interest'}
                       </p>
+                      </div>
                     </div>
 
                     {/* Loan Summary */}
-                    <div className="lending-loan-summary-card" style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(12px) saturate(1.4)', WebkitBackdropFilter: 'blur(12px) saturate(1.4)', borderRadius: 10, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.05)', padding: '14px 18px' }}>
+                    <div className="lending-loan-summary-card" style={{ position: 'relative' }}>
+                      <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
+                      <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', padding: '14px 18px' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 5, marginBottom: 2 }}>
                         <span style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>Loan Summary</span>
                       </div>
@@ -2113,10 +2118,13 @@ export default function Lending({ initialTab }) {
                           </div>
                         )}
                       </div>
+                      </div>
                     </div>
 
                     {/* Borrower Will Pay */}
-                    <div className="lending-pay-card" style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(12px) saturate(1.4)', WebkitBackdropFilter: 'blur(12px) saturate(1.4)', borderRadius: 10, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.05)', padding: '14px 18px' }}>
+                    <div className="lending-pay-card" style={{ position: 'relative' }}>
+                      <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
+                      <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', padding: '14px 18px' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 5, marginBottom: 2 }}>
                         <span style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>Borrower Will Pay</span>
                       </div>
@@ -2130,6 +2138,7 @@ export default function Lending({ initialTab }) {
                       ) : (
                         <div style={{ fontSize: 13, color: '#9B9A98' }}>N/A for Quick Pay</div>
                       )}
+                      </div>
                     </div>
                   </div>
 
