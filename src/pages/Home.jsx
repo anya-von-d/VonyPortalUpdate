@@ -1003,26 +1003,26 @@ export default function Home() {
                     border: '1px solid rgba(37,99,235,0.35)',
                     display: 'flex', flexDirection: 'column', justifyContent: 'center',
                   }}>
-                    {/* Top-right day badge */}
-                    {daysLabel && (
-                      <span style={{ position: 'absolute', top: 10, right: 10, fontSize: 9, fontWeight: 700, color: badgeColor, background: badgeBg, borderRadius: 5, padding: '2px 6px' }}>{daysLabel}</span>
+                    {/* Top-right Log Payment button */}
+                    {nextBorrowerPayment && (
+                      <Link
+                        to={`${createPageUrl("RecordPayment")}?loanId=${nextBorrowerPayment.id}`}
+                        style={{
+                          position: 'absolute', top: 10, right: 10,
+                          display: 'inline-flex', alignItems: 'center', gap: 4,
+                          padding: '4px 8px', borderRadius: 6,
+                          background: '#ECF4FA', color: '#328AB6',
+                          fontSize: 11, fontWeight: 600, textDecoration: 'none',
+                          fontFamily: "'DM Sans', sans-serif",
+                        }}
+                      >Log Payment →</Link>
                     )}
                     <SectionHeader title="Next Payment Due" titleColor="#2563EB" />
                     {nextBorrowerPayment ? (
-                      <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, flexWrap: 'nowrap', overflow: 'hidden' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'nowrap', overflow: 'hidden' }}>
                         <span style={{ fontSize: 15, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em', flexShrink: 0 }}>{format(nextBorrowerPayment.date, 'MMM d')}</span>
-                        <span style={{ fontSize: 11, color: '#9B9A98', flexShrink: 0, whiteSpace: 'nowrap' }}>, {formatMoney(nextBorrowerPayment.payment_amount || 0)} to {nextBorrowerPayment.firstName}</span>
-                        <Link
-                          to={`${createPageUrl("RecordPayment")}?loanId=${nextBorrowerPayment.id}`}
-                          style={{
-                            marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 4,
-                            padding: '4px 8px', borderRadius: 6,
-                            background: '#D9EAF4', color: '#328AB6',
-                            fontSize: 11, fontWeight: 600, textDecoration: 'none',
-                            flexShrink: 0, whiteSpace: 'nowrap',
-                            fontFamily: "'DM Sans', sans-serif",
-                          }}
-                        >Log Payment →</Link>
+                        {daysLabel && <span style={{ fontSize: 9, fontWeight: 700, color: badgeColor, background: badgeBg, borderRadius: 5, padding: '2px 6px', flexShrink: 0 }}>{daysLabel}</span>}
+                        <span style={{ fontSize: 11, color: '#9B9A98', marginLeft: 'auto', flexShrink: 0, whiteSpace: 'nowrap' }}>{formatMoney(nextBorrowerPayment.payment_amount || 0)} to {nextBorrowerPayment.firstName}</span>
                       </div>
                     ) : (
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -1065,26 +1065,26 @@ export default function Home() {
                     background: '#ffffff',
                     display: 'flex', flexDirection: 'column', justifyContent: 'center',
                   }}>
-                    {/* Top-right day badge */}
-                    {daysLabel && (
-                      <span style={{ position: 'absolute', top: 10, right: 10, fontSize: 9, fontWeight: 700, color: badgeColor, background: badgeBg, borderRadius: 5, padding: '2px 6px' }}>{daysLabel}</span>
+                    {/* Top-right Log Payment button */}
+                    {nextLenderPayment && (
+                      <Link
+                        to={`${createPageUrl("RecordPayment")}?loanId=${nextLenderPayment.id}`}
+                        style={{
+                          position: 'absolute', top: 10, right: 10,
+                          display: 'inline-flex', alignItems: 'center', gap: 4,
+                          padding: '4px 8px', borderRadius: 6,
+                          background: '#ECF4FA', color: '#328AB6',
+                          fontSize: 11, fontWeight: 600, textDecoration: 'none',
+                          fontFamily: "'DM Sans', sans-serif",
+                        }}
+                      >Log Payment →</Link>
                     )}
                     <SectionHeader title="Next Payment Incoming" />
                     {nextLenderPayment ? (
-                      <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, flexWrap: 'nowrap', overflow: 'hidden' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'nowrap', overflow: 'hidden' }}>
                         <span style={{ fontSize: 15, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em', flexShrink: 0 }}>{format(nextLenderPayment.date, 'MMM d')}</span>
-                        <span style={{ fontSize: 11, color: '#9B9A98', flexShrink: 0, whiteSpace: 'nowrap' }}>, {formatMoney(nextLenderPayment.payment_amount || 0)} from {nextLenderPayment.firstName}</span>
-                        <Link
-                          to={`${createPageUrl("RecordPayment")}?loanId=${nextLenderPayment.id}`}
-                          style={{
-                            marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 4,
-                            padding: '4px 8px', borderRadius: 6,
-                            background: '#D9EAF4', color: '#328AB6',
-                            fontSize: 11, fontWeight: 600, textDecoration: 'none',
-                            flexShrink: 0, whiteSpace: 'nowrap',
-                            fontFamily: "'DM Sans', sans-serif",
-                          }}
-                        >Log Payment →</Link>
+                        {daysLabel && <span style={{ fontSize: 9, fontWeight: 700, color: badgeColor, background: badgeBg, borderRadius: 5, padding: '2px 6px', flexShrink: 0 }}>{daysLabel}</span>}
+                        <span style={{ fontSize: 11, color: '#9B9A98', marginLeft: 'auto', flexShrink: 0, whiteSpace: 'nowrap' }}>{formatMoney(nextLenderPayment.payment_amount || 0)} from {nextLenderPayment.firstName}</span>
                       </div>
                     ) : (
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -1265,13 +1265,14 @@ export default function Home() {
                 {/* Status message */}
                 <div style={{
                   marginTop: 10,
-                  background: '#D9EAF4',
+                  background: '#ECF4FA',
                   color: '#328AB6',
                   borderRadius: 8,
                   padding: '8px 12px',
                   fontSize: 12,
                   fontWeight: 500,
                   lineHeight: 1.4,
+                  textAlign: 'center',
                   fontFamily: "'DM Sans', sans-serif",
                 }}>
                   {howMonthMessage.text}{howMonthMessage.emoji ? ` ${howMonthMessage.emoji}` : ''}
