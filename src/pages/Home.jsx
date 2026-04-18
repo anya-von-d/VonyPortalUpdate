@@ -949,7 +949,7 @@ export default function Home() {
                 position: 'absolute', top: 0, left: '50%',
                 transform: 'translateX(-50%)',
                 width: 'calc(100% + 36px)', height: '100%',
-                background: 'linear-gradient(225deg, rgb(167,139,250) 0%, rgb(139,92,246) 10%, rgb(124,58,237) 20%, rgb(99,102,241) 32%, rgb(79,70,229) 42%, rgb(67,56,202) 52%, rgb(37,99,235) 62%, rgb(59,130,246) 72%, rgb(96,165,250) 82%, rgb(56,189,248) 92%, rgb(14,165,233) 100%)',
+                background: 'linear-gradient(225deg, rgb(129,140,248) 0%, rgb(99,102,241) 12%, rgb(79,70,229) 24%, rgb(67,56,202) 36%, rgb(37,99,235) 50%, rgb(59,130,246) 64%, rgb(96,165,250) 76%, rgb(56,189,248) 88%, rgb(14,165,233) 100%)',
                 filter: 'blur(12px) saturate(1.18)',
                 opacity: 0.55,
                 borderRadius: 16, zIndex: 0, pointerEvents: 'none',
@@ -1005,17 +1005,6 @@ export default function Home() {
                     border: '1px solid rgba(37,99,235,0.35)',
                     display: 'flex', flexDirection: 'column', justifyContent: 'center',
                   }}>
-                    {/* Top-right Log Payment link (View all → style) */}
-                    {nextBorrowerPayment && (
-                      <Link
-                        to={`${createPageUrl("RecordPayment")}?loanId=${nextBorrowerPayment.id}`}
-                        style={{
-                          position: 'absolute', top: 12, right: 14,
-                          fontSize: 11, fontWeight: 500, color: '#03ACEA',
-                          textDecoration: 'none', fontFamily: "'DM Sans', sans-serif",
-                        }}
-                      >Log Payment →</Link>
-                    )}
                     <SectionHeader title="Next Payment Due" titleColor="#2563EB" />
                     {nextBorrowerPayment ? (
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'nowrap', overflow: 'hidden' }}>
@@ -1064,17 +1053,6 @@ export default function Home() {
                     background: '#ffffff',
                     display: 'flex', flexDirection: 'column', justifyContent: 'center',
                   }}>
-                    {/* Top-right Log Payment link (View all → style) */}
-                    {nextLenderPayment && (
-                      <Link
-                        to={`${createPageUrl("RecordPayment")}?loanId=${nextLenderPayment.id}`}
-                        style={{
-                          position: 'absolute', top: 12, right: 14,
-                          fontSize: 11, fontWeight: 500, color: '#03ACEA',
-                          textDecoration: 'none', fontFamily: "'DM Sans', sans-serif",
-                        }}
-                      >Log Payment →</Link>
-                    )}
                     <SectionHeader title="Next Payment Incoming" />
                     {nextLenderPayment ? (
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'nowrap', overflow: 'hidden' }}>
@@ -1284,19 +1262,20 @@ export default function Home() {
                   <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 4 }}>of {formatMoney(monthlyExpectedPay)} expected</div>
                 </div>
                 {/* Status message */}
-                <div style={{
-                  marginTop: 10,
-                  background: 'rgba(0,0,0,0.04)',
-                  color: '#328AB6',
-                  borderRadius: 8,
-                  padding: '8px 12px',
-                  fontSize: 12,
-                  fontWeight: 500,
-                  lineHeight: 1.4,
-                  textAlign: 'center',
-                  fontFamily: "'DM Sans', sans-serif",
-                }}>
-                  {howMonthMessage.text}{howMonthMessage.emoji ? ` ${howMonthMessage.emoji}` : ''}
+                <div style={{ marginTop: 10, textAlign: 'center' }}>
+                  <span style={{
+                    display: 'inline-block',
+                    background: '#EBF4FA',
+                    color: '#03ACEA',
+                    borderRadius: 0,
+                    padding: '2px 6px',
+                    fontSize: 12,
+                    fontWeight: 500,
+                    lineHeight: 1.2,
+                    fontFamily: "'DM Sans', sans-serif",
+                  }}>
+                    {howMonthMessage.text}{howMonthMessage.emoji ? ` ${howMonthMessage.emoji}` : ''}
+                  </span>
                 </div>
               </div>
               </div>{/* end how-month aurora wrapper */}
