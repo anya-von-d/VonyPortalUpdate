@@ -212,7 +212,7 @@ export default function Upcoming() {
         <div style={{ minWidth: 50, flexShrink: 0, fontSize: 10, fontWeight: 700, color: badgeColor, background: badgeBg, borderRadius: 6, padding: '3px 7px', textAlign: 'center' }}>{daysLabel}</div>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ fontSize: 13, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-            {event.isLender ? <><strong>{event.firstName}</strong> pays you</> : <>Pay <strong>{event.firstName}</strong></>}
+            {event.isLender ? <>Payment due from <strong>{event.firstName}</strong></> : <>Payment due to <strong>{event.firstName}</strong></>}
             {event.purpose && <span style={{ color: '#9B9A98', fontWeight: 400 }}> · {event.purpose}</span>}
           </div>
           <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 1 }}>{format(event.date, 'MMM d')}</div>

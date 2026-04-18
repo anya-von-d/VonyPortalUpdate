@@ -1001,9 +1001,9 @@ export default function Home() {
                   <div style={{
                     position: 'relative', zIndex: 1, flex: 1,
                     padding: '12px 14px', borderRadius: 10,
-                    background: 'rgba(255,255,255,0.55)',
-                    backdropFilter: 'blur(12px) saturate(1.3)',
-                    WebkitBackdropFilter: 'blur(12px) saturate(1.3)',
+                    background: 'rgba(255,255,255,0.9)',
+                    backdropFilter: 'blur(6px)',
+                    WebkitBackdropFilter: 'blur(6px)',
                     border: '1px solid rgba(50,138,182,0.65)',
                     display: 'flex', flexDirection: 'column', justifyContent: 'center',
                   }}>
@@ -1238,7 +1238,7 @@ export default function Home() {
                     <span style={{ fontSize: 14, fontWeight: 700, color: '#1D5B94', letterSpacing: '-0.01em' }}>{formatMoney(monthlyPaidOut)}</span>
                   </div>
                   <div style={{ height: 6, borderRadius: 3, background: '#D9EAF4', overflow: 'hidden' }}>
-                    <div style={{ height: '100%', borderRadius: 3, background: '#2D5777', width: `${monthlyExpectedPay > 0 ? Math.min((monthlyPaidOut / monthlyExpectedPay) * 100, 100) : 0}%`, transition: 'width 0.8s ease-out' }} />
+                    <div style={{ height: '100%', borderRadius: 3, background: '#1D5B94', width: `${monthlyExpectedPay > 0 ? Math.min((monthlyPaidOut / monthlyExpectedPay) * 100, 100) : 0}%`, transition: 'width 0.8s ease-out' }} />
                   </div>
                   <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 4 }}>of {formatMoney(monthlyExpectedPay)} expected</div>
                 </div>
