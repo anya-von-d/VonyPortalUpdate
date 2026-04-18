@@ -293,6 +293,7 @@ input[type="date"] {
       transparent 100%
     ) !important;
     border-right: none !important;
+    box-shadow: 0 0 32px 6px rgba(126, 192, 234, 0.55), 0 0 80px 14px rgba(3, 172, 234, 0.22) !important;
   }
   /* Home: summary row — gaps and edge padding match the other cards. */
   .home-summary-cards {
