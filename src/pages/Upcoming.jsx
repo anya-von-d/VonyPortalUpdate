@@ -20,6 +20,7 @@ export default function Upcoming() {
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('summary');
   const [calendarMonth, setCalendarMonth] = useState(new Date());
+  const [selectedDay, setSelectedDay] = useState(new Date());
   const activeLoansRef = useRef(null);
   const [activeAnimKey, setActiveAnimKey] = useState(0);
   const activeWasOut = useRef(true);
@@ -195,7 +196,8 @@ export default function Upcoming() {
     projected.forEach(date => {
       const key = format(date, 'yyyy-MM-dd');
       if (!calendarEvents[key]) calendarEvents[key] = [];
-      calendarEvents[key].push({ amount, isLender, initial: (otherProfile?.full_name || 'U').charAt(0).toUpperCase(), purpose: loan.purpose || '' });
+      const firstName = (otherProfile?.full_name || otherProfile?.username || 'User').split(' ')[0];
+      calendarEvents[key].push({ amount, isLender, initial: (otherProfile?.full_name || 'U').charAt(0).toUpperCase(), firstName, purpose: loan.purpose || '' });
     });
   });
 
@@ -347,66 +349,110 @@ export default function Upcoming() {
 
             {/* Right: Calendar */}
             <div style={{ position: 'relative' }}>
-              <div className="home-aura-glow" style={{ position: 'absolute', inset: -7, background: '#CFDCE7', borderRadius: 16, filter: 'blur(8px)', opacity: 0.55, zIndex: 0, pointerEvents: 'none' }} />
-            <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', backdropFilter: 'blur(12px) saturate(1.4)', WebkitBackdropFilter: 'blur(12px) saturate(1.4)', borderRadius: 10, border: '1px solid rgba(207,220,231,0.6)', padding: '14px 18px' }}>
+              <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
+            <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', padding: '14px 18px' }}>
+
               {/* Month nav */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-                <button onClick={() => setCalendarMonth(addMonths(calendarMonth, -1))} style={{ width: 28, height: 28, borderRadius: '50%', border: '1px solid rgba(0,0,0,0.09)', background: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#787776" strokeWidth="2" strokeLinecap="round"><polyline points="15 18 9 12 15 6" /></svg>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+                <button onClick={() => setCalendarMonth(addMonths(calendarMonth, -1))} style={{ width: 24, height: 24, borderRadius: '50%', border: '1.5px solid rgba(0,0,0,0.09)', background: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#787776" strokeWidth="2" strokeLinecap="round"><polyline points="15 18 9 12 15 6" /></svg>
                 </button>
-                <span style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em' }}>{format(calendarMonth, 'MMMM yyyy')}</span>
-                <button onClick={() => setCalendarMonth(addMonths(calendarMonth, 1))} style={{ width: 28, height: 28, borderRadius: '50%', border: '1px solid rgba(0,0,0,0.09)', background: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#787776" strokeWidth="2" strokeLinecap="round"><polyline points="9 18 15 12 9 6" /></svg>
+                <span style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>{format(calendarMonth, 'MMMM yyyy')}</span>
+                <button onClick={() => setCalendarMonth(addMonths(calendarMonth, 1))} style={{ width: 24, height: 24, borderRadius: '50%', border: '1.5px solid rgba(0,0,0,0.09)', background: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#787776" strokeWidth="2" strokeLinecap="round"><polyline points="9 18 15 12 9 6" /></svg>
                 </button>
               </div>
-              {/* Day headers */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', borderBottom: '1px solid rgba(0,0,0,0.07)', marginBottom: 4 }}>
+
+              {/* Day-of-week headers — styled like Home week strip */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2, marginBottom: 4 }}>
                 {['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d => (
-                  <div key={d} style={{ textAlign: 'center', fontSize: 10, fontWeight: 600, color: '#787776', padding: '6px 0' }}>{d}</div>
+                  <div key={d} style={{ textAlign: 'center', fontSize: 10, fontWeight: 500, color: '#9B9A98', letterSpacing: '-0.01em', paddingBottom: 4 }}>{d}</div>
                 ))}
               </div>
+
               {/* Calendar grid */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2 }}>
                 {calendarDays.map((day, i) => {
                   const inMonth = isSameMonth(day, calendarMonth);
                   const isToday = isSameDay(day, new Date());
+                  const isSelected = isSameDay(day, selectedDay);
                   const key = format(day, 'yyyy-MM-dd');
                   const dayEvents = calendarEvents[key] || [];
                   const hasIncoming = dayEvents.some(e => e.isLender);
                   const hasOutgoing = dayEvents.some(e => !e.isLender);
                   return (
-                    <div key={i} style={{
-                      minHeight: 62, padding: '5px 6px', borderRadius: 7,
-                      background: inMonth ? (hasIncoming ? 'rgba(3,172,234,0.06)' : hasOutgoing ? 'rgba(29,91,148,0.07)' : 'transparent') : 'transparent',
-                      opacity: inMonth ? 1 : 0.3,
-                      border: isToday ? '1.5px solid #03ACEA' : '1px solid transparent',
-                    }}>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 3 }}>
-                        <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: isToday ? 18 : 'auto', height: isToday ? 18 : 'auto', borderRadius: '50%', fontSize: 11, fontWeight: isToday ? 700 : 500, color: isToday ? 'white' : inMonth ? '#1A1918' : '#C7C6C4', background: isToday ? '#03ACEA' : 'transparent' }}>{format(day, 'd')}</span>
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 1 }}>
-                          {hasIncoming && <span style={{ fontSize: 8, fontWeight: 600, color: '#03ACEA' }}>+{formatMoney(dayEvents.filter(e => e.isLender).reduce((s, e) => s + e.amount, 0))}</span>}
-                          {hasOutgoing && <span style={{ fontSize: 8, fontWeight: 600, color: '#1D5B94' }}>{formatMoney(dayEvents.filter(e => !e.isLender).reduce((s, e) => s + e.amount, 0))}</span>}
-                        </div>
-                      </div>
-                      {dayEvents.length > 0 && (
-                        <div style={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-                          {dayEvents.slice(0, 2).map((ev, j) => (
-                            <div key={j} style={{ width: 16, height: 16, borderRadius: '50%', fontSize: 8, fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', background: ev.isLender ? '#03ACEA' : '#1D5B94', color: 'white' }}>{ev.initial}</div>
-                          ))}
-                          {dayEvents.length > 2 && <div style={{ width: 16, height: 16, borderRadius: '50%', fontSize: 8, fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.06)', color: '#787776' }}>+{dayEvents.length - 2}</div>}
+                    <button
+                      key={i}
+                      onClick={() => { setSelectedDay(day); }}
+                      style={{
+                        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
+                        padding: '5px 2px 6px', borderRadius: 8, border: 'none',
+                        background: isSelected && !isToday ? 'rgba(0,0,0,0.04)' : 'transparent',
+                        cursor: 'pointer', opacity: inMonth ? 1 : 0.28,
+                      }}
+                    >
+                      {/* Day number — same style as Home week strip */}
+                      <span style={{
+                        fontSize: 11, fontWeight: isToday ? 700 : 500,
+                        color: isToday ? '#03ACEA' : '#1A1918',
+                        width: 22, height: 22, borderRadius: '50%',
+                        display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                        background: isToday ? '#EBF4FA' : 'transparent',
+                        border: isToday ? '1.5px solid #03ACEA' : isSelected ? '1.5px solid rgba(0,0,0,0.15)' : '1.5px solid transparent',
+                        fontFamily: "'DM Sans', sans-serif",
+                      }}>
+                        {format(day, 'd')}
+                      </span>
+                      {/* Dots for payments */}
+                      {(hasIncoming || hasOutgoing) && (
+                        <div style={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+                          {hasOutgoing && <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#1D5B94', flexShrink: 0 }} />}
+                          {hasIncoming && <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#03ACEA', flexShrink: 0 }} />}
                         </div>
                       )}
-                    </div>
+                    </button>
                   );
                 })}
               </div>
-              {/* Legend */}
-              <div style={{ display: 'flex', gap: 16, marginTop: 12, paddingTop: 12, borderTop: '1px solid rgba(0,0,0,0.06)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: '#787776' }}><div style={{ width: 8, height: 8, borderRadius: '50%', background: '#03ACEA' }} /> Owed to you</div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: '#787776' }}><div style={{ width: 8, height: 8, borderRadius: '50%', background: '#1D5B94' }} /> You owe</div>
+
+              {/* Selected day details */}
+              <div style={{ marginTop: 16, paddingTop: 14, borderTop: '1px solid rgba(0,0,0,0.06)' }}>
+                {/* Date label — Document Center style */}
+                <div style={{
+                  fontSize: 9, fontWeight: 700, color: '#787776',
+                  letterSpacing: '0.1em', textTransform: 'uppercase',
+                  fontFamily: "'DM Sans', sans-serif", marginBottom: 8,
+                }}>
+                  {format(selectedDay, 'EEEE, MMMM d')}
+                </div>
+
+                {/* Payment rows for selected day */}
+                {(() => {
+                  const key = format(selectedDay, 'yyyy-MM-dd');
+                  const dayEvents = calendarEvents[key] || [];
+                  if (dayEvents.length === 0) {
+                    return <div style={{ fontSize: 12, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>Nothing due</div>;
+                  }
+                  return dayEvents.map((ev, idx) => (
+                    <div key={idx} style={{ marginBottom: idx < dayEvents.length - 1 ? 8 : 0 }}>
+                      <div style={{ fontSize: 12, color: '#1A1918', fontWeight: 500, fontFamily: "'DM Sans', sans-serif" }}>
+                        {ev.isLender
+                          ? <>{formatMoney(ev.amount)} expected from {ev.firstName}</>
+                          : <>Send {ev.firstName} {formatMoney(ev.amount)}</>
+                        }
+                      </div>
+                      {ev.purpose && (
+                        <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 1 }}>
+                          {ev.purpose}
+                        </div>
+                      )}
+                    </div>
+                  ));
+                })()}
               </div>
+
             </div>
-            </div>{/* end calendar aura wrapper */}
+            </div>{/* end calendar card */}
 
           </div>
         </div>

@@ -1166,32 +1166,6 @@ export default function Home() {
               );
             })()}
 
-            {/* Overview */}
-            <div className="home-card-overview" style={{ position: 'relative' }}>
-              <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
-            <div className="home-overview-card" style={{ position: 'relative', zIndex: 1, padding: '12px 14px', borderRadius: 10, background: 'white', border: 'none' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 5, paddingBottom: 5, marginBottom: 2 }}>
-                <span style={{ width: 20, height: 20, borderRadius: 6, background: '#EBF4FA', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M3 3v18h18"/>
-                    <path d="M7 14l4-4 4 4 5-5"/>
-                  </svg>
-                </span>
-                <span style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>Overview</span>
-              </div>
-              {/* Desktop: stacked (amount over label) • Mobile: inline */}
-              <div className="home-overview-stats" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 20 }}>
-                <div className="home-overview-stat" style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                  <span className="home-overview-amount" style={{ fontSize: 13, fontWeight: 800, color: '#03ACEA', letterSpacing: '-0.02em' }}>{formatMoney(lentRemaining)}</span>
-                  <span className="home-overview-label" style={{ fontSize: 11, color: '#787776' }}>Owed to you</span>
-                </div>
-                <div className="home-overview-stat" style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                  <span className="home-overview-amount" style={{ fontSize: 13, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em' }}>{formatMoney(borrowedRemaining)}</span>
-                  <span className="home-overview-label" style={{ fontSize: 11, color: '#787776' }}>You owe</span>
-                </div>
-              </div>
-            </div>
-            </div>{/* end overview aurora wrapper */}
           </div>
 
           {/* Masonry two-column layout */}
@@ -1319,41 +1293,6 @@ export default function Home() {
                   </div>
                 );
               })()}
-              {/* Recent Activity */}
-              <div className="home-card-recent" style={{ position: 'relative' }}>
-                {/* Thin aurora glow — #CFDCE7 → background */}
-                <div className="home-aura-glow" style={{
-                  position: 'absolute', inset: -3,
-                  background: '#CFDCE7',
-                  borderRadius: 12,
-                  filter: 'blur(4px)',
-                  opacity: 0.5,
-                  zIndex: 0,
-                  pointerEvents: 'none',
-                }} />
-              <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', padding: '14px 18px' }}>
-                <SectionHeader title="Recent Activity" linkTo={createPageUrl("RecentActivity")} linkLabel="View all →" />
-                {recentActivity.length === 0 ? (
-                  <div style={{ padding: '8px 0', fontSize: 12, color: '#9B9A98', textAlign: 'center' }}>No activity just yet 🕊️</div>
-                ) : recentActivity.map((item, idx) => (
-                  <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 0' }}>
-                    <div style={{ width: 20, height: 20, borderRadius: 6, background: `${item.color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                      {item.icon === 'send' ? (
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={item.color} strokeWidth="2.5" strokeLinecap="round"><polyline points="7 13 12 18 17 13"/><line x1="12" y1="18" x2="12" y2="6"/></svg>
-                      ) : item.icon === 'receive' ? (
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={item.color} strokeWidth="2.5" strokeLinecap="round"><polyline points="17 11 12 6 7 11"/><line x1="12" y1="6" x2="12" y2="18"/></svg>
-                      ) : item.icon === 'check' ? (
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={item.color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                      ) : (
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={item.color} strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                      )}
-                    </div>
-                    <div style={{ flex: 1, minWidth: 0, fontSize: 12, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.description}</div>
-                    <span style={{ fontSize: 11, color: '#9B9A98', flexShrink: 0 }}>{item.detail}</span>
-                  </div>
-                ))}
-              </div>
-              </div>{/* end Recent Activity aurora wrapper */}
 
             </div>
 
