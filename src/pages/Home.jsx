@@ -1597,6 +1597,70 @@ export default function Home() {
               </div>
               </div>{/* end loans-chart aurora wrapper */}
 
+              {/* Borrowing Overview */}
+              {(() => {
+                // Outstanding per loan, for the pie slices.
+                const slices = borrowedLoans
+                  .map(l => {
+                    const total = l.total_amount || l.amount || 0;
+                    const paid = l.amount_paid || 0;
+                    const remaining = Math.max(0, total - paid);
+                    const otherProfile = safeAllProfiles.find(p => p.user_id === l.lender_id);
+                    const name = otherProfile?.full_name?.split(' ')[0] || otherProfile?.username || 'Loan';
+                    return { value: remaining, name, id: l.id };
+                  })
+                  .filter(s => s.value > 0);
+                const sliceTotal = slices.reduce((s, x) => s + x.value, 0);
+                const PIE_COLORS = ['#03ACEA', '#1D5B94', '#2D5777', '#328AB6', '#60A5FA', '#0F3D6B'];
+                // Build cumulative SVG arc paths.
+                const R = 40, CX = 50, CY = 50;
+                let cumulative = 0;
+                const pieSlices = slices.map((s, i) => {
+                  const startAngle = (cumulative / sliceTotal) * Math.PI * 2 - Math.PI / 2;
+                  cumulative += s.value;
+                  const endAngle = (cumulative / sliceTotal) * Math.PI * 2 - Math.PI / 2;
+                  const x1 = CX + R * Math.cos(startAngle);
+                  const y1 = CY + R * Math.sin(startAngle);
+                  const x2 = CX + R * Math.cos(endAngle);
+                  const y2 = CY + R * Math.sin(endAngle);
+                  const largeArc = endAngle - startAngle > Math.PI ? 1 : 0;
+                  // Single-slice full circle needs two arcs.
+                  const d = slices.length === 1
+                    ? `M ${CX - R} ${CY} A ${R} ${R} 0 1 1 ${CX + R} ${CY} A ${R} ${R} 0 1 1 ${CX - R} ${CY} Z`
+                    : `M ${CX} ${CY} L ${x1} ${y1} A ${R} ${R} 0 ${largeArc} 1 ${x2} ${y2} Z`;
+                  return <path key={s.id} d={d} fill={PIE_COLORS[i % PIE_COLORS.length]} />;
+                });
+                return (
+                  <div className="home-card-bor-overview" style={{ position: 'relative' }}>
+                    <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
+                    <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', padding: '14px 18px' }}>
+                      <SectionHeader title="Borrowing Overview" />
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginTop: 2 }}>
+                        {/* Pie */}
+                        <div style={{ flexShrink: 0 }}>
+                          {sliceTotal > 0 ? (
+                            <svg width="96" height="96" viewBox="0 0 100 100">{pieSlices}</svg>
+                          ) : (
+                            <svg width="96" height="96" viewBox="0 0 100 100">
+                              <circle cx={CX} cy={CY} r={R} fill="#EBF4FA" />
+                            </svg>
+                          )}
+                        </div>
+                        {/* Right text */}
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ fontSize: 13, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em', fontFamily: "'DM Sans', sans-serif", marginBottom: 4 }}>
+                            You Owe {formatMoney(borrowedRemaining)}
+                          </div>
+                          <div style={{ fontSize: 12, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>
+                            {formatMoney(borrowedRemaining)} of {formatMoney(totalBorrowedAmount)} outstanding across {borrowedLoans.length} loan{borrowedLoans.length === 1 ? '' : 's'}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+
             </div>
           </div>
         </div>
