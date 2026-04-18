@@ -303,7 +303,8 @@ input[type="date"] {
   .home-two-col-row .home-card-recent,
   .home-two-col-row .home-card-lending,
   .home-two-col-row .home-card-chart,
-  .home-two-col-row .home-card-bor-overview {
+  .home-two-col-row .home-card-bor-overview,
+  .home-two-col-row .home-card-lending-loans {
     break-inside: avoid;
     -webkit-column-break-inside: avoid;
     page-break-inside: avoid;
@@ -374,7 +375,8 @@ input[type="date"] {
   .home-card-lending   { order: 7 !important; }
   .home-card-recent    { order: 8 !important; }
   .home-card-chart     { order: 9 !important; }
-  .home-card-bor-overview { order: 10 !important; }
+  .home-card-bor-overview   { order: 10 !important; }
+  .home-card-lending-loans  { order: 11 !important; }
   /* Hide the View all link on mobile inside the Lending/Borrowing Progress card */
   .home-progress-viewall { display: none !important; }
   /* Record Payment: stack loan selector above form on mobile */

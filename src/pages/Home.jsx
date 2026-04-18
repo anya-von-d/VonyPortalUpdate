@@ -1661,6 +1661,42 @@ export default function Home() {
                 );
               })()}
 
+              {/* Lending Loans */}
+              <div className="home-card-lending-loans" style={{ position: 'relative' }}>
+                <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
+                <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', padding: '14px 18px' }}>
+                  <SectionHeader title="Lending Loans" linkTo={createPageUrl("YourLoans")} linkLabel="View all →" />
+                  {lentLoans.length === 0 ? (
+                    <div style={{ padding: '8px 0', fontSize: 12, color: '#9B9A98', textAlign: 'center' }}>You haven't lent anything yet 🌱</div>
+                  ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                      {lentLoans.slice(0, 5).map(loan => {
+                        const otherProfile = safeAllProfiles.find(p => p.user_id === loan.borrower_id);
+                        const name = otherProfile?.full_name?.split(' ')[0] || otherProfile?.username || 'User';
+                        const total = loan.total_amount || loan.amount || 0;
+                        const nextDue = loan.next_payment_date ? new Date(loan.next_payment_date) : null;
+                        const isBehind = nextDue && nextDue < today;
+                        const behindAmt = isBehind ? (loan.payment_amount || 0) : 0;
+                        const statusLabel = isBehind ? `${formatMoney(behindAmt)} behind` : 'On track';
+                        const statusColor = isBehind ? '#E8726E' : '#03ACEA';
+                        const statusBg = isBehind ? 'rgba(232,114,110,0.08)' : 'rgba(3,172,234,0.10)';
+                        return (
+                          <div key={loan.id} style={{ padding: '9px 0' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
+                              <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name}</span>
+                              <span style={{ flexShrink: 0, fontSize: 10, fontWeight: 700, color: statusColor, background: statusBg, borderRadius: 5, padding: '2px 6px', lineHeight: 1.2 }}>{statusLabel}</span>
+                            </div>
+                            <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                              Borrowed {formatMoney(total)}{loan.purpose ? ` for ${loan.purpose}` : ''}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              </div>
+
             </div>
           </div>
         </div>
