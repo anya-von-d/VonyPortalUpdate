@@ -155,6 +155,7 @@ export default function SidebarBottomSection() {
             fontSize: 9, fontWeight: 700, color: '#03ACEA',
             letterSpacing: '0.1em', textTransform: 'uppercase',
             fontFamily: "'DM Sans', sans-serif",
+            whiteSpace: 'nowrap',
           }}>
             {loaded && notifications.length === 0 ? 'Key Alerts' : 'What Needs Attention'}
           </span>
@@ -182,6 +183,10 @@ export default function SidebarBottomSection() {
                   fontSize: 11, fontWeight: 500, color: '#787776',
                   fontFamily: "'DM Sans', sans-serif",
                   lineHeight: 1.4,
+                  display: '-webkit-box',
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: 'vertical',
+                  overflow: 'hidden',
                 }}>
                   {notif.text}
                 </span>

@@ -44,6 +44,7 @@ export default function DesktopSidebar() {
         color: isActive ? '#03ACEA' : '#787776',
         background: isActive ? '#D9EAF4' : 'transparent',
         fontFamily: "'DM Sans', sans-serif", width: '100%', boxSizing: 'border-box',
+        whiteSpace: 'nowrap',
       }}>
         <span style={{ flexShrink: 0, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', color: isActive ? '#03ACEA' : '#9B9A98' }}>{NAV_ICONS[label]}</span>
         {label}

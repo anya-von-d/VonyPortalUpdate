@@ -282,28 +282,29 @@ input[type="date"] {
   .mesh-left {
     background: rgba(0,0,0,0.028) !important;
   }
-  /* Home: gutters between cards on desktop (mobile unchanged) */
+  /* Home: summary row (Next Payment Due, Incoming, Overview)
+     sits closer to the screen edges and has wider gaps between cards. */
   .home-summary-cards {
-    gap: 24px !important;
-    margin-bottom: 24px !important;
+    gap: 48px !important;
+    margin: 0 -12px 24px -12px !important;
   }
-  /* Desktop: flatten two-column wrappers into a single 3-column grid */
+  /* Desktop: flatten two-column wrappers into a single 4-column grid.
+     Row 1: Upcoming | Your Loans Over Time | How April is Going | Recent Activity
+     Row 2: Active Lending (spans 2) | Active Borrowing (spans 2) */
   .home-two-col-row {
-    grid-template-columns: 1fr 1fr 1fr !important;
+    grid-template-columns: 1fr 1fr 1fr 1fr !important;
     gap: 24px !important;
     grid-auto-flow: row !important;
   }
   .home-two-col-row > div {
     display: contents !important;
   }
-  /* Row 1: Upcoming | How April is Going | Active Lending */
-  /* Row 2: Recent Activity | Your Loans Over Time | Active Borrowing */
   .home-card-upcoming  { order: 1 !important; }
-  .home-card-howmonth  { order: 2 !important; }
-  .home-card-lending   { order: 3 !important; }
+  .home-card-chart     { order: 2 !important; }
+  .home-card-howmonth  { order: 3 !important; }
   .home-card-recent    { order: 4 !important; }
-  .home-card-chart     { order: 5 !important; }
-  .home-card-borrowing { order: 6 !important; }
+  .home-card-lending   { order: 5 !important; grid-column: span 2 !important; }
+  .home-card-borrowing { order: 6 !important; grid-column: span 2 !important; }
   /* Overview: stack amount over label, label centered under its amount */
   .home-overview-stats {
     gap: 40px !important;
