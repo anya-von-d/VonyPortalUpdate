@@ -19,6 +19,7 @@ import LoanDetailsModal from "@/components/loans/LoanDetailsModal";
 import MeshMobileNav from "@/components/MeshMobileNav";
 import UserAvatar from "@/components/ui/UserAvatar";
 import DesktopSidebar from '../components/DesktopSidebar';
+import LendingWallet from '@/components/LendingWallet';
 
 export default function YourLoans({ defaultTab }) {
   const { logout } = useAuth();
@@ -1068,62 +1069,46 @@ export default function YourLoans({ defaultTab }) {
             );
           })()}
 
-          {/* Overview — exact Home two-ring card */}
+          {/* Overview — animated wallet */}
           {(() => {
-            const Ring = ({ percent, color, label }) => {
-              const C = 2 * Math.PI * 45;
-              const offset = C - (percent / 100) * C;
-              return (
-                <div style={{ position: 'relative', width: 80, height: 80, flexShrink: 0 }}>
-                  <svg width="80" height="80" viewBox="0 0 128 128" style={{ transform: 'rotate(-90deg)' }}>
-                    <circle cx="64" cy="64" r="45" fill="none" stroke={`${color}26`} strokeWidth="12" />
-                    <circle cx="64" cy="64" r="45" fill="none" stroke={color} strokeWidth="12" strokeLinecap="round" strokeDasharray={C} strokeDashoffset={offset} />
-                  </svg>
-                  <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none', gap: 1 }}>
-                    <span style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>{percent}%</span>
-                    <span style={{ fontSize: 9, fontWeight: 500, color: '#787776', fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>{label}</span>
-                  </div>
-                </div>
-              );
-            };
             const lendLoans = activeLendingLoans;
             const borrowLns = activeBorrowingLoans;
             const totalLentAmount = lendLoans.reduce((s, l) => s + (l.total_amount || l.amount || 0), 0);
             const totalRepaid = lendLoans.reduce((s, l) => s + (l.amount_paid || 0), 0);
             const totalBorrowedAmt = borrowLns.reduce((s, l) => s + (l.total_amount || l.amount || 0), 0);
             const totalPaidBackAmt = borrowLns.reduce((s, l) => s + (l.amount_paid || 0), 0);
-            const percentRepaid = totalLentAmount > 0 ? Math.round((totalRepaid / totalLentAmount) * 100) : 0;
-            const percentPaidBack = totalBorrowedAmt > 0 ? Math.round((totalPaidBackAmt / totalBorrowedAmt) * 100) : 0;
             const lentOwed = Math.max(0, totalLentAmount - totalRepaid);
             const borrowOwedAmt = Math.max(0, totalBorrowedAmt - totalPaidBackAmt);
-            const ringColor = isLending ? '#03ACEA' : '#1D5B94';
-            const ringPct = isLending ? percentRepaid : percentPaidBack;
-            const ringLabel = isLending ? 'Repaid' : 'Paid back';
-            const bigLineStyle  = { fontSize: 12, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" };
-            const subLineStyle  = { fontSize: 12, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" };
+
+            const sourceLoans = isLending ? lendLoans : borrowLns;
+            const otherKey = isLending ? 'borrower_id' : 'lender_id';
+            const walletCards = [...sourceLoans]
+              .map(l => {
+                const profile = publicProfiles.find(p => p.user_id === l[otherKey]);
+                const firstName = profile?.full_name?.split(' ')[0] || profile?.username || 'User';
+                const remaining = Math.max(0, (l.total_amount || l.amount || 0) - (l.amount_paid || 0));
+                return { name: firstName, amount: remaining };
+              })
+              .sort((a, b) => b.amount - a.amount)
+              .slice(0, 3);
+
             return (
               <div style={{ position: 'relative' }}>
                 <div style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
-                <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', padding: '14px 18px' }}>
+                <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', padding: '14px 18px 18px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 5, marginBottom: 2 }}>
                     <span style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>Overview</span>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 10 }}>
-                    <Ring percent={ringPct} color={ringColor} label={ringLabel} />
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                    {isLending ? (
-                      <>
-                        <div style={bigLineStyle}>You're owed <span style={{ color: '#03ACEA' }}>{formatMoney(lentOwed)}</span></div>
-                        <div style={subLineStyle}>{formatMoney(totalRepaid)} of {formatMoney(totalLentAmount)} repaid to you</div>
-                      </>
-                    ) : (
-                      <>
-                        <div style={bigLineStyle}>You owe <span style={{ color: '#1D5B94' }}>{formatMoney(borrowOwedAmt)}</span></div>
-                        <div style={subLineStyle}>{formatMoney(totalPaidBackAmt)} of {formatMoney(totalBorrowedAmt)} paid back</div>
-                      </>
-                    )}
-                  </div>
+                  <LendingWallet
+                    cards={walletCards}
+                    label={isLending ? "You're owed" : 'You owe'}
+                    amount={formatMoney(isLending ? lentOwed : borrowOwedAmt)}
+                    sublabel={isLending
+                      ? `${formatMoney(totalRepaid)} of ${formatMoney(totalLentAmount)} repaid to you`
+                      : `${formatMoney(totalPaidBackAmt)} of ${formatMoney(totalBorrowedAmt)} paid back`
+                    }
+                    accentColor={isLending ? '#03ACEA' : '#1D5B94'}
+                  />
                 </div>
               </div>
             );
