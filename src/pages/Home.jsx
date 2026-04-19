@@ -1386,7 +1386,7 @@ export default function Home() {
                   );
                   const rowStyle = { display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 12, color: '#1A1918' };
                   return (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 2 }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 2 }}>
                       {overdueYouOwe.length > 0 && (
                         <div style={rowStyle}>
 <span>You have <strong style={{ color: '#E8726E' }}>{overdueYouOwe.length}</strong> overdue payment{overdueYouOwe.length === 1 ? '' : 's'}</span>
