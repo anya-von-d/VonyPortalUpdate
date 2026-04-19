@@ -1303,60 +1303,56 @@ export default function Home() {
                       <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif", marginBottom: 12 }}>Upcoming</div>
                       {/* Horizontal scroll row */}
                       <div className="home-upcoming-scroll" style={{
-                        display: 'flex', gap: 10, overflowX: 'auto', paddingBottom: 4,
+                        display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4,
                         scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch',
                       }}>
                         {allPaymentEvents.map((evt, idx) => {
                           const isOverdue = evt.days < 0;
                           const daysAbs = Math.abs(evt.days);
                           const daysText = isOverdue
-                            ? `${daysAbs} DAY${daysAbs !== 1 ? 'S' : ''} LATE`
-                            : evt.days === 0
-                            ? 'TODAY'
-                            : `IN ${evt.days} DAY${evt.days !== 1 ? 'S' : ''}`;
-                          const accentColor = isOverdue ? '#E8726E' : evt.days <= 3 ? '#F59E0B' : '#03ACEA';
-                          const cardBg = isOverdue
-                            ? 'linear-gradient(160deg, #2a1010 0%, #1a0a0a 100%)'
-                            : evt.days <= 3
-                            ? 'linear-gradient(160deg, #1e1608 0%, #12100a 100%)'
-                            : 'linear-gradient(160deg, #0e1a22 0%, #0a1218 100%)';
+                            ? `${daysAbs}d late`
+                            : evt.days === 0 ? 'Today'
+                            : `In ${evt.days}d`;
+                          const accentColor = isOverdue ? '#B94040' : evt.days <= 3 ? '#B45309' : '#03ACEA';
+                          const accentBg   = isOverdue ? 'rgba(232,114,110,0.12)' : evt.days <= 3 ? 'rgba(245,158,11,0.10)' : 'rgba(3,172,234,0.10)';
                           return (
                             <div key={idx} style={{
-                              flexShrink: 0, width: 110, borderRadius: 14,
-                              background: cardBg,
+                              flexShrink: 0, width: 86, borderRadius: 12,
+                              background: '#EBF4FA',
+                              border: '1px solid rgba(3,172,234,0.18)',
                               display: 'flex', flexDirection: 'column', alignItems: 'center',
                               overflow: 'hidden',
-                              boxShadow: '0 2px 12px rgba(0,0,0,0.18)',
+                              boxShadow: '0 1px 4px rgba(3,172,234,0.08)',
                             }}>
-                              {/* Top section: avatar + name + amount */}
-                              <div style={{ padding: '14px 10px 12px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, width: '100%' }}>
+                              {/* Top: avatar + name + amount */}
+                              <div style={{ padding: '10px 8px 9px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, width: '100%' }}>
                                 <UserAvatar
                                   name={evt.firstName}
                                   src={evt.profilePic}
-                                  size={44}
-                                  radius={22}
+                                  size={30}
+                                  radius={15}
                                 />
                                 <span style={{
-                                  fontSize: 11, fontWeight: 500, color: 'rgba(255,255,255,0.75)',
+                                  fontSize: 10, fontWeight: 500, color: '#787776',
                                   fontFamily: "'DM Sans', sans-serif",
-                                  maxWidth: 90, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                                  maxWidth: 74, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                                 }}>{evt.firstName}</span>
                                 <span style={{
-                                  fontSize: 15, fontWeight: 800, color: '#ffffff',
-                                  fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.03em', lineHeight: 1,
+                                  fontSize: 13, fontWeight: 800, color: '#1A1918',
+                                  fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.02em', lineHeight: 1,
                                 }}>{formatMoney(evt.remainingAmount)}</span>
                               </div>
                               {/* Bottom bar: due label */}
                               <div style={{
-                                width: '100%', padding: '7px 4px',
-                                borderTop: `1px solid rgba(255,255,255,0.07)`,
-                                background: 'rgba(0,0,0,0.25)',
+                                width: '100%', padding: '5px 4px',
+                                borderTop: '1px solid rgba(3,172,234,0.12)',
+                                background: accentBg,
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                               }}>
                                 <span style={{
                                   fontSize: 9, fontWeight: 700, color: accentColor,
                                   fontFamily: "'DM Sans', sans-serif",
-                                  letterSpacing: '0.08em', textTransform: 'uppercase',
+                                  letterSpacing: '0.06em', textTransform: 'uppercase',
                                 }}>{daysText}</span>
                               </div>
                             </div>
