@@ -206,7 +206,7 @@ export default function Upcoming() {
   // primary line (e.g. "$1.02 due to Natalie"), purpose as secondary line.
   const PaymentRow = ({ event }) => {
     const isOverdueItem = event.days < 0;
-    const daysLabel = isOverdueItem ? `${Math.abs(event.days)}d late` : event.days === 0 ? 'today' : `${event.days}d`;
+    const daysLabel = isOverdueItem ? format(event.date, 'MMM d') : format(event.date, 'MMM d');
     const amountStr = formatMoney(event.amount);
     let primaryLine;
     if (isOverdueItem) {
@@ -269,11 +269,21 @@ export default function Upcoming() {
             <div style={{ height: 1, background: 'rgba(0,0,0,0.08)', marginLeft: -32, marginRight: -32, marginBottom: 20 }} />
           </div>
 
+          {/* Mobile ordering style */}
+          <style>{`
+            @media (max-width: 768px) {
+              .upcoming-three-col { grid-template-columns: 1fr !important; }
+              .upcoming-col-1 { order: 1; }
+              .upcoming-col-3 { order: 2; }
+              .upcoming-col-2 { order: 3; }
+            }
+          `}</style>
+
           {/* Three-column: overdue+7days+coming later | cashflow+so far | calendar */}
           <div className="upcoming-three-col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 24, alignItems: 'start' }}>
 
             {/* Col 1: Overdue + Next 7 Days + Coming Later */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <div className="upcoming-col-1" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               {/* Overdue */}
               {overdue.length > 0 && (
                 <div style={{ position: 'relative', display: 'flex', flexDirection: 'column' }}>
@@ -344,7 +354,7 @@ export default function Upcoming() {
             </div>{/* end col 1 */}
 
             {/* Col 2: Cashflow + So Far This Month */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <div className="upcoming-col-2" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               {/* Cashflow */}
               <div style={{ position: 'relative' }}>
                 <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
@@ -354,10 +364,10 @@ export default function Upcoming() {
                     <span style={{ fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>{format(today, 'MMMM')}</span>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                    <div style={{ fontSize: 12, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>
+                    <div style={{ fontSize: 12, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", textAlign: 'center' }}>
                       Expected to receive <span style={{ fontWeight: 700, color: '#03ACEA' }}>{formatMoney(monthlyExpectedReceive)}</span> this month
                     </div>
-                    <div style={{ fontSize: 12, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>
+                    <div style={{ fontSize: 12, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", textAlign: 'center' }}>
                       Due to pay out <span style={{ fontWeight: 700, color: '#1D5B94' }}>{formatMoney(monthlyExpectedPay)}</span> this month
                     </div>
                   </div>
@@ -410,7 +420,7 @@ export default function Upcoming() {
             </div>{/* end col 2 */}
 
             {/* Col 3: Calendar */}
-            <div style={{ position: 'relative' }}>
+            <div className="upcoming-col-3" style={{ position: 'relative' }}>
               <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
             <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', padding: '14px 18px' }}>
 
@@ -480,7 +490,7 @@ export default function Upcoming() {
               {/* Selected day details */}
               <div style={{ marginTop: 16, paddingTop: 14, borderTop: '1px solid rgba(0,0,0,0.06)' }}>
                 {/* Color key */}
-                <div style={{ display: 'flex', gap: 12, marginBottom: 10 }}>
+                <div style={{ display: 'flex', gap: 12, marginBottom: 10, justifyContent: 'center' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                     <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#03ACEA', flexShrink: 0, display: 'inline-block' }} />
                     <span style={{ fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>Incoming</span>
