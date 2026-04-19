@@ -1182,7 +1182,7 @@ export default function Home() {
           )}
 
           {/* Three summary cards */}
-          <div className="home-summary-cards" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, alignItems: 'stretch', width: '100%', maxWidth: 620, margin: '0 auto 24px' }}>
+          <div className="home-summary-cards" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, alignItems: 'stretch', width: '100%', margin: '0 0 24px' }}>
             {/* Next Payment Due */}
             {(() => {
               const days = nextBorrowerPayment ? Math.ceil((nextBorrowerPayment.date.getTime() - Date.now()) / 86400000) : null;
@@ -1310,6 +1310,59 @@ export default function Home() {
                         <span style={{ fontSize: 11, color: '#9B9A98' }}>None incoming ✨</span>
                       </div>
                     )}
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* Inbox card */}
+            {(() => {
+              const keyRemindersCount = overdueYouOwe.length + overdueOwedToYou.length + pendingOffers.length;
+              return (
+                <div className="home-card-inbox" style={{ position: 'relative', display: 'flex', flexDirection: 'column' }}>
+                  {/* Rainbow aurora — matches notification bar */}
+                  <div style={{
+                    position: 'absolute',
+                    top: '50%', left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: 'calc(100% + 14px)',
+                    height: 'calc(100% + 14px)',
+                    background: 'linear-gradient(225deg, rgb(129,140,248) 0%, rgb(99,102,241) 12%, rgb(79,70,229) 24%, rgb(67,56,202) 36%, rgb(37,99,235) 50%, rgb(59,130,246) 64%, rgb(96,165,250) 76%, rgb(56,189,248) 88%, rgb(14,165,233) 100%)',
+                    filter: 'blur(8px) saturate(1.2)',
+                    opacity: 0.6,
+                    borderRadius: 18, zIndex: 0, pointerEvents: 'none',
+                  }} />
+                  {/* Card body — dark blue */}
+                  <div style={{
+                    position: 'relative', zIndex: 1, flex: 1,
+                    padding: '12px 14px', borderRadius: 10,
+                    background: '#14324D',
+                    border: '1px solid rgba(99,102,241,0.4)',
+                    display: 'flex', flexDirection: 'column', justifyContent: 'center',
+                    overflow: 'hidden',
+                  }}>
+                    {/* Subtle inner glow */}
+                    <div style={{ position: 'absolute', top: -30, right: -30, width: 90, height: 90, borderRadius: '50%', background: 'rgba(99,102,241,0.25)', filter: 'blur(18px)', pointerEvents: 'none' }} />
+                    {/* Header row: title + View → */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: 5, marginBottom: 2 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                        <span style={{ width: 20, height: 20, borderRadius: 6, background: 'rgba(255,255,255,0.12)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                        </span>
+                        <span style={{ fontSize: 12, fontWeight: 600, color: '#ffffff', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>Inbox</span>
+                      </div>
+                      <Link to={createPageUrl("Requests")} style={{ fontSize: 11, fontWeight: 600, color: 'rgba(255,255,255,0.7)', textDecoration: 'none', letterSpacing: '0.01em' }}>
+                        View →
+                      </Link>
+                    </div>
+                    {/* Line 1: notifications */}
+                    <div style={{ fontSize: 12, fontWeight: 500, color: 'rgba(255,255,255,0.85)', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.4, marginTop: 2 }}>
+                      You have <strong style={{ color: '#ffffff', fontWeight: 700 }}>{notifCount}</strong> new notification{notifCount !== 1 ? 's' : ''}
+                    </div>
+                    {/* Line 2: key reminders */}
+                    <div style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.55)', fontFamily: "'DM Sans', sans-serif", letterSpacing: '0.06em', textTransform: 'uppercase', marginTop: 5 }}>
+                      {keyRemindersCount} key reminder{keyRemindersCount !== 1 ? 's' : ''}
+                    </div>
                   </div>
                 </div>
               );
@@ -1495,11 +1548,11 @@ export default function Home() {
                         </div>
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginTop: 10 }}>
-                        <Ring percent={percentRepaid} color="#03ACEA" label="Repaid" />
                         <div style={textBlockStyle}>
                           <div style={bigLineStyle}>You're owed <span style={{ color: '#03ACEA' }}>{formatMoney(lentOwed)}</span></div>
                           <div style={subLineStyle}>{formatMoney(totalRepaid)} of {formatMoney(totalLentAmount)} repaid to you</div>
                         </div>
+                        <Ring percent={percentRepaid} color="#03ACEA" label="Repaid" />
                       </div>
                     </div>
                   </div>
@@ -1510,7 +1563,12 @@ export default function Home() {
               <div className="home-card-howmonth" style={{ position: 'relative' }}>
               <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
               <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', padding: '14px 18px' }}>
-                <SectionHeader title={`How ${format(today, 'MMMM')} is Going`} />
+                {/* Centered title */}
+                <div style={{ textAlign: 'center', paddingBottom: 5, marginBottom: 2 }}>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>
+                    {`How ${format(today, 'MMMM')} is Going`}
+                  </span>
+                </div>
                 {/* Summary lines — each gets a leading bullet colored to match the numeric accent */}
                 {(() => {
                   // Icon helpers: background-less symbol glyphs, color-matched to the line accent.
