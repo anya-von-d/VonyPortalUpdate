@@ -1033,8 +1033,7 @@ export default function Home() {
           )}
 
           {/* Three summary cards */}
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 24 }}>
-          <div className="home-summary-cards" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, alignItems: 'stretch', width: '100%', maxWidth: 540 }}>
+          <div className="home-summary-cards" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, alignItems: 'stretch', width: '100%', maxWidth: 620, margin: '0 auto 24px' }}>
             {/* Next Payment Due */}
             {(() => {
               const days = nextBorrowerPayment ? Math.ceil((nextBorrowerPayment.date.getTime() - Date.now()) / 86400000) : null;
@@ -1168,7 +1167,6 @@ export default function Home() {
             })()}
 
           </div>
-          </div>{/* end centering wrapper */}
 
           {/* Masonry three-column layout */}
           <div className="home-two-col-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 24 }}>

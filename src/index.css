@@ -289,33 +289,7 @@ input[type="date"] {
     background: transparent !important;
     border-right: none !important;
   }
-  /* Home: summary row — gaps and edge padding match the other cards. */
-  .home-summary-cards {
-    gap: 24px !important;
-    margin-bottom: 24px !important;
-  }
-  /* Desktop: 3-column masonry — cards flow top-to-bottom, the next
-     card below starts where the one above ends (no row alignment). */
-  .home-two-col-row {
-    display: block !important;
-    column-count: 3 !important;
-    column-gap: 24px !important;
-  }
-  .home-two-col-row > div {
-    display: contents !important;
-  }
-  .home-two-col-row .home-card-tasks,
-  .home-two-col-row .home-card-howmonth,
-  .home-two-col-row .home-card-recent,
-  .home-two-col-row .home-card-bor-overview,
-  .home-two-col-row .home-card-lending-loans,
-  .home-two-col-row .home-card-your-borrowing {
-    break-inside: avoid;
-    -webkit-column-break-inside: avoid;
-    page-break-inside: avoid;
-    display: block;
-    margin-bottom: 24px;
-  }
+  /* Home: summary row (NPI/NPD) — React sets maxWidth and centers. */
 }
 
 /* Loan details responsive */
