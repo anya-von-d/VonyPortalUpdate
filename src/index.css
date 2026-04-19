@@ -425,6 +425,22 @@ input[type="date"] {
 }
 .pill-nav-scroll::-webkit-scrollbar { display: none; }
 .loan-card-scroll::-webkit-scrollbar { display: none; }
+
+/* Select-a-loan strip: full-bleed within the mesh-center content column */
+.loans-selector-fullbleed {
+  margin-left: -32px;
+  margin-right: -32px;
+  padding-left: 32px;
+  padding-right: 32px;
+}
+@media (max-width: 768px) {
+  .loans-selector-fullbleed {
+    margin-left: -20px;
+    margin-right: -20px;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
 .home-upcoming-scroll::-webkit-scrollbar { display: none; }
 
 

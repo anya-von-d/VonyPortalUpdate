@@ -1157,8 +1157,12 @@ export default function YourLoans({ defaultTab }) {
               </div>
             );
           };
+          const paymentsLeft = activeLoans.reduce((s, l) => {
+            const paidCount = (l.payment_amount || 0) > 0 ? Math.floor((l.amount_paid || 0) / (l.payment_amount)) : 0;
+            return s + Math.max(0, (l.repayment_period || 0) - paidCount);
+          }, 0);
           const tbS = { flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 2 };
-          const bL  = { fontSize: 11, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" };
+          const bL  = { fontSize: 11, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.01em' };
           const sL  = { fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" };
           return (
             <div style={{ position: 'relative' }}>
@@ -1169,16 +1173,16 @@ export default function YourLoans({ defaultTab }) {
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                     <OvRing percent={percentRepaid} color="#03ACEA" label="Repaid" />
                     <div style={tbS}>
-                      <div style={bL}>You're owed <span style={{ color: '#03ACEA' }}>{formatMoney(lentOwed)}</span></div>
-                      <div style={sL}>{formatMoney(totalReceivedLending)} of {formatMoney(totalExpectedLending)} repaid</div>
+                      <div style={bL}>{formatMoney(totalReceivedLending)} <span style={{ color: '#03ACEA' }}>of {formatMoney(totalExpectedLending)}</span> repaid</div>
+                      <div style={sL}>{paymentsLeft} payment{paymentsLeft !== 1 ? 's' : ''} left</div>
                     </div>
                   </div>
                 ) : (
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                     <OvRing percent={percentPaid} color="#1D5B94" label="Paid back" />
                     <div style={tbS}>
-                      <div style={bL}>You owe <span style={{ color: '#1D5B94' }}>{formatMoney(borrowOwed)}</span></div>
-                      <div style={sL}>{formatMoney(totalPaidBorrowing)} of {formatMoney(totalOwedBorrowing)} paid back</div>
+                      <div style={bL}>{formatMoney(totalPaidBorrowing)} <span style={{ color: '#1D5B94' }}>of {formatMoney(totalOwedBorrowing)}</span> paid back</div>
+                      <div style={sL}>{paymentsLeft} payment{paymentsLeft !== 1 ? 's' : ''} left</div>
                     </div>
                   </div>
                 )}
@@ -1405,14 +1409,14 @@ export default function YourLoans({ defaultTab }) {
           </div>{/* end col 2 grid */}
         </div>{/* end loans-top-layout grid */}
 
-        {/* Scrollable loan card row — blue box */}
+        {/* Scrollable loan card row — full bleed */}
         {activeLoans.length > 0 && (
-          <div style={{ background: 'rgba(3,172,234,0.05)', border: '1px solid rgba(3,172,234,0.18)', borderRadius: 12, padding: '14px 16px' }}>
-            <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif", marginBottom: 12 }}>
-              Select a Loan to View Details
+          <div className="loans-selector-fullbleed" style={{ borderTop: '1px solid rgba(0,0,0,0.06)', borderBottom: '1px solid rgba(0,0,0,0.06)', background: 'rgba(3,172,234,0.03)', paddingTop: 14, paddingBottom: 14 }}>
+            <div style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.06em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif", marginBottom: 10, paddingLeft: 2 }}>
+              Select a Loan
             </div>
             <div className="loan-card-scroll" style={{
-              display: 'flex', gap: 12, overflowX: 'auto', paddingBottom: 8,
+              display: 'flex', gap: 12, overflowX: 'auto', paddingBottom: 4,
               scrollbarWidth: 'none', msOverflowStyle: 'none',
               WebkitOverflowScrolling: 'touch',
             }}>
