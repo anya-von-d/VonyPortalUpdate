@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,13 +25,66 @@ export default function BorrowerSignatureModal({
   lenderName,
   borrowerFullName
 }) {
-  const [signature, setSignature] = useState("");
   const [error, setError] = useState("");
   const [isSigning, setIsSigning] = useState(false);
   const [isDeclining, setIsDeclining] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [checkedItems, setCheckedItems] = useState([]);
   const [showChecklistError, setShowChecklistError] = useState(false);
+
+  // Canvas signature state
+  const canvasRef = useRef(null);
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [hasSignature, setHasSignature] = useState(false);
+  const [signatureSaved, setSignatureSaved] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const t = setTimeout(() => {
+      const canvas = canvasRef.current;
+      if (canvas) {
+        const rect = canvas.getBoundingClientRect();
+        if (rect.width > 0) { canvas.width = rect.width; canvas.height = 140; }
+      }
+    }, 80);
+    return () => clearTimeout(t);
+  }, [isOpen]);
+
+  const getPos = (e, canvas) => {
+    const rect = canvas.getBoundingClientRect();
+    const src = e.touches ? e.touches[0] : e;
+    return { x: src.clientX - rect.left, y: src.clientY - rect.top };
+  };
+
+  const startDrawing = (e) => {
+    const canvas = canvasRef.current; if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const { x, y } = getPos(e, canvas);
+    ctx.beginPath(); ctx.moveTo(x, y);
+    setIsDrawing(true); setSignatureSaved(false);
+  };
+
+  const draw = (e) => {
+    if (!isDrawing) return;
+    e.preventDefault();
+    const canvas = canvasRef.current; if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const { x, y } = getPos(e, canvas);
+    ctx.lineTo(x, y);
+    ctx.strokeStyle = '#1A1918'; ctx.lineWidth = 2;
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.stroke();
+    setHasSignature(true);
+  };
+
+  const stopDrawing = () => setIsDrawing(false);
+
+  const clearCanvas = () => {
+    const canvas = canvasRef.current; if (!canvas) return;
+    canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+    setHasSignature(false); setSignatureSaved(false);
+  };
 
   const handleCheckItem = (id) => {
     setCheckedItems(prev =>
@@ -41,7 +94,6 @@ export default function BorrowerSignatureModal({
   };
 
   const allItemsChecked = BORROWER_CHECKLIST.every(item => checkedItems.includes(item.id));
-  const isSignatureValid = signature.trim().toLowerCase() === borrowerFullName?.toLowerCase();
 
   const handleSign = async () => {
     if (!allItemsChecked) {
@@ -49,23 +101,25 @@ export default function BorrowerSignatureModal({
       setError("Please confirm all items in the checklist");
       return;
     }
-    if (!signature.trim()) {
-      setError("Please type your full name to sign");
+    if (!signatureSaved) {
+      setError("Please draw and save your signature above");
       return;
     }
-    if (signature.trim().toLowerCase() !== borrowerFullName.toLowerCase()) {
-      setError("Signature must match your full name");
+    if (!agreedToTerms) {
+      setError("Please confirm that you agree to the terms");
       return;
     }
 
     setIsSigning(true);
     try {
-      await onSign(signature.trim());
+      await onSign(borrowerFullName || "Signed");
       setIsSuccess(true);
       setTimeout(() => {
-        setSignature("");
+        clearCanvas();
         setError("");
         setCheckedItems([]);
+        setAgreedToTerms(false);
+        setSignatureSaved(false);
         setIsSuccess(false);
       }, 2500);
     } catch (error) {
@@ -222,39 +276,78 @@ export default function BorrowerSignatureModal({
           <div className="space-y-3">
             <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500 flex items-center gap-2">
               <PenLine className="w-3.5 h-3.5 text-[#82F0B9]" />
-              Type your full name to sign
+              Draw your signature
             </p>
-            <div className="relative">
-              <Input
-                id="signature"
-                value={signature}
-                onChange={(e) => {
-                  setSignature(e.target.value);
-                  setError("");
-                }}
-                placeholder={borrowerFullName}
-                className={`text-lg h-14 font-serif italic rounded-xl bg-white transition-all ${
-                  signature && isSignatureValid
-                    ? 'ring-2 ring-[#82F0B9]/40 bg-[#82F0B9]/5'
-                    : signature && !isSignatureValid
-                    ? 'ring-1 ring-amber-300'
-                    : ''
-                }`}
+
+            {/* Canvas drawing area */}
+            <div style={{ position: 'relative', border: '1.5px solid #E2E8F0', borderRadius: 12, background: '#F8FAFC', overflow: 'hidden' }}>
+              <canvas
+                ref={canvasRef}
+                width={500}
+                height={140}
+                onMouseDown={startDrawing}
+                onMouseMove={draw}
+                onMouseUp={stopDrawing}
+                onMouseLeave={stopDrawing}
+                onTouchStart={startDrawing}
+                onTouchMove={draw}
+                onTouchEnd={stopDrawing}
+                style={{ display: 'block', width: '100%', height: 140, cursor: 'crosshair', touchAction: 'none' }}
               />
-              {signature && isSignatureValid && (
-                <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  className="absolute right-3 top-1/2 -translate-y-1/2"
-                >
-                  <CheckCircle className="w-6 h-6 text-[#82F0B9]" />
-                </motion.div>
+              {!hasSignature && (
+                <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
+                  <span style={{ fontFamily: 'serif', fontStyle: 'italic', fontSize: 20, color: '#CBD5E1' }}>Sign here…</span>
+                </div>
+              )}
+              {signatureSaved && (
+                <div style={{ position: 'absolute', top: 8, right: 8, background: '#82F0B9', borderRadius: 20, padding: '2px 10px', fontSize: 10, fontWeight: 700, color: '#fff', letterSpacing: '0.04em' }}>
+                  ✓ Saved
+                </div>
               )}
             </div>
-            <p className="text-xs text-slate-500 flex items-center gap-1">
-              <span className="text-slate-400">Please type:</span>
-              <span className="font-medium text-slate-700">{borrowerFullName}</span>
+
+            {/* Canvas controls */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <button
+                onClick={clearCanvas}
+                style={{ padding: '6px 14px', fontSize: 12, fontWeight: 500, color: '#64748B', background: '#F1F5F9', border: 'none', borderRadius: 8, cursor: 'pointer' }}
+              >
+                Clear
+              </button>
+              <button
+                onClick={() => { if (hasSignature) { setSignatureSaved(true); setError(''); } }}
+                disabled={!hasSignature}
+                style={{
+                  padding: '6px 18px', fontSize: 12, fontWeight: 600,
+                  color: hasSignature ? '#fff' : '#94A3B8',
+                  background: hasSignature ? '#82F0B9' : '#E2E8F0',
+                  border: 'none', borderRadius: 8,
+                  cursor: hasSignature ? 'pointer' : 'default',
+                  transition: 'background 0.15s',
+                }}
+              >
+                Save signature
+              </button>
+            </div>
+
+            {/* Disclaimer */}
+            <p style={{ fontSize: 11, color: '#94A3B8', lineHeight: 1.5 }}>
+              By drawing your signature, you confirm your identity and intent to sign this document electronically in accordance with applicable e-signature laws.
             </p>
+
+            {/* Toggle — agree to terms */}
+            <div
+              style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px', background: agreedToTerms ? 'rgba(130,240,185,0.08)' : '#F8FAFC', borderRadius: 10, border: `1px solid ${agreedToTerms ? 'rgba(130,240,185,0.35)' : '#E2E8F0'}`, cursor: 'pointer' }}
+              onClick={() => { setAgreedToTerms(v => !v); setError(''); }}
+            >
+              <div style={{ width: 44, height: 24, borderRadius: 12, background: agreedToTerms ? '#82F0B9' : '#E2E8F0', position: 'relative', flexShrink: 0, transition: 'background 0.2s' }}>
+                <div style={{ position: 'absolute', top: 2, left: agreedToTerms ? 22 : 2, width: 20, height: 20, borderRadius: 10, background: '#fff', boxShadow: '0 1px 3px rgba(0,0,0,0.2)', transition: 'left 0.2s' }} />
+              </div>
+              <span style={{ fontSize: 12, color: '#475569', lineHeight: 1.4 }}>
+                I confirm that I agree to all the terms and conditions of this agreement
+              </span>
+            </div>
+
             {error && (
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
@@ -282,7 +375,7 @@ export default function BorrowerSignatureModal({
               <Button
                 onClick={handleSign}
                 className="w-full h-12 text-base bg-[#82F0B9] hover:bg-[#5a7be6] text-white rounded-xl transition-all"
-                disabled={isSigning || isDeclining || !isSignatureValid || !allItemsChecked}
+                disabled={isSigning || isDeclining || !signatureSaved || !agreedToTerms || !allItemsChecked}
               >
                 {isSigning ? (
                   <>
@@ -292,7 +385,7 @@ export default function BorrowerSignatureModal({
                 ) : (
                   <>
                     <PenLine className="w-5 h-5 mr-2" />
-                    Sign & Accept
+                    Sign the contract
                   </>
                 )}
               </Button>
