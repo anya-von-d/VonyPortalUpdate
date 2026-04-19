@@ -346,15 +346,19 @@ input[type="date"] {
     display: contents !important;
   }
   /* Mobile card order */
-  .home-card-npd       { order: 1 !important; }
-  .home-card-npi       { order: 2 !important; }
-  .home-card-overview  { order: 3 !important; }
-  .home-card-tasks          { order: 4 !important; }
-  .home-card-howmonth       { order: 5 !important; }
-  .home-card-recent         { order: 6 !important; }
-  .home-card-bor-overview   { order: 7 !important; }
-  .home-card-lending-loans  { order: 8 !important; }
-  .home-card-your-borrowing { order: 9 !important; }
+  .home-card-npd            { order: 1 !important; }
+  .home-card-npi            { order: 2 !important; }
+  .home-card-upcoming-strip { order: 3 !important; }
+  .home-card-overview       { order: 4 !important; }
+  .home-card-tasks          { order: 5 !important; }
+  .home-card-howmonth       { order: 6 !important; }
+  .home-card-recent         { order: 7 !important; }
+  .home-card-bor-overview   { order: 8 !important; }
+  .home-card-lending-loans  { order: 9 !important; }
+  .home-card-your-borrowing { order: 10 !important; }
+  /* Upcoming stack: desktop shows stacked card, mobile shows carousel row */
+  .upcoming-stack-desktop { display: block; }
+  .upcoming-stack-mobile  { display: none !important; }
   /* Record Payment: stack loan selector above form on mobile */
   .rp-two-col { grid-template-columns: 1fr !important; }
   /* Create Loan: hide Borrower Will Pay + Loan Summary from top row; show below blue box */
@@ -686,4 +690,8 @@ input[type="date"] {
     grid-template-rows: auto !important;
     align-items: stretch !important;
   }
+
+  /* ── Upcoming payment stack: swap to mobile carousel layout ── */
+  .upcoming-stack-desktop { display: none !important; }
+  .upcoming-stack-mobile  { display: flex !important; }
 }

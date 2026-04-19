@@ -129,6 +129,155 @@ function LoanCarousel({ notifications, onRecordPayment }) {
   );
 }
 
+// ─── Upcoming Payment Stack ────────────────────────────────────────────────
+function UpcomingPaymentStack({ events }) {
+  const navigate = useNavigate();
+  const [idx, setIdx] = React.useState(0);
+  const displayEvents = events.slice(0, 3);
+  const total = displayEvents.length;
+  if (total === 0) return null;
+
+  const goTo = (i) => setIdx(((i % total) + total) % total);
+  const evt = displayEvents[idx];
+  const isOverdue = evt.days < 0;
+  const daysText = isOverdue
+    ? `${Math.abs(evt.days)}d late`
+    : evt.days === 0 ? 'Today'
+    : `${evt.days}d`;
+  const badgeColor = isOverdue ? '#E8726E' : evt.days <= 3 ? '#D97706' : '#03ACEA';
+
+  const ArrowBtn = ({ onClick, children }) => (
+    <button
+      onClick={onClick}
+      style={{
+        width: 30, height: 30, borderRadius: '50%',
+        background: '#F5F4F2', border: '1px solid #ECEAE8',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        cursor: total > 1 ? 'pointer' : 'default',
+        opacity: total > 1 ? 1 : 0.3,
+        flexShrink: 0, padding: 0,
+      }}
+    >
+      {children}
+    </button>
+  );
+
+  // SVG arrow helpers
+  const ChevLeft  = () => <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#1A1918" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>;
+  const ChevRight = () => <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#1A1918" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>;
+  const ChevUp    = () => <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#1A1918" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="18 15 12 9 6 15"/></svg>;
+  const ChevDown  = () => <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#1A1918" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>;
+
+  const CardFace = ({ narrow }) => (
+    <div style={{
+      background: '#ffffff',
+      borderRadius: 14,
+      border: '1px solid #ECEAE8',
+      boxShadow: '0 2px 10px rgba(0,0,0,0.06)',
+      padding: '18px 16px 14px',
+      fontFamily: "'DM Sans', sans-serif",
+      flex: narrow ? 1 : undefined,
+      minWidth: 0,
+    }}>
+      {/* Avatar */}
+      <UserAvatar name={evt.firstName} src={evt.profilePic} size={52} radius={26} />
+      {/* Name */}
+      <div style={{
+        fontWeight: 700, fontSize: 17, color: '#1A1918',
+        marginTop: 10, marginBottom: 10, letterSpacing: '-0.02em',
+        fontFamily: "'DM Sans', sans-serif",
+      }}>{evt.firstName}</div>
+      {/* Divider */}
+      <div style={{ height: 1, background: '#F0EFEE', marginBottom: 10 }} />
+      {/* Info rows */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 14 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span style={{ fontSize: 12, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>Amount due</span>
+          <span style={{ fontSize: 13, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(evt.remainingAmount)}</span>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span style={{ fontSize: 12, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>Due</span>
+          <span style={{ fontSize: 13, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>{format(evt.date, 'MMM d')}</span>
+        </div>
+      </div>
+      {/* Record payment */}
+      <button
+        onClick={() => navigate(createPageUrl('RecordPayment') + `?loanId=${evt.loanId}`)}
+        style={{
+          width: '100%', padding: '9px 0', borderRadius: 20,
+          background: '#1A1918', color: '#ffffff',
+          fontSize: 12, fontWeight: 600, border: 'none', cursor: 'pointer',
+          fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.01em',
+        }}
+      >
+        Record payment
+      </button>
+    </div>
+  );
+
+  return (
+    /* Outer wrapper: gives space for the floating badge at top-right */
+    <div style={{ position: 'relative', paddingTop: 16 }}>
+      {/* Days badge — floats outside top-right corner of the card */}
+      <div style={{
+        position: 'absolute', top: 0, right: 0, zIndex: 30,
+        background: badgeColor, color: '#ffffff',
+        borderRadius: 12, padding: '3px 10px',
+        fontSize: 11, fontWeight: 700,
+        fontFamily: "'DM Sans', sans-serif",
+        boxShadow: '0 2px 6px rgba(0,0,0,0.14)',
+        pointerEvents: 'none',
+      }}>{daysText}</div>
+
+      {/* ── DESKTOP: stacked card effect ── */}
+      <div className="upcoming-stack-desktop">
+        <div style={{ position: 'relative', paddingRight: total >= 2 ? 10 : 0, paddingBottom: total >= 2 ? 10 : 0 }}>
+          {total >= 3 && (
+            <div style={{ position: 'absolute', inset: 0, transform: 'translate(10px,10px)', background: '#EFEEEC', borderRadius: 14, border: '1px solid #E4E2DF', zIndex: 0 }} />
+          )}
+          {total >= 2 && (
+            <div style={{ position: 'absolute', inset: 0, transform: 'translate(5px,5px)', background: '#F5F4F2', borderRadius: 14, border: '1px solid #ECEAE8', zIndex: 1 }} />
+          )}
+          <div style={{ position: 'relative', zIndex: 2 }}>
+            <CardFace />
+          </div>
+        </div>
+        {/* Navigation dots */}
+        {total > 1 && (
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 6, marginTop: 12 }}>
+            {displayEvents.map((_, i) => (
+              <div
+                key={i}
+                onClick={() => goTo(i)}
+                style={{
+                  width: i === idx ? 18 : 6, height: 6, borderRadius: 3,
+                  background: i === idx ? '#1A1918' : '#D9D8D6',
+                  cursor: 'pointer', transition: 'all 0.2s',
+                }}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* ── MOBILE: ← card ↑↓ ── */}
+      <div className="upcoming-stack-mobile" style={{ display: 'none', alignItems: 'stretch', gap: 7 }}>
+        {/* Left arrow */}
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <ArrowBtn onClick={() => goTo(idx - 1)}><ChevLeft /></ArrowBtn>
+        </div>
+        {/* Card (narrows to flex:1) */}
+        <CardFace narrow />
+        {/* Right column: up + down */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+          <ArrowBtn onClick={() => goTo(idx - 1)}><ChevUp /></ArrowBtn>
+          <ArrowBtn onClick={() => goTo(idx + 1)}><ChevDown /></ArrowBtn>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // Helper function to sync public profile
 const syncPublicProfile = async (userData) => {
   if (!userData || !userData.id || !userData.username || !userData.full_name) return;
@@ -1294,75 +1443,12 @@ export default function Home() {
                 );
               })()}
 
-              {/* Upcoming scrollable strip */}
-              {allPaymentEvents.length > 0 && (() => {
-                return (
-                  <div className="home-card-upcoming-strip" style={{ position: 'relative' }}>
-                    <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
-                    <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, padding: '14px 18px' }}>
-                      <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif", marginBottom: 12 }}>Upcoming</div>
-                      {/* Horizontal scroll row */}
-                      <div className="home-upcoming-scroll" style={{
-                        display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4,
-                        scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch',
-                      }}>
-                        {allPaymentEvents.map((evt, idx) => {
-                          const isOverdue = evt.days < 0;
-                          const daysAbs = Math.abs(evt.days);
-                          const daysText = isOverdue
-                            ? `${daysAbs}d late`
-                            : evt.days === 0 ? 'Today'
-                            : `In ${evt.days}d`;
-                          const accentColor = isOverdue ? '#B94040' : evt.days <= 3 ? '#B45309' : '#03ACEA';
-                          const accentBg   = isOverdue ? 'rgba(232,114,110,0.12)' : evt.days <= 3 ? 'rgba(245,158,11,0.10)' : 'rgba(3,172,234,0.10)';
-                          return (
-                            <div key={idx} style={{
-                              flexShrink: 0, width: 86, borderRadius: 12,
-                              background: '#EBF4FA',
-                              border: '1px solid rgba(3,172,234,0.18)',
-                              display: 'flex', flexDirection: 'column', alignItems: 'center',
-                              overflow: 'hidden',
-                              boxShadow: '0 1px 4px rgba(3,172,234,0.08)',
-                            }}>
-                              {/* Top: avatar + name + amount */}
-                              <div style={{ padding: '10px 8px 9px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, width: '100%' }}>
-                                <UserAvatar
-                                  name={evt.firstName}
-                                  src={evt.profilePic}
-                                  size={30}
-                                  radius={15}
-                                />
-                                <span style={{
-                                  fontSize: 10, fontWeight: 500, color: '#787776',
-                                  fontFamily: "'DM Sans', sans-serif",
-                                  maxWidth: 74, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                                }}>{evt.firstName}</span>
-                                <span style={{
-                                  fontSize: 13, fontWeight: 800, color: '#1A1918',
-                                  fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.02em', lineHeight: 1,
-                                }}>{formatMoney(evt.remainingAmount)}</span>
-                              </div>
-                              {/* Bottom bar: due label */}
-                              <div style={{
-                                width: '100%', padding: '5px 4px',
-                                borderTop: '1px solid rgba(3,172,234,0.12)',
-                                background: accentBg,
-                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                              }}>
-                                <span style={{
-                                  fontSize: 9, fontWeight: 700, color: accentColor,
-                                  fontFamily: "'DM Sans', sans-serif",
-                                  letterSpacing: '0.06em', textTransform: 'uppercase',
-                                }}>{daysText}</span>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })()}
+              {/* Upcoming payment stack */}
+              {allPaymentEvents.length > 0 && (
+                <div className="home-card-upcoming-strip">
+                  <UpcomingPaymentStack events={allPaymentEvents} />
+                </div>
+              )}
 
             </div>
 
