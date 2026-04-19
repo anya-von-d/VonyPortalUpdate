@@ -1017,7 +1017,7 @@ export default function YourLoans({ defaultTab }) {
     return (
       <>
         {/* Desktop: wallet in col 1 | stacked (NPI + Upcoming + Active Summary) in col 2 */}
-        <div className="loans-top-layout" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, alignItems: 'start' }}>
+        <div className="loans-top-layout" style={{ display: 'grid', gridTemplateColumns: '320px 1fr', gap: 20, alignItems: 'start' }}>
 
           {/* COL 1: Wallet — standalone, no outer white box */}
           {(() => {
@@ -1043,7 +1043,7 @@ export default function YourLoans({ defaultTab }) {
               .slice(0, 3);
 
             return (
-              <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
                 <LendingWallet
                   cards={walletCards}
                   label={isLending ? "You're owed" : 'You owe'}
@@ -1054,9 +1054,9 @@ export default function YourLoans({ defaultTab }) {
             );
           })()}
 
-          {/* COL 2: NPI + Upcoming + Active Summary stacked */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-          {/* Next Payment Incoming / Due — exact Home aurora card */}
+          {/* COL 2: 2×2 grid — [NPI | Overview] / [Upcoming | Active Summary] */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, alignItems: 'start' }}>
+          {/* Row 1 Col 1: Next Payment Incoming / Due */}
           {(() => {
             const auroraBg = isLending
               ? 'linear-gradient(135deg, rgb(3,172,234) 0%, rgb(6,182,212) 30%, rgb(20,184,166) 60%, rgb(3,172,234) 100%)'
@@ -1136,7 +1136,58 @@ export default function YourLoans({ defaultTab }) {
           })()}
 
 
-        {/* Upcoming + Active Summary (now stacked inside col 2) */}
+        {/* Row 1 Col 2: Overview — only the ring relevant to current tab */}
+        {(() => {
+          const percentPaid   = totalOwedBorrowing   > 0 ? Math.round((totalPaidBorrowing   / totalOwedBorrowing)   * 100) : 0;
+          const percentRepaid = totalExpectedLending > 0 ? Math.round((totalReceivedLending / totalExpectedLending) * 100) : 0;
+          const borrowOwed = Math.max(0, totalOwedBorrowing   - totalPaidBorrowing);
+          const lentOwed   = Math.max(0, totalExpectedLending - totalReceivedLending);
+          const OvRing = ({ percent, color, label }) => {
+            const C = 2 * Math.PI * 45; const offset = C - (percent / 100) * C;
+            return (
+              <div style={{ position: 'relative', width: 60, height: 60, flexShrink: 0 }}>
+                <svg width="60" height="60" viewBox="0 0 128 128" style={{ transform: 'rotate(-90deg)' }}>
+                  <circle cx="64" cy="64" r="45" fill="none" stroke={`${color}26`} strokeWidth="10" />
+                  <circle cx="64" cy="64" r="45" fill="none" stroke={color} strokeWidth="10" strokeLinecap="round" strokeDasharray={C} strokeDashoffset={offset} />
+                </svg>
+                <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>{percent}%</span>
+                  <span style={{ fontSize: 7, fontWeight: 500, color: '#787776', fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>{label}</span>
+                </div>
+              </div>
+            );
+          };
+          const tbS = { flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 2 };
+          const bL  = { fontSize: 11, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" };
+          const sL  = { fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" };
+          return (
+            <div style={{ position: 'relative' }}>
+              <div style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
+              <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, padding: '12px 14px' }}>
+                <div style={{ fontSize: 11, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif", marginBottom: 8 }}>Overview</div>
+                {isLending ? (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <OvRing percent={percentRepaid} color="#03ACEA" label="Repaid" />
+                    <div style={tbS}>
+                      <div style={bL}>You're owed <span style={{ color: '#03ACEA' }}>{formatMoney(lentOwed)}</span></div>
+                      <div style={sL}>{formatMoney(totalReceivedLending)} of {formatMoney(totalExpectedLending)} repaid</div>
+                    </div>
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <OvRing percent={percentPaid} color="#1D5B94" label="Paid back" />
+                    <div style={tbS}>
+                      <div style={bL}>You owe <span style={{ color: '#1D5B94' }}>{formatMoney(borrowOwed)}</span></div>
+                      <div style={sL}>{formatMoney(totalPaidBorrowing)} of {formatMoney(totalOwedBorrowing)} paid back</div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })()}
+
+        {/* Row 2: Upcoming + Active Summary as direct grid children */}
         {(() => {
           const sourceLoans = isLending ? activeLendingLoans : activeBorrowingLoans;
           const otherPartyKey = isLending ? 'borrower_id' : 'lender_id';
@@ -1154,7 +1205,7 @@ export default function YourLoans({ defaultTab }) {
           const upcomingLoans = allPaymentLoans.filter(l => l.days >= 0).slice(0, 5);
           const combinedLoans = [...overdueLoans, ...upcomingLoans];
           return (
-            <div className="loans-bottom-row" style={{ display: 'flex', flexDirection: 'column', gap: 20, alignItems: 'stretch' }}>
+            <>
               <PageCard tone={isLending ? 'lending' : 'borrowing'} title="Upcoming" headerRight={<Link to={createPageUrl("Upcoming")} style={{ fontSize: 11, fontWeight: 500, color: isLending ? '#03ACEA' : '#1D5B94', textDecoration: 'none' }}>Full schedule →</Link>} style={{ marginBottom: 0 }}>
                 {combinedLoans.length === 0 ? (
                   <div style={{ padding: '10px 0', fontSize: 13, color: '#9B9A98', textAlign: 'center' }}>You're all clear! Nothing coming up yet 🎉</div>
@@ -1348,58 +1399,10 @@ export default function YourLoans({ defaultTab }) {
                   </PageCard>
                 )
               )}
-            </div>
+            </>
           );
         })()}
-          {/* Overview rings — identical to Home */}
-          {(() => {
-            const percentPaid = totalOwedBorrowing > 0 ? Math.round((totalPaidBorrowing / totalOwedBorrowing) * 100) : 0;
-            const percentRepaid = totalExpectedLending > 0 ? Math.round((totalReceivedLending / totalExpectedLending) * 100) : 0;
-            const borrowOwed = Math.max(0, totalOwedBorrowing - totalPaidBorrowing);
-            const lentOwed = Math.max(0, totalExpectedLending - totalReceivedLending);
-            const OverviewRing = ({ percent, color, label }) => {
-              const C = 2 * Math.PI * 45;
-              const offset = C - (percent / 100) * C;
-              return (
-                <div style={{ position: 'relative', width: 68, height: 68, flexShrink: 0 }}>
-                  <svg width="68" height="68" viewBox="0 0 128 128" style={{ transform: 'rotate(-90deg)' }}>
-                    <circle cx="64" cy="64" r="45" fill="none" stroke={`${color}26`} strokeWidth="10" />
-                    <circle cx="64" cy="64" r="45" fill="none" stroke={color} strokeWidth="10" strokeLinecap="round" strokeDasharray={C} strokeDashoffset={offset} />
-                  </svg>
-                  <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none', gap: 1 }}>
-                    <span style={{ fontSize: 11, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>{percent}%</span>
-                    <span style={{ fontSize: 8, fontWeight: 500, color: '#787776', fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>{label}</span>
-                  </div>
-                </div>
-              );
-            };
-            const tbStyle = { flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 2 };
-            const bigL = { fontSize: 12, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" };
-            const subL = { fontSize: 12, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" };
-            return (
-              <div style={{ position: 'relative' }}>
-                <div style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
-                <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, padding: '14px 18px' }}>
-                  <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif", marginBottom: 8 }}>Overview</div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                    <OverviewRing percent={percentPaid} color="#1D5B94" label="Paid back" />
-                    <div style={tbStyle}>
-                      <div style={bigL}>You owe <span style={{ color: '#1D5B94' }}>{formatMoney(borrowOwed)}</span></div>
-                      <div style={subL}>{formatMoney(totalPaidBorrowing)} of {formatMoney(totalOwedBorrowing)} paid back</div>
-                    </div>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginTop: 10 }}>
-                    <OverviewRing percent={percentRepaid} color="#03ACEA" label="Repaid" />
-                    <div style={tbStyle}>
-                      <div style={bigL}>You're owed <span style={{ color: '#03ACEA' }}>{formatMoney(lentOwed)}</span></div>
-                      <div style={subL}>{formatMoney(totalReceivedLending)} of {formatMoney(totalExpectedLending)} repaid to you</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            );
-          })()}
-          </div>{/* end col 2 */}
+          </div>{/* end col 2 grid */}
         </div>{/* end loans-top-layout grid */}
 
         {/* Scrollable loan card row — blue box */}
