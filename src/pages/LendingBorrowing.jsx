@@ -31,7 +31,6 @@ export default function LendingBorrowing() {
           {/* Mobile title */}
           <div className="mobile-page-title">
             <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', marginBottom: 12 }}>Lending &amp; Borrowing</div>
-            <div style={{ height: 1, background: 'rgba(0,0,0,0.08)', marginLeft: -20, marginRight: -20, marginBottom: 20 }} />
           </div>
 
           {/* ── Action buttons ── */}

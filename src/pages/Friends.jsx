@@ -280,7 +280,6 @@ export default function Friends() {
           {/* Mobile-only page title (desktop shows it in top bar) */}
           <div className="mobile-page-title">
             <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', marginBottom: 12 }}>Friends</div>
-            <div style={{ height: 1, background: 'rgba(0,0,0,0.08)', marginLeft: -32, marginRight: -32, marginBottom: 20 }} />
           </div>
 
         {/* Invite box — always visible at the top */}

@@ -1051,7 +1051,6 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
                     label: isLending ? "You're owed" : 'You owe',
                     amount: formatMoney(isLending ? lentOwed : borrowOwedAmt),
                     sublabel: `across ${sourceLoans.length} loan${sourceLoans.length !== 1 ? 's' : ''}`,
-                    chips: walletCards.slice(0, 3).map(c => ({ name: c.name, amount: c.amount })),
                   }}
                   onCardClick={(id) => {
                     if (id === 'summary') {
@@ -1600,7 +1599,6 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
                 </button>
               ))}
             </div>
-            <div style={{ height: 1, background: 'rgba(0,0,0,0.08)', marginLeft: -32, marginRight: -32, marginBottom: 20 }} />
           </div>
           ) : (
           <div className="mobile-page-title">
@@ -1609,7 +1607,6 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
                 {defaultTab === 'lending' ? 'Lending' : 'Borrowing'}
               </span>
             </div>
-            <div style={{ height: 1, background: 'rgba(0,0,0,0.08)', marginLeft: -32, marginRight: -32, marginBottom: 20 }} />
           </div>
           )}
 
