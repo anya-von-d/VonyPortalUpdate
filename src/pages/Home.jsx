@@ -1188,8 +1188,8 @@ export default function Home() {
             </div>
           )}
 
-          {/* Three summary cards */}
-          <div className="home-summary-cards" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, alignItems: 'stretch', width: '100%', margin: '0 0 24px' }}>
+          {/* Three summary cards — removed */}
+          <div className="home-summary-cards" style={{ display: 'none' }}>
             {/* Next Payment Due */}
             {(() => {
               const days = nextBorrowerPayment ? Math.ceil((nextBorrowerPayment.date.getTime() - Date.now()) / 86400000) : null;
@@ -1642,44 +1642,21 @@ export default function Home() {
                     {howMonthMessage.text}{howMonthMessage.emoji ? ` ${howMonthMessage.emoji}` : ''}
                   </span>
                 </div>
-                {/* Summary lines */}
-                {(() => {
-                  const rowStyle = { display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: '#1A1918' };
-                  return (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                      {monthlyExpectedReceive > 0 && (
-                        <div style={rowStyle}>
-                          <span>Expected to receive <strong style={{ color: '#03ACEA' }}>{formatMoney(monthlyExpectedReceive)}</strong> this month</span>
-                        </div>
-                      )}
-                      {monthlyExpectedPay > 0 && (
-                        <div style={rowStyle}>
-                          <span>Due to pay out <strong style={{ color: '#1D5B94' }}>{formatMoney(monthlyExpectedPay)}</strong> this month</span>
-                        </div>
-                      )}
-                      {outScheduledTotal > 0 && (
-                        <div style={rowStyle}>
-                          <span>You have <strong style={{ color: '#1D5B94' }}>{outScheduledTotal}</strong> payment{outScheduledTotal === 1 ? '' : 's'} this month</span>
-                        </div>
-                      )}
-                      {leftToPay > 0 && (
-                        <div style={rowStyle}>
-                          <span><strong style={{ color: '#1D5B94' }}>{formatMoney(leftToPay)}</strong> left to pay this month</span>
-                        </div>
-                      )}
-                      {inScheduledTotal > 0 && (
-                        <div style={rowStyle}>
-                          <span>You're due to receive <strong style={{ color: '#03ACEA' }}>{inScheduledTotal}</strong> payment{inScheduledTotal === 1 ? '' : 's'} this month</span>
-                        </div>
-                      )}
-                      {leftToReceive > 0 && (
-                        <div style={rowStyle}>
-                          <span>You're expected to receive <strong style={{ color: '#03ACEA' }}>{formatMoney(leftToReceive)}</strong> before the end of the month</span>
-                        </div>
-                      )}
+                {/* Summary lines — only expected receive + due to pay */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  {monthlyExpectedReceive > 0 && (
+                    <div style={{ fontSize: 12, color: '#1A1918' }}>
+                      Expected to receive <strong style={{ color: '#03ACEA' }}>{formatMoney(monthlyExpectedReceive)}</strong> this month
+                      {inScheduledTotal > 0 && <span style={{ color: '#9B9A98' }}> across {inScheduledTotal} payment{inScheduledTotal !== 1 ? 's' : ''}</span>}
                     </div>
-                  );
-                })()}
+                  )}
+                  {monthlyExpectedPay > 0 && (
+                    <div style={{ fontSize: 12, color: '#1A1918' }}>
+                      Due to pay out <strong style={{ color: '#1D5B94' }}>{formatMoney(monthlyExpectedPay)}</strong> this month
+                      {outScheduledTotal > 0 && <span style={{ color: '#9B9A98' }}> across {outScheduledTotal} payment{outScheduledTotal !== 1 ? 's' : ''}</span>}
+                    </div>
+                  )}
+                </div>
               </div>
               </div>{/* end april-at-a-glance aurora wrapper */}
 

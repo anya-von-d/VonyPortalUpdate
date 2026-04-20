@@ -35,7 +35,12 @@ export default function MeshMobileNav({ user, activePage }) {
         );
         const offers = loans.filter(l => l.borrower_id === user.id && l.status === 'pending');
         const friendReqs = friendships.filter(f => f.friend_id === user.id && f.status === 'pending');
-        setNotifCount(toConfirm.length + offers.length + friendReqs.length);
+        // Reminders = overdue active loans
+        const now = new Date();
+        const overdueReminders = userLoans.filter(l =>
+          l.status === 'active' && l.next_payment_date && new Date(l.next_payment_date) < now
+        );
+        setNotifCount(toConfirm.length + offers.length + friendReqs.length + overdueReminders.length);
       } catch {}
     };
     fetchCounts();
@@ -55,53 +60,66 @@ export default function MeshMobileNav({ user, activePage }) {
   );
 
   // ── Mobile only ──
+  // Glassmorphism style shared by all icon bubbles
+  const glassBubble = {
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    width: 44, height: 44, borderRadius: 14, textDecoration: 'none', flexShrink: 0,
+    background: 'rgba(255,255,255,0.72)',
+    backdropFilter: 'blur(16px)',
+    WebkitBackdropFilter: 'blur(16px)',
+    border: '1px solid rgba(255,255,255,0.55)',
+    boxShadow: '0 2px 10px rgba(0,0,0,0.07)',
+  };
+
   return (
     <>
-      {/* ── Fixed top bar ── */}
+      {/* ── Floating top row — no bar, just logo + icon bubbles ── */}
       <div style={{
-        position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200,
-        height: 56, display: 'flex', alignItems: 'center',
+        position: 'fixed', top: 18, left: 0, right: 0, zIndex: 200,
+        display: 'flex', alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '0 14px 0 18px',
-        background: '#FDFCFA',
-        borderBottom: '1px solid rgba(0,0,0,0.06)',
+        padding: '0 16px',
         fontFamily: "'DM Sans', sans-serif",
+        pointerEvents: 'none',   // let taps pass through the gap between elements
       }}>
-        {/* Logo */}
+        {/* Logo bubble */}
         <Link to="/" style={{
+          ...glassBubble,
+          pointerEvents: 'auto',
+          width: 'auto', padding: '0 14px',
           fontFamily: "'Cormorant Garamond', Georgia, serif",
-          fontWeight: 600, fontStyle: 'italic', fontSize: '1.4rem',
-          color: '#1A1918', textDecoration: 'none', lineHeight: 1,
-          letterSpacing: '-0.02em', flexShrink: 0,
+          fontWeight: 600, fontStyle: 'italic', fontSize: '1.35rem',
+          color: '#1A1918', lineHeight: 1, letterSpacing: '-0.02em',
         }}>Vony</Link>
 
-        {/* Right icons */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+        {/* Right icon bubbles */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, pointerEvents: 'auto' }}>
 
           {/* Notifications bell */}
-          <Link to={createPageUrl("Requests")} style={{
-            position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center',
-            width: 36, height: 36, borderRadius: 10, textDecoration: 'none', flexShrink: 0,
-          }}>
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="rgba(0,0,0,0.55)" strokeWidth="1.8" strokeLinecap="round">
+          <Link to={createPageUrl("Requests")} style={{ ...glassBubble, position: 'relative' }}>
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="rgba(0,0,0,0.6)" strokeWidth="1.8" strokeLinecap="round">
               <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
               <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
             </svg>
             {notifCount > 0 && (
               <span style={{
-                position: 'absolute', top: 6, right: 6,
-                width: 7, height: 7, borderRadius: '50%',
-                background: '#03ACEA',
-              }} />
+                position: 'absolute', top: 4, right: 4,
+                minWidth: 17, height: 17, borderRadius: 9,
+                background: '#E8726E', color: '#fff',
+                fontSize: 9, fontWeight: 800,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                padding: '0 3px', lineHeight: 1,
+                border: '1.5px solid rgba(255,255,255,0.9)',
+                boxShadow: '0 1px 4px rgba(232,114,110,0.4)',
+              }}>
+                {notifCount > 99 ? '99+' : notifCount}
+              </span>
             )}
           </Link>
 
           {/* Friends */}
-          <Link to={createPageUrl("Friends")} style={{
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            width: 36, height: 36, borderRadius: 10, textDecoration: 'none', flexShrink: 0,
-          }}>
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="rgba(0,0,0,0.55)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <Link to={createPageUrl("Friends")} style={glassBubble}>
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="rgba(0,0,0,0.6)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
               <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
               <circle cx="9" cy="7" r="4"/>
               <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
@@ -109,34 +127,34 @@ export default function MeshMobileNav({ user, activePage }) {
             </svg>
           </Link>
 
-          {/* Records text */}
+          {/* Records */}
           <Link to={createPageUrl("LoanAgreements")} style={{
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            height: 36, padding: '0 8px', borderRadius: 10, textDecoration: 'none', flexShrink: 0,
-            fontSize: 13, fontWeight: 600, color: 'rgba(0,0,0,0.55)',
-            fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.01em',
+            ...glassBubble,
+            width: 'auto', padding: '0 12px',
+            fontSize: 13, fontWeight: 600, color: 'rgba(0,0,0,0.6)',
+            letterSpacing: '-0.01em',
           }}>Records</Link>
 
           {/* Profile avatar */}
-          <Link to={createPageUrl("Profile")} style={{
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            width: 36, height: 36, borderRadius: 10, textDecoration: 'none', flexShrink: 0,
-          }}>
+          <Link to={createPageUrl("Profile")} style={glassBubble}>
             <UserAvatar
               name={user?.full_name || user?.username}
               src={user?.avatar_url || user?.profile_picture_url}
-              size={26}
-              radius={13}
+              size={28}
+              radius={14}
             />
           </Link>
 
-          {/* Hamburger → settings */}
+          {/* Settings */}
           <button
             onClick={() => setSettingsOpen(true)}
             style={{
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              width: 36, height: 36, borderRadius: 10, border: 'none', cursor: 'pointer',
-              background: 'transparent', flexShrink: 0,
+              ...glassBubble,
+              border: 'none', cursor: 'pointer',
+              background: 'rgba(255,255,255,0.72)',
+              backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)',
+              boxShadow: '0 2px 10px rgba(0,0,0,0.07)',
             }}
             aria-label="Settings"
           >
