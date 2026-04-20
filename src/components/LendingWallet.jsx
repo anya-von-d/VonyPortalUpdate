@@ -2,111 +2,64 @@ import React from "react";
 import { formatMoney } from "@/components/utils/formatMoney";
 
 /**
- * Dark-navy wallet with stacked cards fanning from the top.
+ * Cream wallet body with a notched top edge that cards slot into.
+ * Cards fan upward from the wallet pocket — each one peeks above the one in front.
  *
- * Layout (top → bottom):
- *   - Summary card  (index 0, z=1)  — only top PEEK px visible
- *   - Loan card N   (index 1, z=2)  — only top PEEK px visible
- *   - …
- *   - Loan card 1   (index N, z=N+1) — front card, FULLY visible
- *   - Dark-navy wallet footer        — always visible, shows total
- *
- * cards:        [{ id, name, amount, purpose }]  — one per active loan
+ * cards:        [{ id, name, amount, purpose }]
  * summaryCard:  { label, amount, sublabel }
- * onCardClick:  (id) => void  — 'summary' | loan.id
+ * onCardClick:  (id) => void
  * selectedId:   string
  * isLending:    bool
  */
 export default function LendingWallet({ cards, summaryCard, onCardClick, selectedId, isLending }) {
-  const CARD_H        = 82;   // total height of each card
-  const PEEK          = 52;   // visible px at the TOP of each buried card (must fit 2 lines)
-  const WIDTH         = 240;
-  const WALLET_PAD_T  = 12;   // navy visible above first card
-  const WALLET_FOOT_H = 52;   // navy footer below the front card
+  const WIDTH        = 280;
+  const CARD_W       = 248;
+  const CARD_H       = 78;
+  const PEEK         = 14;                // how far each card behind peeks upward
+  const WALLET_H     = 150;               // wallet body height
+  const NOTCH_DEPTH  = 34;                // how deep the notch dips at the top middle
+  const CARD_TUCK    = 30;                // how much of the front card is hidden inside the pocket
 
-  const navyBg = '#0D1B2A';
-  const accentColor = isLending ? '#03ACEA' : '#4B8EC8';
-  const summaryGradient = isLending
-    ? 'linear-gradient(135deg, #1A6B9A 0%, #0288D1 60%, #26C6DA 100%)'
-    : 'linear-gradient(135deg, #1A237E 0%, #1D5B94 60%, #1565C0 100%)';
+  const accentColor  = isLending ? '#03ACEA' : '#4B8EC8';
+  const rainbowEdge  = 'linear-gradient(90deg, #FFB06B 0%, #E8726E 25%, #B088D4 55%, #7BAFE0 80%, #4B8EC8 100%)';
 
-  // Summary card is buried deepest (index 0), front loan card is at the bottom (index N).
-  // [...cards].reverse() so the first loan in the array ends up last (front).
-  const stackItems = [
-    { id: 'summary', isSummary: true, ...summaryCard },
-    ...[...cards].reverse().map(c => ({ ...c, isSummary: false })),
-  ];
+  const N            = Math.max(cards.length, 1);
+  const stackHeight  = CARD_H + (N - 1) * PEEK;
+  const containerH   = stackHeight + WALLET_H - CARD_TUCK;
 
-  const N           = stackItems.length;
-  // front card bottom-edge = WALLET_PAD_T + (N-1)*PEEK + CARD_H
-  // container = that + WALLET_FOOT_H
-  const containerH  = WALLET_PAD_T + (N - 1) * PEEK + CARD_H + WALLET_FOOT_H;
+  // Build SVG path for a rounded rectangle with a soft U-shaped notch in the middle of the top edge
+  const R            = 22;                           // corner radius
+  const notchStart   = WIDTH * 0.30;                 // x where left-side of notch begins
+  const notchEnd     = WIDTH * 0.70;                 // x where right-side of notch ends
+  const notchMid     = WIDTH * 0.50;
+  const walletPath = `
+    M ${R} 0
+    L ${notchStart} 0
+    C ${notchStart + 18} 0, ${notchMid - 36} ${NOTCH_DEPTH}, ${notchMid} ${NOTCH_DEPTH}
+    C ${notchMid + 36} ${NOTCH_DEPTH}, ${notchEnd - 18} 0, ${notchEnd} 0
+    L ${WIDTH - R} 0
+    Q ${WIDTH} 0, ${WIDTH} ${R}
+    L ${WIDTH} ${WALLET_H - R}
+    Q ${WIDTH} ${WALLET_H}, ${WIDTH - R} ${WALLET_H}
+    L ${R} ${WALLET_H}
+    Q 0 ${WALLET_H}, 0 ${WALLET_H - R}
+    L 0 ${R}
+    Q 0 0, ${R} 0
+    Z
+  `;
 
   return (
-    <div
-      style={{
-        position: 'relative',
-        width: WIDTH,
-        height: containerH,
-        fontFamily: "'DM Sans', sans-serif",
-        flexShrink: 0,
-        background: navyBg,
-        borderRadius: 20,
-        overflow: 'hidden',
-      }}
-    >
-      {stackItems.map((card, i) => {
-        const topPx   = WALLET_PAD_T + i * PEEK;
-        const zIdx    = i + 1;          // summary=1 (lowest), front loan=N (highest)
+    <div style={{ position: 'relative', width: WIDTH, height: containerH, flexShrink: 0, fontFamily: "'DM Sans', sans-serif" }}>
+
+      {/* ── Card stack (rendered before wallet so wallet overlays the bottom) ── */}
+      {cards.map((card, i) => {
+        // i=0 is the front card (lowest, tucked deepest into pocket)
+        // i=N-1 is the back card (highest, most peeked above)
+        const topPx   = stackHeight - CARD_H - i * PEEK;
+        const zIdx    = 10 + (N - i);     // front card highest z
         const isActive = selectedId === card.id;
-        const isFront  = i === N - 1;  // front loan card = fully visible
+        const isFront  = i === 0;
 
-        /* ── Summary card (gradient, buried at top) ── */
-        if (card.isSummary) {
-          return (
-            <div
-              key="summary"
-              onClick={() => onCardClick && onCardClick('summary')}
-              style={{
-                position: 'absolute',
-                top: topPx,
-                left: 0,
-                width: WIDTH,
-                height: CARD_H,
-                zIndex: zIdx,
-                cursor: 'pointer',
-                background: summaryGradient,
-                borderRadius: 14,
-                border: isActive
-                  ? '1.5px solid rgba(255,255,255,0.4)'
-                  : '1px solid rgba(255,255,255,0.08)',
-                padding: '12px 16px 0',
-                boxSizing: 'border-box',
-                transition: 'border-color 0.15s',
-              }}
-            >
-              {/* Line 1: label + amount (visible in top PEEK area) */}
-              <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 8 }}>
-                <span style={{
-                  fontSize: 10, fontWeight: 700,
-                  color: 'rgba(255,255,255,0.65)',
-                  textTransform: 'uppercase', letterSpacing: '0.08em',
-                }}>
-                  {summaryCard.label || (isLending ? "You're owed" : 'You owe')}
-                </span>
-                <span style={{ fontSize: 15, fontWeight: 800, color: '#ffffff', letterSpacing: '-0.03em' }}>
-                  {summaryCard.amount}
-                </span>
-              </div>
-              {/* Line 2: sublabel */}
-              <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.45)', marginTop: 4 }}>
-                {summaryCard.sublabel}
-              </div>
-            </div>
-          );
-        }
-
-        /* ── Loan card (white, stacked) ── */
         return (
           <div
             key={card.id}
@@ -114,100 +67,158 @@ export default function LendingWallet({ cards, summaryCard, onCardClick, selecte
             style={{
               position: 'absolute',
               top: topPx,
-              left: 0,
-              width: WIDTH,
+              left: (WIDTH - CARD_W) / 2,
+              width: CARD_W,
               height: CARD_H,
               zIndex: zIdx,
               cursor: 'pointer',
               background: '#FFFFFF',
-              borderRadius: 14,
-              border: isActive
-                ? `1.5px solid ${accentColor}`
-                : '1px solid rgba(255,255,255,0.05)',
-              padding: '12px 16px 0',
-              boxSizing: 'border-box',
-              transition: 'border-color 0.15s, box-shadow 0.15s',
+              borderRadius: 18,
+              border: isActive ? `1.5px solid ${accentColor}` : '1px solid rgba(0,0,0,0.05)',
               boxShadow: isActive
-                ? `0 4px 16px ${accentColor}40`
+                ? `0 6px 18px ${accentColor}40`
                 : isFront
-                  ? '0 8px 24px rgba(0,0,0,0.28), 0 2px 6px rgba(0,0,0,0.14)'
-                  : '0 2px 6px rgba(0,0,0,0.12)',
-            }}
-            onMouseEnter={e => { if (!isActive) e.currentTarget.style.boxShadow = '0 6px 20px rgba(0,0,0,0.22)'; }}
-            onMouseLeave={e => {
-              e.currentTarget.style.boxShadow = isActive
-                ? `0 4px 16px ${accentColor}40`
-                : isFront
-                  ? '0 8px 24px rgba(0,0,0,0.28), 0 2px 6px rgba(0,0,0,0.14)'
-                  : '0 2px 6px rgba(0,0,0,0.12)';
+                  ? '0 8px 24px rgba(0,0,0,0.10), 0 2px 6px rgba(0,0,0,0.05)'
+                  : '0 4px 12px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04)',
+              padding: '14px 18px 12px',
+              boxSizing: 'border-box',
+              transition: 'border-color 0.15s, box-shadow 0.15s, transform 0.15s',
+              overflow: 'hidden',
             }}
           >
+            {/* Rainbow top accent stripe */}
+            <div style={{
+              position: 'absolute', top: 0, left: 0, right: 0, height: 4,
+              background: rainbowEdge,
+              opacity: isFront ? 0.9 : 0.6,
+            }} />
+
             {/* Line 1: name + amount */}
-            <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 8 }}>
+            <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 10, marginTop: 2 }}>
               <span style={{
                 fontSize: 13, fontWeight: 700, color: '#1A1918',
                 overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                flex: 1,
+                flex: 1, letterSpacing: '-0.01em',
               }}>
                 {card.name}
               </span>
-              <span style={{ fontSize: 13, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.02em', flexShrink: 0 }}>
+              <span style={{
+                fontSize: 14, fontWeight: 800, color: '#1A1918',
+                letterSpacing: '-0.03em', flexShrink: 0,
+              }}>
                 {formatMoney(card.amount)}
               </span>
             </div>
-            {/* Line 2: purpose */}
+
+            {/* Line 2: purpose/reason */}
             <div style={{
-              fontSize: 11, marginTop: 4,
+              fontSize: 11, marginTop: 5,
               color: card.purpose ? '#9B9A98' : '#C5C3C0',
               overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+              fontWeight: 500,
             }}>
-              {card.purpose || 'No purpose specified'}
+              {card.purpose || 'No reason specified'}
             </div>
-            {/* Accent bar (front card only, more prominent) */}
-            {isFront && (
-              <div style={{
-                position: 'absolute',
-                left: 0, top: 10, bottom: 10,
-                width: 3,
-                borderRadius: '0 2px 2px 0',
-                background: accentColor,
-                opacity: isActive ? 1 : 0.5,
-              }} />
-            )}
           </div>
         );
       })}
 
-      {/* Dark-navy wallet footer — total, always visible */}
+      {/* ── Wallet body (cream, notched top) ── */}
       <div style={{
         position: 'absolute',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        height: WALLET_FOOT_H,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '0 16px',
-        borderTop: '1px solid rgba(255,255,255,0.07)',
-        zIndex: 0,
+        bottom: 0, left: 0,
+        width: WIDTH, height: WALLET_H,
+        zIndex: 100,
       }}>
-        <div>
-          <div style={{
-            fontSize: 9, fontWeight: 700,
-            color: 'rgba(255,255,255,0.38)',
-            textTransform: 'uppercase', letterSpacing: '0.1em',
-            marginBottom: 3,
-          }}>
-            {isLending ? "You're owed" : 'You owe'}
+        <svg
+          width={WIDTH} height={WALLET_H}
+          viewBox={`0 0 ${WIDTH} ${WALLET_H}`}
+          style={{ position: 'absolute', inset: 0, display: 'block' }}
+        >
+          <defs>
+            <linearGradient id="walletBodyBg" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%"   stopColor="#FEFDFB" />
+              <stop offset="100%" stopColor="#F4F1EC" />
+            </linearGradient>
+            <filter id="walletShadow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="6" stdDeviation="10" floodColor="#000" floodOpacity="0.08" />
+            </filter>
+          </defs>
+          <path
+            d={walletPath}
+            fill="url(#walletBodyBg)"
+            stroke="rgba(0,0,0,0.06)"
+            strokeWidth="1"
+            filter="url(#walletShadow)"
+          />
+        </svg>
+
+        {/* Content layer */}
+        <div style={{
+          position: 'absolute', inset: 0,
+          padding: `${NOTCH_DEPTH + 18}px 20px 18px`,
+          boxSizing: 'border-box',
+          display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+        }}>
+          {/* Top row: card count pill */}
+          <div>
+            <div style={{
+              display: 'inline-flex', alignItems: 'center',
+              padding: '5px 11px', borderRadius: 999,
+              background: '#FFFFFF',
+              border: '1px solid rgba(0,0,0,0.08)',
+              fontSize: 11, fontWeight: 700, color: '#1A1918',
+              letterSpacing: '-0.01em',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+            }}>
+              {cards.length} card{cards.length !== 1 ? 's' : ''}
+            </div>
           </div>
-          <div style={{ fontSize: 19, fontWeight: 800, color: '#ffffff', letterSpacing: '-0.04em', lineHeight: 1 }}>
-            {summaryCard.amount}
-          </div>
-        </div>
-        <div style={{ textAlign: 'right' }}>
-          <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.32)' }}>
-            {summaryCard.sublabel}
+
+          {/* Bottom row: label + amount on left, + button on right */}
+          <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 12 }}>
+            <div
+              onClick={() => onCardClick && onCardClick('summary')}
+              style={{ cursor: 'pointer', flex: 1, minWidth: 0 }}
+            >
+              <div style={{
+                fontSize: 11, color: '#9B9A98', fontWeight: 600,
+                marginBottom: 3, letterSpacing: '-0.01em',
+              }}>
+                {summaryCard?.label || (isLending ? "You're owed" : 'You owe')}
+                {summaryCard?.sublabel && (
+                  <span style={{ color: accentColor, fontWeight: 700, marginLeft: 6 }}>
+                    {summaryCard.sublabel}
+                  </span>
+                )}
+              </div>
+              <div style={{
+                fontSize: 22, fontWeight: 800, color: '#1A1918',
+                letterSpacing: '-0.04em', lineHeight: 1,
+                overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+              }}>
+                {summaryCard?.amount || formatMoney(0)}
+              </div>
+            </div>
+
+            {/* Circular + button */}
+            <div
+              onClick={() => onCardClick && onCardClick('summary')}
+              style={{
+                width: 40, height: 40, borderRadius: '50%',
+                background: accentColor,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                cursor: 'pointer', flexShrink: 0,
+                boxShadow: `0 4px 12px ${accentColor}50, 0 1px 3px ${accentColor}40`,
+                transition: 'transform 0.15s',
+              }}
+              aria-label="Summary"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2.8" strokeLinecap="round">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+            </div>
           </div>
         </div>
       </div>
