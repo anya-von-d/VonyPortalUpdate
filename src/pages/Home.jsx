@@ -1377,77 +1377,78 @@ export default function Home() {
 
           </div>
 
-          {/* ── Upcoming Payments (row of up to 3 cards) ── */}
-          {(() => {
-            const now = new Date();
-            const incoming = lentLoans
-              .filter(l => l.next_payment_date && new Date(l.next_payment_date) >= new Date(now.getFullYear(), now.getMonth(), now.getDate()))
-              .map(l => {
-                const p = safeAllProfiles.find(pp => pp.user_id === l.borrower_id);
-                const name = p?.full_name?.split(' ')[0] || p?.username || 'User';
-                return { id: l.id, direction: 'in', name, amount: l.payment_amount || 0, date: new Date(l.next_payment_date) };
-              });
-            const outgoing = borrowedLoans
-              .filter(l => l.next_payment_date && new Date(l.next_payment_date) >= new Date(now.getFullYear(), now.getMonth(), now.getDate()))
-              .map(l => {
-                const p = safeAllProfiles.find(pp => pp.user_id === l.lender_id);
-                const name = p?.full_name?.split(' ')[0] || p?.username || 'User';
-                return { id: l.id, direction: 'out', name, amount: l.payment_amount || 0, date: new Date(l.next_payment_date) };
-              });
-            const upcoming = [...incoming, ...outgoing]
-              .sort((a, b) => a.date - b.date)
-              .slice(0, 3);
-
-            if (upcoming.length === 0) return null;
-
-            const ordinal = (n) => {
-              const s = ['th', 'st', 'nd', 'rd'];
-              const v = n % 100;
-              return n + (s[(v - 20) % 10] || s[v] || s[0]);
-            };
-
-            return (
-              <div className="home-card-upcoming-payments" style={{ position: 'relative', marginBottom: 24 }}>
-                <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
-                <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, padding: '14px 18px' }}>
-                  <SectionHeader title="Upcoming Payments" />
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginTop: 10 }}>
-                    {upcoming.map(item => {
-                      const isIncoming = item.direction === 'in';
-                      const signColor = isIncoming ? '#03ACEA' : '#1D5B94';
-                      const prefixLabel = isIncoming ? `From ${item.name}` : `To ${item.name}`;
-                      const dateStr = `${format(item.date, 'MMM')} ${ordinal(item.date.getDate())}`;
-                      const amtStr = `${isIncoming ? '+' : '-'}${formatMoney(item.amount)}`;
-                      return (
-                        <div key={item.id} style={{
-                          background: '#FAFAF8',
-                          border: '1px solid rgba(0,0,0,0.06)',
-                          borderRadius: 10,
-                          padding: '12px 14px',
-                          display: 'flex', flexDirection: 'column', gap: 4,
-                        }}>
-                          <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                            {prefixLabel}
-                          </div>
-                          <div style={{ fontSize: 18, fontWeight: 800, color: signColor, letterSpacing: '-0.03em', lineHeight: 1.1 }}>
-                            {amtStr}
-                          </div>
-                          <div style={{ fontSize: 11, fontWeight: 500, color: '#9B9A98', letterSpacing: '-0.01em' }}>
-                            {dateStr}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            );
-          })()}
-
           {/* Masonry three-column layout */}
           <div className="home-two-col-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 24 }}>
             {/* Col 1: Coming Up This Week */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+              {/* ── Upcoming Payments (row of up to 3 cards) ── */}
+              {(() => {
+                const now = new Date();
+                const incoming = lentLoans
+                  .filter(l => l.next_payment_date && new Date(l.next_payment_date) >= new Date(now.getFullYear(), now.getMonth(), now.getDate()))
+                  .map(l => {
+                    const p = safeAllProfiles.find(pp => pp.user_id === l.borrower_id);
+                    const name = p?.full_name?.split(' ')[0] || p?.username || 'User';
+                    return { id: l.id, direction: 'in', name, amount: l.payment_amount || 0, date: new Date(l.next_payment_date) };
+                  });
+                const outgoing = borrowedLoans
+                  .filter(l => l.next_payment_date && new Date(l.next_payment_date) >= new Date(now.getFullYear(), now.getMonth(), now.getDate()))
+                  .map(l => {
+                    const p = safeAllProfiles.find(pp => pp.user_id === l.lender_id);
+                    const name = p?.full_name?.split(' ')[0] || p?.username || 'User';
+                    return { id: l.id, direction: 'out', name, amount: l.payment_amount || 0, date: new Date(l.next_payment_date) };
+                  });
+                const upcoming = [...incoming, ...outgoing]
+                  .sort((a, b) => a.date - b.date)
+                  .slice(0, 3);
+
+                if (upcoming.length === 0) return null;
+
+                const ordinal = (n) => {
+                  const s = ['th', 'st', 'nd', 'rd'];
+                  const v = n % 100;
+                  return n + (s[(v - 20) % 10] || s[v] || s[0]);
+                };
+
+                return (
+                  <div className="home-card-upcoming-payments" style={{ position: 'relative' }}>
+                    <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
+                    <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, padding: '14px 18px' }}>
+                      <SectionHeader title="Upcoming Payments" />
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginTop: 10 }}>
+                        {upcoming.map(item => {
+                          const isIncoming = item.direction === 'in';
+                          const signColor = isIncoming ? '#03ACEA' : '#1D5B94';
+                          const prefixLabel = isIncoming ? `From ${item.name}` : `To ${item.name}`;
+                          const dateStr = `${format(item.date, 'MMM')} ${ordinal(item.date.getDate())}`;
+                          const amtStr = `${isIncoming ? '+' : '-'}${formatMoney(item.amount)}`;
+                          return (
+                            <div key={item.id} style={{
+                              background: '#FAFAF8',
+                              border: '1px solid rgba(0,0,0,0.06)',
+                              borderRadius: 10,
+                              padding: '10px 10px',
+                              display: 'flex', flexDirection: 'column', gap: 3,
+                              minWidth: 0,
+                            }}>
+                              <div style={{ fontSize: 11, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                {prefixLabel}
+                              </div>
+                              <div style={{ fontSize: 15, fontWeight: 800, color: signColor, letterSpacing: '-0.03em', lineHeight: 1.1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                {amtStr}
+                              </div>
+                              <div style={{ fontSize: 10, fontWeight: 500, color: '#9B9A98', letterSpacing: '-0.01em' }}>
+                                {dateStr}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+
               {/* Tasks for the Week */}
               {(() => {
                 // Build the 7-day strip (Mon..Sun) for this week.
