@@ -44,6 +44,7 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
   const [reminderSlide, setReminderSlide] = useState(0);
   const [infoTooltip, setInfoTooltip] = useState(null);
   const [selectedScrollLoan, setSelectedScrollLoan] = useState(null);
+  const [selectedWalletLoan, setSelectedWalletLoan] = useState(null);
 
   useEffect(() => { loadData(); }, []);
 
@@ -83,6 +84,7 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
 
   useEffect(() => {
     setSelectedScrollLoan(null);
+    setSelectedWalletLoan(null);
   }, [activeTab]);
 
   // Keep manageLoanSelected in sync with selectedScrollLoan for doc popups
@@ -1017,7 +1019,7 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
     return (
       <>
         {/* Desktop: wallet in col 1 | stacked (NPI + Upcoming + Active Summary) in col 2 */}
-        <div className="loans-top-layout" style={{ display: 'grid', gridTemplateColumns: '320px 1fr', gap: 20, alignItems: 'start' }}>
+        <div className="loans-top-layout" style={{ display: 'grid', gridTemplateColumns: '260px 1fr', gap: 24, alignItems: 'start' }}>
 
           {/* COL 1: Wallet — standalone, no outer white box */}
           {(() => {
@@ -1037,25 +1039,79 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
                 const profile = publicProfiles.find(p => p.user_id === l[otherKey]);
                 const firstName = profile?.full_name?.split(' ')[0] || profile?.username || 'User';
                 const remaining = Math.max(0, (l.total_amount || l.amount || 0) - (l.amount_paid || 0));
-                return { name: firstName, amount: remaining };
+                return { id: l.id, name: firstName, amount: remaining, purpose: l.purpose };
               })
-              .sort((a, b) => b.amount - a.amount)
-              .slice(0, 3);
+              .sort((a, b) => b.amount - a.amount);
 
             return (
               <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
                 <LendingWallet
                   cards={walletCards}
-                  label={isLending ? "You're owed" : 'You owe'}
-                  amount={formatMoney(isLending ? lentOwed : borrowOwedAmt)}
-                  sublabel={`across ${sourceLoans.length} loan${sourceLoans.length !== 1 ? 's' : ''}`}
+                  summaryCard={{
+                    label: isLending ? "You're owed" : 'You owe',
+                    amount: formatMoney(isLending ? lentOwed : borrowOwedAmt),
+                    sublabel: `across ${sourceLoans.length} loan${sourceLoans.length !== 1 ? 's' : ''}`,
+                  }}
+                  onCardClick={(id) => {
+                    if (id === 'summary') {
+                      setSelectedWalletLoan(null);
+                    } else {
+                      const found = sourceLoans.find(l => l.id === id);
+                      setSelectedWalletLoan(found || null);
+                    }
+                  }}
+                  selectedId={selectedWalletLoan?.id || 'summary'}
+                  isLending={isLending}
                 />
               </div>
             );
           })()}
 
-          {/* COL 2: 2×2 grid — [NPI | Overview] / [Upcoming | Active Summary] */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, alignItems: 'start' }}>
+          {/* COL 2: loan detail when a wallet card is selected, else 2×2 summary grid */}
+          <div>
+          {selectedWalletLoan ? (
+            /* ── Wallet-selected loan detail panel ── */
+            (() => {
+              const detailProfile = publicProfiles.find(p => p.user_id === (isLending ? selectedWalletLoan.borrower_id : selectedWalletLoan.lender_id));
+              const detailFullName = detailProfile?.full_name || 'User';
+              const detailAmt = selectedWalletLoan.total_amount || selectedWalletLoan.amount || 0;
+              const detailPurpose = selectedWalletLoan.purpose;
+              return (
+                <div>
+                  {/* Header row */}
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>
+                      {isLending ? 'You lent' : 'You borrowed'}{' '}
+                      {formatMoney(detailAmt)}{' '}
+                      {isLending ? 'to' : 'from'}{' '}
+                      {detailFullName}
+                      {detailPurpose && (
+                        <span style={{ fontWeight: 400, color: '#787776' }}> · {detailPurpose}</span>
+                      )}
+                    </div>
+                    <button
+                      onClick={() => setSelectedWalletLoan(null)}
+                      style={{
+                        background: 'none', border: '1px solid rgba(0,0,0,0.12)',
+                        borderRadius: 8, cursor: 'pointer',
+                        fontSize: 11, fontWeight: 600, color: '#787776',
+                        fontFamily: "'DM Sans', sans-serif",
+                        padding: '4px 10px', flexShrink: 0, marginLeft: 12,
+                        transition: 'background 0.15s',
+                      }}
+                      onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.04)'}
+                      onMouseLeave={e => e.currentTarget.style.background = 'none'}
+                    >
+                      ← Summary
+                    </button>
+                  </div>
+                  {renderLoanDetailBody(selectedWalletLoan)}
+                </div>
+              );
+            })()
+          ) : (
+            /* ── Default 2×2 summary grid ── */
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, alignItems: 'start' }}>
           {/* Row 1 Col 1: Next Payment Incoming / Due */}
           {(() => {
             const auroraBg = isLending
@@ -1406,7 +1462,9 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
             </>
           );
         })()}
-          </div>{/* end col 2 grid */}
+          </div>{/* end col 2 summary grid */}
+          )}{/* end selectedWalletLoan conditional */}
+          </div>{/* end col 2 wrapper */}
         </div>{/* end loans-top-layout grid */}
 
         {/* Scrollable loan card row — full bleed */}
