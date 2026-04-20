@@ -63,6 +63,7 @@ import ComingSoon from './pages/ComingSoon';
 import LoanHelp from './pages/LoanHelp';
 import Upcoming from './pages/Upcoming';
 import YourLoans from './pages/YourLoans';
+import LendingBorrowing from './pages/LendingBorrowing';
 import __Layout from './Layout.jsx';
 
 
@@ -81,6 +82,7 @@ export const PAGES = {
     "LoanHelp": LoanHelp,
     "Upcoming": Upcoming,
     "YourLoans": YourLoans,
+    "LendingBorrowing": LendingBorrowing,
 }
 
 export const pagesConfig = {
