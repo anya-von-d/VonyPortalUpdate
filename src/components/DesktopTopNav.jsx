@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import SettingsModal from './SettingsModal';
+import NotificationsPopup from './NotificationsPopup';
+import FriendsPopup from './FriendsPopup';
 
 const isActive = (location, to) => {
   if (to === '/') return location.pathname === '/';
@@ -127,6 +129,8 @@ const Pill = ({ children }) => (
 export default function DesktopTopNav() {
   const location = useLocation();
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
+  const [friendsOpen, setFriendsOpen] = useState(false);
 
   return (
     <>
@@ -164,14 +168,14 @@ export default function DesktopTopNav() {
 
         {/* Notifications bubble */}
         <div style={{ display: 'inline-flex', alignItems: 'center', background: '#2A2928', borderRadius: 30, padding: '6px 10px' }}>
-          <NavBtn to={createPageUrl('Requests')} active={isActive(location, createPageUrl('Requests'))}>
+          <NavBtn onClick={() => setNotifOpen(v => !v)} active={notifOpen}>
             <BellIcon />
           </NavBtn>
         </div>
 
         {/* Right pill: Friends, Recent Activity, Learn, Records, Profile, Menu */}
         <Pill>
-          <NavBtn to={createPageUrl('Friends')} active={isActive(location, createPageUrl('Friends'))}>
+          <NavBtn onClick={() => setFriendsOpen(v => !v)} active={friendsOpen}>
             <UsersIcon />
           </NavBtn>
           <NavBtn to={createPageUrl('RecentActivity')} active={isActive(location, createPageUrl('RecentActivity'))}>
@@ -194,6 +198,12 @@ export default function DesktopTopNav() {
 
       {settingsOpen && (
         <SettingsModal onClose={() => setSettingsOpen(false)} />
+      )}
+      {notifOpen && (
+        <NotificationsPopup onClose={() => setNotifOpen(false)} />
+      )}
+      {friendsOpen && (
+        <FriendsPopup onClose={() => setFriendsOpen(false)} />
       )}
     </>
   );

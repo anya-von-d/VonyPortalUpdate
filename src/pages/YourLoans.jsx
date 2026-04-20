@@ -21,7 +21,7 @@ import UserAvatar from "@/components/ui/UserAvatar";
 import DesktopSidebar from '../components/DesktopSidebar';
 import LendingWallet from '@/components/LendingWallet';
 
-export default function YourLoans({ defaultTab }) {
+export default function YourLoans({ defaultTab, embeddedMode }) {
   const { logout } = useAuth();
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -1606,6 +1606,62 @@ export default function YourLoans({ defaultTab }) {
     const loan = allLoans.find(l => l.id === p.loan_id);
     return loan && loan.lender_id === user?.id && p.status === 'pending_confirmation';
   });
+
+  if (embeddedMode) {
+    return (
+      <>
+        {/* Document Popup Modal */}
+        <AnimatePresence>
+          {activeDocPopup && docPopupAgreement && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={closeDocPopup}>
+              <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} onClick={(e) => e.stopPropagation()} style={{ background: '#F5F4F0', borderRadius: 18, maxWidth: activeDocPopup === 'amortization' ? 'min(960px, calc(100vw - 32px))' : 520, width: '100%', maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 8px 40px rgba(0,0,0,0.16)' }}>
+                <div style={{ position: 'sticky', top: 0, background: 'transparent', padding: '6px 14px 5px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderRadius: '18px 18px 0 0' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <FileText size={14} style={{ color: '#9B9A98' }} />
+                    <span style={{ fontSize: 9, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>
+                      {activeDocPopup === 'promissory' && 'Promissory Note'}
+                      {activeDocPopup === 'amortization' && 'Amortization Schedule'}
+                      {activeDocPopup === 'summary' && 'Loan Summary'}
+                    </span>
+                  </div>
+                  <button onClick={closeDocPopup} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, color: '#787776' }}><X size={20} /></button>
+                </div>
+                <div style={{ background: '#ffffff', margin: '0 5px 5px', borderRadius: 10, padding: 20 }}>
+                  {activeDocPopup === 'promissory' && <PromissoryNotePopup agreement={docPopupAgreement} />}
+                  {activeDocPopup === 'amortization' && <AmortizationSchedulePopup agreement={docPopupAgreement} />}
+                  {activeDocPopup === 'summary' && <LoanSummaryPopup agreement={docPopupAgreement} />}
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <div style={{ padding: '0 0 40px' }}>
+          {activeTab === 'lending' && renderSummaryTab('lending')}
+          {activeTab === 'borrowing' && renderSummaryTab('borrowing')}
+        </div>
+
+        {showDetailsModal && selectedLoanDetails && (
+          <LoanDetailsModal loan={selectedLoanDetails.loan} type={selectedLoanDetails.type} isOpen={showDetailsModal} user={user} onCancel={() => handleCancelLoan(selectedLoanDetails.loan)} onClose={() => { setShowDetailsModal(false); setSelectedLoanDetails(null); }} />
+        )}
+
+        <AlertDialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
+          <AlertDialogContent className="rounded-2xl border-0 p-0 overflow-hidden" style={{ backgroundColor: '#fafafa' }}>
+            <div className="p-6 pb-4">
+              <AlertDialogHeader>
+                <AlertDialogTitle className="text-xl font-bold" style={{ fontFamily: "'DM Sans', system-ui, sans-serif", color: '#1A1918' }}>Cancel Loan</AlertDialogTitle>
+                <AlertDialogDescription className="text-sm mt-1" style={{ color: '#787776' }}>Are you sure you want to cancel this loan? This action cannot be undone.</AlertDialogDescription>
+              </AlertDialogHeader>
+            </div>
+            <div className="px-6 pb-6 flex flex-col sm:flex-row gap-3">
+              <AlertDialogCancel className="flex-1 rounded-xl border-0 font-semibold text-white text-[14px] h-12 hover:opacity-90 transition-all" style={{ backgroundColor: '#82F0B9' }}>Keep Loan</AlertDialogCancel>
+              <AlertDialogAction onClick={confirmCancelLoan} className="flex-1 rounded-xl border-0 font-semibold text-white text-[14px] h-12 hover:opacity-90 transition-all" style={{ backgroundColor: '#E8726E' }}>Request Loan Cancellation</AlertDialogAction>
+            </div>
+          </AlertDialogContent>
+        </AlertDialog>
+      </>
+    );
+  }
 
   return (
     <>
