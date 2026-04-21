@@ -404,6 +404,8 @@ export default function Home() {
   const [friendsPopupOpen, setFriendsPopupOpen] = useState(false);
   const [confirmPaymentTarget, setConfirmPaymentTarget] = useState(null); // { payment, loan, profile }
   const [confirmWorking, setConfirmWorking] = useState(false);
+  const [viewLoanTarget, setViewLoanTarget] = useState(null);    // { loan, borrowerProfile }
+  const [viewPaymentTarget, setViewPaymentTarget] = useState(null); // { payment, loan, lenderProfile }
   const navigate = useNavigate();
   // Tasks-for-the-Week: checked IDs keyed by ISO date of week start (Monday).
   const weekStartKey = (() => {
@@ -704,6 +706,10 @@ export default function Home() {
 
   const myLoans = safeLoans.filter(loan => loan && (loan.lender_id === user.id || loan.borrower_id === user.id));
   const pendingOffers = safeLoans.filter(loan => loan && loan.borrower_id === user.id && loan.status === 'pending');
+  // Loans YOU sent as lender, still awaiting borrower signature
+  const pendingLoanOffersSent = safeLoans.filter(loan => loan && loan.lender_id === user.id && loan.status === 'pending');
+  // Payments YOU recorded that the other person hasn't confirmed yet
+  const pendingPaymentsSentByMe = safePayments.filter(p => p && p.recorded_by === user.id && p.status === 'pending_confirmation');
 
   const lentLoans = myLoans.filter(l => l && l.lender_id === user.id && l.status === 'active');
   const borrowedLoans = myLoans.filter(l => l && l.borrower_id === user.id && l.status === 'active');
@@ -1789,6 +1795,70 @@ export default function Home() {
                   </div>
                 );
               })()}
+              {/* ── Your pending requests ── */}
+              {(pendingLoanOffersSent.length > 0 || pendingPaymentsSentByMe.length > 0) && (() => {
+                const pendingRows = [];
+
+                pendingLoanOffersSent.forEach(loan => {
+                  const borrowerProfile = safeAllProfiles.find(p => p.user_id === loan.borrower_id);
+                  const firstName = borrowerProfile?.full_name?.split(' ')[0] || borrowerProfile?.username || 'them';
+                  pendingRows.push({
+                    key: `loan-${loan.id}`,
+                    icon: (
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#D97706" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 2 }}>
+                        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                      </svg>
+                    ),
+                    text: `Waiting for ${firstName} to review your loan offer`,
+                    onArrow: () => setViewLoanTarget({ loan, borrowerProfile }),
+                  });
+                });
+
+                pendingPaymentsSentByMe.forEach(payment => {
+                  const loan = safeLoans.find(l => l && l.id === payment.loan_id);
+                  const otherUserId = loan ? (loan.lender_id === user.id ? loan.borrower_id : loan.lender_id) : null;
+                  const otherProfile = otherUserId ? safeAllProfiles.find(p => p.user_id === otherUserId) : null;
+                  const firstName = otherProfile?.full_name?.split(' ')[0] || otherProfile?.username || 'them';
+                  pendingRows.push({
+                    key: `pay-${payment.id}`,
+                    icon: (
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9B9A98" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 2 }}>
+                        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                      </svg>
+                    ),
+                    text: `${firstName} has not confirmed your ${formatMoney(payment.amount || 0)} payment yet`,
+                    onArrow: () => setViewPaymentTarget({ payment, loan, otherProfile }),
+                  });
+                });
+
+                return (
+                  <div className="home-card-attention" style={{ position: 'relative' }}>
+                    <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
+                    <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, padding: '14px 18px' }}>
+                      <SectionHeader title="Your pending requests" />
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                        {pendingRows.map(row => (
+                          <div key={row.key} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, padding: '3px 0' }}>
+                            {row.icon}
+                            <span style={{ flex: 1, fontSize: 12, fontWeight: 500, color: '#787776', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.4 }}>{row.text}</span>
+                            <button
+                              type="button"
+                              onClick={row.onArrow}
+                              aria-label="View"
+                              style={{ flexShrink: 0, background: 'transparent', border: 'none', padding: 0, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', color: '#9B9A98', marginTop: 1 }}
+                              onMouseEnter={e => e.currentTarget.style.color = '#03ACEA'}
+                              onMouseLeave={e => e.currentTarget.style.color = '#9B9A98'}
+                            >
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+
               {/* Borrowing Overview — borrowing ring (pie left / text right),
                   then lending ring below it (text left / pie right, mirrored) */}
               {(() => {
@@ -2100,6 +2170,198 @@ export default function Home() {
               {confirmWorking ? 'Confirming…' : 'Confirm'}
             </button>
           </div>
+        </div>
+      </div>,
+      document.body
+    )}
+
+    {/* ── View loan offer (you sent, awaiting borrower signature) ── */}
+    {viewLoanTarget && createPortal(
+      <div
+        onClick={() => setViewLoanTarget(null)}
+        style={{
+          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.28)',
+          backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)',
+          zIndex: 999999, display: 'flex', alignItems: 'center', justifyContent: 'center',
+          padding: 20, fontFamily: "'DM Sans', sans-serif",
+        }}
+      >
+        <div
+          onClick={e => e.stopPropagation()}
+          style={{
+            background: 'white', borderRadius: 16, maxWidth: 400, width: '100%',
+            boxShadow: '0 24px 64px rgba(0,0,0,0.18), 0 4px 16px rgba(0,0,0,0.08)',
+            padding: '24px 24px 20px', position: 'relative',
+          }}
+        >
+          <button
+            onClick={() => setViewLoanTarget(null)}
+            style={{
+              position: 'absolute', top: 12, right: 12, width: 28, height: 28, borderRadius: 8,
+              background: 'rgba(0,0,0,0.05)', border: 'none', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#787776',
+            }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 18 }}>
+            <UserAvatar
+              name={viewLoanTarget.borrowerProfile?.full_name || viewLoanTarget.borrowerProfile?.username}
+              src={viewLoanTarget.borrowerProfile?.profile_picture_url || viewLoanTarget.borrowerProfile?.avatar_url}
+              size={40}
+            />
+            <div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.01em' }}>
+                Loan Offer to {viewLoanTarget.borrowerProfile?.full_name?.split(' ')[0] || viewLoanTarget.borrowerProfile?.username || 'Borrower'}
+              </div>
+              <div style={{ fontSize: 11, color: '#D97706', fontWeight: 600 }}>⏳ Awaiting their signature</div>
+            </div>
+          </div>
+
+          <div style={{ background: '#fafafa', borderRadius: 10, border: '1px solid rgba(0,0,0,0.07)', padding: '12px 14px', marginBottom: 18, display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontSize: 11, color: '#9B9A98', fontWeight: 500 }}>Amount</span>
+              <span style={{ fontSize: 14, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em' }}>{formatMoney(viewLoanTarget.loan.amount || viewLoanTarget.loan.total_amount || 0)}</span>
+            </div>
+            {viewLoanTarget.loan.interest_rate && (
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: 11, color: '#9B9A98', fontWeight: 500 }}>Interest</span>
+                <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918' }}>{viewLoanTarget.loan.interest_rate}% annually</span>
+              </div>
+            )}
+            {viewLoanTarget.loan.payment_frequency && (
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: 11, color: '#9B9A98', fontWeight: 500 }}>Repayment</span>
+                <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', textTransform: 'capitalize' }}>{viewLoanTarget.loan.payment_frequency}</span>
+              </div>
+            )}
+            {viewLoanTarget.loan.repayment_period && (
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: 11, color: '#9B9A98', fontWeight: 500 }}>Duration</span>
+                <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918' }}>{viewLoanTarget.loan.repayment_period} payments</span>
+              </div>
+            )}
+            {viewLoanTarget.loan.purpose && (
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: 11, color: '#9B9A98', fontWeight: 500 }}>Purpose</span>
+                <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918' }}>{viewLoanTarget.loan.purpose}</span>
+              </div>
+            )}
+            {viewLoanTarget.loan.lender_send_funds_date && (
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: 11, color: '#9B9A98', fontWeight: 500 }}>Funds by</span>
+                <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918' }}>
+                  {format(new Date(viewLoanTarget.loan.lender_send_funds_date), 'MMM d, yyyy')}
+                </span>
+              </div>
+            )}
+          </div>
+
+          <button
+            onClick={() => setViewLoanTarget(null)}
+            style={{
+              width: '100%', padding: '9px', borderRadius: 9, border: 'none',
+              background: '#F4F3F1', fontSize: 12, fontWeight: 600, color: '#787776',
+              cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
+            }}
+          >
+            Close
+          </button>
+        </div>
+      </div>,
+      document.body
+    )}
+
+    {/* ── View payment you recorded (awaiting confirmation) ── */}
+    {viewPaymentTarget && createPortal(
+      <div
+        onClick={() => setViewPaymentTarget(null)}
+        style={{
+          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.28)',
+          backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)',
+          zIndex: 999999, display: 'flex', alignItems: 'center', justifyContent: 'center',
+          padding: 20, fontFamily: "'DM Sans', sans-serif",
+        }}
+      >
+        <div
+          onClick={e => e.stopPropagation()}
+          style={{
+            background: 'white', borderRadius: 16, maxWidth: 400, width: '100%',
+            boxShadow: '0 24px 64px rgba(0,0,0,0.18), 0 4px 16px rgba(0,0,0,0.08)',
+            padding: '24px 24px 20px', position: 'relative',
+          }}
+        >
+          <button
+            onClick={() => setViewPaymentTarget(null)}
+            style={{
+              position: 'absolute', top: 12, right: 12, width: 28, height: 28, borderRadius: 8,
+              background: 'rgba(0,0,0,0.05)', border: 'none', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#787776',
+            }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 18 }}>
+            <UserAvatar
+              name={viewPaymentTarget.otherProfile?.full_name || viewPaymentTarget.otherProfile?.username}
+              src={viewPaymentTarget.otherProfile?.profile_picture_url || viewPaymentTarget.otherProfile?.avatar_url}
+              size={40}
+            />
+            <div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.01em' }}>
+                Your {formatMoney(viewPaymentTarget.payment?.amount || 0)} Payment
+              </div>
+              <div style={{ fontSize: 11, color: '#9B9A98' }}>Waiting for {viewPaymentTarget.otherProfile?.full_name?.split(' ')[0] || 'them'} to confirm</div>
+            </div>
+          </div>
+
+          <div style={{ background: '#fafafa', borderRadius: 10, border: '1px solid rgba(0,0,0,0.07)', padding: '12px 14px', marginBottom: 18, display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontSize: 11, color: '#9B9A98', fontWeight: 500 }}>Amount</span>
+              <span style={{ fontSize: 14, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em' }}>{formatMoney(viewPaymentTarget.payment?.amount || 0)}</span>
+            </div>
+            {viewPaymentTarget.loan && (
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: 11, color: '#9B9A98', fontWeight: 500 }}>For loan</span>
+                <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918' }}>
+                  {formatMoney(viewPaymentTarget.loan.amount || viewPaymentTarget.loan.total_amount || 0)}{viewPaymentTarget.loan.purpose ? ` · ${viewPaymentTarget.loan.purpose}` : ''}
+                </span>
+              </div>
+            )}
+            {viewPaymentTarget.payment?.payment_date && (
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: 11, color: '#9B9A98', fontWeight: 500 }}>Date</span>
+                <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918' }}>
+                  {format(new Date(viewPaymentTarget.payment.payment_date), 'MMM d, yyyy')}
+                </span>
+              </div>
+            )}
+            {viewPaymentTarget.payment?.payment_method && (
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: 11, color: '#9B9A98', fontWeight: 500 }}>Method</span>
+                <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', textTransform: 'capitalize' }}>{viewPaymentTarget.payment.payment_method}</span>
+              </div>
+            )}
+            {viewPaymentTarget.payment?.notes && (
+              <div>
+                <div style={{ fontSize: 11, color: '#9B9A98', fontWeight: 500, marginBottom: 3 }}>Notes</div>
+                <div style={{ fontSize: 12, color: '#787776', lineHeight: 1.45 }}>{viewPaymentTarget.payment.notes}</div>
+              </div>
+            )}
+          </div>
+
+          <button
+            onClick={() => setViewPaymentTarget(null)}
+            style={{
+              width: '100%', padding: '9px', borderRadius: 9, border: 'none',
+              background: '#F4F3F1', fontSize: 12, fontWeight: 600, color: '#787776',
+              cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
+            }}
+          >
+            Close
+          </button>
         </div>
       </div>,
       document.body
