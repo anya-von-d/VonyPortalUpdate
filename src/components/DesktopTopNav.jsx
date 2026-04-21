@@ -1,13 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useAuth } from '@/lib/AuthContext';
 import SettingsModal from './SettingsModal';
 import NotificationsPopup from './NotificationsPopup';
 import FriendsPopup from './FriendsPopup';
+import AppMenuDropdown from './AppMenuDropdown';
 import UserAvatar from './ui/UserAvatar';
-
-const PORTAL_URL = 'https://www.vony-lending.com';
 
 const isActive = (location, to) => {
   if (to === '/') return location.pathname === '/';
@@ -66,84 +65,9 @@ const BellIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="non
 const UsersIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>;
 const UserIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>;
 const MenuIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>;
-const ChevronRight = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>;
-
-/* ── Menu item base styles ── */
-const menuItemStyle = (hovered, danger) => ({
-  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-  gap: 10, padding: '9px 14px', width: '100%',
-  background: hovered ? (danger ? 'rgba(232,114,110,0.07)' : 'rgba(0,0,0,0.04)') : 'transparent',
-  border: 'none', cursor: 'pointer',
-  fontSize: 13, fontWeight: 500,
-  color: danger ? '#E8726E' : '#1A1918',
-  fontFamily: "'DM Sans', sans-serif",
-  textAlign: 'left', textDecoration: 'none',
-  transition: 'background 0.12s',
-  borderRadius: 8,
-});
-
-/* ── MenuItem component ── */
-function MenuItem({ label, icon, onClick, to, danger, hasArrow, children }) {
-  const [hovered, setHovered] = useState(false);
-  const [subOpen, setSubOpen] = useState(false);
-  const subRef = useRef(null);
-
-  if (hasArrow) {
-    return (
-      <div style={{ position: 'relative' }}
-        onMouseEnter={() => { setHovered(true); setSubOpen(true); }}
-        onMouseLeave={() => { setHovered(false); setSubOpen(false); }}
-      >
-        <button style={menuItemStyle(hovered, danger)}>
-          <span style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-            {icon && <span style={{ opacity: 0.5, flexShrink: 0 }}>{icon}</span>}
-            {label}
-          </span>
-          <ChevronRight />
-        </button>
-        {subOpen && (
-          <div style={{
-            position: 'absolute', top: 0, right: 'calc(100% + 6px)',
-            background: '#ffffff', borderRadius: 12,
-            border: '1px solid rgba(0,0,0,0.08)',
-            boxShadow: '0 8px 28px rgba(0,0,0,0.12)',
-            minWidth: 180, padding: '6px',
-            zIndex: 500,
-          }}>
-            {children}
-          </div>
-        )}
-      </div>
-    );
-  }
-
-  if (to) {
-    return (
-      <Link to={to} style={menuItemStyle(hovered, danger)}
-        onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
-        <span style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-          {icon && <span style={{ opacity: 0.5, flexShrink: 0 }}>{icon}</span>}
-          {label}
-        </span>
-      </Link>
-    );
-  }
-
-  return (
-    <button style={menuItemStyle(hovered, danger)} onClick={onClick}
-      onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
-      <span style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-        {icon && <span style={{ opacity: 0.5, flexShrink: 0 }}>{icon}</span>}
-        {label}
-      </span>
-    </button>
-  );
-}
-
 export default function DesktopTopNav() {
   const location = useLocation();
-  const navigate = useNavigate();
-  const { userProfile, user: authUser, logout } = useAuth();
+  const { userProfile, user: authUser } = useAuth();
   const user = userProfile ? { ...userProfile, id: authUser?.id } : null;
 
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -151,7 +75,6 @@ export default function DesktopTopNav() {
   const [friendsOpen, setFriendsOpen] = useState(false);
   const [friendsInitialTab, setFriendsInitialTab] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [linkCopied, setLinkCopied] = useState(false);
 
   const menuRef = useRef(null);
 
@@ -163,55 +86,6 @@ export default function DesktopTopNav() {
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, [menuOpen]);
-
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(PORTAL_URL).then(() => {
-      setLinkCopied(true);
-      setTimeout(() => { setLinkCopied(false); setMenuOpen(false); }, 1500);
-    });
-  };
-
-  const handleLogout = async () => {
-    setMenuOpen(false);
-    await logout();
-  };
-
-  /* ── Invite sub-items ── */
-  const InviteItems = () => (
-    <>
-      <a href={`sms:?body=Hey! Join me on Vony — an easy way to manage loans with friends. Sign up here: ${PORTAL_URL}`}
-        onClick={() => setMenuOpen(false)}
-        style={{ ...menuItemStyle(false, false), display: 'flex', alignItems: 'center', gap: 9, textDecoration: 'none' }}
-        onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.04)'}
-        onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-      >
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.5 }}><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        Message
-      </a>
-      <a href={`mailto:?subject=Join me on Vony&body=Hey!%0A%0AJoin me on Vony to manage loans together.%0A%0A${PORTAL_URL}`}
-        onClick={() => setMenuOpen(false)}
-        style={{ ...menuItemStyle(false, false), display: 'flex', alignItems: 'center', gap: 9, textDecoration: 'none' }}
-        onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.04)'}
-        onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-      >
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.5 }}><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-        Email
-      </a>
-      <button onClick={handleCopyLink}
-        style={{ ...menuItemStyle(false, false), color: linkCopied ? '#16A34A' : '#1A1918' }}
-        onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.04)'}
-        onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-      >
-        <span style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-          {linkCopied
-            ? <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            : <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.5 }}><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          }
-          {linkCopied ? 'Copied!' : 'Copy Link'}
-        </span>
-      </button>
-    </>
-  );
 
   return (
     <>
@@ -271,60 +145,12 @@ export default function DesktopTopNav() {
             </NavBtn>
 
             {menuOpen && (
-              <div style={{
-                position: 'absolute', top: 'calc(100% + 10px)', right: 0,
-                background: '#ffffff', borderRadius: 14,
-                border: '1px solid rgba(0,0,0,0.08)',
-                boxShadow: '0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)',
-                minWidth: 210, padding: '6px',
-                zIndex: 400,
-              }}>
-                {/* Learn */}
-                <MenuItem
-                  label="Learn"
-                  to={createPageUrl('LoanHelp')}
-                  icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>}
-                />
-
-                {/* Invite a Friend → opens Friends popup on Invite tab */}
-                <MenuItem
-                  label="Invite a Friend"
-                  onClick={() => { setMenuOpen(false); setFriendsInitialTab('Invite'); setFriendsOpen(true); }}
-                  icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>}
-                />
-
-                {/* Contact Us */}
-                <MenuItem
-                  label="Contact Us"
-                  onClick={() => { setMenuOpen(false); window.open('mailto:hello@vony-lending.com', '_blank'); }}
-                  icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>}
-                />
-
-                {/* Help & Support */}
-                <MenuItem
-                  label="Help & Support"
-                  to={createPageUrl('LoanHelp')}
-                  icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>}
-                />
-
-                {/* Divider */}
-                <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', margin: '6px 8px' }} />
-
-                {/* Settings */}
-                <MenuItem
-                  label="Settings"
-                  onClick={() => { setMenuOpen(false); setSettingsOpen(true); }}
-                  icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>}
-                />
-
-                {/* Logout */}
-                <MenuItem
-                  label="Log out"
-                  onClick={handleLogout}
-                  danger
-                  icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>}
-                />
-              </div>
+              <AppMenuDropdown
+                style={{ position: 'absolute', top: 'calc(100% + 10px)', right: 0, zIndex: 400 }}
+                onClose={() => setMenuOpen(false)}
+                onInviteFriend={() => { setFriendsInitialTab('Invite'); setFriendsOpen(true); }}
+                onOpenSettings={() => setSettingsOpen(true)}
+              />
             )}
           </div>
         </Pill>

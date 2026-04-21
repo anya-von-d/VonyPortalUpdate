@@ -1,27 +1,38 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Payment, Loan, Friendship } from "@/entities/all";
-import { useAuth } from "@/lib/AuthContext";
 import UserAvatar from "@/components/ui/UserAvatar";
 import SettingsModal from "@/components/SettingsModal";
 import FriendsPopup from "@/components/FriendsPopup";
 import NotificationsPopup from "@/components/NotificationsPopup";
+import AppMenuDropdown from "@/components/AppMenuDropdown";
 
 export default function MeshMobileNav({ user, activePage }) {
-  const { logout } = useAuth();
   const location = useLocation();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [friendsOpen, setFriendsOpen] = useState(false);
+  const [friendsInitialTab, setFriendsInitialTab] = useState(null);
   const [notifOpen, setNotifOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [notifCount, setNotifCount] = useState(0);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const menuRef = useRef(null);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const handler = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [menuOpen]);
 
   useEffect(() => {
     if (!user?.id) return;
@@ -163,18 +174,28 @@ export default function MeshMobileNav({ user, activePage }) {
               />
             </Link>
 
-            {/* Hamburger / Settings */}
-            <button
-              onClick={() => setSettingsOpen(true)}
-              style={{ ...innerBtn, border: 'none' }}
-              aria-label="Settings"
-            >
-              <svg width="17" height="13" viewBox="0 0 17 13" fill="none">
-                <line x1="0" y1="1"   x2="17" y2="1"   stroke="rgba(0,0,0,0.55)" strokeWidth="1.6" strokeLinecap="round"/>
-                <line x1="0" y1="6.5" x2="17" y2="6.5" stroke="rgba(0,0,0,0.55)" strokeWidth="1.6" strokeLinecap="round"/>
-                <line x1="0" y1="12"  x2="17" y2="12"  stroke="rgba(0,0,0,0.55)" strokeWidth="1.6" strokeLinecap="round"/>
-              </svg>
-            </button>
+            {/* Hamburger / App menu */}
+            <div ref={menuRef} style={{ position: 'relative' }}>
+              <button
+                onClick={() => { setMenuOpen(v => !v); setNotifOpen(false); setFriendsOpen(false); }}
+                style={{ ...innerBtn, border: 'none' }}
+                aria-label="Menu"
+              >
+                <svg width="17" height="13" viewBox="0 0 17 13" fill="none">
+                  <line x1="0" y1="1"   x2="17" y2="1"   stroke="rgba(0,0,0,0.55)" strokeWidth="1.6" strokeLinecap="round"/>
+                  <line x1="0" y1="6.5" x2="17" y2="6.5" stroke="rgba(0,0,0,0.55)" strokeWidth="1.6" strokeLinecap="round"/>
+                  <line x1="0" y1="12"  x2="17" y2="12"  stroke="rgba(0,0,0,0.55)" strokeWidth="1.6" strokeLinecap="round"/>
+                </svg>
+              </button>
+              {menuOpen && (
+                <AppMenuDropdown
+                  style={{ position: 'absolute', top: 'calc(100% + 8px)', right: 0, zIndex: 400 }}
+                  onClose={() => setMenuOpen(false)}
+                  onInviteFriend={() => { setFriendsInitialTab('Invite'); setFriendsOpen(true); }}
+                  onOpenSettings={() => setSettingsOpen(true)}
+                />
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -237,7 +258,8 @@ export default function MeshMobileNav({ user, activePage }) {
       <SettingsModal isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
       {friendsOpen && (
         <FriendsPopup
-          onClose={() => setFriendsOpen(false)}
+          onClose={() => { setFriendsOpen(false); setFriendsInitialTab(null); }}
+          initialTab={friendsInitialTab}
           positionOverride={{ top: 76, left: 12, right: 12, width: 'auto' }}
         />
       )}
