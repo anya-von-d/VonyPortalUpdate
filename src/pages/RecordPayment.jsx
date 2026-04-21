@@ -38,6 +38,72 @@ const generateTransactionId = () => {
   return `VNY-${timestamp}-${random}`.toUpperCase();
 };
 
+/* ── FormPillSelect ─────────────────────────────────────── */
+// A Records-filter-style dropdown for form fields (currency, method, etc.)
+function FormPillSelect({ options, value, onChange, placeholder = 'Select…', width }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+  useEffect(() => {
+    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+  const current = options.find(o => o.id === value);
+  return (
+    <div ref={ref} style={{ position: 'relative', width: width || '100%' }}>
+      <button
+        type="button"
+        onClick={() => setOpen(v => !v)}
+        style={{
+          display: 'flex', alignItems: 'center', gap: 6, width: '100%',
+          padding: '10px 12px', borderRadius: 12,
+          border: `1px solid ${value ? 'rgba(3,172,234,0.35)' : 'rgba(0,0,0,0.06)'}`,
+          background: value ? 'rgba(3,172,234,0.06)' : 'white',
+          fontSize: 12, fontWeight: value ? 600 : 400,
+          color: value ? '#1A1918' : '#9B9A98',
+          cursor: 'pointer', textAlign: 'left', fontFamily: "'DM Sans', sans-serif",
+          transition: 'border-color 0.15s, background 0.15s', boxSizing: 'border-box',
+        }}
+      >
+        <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          {current ? current.label : placeholder}
+        </span>
+        <ChevronDown size={13} style={{ flexShrink: 0, opacity: 0.45, transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.18s' }} />
+      </button>
+      {open && (
+        <div style={{
+          position: 'absolute', top: 'calc(100% + 6px)', left: 0,
+          minWidth: '100%', zIndex: 200,
+          background: 'white', borderRadius: 12,
+          border: '1px solid rgba(0,0,0,0.06)',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.10)', padding: 6,
+        }}>
+          {options.map(opt => (
+            <button
+              key={opt.id}
+              type="button"
+              onClick={() => { onChange(opt.id); setOpen(false); }}
+              style={{
+                display: 'block', width: '100%', textAlign: 'left',
+                padding: '8px 10px', borderRadius: 8, border: 'none',
+                cursor: 'pointer', fontSize: 12,
+                color: '#1A1918',
+                background: value === opt.id ? 'rgba(3,172,234,0.08)' : 'transparent',
+                fontWeight: value === opt.id ? 600 : 400,
+                fontFamily: "'DM Sans', sans-serif", transition: 'background 0.1s',
+              }}
+              onMouseEnter={e => { if (value !== opt.id) e.currentTarget.style.background = 'rgba(0,0,0,0.03)'; }}
+              onMouseLeave={e => { if (value !== opt.id) e.currentTarget.style.background = 'transparent'; }}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ── SingleSelectDropdown ────────────────────────────────── */
 function SingleSelectDropdown({ options, selected, onChange }) {
   const [open, setOpen] = useState(false);
@@ -660,25 +726,21 @@ export default function RecordPayment() {
                         <label style={{ fontSize: 12, fontWeight: 600, color: '#787776', marginBottom: 6, display: 'block', fontFamily: "'DM Sans', sans-serif" }}>Payment Amount</label>
                         <div style={{ display: 'flex', gap: 8 }}>
                           {/* Currency dropdown */}
-                          <select
-                            value={currency}
-                            onChange={e => setCurrency(e.target.value)}
-                            style={{
-                              padding: '10px 8px', borderRadius: 12, border: '1px solid rgba(0,0,0,0.06)',
-                              background: 'white', fontSize: 12, fontWeight: 600, color: '#1A1918',
-                              fontFamily: "'DM Sans', sans-serif", outline: 'none', cursor: 'pointer', flexShrink: 0,
-                            }}
-                            onFocus={e => e.target.style.borderColor = 'rgba(3,172,234,0.4)'}
-                            onBlur={e => e.target.style.borderColor = 'rgba(0,0,0,0.06)'}
-                          >
-                            <option value="USD">$ USD</option>
-                            <option value="EUR">€ EUR</option>
-                            <option value="GBP">£ GBP</option>
-                            <option value="CAD">C$ CAD</option>
-                            <option value="AUD">A$ AUD</option>
-                            <option value="JPY">¥ JPY</option>
-                            <option value="CHF">Fr CHF</option>
-                          </select>
+                          <div style={{ flexShrink: 0, width: 110 }}>
+                            <FormPillSelect
+                              value={currency}
+                              onChange={setCurrency}
+                              options={[
+                                { id: 'USD', label: '$ USD' },
+                                { id: 'EUR', label: '€ EUR' },
+                                { id: 'GBP', label: '£ GBP' },
+                                { id: 'CAD', label: 'C$ CAD' },
+                                { id: 'AUD', label: 'A$ AUD' },
+                                { id: 'JPY', label: '¥ JPY' },
+                                { id: 'CHF', label: 'Fr CHF' },
+                              ]}
+                            />
+                          </div>
                           {/* Amount input */}
                           <input
                             type="number" step="0.01" min="0" value={amount}
@@ -730,22 +792,12 @@ export default function RecordPayment() {
                         </div>
                         <div>
                           <label style={{ fontSize: 12, fontWeight: 600, color: '#787776', marginBottom: 6, display: 'block', fontFamily: "'DM Sans', sans-serif" }}>Payment Method</label>
-                          <select
+                          <FormPillSelect
                             value={paymentMethod}
-                            onChange={e => { setPaymentMethod(e.target.value); setError(''); }}
-                            style={{
-                              width: '100%', padding: '10px 14px', borderRadius: 12,
-                              border: '1px solid rgba(0,0,0,0.06)', background: 'white',
-                              fontSize: 12, color: paymentMethod ? '#1A1918' : '#9B9A98', fontFamily: "'DM Sans', sans-serif", outline: 'none', cursor: 'pointer',
-                            }}
-                            onFocus={e => e.target.style.borderColor = 'rgba(3,172,234,0.4)'}
-                            onBlur={e => e.target.style.borderColor = 'rgba(0,0,0,0.06)'}
-                          >
-                            <option value="" disabled>Select method…</option>
-                            {PAYMENT_METHODS.map(m => (
-                              <option key={m.id} value={m.id}>{m.label}</option>
-                            ))}
-                          </select>
+                            onChange={v => { setPaymentMethod(v); setError(''); }}
+                            placeholder="Select method…"
+                            options={PAYMENT_METHODS.map(m => ({ id: m.id, label: m.label }))}
+                          />
                         </div>
                       </div>
 
