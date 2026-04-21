@@ -1142,23 +1142,27 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
             const borrowingThisMonth = activeBorrowingLoans.filter(l => l.next_payment_date && new Date(l.next_payment_date) >= monthStart && new Date(l.next_payment_date) <= monthEnd);
 
             return (
-              <div style={{ background: '#ffffff', borderRadius: 10, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 1px 4px rgba(0,0,0,0.04)', padding: '14px 14px', textAlign: 'center' }}>
+              <div style={{ background: '#ffffff', borderRadius: 10, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 1px 4px rgba(0,0,0,0.04)', padding: '14px 14px' }}>
+                {/* Title — left aligned */}
                 <div style={{ fontSize: 11, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif", marginBottom: 10 }}>
                   {format(today, 'MMMM')} {isLending ? 'Lending' : 'Borrowing'} Snapshot
                 </div>
-                <div style={{ fontSize: 11, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.5 }}>
-                  {insightText}
+                {/* Content — centered */}
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+                  <span style={{ display: 'inline-block', background: accentBg, color: accentColor, padding: '2px 8px', borderRadius: 4, fontSize: 11, fontWeight: 500, lineHeight: 1.4, fontFamily: "'DM Sans', sans-serif" }}>
+                    {insightText}
+                  </span>
+                  {isLending && monthlyReceived > 0 && (
+                    <div style={{ fontSize: 11, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.5, textAlign: 'center' }}>
+                      {formatMoney(monthlyReceived)} received so far this month
+                    </div>
+                  )}
+                  {!isLending && monthlyPaidOut > 0 && (
+                    <div style={{ fontSize: 11, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.5, textAlign: 'center' }}>
+                      {formatMoney(monthlyPaidOut)} paid out so far this month
+                    </div>
+                  )}
                 </div>
-                {isLending && monthlyReceived > 0 && (
-                  <div style={{ fontSize: 11, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", marginTop: 4, lineHeight: 1.5 }}>
-                    {formatMoney(monthlyReceived)} received so far this month
-                  </div>
-                )}
-                {!isLending && monthlyPaidOut > 0 && (
-                  <div style={{ fontSize: 11, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", marginTop: 4, lineHeight: 1.5 }}>
-                    {formatMoney(monthlyPaidOut)} paid out so far this month
-                  </div>
-                )}
               </div>
             );
           })()}
@@ -1193,25 +1197,28 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
           const bL  = { fontSize: 11, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.01em' };
           const sL  = { fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" };
           return (
-            <div style={{ background: '#ffffff', borderRadius: 10, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 1px 4px rgba(0,0,0,0.04)', padding: '14px 14px', textAlign: 'center' }}>
+            <div style={{ background: '#ffffff', borderRadius: 10, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 1px 4px rgba(0,0,0,0.04)', padding: '14px 14px' }}>
                 <div style={{ fontSize: 11, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif", marginBottom: 10 }}>Overview</div>
-                {isLending ? (
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-                    <OvRing percent={percentRepaid} color="#03ACEA" label="Repaid" />
-                    <div>
-                      <div style={bL}>You're owed <span style={{ color: '#03ACEA' }}>{formatMoney(lentOwed)}</span></div>
-                      <div style={sL}>{formatMoney(totalReceivedLending)} of {formatMoney(totalExpectedLending)} repaid to you</div>
+                {/* Ring + text side-by-side, whole group centered */}
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                  {isLending ? (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                      <OvRing percent={percentRepaid} color="#03ACEA" label="Repaid" />
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                        <div style={bL}>You're owed <span style={{ color: '#03ACEA' }}>{formatMoney(lentOwed)}</span></div>
+                        <div style={sL}>{formatMoney(totalReceivedLending)} of {formatMoney(totalExpectedLending)} repaid to you</div>
+                      </div>
                     </div>
-                  </div>
-                ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-                    <OvRing percent={percentPaid} color="#1D5B94" label="Paid back" />
-                    <div>
-                      <div style={bL}>You owe <span style={{ color: '#1D5B94' }}>{formatMoney(borrowOwed)}</span></div>
-                      <div style={sL}>{formatMoney(totalPaidBorrowing)} of {formatMoney(totalOwedBorrowing)} paid back</div>
+                  ) : (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                      <OvRing percent={percentPaid} color="#1D5B94" label="Paid back" />
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                        <div style={bL}>You owe <span style={{ color: '#1D5B94' }}>{formatMoney(borrowOwed)}</span></div>
+                        <div style={sL}>{formatMoney(totalPaidBorrowing)} of {formatMoney(totalOwedBorrowing)} paid back</div>
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
             </div>
           );
         })()}
