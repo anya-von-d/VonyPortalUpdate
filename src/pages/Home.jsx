@@ -1119,7 +1119,7 @@ export default function Home() {
 
           {/* Notification bar — always near top on mobile */}
           {notifCount > 0 && (
-            <div className="mobile-page-title" style={{ marginBottom: 16 }}>
+            <div className="home-notif-banner" style={{ marginBottom: 16 }}>
               <div style={{ position: 'relative' }}>
                 <div style={{
                   position: 'absolute', top: 0, left: '50%',

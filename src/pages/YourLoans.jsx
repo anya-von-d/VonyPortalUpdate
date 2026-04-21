@@ -1152,6 +1152,16 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
                   <span style={{ display: 'inline-block', background: accentBg, color: accentColor, padding: '2px 8px', borderRadius: 4, fontSize: 11, fontWeight: 500, lineHeight: 1.4, fontFamily: "'DM Sans', sans-serif" }}>
                     {insightText}
                   </span>
+                  {isLending && monthlyExpectedReceive > 0 && (
+                    <div style={{ fontSize: 11, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.5, textAlign: 'center' }}>
+                      Expected to receive <span style={{ color: accentColor, fontWeight: 600 }}>{formatMoney(monthlyExpectedReceive)}</span> this month
+                    </div>
+                  )}
+                  {!isLending && monthlyExpectedPay > 0 && (
+                    <div style={{ fontSize: 11, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.5, textAlign: 'center' }}>
+                      Due to pay <span style={{ color: accentColor, fontWeight: 600 }}>{formatMoney(monthlyExpectedPay)}</span> this month
+                    </div>
+                  )}
                   {isLending && monthlyReceived > 0 && (
                     <div style={{ fontSize: 11, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.5, textAlign: 'center' }}>
                       {formatMoney(monthlyReceived)} received so far this month

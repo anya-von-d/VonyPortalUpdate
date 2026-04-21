@@ -164,44 +164,26 @@ export default function LendingWallet({ cards, summaryCard, onCardClick, selecte
         }}>
           {/* Top: "select a loan" hint */}
           <div style={{
-            fontSize: 11, fontWeight: 500, color: 'rgba(255,255,255,0.55)',
+            fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.75)',
             letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif",
-            textAlign: 'center',
+            textAlign: 'center', lineHeight: 1.4,
           }}>
             Select a loan above for more details
           </div>
 
-          {/* Bottom row: label + amount on left, View Summary button on right */}
-          <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 12 }}>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{
-                fontSize: 11, color: 'rgba(255,255,255,0.65)', fontWeight: 600,
-                marginBottom: 3, letterSpacing: '-0.01em',
-              }}>
-                {summaryCard?.label || (isLending ? "You're owed" : 'You owe')}
-              </div>
-              <div style={{
-                fontSize: 22, fontWeight: 800, color: '#FFFFFF',
-                letterSpacing: '-0.04em', lineHeight: 1,
-                overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-              }}>
-                {summaryCard?.amount || formatMoney(0)}
-              </div>
-            </div>
-
-            {/* View Summary button */}
+          {/* Bottom row: View Summary button centered */}
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
             <Link
               to={createPageUrl(isLending ? 'LendingSummary' : 'BorrowingSummary')}
               style={{
                 display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                padding: '7px 12px', borderRadius: 20,
-                background: 'rgba(255,255,255,0.18)',
-                border: '1px solid rgba(255,255,255,0.28)',
+                padding: '5px 10px', borderRadius: 20,
+                background: 'rgba(255,255,255,0.14)',
+                border: '1px solid rgba(255,255,255,0.22)',
                 backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
-                fontSize: 10, fontWeight: 700, color: '#FFFFFF',
+                fontSize: 9, fontWeight: 600, color: 'rgba(255,255,255,0.7)',
                 letterSpacing: '-0.01em', textDecoration: 'none',
-                flexShrink: 0, whiteSpace: 'nowrap',
-                fontFamily: "'DM Sans', sans-serif",
+                whiteSpace: 'nowrap', fontFamily: "'DM Sans', sans-serif",
               }}
             >
               View {isLending ? 'Lending' : 'Borrowing'} Summary
