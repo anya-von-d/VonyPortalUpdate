@@ -583,12 +583,13 @@ export default function RecordPayment() {
                 >
                   Create a Loan
                 </Link>
-                <Link
-                  to={createPageUrl('Friends')}
-                  style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '6px 11px', borderRadius: 9, background: 'white', color: '#1A1918', textDecoration: 'none', fontSize: 12, fontWeight: 600, fontFamily: "'DM Sans', system-ui, sans-serif", border: '1px solid rgba(0,0,0,0.10)' }}
+                <button
+                  type="button"
+                  onClick={() => window.dispatchEvent(new CustomEvent('open-friends-popup'))}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '6px 11px', borderRadius: 9, background: 'white', color: '#1A1918', textDecoration: 'none', fontSize: 12, fontWeight: 600, fontFamily: "'DM Sans', system-ui, sans-serif", border: '1px solid rgba(0,0,0,0.10)', cursor: 'pointer' }}
                 >
                   Add Friends
-                </Link>
+                </button>
               </div>
             </div>
           )}

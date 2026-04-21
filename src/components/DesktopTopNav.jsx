@@ -89,6 +89,18 @@ export default function DesktopTopNav() {
     return () => document.removeEventListener('mousedown', handler);
   }, [menuOpen]);
 
+  // Global open-friends-popup event — lets any component open the friends dropdown
+  useEffect(() => {
+    const handler = (e) => {
+      setFriendsOpen(true);
+      setNotifOpen(false);
+      setMenuOpen(false);
+      if (e?.detail?.initialTab) setFriendsInitialTab(e.detail.initialTab);
+    };
+    window.addEventListener('open-friends-popup', handler);
+    return () => window.removeEventListener('open-friends-popup', handler);
+  }, []);
+
   return (
     <>
       {/* desktop-top-nav class is hidden on mobile via index.css */}

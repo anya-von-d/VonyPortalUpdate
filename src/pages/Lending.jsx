@@ -106,7 +106,7 @@ function InlineLoanSelect({ value, onChange, options, minWidth }) {
               <button
                 key={String(opt.value)}
                 type="button"
-                onClick={() => { onChange(opt.value); setOpen(false); }}
+                onMouseDown={e => { e.preventDefault(); onChange(opt.value); setOpen(false); }}
                 style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                   width: '100%', textAlign: 'left', padding: '8px 14px', border: 'none', cursor: 'pointer',
@@ -240,7 +240,7 @@ export default function Lending({ initialTab }) {
     amount: '',
     interest_rate: '5',
     currency: 'USD',
-    repayment_period: '',
+    repayment_period: '12',
     repayment_unit: 'months',
     custom_due_date: '',
     payment_frequency: 'monthly',
@@ -253,8 +253,8 @@ export default function Lending({ initialTab }) {
     repeating_timezone: 'EST',
     repeating_start_date: '',
     repeating_num_payments: '',
-    first_payment_date: '',
-    lender_send_funds_date: '',
+    first_payment_date: format(addMonths(new Date(), 1), 'yyyy-MM-dd'),
+    lender_send_funds_date: format(new Date(), 'yyyy-MM-dd'),
     loan_day_of_week: 'monday',
     loan_day_of_month: '1',
     loan_time: '12:00',
@@ -1658,12 +1658,13 @@ export default function Lending({ initialTab }) {
                 🌸 You'll need a friend on Vony before you can send a loan offer. Add one to get started!
               </div>
               <div style={{ display: 'flex', gap: 8, flexShrink: 0, flexWrap: 'wrap' }}>
-                <Link
-                  to={createPageUrl('Friends')}
-                  style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '6px 11px', borderRadius: 9, background: '#03ACEA', color: 'white', textDecoration: 'none', fontSize: 12, fontWeight: 600, fontFamily: "'DM Sans', system-ui, sans-serif" }}
+                <button
+                  type="button"
+                  onClick={() => window.dispatchEvent(new CustomEvent('open-friends-popup'))}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '6px 11px', borderRadius: 9, background: '#03ACEA', color: 'white', textDecoration: 'none', fontSize: 12, fontWeight: 600, fontFamily: "'DM Sans', system-ui, sans-serif", border: 'none', cursor: 'pointer' }}
                 >
                   Add a Friend
-                </Link>
+                </button>
                 <div ref={inviteRef} style={{ position: 'relative', display: 'inline-block' }}>
                   <button
                     type="button"
@@ -2148,7 +2149,7 @@ export default function Lending({ initialTab }) {
                       </div>
 
                       {/* Pill slider */}
-                      <div style={{ display: 'inline-flex', alignItems: 'center', background: '#F3F1EE', borderRadius: 999, padding: 4, border: '1px solid rgba(0,0,0,0.05)', alignSelf: 'flex-start' }}>
+                      <div style={{ display: 'inline-flex', alignItems: 'center', background: '#F3F1EE', borderRadius: 999, padding: 4, border: '1px solid rgba(0,0,0,0.05)', alignSelf: 'center' }}>
                         {[{ v: 'scheduled', label: 'Loan' }, { v: 'flexible', label: 'Quick Pay' }].map(o => (
                           <button key={o.v} type="button" onClick={() => setLoanType(o.v)} style={{
                             padding: '7px 24px', borderRadius: 999, border: 'none',
@@ -2166,13 +2167,13 @@ export default function Lending({ initialTab }) {
                         <div>
                           <div style={{ fontSize: 11, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 7 }}>Lender</div>
                           {isLoadingUsers ? <div style={{ height: 38 }} /> : (
-                            <UserSelector users={lenderUsers} value={formData.lender_username} onSelect={handleLenderSelect} placeholder="Choose a person..." showAddFriends onAddFriends={() => navigate(createPageUrl('Friends') + '?tab=add')} />
+                            <UserSelector users={lenderUsers} value={formData.lender_username} onSelect={handleLenderSelect} placeholder="Choose a person..." showAddFriends onAddFriends={() => { setActiveSection('lending'); window.dispatchEvent(new CustomEvent('open-friends-popup', { detail: { initialTab: 'Invite' } })); }} />
                           )}
                         </div>
                         <div>
                           <div style={{ fontSize: 11, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 7 }}>Borrower</div>
                           {isLoadingUsers ? <div style={{ height: 38 }} /> : (
-                            <UserSelector users={borrowerUsers} value={formData.borrower_username} onSelect={handleBorrowerSelect} placeholder="Choose a person..." showAddFriends onAddFriends={() => navigate(createPageUrl('Friends') + '?tab=add')} />
+                            <UserSelector users={borrowerUsers} value={formData.borrower_username} onSelect={handleBorrowerSelect} placeholder="Choose a person..." showAddFriends onAddFriends={() => { setActiveSection('lending'); window.dispatchEvent(new CustomEvent('open-friends-popup', { detail: { initialTab: 'Invite' } })); }} />
                           )}
                         </div>
                       </div>
@@ -2358,7 +2359,7 @@ export default function Lending({ initialTab }) {
                             <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 4, fontSize: 12, lineHeight: 1.9, color: '#3a3937', ...style }} {...props} />
                           );
                           return (
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 22 }}>
                               {/* ¶1 */}
                               <R>
                                 <span className="loan-name">{lenderDisplayName || 'The lender'}</span>

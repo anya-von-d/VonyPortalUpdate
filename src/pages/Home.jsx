@@ -1255,17 +1255,19 @@ export default function Home() {
                 Lending money to friends has never been this easy. Start by adding a friend, then create your first loan together.
               </div>
               <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
-                <Link
-                  to={createPageUrl('Friends')}
+                <button
+                  type="button"
+                  onClick={() => window.dispatchEvent(new CustomEvent('open-friends-popup'))}
                   style={{
                     display: 'inline-flex', alignItems: 'center', gap: 6,
                     padding: '8px 14px', borderRadius: 10,
                     background: '#03ACEA', color: 'white', textDecoration: 'none',
                     fontSize: 13, fontWeight: 600, fontFamily: "'DM Sans', system-ui, sans-serif",
+                    border: 'none', cursor: 'pointer',
                   }}
                 >
                   Find Friends
-                </Link>
+                </button>
                 <Link
                   to={createPageUrl('CreateOffer')}
                   style={{
@@ -1599,7 +1601,7 @@ export default function Home() {
                 // New-user onboarding tasks.
                 const isNewUser = !hasFriends && !hasLoans && pendingOffers.length === 0;
                 if (isNewUser) {
-                  tasks.push({ id: 'new-connect', label: 'Connect with friends', onCheck: () => navigate(createPageUrl('Friends')) });
+                  tasks.push({ id: 'new-connect', label: 'Connect with friends', onCheck: () => window.dispatchEvent(new CustomEvent('open-friends-popup')) });
                   tasks.push({ id: 'new-loan', label: 'Create your first loan', onCheck: () => navigate(createPageUrl('CreateOffer')) });
                 }
 

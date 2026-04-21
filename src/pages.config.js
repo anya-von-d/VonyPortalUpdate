@@ -50,7 +50,6 @@
 import Borrowing from './pages/Borrowing';
 import BorrowingSummary from './pages/BorrowingSummary';
 import CreateOffer from './pages/CreateOffer';
-import Friends from './pages/Friends';
 import Home from './pages/Home';
 import Lending from './pages/Lending';
 import LendingSummary from './pages/LendingSummary';
@@ -69,7 +68,6 @@ import __Layout from './Layout.jsx';
 export const PAGES = {
     "Borrowing": BorrowingSummary,
     "CreateOffer": CreateOffer,
-    "Friends": Friends,
     "Home": Home,
     "Lending": LendingSummary,
     "LoanAgreements": LoanAgreements,

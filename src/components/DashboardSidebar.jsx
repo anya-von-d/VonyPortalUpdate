@@ -146,13 +146,17 @@ export default function DashboardSidebar({ activePage = "Dashboard", user }) {
         </div>
         Lending & Borrowing
       </Link>
-      {/* Friends — filled silhouettes */}
-      <Link to={createPageUrl("Friends")} onClick={() => setMobileMenuOpen(false)} style={linkStyle('Friends')}>
+      {/* Friends — opens FriendsPopup (no Friends page) */}
+      <button
+        type="button"
+        onClick={() => { setMobileMenuOpen(false); window.dispatchEvent(new CustomEvent('open-friends-popup')); }}
+        style={{ ...linkStyle('Friends'), background: 'transparent', border: 'none', cursor: 'pointer', width: '100%', textAlign: 'left' }}
+      >
         <div style={ib('Friends')}>
           <svg width="13" height="13" viewBox="0 0 24 24" fill={ic('Friends')}><circle cx="8.5" cy="6.5" r="4"/><path d="M0 21c0-5 3.8-8 8.5-8s8.5 3 8.5 8H0z"/><circle cx="19" cy="7.5" r="3" opacity="0.55"/><path d="M14.5 21c0-3.5 2-5.5 4.5-5.5S24 17.5 24 21h-9.5" opacity="0.55"/></svg>
         </div>
         Friends
-      </Link>
+      </button>
       {/* Recent Activity — filled clock */}
       <Link to={createPageUrl("RecentActivity")} onClick={() => setMobileMenuOpen(false)} style={linkStyle('RecentActivity')}>
         <div style={ib('RecentActivity')}>
