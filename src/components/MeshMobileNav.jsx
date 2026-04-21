@@ -71,31 +71,38 @@ export default function MeshMobileNav({ user, activePage }) {
     boxShadow: '0 2px 10px rgba(0,0,0,0.07)',
   };
 
+  // Inner icon button style (used inside the combined bubble)
+  const innerBtn = {
+    display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+    width: 36, height: 36, borderRadius: 10,
+    background: 'transparent', border: 'none', cursor: 'pointer',
+    color: 'rgba(0,0,0,0.6)', textDecoration: 'none', flexShrink: 0,
+  };
+
   return (
     <>
-      {/* ── Floating top row — no bar, just logo + icon bubbles ── */}
+      {/* ── Floating top row ── */}
       <div style={{
         position: 'fixed', top: 18, left: 0, right: 0, zIndex: 200,
         display: 'flex', alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '0 16px',
+        padding: '0 20px',
         fontFamily: "'DM Sans', sans-serif",
-        pointerEvents: 'none',   // let taps pass through the gap between elements
+        pointerEvents: 'none',
       }}>
-        {/* Logo bubble */}
+        {/* Logo — plain text, no bubble */}
         <Link to="/" style={{
-          ...glassBubble,
           pointerEvents: 'auto',
-          width: 'auto', padding: '0 14px',
           fontFamily: "'Cormorant Garamond', Georgia, serif",
-          fontWeight: 600, fontStyle: 'italic', fontSize: '1.35rem',
+          fontWeight: 600, fontStyle: 'italic', fontSize: '1.5rem',
           color: '#1A1918', lineHeight: 1, letterSpacing: '-0.02em',
+          textDecoration: 'none',
         }}>Vony</Link>
 
-        {/* Right icon bubbles */}
+        {/* Right side */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, pointerEvents: 'auto' }}>
 
-          {/* Notifications bell */}
+          {/* Notifications — standalone glassmorphism bubble */}
           <Link to={createPageUrl("Requests")} style={{ ...glassBubble, position: 'relative' }}>
             <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="rgba(0,0,0,0.6)" strokeWidth="1.8" strokeLinecap="round">
               <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
@@ -117,53 +124,54 @@ export default function MeshMobileNav({ user, activePage }) {
             )}
           </Link>
 
-          {/* Friends */}
-          <Link to={createPageUrl("Friends")} style={glassBubble}>
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="rgba(0,0,0,0.6)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-              <circle cx="9" cy="7" r="4"/>
-              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-            </svg>
-          </Link>
+          {/* Combined bubble: Friends + Records + Profile + Menu */}
+          <div style={{
+            display: 'inline-flex', alignItems: 'center',
+            background: 'rgba(255,255,255,0.72)',
+            backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
+            border: '1px solid rgba(255,255,255,0.55)',
+            boxShadow: '0 2px 10px rgba(0,0,0,0.07)',
+            borderRadius: 14, padding: 4, gap: 2,
+          }}>
+            {/* Friends */}
+            <Link to={createPageUrl("Friends")} style={innerBtn}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(0,0,0,0.6)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+            </Link>
 
-          {/* Records */}
-          <Link to={createPageUrl("LoanAgreements")} style={{
-            ...glassBubble,
-            width: 'auto', padding: '0 12px',
-            fontSize: 13, fontWeight: 600, color: 'rgba(0,0,0,0.6)',
-            letterSpacing: '-0.01em',
-          }}>Records</Link>
+            {/* Records */}
+            <Link to={createPageUrl("LoanAgreements")} style={{
+              ...innerBtn, width: 'auto', padding: '0 8px',
+              fontSize: 13, fontWeight: 600, letterSpacing: '-0.01em',
+            }}>Records</Link>
 
-          {/* Profile avatar */}
-          <Link to={createPageUrl("Profile")} style={glassBubble}>
-            <UserAvatar
-              name={user?.full_name || user?.username}
-              src={user?.avatar_url || user?.profile_picture_url}
-              size={28}
-              radius={14}
-            />
-          </Link>
+            {/* Profile */}
+            <Link to={createPageUrl("Profile")} style={innerBtn}>
+              <UserAvatar
+                name={user?.full_name || user?.username}
+                src={user?.avatar_url || user?.profile_picture_url}
+                size={26}
+                radius={13}
+              />
+            </Link>
 
-          {/* Settings */}
-          <button
-            onClick={() => setSettingsOpen(true)}
-            style={{
-              ...glassBubble,
-              border: 'none', cursor: 'pointer',
-              background: 'rgba(255,255,255,0.72)',
-              backdropFilter: 'blur(16px)',
-              WebkitBackdropFilter: 'blur(16px)',
-              boxShadow: '0 2px 10px rgba(0,0,0,0.07)',
-            }}
-            aria-label="Settings"
-          >
-            <svg width="19" height="14" viewBox="0 0 19 14" fill="none">
-              <line x1="0" y1="1"  x2="19" y2="1"  stroke="rgba(0,0,0,0.55)" strokeWidth="1.6" strokeLinecap="round"/>
-              <line x1="0" y1="7"  x2="19" y2="7"  stroke="rgba(0,0,0,0.55)" strokeWidth="1.6" strokeLinecap="round"/>
-              <line x1="0" y1="13" x2="19" y2="13" stroke="rgba(0,0,0,0.55)" strokeWidth="1.6" strokeLinecap="round"/>
-            </svg>
-          </button>
+            {/* Hamburger / Settings */}
+            <button
+              onClick={() => setSettingsOpen(true)}
+              style={{ ...innerBtn, border: 'none' }}
+              aria-label="Settings"
+            >
+              <svg width="17" height="13" viewBox="0 0 17 13" fill="none">
+                <line x1="0" y1="1"   x2="17" y2="1"   stroke="rgba(0,0,0,0.55)" strokeWidth="1.6" strokeLinecap="round"/>
+                <line x1="0" y1="6.5" x2="17" y2="6.5" stroke="rgba(0,0,0,0.55)" strokeWidth="1.6" strokeLinecap="round"/>
+                <line x1="0" y1="12"  x2="17" y2="12"  stroke="rgba(0,0,0,0.55)" strokeWidth="1.6" strokeLinecap="round"/>
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
 

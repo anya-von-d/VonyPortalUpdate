@@ -1115,8 +1115,39 @@ export default function Home() {
             <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 17, fontWeight: 600, letterSpacing: '-0.02em', lineHeight: 1.2, color: '#1A1918', marginBottom: 12 }}>
               {greeting}, {firstName}
             </div>
-            <div style={{ height: 1, background: 'rgba(0,0,0,0.08)', marginLeft: -32, marginRight: -32, marginBottom: 20 }} />
           </div>
+
+          {/* Notification bar — always near top on mobile */}
+          {notifCount > 0 && (
+            <div className="mobile-page-title" style={{ marginBottom: 16 }}>
+              <div style={{ position: 'relative' }}>
+                <div style={{
+                  position: 'absolute', top: 0, left: '50%',
+                  transform: 'translateX(-50%)',
+                  width: 'calc(100% + 36px)', height: '100%',
+                  background: 'linear-gradient(225deg, rgb(129,140,248) 0%, rgb(99,102,241) 12%, rgb(79,70,229) 24%, rgb(67,56,202) 36%, rgb(37,99,235) 50%, rgb(59,130,246) 64%, rgb(96,165,250) 76%, rgb(56,189,248) 88%, rgb(14,165,233) 100%)',
+                  filter: 'blur(12px) saturate(1.18)',
+                  opacity: 0.55,
+                  borderRadius: 16, zIndex: 0, pointerEvents: 'none',
+                }} />
+                <div style={{
+                  position: 'relative', zIndex: 1,
+                  display: 'flex', alignItems: 'center', gap: 8, padding: '6px 12px', borderRadius: 9,
+                  background: '#14324D', border: 'none',
+                }}>
+                  <div style={{ width: 20, height: 20, borderRadius: 6, background: 'rgba(255,255,255,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                  </div>
+                  <span style={{ flex: 1, fontSize: 12, fontWeight: 600, color: 'white', fontFamily: "'DM Sans', sans-serif" }}>
+                    You have {notifCount} new notification{notifCount !== 1 ? 's' : ''}
+                  </span>
+                  <Link to={createPageUrl("Requests")} style={{ display: 'flex', alignItems: 'center', flexShrink: 0, textDecoration: 'none' }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* New user onboarding — below greeting */}
           {!hasLoans && (
@@ -1174,36 +1205,6 @@ export default function Home() {
             </div>
           )}
 
-          {/* Notification bar */}
-          {notifCount > 0 && (
-            <div style={{ position: 'relative', marginBottom: 16, paddingTop: 8 }}>
-              {/* Rainbow aura */}
-              <div style={{
-                position: 'absolute', top: 0, left: '50%',
-                transform: 'translateX(-50%)',
-                width: 'calc(100% + 36px)', height: '100%',
-                background: 'linear-gradient(225deg, rgb(129,140,248) 0%, rgb(99,102,241) 12%, rgb(79,70,229) 24%, rgb(67,56,202) 36%, rgb(37,99,235) 50%, rgb(59,130,246) 64%, rgb(96,165,250) 76%, rgb(56,189,248) 88%, rgb(14,165,233) 100%)',
-                filter: 'blur(12px) saturate(1.18)',
-                opacity: 0.55,
-                borderRadius: 16, zIndex: 0, pointerEvents: 'none',
-              }} />
-              <div style={{
-                position: 'relative', zIndex: 1,
-                display: 'flex', alignItems: 'center', gap: 8, padding: '6px 12px', borderRadius: 9,
-                background: '#14324D', border: 'none',
-              }}>
-                <div style={{ width: 20, height: 20, borderRadius: 6, background: 'rgba(255,255,255,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-                </div>
-                <span style={{ flex: 1, fontSize: 12, fontWeight: 600, color: 'white', fontFamily: "'DM Sans', sans-serif" }}>
-                  You have {notifCount} new notification{notifCount !== 1 ? 's' : ''}
-                </span>
-                <Link to={createPageUrl("Requests")} style={{ display: 'flex', alignItems: 'center', flexShrink: 0, textDecoration: 'none' }}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-                </Link>
-              </div>
-            </div>
-          )}
 
           {/* Three summary cards — removed */}
           <div className="home-summary-cards" style={{ display: 'none' }}>
