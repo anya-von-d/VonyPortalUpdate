@@ -407,7 +407,7 @@ export default function Home() {
   const [viewLoanTarget, setViewLoanTarget] = useState(null);    // { loan, borrowerProfile }
   const [viewPaymentTarget, setViewPaymentTarget] = useState(null); // { payment, loan, lenderProfile }
   const [reviewOfferTarget, setReviewOfferTarget] = useState(null); // { loan, lenderProf }
-  const [expandedPendingKey, setExpandedPendingKey] = useState(null); // key of expanded pending row
+  const [pendingDetailTarget, setPendingDetailTarget] = useState(null); // { type, loan?, payment?, profile?, loanForPayment? }
   const navigate = useNavigate();
   // Tasks-for-the-Week: checked IDs keyed by ISO date of week start (Monday).
   const weekStartKey = (() => {
@@ -614,7 +614,7 @@ export default function Home() {
       const agreement = agreements.find(a => a.loan_id === loan.id);
       if (agreement) await LoanAgreement.delete(agreement.id);
       await Loan.delete(loan.id);
-      setExpandedPendingKey(null);
+      setPendingDetailTarget(null);
       await loadData();
     } catch (e) {
       console.error('Error unsending loan offer:', e);
@@ -624,7 +624,7 @@ export default function Home() {
   const handleDeletePayment = async (payment) => {
     try {
       await Payment.delete(payment.id);
-      setExpandedPendingKey(null);
+      setPendingDetailTarget(null);
       await loadData();
     } catch (e) {
       console.error('Error deleting payment:', e);
@@ -1879,6 +1879,7 @@ export default function Home() {
                     key: `loan-${loan.id}`,
                     type: 'loan',
                     loan,
+                    profile: borrowerProfile,
                     icon: (
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#D97706" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 3 }}>
                         <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
@@ -1889,14 +1890,16 @@ export default function Home() {
                 });
 
                 pendingPaymentsSentByMe.forEach(payment => {
-                  const loan = safeLoans.find(l => l && l.id === payment.loan_id);
-                  const otherUserId = loan ? (loan.lender_id === user.id ? loan.borrower_id : loan.lender_id) : null;
+                  const loanForPay = safeLoans.find(l => l && l.id === payment.loan_id);
+                  const otherUserId = loanForPay ? (loanForPay.lender_id === user.id ? loanForPay.borrower_id : loanForPay.lender_id) : null;
                   const otherProfile = otherUserId ? safeAllProfiles.find(p => p.user_id === otherUserId) : null;
                   const firstName = otherProfile?.full_name?.split(' ')[0] || otherProfile?.username || 'them';
                   pendingRows.push({
                     key: `pay-${payment.id}`,
                     type: 'payment',
                     payment,
+                    loan: loanForPay,
+                    profile: otherProfile,
                     icon: (
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9B9A98" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 3 }}>
                         <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
@@ -1912,51 +1915,22 @@ export default function Home() {
                     <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, padding: '14px 18px' }}>
                       <SectionHeader title="Your pending requests" />
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                        {pendingRows.map(row => {
-                          const isExpanded = expandedPendingKey === row.key;
-                          return (
-                            <div key={row.key}>
-                              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, padding: '4px 0' }}>
-                                {row.icon}
-                                <span style={{ flex: 1, fontSize: 12, fontWeight: 500, color: '#787776', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.4 }}>{row.text}</span>
-                                <button
-                                  type="button"
-                                  onClick={() => setExpandedPendingKey(isExpanded ? null : row.key)}
-                                  aria-label="Options"
-                                  style={{ flexShrink: 0, background: 'transparent', border: 'none', padding: 0, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', color: isExpanded ? '#03ACEA' : '#9B9A98', marginTop: 1, transition: 'color 0.15s, transform 0.18s', transform: isExpanded ? 'rotate(90deg)' : 'none' }}
-                                  onMouseEnter={e => { if (!isExpanded) e.currentTarget.style.color = '#03ACEA'; }}
-                                  onMouseLeave={e => { if (!isExpanded) e.currentTarget.style.color = '#9B9A98'; }}
-                                >
-                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-                                </button>
-                              </div>
-                              {isExpanded && (
-                                <div style={{ paddingLeft: 20, paddingBottom: 6, display: 'flex', flexDirection: 'column', gap: 6 }}>
-                                  <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>
-                                    {row.type === 'loan'
-                                      ? 'Unsending will remove this offer from their inbox and notifications.'
-                                      : 'Deleting will remove this payment from their inbox and notifications.'}
-                                  </div>
-                                  <button
-                                    type="button"
-                                    onClick={() => row.type === 'loan' ? handleUnsendLoanOffer(row.loan) : handleDeletePayment(row.payment)}
-                                    style={{
-                                      alignSelf: 'flex-start',
-                                      fontSize: 11, fontWeight: 600, color: '#E8726E',
-                                      background: 'rgba(232,114,110,0.08)', border: '1px solid rgba(232,114,110,0.2)',
-                                      borderRadius: 7, padding: '5px 10px',
-                                      cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
-                                    }}
-                                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(232,114,110,0.14)'}
-                                    onMouseLeave={e => e.currentTarget.style.background = 'rgba(232,114,110,0.08)'}
-                                  >
-                                    {row.type === 'loan' ? 'Unsend Loan Offer' : 'Delete Payment'}
-                                  </button>
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })}
+                        {pendingRows.map(row => (
+                          <div key={row.key} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, padding: '4px 0' }}>
+                            {row.icon}
+                            <span style={{ flex: 1, fontSize: 12, fontWeight: 500, color: '#787776', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.4 }}>{row.text}</span>
+                            <button
+                              type="button"
+                              onClick={() => setPendingDetailTarget(row)}
+                              aria-label="View details"
+                              style={{ flexShrink: 0, background: 'transparent', border: 'none', padding: 0, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', color: '#9B9A98', marginTop: 1, transition: 'color 0.15s' }}
+                              onMouseEnter={e => e.currentTarget.style.color = '#03ACEA'}
+                              onMouseLeave={e => e.currentTarget.style.color = '#9B9A98'}
+                            >
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                            </button>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   </div>
@@ -2283,13 +2257,13 @@ export default function Home() {
       document.body
     )}
 
-    {/* ── View loan offer (you sent, awaiting borrower signature) ── */}
-    {viewLoanTarget && createPortal(
+    {/* ── Pending request detail modal (loan offer or payment you sent) ── */}
+    {pendingDetailTarget && createPortal(
       <div
-        onClick={() => setViewLoanTarget(null)}
+        onClick={() => setPendingDetailTarget(null)}
         style={{
-          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.28)',
-          backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)',
+          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.32)',
+          backdropFilter: 'blur(5px)', WebkitBackdropFilter: 'blur(5px)',
           zIndex: 999999, display: 'flex', alignItems: 'center', justifyContent: 'center',
           padding: 20, fontFamily: "'DM Sans', sans-serif",
         }}
@@ -2297,13 +2271,14 @@ export default function Home() {
         <div
           onClick={e => e.stopPropagation()}
           style={{
-            background: 'white', borderRadius: 16, maxWidth: 400, width: '100%',
-            boxShadow: '0 24px 64px rgba(0,0,0,0.18), 0 4px 16px rgba(0,0,0,0.08)',
+            background: '#FDFCFA', borderRadius: 18, maxWidth: 420, width: '100%',
+            boxShadow: '0 28px 72px rgba(0,0,0,0.20), 0 4px 16px rgba(0,0,0,0.08)',
             padding: '24px 24px 20px', position: 'relative',
           }}
         >
+          {/* Close */}
           <button
-            onClick={() => setViewLoanTarget(null)}
+            onClick={() => setPendingDetailTarget(null)}
             style={{
               position: 'absolute', top: 12, right: 12, width: 28, height: 28, borderRadius: 8,
               background: 'rgba(0,0,0,0.05)', border: 'none', cursor: 'pointer',
@@ -2313,163 +2288,143 @@ export default function Home() {
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
 
+          {/* Header */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 18 }}>
             <UserAvatar
-              name={viewLoanTarget.borrowerProfile?.full_name || viewLoanTarget.borrowerProfile?.username}
-              src={viewLoanTarget.borrowerProfile?.profile_picture_url || viewLoanTarget.borrowerProfile?.avatar_url}
-              size={40}
+              name={pendingDetailTarget.profile?.full_name || pendingDetailTarget.profile?.username}
+              src={pendingDetailTarget.profile?.profile_picture_url || pendingDetailTarget.profile?.avatar_url}
+              size={42}
             />
             <div>
               <div style={{ fontSize: 15, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.01em' }}>
-                Loan Offer to {viewLoanTarget.borrowerProfile?.full_name?.split(' ')[0] || viewLoanTarget.borrowerProfile?.username || 'Borrower'}
+                {pendingDetailTarget.type === 'loan'
+                  ? `Loan Offer to ${pendingDetailTarget.profile?.full_name?.split(' ')[0] || pendingDetailTarget.profile?.username || 'Borrower'}`
+                  : `Your ${formatMoney(pendingDetailTarget.payment?.amount || 0)} Payment`}
               </div>
-              <div style={{ fontSize: 11, color: '#D97706', fontWeight: 600 }}>⏳ Awaiting their signature</div>
+              <div style={{ fontSize: 11, fontWeight: 600, color: pendingDetailTarget.type === 'loan' ? '#D97706' : '#9B9A98', marginTop: 2 }}>
+                {pendingDetailTarget.type === 'loan' ? '⏳ Awaiting their signature' : `⏳ Waiting for ${pendingDetailTarget.profile?.full_name?.split(' ')[0] || 'them'} to confirm`}
+              </div>
             </div>
           </div>
 
-          <div style={{ background: '#fafafa', borderRadius: 10, border: '1px solid rgba(0,0,0,0.07)', padding: '12px 14px', marginBottom: 18, display: 'flex', flexDirection: 'column', gap: 8 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: 11, color: '#9B9A98', fontWeight: 500 }}>Amount</span>
-              <span style={{ fontSize: 14, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em' }}>{formatMoney(viewLoanTarget.loan.amount || viewLoanTarget.loan.total_amount || 0)}</span>
-            </div>
-            {viewLoanTarget.loan.interest_rate && (
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: 11, color: '#9B9A98', fontWeight: 500 }}>Interest</span>
-                <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918' }}>{viewLoanTarget.loan.interest_rate}% annually</span>
-              </div>
-            )}
-            {viewLoanTarget.loan.payment_frequency && (
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: 11, color: '#9B9A98', fontWeight: 500 }}>Repayment</span>
-                <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', textTransform: 'capitalize' }}>{viewLoanTarget.loan.payment_frequency}</span>
-              </div>
-            )}
-            {viewLoanTarget.loan.repayment_period && (
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: 11, color: '#9B9A98', fontWeight: 500 }}>Duration</span>
-                <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918' }}>{viewLoanTarget.loan.repayment_period} payments</span>
-              </div>
-            )}
-            {viewLoanTarget.loan.purpose && (
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: 11, color: '#9B9A98', fontWeight: 500 }}>Purpose</span>
-                <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918' }}>{viewLoanTarget.loan.purpose}</span>
-              </div>
-            )}
-            {viewLoanTarget.loan.lender_send_funds_date && (
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: 11, color: '#9B9A98', fontWeight: 500 }}>Funds by</span>
-                <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918' }}>
-                  {format(new Date(viewLoanTarget.loan.lender_send_funds_date), 'MMM d, yyyy')}
-                </span>
-              </div>
-            )}
-          </div>
-
-          <button
-            onClick={() => setViewLoanTarget(null)}
-            style={{
-              width: '100%', padding: '9px', borderRadius: 9, border: 'none',
-              background: '#F4F3F1', fontSize: 12, fontWeight: 600, color: '#787776',
-              cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
-            }}
-          >
-            Close
-          </button>
-        </div>
-      </div>,
-      document.body
-    )}
-
-    {/* ── View payment you recorded (awaiting confirmation) ── */}
-    {viewPaymentTarget && createPortal(
-      <div
-        onClick={() => setViewPaymentTarget(null)}
-        style={{
-          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.28)',
-          backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)',
-          zIndex: 999999, display: 'flex', alignItems: 'center', justifyContent: 'center',
-          padding: 20, fontFamily: "'DM Sans', sans-serif",
-        }}
-      >
-        <div
-          onClick={e => e.stopPropagation()}
-          style={{
-            background: 'white', borderRadius: 16, maxWidth: 400, width: '100%',
-            boxShadow: '0 24px 64px rgba(0,0,0,0.18), 0 4px 16px rgba(0,0,0,0.08)',
-            padding: '24px 24px 20px', position: 'relative',
-          }}
-        >
-          <button
-            onClick={() => setViewPaymentTarget(null)}
-            style={{
-              position: 'absolute', top: 12, right: 12, width: 28, height: 28, borderRadius: 8,
-              background: 'rgba(0,0,0,0.05)', border: 'none', cursor: 'pointer',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#787776',
-            }}
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-          </button>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 18 }}>
-            <UserAvatar
-              name={viewPaymentTarget.otherProfile?.full_name || viewPaymentTarget.otherProfile?.username}
-              src={viewPaymentTarget.otherProfile?.profile_picture_url || viewPaymentTarget.otherProfile?.avatar_url}
-              size={40}
-            />
-            <div>
-              <div style={{ fontSize: 15, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.01em' }}>
-                Your {formatMoney(viewPaymentTarget.payment?.amount || 0)} Payment
-              </div>
-              <div style={{ fontSize: 11, color: '#9B9A98' }}>Waiting for {viewPaymentTarget.otherProfile?.full_name?.split(' ')[0] || 'them'} to confirm</div>
-            </div>
-          </div>
-
-          <div style={{ background: '#fafafa', borderRadius: 10, border: '1px solid rgba(0,0,0,0.07)', padding: '12px 14px', marginBottom: 18, display: 'flex', flexDirection: 'column', gap: 8 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: 11, color: '#9B9A98', fontWeight: 500 }}>Amount</span>
-              <span style={{ fontSize: 14, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em' }}>{formatMoney(viewPaymentTarget.payment?.amount || 0)}</span>
-            </div>
-            {viewPaymentTarget.loan && (
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: 11, color: '#9B9A98', fontWeight: 500 }}>For loan</span>
-                <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918' }}>
-                  {formatMoney(viewPaymentTarget.loan.amount || viewPaymentTarget.loan.total_amount || 0)}{viewPaymentTarget.loan.purpose ? ` · ${viewPaymentTarget.loan.purpose}` : ''}
-                </span>
-              </div>
-            )}
-            {viewPaymentTarget.payment?.payment_date && (
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: 11, color: '#9B9A98', fontWeight: 500 }}>Date</span>
-                <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918' }}>
-                  {format(new Date(viewPaymentTarget.payment.payment_date), 'MMM d, yyyy')}
-                </span>
-              </div>
-            )}
-            {viewPaymentTarget.payment?.payment_method && (
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: 11, color: '#9B9A98', fontWeight: 500 }}>Method</span>
-                <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', textTransform: 'capitalize' }}>{viewPaymentTarget.payment.payment_method}</span>
-              </div>
-            )}
-            {viewPaymentTarget.payment?.notes && (
-              <div>
-                <div style={{ fontSize: 11, color: '#9B9A98', fontWeight: 500, marginBottom: 3 }}>Notes</div>
-                <div style={{ fontSize: 12, color: '#787776', lineHeight: 1.45 }}>{viewPaymentTarget.payment.notes}</div>
-              </div>
+          {/* Details */}
+          <div style={{ background: 'white', borderRadius: 12, border: '1px solid rgba(0,0,0,0.07)', padding: '12px 14px', marginBottom: 16, display: 'flex', flexDirection: 'column', gap: 9 }}>
+            {pendingDetailTarget.type === 'loan' ? (
+              <>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: 11, color: '#9B9A98', fontWeight: 500 }}>Amount</span>
+                  <span style={{ fontSize: 14, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em' }}>{formatMoney(pendingDetailTarget.loan?.amount || pendingDetailTarget.loan?.total_amount || 0)}</span>
+                </div>
+                {pendingDetailTarget.loan?.interest_rate && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontSize: 11, color: '#9B9A98', fontWeight: 500 }}>Interest rate</span>
+                    <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918' }}>{pendingDetailTarget.loan.interest_rate}% / year</span>
+                  </div>
+                )}
+                {pendingDetailTarget.loan?.payment_frequency && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontSize: 11, color: '#9B9A98', fontWeight: 500 }}>Repayment</span>
+                    <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', textTransform: 'capitalize' }}>{pendingDetailTarget.loan.payment_frequency}</span>
+                  </div>
+                )}
+                {pendingDetailTarget.loan?.repayment_period && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontSize: 11, color: '#9B9A98', fontWeight: 500 }}>Duration</span>
+                    <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918' }}>{pendingDetailTarget.loan.repayment_period} payments</span>
+                  </div>
+                )}
+                {pendingDetailTarget.loan?.first_payment_date && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontSize: 11, color: '#9B9A98', fontWeight: 500 }}>First payment</span>
+                    <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918' }}>{format(new Date(pendingDetailTarget.loan.first_payment_date), 'MMM d, yyyy')}</span>
+                  </div>
+                )}
+                {pendingDetailTarget.loan?.lender_send_funds_date && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontSize: 11, color: '#9B9A98', fontWeight: 500 }}>Funds sent by</span>
+                    <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918' }}>{format(new Date(pendingDetailTarget.loan.lender_send_funds_date), 'MMM d, yyyy')}</span>
+                  </div>
+                )}
+                {pendingDetailTarget.loan?.purpose && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontSize: 11, color: '#9B9A98', fontWeight: 500 }}>Purpose</span>
+                    <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', textAlign: 'right', maxWidth: '60%' }}>{pendingDetailTarget.loan.purpose}</span>
+                  </div>
+                )}
+              </>
+            ) : (
+              <>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: 11, color: '#9B9A98', fontWeight: 500 }}>Amount</span>
+                  <span style={{ fontSize: 14, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em' }}>{formatMoney(pendingDetailTarget.payment?.amount || 0)}</span>
+                </div>
+                {pendingDetailTarget.loan && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontSize: 11, color: '#9B9A98', fontWeight: 500 }}>For loan</span>
+                    <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', textAlign: 'right', maxWidth: '60%' }}>
+                      {formatMoney(pendingDetailTarget.loan.amount || pendingDetailTarget.loan.total_amount || 0)}{pendingDetailTarget.loan.purpose ? ` · ${pendingDetailTarget.loan.purpose}` : ''}
+                    </span>
+                  </div>
+                )}
+                {pendingDetailTarget.payment?.payment_date && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontSize: 11, color: '#9B9A98', fontWeight: 500 }}>Date recorded</span>
+                    <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918' }}>{format(new Date(pendingDetailTarget.payment.payment_date), 'MMM d, yyyy')}</span>
+                  </div>
+                )}
+                {pendingDetailTarget.payment?.payment_method && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontSize: 11, color: '#9B9A98', fontWeight: 500 }}>Method</span>
+                    <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', textTransform: 'capitalize' }}>{pendingDetailTarget.payment.payment_method}</span>
+                  </div>
+                )}
+                {pendingDetailTarget.payment?.notes && (
+                  <div>
+                    <div style={{ fontSize: 11, color: '#9B9A98', fontWeight: 500, marginBottom: 3 }}>Notes</div>
+                    <div style={{ fontSize: 12, color: '#787776', lineHeight: 1.5 }}>{pendingDetailTarget.payment.notes}</div>
+                  </div>
+                )}
+              </>
             )}
           </div>
 
-          <button
-            onClick={() => setViewPaymentTarget(null)}
-            style={{
-              width: '100%', padding: '9px', borderRadius: 9, border: 'none',
-              background: '#F4F3F1', fontSize: 12, fontWeight: 600, color: '#787776',
-              cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
-            }}
-          >
-            Close
-          </button>
+          {/* Divider */}
+          <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 14 }} />
+
+          {/* Action note */}
+          <div style={{ fontSize: 11, color: '#9B9A98', marginBottom: 12, lineHeight: 1.5 }}>
+            {pendingDetailTarget.type === 'loan'
+              ? 'Unsending will permanently remove this offer. The recipient will no longer see it in their inbox or notifications.'
+              : 'Deleting will permanently remove this payment record. The recipient will no longer see it in their inbox or notifications.'}
+          </div>
+
+          {/* Buttons */}
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button
+              onClick={() => setPendingDetailTarget(null)}
+              style={{
+                flex: 1, padding: '9px', borderRadius: 9, border: 'none',
+                background: '#F4F3F1', fontSize: 12, fontWeight: 600, color: '#787776',
+                cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
+              }}
+            >
+              Keep
+            </button>
+            <button
+              onClick={() => pendingDetailTarget.type === 'loan'
+                ? handleUnsendLoanOffer(pendingDetailTarget.loan)
+                : handleDeletePayment(pendingDetailTarget.payment)}
+              style={{
+                flex: 1, padding: '9px', borderRadius: 9, border: 'none',
+                background: '#E8726E', fontSize: 12, fontWeight: 600, color: 'white',
+                cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = '#d45f5b'}
+              onMouseLeave={e => e.currentTarget.style.background = '#E8726E'}
+            >
+              {pendingDetailTarget.type === 'loan' ? 'Unsend Loan Offer' : 'Delete Payment'}
+            </button>
+          </div>
         </div>
       </div>,
       document.body
