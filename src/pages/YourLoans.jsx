@@ -1290,6 +1290,7 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
       </div>
       )}{/* end ylending wrap */}
     </div>{/* end Col 2 */}
+            </div>
           )}{/* end !selectedWalletLoan */}
           </div>{/* end col 2 wrapper */}
         </div>{/* end loans-top-layout grid */}
