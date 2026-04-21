@@ -9,7 +9,7 @@ import { toLocalDate, daysUntil as daysUntilDate } from '@/components/utils/date
 import BorrowerSignatureModal from '@/components/loans/BorrowerSignatureModal';
 import confetti from 'canvas-confetti';
 
-export default function NotificationsPopup({ onClose }) {
+export default function NotificationsPopup({ onClose, positionOverride }) {
   const { user: authUser, userProfile } = useAuth();
   const user = userProfile ? { ...userProfile, id: authUser?.id } : null;
 
@@ -275,17 +275,20 @@ export default function NotificationsPopup({ onClose }) {
           top: 58,
           right: 20,
           zIndex: 400,
-          width: 360,
-          maxHeight: 480,
-          overflowY: 'auto',
+          width: 380,
+          maxHeight: 520,
           background: 'white',
           borderRadius: 14,
           boxShadow: '0 8px 40px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.08)',
           fontFamily: "'DM Sans', sans-serif",
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+          ...positionOverride,
         }}
       >
         {/* Header */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px 10px', borderBottom: '1px solid rgba(0,0,0,0.07)', position: 'sticky', top: 0, background: 'white', zIndex: 1, borderRadius: '14px 14px 0 0' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px 10px', flexShrink: 0 }}>
           <span style={{ fontSize: 13, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.01em' }}>Notifications</span>
           <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, color: '#9B9A98', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <X size={16} />
@@ -293,7 +296,7 @@ export default function NotificationsPopup({ onClose }) {
         </div>
 
         {/* Content */}
-        <div style={{ padding: '12px 12px 16px' }}>
+        <div style={{ flex: 1, overflowY: 'auto', padding: '12px 14px 16px' }}>
           {isLoading ? (
             <div style={{ display: 'flex', justifyContent: 'center', padding: '32px 0' }}>
               <div style={{ width: 24, height: 24, border: '2px solid #03ACEA', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />

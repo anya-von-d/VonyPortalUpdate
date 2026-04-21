@@ -128,6 +128,11 @@ export default function LoanHelp() {
 
         {/* Desktop: pill nav + active-category grid */}
         <div className="learn-desktop-view">
+          {/* Page title */}
+          <div style={{ fontSize: 22, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.03em', marginBottom: 16, fontFamily: "'DM Sans', sans-serif" }}>
+            Learn
+          </div>
+
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 24 }}>
             <div style={{
               display: 'inline-flex', alignItems: 'center', gap: 2,

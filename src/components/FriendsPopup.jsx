@@ -7,11 +7,11 @@ import confetti from 'canvas-confetti';
 
 const TABS = ['Your Friends', 'Find Your Friends', 'Invite'];
 
-export default function FriendsPopup({ onClose, positionOverride }) {
+export default function FriendsPopup({ onClose, positionOverride, initialTab }) {
   const { user: authUser, userProfile } = useAuth();
   const user = userProfile ? { ...userProfile, id: authUser?.id } : null;
 
-  const [activeTab, setActiveTab] = useState('Your Friends');
+  const [activeTab, setActiveTab] = useState(initialTab || 'Your Friends');
   const [friends, setFriends] = useState([]);
   const [sentRequests, setSentRequests] = useState([]);
   const [receivedRequests, setReceivedRequests] = useState([]);

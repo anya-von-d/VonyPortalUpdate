@@ -6,12 +6,14 @@ import { useAuth } from "@/lib/AuthContext";
 import UserAvatar from "@/components/ui/UserAvatar";
 import SettingsModal from "@/components/SettingsModal";
 import FriendsPopup from "@/components/FriendsPopup";
+import NotificationsPopup from "@/components/NotificationsPopup";
 
 export default function MeshMobileNav({ user, activePage }) {
   const { logout } = useAuth();
   const location = useLocation();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [friendsOpen, setFriendsOpen] = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
   const [notifCount, setNotifCount] = useState(0);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
@@ -105,7 +107,7 @@ export default function MeshMobileNav({ user, activePage }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, pointerEvents: 'auto' }}>
 
           {/* Notifications — standalone glassmorphism bubble */}
-          <Link to={createPageUrl("Requests")} style={{ ...glassBubble, position: 'relative' }}>
+          <button onClick={() => setNotifOpen(v => !v)} style={{ ...glassBubble, position: 'relative', border: 'none', cursor: 'pointer' }}>
             <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="rgba(0,0,0,0.6)" strokeWidth="1.8" strokeLinecap="round">
               <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
               <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
@@ -124,7 +126,7 @@ export default function MeshMobileNav({ user, activePage }) {
                 {notifCount > 99 ? '99+' : notifCount}
               </span>
             )}
-          </Link>
+          </button>
 
           {/* Combined bubble: Friends + Records + Profile + Menu */}
           <div style={{
@@ -236,6 +238,12 @@ export default function MeshMobileNav({ user, activePage }) {
       {friendsOpen && (
         <FriendsPopup
           onClose={() => setFriendsOpen(false)}
+          positionOverride={{ top: 76, left: 12, right: 12, width: 'auto' }}
+        />
+      )}
+      {notifOpen && (
+        <NotificationsPopup
+          onClose={() => setNotifOpen(false)}
           positionOverride={{ top: 76, left: 12, right: 12, width: 'auto' }}
         />
       )}
