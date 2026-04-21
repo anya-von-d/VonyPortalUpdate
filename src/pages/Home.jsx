@@ -1480,44 +1480,67 @@ export default function Home() {
 
                 if (upcoming.length === 0) return null;
 
-                const ordinal = (n) => {
-                  const s = ['th', 'st', 'nd', 'rd'];
-                  const v = n % 100;
-                  return n + (s[(v - 20) % 10] || s[v] || s[0]);
+                // Calendar-style date label helpers
+                const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                const tomorrowMidnight = new Date(todayMidnight); tomorrowMidnight.setDate(todayMidnight.getDate() + 1);
+                const getDateLabel = (date) => {
+                  const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+                  if (d.getTime() === todayMidnight.getTime()) return 'Today';
+                  if (d.getTime() === tomorrowMidnight.getTime()) return 'Tomorrow';
+                  return format(date, 'EEE'); // Mon, Tue, etc.
                 };
+                const firstUpcoming = upcoming[0];
+                const daysToNext = differenceInDays(
+                  new Date(firstUpcoming.date.getFullYear(), firstUpcoming.date.getMonth(), firstUpcoming.date.getDate()),
+                  todayMidnight
+                );
+                const nextLabel = daysToNext <= 0 ? 'Today' : daysToNext === 1 ? 'Tomorrow' : `in ${daysToNext} days`;
 
                 return (
                   <div className="home-card-upcoming-payments" style={{ position: 'relative' }}>
                     <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
                     <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, padding: '14px 18px' }}>
-                      <SectionHeader title="Upcoming Payments" />
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginTop: 10 }}>
-                        {upcoming.map(item => {
+                      {/* Header row */}
+                      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 12 }}>
+                        <div>
+                          <div style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>Upcoming Payments</div>
+                          <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 1, fontFamily: "'DM Sans', sans-serif" }}>Next payment {nextLabel}</div>
+                        </div>
+                        {/* Legend */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+                          <div style={{ width: 8, height: 8, borderRadius: 2, background: '#1D5B94' }} />
+                          <div style={{ width: 8, height: 8, borderRadius: 2, background: '#03ACEA' }} />
+                          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#9B9A98" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                        </div>
+                      </div>
+
+                      {/* Event rows */}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+                        {upcoming.map((item, idx) => {
                           const isIncoming = item.direction === 'in';
-                          const signColor = isIncoming ? '#03ACEA' : '#1D5B94';
-                          const dirLabel = isIncoming ? `From ${item.name}` : `To ${item.name}`;
-                          const amtStr = `${isIncoming ? '+' : '-'}${formatMoney(item.amount)}`;
-                          const daysUntil = differenceInDays(item.date, new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()));
-                          const daysLabel = daysUntil <= 0 ? 'TODAY' : daysUntil === 1 ? '1 DAY' : `${daysUntil} DAYS`;
+                          const barColor = isIncoming ? '#03ACEA' : '#1D5B94';
+                          const dateLabel = getDateLabel(item.date);
+                          const dateNum = format(item.date, 'MMM d');
+                          const label = isIncoming ? `${item.name} pays you` : `Pay ${item.name}`;
+                          const amtStr = formatMoney(item.amount);
+                          const showDivider = idx < upcoming.length - 1;
                           return (
-                            <div key={item.id} style={{
-                              background: '#FAFAF8',
-                              border: '1px solid rgba(0,0,0,0.06)',
-                              borderRadius: 10,
-                              padding: '12px 8px 10px',
-                              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
-                              minWidth: 0, textAlign: 'center',
-                            }}>
-                              <UserAvatar name={item.name} src={item.avatar} size={34} radius={17} />
-                              <div style={{ fontSize: 11, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: '100%' }}>
-                                {dirLabel}
+                            <div key={item.id}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '8px 0' }}>
+                                {/* Date column */}
+                                <div style={{ width: 56, flexShrink: 0, textAlign: 'left' }}>
+                                  <div style={{ fontSize: 10, fontWeight: 600, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.2 }}>{dateLabel}</div>
+                                  <div style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.01em', lineHeight: 1.2 }}>{dateNum}</div>
+                                </div>
+                                {/* Colored bar */}
+                                <div style={{ width: 3, height: 34, borderRadius: 2, background: barColor, flexShrink: 0 }} />
+                                {/* Event info */}
+                                <div style={{ flex: 1, minWidth: 0 }}>
+                                  <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{label}</div>
+                                  <div style={{ fontSize: 11, color: barColor, fontWeight: 600, fontFamily: "'DM Sans', sans-serif", marginTop: 1 }}>{amtStr}</div>
+                                </div>
                               </div>
-                              <div style={{ fontSize: 15, fontWeight: 800, color: signColor, letterSpacing: '-0.03em', lineHeight: 1.1 }}>
-                                {amtStr}
-                              </div>
-                              <div style={{ fontSize: 9, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em' }}>
-                                {daysLabel}
-                              </div>
+                              {showDivider && <div style={{ height: 1, background: 'rgba(0,0,0,0.05)', marginLeft: 68 }} />}
                             </div>
                           );
                         })}
