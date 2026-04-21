@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Friendship, PublicProfile } from '@/entities/all';
 import { useAuth } from '@/lib/AuthContext';
-import { Star, Search, X, Send, CheckCircle, UserMinus } from 'lucide-react';
+import { Star, Search, X, Send, CheckCircle, UserMinus, ChevronDown } from 'lucide-react';
 import UserAvatar from '@/components/ui/UserAvatar';
 import confetti from 'canvas-confetti';
+import MoreMenu from '@/components/MoreMenu';
+import BlockConfirmModal from '@/components/BlockConfirmModal';
 
 const TABS = ['Your Friends', 'Find Your Friends', 'Invite'];
 
-export default function FriendsPopup({ onClose, positionOverride, initialTab }) {
+export default function FriendsPopup({ onClose, positionOverride, initialTab, initialRequestsOpen }) {
   const { user: authUser, userProfile } = useAuth();
   const user = userProfile ? { ...userProfile, id: authUser?.id } : null;
 
@@ -15,11 +17,15 @@ export default function FriendsPopup({ onClose, positionOverride, initialTab }) 
   const [friends, setFriends] = useState([]);
   const [sentRequests, setSentRequests] = useState([]);
   const [receivedRequests, setReceivedRequests] = useState([]);
+  const [allFriendshipsRaw, setAllFriendshipsRaw] = useState([]);
+  const [blockedIds, setBlockedIds] = useState(new Set());
   const [profiles, setProfiles] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [processingId, setProcessingId] = useState(null);
   const [inviteLinkCopied, setInviteLinkCopied] = useState(false);
+  const [requestsOpen, setRequestsOpen] = useState(!!initialRequestsOpen);
+  const [blockTarget, setBlockTarget] = useState(null); // { userId, name, requestId? }
 
   const popupRef = useRef(null);
 
@@ -46,19 +52,54 @@ export default function FriendsPopup({ onClose, positionOverride, initialTab }) 
         Friendship.list().catch(() => []),
         PublicProfile.list().catch(() => []),
       ]);
+      setAllFriendshipsRaw(allFriendships);
       setProfiles(allProfiles);
+
+      // Blocked relations in either direction → hide those users everywhere
+      const blocked = allFriendships.filter(f =>
+        f.status === 'blocked' && (f.user_id === user.id || f.friend_id === user.id)
+      );
+      const bids = new Set(blocked.map(r => r.user_id === user.id ? r.friend_id : r.user_id));
+      setBlockedIds(bids);
+
       const acceptedFriends = allFriendships.filter(f =>
         f.status === 'accepted' && (f.user_id === user.id || f.friend_id === user.id)
-      );
+      ).filter(f => {
+        const other = f.user_id === user.id ? f.friend_id : f.user_id;
+        return !bids.has(other);
+      });
       setFriends(acceptedFriends);
-      const pending = allFriendships.filter(f => f.status === 'pending' && f.user_id === user.id);
+      const pending = allFriendships.filter(f => f.status === 'pending' && f.user_id === user.id && !bids.has(f.friend_id));
       setSentRequests(pending);
-      const received = allFriendships.filter(f => f.status === 'pending' && f.friend_id === user.id);
+      const received = allFriendships.filter(f => f.status === 'pending' && f.friend_id === user.id && !bids.has(f.user_id));
       setReceivedRequests(received);
     } catch (error) {
       console.error('Error loading friends data:', error);
     }
     setIsLoading(false);
+  };
+
+  // Block a user. Removes any pending/accepted row, then inserts status='blocked' with me as blocker.
+  const performBlock = async (targetUserId) => {
+    if (!user?.id) return;
+    const existing = allFriendshipsRaw.filter(f =>
+      (f.user_id === user.id && f.friend_id === targetUserId) ||
+      (f.user_id === targetUserId && f.friend_id === user.id)
+    );
+    try {
+      for (const row of existing) {
+        try { await Friendship.delete(row.id); } catch (_) { /* ignore */ }
+      }
+      await Friendship.create({
+        user_id: user.id,
+        friend_id: targetUserId,
+        status: 'blocked',
+        is_starred: false,
+      });
+      await loadFriendsData();
+    } catch (error) {
+      console.error('Error blocking user:', error);
+    }
   };
 
   const getFriendProfile = (friendship) => {
@@ -84,6 +125,7 @@ export default function FriendsPopup({ onClose, positionOverride, initialTab }) 
     const query = searchQuery.toLowerCase();
     return profiles.filter(profile => {
       if (profile.user_id === user?.id) return false;
+      if (blockedIds.has(profile.user_id)) return false;
       const isFriend = friends.some(f => f.user_id === profile.user_id || f.friend_id === profile.user_id);
       if (isFriend) return false;
       const usernameMatch = profile.username?.toLowerCase().includes(query);
@@ -202,28 +244,91 @@ export default function FriendsPopup({ onClose, positionOverride, initialTab }) 
             <div style={{ width: 24, height: 24, border: '2px solid #03ACEA', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
           </div>
         ) : activeTab === 'Your Friends' ? (
-          sortedFriends.length === 0 ? (
-            <div style={{ fontSize: 12, color: '#9B9A98', textAlign: 'center', padding: '20px 0' }}>No friends yet — invite some!</div>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              {sortedFriends.map(friendship => {
-                const friendProfile = getFriendProfile(friendship);
-                if (!friendProfile) return null;
-                return (
-                  <div key={friendship.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0' }}>
-                    <UserAvatar name={friendProfile.full_name || friendProfile.username} src={friendProfile.profile_picture_url || friendProfile.avatar_url} size={30} />
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{friendProfile.full_name || friendProfile.username}</div>
-                      <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>@{friendProfile.username}</div>
-                    </div>
-                    <button onClick={() => handleToggleStar(friendship)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 3, color: friendship.is_starred ? '#F5A623' : '#C7C6C4', flexShrink: 0 }}>
-                      <Star size={14} fill={friendship.is_starred ? 'currentColor' : 'none'} />
-                    </button>
+          <div>
+            {/* Collapsible Friend Requests header — only when there are pending received requests */}
+            {receivedRequests.length > 0 && (
+              <div style={{ marginBottom: 4 }}>
+                <button
+                  type="button"
+                  onClick={() => setRequestsOpen(v => !v)}
+                  style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                    width: '100%', padding: '8px 0', border: 'none', background: 'transparent',
+                    cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
+                  }}
+                >
+                  <span style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.01em' }}>
+                    Friend Request{receivedRequests.length > 1 ? 's' : ''}
+                    <span style={{ fontWeight: 600, color: '#03ACEA', marginLeft: 6 }}>{receivedRequests.length}</span>
+                  </span>
+                  <ChevronDown
+                    size={14}
+                    style={{ color: '#787776', transition: 'transform 0.15s', transform: requestsOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
+                  />
+                </button>
+                {requestsOpen && (
+                  <div style={{ padding: '4px 0 8px', borderBottom: '1px solid rgba(0,0,0,0.06)', marginBottom: 6 }}>
+                    {receivedRequests.map(request => {
+                      const profile = profiles.find(p => p.user_id === request.user_id);
+                      if (!profile) return null;
+                      const displayName = profile.full_name || profile.username;
+                      return (
+                        <div key={request.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '7px 0' }}>
+                          <UserAvatar name={displayName} src={profile.profile_picture_url || profile.avatar_url} size={30} />
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{displayName}</div>
+                            <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>@{profile.username}</div>
+                          </div>
+                          <div style={{ display: 'flex', gap: 4, flexShrink: 0 }}>
+                            <button
+                              onClick={() => handleAcceptRequestFromSearch(request.id)}
+                              disabled={processingId === request.id}
+                              style={{ padding: '5px 10px', borderRadius: 7, border: 'none', background: 'rgba(3,172,234,0.12)', fontSize: 11, fontWeight: 600, color: '#03ACEA', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", opacity: processingId === request.id ? 0.5 : 1 }}
+                            >Accept</button>
+                            <button
+                              onClick={() => handleCancelRequest(request.id)}
+                              disabled={processingId === request.id}
+                              style={{ padding: '5px 10px', borderRadius: 7, border: 'none', background: 'rgba(232,114,110,0.08)', fontSize: 11, fontWeight: 600, color: '#E8726E', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", opacity: processingId === request.id ? 0.5 : 1 }}
+                            >Reject</button>
+                            <MoreMenu items={[{ label: 'Block', danger: true, onClick: () => setBlockTarget({ userId: profile.user_id, name: displayName, requestId: request.id }) }]} />
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
-                );
-              })}
-            </div>
-          )
+                )}
+              </div>
+            )}
+
+            {/* Your Friends list */}
+            {sortedFriends.length === 0 ? (
+              <div style={{ fontSize: 12, color: '#9B9A98', textAlign: 'center', padding: '20px 0' }}>No friends yet — invite some!</div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                {sortedFriends.map(friendship => {
+                  const friendProfile = getFriendProfile(friendship);
+                  if (!friendProfile) return null;
+                  const displayName = friendProfile.full_name || friendProfile.username;
+                  return (
+                    <div key={friendship.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0' }}>
+                      <UserAvatar name={displayName} src={friendProfile.profile_picture_url || friendProfile.avatar_url} size={30} />
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{displayName}</div>
+                        <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>@{friendProfile.username}</div>
+                      </div>
+                      <button onClick={() => handleToggleStar(friendship)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 3, color: friendship.is_starred ? '#F5A623' : '#C7C6C4', flexShrink: 0 }}>
+                        <Star size={14} fill={friendship.is_starred ? 'currentColor' : 'none'} />
+                      </button>
+                      <MoreMenu items={[
+                        { label: 'Unfriend', onClick: () => handleCancelRequest(friendship.id) },
+                        { label: 'Block', danger: true, onClick: () => setBlockTarget({ userId: friendProfile.user_id, name: displayName }) },
+                      ]} />
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         ) : activeTab === 'Find Your Friends' ? (
           <div>
             {/* Search input */}
@@ -253,11 +358,12 @@ export default function FriendsPopup({ onClose, positionOverride, initialTab }) 
                   {allSearchResults.map(profile => {
                     const receivedRequest = getReceivedRequestFrom(profile.user_id);
                     const sentRequest = getSentRequestTo(profile.user_id);
+                    const displayName = profile.full_name || profile.username;
                     return (
                       <div key={profile.user_id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 0' }}>
-                        <UserAvatar name={profile.full_name || profile.username} src={profile.profile_picture_url || profile.avatar_url} size={30} />
+                        <UserAvatar name={displayName} src={profile.profile_picture_url || profile.avatar_url} size={30} />
                         <div style={{ flex: 1, minWidth: 0 }}>
-                          <p style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{profile.full_name || profile.username}</p>
+                          <p style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{displayName}</p>
                           <p style={{ fontSize: 11, color: '#9B9A98', margin: '2px 0 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>@{profile.username}</p>
                         </div>
                         {receivedRequest ? (
@@ -273,6 +379,7 @@ export default function FriendsPopup({ onClose, positionOverride, initialTab }) 
                             <Send size={12} /> Add
                           </button>
                         )}
+                        <MoreMenu items={[{ label: 'Block', danger: true, onClick: () => setBlockTarget({ userId: profile.user_id, name: displayName }) }]} />
                       </div>
                     );
                   })}
@@ -284,16 +391,18 @@ export default function FriendsPopup({ onClose, positionOverride, initialTab }) 
                 {receivedRequests.map(request => {
                   const profile = profiles.find(p => p.user_id === request.user_id);
                   if (!profile) return null;
+                  const displayName = profile.full_name || profile.username;
                   return (
                     <div key={request.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 0' }}>
-                      <UserAvatar name={profile.full_name || profile.username} src={profile.profile_picture_url || profile.avatar_url} size={30} />
+                      <UserAvatar name={displayName} src={profile.profile_picture_url || profile.avatar_url} size={30} />
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <p style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{profile.full_name || profile.username}</p>
+                        <p style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{displayName}</p>
                         <p style={{ fontSize: 11, color: '#9B9A98', margin: '2px 0 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>@{profile.username}</p>
                       </div>
-                      <div style={{ display: 'flex', gap: 5 }}>
+                      <div style={{ display: 'flex', gap: 5, alignItems: 'center' }}>
                         <button onClick={() => handleAcceptRequestFromSearch(request.id)} disabled={processingId === request.id} style={{ padding: '5px 10px', borderRadius: 7, border: 'none', background: 'rgba(3,172,234,0.12)', fontSize: 11, fontWeight: 600, color: '#03ACEA', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", opacity: processingId === request.id ? 0.5 : 1 }}>Confirm</button>
                         <button onClick={() => handleCancelRequest(request.id)} disabled={processingId === request.id} style={{ padding: '5px 10px', borderRadius: 7, border: 'none', background: 'rgba(232,114,110,0.08)', fontSize: 11, fontWeight: 600, color: '#E8726E', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", opacity: processingId === request.id ? 0.5 : 1 }}>Delete</button>
+                        <MoreMenu items={[{ label: 'Block', danger: true, onClick: () => setBlockTarget({ userId: profile.user_id, name: displayName, requestId: request.id }) }]} />
                       </div>
                     </div>
                   );
@@ -344,6 +453,20 @@ export default function FriendsPopup({ onClose, positionOverride, initialTab }) 
       </div>
 
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+
+      <BlockConfirmModal
+        open={!!blockTarget}
+        name={blockTarget?.name}
+        isWorking={processingId === 'block'}
+        onBack={() => setBlockTarget(null)}
+        onConfirm={async () => {
+          if (!blockTarget) return;
+          setProcessingId('block');
+          await performBlock(blockTarget.userId);
+          setProcessingId(null);
+          setBlockTarget(null);
+        }}
+      />
     </div>
   );
 }

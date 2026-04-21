@@ -24,6 +24,8 @@ import MeshMobileNav from "@/components/MeshMobileNav";
 import UserAvatar from "@/components/ui/UserAvatar";
 import SettingsModal from "@/components/SettingsModal";
 import DesktopSidebar from '../components/DesktopSidebar';
+import MoreMenu from "@/components/MoreMenu";
+import BlockConfirmModal from "@/components/BlockConfirmModal";
 
 export default function Friends() {
   const { user: authUser, userProfile, logout } = useAuth();
@@ -41,6 +43,9 @@ export default function Friends() {
   const [inviteLinkCopied, setInviteLinkCopied] = useState(false);
   const [inviteOpen, setInviteOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [allFriendshipsRaw, setAllFriendshipsRaw] = useState([]);
+  const [blockedIds, setBlockedIds] = useState(new Set());
+  const [blockTarget, setBlockTarget] = useState(null);
   const inviteRef = useRef(null);
 
   useEffect(() => {
@@ -73,21 +78,31 @@ export default function Friends() {
         PublicProfile.list().catch(() => [])
       ]);
 
+      setAllFriendshipsRaw(allFriendships);
       setProfiles(allProfiles);
+
+      const blocked = allFriendships.filter(f =>
+        f.status === 'blocked' && (f.user_id === user.id || f.friend_id === user.id)
+      );
+      const bids = new Set(blocked.map(r => r.user_id === user.id ? r.friend_id : r.user_id));
+      setBlockedIds(bids);
 
       const acceptedFriends = allFriendships.filter(f =>
         f.status === 'accepted' &&
         (f.user_id === user.id || f.friend_id === user.id)
-      );
+      ).filter(f => {
+        const other = f.user_id === user.id ? f.friend_id : f.user_id;
+        return !bids.has(other);
+      });
       setFriends(acceptedFriends);
 
       const pending = allFriendships.filter(f =>
-        f.status === 'pending' && f.user_id === user.id
+        f.status === 'pending' && f.user_id === user.id && !bids.has(f.friend_id)
       );
       setSentRequests(pending);
 
       const received = allFriendships.filter(f =>
-        f.status === 'pending' && f.friend_id === user.id
+        f.status === 'pending' && f.friend_id === user.id && !bids.has(f.user_id)
       );
       setReceivedRequests(received);
 
@@ -95,6 +110,28 @@ export default function Friends() {
       console.error("Error loading friends data:", error);
     }
     setIsLoading(false);
+  };
+
+  const performBlock = async (targetUserId) => {
+    if (!user?.id) return;
+    const existing = allFriendshipsRaw.filter(f =>
+      (f.user_id === user.id && f.friend_id === targetUserId) ||
+      (f.user_id === targetUserId && f.friend_id === user.id)
+    );
+    try {
+      for (const row of existing) {
+        try { await Friendship.delete(row.id); } catch (_) { /* ignore */ }
+      }
+      await Friendship.create({
+        user_id: user.id,
+        friend_id: targetUserId,
+        status: 'blocked',
+        is_starred: false,
+      });
+      await loadFriendsData();
+    } catch (error) {
+      console.error("Error blocking user:", error);
+    }
   };
 
   const searchUsers = () => {
@@ -106,6 +143,7 @@ export default function Friends() {
     const query = searchQuery.toLowerCase();
     const results = profiles.filter(profile => {
       if (profile.user_id === user?.id) return false;
+      if (blockedIds.has(profile.user_id)) return false;
 
       const isFriend = friends.some(f =>
         f.user_id === profile.user_id || f.friend_id === profile.user_id
@@ -239,6 +277,7 @@ export default function Friends() {
     const query = searchQuery.toLowerCase();
     const results = profiles.filter(profile => {
       if (profile.user_id === user?.id) return false;
+      if (blockedIds.has(profile.user_id)) return false;
 
       const isFriend = friends.some(f =>
         f.user_id === profile.user_id || f.friend_id === profile.user_id
@@ -372,6 +411,12 @@ export default function Friends() {
                   <button onClick={() => handleToggleStar(friendship)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 3, color: friendship.is_starred ? '#F5A623' : '#C7C6C4', flexShrink: 0 }}>
                     <Star size={14} fill={friendship.is_starred ? 'currentColor' : 'none'} />
                   </button>
+                  <MoreMenu
+                    items={[
+                      { label: 'Unfriend', onClick: () => handleRemoveFriend(friendship.id) },
+                      { label: 'Block', danger: true, onClick: () => setBlockTarget({ userId: friendProfile.user_id, name: friendProfile.full_name || friendProfile.username }) },
+                    ]}
+                  />
                 </div>
               );
             })}
@@ -428,6 +473,11 @@ export default function Friends() {
                             <Send size={13} /> Add
                           </button>
                         )}
+                        <MoreMenu
+                          items={[
+                            { label: 'Block', danger: true, onClick: () => setBlockTarget({ userId: profile.user_id, name: profile.full_name || profile.username }) },
+                          ]}
+                        />
                       </div>
                     );
                   })}
@@ -451,9 +501,14 @@ export default function Friends() {
                         <p style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', margin: 0 }}>{profile.full_name || profile.username}</p>
                         <p style={{ fontSize: 11, color: '#9B9A98', margin: '1px 0 0' }}>@{profile.username}</p>
                       </div>
-                      <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
+                      <div style={{ display: 'flex', gap: 6, flexShrink: 0, alignItems: 'center' }}>
                         <button onClick={() => handleAcceptRequestFromSearch(request.id)} disabled={processingId === request.id} style={{ padding: '6px 14px', borderRadius: 8, border: 'none', background: 'rgba(3,172,234,0.12)', fontSize: 11, fontWeight: 600, color: '#03ACEA', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", opacity: processingId === request.id ? 0.5 : 1 }}>Confirm</button>
                         <button onClick={() => handleCancelRequest(request.id)} disabled={processingId === request.id} style={{ padding: '6px 14px', borderRadius: 8, border: 'none', background: 'rgba(232,114,110,0.08)', fontSize: 11, fontWeight: 600, color: '#E8726E', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", opacity: processingId === request.id ? 0.5 : 1 }}>Delete</button>
+                        <MoreMenu
+                          items={[
+                            { label: 'Block', danger: true, onClick: () => setBlockTarget({ userId: profile.user_id, name: profile.full_name || profile.username }) },
+                          ]}
+                        />
                       </div>
                     </div>
                   );
@@ -471,6 +526,16 @@ export default function Friends() {
     </div>
 
     <SettingsModal isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} initialTab="invite" />
+    <BlockConfirmModal
+      open={!!blockTarget}
+      name={blockTarget?.name}
+      onBack={() => setBlockTarget(null)}
+      onConfirm={async () => {
+        if (!blockTarget) return;
+        await performBlock(blockTarget.userId);
+        setBlockTarget(null);
+      }}
+    />
     </>
   );
 }

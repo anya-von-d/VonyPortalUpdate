@@ -15,6 +15,8 @@ import { CardEntrance, CountUp } from "@/components/ui/animations";
 import DesktopSidebar from '../components/DesktopSidebar';
 import MeshMobileNav from "@/components/MeshMobileNav";
 import UserAvatar from "@/components/ui/UserAvatar";
+import FriendsPopup from "@/components/FriendsPopup";
+import { createPortal } from 'react-dom';
 
 // SVG star field data — exact positions from mockup
 const STAR_CIRCLES = [
@@ -399,6 +401,9 @@ export default function Home() {
   const activeLoansRef = useRef(null);
   const [activeAnimKey, setActiveAnimKey] = useState(0);
   const [progressTab, setProgressTab] = useState('lending'); // 'lending' | 'borrowing'
+  const [friendsPopupOpen, setFriendsPopupOpen] = useState(false);
+  const [confirmPaymentTarget, setConfirmPaymentTarget] = useState(null); // { payment, loan, profile }
+  const [confirmWorking, setConfirmWorking] = useState(false);
   const navigate = useNavigate();
   // Tasks-for-the-Week: checked IDs keyed by ISO date of week start (Monday).
   const weekStartKey = (() => {
@@ -500,7 +505,7 @@ export default function Home() {
     try {
       const [allLoans, recentPayments, allProfiles, allFriendships] = await Promise.all([
         safeEntityCall(() => Loan.list('-created_at')),
-        safeEntityCall(() => Payment.list('-created_at', 10)),
+        safeEntityCall(() => Payment.list('-created_at')),
         safeEntityCall(() => PublicProfile.list()),
         safeEntityCall(() => Friendship.list()),
       ]);
@@ -527,6 +532,45 @@ export default function Home() {
     try { await navigateToLogin(); }
     catch (error) { console.error("Login failed:", error); }
     finally { setTimeout(() => setIsAuthenticating(false), 3000); }
+  };
+
+  const handleConfirmPayment = async () => {
+    if (!confirmPaymentTarget || confirmWorking) return;
+    setConfirmWorking(true);
+    try {
+      const { payment, loan } = confirmPaymentTarget;
+      await Payment.update(payment.id, { status: 'completed' });
+      if (loan) {
+        const newPaid = (loan.amount_paid || 0) + (payment.amount || 0);
+        const remaining = (loan.total_amount || loan.amount || 0) - newPaid;
+        const loanUpdate = { amount_paid: newPaid };
+        if (remaining <= 0) {
+          loanUpdate.status = 'completed';
+          loanUpdate.next_payment_date = null;
+        } else {
+          loanUpdate.next_payment_date = format(addMonths(new Date(), 1), 'yyyy-MM-dd');
+        }
+        await Loan.update(loan.id, loanUpdate);
+      }
+      setConfirmPaymentTarget(null);
+      await loadData();
+    } catch (e) {
+      console.error('Error confirming payment:', e);
+    }
+    setConfirmWorking(false);
+  };
+
+  const handleRejectPayment = async () => {
+    if (!confirmPaymentTarget || confirmWorking) return;
+    setConfirmWorking(true);
+    try {
+      await Payment.update(confirmPaymentTarget.payment.id, { status: 'denied' });
+      setConfirmPaymentTarget(null);
+      await loadData();
+    } catch (e) {
+      console.error('Error rejecting payment:', e);
+    }
+    setConfirmWorking(false);
   };
 
   // Loading state
@@ -1646,7 +1690,7 @@ export default function Home() {
 
             {/* Col 2: Overview + How April is Going */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-              {/* What Needs Attention */}
+              {/* Inbox */}
               {(() => {
                 const attentionItems = [];
                 if (overdueYouOwe.length === 1) {
@@ -1664,32 +1708,80 @@ export default function Home() {
                   const dText = s.days === 0 ? 'today' : `in ${s.days} day${s.days === 1 ? '' : 's'}`;
                   attentionItems.push({ type: 'due', text: `You have a payment due ${dText}` });
                 }
-                const items = attentionItems.slice(0, 4);
+                // Pending loan offers (lender sent you an offer)
+                pendingOffers.forEach(loan => {
+                  const lenderProf = safeAllProfiles.find(p => p.user_id === loan.lender_id);
+                  const lName = lenderProf?.full_name?.split(' ')[0] || lenderProf?.username || 'Someone';
+                  attentionItems.push({ type: 'loan_offer', text: `${lName} sent a loan offer`, loanId: loan.id });
+                });
+                // Friend requests
+                friendRequestsInbox.forEach(req => {
+                  const prof = safeAllProfiles.find(p => p.user_id === req.user_id);
+                  const fName = prof?.full_name?.split(' ')[0] || prof?.username || 'Someone';
+                  attentionItems.push({ type: 'friend_request', text: `${fName} sent a friend request` });
+                });
+                // Payments waiting for your confirmation
+                paymentsToConfirm.forEach(payment => {
+                  const loan = myLoans.find(l => l.id === payment.loan_id);
+                  const recordedByProf = safeAllProfiles.find(p => p.user_id === payment.recorded_by);
+                  const rName = recordedByProf?.full_name?.split(' ')[0] || recordedByProf?.username || 'Someone';
+                  attentionItems.push({ type: 'payment_confirm', text: `Confirm ${rName}'s payment`, payment, loan, profile: recordedByProf });
+                });
+                const items = attentionItems.slice(0, 6);
 
                 const AIcon = ({ type }) => {
-                  const red = '#E8726E', blue = '#03ACEA';
-                  const c = type === 'overdue' ? red : blue;
-                  if (type === 'overdue') return <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{flexShrink:0,marginTop:2}}><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>;
-                  if (type === 'overdue_incoming') return <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{flexShrink:0,marginTop:2}}><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>;
-                  if (type === 'due') return <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{flexShrink:0,marginTop:2}}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>;
-                  return <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{flexShrink:0,marginTop:2}}><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>;
+                  const red = '#E8726E', blue = '#03ACEA', green = '#16A34A', amber = '#D97706';
+                  if (type === 'overdue') return <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={red} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{flexShrink:0,marginTop:2}}><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>;
+                  if (type === 'overdue_incoming') return <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={amber} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{flexShrink:0,marginTop:2}}><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>;
+                  if (type === 'due') return <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={blue} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{flexShrink:0,marginTop:2}}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>;
+                  if (type === 'loan_offer') return <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={blue} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{flexShrink:0,marginTop:2}}><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>;
+                  if (type === 'friend_request') return <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={blue} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{flexShrink:0,marginTop:2}}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>;
+                  if (type === 'payment_confirm') return <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={green} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{flexShrink:0,marginTop:2}}><polyline points="20 6 9 17 4 12"/></svg>;
+                  return <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={blue} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{flexShrink:0,marginTop:2}}><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>;
                 };
 
                 return (
                   <div className="home-card-attention" style={{ position: 'relative' }}>
                     <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
                     <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, padding: '14px 18px' }}>
-                      <SectionHeader title="What Needs Attention" />
+                      <SectionHeader title="Inbox" />
                       {items.length === 0 ? (
-                        <p style={{ fontSize: 12, color: '#C5C3C0', margin: 0, lineHeight: 1.45 }}>All clear, nothing needs attention right now 🎉</p>
+                        <p style={{ fontSize: 12, color: '#C5C3C0', margin: 0, lineHeight: 1.45 }}>All clear, your inbox is empty 🎉</p>
                       ) : (
                         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                          {items.map((item, i) => (
-                            <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, padding: '3px 0' }}>
-                              <AIcon type={item.type} />
-                              <span style={{ fontSize: 12, fontWeight: 500, color: '#787776', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.4 }}>{item.text}</span>
-                            </div>
-                          ))}
+                          {items.map((item, i) => {
+                            const arrowAction = (() => {
+                              if (item.type === 'overdue' || item.type === 'due') return () => navigate(createPageUrl('RecordPayment'));
+                              if (item.type === 'loan_offer') return () => navigate(createPageUrl('Requests'));
+                              if (item.type === 'friend_request') return () => setFriendsPopupOpen(true);
+                              if (item.type === 'payment_confirm') return () => setConfirmPaymentTarget({ payment: item.payment, loan: item.loan, profile: item.profile });
+                              return null;
+                            })();
+                            return (
+                              <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, padding: '3px 0' }}>
+                                <AIcon type={item.type} />
+                                <span style={{ flex: 1, fontSize: 12, fontWeight: 500, color: '#787776', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.4 }}>{item.text}</span>
+                                {arrowAction && (
+                                  <button
+                                    type="button"
+                                    onClick={arrowAction}
+                                    aria-label="Open"
+                                    style={{
+                                      flexShrink: 0, background: 'transparent', border: 'none', padding: 0,
+                                      cursor: 'pointer', display: 'inline-flex', alignItems: 'center',
+                                      color: '#9B9A98', marginTop: 1,
+                                    }}
+                                    onMouseEnter={e => e.currentTarget.style.color = '#03ACEA'}
+                                    onMouseLeave={e => e.currentTarget.style.color = '#9B9A98'}
+                                  >
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                      <polyline points="9 18 15 12 9 6" />
+                                    </svg>
+                                  </button>
+                                )}
+                              </div>
+                            );
+                          })}
                         </div>
                       )}
                     </div>
@@ -1888,5 +1980,128 @@ export default function Home() {
       </div>
 
     </div>
+
+    {/* Friends popup — opened from Inbox "friend request" row */}
+    {friendsPopupOpen && (
+      <FriendsPopup
+        onClose={() => setFriendsPopupOpen(false)}
+        initialRequestsOpen={true}
+        positionOverride={{ top: '50%', left: '50%', right: 'auto', transform: 'translate(-50%, -50%)' }}
+      />
+    )}
+
+    {/* Payment confirm modal */}
+    {confirmPaymentTarget && createPortal(
+      <div
+        onClick={() => { if (!confirmWorking) setConfirmPaymentTarget(null); }}
+        style={{
+          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.28)',
+          backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)',
+          zIndex: 999999, display: 'flex', alignItems: 'center', justifyContent: 'center',
+          padding: 20, fontFamily: "'DM Sans', sans-serif",
+        }}
+      >
+        <div
+          onClick={e => e.stopPropagation()}
+          style={{
+            background: 'white', borderRadius: 16, maxWidth: 400, width: '100%',
+            boxShadow: '0 24px 64px rgba(0,0,0,0.18), 0 4px 16px rgba(0,0,0,0.08)',
+            padding: '24px 24px 20px', position: 'relative',
+          }}
+        >
+          {/* Close */}
+          <button
+            onClick={() => { if (!confirmWorking) setConfirmPaymentTarget(null); }}
+            style={{
+              position: 'absolute', top: 12, right: 12, width: 28, height: 28, borderRadius: 8,
+              background: 'rgba(0,0,0,0.05)', border: 'none', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#787776',
+            }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+
+          {/* Header */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 18 }}>
+            <UserAvatar
+              name={confirmPaymentTarget.profile?.full_name || confirmPaymentTarget.profile?.username}
+              src={confirmPaymentTarget.profile?.profile_picture_url || confirmPaymentTarget.profile?.avatar_url}
+              size={40}
+            />
+            <div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.01em' }}>
+                {confirmPaymentTarget.profile?.full_name || confirmPaymentTarget.profile?.username || 'Someone'}'s Payment
+              </div>
+              <div style={{ fontSize: 11, color: '#9B9A98' }}>Waiting for your confirmation</div>
+            </div>
+          </div>
+
+          {/* Details */}
+          <div style={{ background: '#fafafa', borderRadius: 10, border: '1px solid rgba(0,0,0,0.07)', padding: '12px 14px', marginBottom: 18, display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontSize: 11, color: '#9B9A98', fontWeight: 500 }}>Amount</span>
+              <span style={{ fontSize: 14, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em' }}>{formatMoney(confirmPaymentTarget.payment?.amount || 0)}</span>
+            </div>
+            {confirmPaymentTarget.loan && (
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: 11, color: '#9B9A98', fontWeight: 500 }}>Loan</span>
+                <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918' }}>
+                  {formatMoney(confirmPaymentTarget.loan.amount || 0)}{confirmPaymentTarget.loan.purpose ? ` · ${confirmPaymentTarget.loan.purpose}` : ''}
+                </span>
+              </div>
+            )}
+            {confirmPaymentTarget.payment?.payment_date && (
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: 11, color: '#9B9A98', fontWeight: 500 }}>Date</span>
+                <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918' }}>
+                  {format(new Date(confirmPaymentTarget.payment.payment_date), 'MMM d, yyyy')}
+                </span>
+              </div>
+            )}
+            {confirmPaymentTarget.payment?.payment_method && (
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: 11, color: '#9B9A98', fontWeight: 500 }}>Method</span>
+                <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', textTransform: 'capitalize' }}>{confirmPaymentTarget.payment.payment_method}</span>
+              </div>
+            )}
+            {confirmPaymentTarget.payment?.notes && (
+              <div>
+                <div style={{ fontSize: 11, color: '#9B9A98', fontWeight: 500, marginBottom: 3 }}>Notes</div>
+                <div style={{ fontSize: 12, color: '#787776', lineHeight: 1.45 }}>{confirmPaymentTarget.payment.notes}</div>
+              </div>
+            )}
+          </div>
+
+          {/* Actions */}
+          <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+            <button
+              onClick={handleRejectPayment}
+              disabled={confirmWorking}
+              style={{
+                padding: '8px 16px', borderRadius: 9, border: '1px solid rgba(0,0,0,0.10)',
+                background: 'white', fontSize: 12, fontWeight: 600, color: '#E8726E',
+                cursor: confirmWorking ? 'default' : 'pointer', fontFamily: "'DM Sans', sans-serif",
+                opacity: confirmWorking ? 0.6 : 1,
+              }}
+            >
+              Reject
+            </button>
+            <button
+              onClick={handleConfirmPayment}
+              disabled={confirmWorking}
+              style={{
+                padding: '8px 16px', borderRadius: 9, border: 'none',
+                background: '#16A34A', fontSize: 12, fontWeight: 600, color: 'white',
+                cursor: confirmWorking ? 'default' : 'pointer', fontFamily: "'DM Sans', sans-serif",
+                opacity: confirmWorking ? 0.6 : 1,
+              }}
+            >
+              {confirmWorking ? 'Confirming…' : 'Confirm'}
+            </button>
+          </div>
+        </div>
+      </div>,
+      document.body
+    )}
   );
 }

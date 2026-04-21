@@ -234,6 +234,14 @@ export default function RecordPayment() {
     }).sort((a, b) => a.label.localeCompare(b.label))];
   })();
 
+  // Compute days-until-due for a loan (negative = overdue)
+  const getLoanDueDays = (loan) => {
+    if (!loan.next_payment_date) return null;
+    const today = new Date(); today.setHours(0,0,0,0);
+    const due = new Date(loan.next_payment_date); due.setHours(0,0,0,0);
+    return Math.ceil((due - today) / 86400000);
+  };
+
   const filteredLoans = loans.filter(loan => {
     if (roleFilter === 'lender' && loan.lender_id !== user?.id) return false;
     if (roleFilter === 'borrower' && loan.borrower_id !== user?.id) return false;
@@ -242,6 +250,14 @@ export default function RecordPayment() {
       if (otherId !== friendFilter) return false;
     }
     return true;
+  }).sort((a, b) => {
+    // Overdue first (most overdue at top), then soonest-due, then no-date loans
+    const da = getLoanDueDays(a);
+    const db = getLoanDueDays(b);
+    if (da === null && db === null) return 0;
+    if (da === null) return 1;
+    if (db === null) return -1;
+    return da - db;
   });
 
   const hasAnyFilter = roleFilter !== 'all' || friendFilter !== 'all';
@@ -544,6 +560,22 @@ export default function RecordPayment() {
                       const isLender = isUserLender(loan);
                       const firstName = other.full_name?.split(' ')[0] || other.username;
                       const loanAmt = (loan.amount || 0).toLocaleString();
+
+                      // Status badge — matches Home "Your Lending/Borrowing" style
+                      const days = getLoanDueDays(loan);
+                      let statusLabel = null, statusColor = '#03ACEA', statusBg = 'rgba(3,172,234,0.10)';
+                      if (days !== null) {
+                        if (days < 0) {
+                          statusLabel = `Overdue`;
+                          statusColor = '#E8726E';
+                          statusBg = 'rgba(232,114,110,0.08)';
+                        } else if (days === 0) {
+                          statusLabel = 'Due today';
+                        } else {
+                          statusLabel = `Due in ${days} day${days === 1 ? '' : 's'}`;
+                        }
+                      }
+
                       return (
                         <button key={loan.id} onClick={() => handleSelectLoan(loan)} style={{
                           display: 'block', width: '100%', textAlign: 'left', padding: '10px 0',
@@ -575,6 +607,14 @@ export default function RecordPayment() {
                                 {isLender ? `You lent ${firstName} $${loanAmt}` : `${firstName} lent you $${loanAmt}`}
                               </p>
                             </div>
+                            {statusLabel && (
+                              <span style={{
+                                flexShrink: 0, fontSize: 10, fontWeight: 700,
+                                color: statusColor, background: statusBg,
+                                borderRadius: 5, padding: '2px 6px', lineHeight: 1.2,
+                                fontFamily: "'DM Sans', sans-serif",
+                              }}>{statusLabel}</span>
+                            )}
                           </div>
                         </button>
                       );

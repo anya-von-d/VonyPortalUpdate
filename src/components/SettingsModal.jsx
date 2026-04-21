@@ -5,6 +5,7 @@ import { X, LogOut } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import UserAvatar from './ui/UserAvatar';
+import { Friendship, PublicProfile } from '@/entities/all';
 
 const PORTAL_URL = 'https://www.vony-lending.com';
 const INVITE_MSG = `I think you'll get a lot of value from Vony and wanted to invite you to sign up. Here's the link to get started 🙂 ${PORTAL_URL}`;
@@ -99,6 +100,7 @@ const NAV_GROUPS = [
     { id: 'general',       label: 'General',         icon: Icons.general },
     { id: 'notifications', label: 'Notifications',   icon: Icons.notifications },
     { id: 'invite',        label: 'Invite a Friend', icon: Icons.invite },
+    { id: 'blocked',       label: 'Blocked',         icon: Icons.lock },
   ],
   [
     { id: 'helpsupport',   label: 'Help & Support',  icon: Icons.help },
@@ -375,6 +377,99 @@ function ComingSoonTab() {
   );
 }
 
+function BlockedTab({ user }) {
+  const [rows, setRows] = useState([]);
+  const [profiles, setProfiles] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [busyId, setBusyId] = useState(null);
+
+  const load = async () => {
+    if (!user?.id) return;
+    setLoading(true);
+    try {
+      const [allFriendships, allProfiles] = await Promise.all([
+        Friendship.list().catch(() => []),
+        PublicProfile.list().catch(() => []),
+      ]);
+      const blocked = allFriendships.filter(f =>
+        f.status === 'blocked' && f.user_id === user.id
+      );
+      setRows(blocked);
+      setProfiles(allProfiles);
+    } catch (e) {
+      console.error('Error loading blocked list:', e);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => { load(); }, [user?.id]);
+
+  const handleUnblock = async (row) => {
+    if (busyId) return;
+    setBusyId(row.id);
+    try {
+      await Friendship.delete(row.id);
+      await load();
+    } catch (e) {
+      console.error('Error unblocking:', e);
+    }
+    setBusyId(null);
+  };
+
+  const getProfile = (uid) => profiles.find(p => p.user_id === uid);
+
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', padding: '24px 0' }}>
+        <div style={{ width: 22, height: 22, border: '2px solid #03ACEA', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+      </div>
+    );
+  }
+
+  if (rows.length === 0) {
+    return (
+      <p style={{ fontSize: 13, color: '#787776', lineHeight: 1.5 }}>
+        You haven't blocked anyone. People you block will appear here.
+      </p>
+    );
+  }
+
+  return (
+    <>
+      <p style={{ fontSize: 13, color: '#787776', marginBottom: 14, lineHeight: 1.5 }}>
+        These people can't see you in Find Friends and aren't on your friends list.
+      </p>
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        {rows.map((row) => {
+          const p = getProfile(row.friend_id);
+          const name = p?.full_name || p?.username || 'Unknown';
+          return (
+            <div key={row.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 0', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+              <UserAvatar name={name} src={p?.profile_picture_url || p?.avatar_url} size={32} />
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name}</div>
+                {p?.username && <div style={{ fontSize: 11, color: '#9B9A98' }}>@{p.username}</div>}
+              </div>
+              <button
+                onClick={() => handleUnblock(row)}
+                disabled={busyId === row.id}
+                style={{
+                  padding: '6px 14px', borderRadius: 8, border: '1px solid rgba(0,0,0,0.10)',
+                  background: 'white', fontSize: 11, fontWeight: 600, color: '#1A1918',
+                  cursor: busyId === row.id ? 'default' : 'pointer',
+                  fontFamily: "'DM Sans', sans-serif", opacity: busyId === row.id ? 0.5 : 1,
+                }}
+              >
+                {busyId === row.id ? 'Unblocking…' : 'Unblock'}
+              </button>
+            </div>
+          );
+        })}
+      </div>
+    </>
+  );
+}
+
 /* ── Modal ────────────────────────────────────────────────── */
 export default function SettingsModal({ isOpen, onClose, initialTab = 'general' }) {
   const { user: authUser, userProfile, logout } = useAuth();
@@ -511,6 +606,7 @@ export default function SettingsModal({ isOpen, onClose, initialTab = 'general' 
             {activeTab === 'general'       && <GeneralTab user={user} />}
             {activeTab === 'notifications' && <NotificationsTab />}
             {activeTab === 'invite'        && <InviteTab />}
+            {activeTab === 'blocked'       && <BlockedTab user={user} />}
             {activeTab === 'helpsupport'   && <HelpSupportTab />}
             {activeTab === 'contactus'     && <ContactUsTab />}
             {activeTab === 'guide'         && <GuideTab />}
