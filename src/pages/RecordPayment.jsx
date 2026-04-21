@@ -438,19 +438,49 @@ export default function RecordPayment() {
         )}
       </AnimatePresence>
 
-      <MeshMobileNav user={user} activePage="Log Payment" />
-      <div className="mesh-layout" style={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: 0, minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 12, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased' }}>
+      {/* ── Popup modal overlay ── */}
+      <div
+        style={{
+          position: 'fixed', inset: 0, zIndex: 1000,
+          background: 'rgba(20,30,50,0.45)',
+          backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)',
+          display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
+          padding: '40px 20px', overflowY: 'auto',
+          fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 12, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased',
+        }}
+        onClick={() => { try { navigate(-1); } catch { navigate('/'); } }}
+      >
+        <div
+          onClick={e => e.stopPropagation()}
+          style={{
+            width: '100%', maxWidth: 1000,
+            background: '#F5F4F0', borderRadius: 20,
+            boxShadow: '0 24px 80px rgba(0,0,0,0.28), 0 4px 16px rgba(0,0,0,0.08)',
+            position: 'relative',
+            padding: '28px 32px 40px',
+          }}
+        >
+          {/* Close button */}
+          <button
+            onClick={() => { try { navigate(-1); } catch { navigate('/'); } }}
+            aria-label="Close"
+            style={{
+              position: 'absolute', top: 14, right: 14, zIndex: 10,
+              width: 34, height: 34, borderRadius: 17,
+              background: 'rgba(0,0,0,0.06)', border: 'none', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: '#1A1918',
+            }}
+          >
+            <X size={17} />
+          </button>
 
-        {/* Col 1: left nav */}
-        <DesktopSidebar />
-
-        {/* Col 2: center content */}
-        <div className="mesh-center" style={{ background: 'transparent', padding: '24px 32px 80px' }}>
-
-          {/* Mobile-only page title (desktop shows it in top bar) */}
-          <div className="mobile-page-title">
-            <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', marginBottom: 12 }}>Log Payment</div>
+          {/* Modal header title */}
+          <div style={{ fontSize: 18, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', marginBottom: 18, fontFamily: "'DM Sans', sans-serif" }}>
+            Log Payment
           </div>
+
+        <div style={{ background: 'transparent' }}>
 
           {/* ── No loans onboarding banner ── */}
           {!isLoading && loans.length === 0 && (
@@ -832,10 +862,10 @@ export default function RecordPayment() {
 
           </div>{/* end rp-two-col */}
 
-        </div>
+        </div>{/* end content wrapper */}
 
-
-      </div>
+        </div>{/* end modal panel */}
+      </div>{/* end modal overlay */}
     </>
   );
 }
