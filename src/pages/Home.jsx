@@ -10,6 +10,7 @@ import { format, startOfMonth, endOfMonth, addMonths, addDays, isBefore, isAfter
 import { formatMoney } from "@/components/utils/formatMoney";
 import { toLocalDate, getLocalToday, daysUntil as daysUntilDate } from "@/components/utils/dateUtils";
 import { countNotifications } from "@/components/utils/notificationCount";
+import LoanTimeline from "@/components/LoanTimeline";
 
 import { CardEntrance, CountUp } from "@/components/ui/animations";
 import DesktopSidebar from '../components/DesktopSidebar';
@@ -388,16 +389,8 @@ function WeekStrip({ allPaymentEvents, today, formatMoney }) {
   );
 }
 
-// ─── Loan Timeline Graph ───────────────────────────────────────────────────
-const RANGE_OPTIONS = [
-  { value: '1m',  label: '1 month'  },
-  { value: '3m',  label: '3 months' },
-  { value: '6m',  label: '6 months' },
-  { value: '1y',  label: '1 year'   },
-  { value: 'all', label: 'All time' },
-];
-
-function LoanTimeline({ myLoans, safePayments, safeAllProfiles, userId }) {
+// (LoanTimeline imported from @/components/LoanTimeline — stub below is dead code)
+function _noop() { // eslint-disable-line no-unused-vars
   const [hoveredPt, setHoveredPt] = useState(null);
   const [range,     setRange]     = useState('6m');
   const scrollRef = useRef(null);
@@ -1855,8 +1848,8 @@ export default function Home() {
                             <path d="M14 19 L14 11 M10.5 14.5 L14 11 L17.5 14.5" stroke="#1D5B94" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                           </svg>
                         </div>
-                        <div style={{ fontSize: 13, fontWeight: 400, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>
-                          You owe <span style={{ color: '#1D5B94', fontWeight: 500 }}>{formatMoney(borrowOwed)}</span>
+                        <div style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>
+                          You owe <span style={{ color: '#1D5B94' }}>{formatMoney(borrowOwed)}</span>
                         </div>
                         <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 3, fontFamily: "'DM Sans', sans-serif" }}>
                           across {borrowedLoans.length} loan{borrowedLoans.length !== 1 ? 's' : ''}
@@ -1873,8 +1866,8 @@ export default function Home() {
                             <path d="M14 10 L14 18 M10.5 13.5 L14 18 L17.5 13.5" stroke="#03ACEA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                           </svg>
                         </div>
-                        <div style={{ fontSize: 13, fontWeight: 400, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>
-                          You are owed <span style={{ color: '#03ACEA', fontWeight: 500 }}>{formatMoney(lentOwed)}</span>
+                        <div style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>
+                          You are owed <span style={{ color: '#03ACEA' }}>{formatMoney(lentOwed)}</span>
                         </div>
                         <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 3, fontFamily: "'DM Sans', sans-serif" }}>
                           across {lentLoans.length} loan{lentLoans.length !== 1 ? 's' : ''}
@@ -1974,9 +1967,51 @@ export default function Home() {
 
             </div>
 
-            {/* Col 2: Inbox + Pending + April at a Glance */}
+            {/* Col 2: April at a Glance + What needs your attention + Pending */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-              {/* Inbox */}
+
+              {/* April at a Glance */}
+              <div className="home-card-howmonth" style={{ position: 'relative' }}>
+              <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
+              <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', padding: '14px 18px' }}>
+                <div style={{ paddingBottom: 5, marginBottom: 4 }}>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>
+                    {`${format(today, 'MMMM')} at a Glance`}
+                  </span>
+                </div>
+                <div style={{ marginBottom: 10 }}>
+                  <span style={{
+                    display: 'inline-block',
+                    background: '#EBF4FA',
+                    color: '#03ACEA',
+                    borderRadius: 0,
+                    padding: '2px 6px',
+                    fontSize: 12,
+                    fontWeight: 500,
+                    lineHeight: 1.2,
+                    fontFamily: "'DM Sans', sans-serif",
+                  }}>
+                    {howMonthMessage.text}{howMonthMessage.emoji ? ` ${howMonthMessage.emoji}` : ''}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  {monthlyExpectedReceive > 0 && (
+                    <div style={{ fontSize: 12, color: '#1A1918' }}>
+                      Expected to receive <strong style={{ color: '#03ACEA' }}>{formatMoney(monthlyExpectedReceive)}</strong> this month
+                      {inScheduledTotal > 0 && <span style={{ color: '#9B9A98' }}> across {inScheduledTotal} payment{inScheduledTotal !== 1 ? 's' : ''}</span>}
+                    </div>
+                  )}
+                  {monthlyExpectedPay > 0 && (
+                    <div style={{ fontSize: 12, color: '#1A1918' }}>
+                      Due to pay out <strong style={{ color: '#1D5B94' }}>{formatMoney(monthlyExpectedPay)}</strong> this month
+                      {outScheduledTotal > 0 && <span style={{ color: '#9B9A98' }}> across {outScheduledTotal} payment{outScheduledTotal !== 1 ? 's' : ''}</span>}
+                    </div>
+                  )}
+                </div>
+              </div>
+              </div>
+
+              {/* What needs your attention */}
               {(() => {
                 const attentionItems = [];
                 if (overdueYouOwe.length === 1) {
@@ -2030,7 +2065,7 @@ export default function Home() {
                   <div className="home-card-attention" style={{ position: 'relative' }}>
                     <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
                     <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, padding: '14px 18px' }}>
-                      <SectionHeader title="Inbox" />
+                      <SectionHeader title="What needs your attention" />
                       {items.length === 0 ? (
                         <p style={{ fontSize: 12, color: '#C5C3C0', margin: 0, lineHeight: 1.45 }}>All clear, your inbox is empty 🎉</p>
                       ) : (
@@ -2143,50 +2178,6 @@ export default function Home() {
                 );
               })()}
 
-
-              {/* April at a Glance */}
-              <div className="home-card-howmonth" style={{ position: 'relative' }}>
-              <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
-              <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', padding: '14px 18px' }}>
-                {/* Left-aligned title */}
-                <div style={{ paddingBottom: 5, marginBottom: 4 }}>
-                  <span style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>
-                    {`${format(today, 'MMMM')} at a Glance`}
-                  </span>
-                </div>
-                {/* Insight at the top */}
-                <div style={{ marginBottom: 10 }}>
-                  <span style={{
-                    display: 'inline-block',
-                    background: '#EBF4FA',
-                    color: '#03ACEA',
-                    borderRadius: 0,
-                    padding: '2px 6px',
-                    fontSize: 12,
-                    fontWeight: 500,
-                    lineHeight: 1.2,
-                    fontFamily: "'DM Sans', sans-serif",
-                  }}>
-                    {howMonthMessage.text}{howMonthMessage.emoji ? ` ${howMonthMessage.emoji}` : ''}
-                  </span>
-                </div>
-                {/* Summary lines — only expected receive + due to pay */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  {monthlyExpectedReceive > 0 && (
-                    <div style={{ fontSize: 12, color: '#1A1918' }}>
-                      Expected to receive <strong style={{ color: '#03ACEA' }}>{formatMoney(monthlyExpectedReceive)}</strong> this month
-                      {inScheduledTotal > 0 && <span style={{ color: '#9B9A98' }}> across {inScheduledTotal} payment{inScheduledTotal !== 1 ? 's' : ''}</span>}
-                    </div>
-                  )}
-                  {monthlyExpectedPay > 0 && (
-                    <div style={{ fontSize: 12, color: '#1A1918' }}>
-                      Due to pay out <strong style={{ color: '#1D5B94' }}>{formatMoney(monthlyExpectedPay)}</strong> this month
-                      {outScheduledTotal > 0 && <span style={{ color: '#9B9A98' }}> across {outScheduledTotal} payment{outScheduledTotal !== 1 ? 's' : ''}</span>}
-                    </div>
-                  )}
-                </div>
-              </div>
-              </div>{/* end april-at-a-glance aurora wrapper */}
 
             </div>{/* end col 2 */}
 
@@ -2309,7 +2300,7 @@ export default function Home() {
                     <div className="home-card-lending-loans" style={{ position: 'relative' }}>
                       <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
                       <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, padding: '14px 18px' }}>
-                        <SectionHeader title="Your Loans" linkTo={createPageUrl('LendingBorrowing')} linkLabel="View all →" />
+                        <SectionHeader title="Your Loans" linkTo={createPageUrl('LendingBorrowing') + '?tab=lending'} linkLabel="View all →" />
                         {allLoans.length === 0 ? (
                           <div style={{ padding: '8px 0', fontSize: 12, color: '#9B9A98', textAlign: 'center' }}>No active loans yet 🌱</div>
                         ) : (
@@ -2333,9 +2324,9 @@ export default function Home() {
                                 ? `Borrowed ${formatMoney(total)} from you${loan.purpose ? ` for ${loan.purpose}` : ''}`
                                 : `Lent you ${formatMoney(total)}${loan.purpose ? ` for ${loan.purpose}` : ''}`;
                               return (
-                                <div key={loan.id} style={{ padding: '9px 0', display: 'flex', alignItems: 'flex-start', gap: 9 }}>
+                                <div key={loan.id} style={{ padding: '9px 0', display: 'flex', alignItems: 'center', gap: 9 }}>
                                   {/* Direction circle */}
-                                  <div style={{ flexShrink: 0, marginTop: 3 }}>
+                                  <div style={{ flexShrink: 0 }}>
                                     <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
                                       <circle cx="5" cy="5" r="4.25" stroke={circleColor} strokeWidth="1.5"/>
                                     </svg>

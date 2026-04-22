@@ -20,6 +20,7 @@ import MeshMobileNav from "@/components/MeshMobileNav";
 import UserAvatar from "@/components/ui/UserAvatar";
 import DesktopSidebar from '../components/DesktopSidebar';
 import LendingWallet from '@/components/LendingWallet';
+import LoanTimeline from '@/components/LoanTimeline';
 
 export default function YourLoans({ defaultTab, embeddedMode }) {
   const { logout } = useAuth();
@@ -1391,6 +1392,18 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
         <div style={{ padding: '0 0 40px' }}>
           {activeTab === 'lending' && renderSummaryTab('lending')}
           {activeTab === 'borrowing' && renderSummaryTab('borrowing')}
+
+          {/* Balance History — lending tab only */}
+          {activeTab === 'lending' && user?.id && (
+            <div style={{ marginTop: 32 }}>
+              <LoanTimeline
+                myLoans={allLoans}
+                safePayments={allPayments}
+                safeAllProfiles={publicProfiles}
+                userId={user.id}
+              />
+            </div>
+          )}
         </div>
 
         {showDetailsModal && selectedLoanDetails && (

@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 import { Loan, Payment, PublicProfile } from '@/entities/all';
 import { useAuth } from '@/lib/AuthContext';
 import { X, CheckCircle } from 'lucide-react';
@@ -13,6 +15,7 @@ export default function PendingRequestsPopup({ onClose, positionOverride }) {
   const [profiles, setProfiles] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const navigate = useNavigate();
   const popupRef = useRef(null);
 
   useEffect(() => {
@@ -56,6 +59,7 @@ export default function PendingRequestsPopup({ onClose, positionOverride }) {
     const firstName = borrowerProfile?.full_name?.split(' ')[0] || borrowerProfile?.username || 'them';
     rows.push({
       key: `loan-${loan.id}`,
+      arrowTo: createPageUrl('LendingBorrowing') + '?tab=lending',
       icon: (
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#D97706" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 1 }}>
           <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
@@ -74,6 +78,7 @@ export default function PendingRequestsPopup({ onClose, positionOverride }) {
     const firstName = otherProfile?.full_name?.split(' ')[0] || otherProfile?.username || 'them';
     rows.push({
       key: `pay-${payment.id}`,
+      arrowTo: createPageUrl('RecordPayment'),
       icon: (
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9B9A98" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 1 }}>
           <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
@@ -135,6 +140,24 @@ export default function PendingRequestsPopup({ onClose, positionOverride }) {
                 <span style={{ flex: 1, fontSize: 12, fontWeight: 500, color: '#1A1918', lineHeight: 1.4 }}>
                   {row.text}
                 </span>
+                {row.arrowTo && (
+                  <button
+                    type="button"
+                    onClick={() => { onClose(); navigate(row.arrowTo); }}
+                    aria-label="View details"
+                    style={{
+                      flexShrink: 0, background: 'transparent', border: 'none', padding: 0,
+                      cursor: 'pointer', display: 'inline-flex', alignItems: 'center',
+                      color: '#9B9A98', marginTop: 1, transition: 'color 0.15s',
+                    }}
+                    onMouseEnter={e => e.currentTarget.style.color = '#03ACEA'}
+                    onMouseLeave={e => e.currentTarget.style.color = '#9B9A98'}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="9 18 15 12 9 6"/>
+                    </svg>
+                  </button>
+                )}
               </div>
             ))}
           </div>
