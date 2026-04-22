@@ -557,7 +557,7 @@ function LoanTimeline({ myLoans, safePayments, safeAllProfiles, userId }) {
   };
 
   return (
-    <div ref={cardRef} style={{ position: 'relative' }} onClick={() => setHoveredPt(null)}>
+    <div ref={cardRef} style={{ position: 'relative', minWidth: 0 }} onClick={() => setHoveredPt(null)}>
       <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
       <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, padding: '14px 18px' }}>
 
@@ -609,8 +609,7 @@ function LoanTimeline({ myLoans, safePayments, safeAllProfiles, userId }) {
         {/* ── Scrollable chart area ── */}
         <div
           ref={scrollRef}
-          style={{ overflowX: 'auto', position: 'relative', userSelect: 'none',
-            /* subtle scrollbar styling */
+          style={{ overflowX: 'auto', position: 'relative', userSelect: 'none', width: '100%',
             scrollbarWidth: 'thin', scrollbarColor: '#E0DFDD transparent' }}
         >
           <svg
@@ -1853,7 +1852,7 @@ export default function Home() {
           </div>
 
           {/* Masonry three-column layout */}
-          <div className="home-two-col-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 24 }}>
+          <div className="home-two-col-row" style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)', gap: 24 }}>
             {/* Col 1: Coming Up This Week */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
               {/* ── Overview ── */}
@@ -1868,9 +1867,9 @@ export default function Home() {
                     <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, padding: '14px 18px' }}>
                       <SectionHeader title="Overview" />
                       {!hasOwing && !hasOwed ? (
-                        <p style={{ fontSize: 12, color: '#9B9A98', margin: 0, fontFamily: "'DM Sans', sans-serif" }}>You have no active loans yet 🌱</p>
+                        <p style={{ fontSize: 12, color: '#9B9A98', margin: 0, fontFamily: "'DM Sans', sans-serif", textAlign: 'center' }}>You have no active loans yet 🌱</p>
                       ) : (
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 5, alignItems: 'center', textAlign: 'center' }}>
                           {hasOwing && (
                             <div style={{ fontSize: 12, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>
                               You owe <span style={{ fontWeight: 700, color: '#1D5B94' }}>{formatMoney(borrowOwed)}</span> across {borrowedLoans.length} loan{borrowedLoans.length !== 1 ? 's' : ''}
@@ -2327,14 +2326,14 @@ export default function Home() {
                   <div style={{ position: 'relative' }}>
                     <style>{`
                       @keyframes lbStatusA {
-                        0%, 38% { opacity: 1; }
-                        46%, 88% { opacity: 0; }
-                        96%, 100% { opacity: 1; }
+                        0%, 44% { opacity: 1; }
+                        52%, 94% { opacity: 0; }
+                        100% { opacity: 1; }
                       }
                       @keyframes lbStatusB {
-                        0%, 38% { opacity: 0; }
-                        46%, 88% { opacity: 1; }
-                        96%, 100% { opacity: 0; }
+                        0%, 44% { opacity: 0; }
+                        52%, 94% { opacity: 1; }
+                        100% { opacity: 0; }
                       }
                     `}</style>
                     {arrowBtn('left')}
@@ -2368,9 +2367,9 @@ export default function Home() {
                                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
                                     <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name}</span>
                                     {/* Cycling badge: status ↔ % repaid */}
-                                    <span style={{ flexShrink: 0, position: 'relative', display: 'inline-block', width: 72, height: 18 }}>
-                                      <span style={{ position: 'absolute', inset: 0, fontSize: 10, fontWeight: 700, color: statusColor, background: statusBg, borderRadius: 5, display: 'flex', alignItems: 'center', justifyContent: 'center', animation: 'lbStatusA 4s ease-in-out infinite', lineHeight: 1 }}>{statusLabel}</span>
-                                      <span style={{ position: 'absolute', inset: 0, fontSize: 10, fontWeight: 700, color: '#9B9A98', background: 'rgba(0,0,0,0.04)', borderRadius: 5, display: 'flex', alignItems: 'center', justifyContent: 'center', animation: 'lbStatusB 4s ease-in-out infinite', lineHeight: 1 }}>{pctRepaid}% repaid</span>
+                                    <span style={{ flexShrink: 0, position: 'relative', display: 'inline-block', width: 96, height: 18 }}>
+                                      <span style={{ position: 'absolute', inset: 0, fontSize: 10, fontWeight: 700, color: statusColor, background: statusBg, borderRadius: 5, display: 'flex', alignItems: 'center', justifyContent: 'center', animation: 'lbStatusA 8s ease-in-out infinite', lineHeight: 1, whiteSpace: 'nowrap' }}>{statusLabel}</span>
+                                      <span style={{ position: 'absolute', inset: 0, fontSize: 10, fontWeight: 700, color: '#9B9A98', background: 'rgba(0,0,0,0.04)', borderRadius: 5, display: 'flex', alignItems: 'center', justifyContent: 'center', animation: 'lbStatusB 8s ease-in-out infinite', lineHeight: 1, whiteSpace: 'nowrap' }}>{pctRepaid}% repaid</span>
                                     </span>
                                   </div>
                                   <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{subLine}</div>
