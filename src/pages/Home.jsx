@@ -388,6 +388,334 @@ function WeekStrip({ allPaymentEvents, today, formatMoney }) {
   );
 }
 
+// ─── Loan Timeline Graph ───────────────────────────────────────────────────
+const RANGE_OPTIONS = [
+  { value: '1m',  label: '1 month'  },
+  { value: '3m',  label: '3 months' },
+  { value: '6m',  label: '6 months' },
+  { value: '1y',  label: '1 year'   },
+  { value: 'all', label: 'All time' },
+];
+
+function LoanTimeline({ myLoans, safePayments, safeAllProfiles, userId }) {
+  const [hoveredPt, setHoveredPt] = useState(null);
+  const [range,     setRange]     = useState('6m');
+  const scrollRef = useRef(null);
+  const cardRef   = useRef(null);
+
+  const LEND_COLOR  = '#03ACEA';
+  const BORR_COLOR  = '#1D5B94';
+  const LEND_FUTURE = '#9FD8F0';
+  const BORR_FUTURE = '#7BA3C0';
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const MAX_FUTURE = addMonths(today, 120); // 10-year prediction cap
+
+  // ── Advance a date by payment frequency ──────────────────────────────────
+  const advDate = (d, freq) =>
+    freq === 'weekly'    ? addDays(d, 7)  :
+    freq === 'bi-weekly' ? addDays(d, 14) :
+    addMonths(d, 1);
+
+  // ── Build ALL events (past actual + all future predictions) ───────────────
+  const buildAll = (isLending) => {
+    const raw = [];
+    myLoans
+      .filter(l => l && (isLending ? l.lender_id : l.borrower_id) === userId &&
+        (l.status === 'active' || l.status === 'completed'))
+      .forEach(loan => {
+        const otherId = isLending ? loan.borrower_id : loan.lender_id;
+        const prof    = safeAllProfiles.find(p => p.user_id === otherId);
+        const name    = prof?.full_name?.split(' ')[0] || 'Someone';
+        const total   = loan.total_amount || loan.amount || 0;
+        const freq    = loan.payment_frequency || 'monthly';
+
+        // Loan creation
+        if (loan.created_at) {
+          raw.push({
+            date: new Date(loan.created_at), delta: +total, isFuture: false,
+            label: isLending ? `Lent ${name} ${formatMoney(total)}` : `Borrowed ${formatMoney(total)} from ${name}`,
+          });
+        }
+        // Past completed payments
+        safePayments.filter(p => p && p.loan_id === loan.id && p.status === 'completed').forEach(p => {
+          raw.push({
+            date: new Date(p.payment_date || p.created_at), delta: -(p.amount || 0), isFuture: false,
+            label: isLending ? `${formatMoney(p.amount || 0)} due from ${name}` : `${formatMoney(p.amount || 0)} due to ${name}`,
+          });
+        });
+        // Future predictions — repeat until remaining balance = 0 or MAX_FUTURE
+        if (loan.status === 'active' && loan.next_payment_date && (loan.payment_amount || 0) > 0) {
+          let rem = Math.max(0, total - (loan.amount_paid || 0));
+          let d   = new Date(loan.next_payment_date);
+          while (rem > 0.01 && d <= MAX_FUTURE) {
+            if (d > today) {
+              const pay = Math.min(loan.payment_amount, rem);
+              raw.push({
+                date: new Date(d), delta: -pay, isFuture: true,
+                label: isLending ? `${formatMoney(pay)} due from ${name}` : `${formatMoney(pay)} due to ${name}`,
+              });
+              rem -= pay;
+            }
+            d = advDate(d, freq);
+          }
+        }
+      });
+
+    raw.sort((a, b) => a.date - b.date);
+    let running = 0;
+    return raw.map(e => { running += e.delta; return { ...e, balance: Math.max(0, running) }; });
+  };
+
+  const lendingAll  = buildAll(true);
+  const borrowingAll = buildAll(false);
+  const allEver = [...lendingAll, ...borrowingAll];
+  if (allEver.length === 0) return null;
+
+  // ── xStart based on selected range ────────────────────────────────────────
+  const rangeStart = (() => {
+    if (range === 'all') {
+      const pastDates = allEver.filter(p => !p.isFuture).map(p => p.date);
+      return startOfMonth(pastDates.length > 0 ? new Date(Math.min(...pastDates)) : today);
+    }
+    const m = range === '1m' ? 1 : range === '3m' ? 3 : range === '6m' ? 6 : 12;
+    return startOfMonth(addMonths(today, -m));
+  })();
+
+  // xViewEnd = today + 1 month (right edge of initial viewport)
+  const xViewEnd = addMonths(today, 1);
+
+  // xEnd = last future event + 1 month padding (full SVG width)
+  const futureDates = allEver.filter(p => p.isFuture).map(p => p.date);
+  const xEnd = futureDates.length > 0
+    ? addMonths(startOfMonth(new Date(Math.max(...futureDates))), 1)
+    : addMonths(today, 2);
+
+  // ── Opening balances at rangeStart (balance of last event before window) ──
+  const openingBal = (pts) => {
+    const before = pts.filter(p => p.date < rangeStart);
+    return before.length > 0 ? before[before.length - 1].balance : 0;
+  };
+  const openL = openingBal(lendingAll);
+  const openB = openingBal(borrowingAll);
+
+  // Filter to only events within the visible range
+  const lendingVis  = lendingAll.filter(p => p.date >= rangeStart);
+  const borrowingVis = borrowingAll.filter(p => p.date >= rangeStart);
+  const hasLending   = lendingVis.length > 0 || openL > 0;
+  const hasBorrowing = borrowingVis.length > 0 || openB > 0;
+
+  // ── SVG dimensions — fixed px per month, scrollable ───────────────────────
+  const PX_PER_MONTH = 80;
+  const SH = 148, PL = 6, PR = 16, PT = 14, PB = 26;
+  const plotH = SH - PT - PB;
+
+  // Count months from rangeStart → xEnd for SVG width
+  const monthTicks = [];
+  let mc = new Date(rangeStart);
+  while (mc <= xEnd) { monthTicks.push(new Date(mc)); mc = addMonths(mc, 1); }
+  const SW    = Math.max(monthTicks.length * PX_PER_MONTH, 320);
+  const plotW = SW - PL - PR;
+  const span  = Math.max(xEnd - rangeStart, 1);
+
+  const maxBal = Math.max(
+    openL, openB,
+    ...[...lendingVis, ...borrowingVis].map(p => p.balance),
+    1
+  );
+
+  const xOf = d => PL + ((d - rangeStart) / span) * plotW;
+  const yOf = b => PT + plotH - (b / maxBal) * plotH;
+
+  const polyStr = (open, pts) =>
+    [{ date: rangeStart, balance: open }, ...pts]
+      .map(p => `${xOf(p.date).toFixed(1)},${yOf(p.balance).toFixed(1)}`)
+      .join(' ');
+
+  // ── Auto-scroll so today+1m is at the right edge of viewport ─────────────
+  useEffect(() => {
+    if (!scrollRef.current) return;
+    const cw = scrollRef.current.clientWidth || 380;
+    // Re-derive xOf values from captured closure (same formula as render)
+    const xViewEndPx = PL + ((xViewEnd - rangeStart) / span) * plotW;
+    scrollRef.current.scrollLeft = Math.max(0, xViewEndPx - cw + PR + 20);
+  }, [range]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ── Circle click: capture screen coords relative to card ─────────────────
+  const handleCircleClick = (e, p, k) => {
+    e.stopPropagation();
+    if (hoveredPt?.key === k) { setHoveredPt(null); return; }
+    const cardRect = cardRef.current?.getBoundingClientRect();
+    if (!cardRect) return;
+    const cr = e.target.getBoundingClientRect();
+    setHoveredPt({
+      ...p, key: k,
+      tipX: cr.left + cr.width / 2 - cardRect.left,
+      tipY: cr.top - cardRect.top,
+    });
+  };
+
+  return (
+    <div ref={cardRef} style={{ position: 'relative' }} onClick={() => setHoveredPt(null)}>
+      <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
+      <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, padding: '14px 18px' }}>
+
+        {/* ── Header row ── */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+          <div style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>
+            Balance History
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+            {/* Legend — lending */}
+            {hasLending && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 10, color: '#787776', fontFamily: "'DM Sans', sans-serif" }}>
+                <div style={{ width: 14, height: 2, borderRadius: 1, background: LEND_COLOR }} /> Lending
+              </div>
+            )}
+            {/* Legend — borrowing */}
+            {hasBorrowing && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 10, color: '#787776', fontFamily: "'DM Sans', sans-serif" }}>
+                <div style={{ width: 14, height: 2, borderRadius: 1, background: BORR_COLOR }} /> Borrowing
+              </div>
+            )}
+            {/* Range dropdown */}
+            <div
+              style={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}
+              onClick={e => e.stopPropagation()}
+            >
+              <select
+                value={range}
+                onChange={e => { setRange(e.target.value); setHoveredPt(null); }}
+                style={{
+                  fontSize: 11, fontWeight: 500, color: '#03ACEA',
+                  background: 'transparent', border: 'none', outline: 'none',
+                  cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
+                  appearance: 'none', WebkitAppearance: 'none',
+                  paddingRight: 13, lineHeight: 1,
+                }}
+              >
+                {RANGE_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+              </select>
+              <svg style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}
+                width="8" height="8" viewBox="0 0 24 24" fill="none"
+                stroke="#03ACEA" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Scrollable chart area ── */}
+        <div
+          ref={scrollRef}
+          style={{ overflowX: 'auto', position: 'relative', userSelect: 'none',
+            /* subtle scrollbar styling */
+            scrollbarWidth: 'thin', scrollbarColor: '#E0DFDD transparent' }}
+        >
+          <svg
+            width={SW} height={SH}
+            viewBox={`0 0 ${SW} ${SH}`}
+            style={{ display: 'block', overflow: 'visible' }}
+          >
+            {/* Horizontal grid lines */}
+            {[0.33, 0.67, 1].map((f, i) => (
+              <line key={i}
+                x1={PL} y1={yOf(maxBal * f)} x2={SW - PR} y2={yOf(maxBal * f)}
+                stroke="#F0EFEE" strokeWidth="1"
+              />
+            ))}
+            {/* Baseline */}
+            <line x1={PL} y1={PT + plotH} x2={SW - PR} y2={PT + plotH} stroke="#ECEAE8" strokeWidth="1" />
+            {/* Today dashed vertical line */}
+            {xOf(today) >= PL && xOf(today) <= SW - PR && (
+              <line
+                x1={xOf(today)} y1={PT} x2={xOf(today)} y2={PT + plotH}
+                stroke="#D9D8D6" strokeWidth="1" strokeDasharray="3,3"
+              />
+            )}
+            {/* Month labels */}
+            {monthTicks.map((m, i) => (
+              <text key={i}
+                x={xOf(m)} y={SH - 5}
+                fontSize="8" fill="#C5C3C0" textAnchor="middle" fontFamily="DM Sans,sans-serif"
+              >{format(m, 'MMM')}</text>
+            ))}
+            {/* ── Lending line ── */}
+            {hasLending && (
+              <polyline points={polyStr(openL, lendingVis)} fill="none" stroke={LEND_COLOR} strokeWidth="1.5" strokeLinejoin="round" />
+            )}
+            {/* ── Borrowing line ── */}
+            {hasBorrowing && (
+              <polyline points={polyStr(openB, borrowingVis)} fill="none" stroke={BORR_COLOR} strokeWidth="1.5" strokeLinejoin="round" />
+            )}
+            {/* ── Lending circles ── */}
+            {lendingVis.map((p, i) => {
+              const k = `l${i}`;
+              const isHov = hoveredPt?.key === k;
+              return (
+                <circle key={k}
+                  cx={xOf(p.date)} cy={yOf(p.balance)}
+                  r={isHov ? 5.5 : 4}
+                  fill={p.isFuture ? LEND_FUTURE : LEND_COLOR}
+                  stroke="white" strokeWidth="1.5"
+                  style={{ cursor: 'pointer' }}
+                  onClick={e => handleCircleClick(e, p, k)}
+                />
+              );
+            })}
+            {/* ── Borrowing circles ── */}
+            {borrowingVis.map((p, i) => {
+              const k = `b${i}`;
+              const isHov = hoveredPt?.key === k;
+              return (
+                <circle key={k}
+                  cx={xOf(p.date)} cy={yOf(p.balance)}
+                  r={isHov ? 5.5 : 4}
+                  fill={p.isFuture ? BORR_FUTURE : BORR_COLOR}
+                  stroke="white" strokeWidth="1.5"
+                  style={{ cursor: 'pointer' }}
+                  onClick={e => handleCircleClick(e, p, k)}
+                />
+              );
+            })}
+          </svg>
+        </div>
+
+        {/* ── Tooltip — positioned relative to cardRef (outside scroll area) ── */}
+        {hoveredPt && (() => {
+          const TW  = 170;
+          const cardW = cardRef.current?.getBoundingClientRect().width || 320;
+          const raw = hoveredPt.tipX - TW / 2;
+          const tipX = Math.max(8, Math.min(raw, cardW - TW - 8));
+          const tipY = hoveredPt.tipY - 54;
+          return (
+            <div
+              onClick={e => e.stopPropagation()}
+              style={{
+                position: 'absolute',
+                left: tipX,
+                top: tipY < 10 ? hoveredPt.tipY + 10 : tipY,
+                background: '#1A1918', color: 'white',
+                borderRadius: 7, padding: '6px 10px',
+                fontSize: 11, fontFamily: "'DM Sans', sans-serif",
+                zIndex: 30, whiteSpace: 'nowrap',
+                boxShadow: '0 3px 12px rgba(0,0,0,0.22)',
+                pointerEvents: 'none', lineHeight: 1.35,
+              }}
+            >
+              <div style={{ fontWeight: 600 }}>{hoveredPt.label}</div>
+              <div style={{ color: 'rgba(255,255,255,0.6)', marginTop: 2, fontSize: 10 }}>
+                {format(hoveredPt.date, 'MMM d, yyyy')}
+              </div>
+            </div>
+          );
+        })()}
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
   const { user: authUser, userProfile, isLoadingAuth, navigateToLogin, logout } = useAuth();
   const [loans, setLoans] = useState([]);
@@ -1636,6 +1964,16 @@ export default function Home() {
                   </div>
                 );
               })()}
+
+              {/* ── Balance History line graph ── */}
+              {myLoans.some(l => l && (l.status === 'active' || l.status === 'completed') && (l.lender_id === user.id || l.borrower_id === user.id)) && (
+                <LoanTimeline
+                  myLoans={myLoans}
+                  safePayments={safePayments}
+                  safeAllProfiles={safeAllProfiles}
+                  userId={user.id}
+                />
+              )}
 
             </div>
 
