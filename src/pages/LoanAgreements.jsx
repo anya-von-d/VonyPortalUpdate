@@ -1059,7 +1059,7 @@ export default function LoanAgreements() {
   const PageCard = ({ title, headerRight, children, style }) => (
     <div style={{ position: 'relative', marginBottom: 24 }}>
       <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
-      <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.13)', padding: '14px 18px', ...style }}>
+      <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '0 2px 12px rgba(0,0,0,0.08)', padding: '14px 18px', ...style }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: 5, marginBottom: 2 }}>
           <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>{title}</div>
           {headerRight && <div style={{ flexShrink: 0 }}>{headerRight}</div>}

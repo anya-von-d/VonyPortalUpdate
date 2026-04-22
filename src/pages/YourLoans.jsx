@@ -511,7 +511,7 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
           const paidPct = Math.round(totalWithInterest > 0 ? Math.min(100, (totalPaidAmt / totalWithInterest) * 100) : 0);
           const remaining = Math.max(0, totalWithInterest - totalPaidAmt);
           const ringColor = isLending ? '#03ACEA' : '#1D5B94';
-          const cardBase = { background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.13)', padding: '14px 12px' };
+          const cardBase = { background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '0 2px 12px rgba(0,0,0,0.08)', padding: '14px 12px' };
           const C = 2 * Math.PI * 45; const ringOffset = C - (paidPct / 100) * C;
           const interestRate = selectedLoan.interest_rate || 0;
           const repaymentPeriod = selectedLoan.repayment_period || 0;
@@ -521,7 +521,7 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
             <>
               {/* Compact loan-with bar — centered, fit to content */}
               <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 14 }}>
-                <div style={{ background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.13)', padding: '9px 16px', display: 'inline-flex', alignItems: 'center', gap: 10 }}>
+                <div style={{ background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '0 2px 12px rgba(0,0,0,0.08)', padding: '9px 16px', display: 'inline-flex', alignItems: 'center', gap: 10 }}>
                   <div style={{ width: 30, height: 30, borderRadius: '50%', background: `${ringColor}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden' }}>
                     {otherPartyProfile?.avatar_url || otherPartyProfile?.profile_picture_url
                       ? <img src={otherPartyProfile.avatar_url || otherPartyProfile.profile_picture_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -934,7 +934,7 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
             <div style={{ display: 'flex', gap: 12 }}>
 
               {/* Box 1 — Amount owed/owing */}
-              <div style={{ flex: 1, minWidth: 0, background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.13)', padding: '14px 12px' }}>
+              <div style={{ flex: 1, minWidth: 0, background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '0 2px 12px rgba(0,0,0,0.08)', padding: '14px 12px' }}>
                 <div style={{ marginBottom: 10 }}>
                   {isLending ? (
                     <svg width="26" height="26" viewBox="0 0 28 28" fill="none">
@@ -961,7 +961,7 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
               </div>
 
               {/* Box 2 — Repayment Progress */}
-              <div style={{ flex: 1, minWidth: 0, background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.13)', padding: '14px 12px' }}>
+              <div style={{ flex: 1, minWidth: 0, background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '0 2px 12px rgba(0,0,0,0.08)', padding: '14px 12px' }}>
                 <div style={{ fontSize: 11, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif", marginBottom: 10 }}>Repayment Progress</div>
                 <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 8 }}>
                   {isLending ? (
@@ -994,7 +994,7 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
                 insightText = isLending ? 'All your lent money is on track' : 'All your payments are on track';
               }
               return (
-                <div style={{ background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.13)', padding: '14px 14px' }}>
+                <div style={{ background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '0 2px 12px rgba(0,0,0,0.08)', padding: '14px 14px' }}>
                   <div style={{ fontSize: 11, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif", marginBottom: 10 }}>
                     {format(today, 'MMMM')} {isLending ? 'Lending' : 'Borrowing'} Snapshot
                   </div>
@@ -1047,7 +1047,7 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
             const firstDays = combined.length > 0 ? combined[0].days : null;
             const nextLabel = firstDays === null ? '' : firstDays < 0 ? 'overdue' : firstDays === 0 ? 'today' : firstDays === 1 ? 'tomorrow' : `in ${firstDays} days`;
             return (
-              <div style={{ background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.13)', padding: '14px 18px' }}>
+              <div style={{ background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '0 2px 12px rgba(0,0,0,0.08)', padding: '14px 18px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 }}>
                   <div style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>Upcoming</div>
                   <Link to={createPageUrl('Upcoming')} style={{ fontSize: 11, fontWeight: 500, color: accent, textDecoration: 'none', fontFamily: "'DM Sans', sans-serif" }}>Full schedule →</Link>
@@ -1269,7 +1269,7 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
       background: '#ffffff',
       borderRadius: 10,
       border: 'none',
-      boxShadow: '0 4px 20px rgba(0,0,0,0.13)',
+      boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
       padding: '14px 18px',
       ...style
     }}>

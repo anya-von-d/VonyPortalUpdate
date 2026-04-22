@@ -1514,7 +1514,7 @@ export default function Lending({ initialTab }) {
       </div>
       <div style={{ position: 'relative' }}>
         <div style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
-        <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.13)', padding: '14px 18px', overflow: 'visible' }}>
+        <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '0 2px 12px rgba(0,0,0,0.08)', padding: '14px 18px', overflow: 'visible' }}>
           {children}
         </div>
       </div>
@@ -1672,7 +1672,7 @@ export default function Lending({ initialTab }) {
           {activeSection === 'create' && !isLoadingUsers && friends.length === 0 && (
             <div style={{
               marginBottom: 28, padding: '16px 22px', borderRadius: 10,
-              background: '#ffffff', border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.13)',
+              background: '#ffffff', border: 'none', boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16, flexWrap: 'wrap',
             }}>
               <div style={{ fontSize: 12, color: '#787776', fontFamily: "'DM Sans', system-ui, sans-serif" }}>
@@ -1856,7 +1856,7 @@ export default function Lending({ initialTab }) {
                       return (
                         <div style={{ position: 'relative' }}>
                           <div style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
-                          <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.13)', padding: '14px 18px' }}>
+                          <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '0 2px 12px rgba(0,0,0,0.08)', padding: '14px 18px' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 5, marginBottom: 2 }}>
                               <span style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>Overview</span>
                             </div>
@@ -2484,7 +2484,7 @@ export default function Lending({ initialTab }) {
                       {/* Loan Summary */}
                       <div style={{ position: 'relative' }}>
                         <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
-                        <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.13)', padding: '14px 18px' }}>
+                        <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '0 2px 12px rgba(0,0,0,0.08)', padding: '14px 18px' }}>
                           <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif", marginBottom: 10 }}>Loan Summary</div>
                           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
                             {formData.purpose && (
@@ -2511,7 +2511,7 @@ export default function Lending({ initialTab }) {
                         /* Borrower Will Pay */
                         <div style={{ position: 'relative' }}>
                           <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
-                          <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.13)', padding: '14px 18px' }}>
+                          <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '0 2px 12px rgba(0,0,0,0.08)', padding: '14px 18px' }}>
                             <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif", marginBottom: 10 }}>Borrower Will Pay</div>
                             <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, justifyContent: 'center', flexWrap: 'wrap' }}>
                               <span style={{ fontSize: 14, fontWeight: 700, color: '#03ACEA', letterSpacing: '-0.02em' }}>
@@ -2525,7 +2525,7 @@ export default function Lending({ initialTab }) {
                         /* Repeating Request */
                         <div style={{ position: 'relative' }}>
                           <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
-                          <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.13)', padding: '14px 18px' }}>
+                          <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '0 2px 12px rgba(0,0,0,0.08)', padding: '14px 18px' }}>
                             <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif", marginBottom: 10 }}>Repeating Request</div>
                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
                               <span style={{ fontSize: 12, color: '#9B9A98' }}>Will this payment repeat regularly?</span>
