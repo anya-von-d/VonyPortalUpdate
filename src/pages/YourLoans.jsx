@@ -504,7 +504,7 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
 
     return (
       <>
-        {/* Loan Detail Top — [2fr: Loan With + Loan Terms] [1fr: You Owe | Repayment Progress] */}
+        {/* Loan detail header */}
         {(() => {
           const totalPaidAmt = loanAnalysis ? loanAnalysis.totalPaid : (selectedLoan.amount_paid || 0);
           const totalWithInterest = loanAnalysis ? (loanAnalysis.principal + loanAnalysis.totalInterestAccrued) : (selectedLoan.total_amount || selectedLoan.amount || 0);
@@ -518,106 +518,152 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
           const repaymentUnit = selectedLoan.repayment_unit || 'months';
           const paymentFrequency = selectedLoan.payment_frequency || 'monthly';
           return (
-            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 14, marginBottom: 20, alignItems: 'start' }}>
-
-              {/* Left col (2fr): Loan With + Loan Terms stacked */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-
-                {/* Loan With box */}
-                <div style={{ ...cardBase, display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <div style={{ width: 40, height: 40, borderRadius: '50%', background: `${ringColor}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden' }}>
+            <>
+              {/* Compact loan-with bar — centered, fit to content */}
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 14 }}>
+                <div style={{ background: '#ffffff', borderRadius: 10, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 1px 4px rgba(0,0,0,0.04)', padding: '9px 16px', display: 'inline-flex', alignItems: 'center', gap: 10 }}>
+                  <div style={{ width: 30, height: 30, borderRadius: '50%', background: `${ringColor}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden' }}>
                     {otherPartyProfile?.avatar_url || otherPartyProfile?.profile_picture_url
                       ? <img src={otherPartyProfile.avatar_url || otherPartyProfile.profile_picture_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                      : <span style={{ fontSize: 15, fontWeight: 700, color: ringColor, fontFamily: "'DM Sans', sans-serif" }}>{otherPartyUsername.charAt(0)}</span>
+                      : <span style={{ fontSize: 13, fontWeight: 700, color: ringColor, fontFamily: "'DM Sans', sans-serif" }}>{otherPartyUsername.charAt(0)}</span>
                     }
                   </div>
-                  <div style={{ minWidth: 0 }}>
-                    <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginBottom: 2 }}>Loan with</div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{otherPartyUsername}</div>
-                    {selectedLoan.purpose && (
-                      <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>For: {selectedLoan.purpose}</div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Loan Terms box */}
-                <div style={{ ...cardBase }}>
-                  <div style={{ fontSize: 11, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif", marginBottom: 10 }}>Loan Terms</div>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
-                    {[
-                      { label: 'Loan Amount', value: formatMoney(selectedLoan.amount || 0) },
-                      { label: 'Interest Rate', value: `${interestRate}%` },
-                      { label: 'Term', value: `${repaymentPeriod} ${repaymentUnit}` },
-                      { label: 'Frequency', value: paymentFrequency.charAt(0).toUpperCase() + paymentFrequency.slice(1) },
-                    ].map((item, idx) => (
-                      <div key={idx} style={{ textAlign: 'center' }}>
-                        <div style={{ fontSize: 10, color: '#787776', fontWeight: 500, marginBottom: 2, fontFamily: "'DM Sans', sans-serif" }}>{item.label}</div>
-                        <div style={{ fontSize: 13, fontWeight: 700, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>{item.value}</div>
-                      </div>
-                    ))}
+                  <div style={{ fontSize: 13, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap' }}>
+                    <span style={{ fontWeight: 600 }}>{otherPartyUsername}</span>
+                    {isLending ? ' borrowed ' : ' lent you '}
+                    <span style={{ fontWeight: 700, color: ringColor }}>{formatMoney(selectedLoan.amount || 0)}</span>
+                    {selectedLoan.purpose ? <> for <span style={{ color: '#787776' }}>{selectedLoan.purpose}</span></> : null}
                   </div>
                 </div>
               </div>
 
-              {/* Right col (1fr = same as Activity): You're Owed + Repayment Progress side-by-side */}
-              <div style={{ display: 'flex', gap: 10, alignItems: 'stretch' }}>
+              {/* [2fr: You're Owed + Repayment Progress] [1fr: Loan Terms + Docs] */}
+              <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 14, marginBottom: 20, alignItems: 'start' }}>
 
-                {/* You're Owed — styled like lending summary Box 1 */}
-                <div style={{ flex: 1, minWidth: 0, ...cardBase }}>
-                  <div style={{ marginBottom: 10 }}>
-                    {isLending ? (
-                      <svg width="26" height="26" viewBox="0 0 28 28" fill="none">
-                        <circle cx="14" cy="14" r="13" stroke="#03ACEA" strokeWidth="1.5"/>
-                        <path d="M14 9 L14 17 M10.5 12.5 L14 9 L17.5 12.5" stroke="#03ACEA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    ) : (
-                      <svg width="26" height="26" viewBox="0 0 28 28" fill="none">
-                        <circle cx="14" cy="14" r="13" stroke="#1D5B94" strokeWidth="1.5"/>
-                        <path d="M14 9 L14 17 M10.5 13.5 L14 17 L17.5 13.5" stroke="#1D5B94" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    )}
-                  </div>
-                  <div style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>
-                    {isLending
-                      ? <>You're owed <span style={{ color: '#03ACEA' }}>{formatMoney(remaining)}</span></>
-                      : <>You owe <span style={{ color: '#1D5B94' }}>{formatMoney(remaining)}</span></>
-                    }
-                  </div>
-                  <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 3, fontFamily: "'DM Sans', sans-serif" }}>
-                    {formatMoney(totalPaidAmt)} of {formatMoney(totalWithInterest)} {isLending ? 'repaid' : 'paid back'}
-                  </div>
-                  {selectedLoan.next_payment_date && (() => {
-                    const d = daysUntilDate(selectedLoan.next_payment_date);
-                    const isLate = d < 0;
-                    const label = isLate ? `${Math.abs(d)}d overdue` : d === 0 ? 'today' : `${d}d`;
-                    return (
-                      <div style={{ marginTop: 6, fontSize: 10, fontWeight: 600, color: isLate ? '#E8726E' : ringColor, background: isLate ? 'rgba(232,114,110,0.08)' : `${ringColor}12`, borderRadius: 4, padding: '2px 6px', display: 'inline-block', fontFamily: "'DM Sans', sans-serif" }}>{label}</div>
-                    );
-                  })()}
-                </div>
+                {/* Left (2fr): You're Owed + Repayment Progress side-by-side */}
+                <div style={{ display: 'flex', gap: 10, alignItems: 'stretch' }}>
 
-                {/* Repayment Progress — styled like lending summary Box 2 */}
-                <div style={{ flex: 1, minWidth: 0, ...cardBase }}>
-                  <div style={{ fontSize: 11, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif", marginBottom: 10 }}>Repayment Progress</div>
-                  <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 8 }}>
-                    <div style={{ position: 'relative', width: 60, height: 60, flexShrink: 0 }}>
-                      <svg width="60" height="60" viewBox="0 0 128 128" style={{ transform: 'rotate(-90deg)' }}>
-                        <circle cx="64" cy="64" r="45" fill="none" stroke={`${ringColor}26`} strokeWidth="10" />
-                        <circle cx="64" cy="64" r="45" fill="none" stroke={ringColor} strokeWidth="10" strokeLinecap="round" strokeDasharray={C} strokeDashoffset={ringOffset} />
-                      </svg>
-                      <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
-                        <span style={{ fontSize: 10, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>{paidPct}%</span>
-                        <span style={{ fontSize: 7, fontWeight: 500, color: '#787776', fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>repaid</span>
+                  {/* You're Owed — styled like lending summary Box 1 */}
+                  <div style={{ flex: 1, minWidth: 0, ...cardBase }}>
+                    <div style={{ marginBottom: 10 }}>
+                      {isLending ? (
+                        <svg width="26" height="26" viewBox="0 0 28 28" fill="none">
+                          <circle cx="14" cy="14" r="13" stroke="#03ACEA" strokeWidth="1.5"/>
+                          <path d="M14 9 L14 17 M10.5 12.5 L14 9 L17.5 12.5" stroke="#03ACEA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      ) : (
+                        <svg width="26" height="26" viewBox="0 0 28 28" fill="none">
+                          <circle cx="14" cy="14" r="13" stroke="#1D5B94" strokeWidth="1.5"/>
+                          <path d="M14 9 L14 17 M10.5 13.5 L14 17 L17.5 13.5" stroke="#1D5B94" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      )}
+                    </div>
+                    <div style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>
+                      {isLending
+                        ? <>You're owed <span style={{ color: '#03ACEA' }}>{formatMoney(remaining)}</span></>
+                        : <>You owe <span style={{ color: '#1D5B94' }}>{formatMoney(remaining)}</span></>
+                      }
+                    </div>
+                    <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 3, fontFamily: "'DM Sans', sans-serif" }}>
+                      {formatMoney(totalPaidAmt)} of {formatMoney(totalWithInterest)} {isLending ? 'repaid' : 'paid back'}
+                    </div>
+                    {selectedLoan.next_payment_date && (() => {
+                      const d = daysUntilDate(selectedLoan.next_payment_date);
+                      const isLate = d < 0;
+                      const label = isLate ? `${Math.abs(d)}d overdue` : d === 0 ? 'today' : `${d}d`;
+                      return (
+                        <div style={{ marginTop: 6, fontSize: 10, fontWeight: 600, color: isLate ? '#E8726E' : ringColor, background: isLate ? 'rgba(232,114,110,0.08)' : `${ringColor}12`, borderRadius: 4, padding: '2px 6px', display: 'inline-block', fontFamily: "'DM Sans', sans-serif" }}>{label}</div>
+                      );
+                    })()}
+                  </div>
+
+                  {/* Repayment Progress — styled like lending summary Box 2 */}
+                  <div style={{ flex: 1, minWidth: 0, ...cardBase }}>
+                    <div style={{ fontSize: 11, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif", marginBottom: 10 }}>Repayment Progress</div>
+                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 8 }}>
+                      <div style={{ position: 'relative', width: 60, height: 60, flexShrink: 0 }}>
+                        <svg width="60" height="60" viewBox="0 0 128 128" style={{ transform: 'rotate(-90deg)' }}>
+                          <circle cx="64" cy="64" r="45" fill="none" stroke={`${ringColor}26`} strokeWidth="10" />
+                          <circle cx="64" cy="64" r="45" fill="none" stroke={ringColor} strokeWidth="10" strokeLinecap="round" strokeDasharray={C} strokeDashoffset={ringOffset} />
+                        </svg>
+                        <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
+                          <span style={{ fontSize: 10, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>{paidPct}%</span>
+                          <span style={{ fontSize: 7, fontWeight: 500, color: '#787776', fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>repaid</span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div style={{ fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", textAlign: 'center', lineHeight: 1.4 }}>
-                    {formatMoney(totalPaidAmt)} of {formatMoney(totalWithInterest)} {isLending ? 'repaid to you' : 'paid back'}
+                    <div style={{ fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", textAlign: 'center', lineHeight: 1.4 }}>
+                      {formatMoney(totalPaidAmt)} of {formatMoney(totalWithInterest)} {isLending ? 'repaid to you' : 'paid back'}
+                    </div>
                   </div>
                 </div>
 
+                {/* Right (1fr): Loan Terms + blue doc buttons */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+
+                  {/* Loan Terms */}
+                  <div style={{ ...cardBase }}>
+                    <div style={{ fontSize: 11, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif", marginBottom: 10 }}>Loan Terms</div>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
+                      {[
+                        { label: 'Loan Amount', value: formatMoney(selectedLoan.amount || 0) },
+                        { label: 'Interest Rate', value: `${interestRate}%` },
+                        { label: 'Term', value: `${repaymentPeriod} ${repaymentUnit}` },
+                        { label: 'Frequency', value: paymentFrequency.charAt(0).toUpperCase() + paymentFrequency.slice(1) },
+                      ].map((item, idx) => (
+                        <div key={idx} style={{ textAlign: 'center' }}>
+                          <div style={{ fontSize: 10, color: '#787776', fontWeight: 500, marginBottom: 2, fontFamily: "'DM Sans', sans-serif" }}>{item.label}</div>
+                          <div style={{ fontSize: 13, fontWeight: 700, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>{item.value}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Doc buttons — blue background */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                    {/* Promissory Note */}
+                    <div style={{ position: 'relative' }}>
+                      <div style={{ background: '#03ACEA', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '9px 14px' }}>
+                        <button onClick={() => { const ag = loanAgreements.find(a => a.loan_id === selectedLoan.id); if (ag) openDocPopup('promissory', ag); }} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, flex: 1, textAlign: 'left' }}>
+                          <p style={{ fontSize: 12, fontWeight: 600, color: 'white', margin: 0 }}>Promissory Note</p>
+                        </button>
+                        <button onClick={(e) => { e.stopPropagation(); setInfoTooltip(infoTooltip === 'promissory' ? null : 'promissory'); }} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', flexShrink: 0 }}>
+                          <span style={{ width: 16, height: 16, borderRadius: '50%', background: 'rgba(255,255,255,0.3)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}><span style={{ fontSize: 9, fontWeight: 800, color: 'white', lineHeight: 1 }}>i</span></span>
+                        </button>
+                      </div>
+                      {infoTooltip === 'promissory' && (
+                        <div style={{ position: 'absolute', top: 'calc(100% + 6px)', left: '50%', transform: 'translateX(-50%)', background: 'white', borderRadius: 9, padding: '8px 11px', boxShadow: '0 4px 16px rgba(0,0,0,0.13)', width: 200, zIndex: 200, border: '1px solid rgba(0,0,0,0.06)' }}>
+                          <p style={{ fontSize: 11, color: '#1A1918', margin: 0, lineHeight: 1.55 }}>A signed legal document where the borrower promises to repay a specific amount under agreed terms.</p>
+                        </div>
+                      )}
+                    </div>
+                    {/* Amortization Schedule */}
+                    <div style={{ position: 'relative' }}>
+                      <div style={{ background: '#03ACEA', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '9px 14px' }}>
+                        <button onClick={() => { const ag = loanAgreements.find(a => a.loan_id === selectedLoan.id); if (ag) openDocPopup('amortization', ag); }} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, flex: 1, textAlign: 'left' }}>
+                          <p style={{ fontSize: 12, fontWeight: 600, color: 'white', margin: 0 }}>Amortization Schedule</p>
+                        </button>
+                        <button onClick={(e) => { e.stopPropagation(); setInfoTooltip(infoTooltip === 'amortization' ? null : 'amortization'); }} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', flexShrink: 0 }}>
+                          <span style={{ width: 16, height: 16, borderRadius: '50%', background: 'rgba(255,255,255,0.3)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}><span style={{ fontSize: 9, fontWeight: 800, color: 'white', lineHeight: 1 }}>i</span></span>
+                        </button>
+                      </div>
+                      {infoTooltip === 'amortization' && (
+                        <div style={{ position: 'absolute', top: 'calc(100% + 6px)', left: '50%', transform: 'translateX(-50%)', background: 'white', borderRadius: 9, padding: '8px 11px', boxShadow: '0 4px 16px rgba(0,0,0,0.13)', width: 200, zIndex: 200, border: '1px solid rgba(0,0,0,0.06)' }}>
+                          <p style={{ fontSize: 11, color: '#1A1918', margin: 0, lineHeight: 1.55 }}>A table showing each scheduled payment broken down into principal and interest over the life of the loan.</p>
+                        </div>
+                      )}
+                    </div>
+                    {/* Loan Summary */}
+                    <div style={{ background: '#03ACEA', borderRadius: 10, display: 'flex', alignItems: 'center', padding: '9px 14px' }}>
+                      <button onClick={() => { const ag = loanAgreements.find(a => a.loan_id === selectedLoan.id); if (ag) openDocPopup('summary', ag); }} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, width: '100%', textAlign: 'left' }}>
+                        <p style={{ fontSize: 12, fontWeight: 600, color: 'white', margin: 0 }}>Loan Summary</p>
+                      </button>
+                    </div>
+                  </div>
+
+                </div>
               </div>
-            </div>
+            </>
           );
         })()}
 
@@ -678,47 +724,6 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
           </div>
         </PageCard>
 
-        <div className="loan-details-doc-boxes" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-          <div style={{ display: 'flex', gap: 8 }}>
-            <div style={{ position: 'relative' }}>
-              <div style={{ background: '#1A1918', borderRadius: 10, display: 'inline-flex', alignItems: 'center', gap: 8, padding: '9px 14px' }}>
-                <button onClick={() => { const ag = loanAgreements.find(a => a.loan_id === selectedLoan.id); if (ag) openDocPopup('promissory', ag); }} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
-                  <p style={{ fontSize: 12, fontWeight: 600, color: 'white', margin: 0, whiteSpace: 'nowrap' }}>Promissory Note</p>
-                </button>
-                <button onClick={(e) => { e.stopPropagation(); setInfoTooltip(infoTooltip === 'promissory' ? null : 'promissory'); }} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex' }}>
-                  <span style={{ width: 16, height: 16, borderRadius: '50%', background: 'white', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}><span style={{ fontSize: 9, fontWeight: 800, color: '#1A1918', lineHeight: 1 }}>i</span></span>
-                </button>
-              </div>
-              {infoTooltip === 'promissory' && (
-                <div style={{ position: 'absolute', top: 'calc(100% + 6px)', left: '50%', transform: 'translateX(-50%)', background: 'white', borderRadius: 9, padding: '8px 11px', boxShadow: '0 4px 16px rgba(0,0,0,0.13)', width: 200, zIndex: 200, border: '1px solid rgba(0,0,0,0.06)' }}>
-                  <p style={{ fontSize: 11, color: '#1A1918', margin: 0, lineHeight: 1.55 }}>A signed legal document where the borrower promises to repay a specific amount under agreed terms.</p>
-                </div>
-              )}
-            </div>
-            <div style={{ position: 'relative' }}>
-              <div style={{ background: '#1A1918', borderRadius: 10, display: 'inline-flex', alignItems: 'center', gap: 8, padding: '9px 14px' }}>
-                <button onClick={() => { const ag = loanAgreements.find(a => a.loan_id === selectedLoan.id); if (ag) openDocPopup('amortization', ag); }} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
-                  <p style={{ fontSize: 12, fontWeight: 600, color: 'white', margin: 0, whiteSpace: 'nowrap' }}>Amortization Schedule</p>
-                </button>
-                <button onClick={(e) => { e.stopPropagation(); setInfoTooltip(infoTooltip === 'amortization' ? null : 'amortization'); }} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex' }}>
-                  <span style={{ width: 16, height: 16, borderRadius: '50%', background: 'white', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}><span style={{ fontSize: 9, fontWeight: 800, color: '#1A1918', lineHeight: 1 }}>i</span></span>
-                </button>
-              </div>
-              {infoTooltip === 'amortization' && (
-                <div style={{ position: 'absolute', top: 'calc(100% + 6px)', left: '50%', transform: 'translateX(-50%)', background: 'white', borderRadius: 9, padding: '8px 11px', boxShadow: '0 4px 16px rgba(0,0,0,0.13)', width: 200, zIndex: 200, border: '1px solid rgba(0,0,0,0.06)' }}>
-                  <p style={{ fontSize: 11, color: '#1A1918', margin: 0, lineHeight: 1.55 }}>A table showing each scheduled payment broken down into principal and interest over the life of the loan.</p>
-                </div>
-              )}
-            </div>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <div style={{ background: '#1A1918', borderRadius: 10, display: 'inline-flex', alignItems: 'center', padding: '9px 14px' }}>
-              <button onClick={() => { const ag = loanAgreements.find(a => a.loan_id === selectedLoan.id); if (ag) openDocPopup('summary', ag); }} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
-                <p style={{ fontSize: 12, fontWeight: 600, color: 'white', margin: 0, whiteSpace: 'nowrap' }}>Loan Summary</p>
-              </button>
-            </div>
-          </div>
-        </div>
         </div>{/* end left column */}
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
