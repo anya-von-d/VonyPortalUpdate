@@ -543,9 +543,7 @@ function _noop() { // eslint-disable-line no-unused-vars
   };
 
   return (
-    <div ref={cardRef} style={{ position: 'relative', minWidth: 0 }} onClick={() => setHoveredPt(null)}>
-      <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
-      <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, padding: '14px 18px' }}>
+    <div ref={cardRef} style={{ position: 'relative', minWidth: 0 }} onClick={() => setHoveredPt(null)}>      <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, padding: '14px 18px' }}>
 
         {/* ── Header row ── */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
@@ -1538,37 +1536,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Notification bar — always near top on mobile */}
-          {notifCount > 0 && (
-            <div className="home-notif-banner" style={{ marginBottom: 16 }}>
-              <div style={{ position: 'relative' }}>
-                <div style={{
-                  position: 'absolute', top: 0, left: '50%',
-                  transform: 'translateX(-50%)',
-                  width: 'calc(100% + 36px)', height: '100%',
-                  background: 'linear-gradient(225deg, rgb(129,140,248) 0%, rgb(99,102,241) 12%, rgb(79,70,229) 24%, rgb(67,56,202) 36%, rgb(37,99,235) 50%, rgb(59,130,246) 64%, rgb(96,165,250) 76%, rgb(56,189,248) 88%, rgb(14,165,233) 100%)',
-                  filter: 'blur(12px) saturate(1.18)',
-                  opacity: 0.55,
-                  borderRadius: 16, zIndex: 0, pointerEvents: 'none',
-                }} />
-                <div style={{
-                  position: 'relative', zIndex: 1,
-                  display: 'flex', alignItems: 'center', gap: 8, padding: '6px 12px', borderRadius: 9,
-                  background: '#14324D', border: 'none',
-                }}>
-                  <div style={{ width: 20, height: 20, borderRadius: 6, background: 'rgba(255,255,255,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-                  </div>
-                  <span style={{ flex: 1, fontSize: 12, fontWeight: 600, color: 'white', fontFamily: "'DM Sans', sans-serif" }}>
-                    You have {notifCount} new notification{notifCount !== 1 ? 's' : ''}
-                  </span>
-                  <Link to={createPageUrl("Home")} style={{ display: 'flex', alignItems: 'center', flexShrink: 0, textDecoration: 'none' }}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-                  </Link>
-                </div>
-              </div>
-            </div>
-          )}
 
           {/* New user onboarding — below greeting */}
           {!hasLoans && (
@@ -1803,11 +1770,7 @@ export default function Home() {
                         View →
                       </Link>
                     </div>
-                    {/* Line 1: notifications */}
-                    <div style={{ fontSize: 12, fontWeight: 500, color: 'rgba(255,255,255,0.85)', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.4, marginTop: 2 }}>
-                      You have <strong style={{ color: '#ffffff', fontWeight: 700 }}>{notifCount}</strong> new notification{notifCount !== 1 ? 's' : ''}
-                    </div>
-                    {/* Line 2: key reminders */}
+                    {/* Key reminders */}
                     <div style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.55)', fontFamily: "'DM Sans', sans-serif", letterSpacing: '0.06em', textTransform: 'uppercase', marginTop: 5 }}>
                       {keyRemindersCount} key reminder{keyRemindersCount !== 1 ? 's' : ''}
                     </div>
@@ -1829,9 +1792,7 @@ export default function Home() {
                 const hasOwing = borrowedLoans.length > 0 && borrowOwed > 0;
                 const hasOwed = lentLoans.length > 0 && lentOwed > 0;
                 if (!hasOwing && !hasOwed) return (
-                  <div style={{ position: 'relative' }}>
-                    <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
-                    <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, padding: '14px 18px' }}>
+                  <div style={{ position: 'relative' }}>                    <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, padding: '14px 18px' }}>
                       <p style={{ fontSize: 12, color: '#9B9A98', margin: 0, fontFamily: "'DM Sans', sans-serif", textAlign: 'center' }}>You have no active loans yet 🌱</p>
                     </div>
                   </div>
@@ -1839,9 +1800,7 @@ export default function Home() {
                 return (
                   <div style={{ display: 'flex', gap: 12 }}>
                     {/* Box 1 — You Owe */}
-                    <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>
-                      <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
-                      <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, padding: '14px 14px' }}>
+                    <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>                      <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, padding: '14px 14px' }}>
                         <div style={{ marginBottom: 10 }}>
                           <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
                             <circle cx="14" cy="14" r="13" stroke="#1D5B94" strokeWidth="1.5"/>
@@ -1857,9 +1816,7 @@ export default function Home() {
                       </div>
                     </div>
                     {/* Box 2 — You Are Owed */}
-                    <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>
-                      <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
-                      <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, padding: '14px 14px' }}>
+                    <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>                      <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, padding: '14px 14px' }}>
                         <div style={{ marginBottom: 10 }}>
                           <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
                             <circle cx="14" cy="14" r="13" stroke="#03ACEA" strokeWidth="1.5"/>
@@ -1905,9 +1862,7 @@ export default function Home() {
                 const nextLabel = firstDaysAway === 0 ? 'Today' : firstDaysAway === 1 ? 'Tomorrow' : `In ${firstDaysAway} days`;
 
                 return (
-                  <div className="home-card-upcoming-payments" style={{ position: 'relative' }}>
-                    <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
-                    <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, padding: '14px 18px' }}>
+                  <div className="home-card-upcoming-payments" style={{ position: 'relative' }}>                    <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, padding: '14px 18px' }}>
                       {/* Header row */}
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 }}>
                         <div style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>Upcoming Payments</div>
@@ -1971,9 +1926,7 @@ export default function Home() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 
               {/* April at a Glance */}
-              <div className="home-card-howmonth" style={{ position: 'relative' }}>
-              <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
-              <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', padding: '14px 18px' }}>
+              <div className="home-card-howmonth" style={{ position: 'relative' }}>              <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', padding: '14px 18px' }}>
                 <div style={{ paddingBottom: 5, marginBottom: 4 }}>
                   <span style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>
                     {`${format(today, 'MMMM')} at a Glance`}
@@ -2060,9 +2013,7 @@ export default function Home() {
                 };
 
                 return (
-                  <div className="home-card-attention" style={{ position: 'relative' }}>
-                    <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
-                    <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, padding: '14px 18px' }}>
+                  <div className="home-card-attention" style={{ position: 'relative' }}>                    <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, padding: '14px 18px' }}>
                       <SectionHeader title="What needs your attention" />
                       {items.length === 0 ? (
                         <p style={{ fontSize: 12, color: '#C5C3C0', margin: 0, lineHeight: 1.45 }}>All clear, your inbox is empty 🎉</p>
@@ -2103,74 +2054,6 @@ export default function Home() {
                           })}
                         </div>
                       )}
-                    </div>
-                  </div>
-                );
-              })()}
-              {/* ── Your pending requests ── */}
-              {(pendingLoanOffersSent.length > 0 || pendingPaymentsSentByMe.length > 0) && (() => {
-                const pendingRows = [];
-
-                pendingLoanOffersSent.forEach(loan => {
-                  const borrowerProfile = safeAllProfiles.find(p => p.user_id === loan.borrower_id);
-                  const firstName = borrowerProfile?.full_name?.split(' ')[0] || borrowerProfile?.username || 'them';
-                  pendingRows.push({
-                    key: `loan-${loan.id}`,
-                    type: 'loan',
-                    loan,
-                    profile: borrowerProfile,
-                    icon: (
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#D97706" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 3 }}>
-                        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-                      </svg>
-                    ),
-                    text: `Waiting for ${firstName} to review your loan offer`,
-                  });
-                });
-
-                pendingPaymentsSentByMe.forEach(payment => {
-                  const loanForPay = safeLoans.find(l => l && l.id === payment.loan_id);
-                  const otherUserId = loanForPay ? (loanForPay.lender_id === user.id ? loanForPay.borrower_id : loanForPay.lender_id) : null;
-                  const otherProfile = otherUserId ? safeAllProfiles.find(p => p.user_id === otherUserId) : null;
-                  const firstName = otherProfile?.full_name?.split(' ')[0] || otherProfile?.username || 'them';
-                  pendingRows.push({
-                    key: `pay-${payment.id}`,
-                    type: 'payment',
-                    payment,
-                    loan: loanForPay,
-                    profile: otherProfile,
-                    icon: (
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9B9A98" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 3 }}>
-                        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-                      </svg>
-                    ),
-                    text: `${firstName} has not confirmed your ${formatMoney(payment.amount || 0)} payment yet`,
-                  });
-                });
-
-                return (
-                  <div className="home-card-attention" style={{ position: 'relative' }}>
-                    <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
-                    <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, padding: '14px 18px' }}>
-                      <SectionHeader title="Your pending requests" />
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                        {pendingRows.map(row => (
-                          <div key={row.key} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, padding: '4px 0' }}>
-                            {row.icon}
-                            <span style={{ flex: 1, fontSize: 12, fontWeight: 500, color: '#787776', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.4 }}>{row.text}</span>
-                            <button
-                              type="button"
-                              onClick={() => setPendingDetailTarget(row)}
-                              aria-label="View details"
-                              style={{ flexShrink: 0, background: 'transparent', border: 'none', padding: 0, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', color: '#9B9A98', marginTop: 1, transition: 'color 0.15s' }}
-                              onMouseEnter={e => e.currentTarget.style.color = '#03ACEA'}
-                              onMouseLeave={e => e.currentTarget.style.color = '#9B9A98'}
-                            >
-                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-                            </button>
-                          </div>
-                        ))}
-                      </div>
                     </div>
                   </div>
                 );
@@ -2226,9 +2109,7 @@ export default function Home() {
                 const allTasks = [...tasks, ...customTasks];
                 const sortedTasks = [...allTasks].sort((a, b) => Number(checkedTasks.has(a.id)) - Number(checkedTasks.has(b.id)));
                 return (
-                  <div className="home-card-tasks" style={{ position: 'relative' }}>
-                    <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
-                    <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, padding: '14px 18px' }}>
+                  <div className="home-card-tasks" style={{ position: 'relative' }}>                    <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, padding: '14px 18px' }}>
                       <SectionHeader title="To Do This Week" />
                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4, marginTop: 2, marginBottom: 10 }}>
                         {days.map((d, i) => {
@@ -2295,9 +2176,7 @@ export default function Home() {
                         100% { opacity: 0; }
                       }
                     `}</style>
-                    <div className="home-card-lending-loans" style={{ position: 'relative' }}>
-                      <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
-                      <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, padding: '14px 18px' }}>
+                    <div className="home-card-lending-loans" style={{ position: 'relative' }}>                      <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, padding: '14px 18px' }}>
                         <SectionHeader title="Your Loans" linkTo={createPageUrl('LendingBorrowing') + '?tab=lending'} linkLabel="View all →" />
                         {allLoans.length === 0 ? (
                           <div style={{ padding: '8px 0', fontSize: 12, color: '#9B9A98', textAlign: 'center' }}>No active loans yet 🌱</div>
