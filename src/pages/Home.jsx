@@ -1810,43 +1810,28 @@ export default function Home() {
                 const hasOwing = borrowedLoans.length > 0 && borrowOwed > 0;
                 const hasOwed = lentLoans.length > 0 && lentOwed > 0;
                 if (!hasOwing && !hasOwed) return (
-                  <div className="home-card-bor-overview" style={{ position: 'relative' }}>                    <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '2px 5px 16px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.10)', padding: '14px 18px' }}>
-                      <p style={{ fontSize: 12, color: '#9B9A98', margin: 0, fontFamily: "'DM Sans', sans-serif", textAlign: 'center' }}>You have no active loans yet 🌱</p>
-                    </div>
+                  <div className="home-card-bor-overview" style={{ padding: '4px 2px' }}>
+                    <p style={{ fontSize: 12, color: '#9B9A98', margin: 0, fontFamily: "'DM Sans', sans-serif" }}>You have no active loans yet 🌱</p>
                   </div>
                 );
                 return (
-                  <div className="home-card-bor-overview" style={{ display: 'flex', gap: 12 }}>
-                    {/* Box 1 — You Owe */}
-                    <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>                      <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '2px 5px 16px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.10)', padding: '14px 14px' }}>
-                        <div style={{ marginBottom: 10 }}>
-                          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-                            <circle cx="14" cy="14" r="13" stroke="#1D5B94" strokeWidth="1.5"/>
-                            <path d="M14 19 L14 11 M10.5 14.5 L14 11 L17.5 14.5" stroke="#1D5B94" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                        </div>
-                        <div style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>
-                          You owe <span style={{ color: '#1D5B94' }}>{formatMoney(borrowOwed)}</span>
-                        </div>
-                        <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 3, fontFamily: "'DM Sans', sans-serif" }}>
-                          across {borrowedLoans.length} loan{borrowedLoans.length !== 1 ? 's' : ''}
-                        </div>
+                  <div className="home-card-bor-overview" style={{ display: 'flex', gap: 0 }}>
+                    {/* You Owe */}
+                    <div style={{ flex: 1, minWidth: 0, padding: '4px 8px 4px 2px', borderRight: '1px solid rgba(0,0,0,0.08)' }}>
+                      <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>
+                        You owe <span style={{ color: '#1D5B94' }}>{formatMoney(borrowOwed)}</span>
+                      </div>
+                      <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 2, fontFamily: "'DM Sans', sans-serif" }}>
+                        across {borrowedLoans.length} loan{borrowedLoans.length !== 1 ? 's' : ''}
                       </div>
                     </div>
-                    {/* Box 2 — You Are Owed */}
-                    <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>                      <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '2px 5px 16px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.10)', padding: '14px 14px' }}>
-                        <div style={{ marginBottom: 10 }}>
-                          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-                            <circle cx="14" cy="14" r="13" stroke="#03ACEA" strokeWidth="1.5"/>
-                            <path d="M14 10 L14 18 M10.5 13.5 L14 18 L17.5 13.5" stroke="#03ACEA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                        </div>
-                        <div style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>
-                          You are owed <span style={{ color: '#03ACEA' }}>{formatMoney(lentOwed)}</span>
-                        </div>
-                        <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 3, fontFamily: "'DM Sans', sans-serif" }}>
-                          across {lentLoans.length} loan{lentLoans.length !== 1 ? 's' : ''}
-                        </div>
+                    {/* You Are Owed */}
+                    <div style={{ flex: 1, minWidth: 0, padding: '4px 2px 4px 12px' }}>
+                      <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>
+                        You are owed <span style={{ color: '#03ACEA' }}>{formatMoney(lentOwed)}</span>
+                      </div>
+                      <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 2, fontFamily: "'DM Sans', sans-serif" }}>
+                        across {lentLoans.length} loan{lentLoans.length !== 1 ? 's' : ''}
                       </div>
                     </div>
                   </div>
