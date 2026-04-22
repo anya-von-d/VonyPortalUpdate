@@ -34,6 +34,11 @@ input[type="date"] {
   html, body {
     scroll-behavior: smooth;
     background-color: #FDFBF9;
+    background-image:
+      radial-gradient(ellipse at 18% 22%, rgba(255, 195, 140, 0.13) 0%, transparent 52%),
+      radial-gradient(ellipse at 82% 78%, rgba(3, 172, 234, 0.07) 0%, transparent 48%),
+      radial-gradient(ellipse at 60% 10%, rgba(255, 220, 180, 0.08) 0%, transparent 40%);
+    background-attachment: fixed;
   }
 
   /* Scrollbar styling */
