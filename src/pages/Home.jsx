@@ -1520,11 +1520,11 @@ export default function Home() {
         <DesktopSidebar />
 
         {/* ── CENTER ── */}
-        <div className="mesh-center" style={{ background: 'transparent', padding: '24px 56px 80px' }}>
+        <div className="mesh-center" style={{ background: 'transparent', padding: '36px 72px 80px' }}>
 
           {/* Desktop page title */}
           <div className="desktop-page-title" style={{ marginBottom: 28 }}>
-            <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 26, fontWeight: 400, letterSpacing: '-0.01em', lineHeight: 1.2, color: '#1A1918' }}>
+            <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 34, fontWeight: 400, letterSpacing: '-0.01em', lineHeight: 1.2, color: '#1A1918' }}>
               <span style={{ fontStyle: 'normal' }}>{greeting},</span>{' '}
               <span style={{ fontStyle: 'italic', color: '#03ACEA' }}>{firstName}</span>{' '}👋
             </div>
@@ -1532,7 +1532,7 @@ export default function Home() {
 
           {/* Mobile-only page title */}
           <div className="mobile-page-title">
-            <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 22, fontWeight: 400, letterSpacing: '-0.01em', lineHeight: 1.2, color: '#1A1918', marginBottom: 12 }}>
+            <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 28, fontWeight: 400, letterSpacing: '-0.01em', lineHeight: 1.2, color: '#1A1918', marginBottom: 12 }}>
               <span style={{ fontStyle: 'normal' }}>{greeting},</span>{' '}
               <span style={{ fontStyle: 'italic', color: '#03ACEA' }}>{firstName}</span>{' '}👋
             </div>
