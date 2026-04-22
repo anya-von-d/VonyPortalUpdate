@@ -1845,13 +1845,13 @@ export default function Home() {
                       ) : (
                         <div style={{ display: 'flex', flexDirection: 'column', gap: 5, alignItems: 'center', textAlign: 'center' }}>
                           {hasOwing && (
-                            <div style={{ fontSize: 12, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>
-                              You owe <span style={{ fontWeight: 700, color: '#1D5B94' }}>{formatMoney(borrowOwed)}</span> across {borrowedLoans.length} loan{borrowedLoans.length !== 1 ? 's' : ''}
+                            <div style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>
+                              You owe <span style={{ color: '#1D5B94' }}>{formatMoney(borrowOwed)}</span> across {borrowedLoans.length} loan{borrowedLoans.length !== 1 ? 's' : ''}
                             </div>
                           )}
                           {hasOwed && (
-                            <div style={{ fontSize: 12, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>
-                              You are owed <span style={{ fontWeight: 700, color: '#03ACEA' }}>{formatMoney(lentOwed)}</span> across {lentLoans.length} loan{lentLoans.length !== 1 ? 's' : ''}
+                            <div style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>
+                              You are owed <span style={{ color: '#03ACEA' }}>{formatMoney(lentOwed)}</span> across {lentLoans.length} loan{lentLoans.length !== 1 ? 's' : ''}
                             </div>
                           )}
                         </div>
@@ -2022,7 +2022,7 @@ export default function Home() {
                             return (
                               <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, padding: '3px 0' }}>
                                 <AIcon type={item.type} />
-                                <span style={{ flex: 1, fontSize: 12, fontWeight: 500, color: '#787776', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.4 }}>{item.text}</span>
+                                <span style={{ flex: 1, fontSize: 12, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.4 }}>{item.text}</span>
                                 {arrowAction && (
                                   <button
                                     type="button"
