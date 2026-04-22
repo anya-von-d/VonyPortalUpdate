@@ -1810,13 +1810,13 @@ export default function Home() {
                 const hasOwing = borrowedLoans.length > 0 && borrowOwed > 0;
                 const hasOwed = lentLoans.length > 0 && lentOwed > 0;
                 if (!hasOwing && !hasOwed) return (
-                  <div style={{ position: 'relative' }}>                    <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '2px 5px 16px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.10)', padding: '14px 18px' }}>
+                  <div className="home-card-bor-overview" style={{ position: 'relative' }}>                    <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '2px 5px 16px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.10)', padding: '14px 18px' }}>
                       <p style={{ fontSize: 12, color: '#9B9A98', margin: 0, fontFamily: "'DM Sans', sans-serif", textAlign: 'center' }}>You have no active loans yet 🌱</p>
                     </div>
                   </div>
                 );
                 return (
-                  <div style={{ display: 'flex', gap: 12 }}>
+                  <div className="home-card-bor-overview" style={{ display: 'flex', gap: 12 }}>
                     {/* Box 1 — You Owe */}
                     <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>                      <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '2px 5px 16px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.10)', padding: '14px 14px' }}>
                         <div style={{ marginBottom: 10 }}>
@@ -1992,7 +1992,7 @@ export default function Home() {
                 const allLines = [...cashLines, ...customExpenses.map(e => ({ ...e, date: e.date ? toLocalDate(e.date) : null, status: e.status || 'custom' }))];
                 const total = allLines.reduce((s, l) => s + l.amount, 0);
                 return (
-                  <div style={{ background: '#ffffff', borderRadius: 10, boxShadow: '2px 5px 16px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.10)', padding: '14px 18px' }}>
+                  <div className="home-card-plan-month" style={{ background: '#ffffff', borderRadius: 10, boxShadow: '2px 5px 16px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.10)', padding: '14px 18px' }}>
                     <SectionHeader title="Plan Your Month" />
                     <div style={{ fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: -6, marginBottom: 10 }}>{monthName}</div>
 
@@ -2110,7 +2110,7 @@ export default function Home() {
     { top: '40%', left: '93%', tx: '-100%', ty: '-50%', size: 38 },
   ];
   return (
-    <div style={{ position: 'relative', borderRadius: 10, overflow: 'hidden', boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}>
+    <div className="home-card-people-bubble" style={{ position: 'relative', borderRadius: 10, overflow: 'hidden', boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}>
       {/* Blue gradient background */}
       <div style={{ background: 'linear-gradient(135deg, #1a4f7a 0%, #03ACEA 100%)', height: 200, position: 'relative' }}>
         {displayPeople.slice(0, 7).map((person, i) => {
@@ -2199,7 +2199,7 @@ export default function Home() {
                   { bg: 'linear-gradient(170deg, #FFE082 0%, #FFCA28 100%)', rotate: '-1deg',   ty: '5px',  zIndex: 3, textColor: '#5C4200' },
                 ];
                 return (
-                  <div style={{ display: 'flex', paddingBottom: 10, overflow: 'visible' }}>
+                  <div className="home-card-attention" style={{ display: 'flex', paddingBottom: 10, overflow: 'visible' }}>
                     {reminders.slice(0, 3).map((rem, i) => {
                       const nc = noteConfigs[i];
                       const isSuggestion = rem.type === 'suggestion';
@@ -2356,7 +2356,7 @@ export default function Home() {
 
               {/* Monthly received / paid boxes — stacked full width */}
               {(monthlyExpectedReceive > 0 || monthlyExpectedPay > 0) && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <div className="home-card-monthly-summary" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                   {monthlyExpectedReceive > 0 && (
                     <div style={{ background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '2px 5px 16px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.10)', padding: '12px 14px', display: 'flex', alignItems: 'center', gap: 12 }}>
                       <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(3,172,234,0.1)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -2430,7 +2430,7 @@ export default function Home() {
                   );
                 };
                 return (
-                  <div style={{ position: 'relative', overflow: 'visible', padding: '0 6px' }}>
+                  <div className="home-card-loans-pair" style={{ position: 'relative', overflow: 'visible', padding: '0 6px' }}>
                     <style>{`
                       @keyframes lbStatusA {
                         0%, 44% { opacity: 1; }
