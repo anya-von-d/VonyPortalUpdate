@@ -561,12 +561,12 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
                     </div>
                   </div>
 
-                  {/* Blue doc buttons */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  {/* Blue doc buttons — horizontal row, fit to text */}
+                  <div style={{ display: 'flex', flexDirection: 'row', gap: 6 }}>
                     <div style={{ position: 'relative' }}>
-                      <div style={{ background: '#03ACEA', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '9px 14px' }}>
-                        <button onClick={() => { const ag = loanAgreements.find(a => a.loan_id === selectedLoan.id); if (ag) openDocPopup('promissory', ag); }} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, flex: 1, textAlign: 'left' }}>
-                          <p style={{ fontSize: 12, fontWeight: 600, color: 'white', margin: 0 }}>Promissory Note</p>
+                      <div style={{ background: '#03ACEA', borderRadius: 10, display: 'inline-flex', alignItems: 'center', gap: 6, padding: '7px 10px' }}>
+                        <button onClick={() => { const ag = loanAgreements.find(a => a.loan_id === selectedLoan.id); if (ag) openDocPopup('promissory', ag); }} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
+                          <p style={{ fontSize: 12, fontWeight: 600, color: 'white', margin: 0, whiteSpace: 'nowrap' }}>Promissory Note</p>
                         </button>
                         <button onClick={(e) => { e.stopPropagation(); setInfoTooltip(infoTooltip === 'promissory' ? null : 'promissory'); }} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', flexShrink: 0 }}>
                           <span style={{ width: 16, height: 16, borderRadius: '50%', background: 'rgba(255,255,255,0.3)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}><span style={{ fontSize: 9, fontWeight: 800, color: 'white', lineHeight: 1 }}>i</span></span>
@@ -579,9 +579,9 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
                       )}
                     </div>
                     <div style={{ position: 'relative' }}>
-                      <div style={{ background: '#03ACEA', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '9px 14px' }}>
-                        <button onClick={() => { const ag = loanAgreements.find(a => a.loan_id === selectedLoan.id); if (ag) openDocPopup('amortization', ag); }} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, flex: 1, textAlign: 'left' }}>
-                          <p style={{ fontSize: 12, fontWeight: 600, color: 'white', margin: 0 }}>Amortization Schedule</p>
+                      <div style={{ background: '#03ACEA', borderRadius: 10, display: 'inline-flex', alignItems: 'center', gap: 6, padding: '7px 10px' }}>
+                        <button onClick={() => { const ag = loanAgreements.find(a => a.loan_id === selectedLoan.id); if (ag) openDocPopup('amortization', ag); }} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
+                          <p style={{ fontSize: 12, fontWeight: 600, color: 'white', margin: 0, whiteSpace: 'nowrap' }}>Amortization Schedule</p>
                         </button>
                         <button onClick={(e) => { e.stopPropagation(); setInfoTooltip(infoTooltip === 'amortization' ? null : 'amortization'); }} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', flexShrink: 0 }}>
                           <span style={{ width: 16, height: 16, borderRadius: '50%', background: 'rgba(255,255,255,0.3)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}><span style={{ fontSize: 9, fontWeight: 800, color: 'white', lineHeight: 1 }}>i</span></span>
@@ -593,9 +593,9 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
                         </div>
                       )}
                     </div>
-                    <div style={{ background: '#03ACEA', borderRadius: 10, display: 'flex', alignItems: 'center', padding: '9px 14px' }}>
-                      <button onClick={() => { const ag = loanAgreements.find(a => a.loan_id === selectedLoan.id); if (ag) openDocPopup('summary', ag); }} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, width: '100%', textAlign: 'left' }}>
-                        <p style={{ fontSize: 12, fontWeight: 600, color: 'white', margin: 0 }}>Loan Summary</p>
+                    <div style={{ background: '#03ACEA', borderRadius: 10, display: 'inline-flex', alignItems: 'center', padding: '7px 10px' }}>
+                      <button onClick={() => { const ag = loanAgreements.find(a => a.loan_id === selectedLoan.id); if (ag) openDocPopup('summary', ag); }} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
+                        <p style={{ fontSize: 12, fontWeight: 600, color: 'white', margin: 0, whiteSpace: 'nowrap' }}>Loan Summary</p>
                       </button>
                     </div>
                   </div>
@@ -653,8 +653,8 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
           );
         })()}
 
-        {/* 2-col: [Payment History + Activity] | [Payments + Loan Progress] */}
-        <div className="loan-details-masonry" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, alignItems: 'start' }}>
+        {/* 3-col: [Payment History + Activity] | [Payments] | [Loan Progress] */}
+        <div className="loan-details-masonry" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 20, alignItems: 'start' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
         <PageCard title="Payment History">
           <div>
@@ -779,7 +779,7 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
 
         </div>{/* end left column */}
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+        <div>
         <PageCard title="Payments">
           <div>
           {(() => {
@@ -841,6 +841,9 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
           })()}
           </div>
         </PageCard>
+        </div>{/* end payments column */}
+
+        <div>
         <PageCard title="Loan Progress">
           <div>
           {(() => {
@@ -865,9 +868,9 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
           })()}
           </div>
         </PageCard>
-        </div>{/* end right column */}
+        </div>{/* end loan progress column */}
 
-        </div>{/* end 2-col masonry */}
+        </div>{/* end 3-col masonry */}
 
         {/* Cancelled notice */}
         {selectedLoan.status === 'cancelled' && (
