@@ -1803,82 +1803,52 @@ export default function Home() {
           <div className="home-two-col-row" style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)', gap: 24 }}>
             {/* Col 1: Reminders + Coming Up This Week */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-              {/* ── Reminders as post-it notes (always 3) ── */}
+              {/* ── Overview ── two equal-width mini-boxes */}
               {(() => {
-                const reminders = [];
-                if (overdueYouOwe.length === 1) {
-                  reminders.push({ type: 'overdue', text: 'You have an overdue payment', emoji: '⚠️', action: () => navigate(createPageUrl('RecordPayment')) });
-                } else if (overdueYouOwe.length > 1) {
-                  reminders.push({ type: 'overdue', text: `${overdueYouOwe.length} overdue payments`, emoji: '⚠️', action: () => navigate(createPageUrl('RecordPayment')) });
-                }
-                if (upcomingEvents.length > 0) {
-                  const s = upcomingEvents[0];
-                  const dText = s.days === 0 ? 'today' : s.days === 1 ? 'tomorrow' : `in ${s.days} days`;
-                  reminders.push({ type: 'due', text: `Payment due ${dText}`, emoji: '📅', action: () => navigate(createPageUrl('RecordPayment')) });
-                }
-                if (pendingOffers.length === 1) {
-                  const lenderProf = safeAllProfiles.find(p => p.user_id === pendingOffers[0].lender_id);
-                  reminders.push({ type: 'loan_offer', text: 'New loan offer to review', emoji: '📋', action: () => setReviewOfferTarget({ loan: pendingOffers[0], lenderProf }) });
-                } else if (pendingOffers.length > 1) {
-                  reminders.push({ type: 'loan_offer', text: `${pendingOffers.length} loan offers`, emoji: '📋', action: () => navigate(createPageUrl('LendingBorrowing')) });
-                }
-                // Pad to exactly 3 with friendly suggestions
-                const suggestions = [
-                  { type: 'suggestion', text: 'Connect with your friends', emoji: '👥', action: () => window.dispatchEvent(new CustomEvent('open-friends-popup')) },
-                  { type: 'suggestion', text: 'Review your loans', emoji: '🔍', action: () => navigate(createPageUrl('LendingBorrowing')) },
-                  { type: 'suggestion', text: 'Record a payment', emoji: '✏️', action: () => navigate(createPageUrl('RecordPayment')) },
-                  { type: 'suggestion', text: 'Plan your month', emoji: '📆', action: () => navigate(createPageUrl('Upcoming')) },
-                ];
-                let si = 0;
-                while (reminders.length < 3) { reminders.push(suggestions[si++ % suggestions.length]); }
-                const noteConfigs = [
-                  { bg: 'linear-gradient(170deg, #FFE566 0%, #FFD638 100%)', rotate: '-3.5deg', ty: '7px', zIndex: 1, textColor: '#5C4200' },
-                  { bg: 'linear-gradient(170deg, #FFFDE0 0%, #FFF59D 100%)', rotate: '1.8deg',  ty: '0px',  zIndex: 2, textColor: '#5C4200' },
-                  { bg: 'linear-gradient(170deg, #FFE082 0%, #FFCA28 100%)', rotate: '-1deg',   ty: '5px',  zIndex: 3, textColor: '#5C4200' },
-                ];
+                const borrowOwed = Math.max(0, totalBorrowedAmount - totalPaidBack);
+                const lentOwed = Math.max(0, totalLentAmount - totalRepaid);
+                const hasOwing = borrowedLoans.length > 0 && borrowOwed > 0;
+                const hasOwed = lentLoans.length > 0 && lentOwed > 0;
+                if (!hasOwing && !hasOwed) return (
+                  <div style={{ position: 'relative' }}>                    <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '2px 5px 16px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.10)', padding: '14px 18px' }}>
+                      <p style={{ fontSize: 12, color: '#9B9A98', margin: 0, fontFamily: "'DM Sans', sans-serif", textAlign: 'center' }}>You have no active loans yet 🌱</p>
+                    </div>
+                  </div>
+                );
                 return (
-                  <div style={{ display: 'flex', paddingBottom: 10, overflow: 'visible' }}>
-                    {reminders.slice(0, 3).map((rem, i) => {
-                      const nc = noteConfigs[i];
-                      const isSuggestion = rem.type === 'suggestion';
-                      return (
-                        <div
-                          key={i}
-                          onClick={rem.action}
-                          style={{
-                            flex: 1,
-                            minHeight: 110,
-                            background: nc.bg,
-                            borderRadius: '2px 2px 3px 3px',
-                            padding: '14px 10px 12px',
-                            marginRight: i < 2 ? -11 : 0,
-                            transform: `rotate(${nc.rotate}) translateY(${nc.ty})`,
-                            zIndex: nc.zIndex,
-                            position: 'relative',
-                            boxShadow: '2px 5px 16px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.10)',
-                            cursor: rem.action ? 'pointer' : 'default',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: 6,
-                          }}
-                        >
-                          {/* Top sticky strip — darker yellow band */}
-                          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 6, background: 'rgba(0,0,0,0.08)', borderRadius: '2px 2px 0 0' }} />
-                          <div style={{ fontSize: 18, lineHeight: 1, marginTop: 4 }}>{rem.emoji}</div>
-                          <p style={{
-                            margin: 0,
-                            fontSize: 11,
-                            fontWeight: isSuggestion ? 400 : 600,
-                            color: nc.textColor,
-                            fontFamily: "'DM Sans', sans-serif",
-                            lineHeight: 1.45,
-                            opacity: isSuggestion ? 0.7 : 1,
-                          }}>
-                            {rem.text}
-                          </p>
+                  <div style={{ display: 'flex', gap: 12 }}>
+                    {/* Box 1 — You Owe */}
+                    <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>                      <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '2px 5px 16px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.10)', padding: '14px 14px' }}>
+                        <div style={{ marginBottom: 10 }}>
+                          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                            <circle cx="14" cy="14" r="13" stroke="#1D5B94" strokeWidth="1.5"/>
+                            <path d="M14 19 L14 11 M10.5 14.5 L14 11 L17.5 14.5" stroke="#1D5B94" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
                         </div>
-                      );
-                    })}
+                        <div style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>
+                          You owe <span style={{ color: '#1D5B94' }}>{formatMoney(borrowOwed)}</span>
+                        </div>
+                        <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 3, fontFamily: "'DM Sans', sans-serif" }}>
+                          across {borrowedLoans.length} loan{borrowedLoans.length !== 1 ? 's' : ''}
+                        </div>
+                      </div>
+                    </div>
+                    {/* Box 2 — You Are Owed */}
+                    <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>                      <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '2px 5px 16px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.10)', padding: '14px 14px' }}>
+                        <div style={{ marginBottom: 10 }}>
+                          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                            <circle cx="14" cy="14" r="13" stroke="#03ACEA" strokeWidth="1.5"/>
+                            <path d="M14 10 L14 18 M10.5 13.5 L14 18 L17.5 13.5" stroke="#03ACEA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        </div>
+                        <div style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>
+                          You are owed <span style={{ color: '#03ACEA' }}>{formatMoney(lentOwed)}</span>
+                        </div>
+                        <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 3, fontFamily: "'DM Sans', sans-serif" }}>
+                          across {lentLoans.length} loan{lentLoans.length !== 1 ? 's' : ''}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 );
               })()}
@@ -2066,52 +2036,82 @@ export default function Home() {
             {/* Col 2: You Owe/Owed + To Do This Week */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 
-              {/* ── Overview ── two equal-width mini-boxes */}
+              {/* ── Reminders as post-it notes (always 3) ── */}
               {(() => {
-                const borrowOwed = Math.max(0, totalBorrowedAmount - totalPaidBack);
-                const lentOwed = Math.max(0, totalLentAmount - totalRepaid);
-                const hasOwing = borrowedLoans.length > 0 && borrowOwed > 0;
-                const hasOwed = lentLoans.length > 0 && lentOwed > 0;
-                if (!hasOwing && !hasOwed) return (
-                  <div style={{ position: 'relative' }}>                    <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '2px 5px 16px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.10)', padding: '14px 18px' }}>
-                      <p style={{ fontSize: 12, color: '#9B9A98', margin: 0, fontFamily: "'DM Sans', sans-serif", textAlign: 'center' }}>You have no active loans yet 🌱</p>
-                    </div>
-                  </div>
-                );
+                const reminders = [];
+                if (overdueYouOwe.length === 1) {
+                  reminders.push({ type: 'overdue', text: 'You have an overdue payment', emoji: '⚠️', action: () => navigate(createPageUrl('RecordPayment')) });
+                } else if (overdueYouOwe.length > 1) {
+                  reminders.push({ type: 'overdue', text: `${overdueYouOwe.length} overdue payments`, emoji: '⚠️', action: () => navigate(createPageUrl('RecordPayment')) });
+                }
+                if (upcomingEvents.length > 0) {
+                  const s = upcomingEvents[0];
+                  const dText = s.days === 0 ? 'today' : s.days === 1 ? 'tomorrow' : `in ${s.days} days`;
+                  reminders.push({ type: 'due', text: `Payment due ${dText}`, emoji: '📅', action: () => navigate(createPageUrl('RecordPayment')) });
+                }
+                if (pendingOffers.length === 1) {
+                  const lenderProf = safeAllProfiles.find(p => p.user_id === pendingOffers[0].lender_id);
+                  reminders.push({ type: 'loan_offer', text: 'New loan offer to review', emoji: '📋', action: () => setReviewOfferTarget({ loan: pendingOffers[0], lenderProf }) });
+                } else if (pendingOffers.length > 1) {
+                  reminders.push({ type: 'loan_offer', text: `${pendingOffers.length} loan offers`, emoji: '📋', action: () => navigate(createPageUrl('LendingBorrowing')) });
+                }
+                // Pad to exactly 3 with friendly suggestions
+                const suggestions = [
+                  { type: 'suggestion', text: 'Connect with your friends', emoji: '👥', action: () => window.dispatchEvent(new CustomEvent('open-friends-popup')) },
+                  { type: 'suggestion', text: 'Review your loans', emoji: '🔍', action: () => navigate(createPageUrl('LendingBorrowing')) },
+                  { type: 'suggestion', text: 'Record a payment', emoji: '✏️', action: () => navigate(createPageUrl('RecordPayment')) },
+                  { type: 'suggestion', text: 'Plan your month', emoji: '📆', action: () => navigate(createPageUrl('Upcoming')) },
+                ];
+                let si = 0;
+                while (reminders.length < 3) { reminders.push(suggestions[si++ % suggestions.length]); }
+                const noteConfigs = [
+                  { bg: 'linear-gradient(170deg, #FFE566 0%, #FFD638 100%)', rotate: '-3.5deg', ty: '7px', zIndex: 1, textColor: '#5C4200' },
+                  { bg: 'linear-gradient(170deg, #FFFDE0 0%, #FFF59D 100%)', rotate: '1.8deg',  ty: '0px',  zIndex: 2, textColor: '#5C4200' },
+                  { bg: 'linear-gradient(170deg, #FFE082 0%, #FFCA28 100%)', rotate: '-1deg',   ty: '5px',  zIndex: 3, textColor: '#5C4200' },
+                ];
                 return (
-                  <div style={{ display: 'flex', gap: 12 }}>
-                    {/* Box 1 — You Owe */}
-                    <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>                      <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '2px 5px 16px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.10)', padding: '14px 14px' }}>
-                        <div style={{ marginBottom: 10 }}>
-                          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-                            <circle cx="14" cy="14" r="13" stroke="#1D5B94" strokeWidth="1.5"/>
-                            <path d="M14 19 L14 11 M10.5 14.5 L14 11 L17.5 14.5" stroke="#1D5B94" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
+                  <div style={{ display: 'flex', paddingBottom: 10, overflow: 'visible' }}>
+                    {reminders.slice(0, 3).map((rem, i) => {
+                      const nc = noteConfigs[i];
+                      const isSuggestion = rem.type === 'suggestion';
+                      return (
+                        <div
+                          key={i}
+                          onClick={rem.action}
+                          style={{
+                            flex: 1,
+                            minHeight: 110,
+                            background: nc.bg,
+                            borderRadius: '2px 2px 3px 3px',
+                            padding: '14px 10px 12px',
+                            marginRight: i < 2 ? -11 : 0,
+                            transform: `rotate(${nc.rotate}) translateY(${nc.ty})`,
+                            zIndex: nc.zIndex,
+                            position: 'relative',
+                            boxShadow: '2px 5px 16px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.10)',
+                            cursor: rem.action ? 'pointer' : 'default',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: 6,
+                          }}
+                        >
+                          {/* Top sticky strip — darker yellow band */}
+                          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 6, background: 'rgba(0,0,0,0.08)', borderRadius: '2px 2px 0 0' }} />
+                          <div style={{ fontSize: 18, lineHeight: 1, marginTop: 4 }}>{rem.emoji}</div>
+                          <p style={{
+                            margin: 0,
+                            fontSize: 11,
+                            fontWeight: isSuggestion ? 400 : 600,
+                            color: nc.textColor,
+                            fontFamily: "'DM Sans', sans-serif",
+                            lineHeight: 1.45,
+                            opacity: isSuggestion ? 0.7 : 1,
+                          }}>
+                            {rem.text}
+                          </p>
                         </div>
-                        <div style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>
-                          You owe <span style={{ color: '#1D5B94' }}>{formatMoney(borrowOwed)}</span>
-                        </div>
-                        <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 3, fontFamily: "'DM Sans', sans-serif" }}>
-                          across {borrowedLoans.length} loan{borrowedLoans.length !== 1 ? 's' : ''}
-                        </div>
-                      </div>
-                    </div>
-                    {/* Box 2 — You Are Owed */}
-                    <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>                      <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '2px 5px 16px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.10)', padding: '14px 14px' }}>
-                        <div style={{ marginBottom: 10 }}>
-                          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-                            <circle cx="14" cy="14" r="13" stroke="#03ACEA" strokeWidth="1.5"/>
-                            <path d="M14 10 L14 18 M10.5 13.5 L14 18 L17.5 13.5" stroke="#03ACEA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                        </div>
-                        <div style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>
-                          You are owed <span style={{ color: '#03ACEA' }}>{formatMoney(lentOwed)}</span>
-                        </div>
-                        <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 3, fontFamily: "'DM Sans', sans-serif" }}>
-                          across {lentLoans.length} loan{lentLoans.length !== 1 ? 's' : ''}
-                        </div>
-                      </div>
-                    </div>
+                      );
+                    })}
                   </div>
                 );
               })()}
