@@ -1940,17 +1940,27 @@ export default function Home() {
                 if (highestLoan && highestName) {
                   insights.push({ icon: '↑', text: `Largest loan: ${formatMoney(highestLoan.total_amount || highestLoan.amount || 0)} with ${highestName}`, color: '#787776' });
                 }
-                if (insights.length === 0) return null;
+                // Prepend howMonthMessage as first insight
+                const monthInsight = howMonthMessage?.text
+                  ? [{ icon: howMonthMessage.emoji || '💡', text: howMonthMessage.text, color: '#03ACEA', isMonth: true }]
+                  : [];
+                const allInsights = [...monthInsight, ...insights];
+                if (allInsights.length === 0) return null;
                 return (
                   <div style={{ background: '#ffffff', borderRadius: 10, border: '1px solid #E5E5E5', padding: '14px 18px' }}>
-                    <div style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif", marginBottom: 10 }}>Insights</div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                      {insights.map((ins, i) => (
+                      {allInsights.map((ins, i) => (
                         <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                           <div style={{ width: 24, height: 24, borderRadius: '50%', background: `${ins.color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                             <span style={{ fontSize: 11, color: ins.color, fontWeight: 700, fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>{ins.icon}</span>
                           </div>
-                          <span style={{ fontSize: 12, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.4 }}>{ins.text}</span>
+                          {ins.isMonth ? (
+                            <span style={{ fontSize: 12, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.4 }}>
+                              <span style={{ background: '#EBF4FA', color: '#03ACEA', borderRadius: 3, padding: '1px 5px', fontWeight: 500 }}>{ins.text}</span>
+                            </span>
+                          ) : (
+                            <span style={{ fontSize: 12, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.4 }}>{ins.text}</span>
+                          )}
                         </div>
                       ))}
                     </div>
@@ -1963,43 +1973,6 @@ export default function Home() {
 
             {/* Col 2: April at a Glance + What needs your attention + Pending */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-
-              {/* April at a Glance */}
-              <div className="home-card-howmonth" style={{ position: 'relative' }}>              <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: '1px solid #E5E5E5', padding: '14px 18px' }}>
-                <div style={{ paddingBottom: 5, marginBottom: 4 }}>
-                  <span style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>
-                    {`${format(today, 'MMMM')} at a Glance`}
-                  </span>
-                </div>
-                <div style={{ marginBottom: 10, textAlign: 'center' }}>
-                  <span style={{
-                    display: 'inline-block',
-                    background: '#EBF4FA',
-                    color: '#03ACEA',
-                    borderRadius: 0,
-                    padding: '2px 6px',
-                    fontSize: 12,
-                    fontWeight: 500,
-                    lineHeight: 1.2,
-                    fontFamily: "'DM Sans', sans-serif",
-                  }}>
-                    {howMonthMessage.text}{howMonthMessage.emoji ? ` ${howMonthMessage.emoji}` : ''}
-                  </span>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'center', textAlign: 'center' }}>
-                  {monthlyExpectedReceive > 0 && (
-                    <div style={{ fontSize: 12, color: '#1A1918' }}>
-                      Expected to receive <strong style={{ color: '#03ACEA' }}>{formatMoney(monthlyExpectedReceive)}</strong> this month
-                    </div>
-                  )}
-                  {monthlyExpectedPay > 0 && (
-                    <div style={{ fontSize: 12, color: '#1A1918' }}>
-                      Due to pay out <strong style={{ color: '#1D5B94' }}>{formatMoney(monthlyExpectedPay)}</strong> this month
-                    </div>
-                  )}
-                </div>
-              </div>
-              </div>
 
               {/* What needs your attention */}
               {(() => {
@@ -2057,7 +2030,7 @@ export default function Home() {
                       {items.length === 0 ? (
                         <p style={{ fontSize: 12, color: '#C5C3C0', margin: 0, lineHeight: 1.45 }}>All clear, your inbox is empty 🎉</p>
                       ) : (
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
                           {items.map((item, i) => {
                             const arrowAction = (() => {
                               if (item.type === 'overdue' || item.type === 'due') return () => navigate(createPageUrl('RecordPayment'));
@@ -2098,6 +2071,39 @@ export default function Home() {
                 );
               })()}
 
+              {/* Monthly received / paid boxes */}
+              {(monthlyExpectedReceive > 0 || monthlyExpectedPay > 0) && (
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                  {/* You've received */}
+                  {monthlyExpectedReceive > 0 && (
+                    <div style={{ background: '#ffffff', borderRadius: 10, border: '1px solid #E5E5E5', padding: '12px 14px' }}>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: '#03ACEA', fontFamily: "'DM Sans', sans-serif", marginBottom: 4 }}>
+                        {formatMoney(monthlyReceived)}
+                      </div>
+                      <div style={{ fontSize: 11, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.4 }}>
+                        You've received this month
+                      </div>
+                      <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 3 }}>
+                        of {formatMoney(monthlyExpectedReceive)} expected for {format(today, 'MMMM')}
+                      </div>
+                    </div>
+                  )}
+                  {/* You've paid */}
+                  {monthlyExpectedPay > 0 && (
+                    <div style={{ background: '#ffffff', borderRadius: 10, border: '1px solid #E5E5E5', padding: '12px 14px' }}>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: '#1D5B94', fontFamily: "'DM Sans', sans-serif", marginBottom: 4 }}>
+                        {formatMoney(monthlyPaidOut)}
+                      </div>
+                      <div style={{ fontSize: 11, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.4 }}>
+                        You've paid this month
+                      </div>
+                      <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 3 }}>
+                        of {formatMoney(monthlyExpectedPay)} due in {format(today, 'MMMM')}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
 
             </div>{/* end col 2 */}
 
