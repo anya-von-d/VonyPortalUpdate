@@ -2165,26 +2165,71 @@ export default function Home() {
                 const monthStart = startOfMonth(today);
                 const monthEnd = endOfMonth(today);
                 const monthName = format(today, 'MMMM');
-                // Loan cashflow lines for this month
                 const cashLines = [];
+
+                // 1. Completed payments this month (actual transactions)
+                safePayments.forEach(p => {
+                  if (!p || p.status !== 'completed') return;
+                  const d = p.payment_date ? toLocalDate(p.payment_date) : new Date(p.created_at);
+                  if (d < monthStart || d > monthEnd) return;
+                  const loan = myLoans.find(l => l.id === p.loan_id);
+                  if (!loan) return;
+                  const isLender = loan.lender_id === user.id;
+                  const otherId = isLender ? loan.borrower_id : loan.lender_id;
+                  const prof = safeAllProfiles.find(pp => pp.user_id === otherId);
+                  const name = prof?.full_name?.split(' ')[0] || prof?.username || (isLender ? 'Borrower' : 'Lender');
+                  cashLines.push({ id: `paid-${p.id}`, label: isLender ? `From ${name}` : `To ${name}`, amount: isLender ? (p.amount || 0) : -(p.amount || 0), date: d, status: 'done' });
+                });
+
+                // 2. Scheduled this month (next_payment_date in month, not yet a completed payment above)
+                const paidLoanIds = new Set(cashLines.map(l => { const m = l.id.match(/^paid-/); return m ? null : null; }));
+                const completedThisMonth = new Set(safePayments.filter(p => {
+                  if (!p || p.status !== 'completed') return false;
+                  const d = p.payment_date ? toLocalDate(p.payment_date) : new Date(p.created_at);
+                  return d >= monthStart && d <= monthEnd;
+                }).map(p => p.loan_id));
+
                 lentLoans.forEach(loan => {
                   if (!loan.next_payment_date) return;
                   const d = toLocalDate(loan.next_payment_date);
                   if (d < monthStart || d > monthEnd) return;
+                  if (completedThisMonth.has(loan.id)) return; // already recorded
                   const p = safeAllProfiles.find(pp => pp.user_id === loan.borrower_id);
                   const name = p?.full_name?.split(' ')[0] || p?.username || 'Borrower';
-                  cashLines.push({ id: `in-${loan.id}`, label: `From ${name}`, amount: loan.payment_amount || 0, date: d });
+                  cashLines.push({ id: `sched-in-${loan.id}`, label: `From ${name}`, amount: loan.payment_amount || 0, date: d, status: 'scheduled' });
                 });
                 borrowedLoans.forEach(loan => {
                   if (!loan.next_payment_date) return;
                   const d = toLocalDate(loan.next_payment_date);
                   if (d < monthStart || d > monthEnd) return;
+                  if (completedThisMonth.has(loan.id)) return;
                   const p = safeAllProfiles.find(pp => pp.user_id === loan.lender_id);
                   const name = p?.full_name?.split(' ')[0] || p?.username || 'Lender';
-                  cashLines.push({ id: `out-${loan.id}`, label: `To ${name}`, amount: -(loan.payment_amount || 0), date: d });
+                  cashLines.push({ id: `sched-out-${loan.id}`, label: `To ${name}`, amount: -(loan.payment_amount || 0), date: d, status: 'scheduled' });
                 });
-                cashLines.sort((a, b) => a.date - b.date);
-                const allLines = [...cashLines, ...customExpenses.map(e => ({ ...e, date: null }))];
+
+                // 3. Overdue payments (next_payment_date before today, not completed)
+                lentLoans.forEach(loan => {
+                  if (!loan.next_payment_date) return;
+                  const d = toLocalDate(loan.next_payment_date);
+                  if (d >= monthStart) return; // covered above or future
+                  if (completedThisMonth.has(loan.id)) return;
+                  const p = safeAllProfiles.find(pp => pp.user_id === loan.borrower_id);
+                  const name = p?.full_name?.split(' ')[0] || p?.username || 'Borrower';
+                  cashLines.push({ id: `overdue-in-${loan.id}`, label: `From ${name}`, amount: loan.payment_amount || 0, date: d, status: 'overdue' });
+                });
+                borrowedLoans.forEach(loan => {
+                  if (!loan.next_payment_date) return;
+                  const d = toLocalDate(loan.next_payment_date);
+                  if (d >= monthStart) return;
+                  if (completedThisMonth.has(loan.id)) return;
+                  const p = safeAllProfiles.find(pp => pp.user_id === loan.lender_id);
+                  const name = p?.full_name?.split(' ')[0] || p?.username || 'Lender';
+                  cashLines.push({ id: `overdue-out-${loan.id}`, label: `To ${name}`, amount: -(loan.payment_amount || 0), date: d, status: 'overdue' });
+                });
+
+                cashLines.sort((a, b) => (a.date || new Date(0)) - (b.date || new Date(0)));
+                const allLines = [...cashLines, ...customExpenses.map(e => ({ ...e, date: null, status: 'custom' }))];
                 const total = allLines.reduce((s, l) => s + l.amount, 0);
                 return (
                   <div style={{ background: 'rgba(255,255,255,0.45)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', borderRadius: 10, border: '1px solid rgba(255,255,255,0.82)', boxShadow: '0 4px 20px rgba(0,0,0,0.08), inset 0 0 60px rgba(3,172,234,0.07)', padding: '14px 18px' }}>
@@ -2195,10 +2240,15 @@ export default function Home() {
                       <div style={{ display: 'flex', flexDirection: 'column' }}>
                         {allLines.map(line => {
                           const isPos = line.amount >= 0;
+                          const statusColor = line.status === 'overdue' ? '#E8726E' : line.status === 'done' ? '#22C55E' : line.status === 'scheduled' ? '#9B9A98' : '#9B9A98';
+                          const statusLabel = line.status === 'overdue' ? 'overdue' : line.status === 'done' ? 'paid' : null;
                           return (
                             <div key={line.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
-                              <div style={{ display: 'flex', flexDirection: 'column', gap: 1, minWidth: 0 }}>
-                                <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{line.label}</span>
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: 1, minWidth: 0, flex: 1 }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                  <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{line.label}</span>
+                                  {statusLabel && <span style={{ fontSize: 9, fontWeight: 600, color: statusColor, fontFamily: "'DM Sans', sans-serif", textTransform: 'uppercase', letterSpacing: '0.04em', flexShrink: 0 }}>{statusLabel}</span>}
+                                </div>
                                 {line.date && <span style={{ fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>{format(line.date, 'MMM d')}</span>}
                               </div>
                               <span style={{ fontSize: 12, fontWeight: 600, color: isPos ? '#03ACEA' : '#1D5B94', fontFamily: "'DM Sans', sans-serif", flexShrink: 0, marginLeft: 8 }}>
@@ -2242,17 +2292,25 @@ export default function Home() {
               {(monthlyExpectedReceive > 0 || monthlyExpectedPay > 0) && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                   {monthlyExpectedReceive > 0 && (
-                    <div style={{ background: 'rgba(255,255,255,0.45)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', borderRadius: 10, border: '1px solid rgba(255,255,255,0.82)', boxShadow: '0 4px 20px rgba(0,0,0,0.08), inset 0 0 60px rgba(3,172,234,0.07)', padding: '12px 14px' }}>
-                      <div style={{ fontSize: 13, fontWeight: 600, color: '#03ACEA', fontFamily: "'DM Sans', sans-serif", marginBottom: 4 }}>{formatMoney(monthlyReceived)}</div>
-                      <div style={{ fontSize: 11, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.4 }}>You've received this month</div>
-                      <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 3 }}>of {formatMoney(monthlyExpectedReceive)} expected for {format(today, 'MMMM')}</div>
+                    <div style={{ background: 'rgba(255,255,255,0.45)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', borderRadius: 10, border: '1px solid rgba(255,255,255,0.82)', boxShadow: '0 4px 20px rgba(0,0,0,0.08), inset 0 0 60px rgba(3,172,234,0.07)', padding: '12px 14px', display: 'flex', alignItems: 'center', gap: 12 }}>
+                      <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(3,172,234,0.1)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                      </div>
+                      <div>
+                        <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.3 }}>You've received <span style={{ color: '#03ACEA' }}>{formatMoney(monthlyReceived)}</span></div>
+                        <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 2 }}>of {formatMoney(monthlyExpectedReceive)} expected in {format(today, 'MMMM')}</div>
+                      </div>
                     </div>
                   )}
                   {monthlyExpectedPay > 0 && (
-                    <div style={{ background: 'rgba(255,255,255,0.45)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', borderRadius: 10, border: '1px solid rgba(255,255,255,0.82)', boxShadow: '0 4px 20px rgba(0,0,0,0.08), inset 0 0 60px rgba(3,172,234,0.07)', padding: '12px 14px' }}>
-                      <div style={{ fontSize: 13, fontWeight: 600, color: '#1D5B94', fontFamily: "'DM Sans', sans-serif", marginBottom: 4 }}>{formatMoney(monthlyPaidOut)}</div>
-                      <div style={{ fontSize: 11, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.4 }}>You've paid this month</div>
-                      <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 3 }}>of {formatMoney(monthlyExpectedPay)} due in {format(today, 'MMMM')}</div>
+                    <div style={{ background: 'rgba(255,255,255,0.45)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', borderRadius: 10, border: '1px solid rgba(255,255,255,0.82)', boxShadow: '0 4px 20px rgba(0,0,0,0.08), inset 0 0 60px rgba(3,172,234,0.07)', padding: '12px 14px', display: 'flex', alignItems: 'center', gap: 12 }}>
+                      <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(29,91,148,0.08)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1D5B94" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>
+                      </div>
+                      <div>
+                        <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.3 }}>You've paid <span style={{ color: '#1D5B94' }}>{formatMoney(monthlyPaidOut)}</span></div>
+                        <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 2 }}>of {formatMoney(monthlyExpectedPay)} due in {format(today, 'MMMM')}</div>
+                      </div>
                     </div>
                   )}
                 </div>
