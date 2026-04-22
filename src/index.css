@@ -369,14 +369,13 @@ input[type="date"] {
     display: contents !important;
   }
   /* Mobile card order */
-  .home-card-attention          { order: 1 !important; }  /* post-it reminders */
-  .home-card-bor-overview       { order: 2 !important; }  /* you owe / you are owed */
-  .home-card-upcoming-payments  { order: 3 !important; }  /* upcoming payments */
-  .home-card-tasks              { order: 4 !important; }  /* to do this week */
-  .home-card-monthly-summary    { order: 5 !important; }  /* you've received / paid */
-  .home-card-plan-month         { order: 6 !important; }  /* plan your month */
-  .home-card-loans-pair         { order: 7 !important; }  /* borrowing + lending */
-  .home-card-people-bubble      { order: 8 !important; }  /* people bubble */
+  .home-card-attention          { order: 1 !important; }
+  .home-card-upcoming-payments  { order: 2 !important; }
+  .home-card-bor-overview       { order: 3 !important; }
+  .home-card-tasks              { order: 4 !important; }
+  .home-card-howmonth           { order: 5 !important; }
+  .home-card-lending-loans      { order: 6 !important; }
+  .home-card-your-borrowing     { order: 7 !important; }
   /* Hide desktop-only cards on mobile */
   .home-card-npd            { display: none !important; }
   .home-card-npi            { display: none !important; }

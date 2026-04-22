@@ -1803,7 +1803,6 @@ export default function Home() {
           <div className="home-two-col-row" style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)', gap: 24 }}>
             {/* Col 1: Reminders + Coming Up This Week */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-              <div className="home-card-bor-overview">
               {/* ── Overview ── two equal-width mini-boxes */}
               {(() => {
                 const borrowOwed = Math.max(0, totalBorrowedAmount - totalPaidBack);
@@ -1993,7 +1992,7 @@ export default function Home() {
                 const allLines = [...cashLines, ...customExpenses.map(e => ({ ...e, date: e.date ? toLocalDate(e.date) : null, status: e.status || 'custom' }))];
                 const total = allLines.reduce((s, l) => s + l.amount, 0);
                 return (
-                  <div className="home-card-plan-month" style={{ background: '#ffffff', borderRadius: 10, boxShadow: '2px 5px 16px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.10)', padding: '14px 18px' }}>
+                  <div style={{ background: '#ffffff', borderRadius: 10, boxShadow: '2px 5px 16px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.10)', padding: '14px 18px' }}>
                     <SectionHeader title="Plan Your Month" />
                     <div style={{ fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: -6, marginBottom: 10 }}>{monthName}</div>
 
@@ -2111,7 +2110,7 @@ export default function Home() {
     { top: '40%', left: '93%', tx: '-100%', ty: '-50%', size: 38 },
   ];
   return (
-    <div className="home-card-people-bubble" style={{ position: 'relative', borderRadius: 10, overflow: 'hidden', boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}>
+    <div style={{ position: 'relative', borderRadius: 10, overflow: 'hidden', boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}>
       {/* Blue gradient background */}
       <div style={{ background: 'linear-gradient(135deg, #1a4f7a 0%, #03ACEA 100%)', height: 200, position: 'relative' }}>
         {displayPeople.slice(0, 7).map((person, i) => {
@@ -2200,7 +2199,7 @@ export default function Home() {
                   { bg: 'linear-gradient(170deg, #FFE082 0%, #FFCA28 100%)', rotate: '-1deg',   ty: '5px',  zIndex: 3, textColor: '#5C4200' },
                 ];
                 return (
-                  <div className="home-card-attention" style={{ display: 'flex', paddingBottom: 10, overflow: 'visible' }}>
+                  <div style={{ display: 'flex', paddingBottom: 10, overflow: 'visible' }}>
                     {reminders.slice(0, 3).map((rem, i) => {
                       const nc = noteConfigs[i];
                       const isSuggestion = rem.type === 'suggestion';
@@ -2245,7 +2244,6 @@ export default function Home() {
                   </div>
                 );
               })()}
-              </div>
 
               {/* To Do This Week */}
               {(() => {
@@ -2357,7 +2355,6 @@ export default function Home() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 
               {/* Monthly received / paid boxes — stacked full width */}
-              <div className="home-card-monthly-summary">
               {(monthlyExpectedReceive > 0 || monthlyExpectedPay > 0) && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                   {monthlyExpectedReceive > 0 && (
@@ -2384,7 +2381,6 @@ export default function Home() {
                   )}
                 </div>
               )}
-              </div>
 
               {/* Your Loans — two paper cards, lending on top anti-clockwise, borrowing clockwise */}
               {(() => {
@@ -2434,7 +2430,7 @@ export default function Home() {
                   );
                 };
                 return (
-                  <div className="home-card-loans-pair" style={{ position: 'relative', overflow: 'visible', padding: '0 6px' }}>
+                  <div style={{ position: 'relative', overflow: 'visible', padding: '0 6px' }}>
                     <style>{`
                       @keyframes lbStatusA {
                         0%, 44% { opacity: 1; }
