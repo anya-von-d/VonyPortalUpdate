@@ -543,7 +543,7 @@ function _noop() { // eslint-disable-line no-unused-vars
   };
 
   return (
-    <div ref={cardRef} style={{ position: 'relative', minWidth: 0 }} onClick={() => setHoveredPt(null)}>      <div style={{ position: 'relative', zIndex: 1, background: 'rgba(255,255,255,0.60)', backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)', borderRadius: 10, border: '1px solid rgba(255,255,255,0.78)', boxShadow: '0 4px 20px rgba(0,0,0,0.09)', padding: '14px 18px' }}>
+    <div ref={cardRef} style={{ position: 'relative', minWidth: 0 }} onClick={() => setHoveredPt(null)}>      <div style={{ position: 'relative', zIndex: 1, background: 'rgba(255,255,255,0.45)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', borderRadius: 10, border: '1px solid rgba(255,255,255,0.82)', boxShadow: '0 4px 20px rgba(0,0,0,0.08), inset 0 0 60px rgba(3,172,234,0.07)', padding: '14px 18px' }}>
 
         {/* ── Header row ── */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
@@ -1794,7 +1794,7 @@ export default function Home() {
                 const hasOwing = borrowedLoans.length > 0 && borrowOwed > 0;
                 const hasOwed = lentLoans.length > 0 && lentOwed > 0;
                 if (!hasOwing && !hasOwed) return (
-                  <div style={{ position: 'relative' }}>                    <div style={{ position: 'relative', zIndex: 1, background: 'rgba(255,255,255,0.60)', backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)', borderRadius: 10, border: '1px solid rgba(255,255,255,0.78)', boxShadow: '0 4px 20px rgba(0,0,0,0.09)', padding: '14px 18px' }}>
+                  <div style={{ position: 'relative' }}>                    <div style={{ position: 'relative', zIndex: 1, background: 'rgba(255,255,255,0.45)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', borderRadius: 10, border: '1px solid rgba(255,255,255,0.82)', boxShadow: '0 4px 20px rgba(0,0,0,0.08), inset 0 0 60px rgba(3,172,234,0.07)', padding: '14px 18px' }}>
                       <p style={{ fontSize: 12, color: '#9B9A98', margin: 0, fontFamily: "'DM Sans', sans-serif", textAlign: 'center' }}>You have no active loans yet 🌱</p>
                     </div>
                   </div>
@@ -1802,7 +1802,7 @@ export default function Home() {
                 return (
                   <div style={{ display: 'flex', gap: 12 }}>
                     {/* Box 1 — You Owe */}
-                    <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>                      <div style={{ position: 'relative', zIndex: 1, background: 'rgba(255,255,255,0.60)', backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)', borderRadius: 10, border: '1px solid rgba(255,255,255,0.78)', boxShadow: '0 4px 20px rgba(0,0,0,0.09)', padding: '14px 14px' }}>
+                    <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>                      <div style={{ position: 'relative', zIndex: 1, background: 'rgba(255,255,255,0.45)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', borderRadius: 10, border: '1px solid rgba(255,255,255,0.82)', boxShadow: '0 4px 20px rgba(0,0,0,0.08), inset 0 0 60px rgba(3,172,234,0.07)', padding: '14px 14px' }}>
                         <div style={{ marginBottom: 10 }}>
                           <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
                             <circle cx="14" cy="14" r="13" stroke="#1D5B94" strokeWidth="1.5"/>
@@ -1818,7 +1818,7 @@ export default function Home() {
                       </div>
                     </div>
                     {/* Box 2 — You Are Owed */}
-                    <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>                      <div style={{ position: 'relative', zIndex: 1, background: 'rgba(255,255,255,0.60)', backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)', borderRadius: 10, border: '1px solid rgba(255,255,255,0.78)', boxShadow: '0 4px 20px rgba(0,0,0,0.09)', padding: '14px 14px' }}>
+                    <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>                      <div style={{ position: 'relative', zIndex: 1, background: 'rgba(255,255,255,0.45)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', borderRadius: 10, border: '1px solid rgba(255,255,255,0.82)', boxShadow: '0 4px 20px rgba(0,0,0,0.08), inset 0 0 60px rgba(3,172,234,0.07)', padding: '14px 14px' }}>
                         <div style={{ marginBottom: 10 }}>
                           <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
                             <circle cx="14" cy="14" r="13" stroke="#03ACEA" strokeWidth="1.5"/>
@@ -1864,7 +1864,7 @@ export default function Home() {
                 const nextLabel = firstDaysAway === 0 ? 'Today' : firstDaysAway === 1 ? 'Tomorrow' : `In ${firstDaysAway} days`;
 
                 return (
-                  <div className="home-card-upcoming-payments" style={{ position: 'relative' }}>                    <div style={{ position: 'relative', zIndex: 1, background: 'rgba(255,255,255,0.60)', backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)', borderRadius: 10, border: '1px solid rgba(255,255,255,0.78)', boxShadow: '0 4px 20px rgba(0,0,0,0.09)', padding: '14px 18px' }}>
+                  <div className="home-card-upcoming-payments" style={{ position: 'relative' }}>                    <div style={{ position: 'relative', zIndex: 1, background: 'rgba(255,255,255,0.45)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', borderRadius: 10, border: '1px solid rgba(255,255,255,0.82)', boxShadow: '0 4px 20px rgba(0,0,0,0.08), inset 0 0 60px rgba(3,172,234,0.07)', padding: '14px 18px' }}>
                       {/* Header row */}
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 }}>
                         <div style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>Upcoming Payments</div>
@@ -1949,7 +1949,7 @@ export default function Home() {
                 const allInsights = [...monthInsight, ...insights];
                 if (allInsights.length === 0) return null;
                 return (
-                  <div style={{ background: 'rgba(255,255,255,0.60)', backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)', borderRadius: 10, border: '1px solid rgba(255,255,255,0.78)', boxShadow: '0 4px 20px rgba(0,0,0,0.09)', padding: '14px 18px' }}>
+                  <div style={{ background: 'rgba(255,255,255,0.45)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', borderRadius: 10, border: '1px solid rgba(255,255,255,0.82)', boxShadow: '0 4px 20px rgba(0,0,0,0.08), inset 0 0 60px rgba(3,172,234,0.07)', padding: '14px 18px' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                       {allInsights.map((ins, i) => (
                         <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -2027,7 +2027,7 @@ export default function Home() {
                 };
 
                 return (
-                  <div className="home-card-attention" style={{ position: 'relative' }}>                    <div style={{ position: 'relative', zIndex: 1, background: 'rgba(255,255,255,0.60)', backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)', borderRadius: 10, border: '1px solid rgba(255,255,255,0.78)', boxShadow: '0 4px 20px rgba(0,0,0,0.09)', padding: '14px 18px' }}>
+                  <div className="home-card-attention" style={{ position: 'relative' }}>                    <div style={{ position: 'relative', zIndex: 1, background: 'rgba(255,255,255,0.45)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', borderRadius: 10, border: '1px solid rgba(255,255,255,0.82)', boxShadow: '0 4px 20px rgba(0,0,0,0.08), inset 0 0 60px rgba(3,172,234,0.07)', padding: '14px 18px' }}>
                       <SectionHeader title="What needs your attention" />
                       {items.length === 0 ? (
                         <p style={{ fontSize: 12, color: '#C5C3C0', margin: 0, lineHeight: 1.45 }}>All clear, your inbox is empty 🎉</p>
@@ -2078,7 +2078,7 @@ export default function Home() {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                   {/* You've received */}
                   {monthlyExpectedReceive > 0 && (
-                    <div style={{ background: 'rgba(255,255,255,0.60)', backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)', borderRadius: 10, border: '1px solid rgba(255,255,255,0.78)', boxShadow: '0 4px 20px rgba(0,0,0,0.09)', padding: '12px 14px' }}>
+                    <div style={{ background: 'rgba(255,255,255,0.45)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', borderRadius: 10, border: '1px solid rgba(255,255,255,0.82)', boxShadow: '0 4px 20px rgba(0,0,0,0.08), inset 0 0 60px rgba(3,172,234,0.07)', padding: '12px 14px' }}>
                       <div style={{ fontSize: 13, fontWeight: 600, color: '#03ACEA', fontFamily: "'DM Sans', sans-serif", marginBottom: 4 }}>
                         {formatMoney(monthlyReceived)}
                       </div>
@@ -2092,7 +2092,7 @@ export default function Home() {
                   )}
                   {/* You've paid */}
                   {monthlyExpectedPay > 0 && (
-                    <div style={{ background: 'rgba(255,255,255,0.60)', backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)', borderRadius: 10, border: '1px solid rgba(255,255,255,0.78)', boxShadow: '0 4px 20px rgba(0,0,0,0.09)', padding: '12px 14px' }}>
+                    <div style={{ background: 'rgba(255,255,255,0.45)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', borderRadius: 10, border: '1px solid rgba(255,255,255,0.82)', boxShadow: '0 4px 20px rgba(0,0,0,0.08), inset 0 0 60px rgba(3,172,234,0.07)', padding: '12px 14px' }}>
                       <div style={{ fontSize: 13, fontWeight: 600, color: '#1D5B94', fontFamily: "'DM Sans', sans-serif", marginBottom: 4 }}>
                         {formatMoney(monthlyPaidOut)}
                       </div>
@@ -2156,7 +2156,7 @@ export default function Home() {
                 const allTasks = [...tasks, ...customTasks];
                 const sortedTasks = [...allTasks].sort((a, b) => Number(checkedTasks.has(a.id)) - Number(checkedTasks.has(b.id)));
                 return (
-                  <div className="home-card-tasks" style={{ position: 'relative' }}>                    <div style={{ position: 'relative', zIndex: 1, background: 'rgba(255,255,255,0.60)', backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)', borderRadius: 10, border: '1px solid rgba(255,255,255,0.78)', boxShadow: '0 4px 20px rgba(0,0,0,0.09)', padding: '14px 18px' }}>
+                  <div className="home-card-tasks" style={{ position: 'relative' }}>                    <div style={{ position: 'relative', zIndex: 1, background: 'rgba(255,255,255,0.45)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', borderRadius: 10, border: '1px solid rgba(255,255,255,0.82)', boxShadow: '0 4px 20px rgba(0,0,0,0.08), inset 0 0 60px rgba(3,172,234,0.07)', padding: '14px 18px' }}>
                       <SectionHeader title="To Do This Week" />
                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4, marginTop: 2, marginBottom: 10 }}>
                         {days.map((d, i) => {
@@ -2223,7 +2223,7 @@ export default function Home() {
                         100% { opacity: 0; }
                       }
                     `}</style>
-                    <div className="home-card-lending-loans" style={{ position: 'relative' }}>                      <div style={{ position: 'relative', zIndex: 1, background: 'rgba(255,255,255,0.60)', backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)', borderRadius: 10, border: '1px solid rgba(255,255,255,0.78)', boxShadow: '0 4px 20px rgba(0,0,0,0.09)', padding: '14px 18px' }}>
+                    <div className="home-card-lending-loans" style={{ position: 'relative' }}>                      <div style={{ position: 'relative', zIndex: 1, background: 'rgba(255,255,255,0.45)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', borderRadius: 10, border: '1px solid rgba(255,255,255,0.82)', boxShadow: '0 4px 20px rgba(0,0,0,0.08), inset 0 0 60px rgba(3,172,234,0.07)', padding: '14px 18px' }}>
                         <SectionHeader title="Your Loans" linkTo={createPageUrl('LendingBorrowing') + '?tab=lending'} linkLabel="View all →" />
                         {allLoans.length === 0 ? (
                           <div style={{ padding: '8px 0', fontSize: 12, color: '#9B9A98', textAlign: 'center' }}>No active loans yet 🌱</div>
