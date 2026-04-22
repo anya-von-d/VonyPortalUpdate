@@ -1540,7 +1540,7 @@ export default function Home() {
 
           {/* Desktop page title */}
           <div className="desktop-page-title" style={{ marginBottom: 28 }}>
-            <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 34, fontWeight: 400, letterSpacing: '-0.01em', lineHeight: 1.2, color: '#1A1918' }}>
+            <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 34, fontWeight: 600, letterSpacing: '-0.02em', lineHeight: 1.2, color: '#1A1918' }}>
               <span style={{ fontStyle: 'normal' }}>{greeting},</span>{' '}
               <span style={{ fontStyle: 'italic', color: '#03ACEA' }}>{firstName}</span>{' '}👋
             </div>
@@ -1548,7 +1548,7 @@ export default function Home() {
 
           {/* Mobile-only page title */}
           <div className="mobile-page-title">
-            <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 28, fontWeight: 400, letterSpacing: '-0.01em', lineHeight: 1.2, color: '#1A1918', marginBottom: 12 }}>
+            <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 28, fontWeight: 600, letterSpacing: '-0.02em', lineHeight: 1.2, color: '#1A1918', marginBottom: 12 }}>
               <span style={{ fontStyle: 'normal' }}>{greeting},</span>{' '}
               <span style={{ fontStyle: 'italic', color: '#03ACEA' }}>{firstName}</span>{' '}👋
             </div>
@@ -2036,65 +2036,85 @@ export default function Home() {
             {/* Col 2: Reminders + To Do This Week */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 
-              {/* ── Reminders ── */}
+              {/* ── Reminders as post-it notes (always 3) ── */}
               {(() => {
-  const attentionItems = [];
-  if (overdueYouOwe.length === 1) {
-    attentionItems.push({ type: 'overdue', text: 'You have an overdue payment' });
-  } else if (overdueYouOwe.length > 1) {
-    attentionItems.push({ type: 'overdue', text: `You have ${overdueYouOwe.length} overdue payments` });
-  }
-  if (upcomingEvents.length > 0) {
-    const s = upcomingEvents[0];
-    const dText = s.days === 0 ? 'today' : `in ${s.days} day${s.days === 1 ? '' : 's'}`;
-    attentionItems.push({ type: 'due', text: `You have a payment due ${dText}` });
-  }
-  if (pendingOffers.length === 1) {
-    const lenderProf = safeAllProfiles.find(p => p.user_id === pendingOffers[0].lender_id);
-    attentionItems.push({ type: 'loan_offer', text: 'You have a new loan offer to review', loan: pendingOffers[0], lenderProf });
-  } else if (pendingOffers.length > 1) {
-    attentionItems.push({ type: 'loan_offer', text: `You have ${pendingOffers.length} new loan offers to review` });
-  }
-  const AIcon = ({ type }) => {
-    const red = '#E8726E', blue = '#03ACEA';
-    if (type === 'overdue') return <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={red} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{flexShrink:0,marginTop:2}}><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>;
-    if (type === 'due') return <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={blue} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{flexShrink:0,marginTop:2}}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>;
-    if (type === 'loan_offer') return <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={blue} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{flexShrink:0,marginTop:2}}><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>;
-    return null;
-  };
-  if (attentionItems.length === 0) return null;
-  return (
-    <div className="home-card-attention" style={{ position: 'relative' }}>
-      <div style={{ position: 'relative', zIndex: 1, background: 'rgba(255,255,255,0.45)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', borderRadius: 10, border: '1px solid rgba(255,255,255,0.82)', boxShadow: '0 4px 20px rgba(0,0,0,0.08), inset 0 0 60px rgba(3,172,234,0.07)', padding: '14px 18px' }}>
-        <SectionHeader title="Reminders" />
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-          {attentionItems.map((item, i) => {
-            const arrowAction = (() => {
-              if (item.type === 'overdue' || item.type === 'due') return () => navigate(createPageUrl('RecordPayment'));
-              if (item.type === 'loan_offer' && item.loan) return () => setReviewOfferTarget({ loan: item.loan, lenderProf: item.lenderProf });
-              return null;
-            })();
-            return (
-              <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, padding: '3px 0' }}>
-                <AIcon type={item.type} />
-                <span style={{ flex: 1, fontSize: 12, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.4 }}>{item.text}</span>
-                {arrowAction && (
-                  <button type="button" onClick={arrowAction} aria-label="Open"
-                    style={{ flexShrink: 0, background: 'transparent', border: 'none', padding: 0, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', color: '#9B9A98', marginTop: 1 }}
-                    onMouseEnter={e => e.currentTarget.style.color = '#03ACEA'}
-                    onMouseLeave={e => e.currentTarget.style.color = '#9B9A98'}
-                  >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6" /></svg>
-                  </button>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    </div>
-  );
-})()}
+                const reminders = [];
+                if (overdueYouOwe.length === 1) {
+                  reminders.push({ type: 'overdue', text: 'You have an overdue payment', emoji: '⚠️', action: () => navigate(createPageUrl('RecordPayment')) });
+                } else if (overdueYouOwe.length > 1) {
+                  reminders.push({ type: 'overdue', text: `${overdueYouOwe.length} overdue payments`, emoji: '⚠️', action: () => navigate(createPageUrl('RecordPayment')) });
+                }
+                if (upcomingEvents.length > 0) {
+                  const s = upcomingEvents[0];
+                  const dText = s.days === 0 ? 'today' : s.days === 1 ? 'tomorrow' : `in ${s.days} days`;
+                  reminders.push({ type: 'due', text: `Payment due ${dText}`, emoji: '📅', action: () => navigate(createPageUrl('RecordPayment')) });
+                }
+                if (pendingOffers.length === 1) {
+                  const lenderProf = safeAllProfiles.find(p => p.user_id === pendingOffers[0].lender_id);
+                  reminders.push({ type: 'loan_offer', text: 'New loan offer to review', emoji: '📋', action: () => setReviewOfferTarget({ loan: pendingOffers[0], lenderProf }) });
+                } else if (pendingOffers.length > 1) {
+                  reminders.push({ type: 'loan_offer', text: `${pendingOffers.length} loan offers`, emoji: '📋', action: () => navigate(createPageUrl('LendingBorrowing')) });
+                }
+                // Pad to exactly 3 with friendly suggestions
+                const suggestions = [
+                  { type: 'suggestion', text: 'Connect with your friends', emoji: '👥', action: () => window.dispatchEvent(new CustomEvent('open-friends-popup')) },
+                  { type: 'suggestion', text: 'Review your loans', emoji: '🔍', action: () => navigate(createPageUrl('LendingBorrowing')) },
+                  { type: 'suggestion', text: 'Record a payment', emoji: '✏️', action: () => navigate(createPageUrl('RecordPayment')) },
+                  { type: 'suggestion', text: 'Plan your month', emoji: '📆', action: () => navigate(createPageUrl('Upcoming')) },
+                ];
+                let si = 0;
+                while (reminders.length < 3) { reminders.push(suggestions[si++ % suggestions.length]); }
+                const noteConfigs = [
+                  { bg: 'linear-gradient(170deg, #FFE566 0%, #FFD638 100%)', rotate: '-3.5deg', ty: '7px', zIndex: 1, textColor: '#5C4200' },
+                  { bg: 'linear-gradient(170deg, #FFFDE0 0%, #FFF59D 100%)', rotate: '1.8deg',  ty: '0px',  zIndex: 2, textColor: '#5C4200' },
+                  { bg: 'linear-gradient(170deg, #FFE082 0%, #FFCA28 100%)', rotate: '-1deg',   ty: '5px',  zIndex: 3, textColor: '#5C4200' },
+                ];
+                return (
+                  <div style={{ display: 'flex', paddingBottom: 10, overflow: 'visible' }}>
+                    {reminders.slice(0, 3).map((rem, i) => {
+                      const nc = noteConfigs[i];
+                      const isSuggestion = rem.type === 'suggestion';
+                      return (
+                        <div
+                          key={i}
+                          onClick={rem.action}
+                          style={{
+                            flex: 1,
+                            minHeight: 110,
+                            background: nc.bg,
+                            borderRadius: '2px 2px 3px 3px',
+                            padding: '14px 10px 12px',
+                            marginRight: i < 2 ? -11 : 0,
+                            transform: `rotate(${nc.rotate}) translateY(${nc.ty})`,
+                            zIndex: nc.zIndex,
+                            position: 'relative',
+                            boxShadow: '2px 5px 16px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.10)',
+                            cursor: rem.action ? 'pointer' : 'default',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: 6,
+                          }}
+                        >
+                          {/* Top sticky strip — darker yellow band */}
+                          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 6, background: 'rgba(0,0,0,0.08)', borderRadius: '2px 2px 0 0' }} />
+                          <div style={{ fontSize: 18, lineHeight: 1, marginTop: 4 }}>{rem.emoji}</div>
+                          <p style={{
+                            margin: 0,
+                            fontSize: 11,
+                            fontWeight: isSuggestion ? 400 : 600,
+                            color: nc.textColor,
+                            fontFamily: "'DM Sans', sans-serif",
+                            lineHeight: 1.45,
+                            opacity: isSuggestion ? 0.7 : 1,
+                          }}>
+                            {rem.text}
+                          </p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })()}
 
               {/* To Do This Week */}
               {(() => {
