@@ -19,7 +19,6 @@ import LoanDetailsModal from "@/components/loans/LoanDetailsModal";
 import MeshMobileNav from "@/components/MeshMobileNav";
 import UserAvatar from "@/components/ui/UserAvatar";
 import DesktopSidebar from '../components/DesktopSidebar';
-import LendingWallet from '@/components/LendingWallet';
 import LoanTimeline from '@/components/LoanTimeline';
 
 export default function YourLoans({ defaultTab, embeddedMode }) {
@@ -45,7 +44,6 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
   const [reminderSlide, setReminderSlide] = useState(0);
   const [infoTooltip, setInfoTooltip] = useState(null);
   const [selectedScrollLoan, setSelectedScrollLoan] = useState(null);
-  const [selectedWalletLoan, setSelectedWalletLoan] = useState(null);
 
   useEffect(() => { loadData(); }, []);
 
@@ -893,410 +891,261 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
   const renderSummaryTab = (type) => {
     const isLending = type === 'lending';
     const activeLoans = isLending ? activeLendingLoans : activeBorrowingLoans;
-    const nextPaymentLoan = isLending ? nextPaymentLoanLending : nextPaymentLoanBorrowing;
-    const nextPaymentDays = isLending ? nextPaymentDaysLending : nextPaymentDaysBorrowing;
-    const nextPaymentAmount = isLending ? nextPaymentAmountLending : nextPaymentAmountBorrowing;
-    const otherPartyUsername = isLending ? nextPaymentBorrowerUsername : nextPaymentLenderUsername;
-    const rankingFilter = isLending ? rankingFilterLending : rankingFilterBorrowing;
-    const setRankingFilter = isLending ? setRankingFilterLending : setRankingFilterBorrowing;
-    const barColor = isLending ? '#03ACEA' : '#1D5B94';
-    const barBg = '#D9EAF4';
+    const accent = isLending ? '#03ACEA' : '#1D5B94';
+    const accentBg = isLending ? '#EBF4FA' : 'rgba(29,91,148,0.08)';
+    const otherKey = isLending ? 'borrower_id' : 'lender_id';
 
-    const glowBox = {
-      padding: 16, borderRadius: 10, background: 'white',
-      boxShadow: '0 0 0 2px rgba(3,172,234,0.25), 0 0 16px rgba(3,172,234,0.12), 0 2px 12px rgba(0,0,0,0.04)',
-      border: '1.5px solid rgba(3,172,234,0.35)',
+    // Build card data for carousel
+    const loanCards = activeLoans.map(loan => {
+      const profile = publicProfiles.find(p => p.user_id === loan[otherKey]);
+      const name = profile?.full_name?.split(' ')[0] || profile?.username || 'User';
+      const remaining = Math.max(0, (loan.total_amount || loan.amount || 0) - (loan.amount_paid || 0));
+      return { loan, profile, name, remaining };
+    });
+    const selectedIdx = loanCards.findIndex(c => c.loan.id === selectedScrollLoan?.id);
+
+    // Overview ring component
+    const OvRing = ({ percent, color, label }) => {
+      const C = 2 * Math.PI * 45; const offset = C - (percent / 100) * C;
+      return (
+        <div style={{ position: 'relative', width: 60, height: 60, flexShrink: 0 }}>
+          <svg width="60" height="60" viewBox="0 0 128 128" style={{ transform: 'rotate(-90deg)' }}>
+            <circle cx="64" cy="64" r="45" fill="none" stroke={`${color}26`} strokeWidth="10" />
+            <circle cx="64" cy="64" r="45" fill="none" stroke={color} strokeWidth="10" strokeLinecap="round" strokeDasharray={C} strokeDashoffset={offset} />
+          </svg>
+          <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
+            <span style={{ fontSize: 10, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>{percent}%</span>
+            <span style={{ fontSize: 7, fontWeight: 500, color: '#787776', fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>{label}</span>
+          </div>
+        </div>
+      );
     };
-    const isLate = nextPaymentDays !== null && nextPaymentDays < 0;
-    const daysLabel = nextPaymentDays === null ? null : isLate ? `${Math.abs(nextPaymentDays)}d late` : nextPaymentDays === 0 ? 'today' : `${nextPaymentDays}d`;
-    const badgeColor = isLate ? '#E8726E' : '#03ACEA';
-    const badgeBg = isLate ? 'rgba(232,114,110,0.08)' : 'rgba(3,172,234,0.10)';
-
-    const totalOwedAll = activeLoans.reduce((s, l) => s + (l.total_amount || l.amount || 0), 0);
-    const totalPaidAll = activeLoans.reduce((s, l) => s + (l.amount_paid || 0), 0);
-    const pctAll = totalOwedAll > 0 ? Math.round((totalPaidAll / totalOwedAll) * 100) : 0;
 
     return (
       <>
-        {/* Desktop: wallet in col 1 | stacked (NPI + Upcoming + Active Summary) in col 2 */}
-        <div className="loans-top-layout" style={{ display: 'grid', gridTemplateColumns: '260px 1fr', gap: 40, alignItems: 'start' }}>
+        {/* Top 2-col grid: [Overview + Snapshot] | [Upcoming] */}
+        <div className="loans-top-layout" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, alignItems: 'start' }}>
 
-          {/* COL 1: Wallet — standalone, no outer white box */}
-          {(() => {
-            const lendLoans = activeLendingLoans;
-            const borrowLns = activeBorrowingLoans;
-            const totalLentAmount = lendLoans.reduce((s, l) => s + (l.total_amount || l.amount || 0), 0);
-            const totalRepaid = lendLoans.reduce((s, l) => s + (l.amount_paid || 0), 0);
-            const totalBorrowedAmt = borrowLns.reduce((s, l) => s + (l.total_amount || l.amount || 0), 0);
-            const totalPaidBackAmt = borrowLns.reduce((s, l) => s + (l.amount_paid || 0), 0);
-            const lentOwed = Math.max(0, totalLentAmount - totalRepaid);
-            const borrowOwedAmt = Math.max(0, totalBorrowedAmt - totalPaidBackAmt);
+          {/* Col 1: Overview + Snapshot stacked */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 
-            const sourceLoans = isLending ? lendLoans : borrowLns;
-            const otherKey = isLending ? 'borrower_id' : 'lender_id';
-            const walletCards = [...sourceLoans]
-              .map(l => {
-                const profile = publicProfiles.find(p => p.user_id === l[otherKey]);
-                const firstName = profile?.full_name?.split(' ')[0] || profile?.username || 'User';
-                const remaining = Math.max(0, (l.total_amount || l.amount || 0) - (l.amount_paid || 0));
-                return { id: l.id, name: firstName, amount: remaining, purpose: l.purpose };
-              })
-              .sort((a, b) => b.amount - a.amount);
-
-            return (
-              <div className="ylo-wallet-wrap" style={{ display: 'flex', justifyContent: 'flex-start' }}>
-                <LendingWallet
-                  cards={walletCards}
-                  summaryCard={{
-                    label: isLending ? "You're owed" : 'You owe',
-                    amount: formatMoney(isLending ? lentOwed : borrowOwedAmt),
-                    sublabel: `across ${sourceLoans.length} loan${sourceLoans.length !== 1 ? 's' : ''}`,
-                  }}
-                  onCardClick={(id) => {
-                    if (id === 'summary') {
-                      setSelectedWalletLoan(null);
-                    } else {
-                      const found = sourceLoans.find(l => l.id === id);
-                      setSelectedWalletLoan(found || null);
-                    }
-                  }}
-                  selectedId={selectedWalletLoan?.id || 'summary'}
-                  isLending={isLending}
-                />
-              </div>
-            );
-          })()}
-
-          {/* COL 2: loan detail when a wallet card is selected, else 2×2 summary grid */}
-          <div>
-          {/* ── Wallet-selected loan detail panel ── */}
-          {selectedWalletLoan && (() => {
-            const detailProfile = publicProfiles.find(p => p.user_id === (isLending ? selectedWalletLoan.borrower_id : selectedWalletLoan.lender_id));
-            const detailFullName = detailProfile?.full_name || 'User';
-            const detailAmt = selectedWalletLoan.total_amount || selectedWalletLoan.amount || 0;
-            const detailPurpose = selectedWalletLoan.purpose;
-            return (
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>
-                    {isLending ? 'You lent' : 'You borrowed'}{' '}
-                    {formatMoney(detailAmt)}{' '}
-                    {isLending ? 'to' : 'from'}{' '}
-                    {detailFullName}
-                    {detailPurpose && (
-                      <span style={{ fontWeight: 400, color: '#787776' }}> · {detailPurpose}</span>
-                    )}
-                  </div>
-                  <button
-                    onClick={() => setSelectedWalletLoan(null)}
-                    style={{
-                      background: 'none', border: '1px solid rgba(0,0,0,0.12)',
-                      borderRadius: 8, cursor: 'pointer',
-                      fontSize: 11, fontWeight: 600, color: '#787776',
-                      fontFamily: "'DM Sans', sans-serif",
-                      padding: '4px 10px', flexShrink: 0, marginLeft: 12,
-                      transition: 'background 0.15s',
-                    }}
-                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.04)'}
-                    onMouseLeave={e => e.currentTarget.style.background = 'none'}
-                  >
-                    ← Summary
-                  </button>
-                </div>
-                {renderLoanDetailBody(selectedWalletLoan)}
-              </div>
-            );
-          })()}
-          {/* ── Default 2-col summary layout ── */}
-          {!selectedWalletLoan && (
-            <div className="loans-summary-row" style={{ display: 'flex', gap: 20, alignItems: 'flex-start' }}>
-            {/* Col 1: Snapshot + Upcoming */}
-            <div className="loans-summary-col-a" style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 20 }}>
-          {/* Snapshot */}
-          <div className="loans-summary-snapshot">
-          {(() => {
-            const today = new Date();
-            const accentColor = isLending ? '#03ACEA' : '#1D5B94';
-            const accentBg = isLending ? '#EBF4FA' : 'rgba(29,91,148,0.08)';
-
-            // Insight logic
-            const overdueCount = (isLending ? activeLendingLoans : activeBorrowingLoans)
-              .filter(l => l.next_payment_date && new Date(l.next_payment_date) < today).length;
-            const sourceLoans = isLending ? activeLendingLoans : activeBorrowingLoans;
-            let insightText = '';
-            if (sourceLoans.length === 0) {
-              insightText = isLending ? 'No active loans yet' : 'You have no active borrowing';
-            } else if (overdueCount > 1) {
-              insightText = isLending
-                ? `${overdueCount} borrowers are behind on payments`
-                : `${overdueCount} payments need your attention`;
-            } else if (overdueCount === 1) {
-              insightText = isLending
-                ? 'One borrower is behind — follow up when ready'
-                : "One quick payment and you're back on track";
-            } else {
-              insightText = isLending ? 'All your lent money is on track' : 'All your payments are on track';
-            }
-
-            // This-month scheduled counts
-            const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
-            const monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0, 23, 59, 59);
-            const lendingThisMonth = activeLendingLoans.filter(l => l.next_payment_date && new Date(l.next_payment_date) >= monthStart && new Date(l.next_payment_date) <= monthEnd);
-            const borrowingThisMonth = activeBorrowingLoans.filter(l => l.next_payment_date && new Date(l.next_payment_date) >= monthStart && new Date(l.next_payment_date) <= monthEnd);
-
-            return (
-              <div style={{ background: '#ffffff', borderRadius: 10, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 1px 4px rgba(0,0,0,0.04)', padding: '14px 14px' }}>
-                {/* Title — left aligned */}
-                <div style={{ fontSize: 11, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif", marginBottom: 10 }}>
-                  {format(today, 'MMMM')} {isLending ? 'Lending' : 'Borrowing'} Snapshot
-                </div>
-                {/* Content — centered */}
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
-                  <span style={{ display: 'inline-block', background: accentBg, color: accentColor, padding: '2px 8px', borderRadius: 4, fontSize: 11, fontWeight: 500, lineHeight: 1.4, fontFamily: "'DM Sans', sans-serif" }}>
-                    {insightText}
-                  </span>
-                  {isLending && monthlyExpectedReceive > 0 && (
-                    <div style={{ fontSize: 11, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.5, textAlign: 'center' }}>
-                      Expected to receive <span style={{ color: accentColor, fontWeight: 600 }}>{formatMoney(monthlyExpectedReceive)}</span> this month
-                    </div>
-                  )}
-                  {!isLending && monthlyExpectedPay > 0 && (
-                    <div style={{ fontSize: 11, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.5, textAlign: 'center' }}>
-                      Due to pay <span style={{ color: accentColor, fontWeight: 600 }}>{formatMoney(monthlyExpectedPay)}</span> this month
-                    </div>
-                  )}
-                  {isLending && monthlyReceived > 0 && (
-                    <div style={{ fontSize: 11, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.5, textAlign: 'center' }}>
-                      {formatMoney(monthlyReceived)} received so far this month
-                    </div>
-                  )}
-                  {!isLending && monthlyPaidOut > 0 && (
-                    <div style={{ fontSize: 11, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.5, textAlign: 'center' }}>
-                      {formatMoney(monthlyPaidOut)} paid out so far this month
-                    </div>
-                  )}
-                </div>
-              </div>
-            );
-          })()}
-          </div>{/* end snapshot wrap */}
-      {/* Upcoming — Col 1 */}
-      <div className="loans-summary-upcoming">
-      {(() => {
-        const sourceLoans2 = isLending ? activeLendingLoans : activeBorrowingLoans;
-        const otherPartyKey2 = isLending ? 'borrower_id' : 'lender_id';
-        const allPaymentLoans2 = sourceLoans2
-          .filter(l => l.next_payment_date)
-          .map(l => {
-            const otherParty = publicProfiles.find(p => p.user_id === l[otherPartyKey2]);
-            const days = daysUntilDate(l.next_payment_date);
-            const payDate = toLocalDate(l.next_payment_date);
-            const firstName = otherParty?.full_name?.split(' ')[0] || otherParty?.username || 'User';
-            return { ...l, firstName, days, payDate };
-          })
-          .sort((a, b) => a.payDate - b.payDate);
-        const overdueLoans2 = allPaymentLoans2.filter(l => l.days < 0);
-        const upcomingLoans2 = allPaymentLoans2.filter(l => l.days >= 0).slice(0, 5);
-        const combinedLoans2 = [...overdueLoans2, ...upcomingLoans2];
-        return (
-          <PageCard tone={isLending ? 'lending' : 'borrowing'} title="Upcoming" headerRight={<Link to={createPageUrl("Upcoming")} style={{ fontSize: 11, fontWeight: 500, color: isLending ? '#03ACEA' : '#1D5B94', textDecoration: 'none' }}>Full schedule →</Link>} style={{ marginBottom: 0 }}>
-            {combinedLoans2.length === 0 ? (
-              <div style={{ padding: '10px 0', fontSize: 12, color: '#787776', textAlign: 'center', fontFamily: "'DM Sans', sans-serif" }}>You're all caught up! 🎉</div>
-            ) : combinedLoans2.map((loan) => {
-              const isOverdue = loan.days < 0;
-              const isToday = loan.days === 0;
-              const dayName = isOverdue ? 'Late' : isToday ? 'Today' : format(loan.payDate, 'MMM');
-              const dateNum = format(loan.payDate, 'd');
-              const dateBg = isOverdue ? 'rgba(232,114,110,0.10)' : isToday ? '#1A1918' : 'rgba(0,0,0,0.04)';
-              const dayNameColor = isOverdue ? '#E8726E' : isToday ? 'rgba(255,255,255,0.6)' : '#9B9A98';
-              const dateNumColor = isOverdue ? '#E8726E' : isToday ? '#ffffff' : '#1A1918';
-              const amtStr = formatMoney(loan.payment_amount || 0);
-              const primaryLine = isOverdue
-                ? (isLending
-                    ? <>{loan.firstName}'s <strong>{amtStr}</strong> payment is overdue</>
-                    : <>Your <strong>{amtStr}</strong> payment to {loan.firstName} is overdue</>)
-                : (isLending
-                    ? <>Due to receive <strong>{amtStr}</strong> from {loan.firstName}</>
-                    : <><strong>{amtStr}</strong> due to {loan.firstName}</>);
+            {/* Overview */}
+            {(() => {
+              const percentPaid   = totalOwedBorrowing   > 0 ? Math.round((totalPaidBorrowing   / totalOwedBorrowing)   * 100) : 0;
+              const percentRepaid = totalExpectedLending > 0 ? Math.round((totalReceivedLending / totalExpectedLending) * 100) : 0;
+              const borrowOwed = Math.max(0, totalOwedBorrowing   - totalPaidBorrowing);
+              const lentOwed   = Math.max(0, totalExpectedLending - totalReceivedLending);
+              const bL = { fontSize: 11, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.01em' };
+              const sL = { fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" };
               return (
-                <div key={loan.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '7px 0', borderBottom: isLending ? 'none' : '1px solid rgba(0,0,0,0.04)' }}>
-                  <div style={{ width: 36, height: 36, borderRadius: 9, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: dateBg, flexShrink: 0 }}>
-                    <span style={{ fontSize: 7, fontWeight: 700, color: dayNameColor, lineHeight: 1, textTransform: 'uppercase', letterSpacing: '0.05em', fontFamily: "'DM Sans', sans-serif" }}>{dayName}</span>
-                    <span style={{ fontSize: 13, fontWeight: 700, color: dateNumColor, lineHeight: 1, marginTop: 1, fontFamily: "'DM Sans', sans-serif" }}>{dateNum}</span>
-                  </div>
-                  <div style={{ width: 1, alignSelf: 'stretch', background: 'rgba(0,0,0,0.06)', marginTop: 4, marginBottom: 4 }} />
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 12, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{primaryLine}</div>
-                    {loan.purpose && (
-                      <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{loan.purpose}</div>
+                <div style={{ background: '#ffffff', borderRadius: 10, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 1px 4px rgba(0,0,0,0.04)', padding: '14px 14px' }}>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif", marginBottom: 10 }}>Overview</div>
+                  <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    {isLending ? (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                        <OvRing percent={percentRepaid} color="#03ACEA" label="Repaid" />
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                          <div style={bL}>You're owed <span style={{ color: '#03ACEA' }}>{formatMoney(lentOwed)}</span></div>
+                          <div style={sL}>{formatMoney(totalReceivedLending)} of {formatMoney(totalExpectedLending)} repaid to you</div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                        <OvRing percent={percentPaid} color="#1D5B94" label="Paid back" />
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                          <div style={bL}>You owe <span style={{ color: '#1D5B94' }}>{formatMoney(borrowOwed)}</span></div>
+                          <div style={sL}>{formatMoney(totalPaidBorrowing)} of {formatMoney(totalOwedBorrowing)} paid back</div>
+                        </div>
+                      </div>
                     )}
                   </div>
                 </div>
               );
-            })}
-          </PageCard>
-        );
-      })()}
-      </div>{/* end upcoming wrap */}
-    </div>{/* end Col 1 */}
+            })()}
 
-    {/* Col 2: Overview + Your Lending/Borrowing */}
-    <div className="loans-summary-col-b" style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 20 }}>
-      {/* Overview */}
-      <div className="loans-summary-overview">
-      {(() => {
-        const percentPaid   = totalOwedBorrowing   > 0 ? Math.round((totalPaidBorrowing   / totalOwedBorrowing)   * 100) : 0;
-        const percentRepaid = totalExpectedLending > 0 ? Math.round((totalReceivedLending / totalExpectedLending) * 100) : 0;
-        const borrowOwed = Math.max(0, totalOwedBorrowing   - totalPaidBorrowing);
-        const lentOwed   = Math.max(0, totalExpectedLending - totalReceivedLending);
-        const OvRing = ({ percent, color, label }) => {
-          const C = 2 * Math.PI * 45; const offset = C - (percent / 100) * C;
-          return (
-            <div style={{ position: 'relative', width: 60, height: 60, flexShrink: 0 }}>
-              <svg width="60" height="60" viewBox="0 0 128 128" style={{ transform: 'rotate(-90deg)' }}>
-                <circle cx="64" cy="64" r="45" fill="none" stroke={`${color}26`} strokeWidth="10" />
-                <circle cx="64" cy="64" r="45" fill="none" stroke={color} strokeWidth="10" strokeLinecap="round" strokeDasharray={C} strokeDashoffset={offset} />
-              </svg>
-              <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
-                <span style={{ fontSize: 10, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>{percent}%</span>
-                <span style={{ fontSize: 7, fontWeight: 500, color: '#787776', fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>{label}</span>
-              </div>
-            </div>
-          );
-        };
-        const bL = { fontSize: 11, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.01em' };
-        const sL = { fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" };
-        return (
-          <div style={{ background: '#ffffff', borderRadius: 10, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 1px 4px rgba(0,0,0,0.04)', padding: '14px 14px' }}>
-            <div style={{ fontSize: 11, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif", marginBottom: 10 }}>Overview</div>
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-              {isLending ? (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <OvRing percent={percentRepaid} color="#03ACEA" label="Repaid" />
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                    <div style={bL}>You're owed <span style={{ color: '#03ACEA' }}>{formatMoney(lentOwed)}</span></div>
-                    <div style={sL}>{formatMoney(totalReceivedLending)} of {formatMoney(totalExpectedLending)} repaid to you</div>
+            {/* Snapshot */}
+            {(() => {
+              const today = new Date();
+              const overdueCount = activeLoans.filter(l => l.next_payment_date && new Date(l.next_payment_date) < today).length;
+              let insightText = '';
+              if (activeLoans.length === 0) {
+                insightText = isLending ? 'No active loans yet' : 'You have no active borrowing';
+              } else if (overdueCount > 1) {
+                insightText = isLending ? `${overdueCount} borrowers are behind on payments` : `${overdueCount} payments need your attention`;
+              } else if (overdueCount === 1) {
+                insightText = isLending ? 'One borrower is behind — follow up when ready' : "One quick payment and you're back on track";
+              } else {
+                insightText = isLending ? 'All your lent money is on track' : 'All your payments are on track';
+              }
+              return (
+                <div style={{ background: '#ffffff', borderRadius: 10, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 1px 4px rgba(0,0,0,0.04)', padding: '14px 14px' }}>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif", marginBottom: 10 }}>
+                    {format(today, 'MMMM')} {isLending ? 'Lending' : 'Borrowing'} Snapshot
                   </div>
-                </div>
-              ) : (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <OvRing percent={percentPaid} color="#1D5B94" label="Paid back" />
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                    <div style={bL}>You owe <span style={{ color: '#1D5B94' }}>{formatMoney(borrowOwed)}</span></div>
-                    <div style={sL}>{formatMoney(totalPaidBorrowing)} of {formatMoney(totalOwedBorrowing)} paid back</div>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        );
-      })()}
-      </div>{/* end overview wrap */}
-      {/* Your Lending / Your Borrowing summary */}
-      {activeLoans.length > 0 && (
-      <div className="loans-summary-ylending">
-      {(() => {
-        const tone = isLending ? 'lending' : 'borrowing';
-        const titleStr = isLending ? 'Your Lending' : 'Your Borrowing';
-        const accent = isLending ? '#03ACEA' : '#1D5B94';
-        const accentBg = isLending ? 'rgba(3,172,234,0.10)' : 'rgba(29,91,148,0.10)';
-        const sortedLoans = [...activeLoans].sort((a, b) => {
-          if (rankingFilter === 'status') {
-            const aOv = a.next_payment_date && new Date(a.next_payment_date) < new Date();
-            const bOv = b.next_payment_date && new Date(b.next_payment_date) < new Date();
-            if (aOv && !bOv) return -1; if (!aOv && bOv) return 1; return 0;
-          }
-          if (rankingFilter === 'highest_interest') return (b.interest_rate || 0) - (a.interest_rate || 0);
-          if (rankingFilter === 'lowest_interest') return (a.interest_rate || 0) - (b.interest_rate || 0);
-          if (rankingFilter === 'highest_payment') return (b.payment_amount || 0) - (a.payment_amount || 0);
-          if (rankingFilter === 'lowest_payment') return (a.payment_amount || 0) - (b.payment_amount || 0);
-          if (rankingFilter === 'soonest_deadline') { const dA = a.next_payment_date ? new Date(a.next_payment_date) : new Date('2099-01-01'); const dB = b.next_payment_date ? new Date(b.next_payment_date) : new Date('2099-01-01'); return dA - dB; }
-          if (rankingFilter === 'largest_amount') return (b.total_amount || b.amount || 0) - (a.total_amount || a.amount || 0);
-          if (rankingFilter === 'smallest_amount') return (a.total_amount || a.amount || 0) - (b.total_amount || b.amount || 0);
-          if (rankingFilter === 'most_repaid') { const pA = (a.total_amount||a.amount||0)>0?(a.amount_paid||0)/(a.total_amount||a.amount||1):0; const pB = (b.total_amount||b.amount||0)>0?(b.amount_paid||0)/(b.total_amount||b.amount||1):0; return pB-pA; }
-          if (rankingFilter === 'least_repaid') { const pA = (a.total_amount||a.amount||0)>0?(a.amount_paid||0)/(a.total_amount||a.amount||1):0; const pB = (b.total_amount||b.amount||0)>0?(b.amount_paid||0)/(b.total_amount||b.amount||1):0; return pA-pB; }
-          if (rankingFilter === 'most_recent') return new Date(b.created_at) - new Date(a.created_at);
-          return 0;
-        });
-        return (
-          <PageCard tone={tone} title={titleStr} style={{ marginBottom: 0 }} headerRight={
-            <Select value={rankingFilter} onValueChange={setRankingFilter}>
-              <SelectTrigger className="w-auto h-7 px-2 border-0 text-xs font-medium rounded-lg" style={{ background: accentBg, color: accent }}><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="status">Status</SelectItem>
-                <SelectItem value="highest_interest">Highest Interest Rate</SelectItem>
-                <SelectItem value="lowest_interest">Lowest Interest Rate</SelectItem>
-                <SelectItem value="highest_payment">Highest Payment</SelectItem>
-                <SelectItem value="lowest_payment">Lowest Payment</SelectItem>
-                <SelectItem value="soonest_deadline">Soonest Deadline</SelectItem>
-                <SelectItem value="largest_amount">Largest Amount</SelectItem>
-                <SelectItem value="smallest_amount">Smallest Amount</SelectItem>
-                <SelectItem value="most_repaid">Most Repaid</SelectItem>
-                <SelectItem value="least_repaid">Least Repaid</SelectItem>
-                <SelectItem value="most_recent">Most Recently Created</SelectItem>
-              </SelectContent>
-            </Select>
-          }>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              {sortedLoans.slice(0, 5).map((loan, idx) => {
-                const otherUserId = isLending ? loan.borrower_id : loan.lender_id;
-                const op = publicProfiles.find(p => p.user_id === otherUserId);
-                const name = op?.full_name?.split(' ')[0] || op?.username || 'User';
-                const totalAmt = loan.total_amount || loan.amount || 0;
-                const paidAmt = loan.amount_paid || 0;
-                const pct = totalAmt > 0 ? Math.round((paidAmt / totalAmt) * 100) : 0;
-                const isOverdue = loan.next_payment_date && new Date(loan.next_payment_date) < new Date();
-                const overdueAmt = isOverdue ? (loan.payment_amount || 0) : 0;
-                let badgeLabel = '';
-                let badgeColor = accent;
-                let badgeBg = accentBg;
-                if (rankingFilter === 'status') {
-                  badgeLabel = isOverdue ? `${formatMoney(overdueAmt)} overdue` : 'On track';
-                  badgeColor = isOverdue ? '#E8726E' : accent;
-                  badgeBg = isOverdue ? 'rgba(232,114,110,0.08)' : accentBg;
-                } else if (rankingFilter === 'highest_interest' || rankingFilter === 'lowest_interest') {
-                  badgeLabel = `${loan.interest_rate || 0}% interest`;
-                } else if (rankingFilter === 'highest_payment' || rankingFilter === 'lowest_payment') {
-                  badgeLabel = `${formatMoney(loan.payment_amount || 0)}/period`;
-                } else if (rankingFilter === 'soonest_deadline') {
-                  const d = loan.next_payment_date ? daysUntilDate(loan.next_payment_date) : null;
-                  badgeLabel = d === null ? '—' : d < 0 ? `${Math.abs(d)}d late` : d === 0 ? 'today' : `${d}d`;
-                  if (d !== null && d < 0) { badgeColor = '#E8726E'; badgeBg = 'rgba(232,114,110,0.08)'; }
-                } else if (rankingFilter === 'largest_amount' || rankingFilter === 'smallest_amount') {
-                  badgeLabel = `${formatMoney(totalAmt)} total`;
-                } else if (rankingFilter === 'most_repaid' || rankingFilter === 'least_repaid') {
-                  badgeLabel = `${pct}% repaid`;
-                } else if (rankingFilter === 'most_recent') {
-                  badgeLabel = loan.created_at ? format(new Date(loan.created_at), 'MMM d') : '—';
-                }
-                return (
-                  <div key={loan.id} style={{ padding: '9px 0', display: 'flex', alignItems: 'flex-start', gap: 8 }}>
-                    <span style={{ fontSize: 11, fontWeight: 700, color: '#C5C3C0', minWidth: 14, textAlign: 'right', flexShrink: 0, lineHeight: '17px' }}>{idx + 1}</span>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
-                        <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name}</span>
-                        <span style={{ flexShrink: 0, fontSize: 10, fontWeight: 700, color: badgeColor, background: badgeBg, borderRadius: 5, padding: '2px 6px', lineHeight: 1.2 }}>{badgeLabel}</span>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+                    <span style={{ display: 'inline-block', background: accentBg, color: accent, padding: '2px 8px', borderRadius: 4, fontSize: 11, fontWeight: 500, lineHeight: 1.4, fontFamily: "'DM Sans', sans-serif" }}>
+                      {insightText}
+                    </span>
+                    {isLending && monthlyExpectedReceive > 0 && (
+                      <div style={{ fontSize: 11, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.5, textAlign: 'center' }}>
+                        Expected to receive <span style={{ color: accent, fontWeight: 600 }}>{formatMoney(monthlyExpectedReceive)}</span> this month
                       </div>
-                      <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        {isLending ? `Borrowed ${formatMoney(totalAmt)} from you${loan.purpose ? ` for ${loan.purpose}` : ''}` : `Lent you ${formatMoney(totalAmt)}${loan.purpose ? ` for ${loan.purpose}` : ''}`}
+                    )}
+                    {!isLending && monthlyExpectedPay > 0 && (
+                      <div style={{ fontSize: 11, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.5, textAlign: 'center' }}>
+                        Due to pay <span style={{ color: accent, fontWeight: 600 }}>{formatMoney(monthlyExpectedPay)}</span> this month
+                      </div>
+                    )}
+                    {isLending && monthlyReceived > 0 && (
+                      <div style={{ fontSize: 11, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.5, textAlign: 'center' }}>
+                        {formatMoney(monthlyReceived)} received so far this month
+                      </div>
+                    )}
+                    {!isLending && monthlyPaidOut > 0 && (
+                      <div style={{ fontSize: 11, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.5, textAlign: 'center' }}>
+                        {formatMoney(monthlyPaidOut)} paid out so far this month
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
+          </div>
+
+          {/* Col 2: Upcoming */}
+          {(() => {
+            const sourceLoans2 = activeLoans;
+            const otherPartyKey2 = otherKey;
+            const allPaymentLoans2 = sourceLoans2
+              .filter(l => l.next_payment_date)
+              .map(l => {
+                const otherParty = publicProfiles.find(p => p.user_id === l[otherPartyKey2]);
+                const days = daysUntilDate(l.next_payment_date);
+                const payDate = toLocalDate(l.next_payment_date);
+                const firstName = otherParty?.full_name?.split(' ')[0] || otherParty?.username || 'User';
+                return { ...l, firstName, days, payDate };
+              })
+              .sort((a, b) => a.payDate - b.payDate);
+            const overdueLoans2 = allPaymentLoans2.filter(l => l.days < 0);
+            const upcomingLoans2 = allPaymentLoans2.filter(l => l.days >= 0).slice(0, 5);
+            const combinedLoans2 = [...overdueLoans2, ...upcomingLoans2];
+            return (
+              <PageCard tone={isLending ? 'lending' : 'borrowing'} title="Upcoming" headerRight={<Link to={createPageUrl("Upcoming")} style={{ fontSize: 11, fontWeight: 500, color: accent, textDecoration: 'none' }}>Full schedule →</Link>} style={{ marginBottom: 0 }}>
+                {combinedLoans2.length === 0 ? (
+                  <div style={{ padding: '10px 0', fontSize: 12, color: '#787776', textAlign: 'center', fontFamily: "'DM Sans', sans-serif" }}>You're all caught up! 🎉</div>
+                ) : combinedLoans2.map((loan) => {
+                  const isOverdue = loan.days < 0;
+                  const isToday = loan.days === 0;
+                  const dayName = isOverdue ? 'Late' : isToday ? 'Today' : format(loan.payDate, 'MMM');
+                  const dateNum = format(loan.payDate, 'd');
+                  const dateBg = isOverdue ? 'rgba(232,114,110,0.10)' : isToday ? '#1A1918' : 'rgba(0,0,0,0.04)';
+                  const dayNameColor = isOverdue ? '#E8726E' : isToday ? 'rgba(255,255,255,0.6)' : '#9B9A98';
+                  const dateNumColor = isOverdue ? '#E8726E' : isToday ? '#ffffff' : '#1A1918';
+                  const amtStr = formatMoney(loan.payment_amount || 0);
+                  const primaryLine = isOverdue
+                    ? (isLending
+                        ? <>{loan.firstName}'s <strong>{amtStr}</strong> payment is overdue</>
+                        : <>Your <strong>{amtStr}</strong> payment to {loan.firstName} is overdue</>)
+                    : (isLending
+                        ? <>Due to receive <strong>{amtStr}</strong> from {loan.firstName}</>
+                        : <><strong>{amtStr}</strong> due to {loan.firstName}</>);
+                  return (
+                    <div key={loan.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '7px 0', borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
+                      <div style={{ width: 36, height: 36, borderRadius: 9, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: dateBg, flexShrink: 0 }}>
+                        <span style={{ fontSize: 7, fontWeight: 700, color: dayNameColor, lineHeight: 1, textTransform: 'uppercase', letterSpacing: '0.05em', fontFamily: "'DM Sans', sans-serif" }}>{dayName}</span>
+                        <span style={{ fontSize: 13, fontWeight: 700, color: dateNumColor, lineHeight: 1, marginTop: 1, fontFamily: "'DM Sans', sans-serif" }}>{dateNum}</span>
+                      </div>
+                      <div style={{ width: 1, alignSelf: 'stretch', background: 'rgba(0,0,0,0.06)', marginTop: 4, marginBottom: 4 }} />
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: 12, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{primaryLine}</div>
+                        {loan.purpose && (
+                          <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{loan.purpose}</div>
+                        )}
                       </div>
                     </div>
+                  );
+                })}
+              </PageCard>
+            );
+          })()}
+        </div>{/* end top grid */}
+
+        {/* Balance History */}
+        {user?.id && (
+          <div style={{ marginTop: 28 }}>
+            <LoanTimeline myLoans={allLoans} safePayments={allPayments} safeAllProfiles={publicProfiles} userId={user.id} />
+          </div>
+        )}
+
+        {/* Loan carousel */}
+        {loanCards.length > 0 && (
+          <div style={{ marginTop: 28 }}>
+            <div style={{ fontSize: 12, fontWeight: 500, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginBottom: 24, textAlign: 'center', letterSpacing: '-0.01em' }}>
+              Select a loan to view details
+            </div>
+
+            {/* Cards fan row */}
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-end', gap: 16, padding: '8px 24px 32px', overflowX: 'auto', overflowY: 'visible' }}>
+              {loanCards.map(({ loan, profile, name, remaining }, idx) => {
+                const isSelected = selectedIdx === idx;
+                const diff = selectedIdx === -1 ? 0 : idx - selectedIdx;
+                const rotate = isSelected || selectedIdx === -1 ? 0 : diff * 9;
+                const scale = isSelected ? 1.07 : Math.max(0.80, 1 - Math.abs(diff) * 0.05);
+                const ty = isSelected || selectedIdx === -1 ? 0 : Math.abs(diff) * 5;
+                const zIdx = isSelected ? 10 : Math.max(1, 6 - Math.abs(diff));
+                return (
+                  <div
+                    key={loan.id}
+                    onClick={() => setSelectedScrollLoan(isSelected ? null : loan)}
+                    style={{
+                      width: 115,
+                      flexShrink: 0,
+                      background: '#ffffff',
+                      borderRadius: 12,
+                      border: isSelected ? `2px solid ${accent}` : '1.5px solid rgba(0,0,0,0.08)',
+                      boxShadow: isSelected
+                        ? `0 6px 24px ${accent}30, 0 2px 8px rgba(0,0,0,0.08)`
+                        : '0 2px 8px rgba(0,0,0,0.06)',
+                      padding: '14px 10px 12px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      gap: 7,
+                      cursor: 'pointer',
+                      transform: `rotate(${rotate}deg) scale(${scale}) translateY(${ty}px)`,
+                      transformOrigin: 'bottom center',
+                      transition: 'transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s, border-color 0.2s',
+                      position: 'relative',
+                      zIndex: zIdx,
+                      userSelect: 'none',
+                    }}
+                  >
+                    <UserAvatar
+                      name={profile?.full_name || profile?.username || name}
+                      src={profile?.avatar_url || profile?.profile_picture_url}
+                      size={38}
+                      radius={19}
+                    />
+                    <div style={{ fontSize: 11, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", textAlign: 'center', lineHeight: 1.25 }}>{name}</div>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: accent, fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(remaining)}</div>
+                    {loan.purpose && (
+                      <div style={{ fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", textAlign: 'center', lineHeight: 1.35, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
+                        {loan.purpose}
+                      </div>
+                    )}
                   </div>
                 );
               })}
             </div>
-          </PageCard>
-        );
-      })()}
-      </div>
-      )}{/* end ylending wrap */}
-    </div>{/* end Col 2 */}
-            </div>
-          )}{/* end !selectedWalletLoan */}
-          </div>{/* end col 2 wrapper */}
-        </div>{/* end loans-top-layout grid */}
 
-
+            {/* Detail panel */}
+            {selectedScrollLoan && (
+              <div style={{ marginTop: 4 }}>
+                {renderLoanDetailBody(selectedScrollLoan)}
+              </div>
+            )}
+          </div>
+        )}
       </>
     );
   };
@@ -1393,17 +1242,6 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
           {activeTab === 'lending' && renderSummaryTab('lending')}
           {activeTab === 'borrowing' && renderSummaryTab('borrowing')}
 
-          {/* Balance History — lending tab only */}
-          {activeTab === 'lending' && user?.id && (
-            <div style={{ marginTop: 32 }}>
-              <LoanTimeline
-                myLoans={allLoans}
-                safePayments={allPayments}
-                safeAllProfiles={publicProfiles}
-                userId={user.id}
-              />
-            </div>
-          )}
         </div>
 
         {showDetailsModal && selectedLoanDetails && (
