@@ -504,118 +504,91 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
 
     return (
       <>
-        {/* 3. Payment Progress | NP cards + Loan Terms */}
+        {/* Loan Detail Top — 3-col: [2fr who+amount+reason] [1fr you owe] [1fr repayment progress] */}
         {(() => {
           const totalOwedNow = loanAnalysis ? loanAnalysis.totalOwedNow : (selectedLoan.total_amount || selectedLoan.amount || 0);
           const totalPaidAmt = loanAnalysis ? loanAnalysis.totalPaid : (selectedLoan.amount_paid || 0);
-          const loanPrincipal = selectedLoan.amount || 0;
-          const totalWithInterest = loanAnalysis ? (loanAnalysis.principal + loanAnalysis.totalInterestAccrued) : (selectedLoan.total_amount || loanPrincipal);
-          const paidPct = loanAnalysis ? loanAnalysis.paidPercentage : (totalWithInterest > 0 ? (totalPaidAmt / totalWithInterest) * 100 : 0);
-          const nextPmtAmt = loanAnalysis ? loanAnalysis.nextPaymentAmount : (recalculatedPayment > 0 ? recalculatedPayment : (selectedLoan.payment_amount || 0));
-          let nextPmtDate = null; let daysUntil = null;
-          if (selectedLoan.next_payment_date) { nextPmtDate = toLocalDate(selectedLoan.next_payment_date); daysUntil = daysUntilDate(selectedLoan.next_payment_date); }
-          const isLate = daysUntil !== null && daysUntil < 0;
-          const dLabel = daysUntil === null ? null : isLate ? `${Math.abs(daysUntil)}d late` : daysUntil === 0 ? 'today' : `${daysUntil}d`;
-          const badgeColor = isLate ? '#E8726E' : isLending ? '#03ACEA' : (daysUntil !== null && daysUntil <= 3 ? '#F59E0B' : '#9B9A98');
-          const badgeBg = isLate ? 'rgba(232,114,110,0.08)' : isLending ? 'rgba(3,172,234,0.10)' : (daysUntil !== null && daysUntil <= 3 ? 'rgba(245,158,11,0.08)' : 'rgba(0,0,0,0.04)');
-          const size = 140; const dCx = size / 2; const dCy = size / 2;
-          const ringR = 54; const ringStroke = 9;
-          const ringCirc = 2 * Math.PI * ringR; const ringDash = (paidPct / 100) * ringCirc;
-          const iconBg = isLending ? 'rgba(3,172,234,0.12)' : 'rgba(29,91,148,0.12)';
-          const iconColor = isLending ? '#03ACEA' : '#1D5B94';
-          const AuroraCard = ({ children }) => (
-            <div style={{ position: 'relative', display: 'flex', flexDirection: 'column' }}>
-              <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 'calc(100% + 10px)', height: 'calc(100% + 10px)', background: 'linear-gradient(135deg, rgb(3,172,234) 0%, rgb(6,182,212) 30%, rgb(20,184,166) 60%, rgb(3,172,234) 100%)', filter: 'blur(5px) saturate(1.2)', opacity: 0.35, borderRadius: 18, zIndex: 0, pointerEvents: 'none' }} />
-              <div style={{ position: 'relative', zIndex: 1, flex: 1, background: 'linear-gradient(to right, rgba(3,172,234,0) 0%, #03ACEA 67%, #03ACEA 100%)', padding: 1, borderRadius: 11, display: 'flex', flexDirection: 'column' }}>
-              <div style={{ flex: 1, padding: '12px 14px', borderRadius: 10, background: '#ffffff' }}>
-                {children}
-              </div>
-              </div>
-            </div>
-          );
-          const amount = selectedLoan.amount || 0;
-          const interestRate = selectedLoan.interest_rate || 0;
-          const repaymentPeriod = selectedLoan.repayment_period || 0;
-          const repaymentUnit = selectedLoan.repayment_unit || 'months';
-          const paymentFrequency = selectedLoan.payment_frequency || 'monthly';
-          const loanTermItems = [
-            { label: 'Loan Amount', value: `$${amount.toLocaleString()}` },
-            { label: 'Interest Rate', value: `${interestRate}%` },
-            { label: 'Term', value: `${repaymentPeriod} ${repaymentUnit}` },
-            { label: 'Frequency', value: paymentFrequency.charAt(0).toUpperCase() + paymentFrequency.slice(1) },
-          ];
+          const totalWithInterest = loanAnalysis ? (loanAnalysis.principal + loanAnalysis.totalInterestAccrued) : (selectedLoan.total_amount || selectedLoan.amount || 0);
+          const paidPct = Math.round(totalWithInterest > 0 ? Math.min(100, (totalPaidAmt / totalWithInterest) * 100) : 0);
+          const remaining = Math.max(0, totalWithInterest - totalPaidAmt);
+          const ringColor = isLending ? '#03ACEA' : '#1D5B94';
+          const cardBase = { background: '#ffffff', borderRadius: 10, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 1px 4px rgba(0,0,0,0.04)', padding: '14px 16px' };
+          const labelStyle = { fontSize: 11, fontWeight: 600, color: '#9B9A98', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif", marginBottom: 8 };
+          const C = 2 * Math.PI * 45; const ringOffset = C - (paidPct / 100) * C;
           return (
-            <>
-              {/* DESKTOP: Loan Terms + Overview in right column */}
-              <div className="loans-detail-desktop-only" style={{ gridTemplateColumns: '2fr 1fr', gap: 16, marginBottom: 16, alignItems: 'start' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                  <PageCard title="Loan Terms" style={{ marginBottom: 0 }}>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
-                      {loanTermItems.map((item, idx) => (<div key={idx} style={{ textAlign: 'center' }}><p style={{ fontSize: 10, color: '#787776', fontWeight: 500, marginBottom: 2 }}>{item.label}</p><p style={{ fontSize: 13, fontWeight: 700, color: '#1A1918', margin: 0 }}>{item.value}</p></div>))}
-                    </div>
-                  </PageCard>
+            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: 14, marginBottom: 20, alignItems: 'stretch' }}>
+
+              {/* Col 1 (2fr): Who + amount + reason */}
+              <div style={{ ...cardBase, display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <div style={labelStyle}>Loan with</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <div style={{ width: 36, height: 36, borderRadius: '50%', background: `${ringColor}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden' }}>
+                    {otherPartyProfile?.avatar_url || otherPartyProfile?.profile_picture_url
+                      ? <img src={otherPartyProfile.avatar_url || otherPartyProfile.profile_picture_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      : <span style={{ fontSize: 13, fontWeight: 700, color: ringColor, fontFamily: "'DM Sans', sans-serif" }}>{otherPartyUsername.charAt(0)}</span>
+                    }
+                  </div>
+                  <div style={{ minWidth: 0 }}>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{otherPartyUsername}</div>
+                    {selectedLoan.purpose && (
+                      <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>For: {selectedLoan.purpose}</div>
+                    )}
+                  </div>
                 </div>
-                {(() => {
-                  const percentPaid = totalOwedBorrowing > 0 ? Math.round((totalPaidBorrowing / totalOwedBorrowing) * 100) : 0;
-                  const percentRepaid = totalExpectedLending > 0 ? Math.round((totalReceivedLending / totalExpectedLending) * 100) : 0;
-                  const borrowOwed = Math.max(0, totalOwedBorrowing - totalPaidBorrowing);
-                  const lentOwed = Math.max(0, totalExpectedLending - totalReceivedLending);
-                  const Ring = ({ percent, color, label }) => {
-                    const C = 2 * Math.PI * 45;
-                    const offset = C - (percent / 100) * C;
-                    return (
-                      <div style={{ position: 'relative', width: 68, height: 68, flexShrink: 0 }}>
-                        <svg width="68" height="68" viewBox="0 0 128 128" style={{ transform: 'rotate(-90deg)' }}>
-                          <circle cx="64" cy="64" r="45" fill="none" stroke={`${color}26`} strokeWidth="10" />
-                          <circle cx="64" cy="64" r="45" fill="none" stroke={color} strokeWidth="10" strokeLinecap="round" strokeDasharray={C} strokeDashoffset={offset} />
-                        </svg>
-                        <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none', gap: 1 }}>
-                          <span style={{ fontSize: 11, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>{percent}%</span>
-                          <span style={{ fontSize: 8, fontWeight: 500, color: '#787776', fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>{label}</span>
-                        </div>
-                      </div>
-                    );
-                  };
-                  const textBlockStyle = { flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 2 };
-                  const bigLineStyle = { fontSize: 12, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" };
-                  const subLineStyle = { fontSize: 12, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" };
-                  return (
-                    <div style={{ position: 'relative' }}>
-                      <div style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
-                      <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', padding: '14px 18px' }}>
-                        <div style={{ fontSize: 14, fontWeight: 700, color: '#1A1918', marginBottom: 8, fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.01em' }}>Overview</div>
-                        {isLending ? (
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginTop: 4 }}>
-                            <Ring percent={percentRepaid} color="#03ACEA" label="Repaid" />
-                            <div style={textBlockStyle}>
-                              <div style={bigLineStyle}>You're owed <span style={{ color: '#03ACEA' }}>{formatMoney(lentOwed)}</span></div>
-                              <div style={subLineStyle}>{formatMoney(totalReceivedLending)} of {formatMoney(totalExpectedLending)} repaid to you</div>
-                            </div>
-                          </div>
-                        ) : (
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginTop: 4 }}>
-                            <Ring percent={percentPaid} color="#1D5B94" label="Paid back" />
-                            <div style={textBlockStyle}>
-                              <div style={bigLineStyle}>You owe <span style={{ color: '#1D5B94' }}>{formatMoney(borrowOwed)}</span></div>
-                              <div style={subLineStyle}>{formatMoney(totalPaidBorrowing)} of {formatMoney(totalOwedBorrowing)} paid back</div>
-                            </div>
-                          </div>
-                        )}
-                      </div>
+                <div style={{ display: 'flex', gap: 16, paddingTop: 4, borderTop: '1px solid rgba(0,0,0,0.05)' }}>
+                  <div>
+                    <div style={{ fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginBottom: 2 }}>Loan Amount</div>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(selectedLoan.amount || 0)}</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginBottom: 2 }}>Total with Interest</div>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(totalWithInterest)}</div>
+                  </div>
+                  {(selectedLoan.interest_rate || 0) > 0 && (
+                    <div>
+                      <div style={{ fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginBottom: 2 }}>Interest Rate</div>
+                      <div style={{ fontSize: 14, fontWeight: 700, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>{selectedLoan.interest_rate}%</div>
                     </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Col 2 (1fr): You owe / You're owed */}
+              <div style={{ ...cardBase, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', gap: 6 }}>
+                <div style={labelStyle}>{isLending ? "You're Owed" : "You Owe"}</div>
+                <div style={{ fontSize: 22, fontWeight: 700, color: ringColor, fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.03em', lineHeight: 1.1 }}>{formatMoney(remaining)}</div>
+                <div style={{ fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.4 }}>
+                  {formatMoney(totalPaidAmt)} of {formatMoney(totalWithInterest)} {isLending ? 'repaid to you' : 'paid back'}
+                </div>
+                {selectedLoan.next_payment_date && (() => {
+                  const d = daysUntilDate(selectedLoan.next_payment_date);
+                  const isLate = d < 0;
+                  const label = isLate ? `${Math.abs(d)}d overdue` : d === 0 ? 'Due today' : `Due in ${d}d`;
+                  return (
+                    <div style={{ marginTop: 4, fontSize: 10, fontWeight: 600, color: isLate ? '#E8726E' : ringColor, background: isLate ? 'rgba(232,114,110,0.08)' : `${ringColor}12`, borderRadius: 5, padding: '2px 8px', fontFamily: "'DM Sans', sans-serif" }}>{label}</div>
                   );
                 })()}
               </div>
 
-              {/* MOBILE: Loan Terms */}
-              <div className="loans-detail-mobile-only">
-                <PageCard title="Loan Terms" style={{ marginBottom: 0 }}>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
-                    {loanTermItems.map((item, idx) => (<div key={idx} style={{ textAlign: 'center' }}><p style={{ fontSize: 10, color: '#787776', fontWeight: 500, marginBottom: 2 }}>{item.label}</p><p style={{ fontSize: 13, fontWeight: 700, color: '#1A1918', margin: 0 }}>{item.value}</p></div>))}
+              {/* Col 3 (1fr): Repayment Progress ring */}
+              <div style={{ ...cardBase, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                <div style={labelStyle}>Repayment Progress</div>
+                <div style={{ position: 'relative', width: 72, height: 72 }}>
+                  <svg width="72" height="72" viewBox="0 0 128 128" style={{ transform: 'rotate(-90deg)' }}>
+                    <circle cx="64" cy="64" r="45" fill="none" stroke={`${ringColor}26`} strokeWidth="12" />
+                    <circle cx="64" cy="64" r="45" fill="none" stroke={ringColor} strokeWidth="12" strokeLinecap="round" strokeDasharray={C} strokeDashoffset={ringOffset} />
+                  </svg>
+                  <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
+                    <span style={{ fontSize: 13, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>{paidPct}%</span>
+                    <span style={{ fontSize: 8, fontWeight: 500, color: '#787776', fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>repaid</span>
                   </div>
-                </PageCard>
+                </div>
+                <div style={{ fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", textAlign: 'center', lineHeight: 1.4 }}>
+                  {formatMoney(totalPaidAmt)} of {formatMoney(totalWithInterest)}
+                </div>
               </div>
-            </>
+
+            </div>
           );
         })()}
 
@@ -1089,54 +1062,6 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
                     })}
                   </div>
                 )}
-              </div>
-            );
-          })()}
-
-          {/* Insights */}
-          {(() => {
-            const overdueLoans = activeLoans.filter(l => l.next_payment_date && new Date(l.next_payment_date) < new Date());
-            const onTimeCount = activeLoans.length - overdueLoans.length;
-            const onTimePct = activeLoans.length > 0 ? Math.round((onTimeCount / activeLoans.length) * 100) : 100;
-            const avgInterest = activeLoans.length > 0
-              ? (activeLoans.reduce((s, l) => s + (l.interest_rate || 0), 0) / activeLoans.length).toFixed(1)
-              : null;
-            const highestLoan = activeLoans.length > 0
-              ? activeLoans.reduce((max, l) => ((l.total_amount || l.amount || 0) > (max.total_amount || max.amount || 0) ? l : max), activeLoans[0])
-              : null;
-            const highestProfile = highestLoan ? publicProfiles.find(p => p.user_id === (isLending ? highestLoan.borrower_id : highestLoan.lender_id)) : null;
-            const highestName = highestProfile?.full_name?.split(' ')[0] || highestProfile?.username || null;
-            const insights = [];
-            if (overdueLoans.length > 0) {
-              insights.push({ icon: '⚠️', text: `${overdueLoans.length} payment${overdueLoans.length !== 1 ? 's are' : ' is'} overdue`, color: '#E8726E' });
-            }
-            if (onTimePct === 100 && activeLoans.length > 0) {
-              insights.push({ icon: '✓', text: 'All loans are on track', color: '#22C55E' });
-            } else if (onTimePct >= 50 && overdueLoans.length > 0) {
-              insights.push({ icon: '✓', text: `${onTimeCount} of ${activeLoans.length} loans on track`, color: accent });
-            }
-            if (avgInterest !== null && parseFloat(avgInterest) > 0) {
-              insights.push({ icon: '%', text: `Avg. interest rate ${avgInterest}%`, color: accent });
-            }
-            if (highestLoan && highestName) {
-              insights.push({ icon: '↑', text: `Largest loan: ${formatMoney(highestLoan.total_amount || highestLoan.amount || 0)} with ${highestName}`, color: '#787776' });
-            }
-            if (insights.length === 0) {
-              insights.push({ icon: '💡', text: 'No active loans yet', color: '#9B9A98' });
-            }
-            return (
-              <div style={{ background: '#ffffff', borderRadius: 10, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 1px 4px rgba(0,0,0,0.04)', padding: '14px 18px' }}>
-                <div style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif", marginBottom: 10 }}>Insights</div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  {insights.map((ins, i) => (
-                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                      <div style={{ width: 24, height: 24, borderRadius: '50%', background: `${ins.color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                        <span style={{ fontSize: 11, color: ins.color, fontWeight: 700, fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>{ins.icon}</span>
-                      </div>
-                      <span style={{ fontSize: 12, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.4 }}>{ins.text}</span>
-                    </div>
-                  ))}
-                </div>
               </div>
             );
           })()}

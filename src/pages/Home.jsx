@@ -1910,6 +1910,54 @@ export default function Home() {
                 );
               })()}
 
+              {/* ── Insights ── */}
+              {(lentLoans.length > 0 || borrowedLoans.length > 0) && (() => {
+                const allActive = [...lentLoans, ...borrowedLoans];
+                const overdueCount = overdueYouOwe.length + overdueOwedToYou.length;
+                const onTimeCount = allActive.length - overdueCount;
+                const avgInterest = allActive.length > 0
+                  ? (allActive.reduce((s, l) => s + (l.interest_rate || 0), 0) / allActive.length).toFixed(1)
+                  : null;
+                const highestLoan = allActive.length > 0
+                  ? allActive.reduce((mx, l) => ((l.total_amount || l.amount || 0) > (mx.total_amount || mx.amount || 0) ? l : mx), allActive[0])
+                  : null;
+                const highestProfile = highestLoan
+                  ? safeAllProfiles.find(p => p.user_id === (highestLoan.lender_id === user.id ? highestLoan.borrower_id : highestLoan.lender_id))
+                  : null;
+                const highestName = highestProfile?.full_name?.split(' ')[0] || highestProfile?.username || null;
+                const insights = [];
+                if (overdueCount > 0) {
+                  insights.push({ icon: '⚠️', text: `${overdueCount} payment${overdueCount !== 1 ? 's are' : ' is'} overdue`, color: '#E8726E' });
+                }
+                if (overdueCount === 0 && allActive.length > 0) {
+                  insights.push({ icon: '✓', text: 'All loans are on track', color: '#22C55E' });
+                } else if (onTimeCount > 0 && overdueCount > 0) {
+                  insights.push({ icon: '✓', text: `${onTimeCount} of ${allActive.length} loans on track`, color: '#03ACEA' });
+                }
+                if (avgInterest !== null && parseFloat(avgInterest) > 0) {
+                  insights.push({ icon: '%', text: `Avg. interest rate ${avgInterest}%`, color: '#03ACEA' });
+                }
+                if (highestLoan && highestName) {
+                  insights.push({ icon: '↑', text: `Largest loan: ${formatMoney(highestLoan.total_amount || highestLoan.amount || 0)} with ${highestName}`, color: '#787776' });
+                }
+                if (insights.length === 0) return null;
+                return (
+                  <div style={{ background: '#ffffff', borderRadius: 10, border: '1px solid #E5E5E5', padding: '14px 18px' }}>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif", marginBottom: 10 }}>Insights</div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                      {insights.map((ins, i) => (
+                        <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                          <div style={{ width: 24, height: 24, borderRadius: '50%', background: `${ins.color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                            <span style={{ fontSize: 11, color: ins.color, fontWeight: 700, fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>{ins.icon}</span>
+                          </div>
+                          <span style={{ fontSize: 12, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.4 }}>{ins.text}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
+
               {/* ── Balance History line graph ── */}
               {myLoans.some(l => l && (l.status === 'active' || l.status === 'completed') && (l.lender_id === user.id || l.borrower_id === user.id)) && (
                 <LoanTimeline
