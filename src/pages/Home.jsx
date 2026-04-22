@@ -2161,45 +2161,58 @@ export default function Home() {
                 const sortedTasks = [...allTasks].sort((a, b) => Number(checkedTasks.has(a.id)) - Number(checkedTasks.has(b.id)));
                 return (
                   <div className="home-card-tasks" style={{ position: 'relative' }}>
-                    <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '2px 5px 16px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.10)', padding: '14px 18px' }}>
-                      <SectionHeader title="To Do This Week" />
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4, marginTop: 2, marginBottom: 10 }}>
-                        {days.map((d, i) => {
-                          const isToday = isSameDay(d, now);
-                          return (
-                            <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
-                              <span style={{ fontSize: 10, fontWeight: 500, color: isToday ? '#03ACEA' : '#9B9A98', letterSpacing: '-0.01em' }}>{dayLabels[i]}</span>
-                              <span style={{ fontSize: 11, fontWeight: isToday ? 700 : 500, color: isToday ? '#03ACEA' : '#1A1918', width: 22, height: 22, borderRadius: '50%', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: isToday ? '#EBF4FA' : 'transparent', border: isToday ? '1.5px solid #03ACEA' : '1.5px solid transparent' }}>{d.getDate()}</span>
-                            </div>
-                          );
-                        })}
-                      </div>
-                      {sortedTasks.length === 0 ? (
-                        <div style={{ padding: '8px 0', fontSize: 12, color: '#9B9A98', textAlign: 'center' }}>Nothing on the list right now 🌿</div>
-                      ) : (
-                        <div style={{ display: 'flex', flexDirection: 'column' }}>
-                          {sortedTasks.map(task => {
-                            const checked = checkedTasks.has(task.id);
+                    <div style={{ position: 'relative', zIndex: 1, background: '#FEFDF5', borderRadius: 10, border: 'none', boxShadow: '2px 5px 16px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.10)', overflow: 'hidden' }}>
+                      {/* Red margin line */}
+                      <div style={{ position: 'absolute', left: 34, top: 0, bottom: 0, width: 1.5, background: 'rgba(210,50,50,0.2)', zIndex: 2, pointerEvents: 'none' }} />
+
+                      {/* Title + calendar — full width */}
+                      <div style={{ padding: '14px 18px 10px', position: 'relative', zIndex: 1 }}>
+                        <SectionHeader title="To Do This Week" />
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4, marginTop: 2, marginBottom: 4 }}>
+                          {days.map((d, i) => {
+                            const isToday = isSameDay(d, now);
                             return (
-                              <button key={task.id} type="button" onClick={() => { if (!checked && task.onCheck) { task.onCheck(); return; } toggleTask(task.id); }}
-                                style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '7px 0', background: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left', fontFamily: "'DM Sans', sans-serif", width: '100%' }}>
-                                <span style={{ width: 18, height: 18, borderRadius: 5, flexShrink: 0, border: checked ? '1.5px solid #03ACEA' : '1.5px solid #D9D8D6', background: checked ? '#03ACEA' : 'transparent', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.15s' }}>
-                                  {checked && <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>}
-                                </span>
-                                <span style={{ fontSize: 12, color: checked ? '#9B9A98' : '#1A1918', textDecoration: checked ? 'line-through' : 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{task.label}</span>
-                              </button>
+                              <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
+                                <span style={{ fontSize: 10, fontWeight: 500, color: isToday ? '#03ACEA' : '#9B9A98', letterSpacing: '-0.01em' }}>{dayLabels[i]}</span>
+                                <span style={{ fontSize: 11, fontWeight: isToday ? 700 : 500, color: isToday ? '#03ACEA' : '#1A1918', width: 22, height: 22, borderRadius: '50%', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: isToday ? '#EBF4FA' : 'transparent', border: isToday ? '1.5px solid #03ACEA' : '1.5px solid transparent' }}>{d.getDate()}</span>
+                              </div>
                             );
                           })}
                         </div>
-                      )}
-                      {addingTask && (
-                        <form onSubmit={e => { e.preventDefault(); addCustomTask(newTaskText); setNewTaskText(''); setAddingTask(false); }} style={{ display: 'flex', alignItems: 'center', gap: 8, paddingTop: 6 }}>
-                          <input autoFocus value={newTaskText} onChange={e => setNewTaskText(e.target.value)} onKeyDown={e => { if (e.key === 'Escape') { setAddingTask(false); setNewTaskText(''); } }} placeholder="Add a to-do…" style={{ flex: 1, fontSize: 12, fontFamily: "'DM Sans', sans-serif", border: 'none', borderBottom: '1.5px solid #03ACEA', outline: 'none', background: 'transparent', color: '#1A1918', padding: '2px 0' }} />
-                          <button type="submit" style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
-                        </form>
-                      )}
-                      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 8 }}>
-                        <button type="button" onClick={() => { setAddingTask(v => !v); setNewTaskText(''); }} style={{ width: 26, height: 26, borderRadius: '50%', background: addingTask ? '#EBF4FA' : '#F4F3F1', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }} aria-label="Add to-do">
+                      </div>
+
+                      {/* Ruled separator under calendar */}
+                      <div style={{ height: 1, background: 'rgba(173,210,230,0.55)' }} />
+
+                      {/* Task rows — indented past red margin */}
+                      <div style={{ padding: '0 18px 0 48px', position: 'relative', zIndex: 1 }}>
+                        {sortedTasks.length === 0 ? (
+                          <div style={{ padding: '10px 0', fontSize: 12, color: '#9B9A98', textAlign: 'center', borderBottom: '1px solid rgba(173,210,230,0.4)' }}>Nothing on the list right now 🌿</div>
+                        ) : (
+                          sortedTasks.map(task => {
+                            const checked = checkedTasks.has(task.id);
+                            return (
+                              <button key={task.id} type="button" onClick={() => { if (!checked && task.onCheck) { task.onCheck(); return; } toggleTask(task.id); }}
+                                style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 0', background: 'transparent', border: 'none', borderBottom: '1px solid rgba(173,210,230,0.4)', cursor: 'pointer', textAlign: 'left', fontFamily: "'DM Sans', sans-serif", width: '100%' }}>
+                                <span style={{ width: 16, height: 16, borderRadius: '50%', flexShrink: 0, border: checked ? '1.5px solid #03ACEA' : '1.5px solid #C4C2BE', background: checked ? '#03ACEA' : 'transparent', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.15s' }}>
+                                  {checked && <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>}
+                                </span>
+                                <span style={{ fontSize: 12, color: checked ? '#AEACA8' : '#2A2926', textDecoration: checked ? 'line-through' : 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{task.label}</span>
+                              </button>
+                            );
+                          })
+                        )}
+                        {addingTask && (
+                          <form onSubmit={e => { e.preventDefault(); addCustomTask(newTaskText); setNewTaskText(''); setAddingTask(false); }} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 0', borderBottom: '1px solid rgba(173,210,230,0.4)' }}>
+                            <input autoFocus value={newTaskText} onChange={e => setNewTaskText(e.target.value)} onKeyDown={e => { if (e.key === 'Escape') { setAddingTask(false); setNewTaskText(''); } }} placeholder="Add a to-do…" style={{ flex: 1, fontSize: 12, fontFamily: "'DM Sans', sans-serif", border: 'none', borderBottom: '1.5px solid #03ACEA', outline: 'none', background: 'transparent', color: '#1A1918', padding: '2px 0' }} />
+                            <button type="submit" style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
+                          </form>
+                        )}
+                      </div>
+
+                      {/* Add button */}
+                      <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '8px 18px 12px', position: 'relative', zIndex: 1 }}>
+                        <button type="button" onClick={() => { setAddingTask(v => !v); setNewTaskText(''); }} style={{ width: 26, height: 26, borderRadius: '50%', background: addingTask ? '#EBF4FA' : 'rgba(0,0,0,0.05)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }} aria-label="Add to-do">
                           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={addingTask ? '#03ACEA' : '#787776'} strokeWidth="2.8" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                         </button>
                       </div>
