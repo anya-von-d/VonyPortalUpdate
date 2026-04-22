@@ -2437,7 +2437,7 @@ export default function Home() {
         <div
           onClick={e => e.stopPropagation()}
           style={{
-            background: '#FDFCFA', borderRadius: 18, maxWidth: 420, width: '100%',
+            background: '#ffffff', borderRadius: 18, maxWidth: 420, width: '100%',
             boxShadow: '0 28px 72px rgba(0,0,0,0.20), 0 4px 16px rgba(0,0,0,0.08)',
             padding: '24px 24px 20px', position: 'relative',
           }}

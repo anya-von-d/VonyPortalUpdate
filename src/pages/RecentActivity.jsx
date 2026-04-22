@@ -774,19 +774,19 @@ export default function RecentActivity({ embeddedMode }) {
                 Loan Offer from {getUserById(viewingLoanOffer.lender_id)?.full_name || 'Lender'}
               </h2>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 20 }}>
-                <div style={{ background: '#F5F4F0', borderRadius: 10, padding: '12px 14px' }}>
+                <div style={{ background: '#ffffff', borderRadius: 10, padding: '12px 14px' }}>
                   <p style={{ fontSize: 11, color: '#787776', margin: '0 0 4px', textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 600 }}>Amount</p>
                   <p style={{ fontSize: 16, fontWeight: 700, color: '#1A1918', margin: 0 }}>${viewingLoanOffer.amount?.toLocaleString() || '0'}</p>
                 </div>
-                <div style={{ background: '#F5F4F0', borderRadius: 10, padding: '12px 14px' }}>
+                <div style={{ background: '#ffffff', borderRadius: 10, padding: '12px 14px' }}>
                   <p style={{ fontSize: 11, color: '#787776', margin: '0 0 4px', textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 600 }}>Interest Rate</p>
                   <p style={{ fontSize: 16, fontWeight: 700, color: '#1A1918', margin: 0 }}>{viewingLoanOffer.interest_rate ?? '0'}%</p>
                 </div>
-                <div style={{ background: '#F5F4F0', borderRadius: 10, padding: '12px 14px' }}>
+                <div style={{ background: '#ffffff', borderRadius: 10, padding: '12px 14px' }}>
                   <p style={{ fontSize: 11, color: '#787776', margin: '0 0 4px', textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 600 }}>Repayment Period</p>
                   <p style={{ fontSize: 16, fontWeight: 700, color: '#1A1918', margin: 0 }}>{viewingLoanOffer.repayment_period_months ?? viewingLoanOffer.duration_months ?? '—'} mo</p>
                 </div>
-                <div style={{ background: '#F5F4F0', borderRadius: 10, padding: '12px 14px' }}>
+                <div style={{ background: '#ffffff', borderRadius: 10, padding: '12px 14px' }}>
                   <p style={{ fontSize: 11, color: '#787776', margin: '0 0 4px', textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 600 }}>Purpose</p>
                   <p style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{viewingLoanOffer.purpose || '—'}</p>
                 </div>
@@ -993,19 +993,19 @@ export default function RecentActivity({ embeddedMode }) {
               Loan Offer from {getUserById(viewingLoanOffer.lender_id)?.full_name || 'Lender'}
             </h2>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 20 }}>
-              <div style={{ background: '#F5F4F0', borderRadius: 10, padding: '12px 14px' }}>
+              <div style={{ background: '#ffffff', borderRadius: 10, padding: '12px 14px' }}>
                 <p style={{ fontSize: 11, color: '#787776', margin: '0 0 4px', textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 600 }}>Amount</p>
                 <p style={{ fontSize: 16, fontWeight: 700, color: '#1A1918', margin: 0 }}>${viewingLoanOffer.amount?.toLocaleString() || '0'}</p>
               </div>
-              <div style={{ background: '#F5F4F0', borderRadius: 10, padding: '12px 14px' }}>
+              <div style={{ background: '#ffffff', borderRadius: 10, padding: '12px 14px' }}>
                 <p style={{ fontSize: 11, color: '#787776', margin: '0 0 4px', textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 600 }}>Interest Rate</p>
                 <p style={{ fontSize: 16, fontWeight: 700, color: '#1A1918', margin: 0 }}>{viewingLoanOffer.interest_rate ?? '0'}%</p>
               </div>
-              <div style={{ background: '#F5F4F0', borderRadius: 10, padding: '12px 14px' }}>
+              <div style={{ background: '#ffffff', borderRadius: 10, padding: '12px 14px' }}>
                 <p style={{ fontSize: 11, color: '#787776', margin: '0 0 4px', textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 600 }}>Repayment Period</p>
                 <p style={{ fontSize: 16, fontWeight: 700, color: '#1A1918', margin: 0 }}>{viewingLoanOffer.repayment_period_months ?? viewingLoanOffer.duration_months ?? '—'} mo</p>
               </div>
-              <div style={{ background: '#F5F4F0', borderRadius: 10, padding: '12px 14px' }}>
+              <div style={{ background: '#ffffff', borderRadius: 10, padding: '12px 14px' }}>
                 <p style={{ fontSize: 11, color: '#787776', margin: '0 0 4px', textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 600 }}>Purpose</p>
                 <p style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{viewingLoanOffer.purpose || '—'}</p>
               </div>

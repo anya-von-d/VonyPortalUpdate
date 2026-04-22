@@ -1629,7 +1629,7 @@ export default function Lending({ initialTab }) {
           style={initialTab === 'create' ? {
             display: 'block',
             maxWidth: 1000, margin: '0 auto',
-            background: '#FDFCFA', borderRadius: 20,
+            background: '#ffffff', borderRadius: 20,
             boxShadow: '0 24px 80px rgba(0,0,0,0.28), 0 4px 16px rgba(0,0,0,0.08)',
             position: 'relative',
             padding: '28px 32px 40px',
@@ -2170,7 +2170,7 @@ export default function Lending({ initialTab }) {
                       </div>
 
                       {/* Pill slider */}
-                      <div style={{ display: 'inline-flex', alignItems: 'center', background: '#F3F1EE', borderRadius: 999, padding: 4, border: '1px solid rgba(0,0,0,0.05)', alignSelf: 'center' }}>
+                      <div style={{ display: 'inline-flex', alignItems: 'center', background: '#ffffff', borderRadius: 999, padding: 4, border: '1px solid rgba(0,0,0,0.08)', alignSelf: 'center' }}>
                         {[{ v: 'scheduled', label: 'Loan' }, { v: 'flexible', label: 'Quick Pay' }].map(o => (
                           <button key={o.v} type="button" onClick={() => setLoanType(o.v)} style={{
                             padding: '7px 24px', borderRadius: 999, border: 'none',

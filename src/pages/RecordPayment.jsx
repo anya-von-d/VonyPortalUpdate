@@ -537,7 +537,7 @@ export default function RecordPayment() {
           onClick={e => e.stopPropagation()}
           style={{
             width: '100%', maxWidth: 1000,
-            background: '#FDFCFA', borderRadius: 20,
+            background: '#ffffff', borderRadius: 20,
             boxShadow: '0 24px 80px rgba(0,0,0,0.28), 0 4px 16px rgba(0,0,0,0.08)',
             position: 'relative',
             padding: '28px 32px 40px',
