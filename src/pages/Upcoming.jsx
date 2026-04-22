@@ -120,8 +120,9 @@ export default function Upcoming() {
     if (freq === 'weekly') periodStart.setDate(periodStart.getDate() - 7);
     else if (freq === 'bi-weekly') periodStart.setDate(periodStart.getDate() - 14);
     else periodStart.setMonth(periodStart.getMonth() - 1);
+    // Count completed AND pending_confirmation payments — a pending payment means the period is covered
     const paidThisPeriod = loanPayments
-      .filter(p => { const pDate = new Date(p.payment_date || p.created_at); return pDate >= periodStart && pDate <= today && p.status === 'completed'; })
+      .filter(p => { const pDate = new Date(p.payment_date || p.created_at); return pDate >= periodStart && pDate <= today && (p.status === 'completed' || p.status === 'pending_confirmation'); })
       .reduce((sum, p) => sum + (p.amount || 0), 0);
     const originalAmount = loan.payment_amount || 0;
     const remainingAmount = Math.max(0, originalAmount - paidThisPeriod);
@@ -569,9 +570,9 @@ export default function Upcoming() {
                         <div style={{ width: 3, borderRadius: 2, background: barColor, flexShrink: 0, minHeight: 18 }} />
                         <div>
                           <div style={{ fontSize: 12, color: '#1A1918', fontWeight: 500, fontFamily: "'DM Sans', sans-serif" }}>
-                            {ev.isCompleted
-                              ? (ev.isLender ? <>{formatMoney(ev.amount)} received from {ev.firstName}</> : <>Sent {ev.firstName} {formatMoney(ev.amount)}</>)
-                              : (ev.isLender ? <>{formatMoney(ev.amount)} expected from {ev.firstName}</> : <>Send {ev.firstName} {formatMoney(ev.amount)}</>)
+                            {ev.isLender
+                              ? <>{formatMoney(ev.amount)} expected from {ev.firstName}</>
+                              : <>Send {ev.firstName} {formatMoney(ev.amount)}</>
                             }
                           </div>
                           {ev.purpose && (

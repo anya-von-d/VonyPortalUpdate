@@ -531,6 +531,13 @@ export default function Home() {
     else if (!isLoadingAuth && !authUser) setIsLoading(false);
   }, [isLoadingAuth]);
 
+  // Reload when a loan status changes externally (e.g. declined from notifications popup)
+  useEffect(() => {
+    const handler = () => { if (authUser) loadData(); };
+    window.addEventListener('loan-status-changed', handler);
+    return () => window.removeEventListener('loan-status-changed', handler);
+  }, [authUser]);
+
   const handleLogin = async () => {
     setIsAuthenticating(true);
     try { await navigateToLogin(); }
@@ -830,14 +837,18 @@ export default function Home() {
   const greeting = hour >= 5 && hour < 12 ? 'Good morning' : hour >= 12 && hour < 18 ? 'Good afternoon' : 'Good night';
   const firstName = user.full_name?.split(' ')[0] || 'User';
 
-  // Overdue payments (for hero alert)
+  // Overdue payments (for hero alert) — exclude loans that have a pending_confirmation payment
   const today = new Date();
-  const overdueYouOwe = myLoans.filter(l =>
-    l && l.borrower_id === user.id && l.status === 'active' && l.next_payment_date && new Date(l.next_payment_date) < today
-  );
-  const overdueOwedToYou = myLoans.filter(l =>
-    l && l.lender_id === user.id && l.status === 'active' && l.next_payment_date && new Date(l.next_payment_date) < today
-  );
+  const overdueYouOwe = myLoans.filter(l => {
+    if (!l || l.borrower_id !== user.id || l.status !== 'active' || !l.next_payment_date) return false;
+    if (new Date(l.next_payment_date) >= today) return false;
+    return !safePayments.some(p => p && p.loan_id === l.id && p.status === 'pending_confirmation');
+  });
+  const overdueOwedToYou = myLoans.filter(l => {
+    if (!l || l.lender_id !== user.id || l.status !== 'active' || !l.next_payment_date) return false;
+    if (new Date(l.next_payment_date) >= today) return false;
+    return !safePayments.some(p => p && p.loan_id === l.id && p.status === 'pending_confirmation');
+  });
 
   // Upcoming/overdue payment events
   const activeLoansForPayments = myLoans.filter(l => l && l.status === 'active' && l.next_payment_date);
@@ -854,8 +865,9 @@ export default function Home() {
       if (freq === 'weekly') periodStart.setDate(periodStart.getDate() - 7);
       else if (freq === 'bi-weekly') periodStart.setDate(periodStart.getDate() - 14);
       else periodStart.setMonth(periodStart.getMonth() - 1);
+      // Count completed AND pending_confirmation — pending means the period is covered
       const paidThisPeriod = loanPayments
-        .filter(p => { const pDate = new Date(p.payment_date || p.created_at); return pDate >= periodStart && pDate <= today && p.status === 'completed'; })
+        .filter(p => { const pDate = new Date(p.payment_date || p.created_at); return pDate >= periodStart && pDate <= today && (p.status === 'completed' || p.status === 'pending_confirmation'); })
         .reduce((sum, p) => sum + (p.amount || 0), 0);
       const originalAmount = loan.payment_amount || 0;
       const remainingAmount = Math.max(0, originalAmount - paidThisPeriod);

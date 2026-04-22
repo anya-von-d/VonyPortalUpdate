@@ -104,6 +104,9 @@ export default function NotificationsPopup({ onClose, positionOverride, onOpenFr
     activeLoans.forEach(loan => {
       const daysUntil = daysUntilDate(loan.next_payment_date);
       if (daysUntil > 5) return;
+      // If there's a pending_confirmation payment, don't treat this loan as overdue
+      const hasPendingPayment = allPayments.some(p => p.loan_id === loan.id && p.status === 'pending_confirmation');
+      if (daysUntil < 0 && hasPendingPayment) return;
       const isBorrower = loan.borrower_id === user.id;
       const otherUserId = isBorrower ? loan.lender_id : loan.borrower_id;
       const otherProfile = profiles.find(p => p.user_id === otherUserId);
@@ -205,6 +208,8 @@ export default function NotificationsPopup({ onClose, positionOverride, onOpenFr
       setShowSignatureModal(false);
       setSelectedOffer(null);
       loadRequests();
+      // Tell other pages (Home, etc.) to refresh their loan data
+      window.dispatchEvent(new CustomEvent('loan-status-changed'));
     } catch (error) { console.error('Error declining loan offer:', error); }
     setProcessingId(null);
   };
