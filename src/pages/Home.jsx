@@ -1958,15 +1958,6 @@ export default function Home() {
                 );
               })()}
 
-              {/* ── Balance History line graph ── */}
-              {myLoans.some(l => l && (l.status === 'active' || l.status === 'completed') && (l.lender_id === user.id || l.borrower_id === user.id)) && (
-                <LoanTimeline
-                  myLoans={myLoans}
-                  safePayments={safePayments}
-                  safeAllProfiles={safeAllProfiles}
-                  userId={user.id}
-                />
-              )}
 
             </div>
 
