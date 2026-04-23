@@ -1837,7 +1837,7 @@ export default function Home() {
                 return (
                   <div className="home-card-bor-overview" style={{ display: 'flex', gap: 12 }}>
                     {/* Box 1 — You Owe */}
-                    <div style={{ position: 'relative', flex: 1, minWidth: 0 }}><div style={{ position: 'relative', zIndex: 1, background: '#FEFDF5', borderRadius: 4, border: 'none', boxShadow: '0 1px 0 2px #edeade, 0 3px 0 3px #f5f3ea, 2px 6px 18px rgba(0,0,0,0.13)', padding: '14px 14px' }}>
+                    <div style={{ position: 'relative', flex: 1, minWidth: 0 }}><div style={{ position: 'relative', zIndex: 1, background: '#FEFDF5', borderRadius: 4, border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.10)', padding: '14px 14px' }}>
                         <div style={{ marginBottom: 10 }}>
                           <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
                             <circle cx="14" cy="14" r="13" stroke="#1D5B94" strokeWidth="1.5"/>
@@ -1853,7 +1853,7 @@ export default function Home() {
                       </div>
                     </div>
                     {/* Box 2 — You Are Owed */}
-                    <div style={{ position: 'relative', flex: 1, minWidth: 0 }}><div style={{ position: 'relative', zIndex: 1, background: '#FEFDF5', borderRadius: 4, border: 'none', boxShadow: '0 1px 0 2px #edeade, 0 3px 0 3px #f5f3ea, 2px 6px 18px rgba(0,0,0,0.13)', padding: '14px 14px' }}>
+                    <div style={{ position: 'relative', flex: 1, minWidth: 0 }}><div style={{ position: 'relative', zIndex: 1, background: '#FEFDF5', borderRadius: 4, border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.10)', padding: '14px 14px' }}>
                         <div style={{ marginBottom: 10 }}>
                           <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
                             <circle cx="14" cy="14" r="13" stroke="#03ACEA" strokeWidth="1.5"/>
@@ -1944,7 +1944,7 @@ export default function Home() {
                 const soFarTotal = allLines.filter(l => l.status === 'done').reduce((s, l) => s + l.amount, 0);
                 const fmtSigned = (amt) => amt === 0 ? '$0.00' : amt > 0 ? `+${formatMoney(amt)}` : `-${formatMoney(Math.abs(amt))}`;
                 return (
-                  <div className="home-card-plan-month" style={{ background: '#FEFCF8', borderRadius: 4, boxShadow: '0 1px 0 2px #f0efea, 0 3px 0 3px #f5f4f0, 2px 6px 18px rgba(0,0,0,0.13)', padding: '14px 18px' }}>
+                  <div className="home-card-plan-month" style={{ background: '#FEFCF8', borderRadius: 4, boxShadow: '0 4px 12px rgba(0,0,0,0.10)', padding: '14px 18px' }}>
                     {/* Header row with title + Edit button */}
                     <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 2 }}>
                       <SectionHeader title="Plan Your Month" />
@@ -2163,7 +2163,7 @@ export default function Home() {
                 const nextLabel = firstDaysAway === 0 ? 'Today' : firstDaysAway === 1 ? 'Tomorrow' : `In ${firstDaysAway} days`;
 
                 return (
-                  <div className="home-card-upcoming-payments" style={{ background: '#FEFDF5', borderRadius: 4, border: 'none', boxShadow: '0 1px 0 2px #edeade, 0 3px 0 3px #f5f3ea, 2px 6px 18px rgba(0,0,0,0.13)', padding: '14px 18px' }}>
+                  <div className="home-card-upcoming-payments" style={{ background: '#FEFDF5', borderRadius: 4, border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.10)', padding: '14px 18px' }}>
                     {/* Header row */}
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 }}>
                       <div style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>Upcoming Payments</div>
