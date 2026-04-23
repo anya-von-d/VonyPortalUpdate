@@ -1556,17 +1556,17 @@ export default function Home() {
 
           {/* Desktop page title */}
           <div className="desktop-page-title" style={{ marginBottom: 28 }}>
-            <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 34, fontWeight: 600, letterSpacing: '-0.02em', lineHeight: 1.2, color: '#1A1918' }}>
+            <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 28, fontWeight: 600, letterSpacing: '-0.02em', lineHeight: 1.2, color: '#1A1918' }}>
               <span style={{ fontStyle: 'normal' }}>{greeting},</span>{' '}
-              <span style={{ fontStyle: 'normal', color: '#03ACEA' }}>{firstName}</span>{' '}👋
+              <span style={{ fontStyle: 'normal' }}>{firstName}</span>
             </div>
           </div>
 
           {/* Mobile-only page title */}
           <div className="mobile-page-title">
-            <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 28, fontWeight: 600, letterSpacing: '-0.02em', lineHeight: 1.2, color: '#1A1918', marginBottom: 12 }}>
+            <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 22, fontWeight: 600, letterSpacing: '-0.02em', lineHeight: 1.2, color: '#1A1918', marginBottom: 12 }}>
               <span style={{ fontStyle: 'normal' }}>{greeting},</span>{' '}
-              <span style={{ fontStyle: 'normal', color: '#03ACEA' }}>{firstName}</span>{' '}👋
+              <span style={{ fontStyle: 'normal' }}>{firstName}</span>
             </div>
           </div>
 
@@ -2016,10 +2016,11 @@ export default function Home() {
                 const soFarTotal = allLines.filter(l => l.status === 'done').reduce((s, l) => s + l.amount, 0);
                 const fmtSigned = (amt) => amt === 0 ? '$0.00' : amt > 0 ? `+${formatMoney(amt)}` : `-${formatMoney(Math.abs(amt))}`;
                 return (
-                  <div style={{ position: 'relative' }}>
-                    <div style={{ position: 'absolute', bottom: -9, left: 9, right: -9, height: 20, background: '#E8E4DA', borderRadius: 4, zIndex: 0 }} />
-                  <div style={{ position: 'absolute', bottom: -5, left: 5, right: -5, height: 18, background: '#F2EFE7', borderRadius: 4, zIndex: 0 }} />
-                    <div className="home-card-plan-month" style={{ position: 'relative', zIndex: 1, background: '#FEFCF7', borderRadius: 4, boxShadow: '0 2px 6px rgba(0,0,0,0.09), 0 1px 2px rgba(0,0,0,0.06)', border: '1px solid rgba(0,0,0,0.07)', padding: '14px 18px', backgroundImage: 'repeating-linear-gradient(to bottom, transparent, transparent 22px, rgba(0,0,0,0.04) 22px, rgba(0,0,0,0.04) 23px)' }}>
+                  <div className="home-card-plan-month" style={{ position: 'relative' }}>
+                    {/* Stacked paper pages — visible below and to the right */}
+                  <div style={{ position: 'absolute', top: 3, bottom: -9, left: 7, right: -7, background: '#E4E0D6', borderRadius: 4, zIndex: 0 }} />
+                  <div style={{ position: 'absolute', top: 2, bottom: -5, left: 4, right: -4, background: '#F0EDE5', borderRadius: 4, zIndex: 0 }} />
+                    <div style={{ position: 'relative', zIndex: 1, background: '#FEFCF8', borderRadius: 4, boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.07)', border: '1px solid rgba(0,0,0,0.09)', padding: '14px 18px' }}>
                     {/* Header row with title + Edit button */}
                     <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 2 }}>
                       <SectionHeader title="Plan Your Month" />
