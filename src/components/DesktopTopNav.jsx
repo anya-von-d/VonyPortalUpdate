@@ -8,6 +8,7 @@ import FriendsPopup from './FriendsPopup';
 import PendingRequestsPopup from './PendingRequestsPopup';
 import AppMenuDropdown from './AppMenuDropdown';
 import UserAvatar from './ui/UserAvatar';
+import DemoModeToggle from './DemoModeToggle';
 import { useNotificationCount } from './utils/notificationCount';
 
 const isActive = (location, to) => {
@@ -111,7 +112,7 @@ export default function DesktopTopNav() {
       {/* desktop-top-nav class is hidden on mobile via index.css */}
       <div className="desktop-top-nav" style={{
         position: 'fixed', top: 34, left: 0, right: 0, zIndex: 300,
-        display: 'flex', alignItems: 'center',
+        display: 'flex', alignItems: 'flex-start',
         padding: '0 56px', gap: 12,
         background: 'none',
         pointerEvents: 'none',  // let clicks pass through gaps between bubbles
@@ -158,7 +159,8 @@ export default function DesktopTopNav() {
           )}
         </div>
 
-        {/* Right pill */}
+        {/* Right pill — stacked with a Demo Mode toggle underneath */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8, pointerEvents: 'auto' }}>
         <Pill>
           <NavBtn onClick={() => { setFriendsOpen(v => !v); setNotifOpen(false); setMenuOpen(false); }} active={friendsOpen}>
             <UsersIcon />
@@ -189,6 +191,8 @@ export default function DesktopTopNav() {
             )}
           </div>
         </Pill>
+        <DemoModeToggle variant="desktop" />
+        </div>
       </div>
 
       <SettingsModal isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />

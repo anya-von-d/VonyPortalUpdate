@@ -9,6 +9,7 @@ import { pagesConfig } from './pages.config'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
+import { DemoModeProvider } from '@/lib/DemoModeContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import OnboardingModal from '@/components/OnboardingModal';
 import { User } from '@/entities/all';
@@ -108,14 +109,16 @@ function App() {
 
   return (
     <AuthProvider>
-      <QueryClientProvider client={queryClientInstance}>
-        <Router>
-          <NavigationTracker />
-          <AuthenticatedApp />
-        </Router>
-        <Toaster />
-        <VisualEditAgent />
-      </QueryClientProvider>
+      <DemoModeProvider>
+        <QueryClientProvider client={queryClientInstance}>
+          <Router>
+            <NavigationTracker />
+            <AuthenticatedApp />
+          </Router>
+          <Toaster />
+          <VisualEditAgent />
+        </QueryClientProvider>
+      </DemoModeProvider>
     </AuthProvider>
   )
 }

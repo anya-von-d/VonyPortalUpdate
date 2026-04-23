@@ -6,6 +6,7 @@ import FriendsPopup from "@/components/FriendsPopup";
 import NotificationsPopup from "@/components/NotificationsPopup";
 import PendingRequestsPopup from "@/components/PendingRequestsPopup";
 import AppMenuDropdown from "@/components/AppMenuDropdown";
+import DemoModeToggle from "@/components/DemoModeToggle";
 import { useNotificationCount } from "@/components/utils/notificationCount";
 
 export default function MeshMobileNav({ user, activePage }) {
@@ -152,6 +153,9 @@ export default function MeshMobileNav({ user, activePage }) {
               </span>
             )}
           </button>
+
+          {/* Demo Mode — to the right of the bell */}
+          <DemoModeToggle variant="mobile" />
 
           {/* Hamburger / App menu — bare, no bubble */}
           <div ref={menuRef} style={{ position: 'relative' }}>

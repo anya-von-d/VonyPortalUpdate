@@ -1,4 +1,66 @@
 import { supabase } from '@/lib/supabaseClient';
+import { isDemoModeActive } from '@/lib/DemoModeContext';
+import { getDemoDataset } from '@/lib/demoData';
+
+// ── Demo-mode helpers ────────────────────────────────────────────────────────
+// When demo mode is on, reads (list/filter) for certain tables return sample
+// data instead of hitting Supabase. Writes (create/update/delete) are
+// swallowed — the UI updates optimistically in page state, but nothing
+// persists. This keeps real accounts clean while letting investors click
+// around.
+const DEMO_TABLES = new Set(['loans', 'payments', 'friendships', 'public_profiles', 'loan_agreements']);
+
+const getCurrentUserIdCached = (() => {
+  let cached = null;
+  let inflight = null;
+  return () => {
+    if (cached) return Promise.resolve(cached);
+    if (inflight) return inflight;
+    inflight = supabase.auth.getUser().then(({ data }) => {
+      cached = data?.user?.id || 'demo-user-self';
+      inflight = null;
+      return cached;
+    }).catch(() => 'demo-user-self');
+    return inflight;
+  };
+})();
+
+const applyOrder = (rows, order) => {
+  if (!order) return rows;
+  const isDesc = order.startsWith('-');
+  const field = isDesc ? order.slice(1) : order;
+  return [...rows].sort((a, b) => {
+    const av = a?.[field], bv = b?.[field];
+    if (av === bv) return 0;
+    if (av == null) return 1;
+    if (bv == null) return -1;
+    return (av < bv ? -1 : 1) * (isDesc ? -1 : 1);
+  });
+};
+
+const applyFilters = (rows, filters) => {
+  if (!filters || filters.length === 0) return rows;
+  return rows.filter(row => filters.every(({ key, value }) => row?.[key] === value));
+};
+
+const demoList = async (tableName, order, limit) => {
+  const uid = await getCurrentUserIdCached();
+  const dataset = getDemoDataset(uid);
+  let rows = dataset[tableName] || [];
+  rows = applyOrder(rows, order);
+  if (limit) rows = rows.slice(0, limit);
+  return rows;
+};
+
+const demoFilter = async (tableName, queryObj, order, limit) => {
+  const uid = await getCurrentUserIdCached();
+  const dataset = getDemoDataset(uid);
+  const filters = normalizeFilter(queryObj);
+  let rows = applyFilters(dataset[tableName] || [], filters);
+  rows = applyOrder(rows, order);
+  if (limit) rows = rows.slice(0, limit);
+  return rows;
+};
 
 const parseOrder = (order) => {
   if (!order) return null;
@@ -19,6 +81,9 @@ const normalizeFilter = (query) => {
 
 const createTableApi = (tableName) => ({
   async list(order = null, limit = null) {
+    if (isDemoModeActive() && DEMO_TABLES.has(tableName)) {
+      return demoList(tableName, order, limit);
+    }
     let query = supabase.from(tableName).select('*');
     const orderConfig = parseOrder(order);
     if (orderConfig) {
@@ -32,6 +97,9 @@ const createTableApi = (tableName) => ({
     return data ?? [];
   },
   async filter(queryObj, order = null, limit = null) {
+    if (isDemoModeActive() && DEMO_TABLES.has(tableName)) {
+      return demoFilter(tableName, queryObj, order, limit);
+    }
     let query = supabase.from(tableName).select('*');
     const filters = normalizeFilter(queryObj);
     filters.forEach(({ key, op, value }) => {
@@ -49,6 +117,9 @@ const createTableApi = (tableName) => ({
     return data ?? [];
   },
   async create(payload) {
+    if (isDemoModeActive() && DEMO_TABLES.has(tableName)) {
+      return { id: `demo-${tableName}-${Date.now()}`, ...payload };
+    }
     const { data, error } = await supabase
       .from(tableName)
       .insert(payload)
@@ -58,6 +129,9 @@ const createTableApi = (tableName) => ({
     return data;
   },
   async update(id, payload) {
+    if (isDemoModeActive() && DEMO_TABLES.has(tableName)) {
+      return { id, ...payload };
+    }
     const { data, error } = await supabase
       .from(tableName)
       .update(payload)
@@ -68,6 +142,9 @@ const createTableApi = (tableName) => ({
     return data;
   },
   async delete(id) {
+    if (isDemoModeActive() && DEMO_TABLES.has(tableName)) {
+      return true;
+    }
     const { error } = await supabase.from(tableName).delete().eq('id', id);
     if (error) throw error;
     return true;
