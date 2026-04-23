@@ -75,6 +75,7 @@ export const PAGES = {
     "RecordPayment": RecordPayment,
     "RecentActivity": RecentActivity,
     "ComingSoon": ComingSoon,
+    "Learn": ComingSoon,
     "LoanHelp": LoanHelp,
     "Upcoming": Upcoming,
     "YourLoans": YourLoans,
