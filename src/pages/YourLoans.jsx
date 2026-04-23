@@ -947,30 +947,36 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
             {/* Two side-by-side overview boxes */}
             <div style={{ display: 'flex', gap: 12 }}>
 
-              {/* Box 1 — You're Owed / You Owe — receipt style */}
+              {/* Box 1 — You're Owed / You Owe — post-it note */}
               <div style={{
-                flex: 1, minWidth: 0, background: '#FEFEFE', borderRadius: 3,
-                boxShadow: '0 2px 8px rgba(0,0,0,0.10), 0 1px 3px rgba(0,0,0,0.06)',
-                padding: '14px 12px 10px', fontFamily: "'DM Sans', sans-serif",
-                display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'visible',
+                flex: 1, minWidth: 0, position: 'relative',
+                background: 'linear-gradient(170deg, #FFF9DE 0%, #FFF3B0 100%)',
+                borderRadius: 3,
+                boxShadow: '0 4px 10px rgba(0,0,0,0.13), 0 1px 3px rgba(0,0,0,0.08)',
+                padding: '18px 12px 12px',
+                fontFamily: "'DM Sans', sans-serif",
+                display: 'flex', flexDirection: 'column',
               }}>
-                <div style={{ position: 'absolute', top: -6, left: 0, right: 0, height: 6, backgroundImage: 'radial-gradient(circle at 6px -1px, #FEFEFE 6px, transparent 6px)', backgroundSize: '12px 6px', backgroundRepeat: 'repeat-x' }} />
-                <div style={{ fontSize: 10, fontWeight: 700, color: '#1A1918', letterSpacing: '0.07em', textTransform: 'uppercase', marginBottom: 6 }}>
+                {/* Top strip */}
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 6, background: 'rgba(0,0,0,0.08)', borderRadius: '2px 2px 0 0' }} />
+                {/* Corner curl */}
+                <div style={{ position: 'absolute', bottom: 0, right: 0, width: 16, height: 16, background: '#D4C060', clipPath: 'polygon(100% 0, 100% 100%, 0 100%)', zIndex: 2 }} />
+                <div style={{ fontSize: 10, fontWeight: 700, color: '#5C4200', letterSpacing: '0.07em', textTransform: 'uppercase', marginBottom: 8 }}>
                   {isLending ? "You're owed" : "You owe"}
                 </div>
-                <div style={{ borderTop: '1.5px dashed rgba(0,0,0,0.15)', marginBottom: 10 }} />
-                <div style={{ fontSize: 22, fontWeight: 700, letterSpacing: '-0.04em', lineHeight: 1, color: isLending ? '#03ACEA' : '#1D5B94', marginBottom: 'auto', paddingBottom: 10 }}>
+                <div style={{ fontSize: 22, fontWeight: 700, letterSpacing: '-0.04em', lineHeight: 1, color: isLending ? '#03ACEA' : '#1D5B94', marginBottom: 'auto', paddingBottom: 8 }}>
                   {isLending ? formatMoney(lentOwed) : formatMoney(borrowOwed)}
                 </div>
-                <div style={{ borderTop: '1.5px dashed rgba(0,0,0,0.10)', marginBottom: 7 }} />
-                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                  <span style={{ fontSize: 10, color: '#9B9A98' }}>across {activeLoans.length} loan{activeLoans.length !== 1 ? 's' : ''}</span>
+                <div style={{ fontSize: 10, color: '#8B7000', textAlign: 'right' }}>
+                  across {activeLoans.length} loan{activeLoans.length !== 1 ? 's' : ''}
                 </div>
-                <div style={{ position: 'absolute', bottom: -6, left: 0, right: 0, height: 6, backgroundImage: 'radial-gradient(circle at 6px 7px, #FEFEFE 6px, transparent 6px)', backgroundSize: '12px 6px', backgroundRepeat: 'repeat-x' }} />
               </div>
 
-              {/* Box 2 — Repayment Progress — no title, bigger chart */}
-              <div style={{ flex: 1, minWidth: 0, background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.13)', padding: '14px 12px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+              {/* Box 2 — Repayment Progress — paper with lifted corner */}
+              <div style={{ flex: 1, minWidth: 0, position: 'relative' }}>
+              {/* Lifted corner shadow layer */}
+              <div style={{ position: 'absolute', bottom: -5, right: -4, left: 5, top: 5, background: 'rgba(0,0,0,0.07)', borderRadius: 4, transform: 'rotate(1.8deg)' }} />
+              <div style={{ position: 'relative', zIndex: 1, background: '#FEFCF8', borderRadius: 4, border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 1px 4px rgba(0,0,0,0.08)', padding: '14px 12px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                 {(() => {
                   const c2 = isLending ? '#03ACEA' : '#1D5B94';
                   const p2 = isLending ? percentRepaid : percentPaid;
@@ -996,6 +1002,7 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
                   }
                 </div>
               </div>
+              </div>
             </div>
 
             {/* Snapshot — below the two boxes */}
@@ -1014,35 +1021,33 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
               }
               return (
                 <div style={{
-                  background: '#FDFAF3',
-                  borderRadius: '3px 3px 3px 3px',
-                  boxShadow: '0 1px 0 2px #eeebe4, 0 3px 0 3px #f0ede8, 2px 6px 16px rgba(0,0,0,0.11)',
-                  border: '1px solid rgba(0,0,0,0.07)',
-                  padding: '12px 14px',
+                  background: '#FEFCF8',
+                  borderRadius: 4,
+                  boxShadow: '0 1px 0 2px #f0efea, 0 3px 0 3px #f5f4f0, 2px 6px 18px rgba(0,0,0,0.13)',
+                  padding: '14px 16px',
                   fontFamily: "'DM Sans', sans-serif",
-                  backgroundImage: 'repeating-linear-gradient(to bottom, transparent, transparent 22px, rgba(0,0,0,0.05) 22px, rgba(0,0,0,0.05) 23px)',
-                  position: 'relative',
+                  textAlign: 'center',
                 }}>
-                  <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 4, background: accent, borderRadius: '3px 3px 0 0', opacity: 0.8 }} />
-                  <div style={{ fontSize: 11, fontWeight: 500, color: accent, marginBottom: 8, marginTop: 6, lineHeight: 1.4 }}>{insightText}</div>
+                  <div style={{ fontSize: 9, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.10em', textTransform: 'uppercase', marginBottom: 8 }}>Insight</div>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: accent, marginBottom: 10, lineHeight: 1.5 }}>{insightText}</div>
                   {isLending && monthlyExpectedReceive > 0 && (
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', padding: '5px 0', borderBottom: `1px solid ${accent}18`, fontSize: 11, color: '#1A1918' }}>
-                      <span>Expected this month</span><span style={{ fontWeight: 700, color: accent }}>{formatMoney(monthlyExpectedReceive)}</span>
+                    <div style={{ fontSize: 11, color: '#1A1918', marginBottom: 5 }}>
+                      You're expecting <span style={{ fontWeight: 700, color: accent }}>{formatMoney(monthlyExpectedReceive)}</span> this month
                     </div>
                   )}
                   {!isLending && monthlyExpectedPay > 0 && (
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', padding: '5px 0', borderBottom: `1px solid ${accent}18`, fontSize: 11, color: '#1A1918' }}>
-                      <span>Due this month</span><span style={{ fontWeight: 700, color: accent }}>{formatMoney(monthlyExpectedPay)}</span>
+                    <div style={{ fontSize: 11, color: '#1A1918', marginBottom: 5 }}>
+                      You're expecting to pay <span style={{ fontWeight: 700, color: accent }}>{formatMoney(monthlyExpectedPay)}</span> this month
                     </div>
                   )}
                   {isLending && monthlyReceived > 0 && (
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', padding: '5px 0', fontSize: 11, color: '#1A1918' }}>
-                      <span>Received so far</span><span style={{ fontWeight: 700, color: accent }}>{formatMoney(monthlyReceived)}</span>
+                    <div style={{ fontSize: 11, color: '#1A1918' }}>
+                      You've received <span style={{ fontWeight: 700, color: accent }}>{formatMoney(monthlyReceived)}</span> so far
                     </div>
                   )}
                   {!isLending && monthlyPaidOut > 0 && (
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', padding: '5px 0', fontSize: 11, color: '#1A1918' }}>
-                      <span>Paid out so far</span><span style={{ fontWeight: 700, color: accent }}>{formatMoney(monthlyPaidOut)}</span>
+                    <div style={{ fontSize: 11, color: '#1A1918' }}>
+                      You've paid <span style={{ fontWeight: 700, color: accent }}>{formatMoney(monthlyPaidOut)}</span> so far
                     </div>
                   )}
                 </div>
@@ -1069,7 +1074,7 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
             const firstDays = combined.length > 0 ? combined[0].days : null;
             const nextLabel = firstDays === null ? '' : firstDays < 0 ? 'overdue' : firstDays === 0 ? 'today' : firstDays === 1 ? 'tomorrow' : `in ${firstDays} days`;
             return (
-              <div style={{ background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.13)', padding: '14px 18px' }}>
+              <div style={{ background: '#FEFDF9', borderRadius: 4, border: 'none', boxShadow: '0 1px 0 2px #f0efea, 0 3px 0 3px #f5f4f0, 2px 6px 18px rgba(0,0,0,0.13)', padding: '14px 18px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 }}>
                   <div style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>Upcoming</div>
                   <Link to={createPageUrl('Upcoming')} style={{ fontSize: 11, fontWeight: 500, color: accent, textDecoration: 'none', fontFamily: "'DM Sans', sans-serif" }}>Full schedule →</Link>
@@ -1139,21 +1144,8 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
                 return 0;
               });
               return (
-                <div style={{ position: 'relative' }}>
-                  {/* Blue manila file-folder envelope behind */}
-                  <div style={{ position: 'absolute', top: 8, left: -6, right: 6, bottom: -10, background: isLending ? '#1A4E8A' : '#12345E', borderRadius: 10, zIndex: 0, boxShadow: '0 4px 14px rgba(0,0,0,0.30)' }}>
-                    {/* File folder tab */}
-                    <div style={{ position: 'absolute', top: -13, right: 22, width: 46, height: 14, background: isLending ? '#2462A8' : '#1A4578', borderRadius: '5px 5px 0 0' }} />
-                    {/* Envelope flap */}
-                    <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', overflow: 'hidden', borderRadius: '10px 10px 0 0' }} height="30" viewBox="0 0 200 30" preserveAspectRatio="none">
-                      <polygon points="0,0 200,0 100,26" fill={isLending ? '#2462A8' : '#1A4578'} />
-                    </svg>
-                    {/* Subtle envelope lines */}
-                    <div style={{ position: 'absolute', bottom: 10, left: 14, right: 14, height: 1, background: 'rgba(255,255,255,0.08)', borderRadius: 1 }} />
-                    <div style={{ position: 'absolute', bottom: 18, left: 14, right: 14, height: 1, background: 'rgba(255,255,255,0.06)', borderRadius: 1 }} />
-                  </div>
-                  <div style={{ position: 'relative', zIndex: 1 }}>
-                <PageCard tone={tone} title={titleStr} style={{ marginBottom: 0 }} headerRight={
+                <div>
+                <PageCard tone={tone} title={titleStr} style={{ marginBottom: 0, background: '#FEFCF8', borderRadius: 4, boxShadow: '0 1px 0 2px #f0efea, 0 3px 0 3px #f5f4f0, 2px 6px 18px rgba(0,0,0,0.13)' }} headerRight={
                   <Select value={rankingFilter} onValueChange={setRankingFilter}>
                     <SelectTrigger className="w-auto h-7 px-2 border-0 text-xs font-medium rounded-lg" style={{ background: accentColBg, color: accentCol }}><SelectValue /></SelectTrigger>
                     <SelectContent>
@@ -1215,7 +1207,6 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
                     })}
                   </div>
                 </PageCard>
-                  </div>
                 </div>
               );
             })()}
