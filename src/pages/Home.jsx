@@ -2017,8 +2017,9 @@ export default function Home() {
                 const fmtSigned = (amt) => amt === 0 ? '$0.00' : amt > 0 ? `+${formatMoney(amt)}` : `-${formatMoney(Math.abs(amt))}`;
                 return (
                   <div style={{ position: 'relative' }}>
-                    <div style={{ position: 'absolute', bottom: -7, left: 6, right: -6, height: 18, background: '#F5F3EC', borderRadius: 4, zIndex: 0, boxShadow: '0 2px 6px rgba(0,0,0,0.08)' }} />
-                    <div className="home-card-plan-month" style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 4, boxShadow: '2px 5px 16px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.10)', padding: '14px 18px' }}>
+                    <div style={{ position: 'absolute', bottom: -9, left: 9, right: -9, height: 20, background: '#E8E4DA', borderRadius: 4, zIndex: 0 }} />
+                  <div style={{ position: 'absolute', bottom: -5, left: 5, right: -5, height: 18, background: '#F2EFE7', borderRadius: 4, zIndex: 0 }} />
+                    <div className="home-card-plan-month" style={{ position: 'relative', zIndex: 1, background: '#FEFCF7', borderRadius: 4, boxShadow: '0 2px 6px rgba(0,0,0,0.09), 0 1px 2px rgba(0,0,0,0.06)', border: '1px solid rgba(0,0,0,0.07)', padding: '14px 18px', backgroundImage: 'repeating-linear-gradient(to bottom, transparent, transparent 22px, rgba(0,0,0,0.04) 22px, rgba(0,0,0,0.04) 23px)' }}>
                     {/* Header row with title + Edit button */}
                     <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 2 }}>
                       <SectionHeader title="Plan Your Month" />
@@ -2027,20 +2028,22 @@ export default function Home() {
                         {editingPlan ? 'Done' : 'Edit'}
                       </button>
                     </div>
-                    <div style={{ fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: -6, marginBottom: 10 }}>{monthName}</div>
 
                     {allLines.length === 0 ? (
                       <div style={{ fontSize: 12, color: '#9B9A98', textAlign: 'center', padding: '8px 0' }}>No cashflow scheduled 🌿</div>
                     ) : (
                       <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        {allLines.map(line => {
+                        {allLines.map((line, idx) => {
                           const isPos = line.amount >= 0;
                           const isDone = line.status === 'done';
                           const isOverdue = line.status === 'overdue';
                           const isCustom = customExpenses.some(e => e.id === line.id);
                           const dotColor = isDone ? '#03ACEA' : isOverdue ? '#E8726E' : isPos ? '#03ACEA' : '#1D5B94';
+                          const subLabel = isOverdue && line.date
+                            ? `Overdue since ${format(line.date, 'MMM d')}`
+                            : line.date ? `${line.dateLabel} ${format(line.date, 'MMM d')}` : null;
                           return (
-                            <div key={line.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 0' }}>
+                            <div key={line.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 0', borderBottom: idx < allLines.length - 1 ? '1px solid #ECEAE5' : 'none' }}>
                               {/* Tick circle — clickable for custom items */}
                               <div
                                 onClick={isCustom ? () => toggleCustomExpenseDone(line.id) : undefined}
@@ -2055,12 +2058,12 @@ export default function Home() {
                               {/* Two-line label block */}
                               <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 1 }}>
                                 <span style={{ fontSize: 12, fontWeight: 500, color: isDone ? '#B0AEA8' : '#1A1918', fontFamily: "'DM Sans', sans-serif", overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{line.label}</span>
-                                {line.date && (
-                                  <span style={{ fontSize: 10, color: '#B0AEA8', fontFamily: "'DM Sans', sans-serif" }}>{line.dateLabel} {format(line.date, 'MMM d')}</span>
+                                {subLabel && (
+                                  <span style={{ fontSize: 10, color: isOverdue ? '#E8726E' : '#B0AEA8', fontFamily: "'DM Sans', sans-serif" }}>{subLabel}</span>
                                 )}
                               </div>
-                              {/* Amount — centered between two lines */}
-                              <span style={{ fontSize: 12, fontWeight: 500, color: isPos ? '#03ACEA' : '#1D5B94', fontFamily: "'DM Sans', sans-serif", flexShrink: 0, alignSelf: 'center' }}>{fmtSigned(line.amount)}</span>
+                              {/* Amount — same weight as title */}
+                              <span style={{ fontSize: 12, fontWeight: 700, color: isPos ? '#03ACEA' : '#1D5B94', fontFamily: "'DM Sans', sans-serif", flexShrink: 0, alignSelf: 'center' }}>{fmtSigned(line.amount)}</span>
                               {/* Delete button — edit mode, custom only */}
                               {editingPlan && isCustom && (
                                 <button type="button" onClick={() => deleteCustomExpense(line.id)}
@@ -2078,8 +2081,8 @@ export default function Home() {
                     <div style={{ marginTop: 10 }}>
                       <div style={{ borderTop: '1.5px dashed rgba(0,0,0,0.13)', marginBottom: 4 }} />
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '4px 0' }}>
-                        <span style={{ fontSize: 11, fontWeight: 500, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>So far this month</span>
-                        <span style={{ fontSize: 11, fontWeight: 500, color: soFarTotal >= 0 ? '#03ACEA' : '#1D5B94', fontFamily: "'DM Sans', sans-serif" }}>{fmtSigned(soFarTotal)}</span>
+                        <span style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>So Far This Month</span>
+                        <span style={{ fontSize: 13, fontWeight: 700, color: soFarTotal >= 0 ? '#03ACEA' : '#1D5B94', fontFamily: "'DM Sans', sans-serif" }}>{fmtSigned(soFarTotal)}</span>
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '4px 0 2px' }}>
                         <span style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>Net {monthName}</span>
@@ -2424,23 +2427,21 @@ export default function Home() {
               {(monthlyExpectedReceive > 0 || monthlyExpectedPay > 0) && (
                 <div className="home-card-monthly-summary" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                   {monthlyExpectedReceive > 0 && (
-                    <div style={{ position: 'relative', background: '#FEFEF5', borderRadius: '3px 3px 3px 3px', border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 1px 2px rgba(0,0,0,0.07), 0 4px 10px rgba(0,0,0,0.10), 0 10px 28px rgba(0,0,0,0.07), 6px 16px 24px rgba(0,0,0,0.06)', padding: '10px 14px 11px 12px', overflow: 'visible', transform: 'translateY(-1px)' }}>
-                      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 5, background: 'rgba(0,0,0,0.06)', borderRadius: '2px 2px 0 0' }} />
-                      <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.3, marginTop: 4 }}>You've received <span style={{ color: '#03ACEA' }}>{formatMoney(monthlyReceived)}</span></div>
-                      <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 2 }}>of {formatMoney(monthlyExpectedReceive)} expected in {format(today, 'MMMM')}</div>
-                      {/* Bottom-right curl */}
-                      <div style={{ position: 'absolute', bottom: 0, right: 0, width: 18, height: 18, background: '#E8E5D6', clipPath: 'polygon(100% 0, 100% 100%, 0 100%)', zIndex: 2 }} />
-                      <div style={{ position: 'absolute', bottom: 0, right: 0, width: 22, height: 22, background: 'radial-gradient(ellipse at 100% 100%, rgba(0,0,0,0.18) 0%, transparent 65%)', zIndex: 1 }} />
+                    <div style={{ position: 'relative', background: 'linear-gradient(170deg, #FFF9DE 0%, #FFF3B0 100%)', borderRadius: '2px 2px 3px 3px', boxShadow: '2px 5px 16px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.10)', padding: '12px 14px 13px 12px', overflow: 'visible' }}>
+                      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 6, background: 'rgba(0,0,0,0.08)', borderRadius: '2px 2px 0 0' }} />
+                      <div style={{ fontSize: 12, fontWeight: 600, color: '#5C4200', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.3, marginTop: 5 }}>You've received <span style={{ color: '#03ACEA' }}>{formatMoney(monthlyReceived)}</span></div>
+                      <div style={{ fontSize: 11, color: '#8C6D00', fontFamily: "'DM Sans', sans-serif", marginTop: 2 }}>of {formatMoney(monthlyExpectedReceive)} expected in {format(today, 'MMMM')}</div>
+                      <div style={{ position: 'absolute', bottom: 0, right: 0, width: 16, height: 16, background: '#D4C060', clipPath: 'polygon(100% 0, 100% 100%, 0 100%)', zIndex: 2 }} />
+                      <div style={{ position: 'absolute', bottom: 0, right: 0, width: 20, height: 20, background: 'radial-gradient(ellipse at 100% 100%, rgba(0,0,0,0.20) 0%, transparent 65%)', zIndex: 1 }} />
                     </div>
                   )}
                   {monthlyExpectedPay > 0 && (
-                    <div style={{ position: 'relative', background: '#FEFEF5', borderRadius: '3px 3px 3px 3px', border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 1px 2px rgba(0,0,0,0.07), 0 4px 10px rgba(0,0,0,0.10), 0 10px 28px rgba(0,0,0,0.07), 6px 16px 24px rgba(0,0,0,0.06)', padding: '10px 14px 11px 12px', overflow: 'visible', transform: 'translateY(-1px)' }}>
-                      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 5, background: 'rgba(0,0,0,0.06)', borderRadius: '2px 2px 0 0' }} />
-                      <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.3, marginTop: 4 }}>You've paid <span style={{ color: '#1D5B94' }}>{formatMoney(monthlyPaidOut)}</span></div>
-                      <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 2 }}>of {formatMoney(monthlyExpectedPay)} due in {format(today, 'MMMM')}</div>
-                      {/* Bottom-right curl */}
-                      <div style={{ position: 'absolute', bottom: 0, right: 0, width: 18, height: 18, background: '#E8E5D6', clipPath: 'polygon(100% 0, 100% 100%, 0 100%)', zIndex: 2 }} />
-                      <div style={{ position: 'absolute', bottom: 0, right: 0, width: 22, height: 22, background: 'radial-gradient(ellipse at 100% 100%, rgba(0,0,0,0.18) 0%, transparent 65%)', zIndex: 1 }} />
+                    <div style={{ position: 'relative', background: 'linear-gradient(170deg, #FFFDE0 0%, #FFF59D 100%)', borderRadius: '2px 2px 3px 3px', boxShadow: '2px 5px 16px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.10)', padding: '12px 14px 13px 12px', overflow: 'visible' }}>
+                      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 6, background: 'rgba(0,0,0,0.08)', borderRadius: '2px 2px 0 0' }} />
+                      <div style={{ fontSize: 12, fontWeight: 600, color: '#5C4200', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.3, marginTop: 5 }}>You've paid <span style={{ color: '#1D5B94' }}>{formatMoney(monthlyPaidOut)}</span></div>
+                      <div style={{ fontSize: 11, color: '#8C6D00', fontFamily: "'DM Sans', sans-serif", marginTop: 2 }}>of {formatMoney(monthlyExpectedPay)} due in {format(today, 'MMMM')}</div>
+                      <div style={{ position: 'absolute', bottom: 0, right: 0, width: 16, height: 16, background: '#D4C060', clipPath: 'polygon(100% 0, 100% 100%, 0 100%)', zIndex: 2 }} />
+                      <div style={{ position: 'absolute', bottom: 0, right: 0, width: 20, height: 20, background: 'radial-gradient(ellipse at 100% 100%, rgba(0,0,0,0.20) 0%, transparent 65%)', zIndex: 1 }} />
                     </div>
                   )}
                 </div>
