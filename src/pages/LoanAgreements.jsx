@@ -1404,7 +1404,12 @@ export default function LoanAgreements() {
             }
           `}</style>
           </>) : (
-            <RecentActivity embeddedMode />
+            <div style={{ position: 'relative', marginBottom: 24 }}>
+              <div style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
+              <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.13)', padding: '14px 18px' }}>
+                <RecentActivity embeddedMode />
+              </div>
+            </div>
           )}
 
         </div>
