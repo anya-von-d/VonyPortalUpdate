@@ -2216,13 +2216,18 @@ export default function Home() {
               {(monthlyExpectedReceive > 0 || monthlyExpectedPay > 0) && (
                 <div className="home-card-monthly-summary" style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
                   {monthlyExpectedReceive > 0 && (
-                    <div style={{ background: '#FEFDF5', borderRadius: 4, boxShadow: '0 1px 0 2px #edeade, 0 3px 0 3px #f5f3ea, 2px 6px 18px rgba(0,0,0,0.13)', padding: '11px 14px 12px' }}>
-                      <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.35 }}>You've received <span style={{ color: '#03ACEA' }}>{formatMoney(monthlyReceived)}</span></div>
-                      <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 3 }}>of {formatMoney(monthlyExpectedReceive)} expected in {format(today, 'MMMM')}</div>
+                    <div style={{ position: 'relative', background: '#FEFDF5', borderRadius: 4, boxShadow: '0 1px 0 2px #edeade, 0 3px 0 3px #f5f3ea, 2px 6px 18px rgba(0,0,0,0.13)', padding: '17px 14px 12px', overflow: 'hidden' }}>
+                      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 6, background: 'rgba(0,0,0,0.07)', borderRadius: '4px 4px 0 0' }} />
+                      <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.35, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        You've received{' '}
+                        <span style={{ background: 'linear-gradient(transparent 52%, rgba(3,172,234,0.45) 52%)', paddingBottom: 1 }}>{formatMoney(monthlyReceived)}</span>
+                        {' '}of {formatMoney(monthlyExpectedReceive)} expected in {format(today, 'MMMM')}
+                      </div>
                     </div>
                   )}
                   {monthlyExpectedPay > 0 && (
-                    <div style={{ background: '#FEFDF5', borderRadius: 4, boxShadow: '0 1px 0 2px #edeade, 0 3px 0 3px #f5f3ea, 2px 6px 18px rgba(0,0,0,0.13)', padding: '11px 14px 12px' }}>
+                    <div style={{ position: 'relative', background: '#FEFDF5', borderRadius: 4, boxShadow: '0 1px 0 2px #edeade, 0 3px 0 3px #f5f3ea, 2px 6px 18px rgba(0,0,0,0.13)', padding: '17px 14px 12px', overflow: 'hidden' }}>
+                      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 6, background: 'rgba(0,0,0,0.07)', borderRadius: '4px 4px 0 0' }} />
                       <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.35, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                         You've paid{' '}
                         <span style={{ background: 'linear-gradient(transparent 52%, rgba(3,172,234,0.45) 52%)', paddingBottom: 1 }}>{formatMoney(monthlyPaidOut)}</span>
