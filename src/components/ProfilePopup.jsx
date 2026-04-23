@@ -5,40 +5,7 @@ import { UploadFile } from '@/integrations/Core';
 import { CheckCircle, Loader2, ChevronDown, Pencil, Landmark, Image, X, Clock } from 'lucide-react';
 import UserAvatar from '@/components/ui/UserAvatar';
 import { useAuth } from '@/lib/AuthContext';
-
-// ── Shared constants (same as onboarding) ─────────────────────────────────────
-const ICON_OPTIONS = [
-  { id: 'bear',      emoji: '🐻', bg: '#E8A87C' },
-  { id: 'fox',       emoji: '🦊', bg: '#F4A261' },
-  { id: 'lion',      emoji: '🦁', bg: '#E9C46A' },
-  { id: 'tiger',     emoji: '🐯', bg: '#F4965C' },
-  { id: 'wolf',      emoji: '🐺', bg: '#8FA8C8' },
-  { id: 'cat',       emoji: '🐱', bg: '#C38D9E' },
-  { id: 'dog',       emoji: '🐶', bg: '#D4A373' },
-  { id: 'koala',     emoji: '🐨', bg: '#A5B4C3' },
-  { id: 'panda',     emoji: '🐼', bg: '#9EC5AB' },
-  { id: 'rabbit',    emoji: '🐰', bg: '#B084CC' },
-  { id: 'frog',      emoji: '🐸', bg: '#85B79D' },
-  { id: 'owl',       emoji: '🦉', bg: '#6C8EBF' },
-  { id: 'penguin',   emoji: '🐧', bg: '#7EC1EC' },
-  { id: 'flamingo',  emoji: '🦩', bg: '#F4A8B7' },
-  { id: 'eagle',     emoji: '🦅', bg: '#C9A84C' },
-  { id: 'unicorn',   emoji: '🦄', bg: '#D4AEDD' },
-  { id: 'dolphin',   emoji: '🐬', bg: '#54A6CF' },
-  { id: 'butterfly', emoji: '🦋', bg: '#B9A0D4' },
-  { id: 'moon',      emoji: '🌙', bg: '#6C8EBF' },
-  { id: 'star',      emoji: '⭐', bg: '#F4B942' },
-  { id: 'wave',      emoji: '🌊', bg: '#3A9BDC' },
-  { id: 'fire',      emoji: '🔥', bg: '#E8726E' },
-  { id: 'plant',     emoji: '🌿', bg: '#5CB87A' },
-  { id: 'rose',      emoji: '🌹', bg: '#D97C8A' },
-  { id: 'gem',       emoji: '💎', bg: '#5BA4CF' },
-  { id: 'rocket',    emoji: '🚀', bg: '#4A5568' },
-  { id: 'music',     emoji: '🎵', bg: '#9B7FCA' },
-  { id: 'art',       emoji: '🎨', bg: '#E67E22' },
-  { id: 'target',    emoji: '🎯', bg: '#E85555' },
-  { id: 'coffee',    emoji: '☕', bg: '#9B7651' },
-];
+import { ICON_OPTIONS, generateIconUrl as sharedGenerateIconUrl, iconInnerSvg } from '@/lib/profileIcons';
 
 const CURRENCIES = [
   { code: 'USD', label: 'USD — US Dollar ($)' },
@@ -99,11 +66,7 @@ const COUNTRIES = [
   'Vietnam','Yemen','Zambia','Zimbabwe',
 ];
 
-const generateIconUrl = (icon) => {
-  if (!icon) return null;
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128"><circle cx="64" cy="64" r="64" fill="${icon.bg}"/><text x="64" y="75" dominant-baseline="middle" text-anchor="middle" font-size="60" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">${icon.emoji}</text></svg>`;
-  return `data:image/svg+xml,${encodeURIComponent(svg)}`;
-};
+const generateIconUrl = sharedGenerateIconUrl;
 
 const syncPublicProfile = async (userData) => {
   if (!userData?.id || !userData?.username || !userData?.full_name) return;
@@ -421,13 +384,18 @@ export default function ProfilePopup({ onClose }) {
                         background: icon.bg,
                         border: '2px solid transparent',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontSize: 18, lineHeight: 1, cursor: 'pointer',
+                        cursor: 'pointer',
                         transition: 'transform 0.1s',
+                        padding: 0,
+                        overflow: 'hidden',
                       }}
                       onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.15)'}
                       onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
                     >
-                      {icon.emoji}
+                      <div
+                        style={{ width: '100%', height: '100%', display: 'flex', pointerEvents: 'none' }}
+                        dangerouslySetInnerHTML={{ __html: iconInnerSvg(icon) }}
+                      />
                     </button>
                   ))}
                 </div>

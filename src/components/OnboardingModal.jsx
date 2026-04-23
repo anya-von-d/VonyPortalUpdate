@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { User, PublicProfile } from "@/entities/all";
 import { supabase } from "@/lib/supabaseClient";
 import { CheckCircle, Loader2, ChevronDown } from "lucide-react";
+import { ICON_OPTIONS as SHARED_ICON_OPTIONS, generateIconUrl as sharedGenerateIconUrl, iconInnerSvg } from "@/lib/profileIcons";
 
 // Grain overlays — match Layout.jsx portal texture
 const GRAIN_FINE = `url("data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.55 0"/></filter><rect width="100%" height="100%" filter="url(#n)"/></svg>')}")`;
@@ -14,40 +15,8 @@ const PORTAL_BG = '#FDFBF9';
 const BRAND_BLUE = '#03ACEA';
 
 // ── Profile icon palette ───────────────────────────────────────────────────
-// Grown-up set: nature, cosmos, weather, minimalist objects. No animal-emoji
-// kid-stickers. Colors draw from the portal palette.
-const ICON_OPTIONS = [
-  { id: 'moon',       emoji: '🌙', bg: '#1D5B94' },
-  { id: 'sun',        emoji: '☀️', bg: '#E9A83A' },
-  { id: 'star',       emoji: '✦',  bg: '#0B2F5C' },
-  { id: 'wave',       emoji: '🌊', bg: '#3A9BDC' },
-  { id: 'mountain',   emoji: '⛰',  bg: '#6C8A9C' },
-  { id: 'leaf',       emoji: '🌿', bg: '#5A8A6B' },
-  { id: 'olive',      emoji: '🫒', bg: '#7A8B54' },
-  { id: 'tulip',      emoji: '🌷', bg: '#D97C8A' },
-  { id: 'tree',       emoji: '🌳', bg: '#4A7A56' },
-  { id: 'clover',     emoji: '☘',  bg: '#4E8A5A' },
-  { id: 'flame',      emoji: '🔥', bg: '#C9562B' },
-  { id: 'cloud',      emoji: '☁',  bg: '#8FA8C8' },
-  { id: 'rain',       emoji: '🌧', bg: '#5C7AA0' },
-  { id: 'snow',       emoji: '❄',  bg: '#7EB4D4' },
-  { id: 'book',       emoji: '📖', bg: '#8C6A4A' },
-  { id: 'coffee',     emoji: '☕', bg: '#6A4A36' },
-  { id: 'teacup',     emoji: '🍵', bg: '#8AA66A' },
-  { id: 'music',      emoji: '♪',  bg: '#7A5CA8' },
-  { id: 'palette',    emoji: '🎨', bg: '#C86A4C' },
-  { id: 'lens',       emoji: '📷', bg: '#3E3E3E' },
-  { id: 'globe',      emoji: '🌍', bg: '#2F6B8F' },
-  { id: 'anchor',     emoji: '⚓', bg: '#264A6B' },
-  { id: 'compass',    emoji: '🧭', bg: '#B8823E' },
-  { id: 'key',        emoji: '🔑', bg: '#A67C2E' },
-  { id: 'quill',      emoji: '✒',  bg: '#2A2A2A' },
-  { id: 'candle',     emoji: '🕯', bg: '#9B7A4E' },
-  { id: 'lantern',    emoji: '🏮', bg: '#B6443A' },
-  { id: 'diamond',    emoji: '◆',  bg: '#5BA4CF' },
-  { id: 'circle',     emoji: '●',  bg: '#1A1918' },
-  { id: 'crescent',   emoji: '☾',  bg: '#3A4A6B' },
-];
+// 25 pastel/symbol icons — see src/lib/profileIcons.js
+const ICON_OPTIONS = SHARED_ICON_OPTIONS;
 
 // ── Country list ─────────────────────────────────────────────────────────────
 const COUNTRIES = [
@@ -130,11 +99,7 @@ const TERMS = [
 ];
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
-export const generateIconUrl = (icon) => {
-  if (!icon) return null;
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128"><circle cx="64" cy="64" r="64" fill="${icon.bg}"/><text x="64" y="75" dominant-baseline="middle" text-anchor="middle" font-size="60" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">${icon.emoji}</text></svg>`;
-  return `data:image/svg+xml,${encodeURIComponent(svg)}`;
-};
+export const generateIconUrl = sharedGenerateIconUrl;
 
 // ── Shared styles (module-level so inputs aren't remounted per render) ────────
 const labelStyle = {
@@ -504,11 +469,16 @@ export default function OnboardingModal({ user, onComplete }) {
                       width: 72, height: 72, borderRadius: '50%', flexShrink: 0,
                       background: formData.selectedIcon ? formData.selectedIcon.bg : '#D4D2CF',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: 34, lineHeight: 1, color: '#fff',
                       border: '2px solid rgba(0,0,0,0.08)',
                       transition: 'background 0.2s',
+                      overflow: 'hidden',
                     }}>
-                      {formData.selectedIcon ? formData.selectedIcon.emoji : ''}
+                      {formData.selectedIcon && (
+                        <div
+                          style={{ width: '100%', height: '100%', display: 'flex' }}
+                          dangerouslySetInnerHTML={{ __html: iconInnerSvg(formData.selectedIcon) }}
+                        />
+                      )}
                     </div>
 
                     {/* Scrollable icon grid */}
@@ -529,13 +499,18 @@ export default function OnboardingModal({ user, onComplete }) {
                                 background: icon.bg,
                                 border: isSelected ? '2.5px solid #1A1918' : '2.5px solid transparent',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                fontSize: 20, lineHeight: 1, color: '#fff', cursor: 'pointer',
+                                cursor: 'pointer',
                                 transition: 'border-color 0.12s, transform 0.12s',
                                 transform: isSelected ? 'scale(1.12)' : 'scale(1)',
                                 boxSizing: 'border-box',
+                                padding: 0,
+                                overflow: 'hidden',
                               }}
                             >
-                              {icon.emoji}
+                              <div
+                                style={{ width: '100%', height: '100%', display: 'flex', pointerEvents: 'none' }}
+                                dangerouslySetInnerHTML={{ __html: iconInnerSvg(icon) }}
+                              />
                             </button>
                           );
                         })}
