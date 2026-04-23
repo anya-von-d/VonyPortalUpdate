@@ -1869,81 +1869,6 @@ export default function Home() {
                 );
               })()}
 
-              {/* ── Upcoming Payments (row of up to 3 cards) ── */}
-              {(() => {
-                const now = new Date();
-                const incoming = lentLoans
-                  .filter(l => l.next_payment_date && new Date(l.next_payment_date) >= new Date(now.getFullYear(), now.getMonth(), now.getDate()))
-                  .map(l => {
-                    const p = safeAllProfiles.find(pp => pp.user_id === l.borrower_id);
-                    const name = p?.full_name?.split(' ')[0] || p?.username || 'User';
-                    return { id: l.id, direction: 'in', name, avatar: p?.avatar_url || p?.profile_picture_url, amount: l.payment_amount || 0, date: new Date(l.next_payment_date) };
-                  });
-                const outgoing = borrowedLoans
-                  .filter(l => l.next_payment_date && new Date(l.next_payment_date) >= new Date(now.getFullYear(), now.getMonth(), now.getDate()))
-                  .map(l => {
-                    const p = safeAllProfiles.find(pp => pp.user_id === l.lender_id);
-                    const name = p?.full_name?.split(' ')[0] || p?.username || 'User';
-                    return { id: l.id, direction: 'out', name, avatar: p?.avatar_url || p?.profile_picture_url, amount: l.payment_amount || 0, date: new Date(l.next_payment_date) };
-                  });
-                const upcoming = [...incoming, ...outgoing]
-                  .sort((a, b) => a.date - b.date)
-                  .slice(0, 3);
-
-                if (upcoming.length === 0) return null;
-
-                const firstDaysAway = differenceInDays(upcoming[0].date, now);
-                const nextLabel = firstDaysAway === 0 ? 'Today' : firstDaysAway === 1 ? 'Tomorrow' : `In ${firstDaysAway} days`;
-
-                return (
-                  <div className="home-card-upcoming-payments" style={{ background: '#FEFDF9', borderRadius: 4, border: 'none', boxShadow: '0 1px 0 2px #f0efea, 0 3px 0 3px #f5f4f0, 2px 6px 18px rgba(0,0,0,0.13)', padding: '14px 18px' }}>
-                      {/* Header row */}
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 }}>
-                        <div style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>Upcoming Payments</div>
-                        <Link
-                          to={createPageUrl('Upcoming')}
-                          style={{ fontSize: 11, fontWeight: 500, color: '#03ACEA', textDecoration: 'none', fontFamily: "'DM Sans', sans-serif" }}
-                        >
-                          View full schedule →
-                        </Link>
-                      </div>
-                      {/* Next payment subtitle */}
-                      <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginBottom: 10 }}>
-                        Next payment {nextLabel.toLowerCase()}
-                      </div>
-
-                      {/* Event rows */}
-                      <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        {upcoming.map(item => {
-                          const isIncoming = item.direction === 'in';
-                          const barColor = isIncoming ? '#03ACEA' : '#1D5B94';
-                          const dayOfWeek = format(item.date, 'EEE');
-                          const dateNum = format(item.date, 'MMM d');
-                          const label = isIncoming
-                            ? `Expect ${formatMoney(item.amount)} from ${item.name}`
-                            : `${formatMoney(item.amount)} due to ${item.name}`;
-                          return (
-                            <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '7px 0' }}>
-                              {/* Date column — day + date stacked */}
-                              <div style={{ width: 52, flexShrink: 0, fontFamily: "'DM Sans', sans-serif" }}>
-                                <div style={{ fontSize: 10, fontWeight: 500, color: '#9B9A98', letterSpacing: '-0.01em' }}>{dayOfWeek}</div>
-                                <div style={{ fontSize: 12, fontWeight: 500, color: '#1A1918' }}>{dateNum}</div>
-                              </div>
-                              {/* Colored bar */}
-                              <div style={{ width: 3, alignSelf: 'stretch', borderRadius: 2, background: barColor, flexShrink: 0 }} />
-                              {/* Event label */}
-                              <div style={{ flex: 1, minWidth: 0, fontSize: 12, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                {label}
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                  </div>
-
-                );
-              })()}
-
               {/* ── Plan Your Month ── */}
               {(() => {
                 const monthStart = startOfMonth(today);
@@ -2208,106 +2133,71 @@ export default function Home() {
                 );
               })()}
 
-              {/* To Do This Week */}
+              {/* ── Upcoming Payments ── */}
               {(() => {
                 const now = new Date();
-                const todayDow = now.getDay();
-                const mondayOffset = todayDow === 0 ? -6 : 1 - todayDow;
-                const weekMonday = new Date(now);
-                weekMonday.setDate(now.getDate() + mondayOffset);
-                weekMonday.setHours(0, 0, 0, 0);
-                const weekEnd = new Date(weekMonday);
-                weekEnd.setDate(weekMonday.getDate() + 6);
-                weekEnd.setHours(23, 59, 59, 999);
-                const days = Array.from({ length: 7 }, (_, i) => {
-                  const d = new Date(weekMonday);
-                  d.setDate(weekMonday.getDate() + i);
-                  return d;
-                });
-                const dayLabels = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-                const tasks = [];
-                borrowedLoans.forEach(loan => {
-                  if (!loan.next_payment_date) return;
-                  const due = new Date(loan.next_payment_date);
-                  if (due > weekEnd) return;
-                  const otherProfile = safeAllProfiles.find(p => p.user_id === loan.lender_id);
-                  const name = otherProfile?.full_name?.split(' ')[0] || otherProfile?.username || 'them';
-                  const amt = formatMoney(loan.payment_amount || loan.next_payment_amount || 0);
-                  tasks.push({ id: `pay-${loan.id}`, label: `Send ${amt} to ${name}`, onCheck: () => navigate(createPageUrl('RecordPayment') + `?loanId=${loan.id}`) });
-                });
-                borrowedLoans.forEach(loan => {
-                  if (!loan.next_payment_date) return;
-                  const daysAway = differenceInDays(new Date(loan.next_payment_date), now);
-                  if (daysAway < 7 || daysAway > 14) return;
-                  const otherProfile = safeAllProfiles.find(p => p.user_id === loan.lender_id);
-                  const name = otherProfile?.full_name?.split(' ')[0] || otherProfile?.username || 'them';
-                  const amt = formatMoney(loan.payment_amount || loan.next_payment_amount || 0);
-                  tasks.push({ id: `plan-${loan.id}`, label: `Plan next week's ${amt} payment to ${name}` });
-                });
-                const isNewUser = !hasFriends && !hasLoans && pendingOffers.length === 0;
-                if (isNewUser) {
-                  tasks.push({ id: 'new-connect', label: 'Connect with friends', onCheck: () => window.dispatchEvent(new CustomEvent('open-friends-popup')) });
-                  tasks.push({ id: 'new-loan', label: 'Create your first loan', onCheck: () => navigate(createPageUrl('CreateOffer')) });
-                }
-                const allTasks = [...tasks, ...customTasks];
-                const sortedTasks = [...allTasks].sort((a, b) => Number(checkedTasks.has(a.id)) - Number(checkedTasks.has(b.id)));
+                const incoming = lentLoans
+                  .filter(l => l.next_payment_date && new Date(l.next_payment_date) >= new Date(now.getFullYear(), now.getMonth(), now.getDate()))
+                  .map(l => {
+                    const p = safeAllProfiles.find(pp => pp.user_id === l.borrower_id);
+                    const name = p?.full_name?.split(' ')[0] || p?.username || 'User';
+                    return { id: l.id, direction: 'in', name, avatar: p?.avatar_url || p?.profile_picture_url, amount: l.payment_amount || 0, date: new Date(l.next_payment_date) };
+                  });
+                const outgoing = borrowedLoans
+                  .filter(l => l.next_payment_date && new Date(l.next_payment_date) >= new Date(now.getFullYear(), now.getMonth(), now.getDate()))
+                  .map(l => {
+                    const p = safeAllProfiles.find(pp => pp.user_id === l.lender_id);
+                    const name = p?.full_name?.split(' ')[0] || p?.username || 'User';
+                    return { id: l.id, direction: 'out', name, avatar: p?.avatar_url || p?.profile_picture_url, amount: l.payment_amount || 0, date: new Date(l.next_payment_date) };
+                  });
+                const upcoming = [...incoming, ...outgoing]
+                  .sort((a, b) => a.date - b.date)
+                  .slice(0, 3);
+
+                if (upcoming.length === 0) return null;
+
+                const firstDaysAway = differenceInDays(upcoming[0].date, now);
+                const nextLabel = firstDaysAway === 0 ? 'Today' : firstDaysAway === 1 ? 'Tomorrow' : `In ${firstDaysAway} days`;
+
                 return (
-                  <div className="home-card-tasks" style={{ position: 'relative' }}>
-                    <div style={{ position: 'relative', zIndex: 1, background: '#FEFDF5', borderRadius: 4, border: 'none', boxShadow: '0 1px 0 2px #edeade, 0 3px 0 3px #f5f3ea, 2px 6px 18px rgba(0,0,0,0.13)', overflow: 'hidden' }}>
-
-                      {/* Title + calendar — full width */}
-                      <div style={{ padding: '14px 18px 10px', position: 'relative', zIndex: 1 }}>
-                        <SectionHeader title="To Do This Week" />
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4, marginTop: 2, marginBottom: 4 }}>
-                          {days.map((d, i) => {
-                            const isToday = isSameDay(d, now);
-                            return (
-                              <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
-                                <span style={{ fontSize: 10, fontWeight: 500, color: isToday ? '#03ACEA' : '#9B9A98', letterSpacing: '-0.01em' }}>{dayLabels[i]}</span>
-                                <span style={{ fontSize: 11, fontWeight: isToday ? 700 : 500, color: isToday ? '#03ACEA' : '#1A1918', width: 22, height: 22, borderRadius: '50%', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: isToday ? '#EBF4FA' : 'transparent', border: isToday ? '1.5px solid #03ACEA' : '1.5px solid transparent' }}>{d.getDate()}</span>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-
-                      {/* Ruled separator under calendar — removed */}
-
-                      {/* Task rows — bullet aligned under Mon column */}
-                      <div style={{ padding: '0 18px', position: 'relative', zIndex: 1 }}>
-                        {sortedTasks.length === 0 ? (
-                          <div style={{ padding: '10px 0', fontSize: 12, color: '#9B9A98', textAlign: 'center' }}>Nothing on the list right now 🌿</div>
-                        ) : (
-                          sortedTasks.map(task => {
-                            const checked = checkedTasks.has(task.id);
-                            return (
-                              <button key={task.id} type="button" onClick={() => { if (!checked && task.onCheck) { task.onCheck(); return; } toggleTask(task.id); }}
-                                style={{ display: 'flex', alignItems: 'center', gap: 0, padding: '5px 0', background: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left', fontFamily: "'DM Sans', sans-serif", width: '100%' }}>
-                                {/* Bullet centered in first-day-column width */}
-                                <div style={{ width: 'calc(100% / 7)', flexShrink: 0, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                  <span style={{ width: 13, height: 13, borderRadius: '50%', border: checked ? '1.5px solid #03ACEA' : '1.5px solid #C4C2BE', background: checked ? '#03ACEA' : 'transparent', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.15s', flexShrink: 0 }}>
-                                    {checked && <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>}
-                                  </span>
-                                </div>
-                                <span style={{ flex: 1, fontSize: 12, color: checked ? '#AEACA8' : '#2A2926', textDecoration: checked ? 'line-through' : 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{task.label}</span>
-                              </button>
-                            );
-                          })
-                        )}
-                        {addingTask && (
-                          <form onSubmit={e => { e.preventDefault(); addCustomTask(newTaskText); setNewTaskText(''); setAddingTask(false); }} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 0' }}>
-                            <input autoFocus value={newTaskText} onChange={e => setNewTaskText(e.target.value)} onKeyDown={e => { if (e.key === 'Escape') { setAddingTask(false); setNewTaskText(''); } }} placeholder="Add a to-do…" style={{ flex: 1, fontSize: 12, fontFamily: "'DM Sans', sans-serif", border: 'none', borderBottom: '1.5px solid #03ACEA', outline: 'none', background: 'transparent', color: '#1A1918', padding: '2px 0' }} />
-                            <button type="submit" style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
-                          </form>
-                        )}
-                      </div>
-
-                      {/* Add button */}
-                      <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '8px 18px 12px', position: 'relative', zIndex: 1 }}>
-                        <button type="button" onClick={() => { setAddingTask(v => !v); setNewTaskText(''); }} style={{ width: 26, height: 26, borderRadius: '50%', background: addingTask ? '#EBF4FA' : 'rgba(0,0,0,0.05)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }} aria-label="Add to-do">
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={addingTask ? '#03ACEA' : '#787776'} strokeWidth="2.8" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                        </button>
-                      </div>
+                  <div className="home-card-upcoming-payments" style={{ background: '#FEFDF5', borderRadius: 4, border: 'none', boxShadow: '0 1px 0 2px #edeade, 0 3px 0 3px #f5f3ea, 2px 6px 18px rgba(0,0,0,0.13)', padding: '14px 18px' }}>
+                    {/* Header row */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 }}>
+                      <div style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>Upcoming Payments</div>
+                      <Link
+                        to={createPageUrl('Upcoming')}
+                        style={{ fontSize: 11, fontWeight: 500, color: '#03ACEA', textDecoration: 'none', fontFamily: "'DM Sans', sans-serif" }}
+                      >
+                        View full schedule →
+                      </Link>
+                    </div>
+                    {/* Next payment subtitle */}
+                    <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginBottom: 10 }}>
+                      Next payment {nextLabel.toLowerCase()}
+                    </div>
+                    {/* Event rows */}
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                      {upcoming.map(item => {
+                        const isIncoming = item.direction === 'in';
+                        const barColor = isIncoming ? '#03ACEA' : '#1D5B94';
+                        const dayOfWeek = format(item.date, 'EEE');
+                        const dateNum = format(item.date, 'MMM d');
+                        const label = isIncoming
+                          ? `Expect ${formatMoney(item.amount)} from ${item.name}`
+                          : `${formatMoney(item.amount)} due to ${item.name}`;
+                        return (
+                          <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '7px 0' }}>
+                            <div style={{ width: 52, flexShrink: 0, fontFamily: "'DM Sans', sans-serif" }}>
+                              <div style={{ fontSize: 10, fontWeight: 500, color: '#9B9A98', letterSpacing: '-0.01em' }}>{dayOfWeek}</div>
+                              <div style={{ fontSize: 12, fontWeight: 500, color: '#1A1918' }}>{dateNum}</div>
+                            </div>
+                            <div style={{ width: 3, alignSelf: 'stretch', borderRadius: 2, background: barColor, flexShrink: 0 }} />
+                            <div style={{ flex: 1, minWidth: 0, fontSize: 12, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                              {label}
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                 );
@@ -2323,15 +2213,19 @@ export default function Home() {
               {(monthlyExpectedReceive > 0 || monthlyExpectedPay > 0) && (
                 <div className="home-card-monthly-summary" style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
                   {monthlyExpectedReceive > 0 && (
-                    <div style={{ background: '#ffffff', borderRadius: 4, boxShadow: '2px 5px 16px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.10)', padding: '12px 14px 13px 12px' }}>
-                      <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.3 }}>You've received <span style={{ color: '#03ACEA' }}>{formatMoney(monthlyReceived)}</span></div>
-                      <div style={{ fontSize: 11, color: '#787776', fontFamily: "'DM Sans', sans-serif", marginTop: 2 }}>of {formatMoney(monthlyExpectedReceive)} expected in {format(today, 'MMMM')}</div>
+                    <div style={{ background: 'linear-gradient(168deg, #FAF7F0 0%, #F2EBE0 55%, #EAE3D6 100%)', borderRadius: 3, boxShadow: '0 1px 1px rgba(0,0,0,0.10), 2px 4px 8px rgba(0,0,0,0.12), 5px 12px 20px rgba(0,0,0,0.09), inset 0 1px 1px rgba(255,255,255,0.55)', padding: '11px 14px 12px', position: 'relative', overflow: 'hidden' }}>
+                      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, rgba(255,255,255,0.30) 0%, rgba(255,255,255,0.06) 40%, rgba(0,0,0,0) 65%, rgba(0,0,0,0.04) 100%)', pointerEvents: 'none' }} />
+                      <div style={{ position: 'absolute', bottom: 0, right: 0, width: 13, height: 13, background: 'linear-gradient(135deg, #BDB49E 0%, #A8A08A 100%)', clipPath: 'polygon(100% 0, 100% 100%, 0 100%)', pointerEvents: 'none' }} />
+                      <div style={{ position: 'relative', fontSize: 12, fontWeight: 600, color: '#3B3226', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.35 }}>You've received <span style={{ color: '#4A7D6F' }}>{formatMoney(monthlyReceived)}</span></div>
+                      <div style={{ position: 'relative', fontSize: 11, color: '#8A7E6E', fontFamily: "'DM Sans', sans-serif", marginTop: 3 }}>of {formatMoney(monthlyExpectedReceive)} expected in {format(today, 'MMMM')}</div>
                     </div>
                   )}
                   {monthlyExpectedPay > 0 && (
-                    <div style={{ background: '#ffffff', borderRadius: 4, boxShadow: '2px 5px 16px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.10)', padding: '12px 14px 13px 12px' }}>
-                      <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.3 }}>You've paid <span style={{ color: '#03ACEA' }}>{formatMoney(monthlyPaidOut)}</span></div>
-                      <div style={{ fontSize: 11, color: '#787776', fontFamily: "'DM Sans', sans-serif", marginTop: 2 }}>of {formatMoney(monthlyExpectedPay)} due in {format(today, 'MMMM')}</div>
+                    <div style={{ background: 'linear-gradient(168deg, #F7F3EC 0%, #EDE6D8 55%, #E5DDD0 100%)', borderRadius: 3, boxShadow: '0 1px 1px rgba(0,0,0,0.10), 2px 4px 8px rgba(0,0,0,0.12), 5px 12px 20px rgba(0,0,0,0.09), inset 0 1px 1px rgba(255,255,255,0.50)', padding: '11px 14px 12px', position: 'relative', overflow: 'hidden' }}>
+                      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.05) 40%, rgba(0,0,0,0) 65%, rgba(0,0,0,0.04) 100%)', pointerEvents: 'none' }} />
+                      <div style={{ position: 'absolute', bottom: 0, right: 0, width: 13, height: 13, background: 'linear-gradient(135deg, #B5AC98 0%, #A09588 100%)', clipPath: 'polygon(100% 0, 100% 100%, 0 100%)', pointerEvents: 'none' }} />
+                      <div style={{ position: 'relative', fontSize: 12, fontWeight: 600, color: '#3B3226', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.35 }}>You've paid <span style={{ color: '#5A6E8A' }}>{formatMoney(monthlyPaidOut)}</span></div>
+                      <div style={{ position: 'relative', fontSize: 11, color: '#8A7E6E', fontFamily: "'DM Sans', sans-serif", marginTop: 3 }}>of {formatMoney(monthlyExpectedPay)} due in {format(today, 'MMMM')}</div>
                     </div>
                   )}
                 </div>
