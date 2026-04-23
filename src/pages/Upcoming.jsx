@@ -413,8 +413,7 @@ export default function Upcoming() {
                 const next7Total = next7Days.reduce((s, e) => s + e.amount, 0);
                 return (
                   <div style={{ position: 'relative' }}>
-                    <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
-                    <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, padding: '14px 18px' }}>
+                    <div style={{ position: 'relative', zIndex: 1, background: '#FEFEFE', borderRadius: 2, border: 'none', boxShadow: '5px 4px 18px rgba(0,0,0,0.09), -1px 0 0 rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.06)', padding: '14px 18px' }}>
 
                       {/* Card header */}
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 }}>
@@ -506,8 +505,8 @@ export default function Upcoming() {
               {/* Coming Later — paper card */}
               <div style={{ position: 'relative' }}>
                 <div style={{
-                  background: '#FFFEFD', borderRadius: 4,
-                  boxShadow: '0 1px 0 2px #f0efea, 0 3px 0 3px #f5f4f0, 2px 6px 18px rgba(0,0,0,0.13)',
+                  background: '#FEFEFE', borderRadius: 2, border: 'none',
+                  boxShadow: '5px 4px 18px rgba(0,0,0,0.09), -1px 0 0 rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.06)',
                   padding: '14px 18px',
                 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
@@ -543,8 +542,7 @@ export default function Upcoming() {
 
             {/* Col 3: Calendar */}
             <div className="upcoming-col-3" style={{ position: 'relative' }}>
-              <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
-            <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', padding: '14px 18px' }}>
+            <div style={{ position: 'relative', zIndex: 1, background: '#FEFEFE', borderRadius: 2, border: 'none', boxShadow: '5px 4px 18px rgba(0,0,0,0.09), -1px 0 0 rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.06)', padding: '14px 18px' }}>
 
               {/* Month nav */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
