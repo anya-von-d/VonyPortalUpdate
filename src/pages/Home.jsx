@@ -2078,9 +2078,9 @@ export default function Home() {
                 let si = 0;
                 while (reminders.length < 3) { reminders.push(suggestions[si++ % suggestions.length]); }
                 const noteConfigs = [
-                  { bg: 'linear-gradient(170deg, #7DD4FF 0%, #3DB8FF 100%)', rotate: '-3.5deg', ty: '7px', zIndex: 1, textColor: '#003D5C' },
-                  { bg: 'linear-gradient(170deg, #B8E6FF 0%, #72CAFF 100%)', rotate: '1.8deg',  ty: '0px',  zIndex: 2, textColor: '#003D5C' },
-                  { bg: 'linear-gradient(170deg, #55C4FF 0%, #1AABF5 100%)', rotate: '-1deg',   ty: '5px',  zIndex: 3, textColor: '#002F48' },
+                  { bg: '#5BC8F5', rotate: '-3.5deg', ty: '7px', zIndex: 1, textColor: '#003A52' },
+                  { bg: '#88D8F8', rotate: '1.8deg',  ty: '0px',  zIndex: 2, textColor: '#003A52' },
+                  { bg: '#29B5E8', rotate: '-1deg',   ty: '5px',  zIndex: 3, textColor: '#001F30' },
                 ];
                 return (
                   <div className="home-card-attention" style={{ display: 'flex', paddingBottom: 10, overflow: 'visible' }}>
@@ -2095,9 +2095,9 @@ export default function Home() {
                           onMouseLeave={() => setHoveredPostit(null)}
                           style={{
                             flex: 1,
-                            minHeight: 110,
+                            minHeight: 120,
                             background: nc.bg,
-                            borderRadius: '2px 2px 3px 3px',
+                            borderRadius: '3px 3px 4px 4px',
                             padding: '14px 10px 12px',
                             marginRight: i < 2 ? -11 : 0,
                             transform: hoveredPostit === i
@@ -2216,30 +2216,21 @@ export default function Home() {
               {(monthlyExpectedReceive > 0 || monthlyExpectedPay > 0) && (
                 <div className="home-card-monthly-summary" style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
                   {monthlyExpectedReceive > 0 && (
-                    <div style={{ position: 'relative' }}>
-                      {/* Rotated lift-shadow backing — anchored left, right edge angles away */}
-                      <div style={{ position: 'absolute', top: 4, right: -3, bottom: -4, left: 2, background: '#C8C4B4', borderRadius: '0 4px 4px 0', transform: 'rotate(1.8deg)', transformOrigin: '0% 50%', zIndex: 0 }} />
-                      {/* Tab front */}
-                      <div style={{ position: 'relative', zIndex: 1, background: '#FEFDF5', borderRadius: '0 5px 5px 0', boxShadow: '2px 1px 4px rgba(0,0,0,0.10), 4px 3px 10px rgba(0,0,0,0.10)', padding: '10px 16px 10px 18px', overflow: 'hidden' }}>
-                        {/* Left adhesive strip */}
-                        <div style={{ position: 'absolute', top: 0, left: 0, bottom: 0, width: 5, background: 'rgba(0,0,0,0.11)' }} />
-                        <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.3 }}>
-                          You've received <span style={{ color: '#03ACEA' }}>{formatMoney(monthlyReceived)}</span>
-                        </div>
-                        <div style={{ fontSize: 11, fontWeight: 400, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 2 }}>of {formatMoney(monthlyExpectedReceive)} expected in {format(today, 'MMMM')}</div>
+                    <div style={{ position: 'relative', background: '#FEFDF5', borderRadius: '0 4px 4px 0', boxShadow: '3px 2px 6px rgba(0,0,0,0.10), 6px 5px 14px rgba(0,0,0,0.10), 9px 10px 22px rgba(0,0,0,0.07)', padding: '10px 16px 10px 18px', overflow: 'hidden' }}>
+                      <div style={{ position: 'absolute', top: 0, left: 0, bottom: 0, width: 5, background: 'rgba(0,0,0,0.09)' }} />
+                      <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.3 }}>
+                        You've received <span style={{ color: '#03ACEA' }}>{formatMoney(monthlyReceived)}</span>
                       </div>
+                      <div style={{ fontSize: 11, fontWeight: 400, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 2 }}>of {formatMoney(monthlyExpectedReceive)} expected in {format(today, 'MMMM')}</div>
                     </div>
                   )}
                   {monthlyExpectedPay > 0 && (
-                    <div style={{ position: 'relative' }}>
-                      <div style={{ position: 'absolute', top: 4, right: -3, bottom: -4, left: 2, background: '#C8C4B4', borderRadius: '0 4px 4px 0', transform: 'rotate(1.8deg)', transformOrigin: '0% 50%', zIndex: 0 }} />
-                      <div style={{ position: 'relative', zIndex: 1, background: '#FEFDF5', borderRadius: '0 5px 5px 0', boxShadow: '2px 1px 4px rgba(0,0,0,0.10), 4px 3px 10px rgba(0,0,0,0.10)', padding: '10px 16px 10px 18px', overflow: 'hidden' }}>
-                        <div style={{ position: 'absolute', top: 0, left: 0, bottom: 0, width: 5, background: 'rgba(0,0,0,0.11)' }} />
-                        <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.3 }}>
-                          You've paid <span style={{ color: '#03ACEA' }}>{formatMoney(monthlyPaidOut)}</span>
-                        </div>
-                        <div style={{ fontSize: 11, fontWeight: 400, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 2 }}>of {formatMoney(monthlyExpectedPay)} due in {format(today, 'MMMM')}</div>
+                    <div style={{ position: 'relative', background: '#FEFDF5', borderRadius: '0 4px 4px 0', boxShadow: '3px 2px 6px rgba(0,0,0,0.10), 6px 5px 14px rgba(0,0,0,0.10), 9px 10px 22px rgba(0,0,0,0.07)', padding: '10px 16px 10px 18px', overflow: 'hidden' }}>
+                      <div style={{ position: 'absolute', top: 0, left: 0, bottom: 0, width: 5, background: 'rgba(0,0,0,0.09)' }} />
+                      <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.3 }}>
+                        You've paid <span style={{ color: '#03ACEA' }}>{formatMoney(monthlyPaidOut)}</span>
                       </div>
+                      <div style={{ fontSize: 11, fontWeight: 400, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 2 }}>of {formatMoney(monthlyExpectedPay)} due in {format(today, 'MMMM')}</div>
                     </div>
                   )}
                 </div>
@@ -2265,9 +2256,7 @@ export default function Home() {
                 const renderLoanRow = (loan, isLending, idx, filter) => {
                   const accentCol = isLending ? '#03ACEA' : '#1D5B94';
                   const accentColBg = isLending ? 'rgba(3,172,234,0.10)' : 'rgba(29,91,148,0.10)';
-                  const lendGrad = ['#7FD9FF','#3DC4F5','#03ACEA','#0291C0','#027AA3'];
-                  const borrGrad = ['#7AAED4','#4D8DBF','#2B6EA8','#1D5B94','#154578'];
-                  const ringColor = (isLending ? lendGrad : borrGrad)[idx] || accentCol;
+                  const ringColor = accentCol;
                   const otherId = isLending ? loan.borrower_id : loan.lender_id;
                   const otherProfile = safeAllProfiles.find(p => p.user_id === otherId);
                   const name = otherProfile?.full_name?.split(' ')[0] || otherProfile?.username || 'User';
