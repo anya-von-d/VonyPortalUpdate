@@ -353,7 +353,7 @@ export default function Upcoming() {
                 const hasPending = pendingPayments.length > 0;
 
                 const openPending = () => window.dispatchEvent(
-                  new CustomEvent('open-friends-popup', { detail: { initialRequestsOpen: true } })
+                  new CustomEvent('open-pending-requests-popup')
                 );
 
                 const overdueText = (e) => {
@@ -388,11 +388,16 @@ export default function Upcoming() {
                   ];
                 } else if (hasOverdue) {
                   if (overdue.length === 1) {
-                    postitItems = [{ text: overdueText(overdue[0]), action: null }];
+                    postitItems = [
+                      { text: '', action: null },
+                      { text: overdueText(overdue[0]), action: null },
+                      { text: '', action: null },
+                    ];
                   } else if (overdue.length === 2) {
                     postitItems = [
                       { text: overdueText(overdue[0]), action: null },
                       { text: overdueText(overdue[1]), action: null },
+                      { text: '', action: null },
                     ];
                   } else {
                     const remaining = overdue.length - 2;
@@ -403,12 +408,16 @@ export default function Upcoming() {
                     ];
                   }
                 } else {
-                  // pending only — single post-it
-                  postitItems = [{ text: pendingText(), action: openPending, isPending: true }];
+                  // pending only
+                  postitItems = [
+                    { text: '', action: null },
+                    { text: pendingText(), action: openPending, isPending: true },
+                    { text: '', action: null },
+                  ];
                 }
 
                 return (
-                  <div className="home-card-attention" style={{ display: 'flex', paddingBottom: 10, overflow: 'visible', justifyContent: postitItems.length < 3 ? 'center' : 'flex-start' }}>
+                  <div className="home-card-attention" style={{ display: 'flex', paddingBottom: 10, overflow: 'visible' }}>
                     {postitItems.map((item, i) => {
                       const nc = noteConfigs[i];
                       return (
@@ -418,10 +427,9 @@ export default function Upcoming() {
                           onMouseEnter={() => setHoveredPostitOverdue(i)}
                           onMouseLeave={() => setHoveredPostitOverdue(null)}
                           style={{
-                            flex: postitItems.length === 3 ? 1 : '0 0 auto',
-                            width: postitItems.length === 3 ? 'auto' : '34%',
-                            minHeight: 110,
-                            marginRight: i < postitItems.length - 1 ? -22 : 0,
+                            flex: 1,
+                            minHeight: 150,
+                            marginRight: i < 2 ? -22 : 0,
                             transform: hoveredPostitOverdue === i
                               ? `rotate(${nc.rotate}) translateY(calc(${nc.ty} - 10px))`
                               : `rotate(${nc.rotate}) translateY(${nc.ty})`,

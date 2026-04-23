@@ -302,7 +302,7 @@ export default function FriendsPopup({ onClose, positionOverride, initialTab, in
 
             {/* Your Friends list */}
             {sortedFriends.length === 0 ? (
-              <div style={{ fontSize: 12, color: '#9B9A98', textAlign: 'center', padding: '20px 0' }}>No friends yet — invite some!</div>
+              <div style={{ fontSize: 12, color: '#9B9A98', textAlign: 'center', padding: '20px 0' }}>Your friends will show up here once you connect 🙂</div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column' }}>
                 {sortedFriends.map(friendship => {

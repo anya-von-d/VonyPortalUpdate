@@ -4,6 +4,7 @@ import { createPageUrl } from "@/utils";
 import SettingsModal from "@/components/SettingsModal";
 import FriendsPopup from "@/components/FriendsPopup";
 import NotificationsPopup from "@/components/NotificationsPopup";
+import PendingRequestsPopup from "@/components/PendingRequestsPopup";
 import AppMenuDropdown from "@/components/AppMenuDropdown";
 import { useNotificationCount } from "@/components/utils/notificationCount";
 
@@ -34,18 +35,32 @@ export default function MeshMobileNav({ user, activePage }) {
   }, [menuOpen]);
 
   const [friendsInitialRequestsOpen, setFriendsInitialRequestsOpen] = useState(false);
+  const [pendingOpen, setPendingOpen] = useState(false);
 
-  // Global open-friends-popup event — lets any component open the friends dropdown
+  // Global open-friends-popup event
   useEffect(() => {
     const handler = (e) => {
       setFriendsOpen(true);
       setNotifOpen(false);
+      setPendingOpen(false);
       setMenuOpen(false);
       if (e?.detail?.initialTab) setFriendsInitialTab(e.detail.initialTab);
       if (e?.detail?.initialRequestsOpen) setFriendsInitialRequestsOpen(true);
     };
     window.addEventListener('open-friends-popup', handler);
     return () => window.removeEventListener('open-friends-popup', handler);
+  }, []);
+
+  // Global open-pending-requests-popup event — used by post-its, etc.
+  useEffect(() => {
+    const handler = () => {
+      setPendingOpen(true);
+      setFriendsOpen(false);
+      setNotifOpen(false);
+      setMenuOpen(false);
+    };
+    window.addEventListener('open-pending-requests-popup', handler);
+    return () => window.removeEventListener('open-pending-requests-popup', handler);
   }, []);
 
   const isActivePage = (page) => {
@@ -164,6 +179,7 @@ export default function MeshMobileNav({ user, activePage }) {
                 onInviteFriend={() => { setFriendsInitialTab('Invite'); setFriendsOpen(true); }}
                 onOpenSettings={() => setSettingsOpen(true)}
                 onOpenFriends={() => setFriendsOpen(true)}
+                onOpenPendingRequests={() => { setMenuOpen(false); setPendingOpen(true); setFriendsOpen(false); setNotifOpen(false); }}
                 showProfileAndFriends
               />
             )}
@@ -256,6 +272,12 @@ export default function MeshMobileNav({ user, activePage }) {
       {notifOpen && (
         <NotificationsPopup
           onClose={() => setNotifOpen(false)}
+          positionOverride={{ top: 92, left: 12, right: 12, width: 'auto' }}
+        />
+      )}
+      {pendingOpen && (
+        <PendingRequestsPopup
+          onClose={() => setPendingOpen(false)}
           positionOverride={{ top: 92, left: 12, right: 12, width: 'auto' }}
         />
       )}
