@@ -1934,7 +1934,9 @@ export default function Home() {
                   const prof = safeAllProfiles.find(pp => pp.user_id === otherId);
                   const name = prof?.full_name?.split(' ')[0] || prof?.username || (isLender ? 'Borrower' : 'Lender');
                   const dateLabel = isLender ? 'received' : 'sent';
-                  cashLines.push({ id: `paid-${p.id}`, label: isLender ? `From ${name}` : `To ${name}`, amount: isLender ? (p.amount || 0) : -(p.amount || 0), date: d, status: 'done', dateLabel });
+                  const paidReason = loan.reason || loan.purpose || '';
+                  const paidDateStr = format(d, 'MMM d');
+                  cashLines.push({ id: `paid-${p.id}`, label: isLender ? `Received from ${name} · ${paidDateStr}` : `Sent to ${name} · ${paidDateStr}`, amount: isLender ? (p.amount || 0) : -(p.amount || 0), date: d, status: 'done', dateLabel, reason: paidReason });
                 });
                 const completedThisMonth = new Set(safePayments.filter(p => {
                   if (!p || p.status !== 'completed') return false;
@@ -1948,7 +1950,7 @@ export default function Home() {
                   if (completedThisMonth.has(loan.id)) return;
                   const p = safeAllProfiles.find(pp => pp.user_id === loan.borrower_id);
                   const name = p?.full_name?.split(' ')[0] || p?.username || 'Borrower';
-                  cashLines.push({ id: `sched-in-${loan.id}`, label: `From ${name}`, amount: loan.payment_amount || 0, date: d, status: 'scheduled', dateLabel: 'expect by' });
+                  cashLines.push({ id: `sched-in-${loan.id}`, label: `Due from ${name} · ${format(d, 'MMM d')}`, amount: loan.payment_amount || 0, date: d, status: 'scheduled', dateLabel: 'expect by', reason: loan.reason || loan.purpose || '' });
                 });
                 borrowedLoans.forEach(loan => {
                   if (!loan.next_payment_date) return;
@@ -1957,7 +1959,7 @@ export default function Home() {
                   if (completedThisMonth.has(loan.id)) return;
                   const p = safeAllProfiles.find(pp => pp.user_id === loan.lender_id);
                   const name = p?.full_name?.split(' ')[0] || p?.username || 'Lender';
-                  cashLines.push({ id: `sched-out-${loan.id}`, label: `To ${name}`, amount: -(loan.payment_amount || 0), date: d, status: 'scheduled', dateLabel: 'due' });
+                  cashLines.push({ id: `sched-out-${loan.id}`, label: `Due to ${name} · ${format(d, 'MMM d')}`, amount: -(loan.payment_amount || 0), date: d, status: 'scheduled', dateLabel: 'due', reason: loan.reason || loan.purpose || '' });
                 });
                 lentLoans.forEach(loan => {
                   if (!loan.next_payment_date) return;
@@ -1967,7 +1969,7 @@ export default function Home() {
                   const p = safeAllProfiles.find(pp => pp.user_id === loan.borrower_id);
                   const name = p?.full_name?.split(' ')[0] || p?.username || 'Borrower';
                   // date set to today so the display stays within the current month; overdueDate stores the original for the sub-label
-                  cashLines.push({ id: `overdue-in-${loan.id}`, label: `From ${name}`, amount: loan.payment_amount || 0, date: today, overdueDate: d, status: 'overdue', dateLabel: 'expect by' });
+                  cashLines.push({ id: `overdue-in-${loan.id}`, label: `Overdue from ${name} since ${format(d, 'MMM d')}`, amount: loan.payment_amount || 0, date: today, overdueDate: d, status: 'overdue', dateLabel: 'expect by', reason: loan.reason || loan.purpose || '' });
                 });
                 borrowedLoans.forEach(loan => {
                   if (!loan.next_payment_date) return;
@@ -1976,7 +1978,7 @@ export default function Home() {
                   if (completedThisMonth.has(loan.id)) return;
                   const p = safeAllProfiles.find(pp => pp.user_id === loan.lender_id);
                   const name = p?.full_name?.split(' ')[0] || p?.username || 'Lender';
-                  cashLines.push({ id: `overdue-out-${loan.id}`, label: `To ${name}`, amount: -(loan.payment_amount || 0), date: today, overdueDate: d, status: 'overdue', dateLabel: 'due' });
+                  cashLines.push({ id: `overdue-out-${loan.id}`, label: `Overdue to ${name} since ${format(d, 'MMM d')}`, amount: -(loan.payment_amount || 0), date: today, overdueDate: d, status: 'overdue', dateLabel: 'due', reason: loan.reason || loan.purpose || '' });
                 });
                 cashLines.sort((a, b) => (a.date || new Date(0)) - (b.date || new Date(0)));
                 // In demo mode, strip out Elena's completed loan-7 payment (it's already paid off)
@@ -2023,9 +2025,12 @@ export default function Home() {
                           const isCustom = customExpenses.some(e => e.id === line.id);
                           const isFirstCustom = firstCustomIdx !== -1 && idx === firstCustomIdx;
                           const dotColor = isDone ? '#03ACEA' : isOverdue ? '#E8726E' : isPos ? '#03ACEA' : '#1D5B94';
-                          const subLabel = isOverdue
-                            ? (line.overdueDate ? `Overdue since ${format(line.overdueDate, 'MMM d')}` : 'Overdue')
-                            : line.date ? `${line.dateLabel} ${format(line.date, 'MMM d')}` : null;
+                          // Loan lines have date embedded in the label; show reason as sublabel.
+                          // Custom / demo-plan lines (Additional Income & Expenses) keep the date sublabel.
+                          const isLoanCashLine = line.id.startsWith('paid-') || line.id.startsWith('sched-') || line.id.startsWith('overdue-');
+                          const subLabel = isLoanCashLine
+                            ? (line.reason || null)
+                            : (line.date ? `${line.dateLabel || ''} ${format(line.date, 'MMM d')}`.trim() : null);
                           // Loan-payment lines are tickable too (scheduled or overdue).
                           // Clicking opens an inline input to confirm the actual amount.
                           const loanLineMatch = line.id.match(/^(sched-in|sched-out|overdue-in|overdue-out)-(.+)$/);
