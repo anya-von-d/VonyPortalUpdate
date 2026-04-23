@@ -74,7 +74,7 @@ export default function AppMenuDropdown({ style, onClose, onInviteFriend, onOpen
         </>
       )}
       <Item label="Pending Requests" onClick={() => { close(); onOpenPendingRequests && onOpenPendingRequests(); }} icon={<PendingIcon />} />
-      <Item label="Learn"           to={createPageUrl('LoanHelp')} onClick={close} icon={<LearnIcon />} />
+      <Item label="Learn"           to={createPageUrl('Learn')} onClick={close} icon={<LearnIcon />} />
       <Item label="Invite a Friend" onClick={() => { close(); onInviteFriend && onInviteFriend(); }} icon={<InviteIcon />} />
       <Item label="Contact Us"      onClick={() => { close(); window.open('mailto:hello@vony-lending.com', '_blank'); }} icon={<ContactIcon />} />
       <Item label="Help & Support"  to={createPageUrl('LoanHelp')} onClick={close} icon={<HelpIcon />} />
