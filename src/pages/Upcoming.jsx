@@ -449,21 +449,38 @@ export default function Upcoming() {
             {/* Col 2: Coming Later + Cashflow + So Far This Month */}
             <div className="upcoming-col-2" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 
-              {/* Coming Later */}
-              <div style={{ position: 'relative' }}>
-                <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
-                <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', padding: '14px 18px' }}>
+              {/* Coming Later — paper card + sticky insight tab */}
+              <div style={{ position: 'relative', marginTop: comingLater.length > 0 ? 30 : 0 }}>
+                {/* Sticky tab — sits above the card, protruding from top-left */}
+                {comingLater.length > 0 && (
+                  <div style={{
+                    position: 'absolute', top: -30, left: 14, zIndex: 5,
+                    background: '#FEFCE0',
+                    borderRadius: '4px 4px 0 0',
+                    padding: '5px 9px',
+                    boxShadow: '-1px -2px 6px rgba(0,0,0,0.07), 1px 0 0 rgba(0,0,0,0.04)',
+                    fontSize: 11, color: '#5C5940',
+                    fontFamily: "'DM Sans', sans-serif",
+                    whiteSpace: 'nowrap', lineHeight: 1.4,
+                  }}>
+                    You have <b style={{ color: '#1A1918' }}>{comingLater.length} payment{comingLater.length !== 1 ? 's' : ''}</b> coming up for <b style={{ color: '#1A1918' }}>{formatMoney(comingLater.reduce((s, e) => s + e.amount, 0))}</b>.
+                  </div>
+                )}
+                {/* Card — styled like Your Borrowing paper card */}
+                <div style={{
+                  background: '#FFFEFD', borderRadius: 4,
+                  boxShadow: '0 1px 0 2px #f0efea, 0 3px 0 3px #f5f4f0, 2px 6px 18px rgba(0,0,0,0.13)',
+                  padding: '14px 18px',
+                }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
                     <span style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>Coming Later</span>
-                    {comingLater.length > 0 && <span style={{ fontSize: 11, color: '#9B9A98' }}>{comingLater.length} · {formatMoney(comingLater.reduce((s, e) => s + e.amount, 0))}</span>}
+                    {comingLater.length > 0 && <span style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>{comingLater.length} · {formatMoney(comingLater.reduce((s, e) => s + e.amount, 0))}</span>}
                   </div>
-                  {/* Insight line */}
-                  <div style={{ fontSize: 12, color: '#787776', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.45, marginBottom: comingLater.length > 0 ? 10 : 0, textAlign: 'center' }}>
-                    {comingLater.length > 0
-                      ? <>You have <span style={{ fontWeight: 600, color: '#1A1918' }}>{comingLater.length} payment{comingLater.length !== 1 ? 's' : ''}</span> coming up for <span style={{ fontWeight: 600, color: '#1A1918' }}>{formatMoney(comingLater.reduce((s, e) => s + e.amount, 0))}</span>.</>
-                      : <>Clear skies ahead ✨</>
-                    }
-                  </div>
+                  {comingLater.length === 0 && (
+                    <div style={{ fontSize: 12, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.45, textAlign: 'center', padding: '4px 0' }}>
+                      Clear skies ahead ✨
+                    </div>
+                  )}
                   {comingLater.map(event => <PaymentRow key={event.loanId + '-later'} event={event} />)}
                 </div>
               </div>
@@ -474,67 +491,76 @@ export default function Upcoming() {
 
             {/* Col 3: Calendar */}
             <div className="upcoming-col-3" style={{ position: 'relative' }}>
-              <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
-            <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', padding: '14px 18px' }}>
+            <div style={{ background: '#ffffff', borderRadius: 8, overflow: 'hidden', boxShadow: '0 2px 12px rgba(0,0,0,0.10), 0 1px 3px rgba(0,0,0,0.07)' }}>
 
-              {/* Month nav */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-                <button onClick={() => setCalendarMonth(addMonths(calendarMonth, -1))} style={{ width: 24, height: 24, borderRadius: '50%', border: '1.5px solid rgba(0,0,0,0.09)', background: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#787776" strokeWidth="2" strokeLinecap="round"><polyline points="15 18 9 12 15 6" /></svg>
-                </button>
-                <span style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>{format(calendarMonth, 'MMMM yyyy')}</span>
-                <button onClick={() => setCalendarMonth(addMonths(calendarMonth, 1))} style={{ width: 24, height: 24, borderRadius: '50%', border: '1.5px solid rgba(0,0,0,0.09)', background: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#787776" strokeWidth="2" strokeLinecap="round"><polyline points="9 18 15 12 9 6" /></svg>
-                </button>
+              {/* ── Calendar header band ── */}
+              <div style={{ background: '#1A3F62', padding: '10px 14px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <button onClick={() => setCalendarMonth(addMonths(calendarMonth, -1))}
+                    style={{ width: 22, height: 22, borderRadius: '50%', border: 'none', background: 'rgba(255,255,255,0.15)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"><polyline points="15 18 9 12 15 6" /></svg>
+                  </button>
+                  <div style={{ textAlign: 'center' }}>
+                    <div style={{ fontSize: 15, fontWeight: 700, color: '#ffffff', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.02em' }}>{format(calendarMonth, 'MMMM')}</div>
+                    <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.6)', fontFamily: "'DM Sans', sans-serif", marginTop: -1 }}>{format(calendarMonth, 'yyyy')}</div>
+                  </div>
+                  <button onClick={() => setCalendarMonth(addMonths(calendarMonth, 1))}
+                    style={{ width: 22, height: 22, borderRadius: '50%', border: 'none', background: 'rgba(255,255,255,0.15)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 18 15 12 9 6" /></svg>
+                  </button>
+                </div>
               </div>
 
-              {/* Day-of-week headers — styled like Home week strip */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2, marginBottom: 4 }}>
-                {['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d => (
-                  <div key={d} style={{ textAlign: 'center', fontSize: 10, fontWeight: 500, color: '#9B9A98', letterSpacing: '-0.01em', paddingBottom: 4 }}>{d}</div>
+              {/* ── Day-of-week header row ── */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', background: '#F0F4F8', borderBottom: '1px solid rgba(0,0,0,0.08)' }}>
+                {['S','M','T','W','T','F','S'].map((d, idx) => (
+                  <div key={idx} style={{ textAlign: 'center', fontSize: 10, fontWeight: 700, color: idx === 0 || idx === 6 ? '#9B9A98' : '#787776', padding: '5px 0', letterSpacing: '0.04em', fontFamily: "'DM Sans', sans-serif" }}>{d}</div>
                 ))}
               </div>
 
-              {/* Calendar grid */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2 }}>
+              {/* ── Calendar grid ── */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)' }}>
                 {calendarDays.map((day, i) => {
                   const inMonth = isSameMonth(day, calendarMonth);
                   const isToday = isSameDay(day, new Date());
-                  const isSelected = isSameDay(day, selectedDay);
+                  const isSelected = isSameDay(day, selectedDay) && !isToday;
                   const key = format(day, 'yyyy-MM-dd');
                   const dayEvents = calendarEvents[key] || [];
                   const hasIncoming = dayEvents.some(e => !e.isCompleted && e.isLender);
                   const hasOutgoing = dayEvents.some(e => !e.isCompleted && !e.isLender);
                   const hasCompleted = dayEvents.some(e => e.isCompleted);
+                  const isWeekend = i % 7 === 0 || i % 7 === 6;
+                  const isEndOfRow = i % 7 === 6;
+                  const isLastRow = i >= calendarDays.length - 7;
                   return (
                     <button
                       key={i}
-                      onClick={() => { setSelectedDay(day); }}
+                      onClick={() => setSelectedDay(day)}
                       style={{
-                        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
-                        padding: '5px 2px 6px', borderRadius: 8, border: 'none',
-                        background: isSelected && !isToday ? 'rgba(0,0,0,0.04)' : 'transparent',
-                        cursor: 'pointer', opacity: inMonth ? 1 : 0.28,
+                        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start',
+                        padding: '6px 0 5px', border: 'none',
+                        borderRight: isEndOfRow ? 'none' : '1px solid rgba(0,0,0,0.05)',
+                        borderBottom: isLastRow ? 'none' : '1px solid rgba(0,0,0,0.05)',
+                        background: isSelected ? 'rgba(3,172,234,0.06)' : isWeekend && inMonth ? 'rgba(0,0,0,0.015)' : 'transparent',
+                        cursor: 'pointer', opacity: inMonth ? 1 : 0.3,
+                        gap: 3, minHeight: 44,
                       }}
                     >
-                      {/* Day number — same style as Home week strip */}
                       <span style={{
-                        fontSize: 11, fontWeight: isToday ? 700 : 500,
-                        color: isToday ? '#03ACEA' : '#1A1918',
+                        fontSize: 11, fontWeight: isToday ? 700 : 400,
                         width: 22, height: 22, borderRadius: '50%',
                         display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                        background: isToday ? '#EBF4FA' : 'transparent',
-                        border: isToday ? '1.5px solid #03ACEA' : isSelected ? '1.5px solid rgba(0,0,0,0.15)' : '1.5px solid transparent',
+                        background: isToday ? '#E8726E' : 'transparent',
+                        color: isToday ? '#fff' : isWeekend ? '#9B9A98' : '#1A1918',
                         fontFamily: "'DM Sans', sans-serif",
                       }}>
                         {format(day, 'd')}
                       </span>
-                      {/* Dots for payments */}
                       {(hasIncoming || hasOutgoing || hasCompleted) && (
                         <div style={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-                          {hasOutgoing && <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#1D5B94', flexShrink: 0 }} />}
-                          {hasIncoming && <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#03ACEA', flexShrink: 0 }} />}
-                          {hasCompleted && <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#22c55e', flexShrink: 0 }} />}
+                          {hasOutgoing && <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#1D5B94', flexShrink: 0 }} />}
+                          {hasIncoming && <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#03ACEA', flexShrink: 0 }} />}
+                          {hasCompleted && <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#22c55e', flexShrink: 0 }} />}
                         </div>
                       )}
                     </button>
@@ -542,37 +568,22 @@ export default function Upcoming() {
                 })}
               </div>
 
-              {/* Selected day details */}
-              <div style={{ marginTop: 16, paddingTop: 14, borderTop: '1px solid rgba(0,0,0,0.06)' }}>
-                {/* Color key */}
-                <div style={{ display: 'flex', gap: 10, marginBottom: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                    <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#03ACEA', flexShrink: 0, display: 'inline-block' }} />
-                    <span style={{ fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>Incoming</span>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                    <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#1D5B94', flexShrink: 0, display: 'inline-block' }} />
-                    <span style={{ fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>Outgoing</span>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                    <span style={{ width: 6, height: 6, borderRadius: 2, background: '#E8726E', flexShrink: 0, display: 'inline-block' }} />
-                    <span style={{ fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>Overdue</span>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                    <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#22c55e', flexShrink: 0, display: 'inline-block' }} />
-                    <span style={{ fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>Complete</span>
-                  </div>
+              {/* ── Selected day details ── */}
+              <div style={{ padding: '12px 14px', borderTop: '1px solid rgba(0,0,0,0.07)', background: '#FAFAFA' }}>
+                {/* Legend */}
+                <div style={{ display: 'flex', gap: 10, marginBottom: 10, flexWrap: 'wrap' }}>
+                  {[['#03ACEA','Incoming'],['#1D5B94','Outgoing'],['#E8726E','Overdue'],['#22c55e','Complete']].map(([color, label]) => (
+                    <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+                      <span style={{ width: 6, height: 6, borderRadius: '50%', background: color, flexShrink: 0, display: 'inline-block' }} />
+                      <span style={{ fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>{label}</span>
+                    </div>
+                  ))}
                 </div>
                 {/* Date label */}
-                <div style={{
-                  fontSize: 9, fontWeight: 700, color: '#787776',
-                  letterSpacing: '0.1em', textTransform: 'uppercase',
-                  fontFamily: "'DM Sans', sans-serif", marginBottom: 8,
-                }}>
+                <div style={{ fontSize: 9, fontWeight: 700, color: '#787776', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif", marginBottom: 8 }}>
                   {format(selectedDay, 'EEEE, MMMM d')}
                 </div>
-
-                {/* Payment rows for selected day */}
+                {/* Payment rows */}
                 {(() => {
                   const key = format(selectedDay, 'yyyy-MM-dd');
                   const dayEvents = calendarEvents[key] || [];
@@ -586,16 +597,9 @@ export default function Upcoming() {
                         <div style={{ width: 3, borderRadius: 2, background: barColor, flexShrink: 0, minHeight: 18 }} />
                         <div>
                           <div style={{ fontSize: 12, color: '#1A1918', fontWeight: 500, fontFamily: "'DM Sans', sans-serif" }}>
-                            {ev.isLender
-                              ? <>{formatMoney(ev.amount)} expected from {ev.firstName}</>
-                              : <>Send {ev.firstName} {formatMoney(ev.amount)}</>
-                            }
+                            {ev.isLender ? <>{formatMoney(ev.amount)} expected from {ev.firstName}</> : <>Send {ev.firstName} {formatMoney(ev.amount)}</>}
                           </div>
-                          {ev.purpose && (
-                            <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 1 }}>
-                              {ev.purpose}
-                            </div>
-                          )}
+                          {ev.purpose && <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 1 }}>{ev.purpose}</div>}
                         </div>
                       </div>
                     );
