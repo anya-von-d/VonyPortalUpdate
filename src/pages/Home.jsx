@@ -756,9 +756,24 @@ export default function Home() {
     const exp = { id: `exp-${Date.now()}`, label: label.trim(), amount: signed, date: date || null, status: 'custom' };
     setCustomExpenses(prev => { const next = [...prev, exp]; try { localStorage.setItem('vony.plan-expenses', JSON.stringify(next)); } catch {} return next; });
   };
+  const deleteCustomExpense = (id) => {
+    setCustomExpenses(prev => {
+      const next = prev.filter(e => e.id !== id);
+      try { localStorage.setItem('vony.plan-expenses', JSON.stringify(next)); } catch {}
+      return next;
+    });
+  };
+  const toggleCustomExpenseDone = (id) => {
+    setCustomExpenses(prev => {
+      const next = prev.map(e => e.id === id ? { ...e, done: !e.done } : e);
+      try { localStorage.setItem('vony.plan-expenses', JSON.stringify(next)); } catch {}
+      return next;
+    });
+  };
   const [lbTab, setLbTab] = useState('lending'); // 'lending' | 'borrowing'
   const [selectedBubblePerson, setSelectedBubblePerson] = useState(null);
   const [hoveredPostit, setHoveredPostit] = useState(null);
+  const [editingPlan, setEditingPlan] = useState(false);
   const loansWasOut = useRef(true);
   const activeWasOut = useRef(true);
   const [bigScreen, setBigScreen] = useState(window.innerWidth > 900);
@@ -1946,7 +1961,8 @@ export default function Home() {
                   const otherId = isLender ? loan.borrower_id : loan.lender_id;
                   const prof = safeAllProfiles.find(pp => pp.user_id === otherId);
                   const name = prof?.full_name?.split(' ')[0] || prof?.username || (isLender ? 'Borrower' : 'Lender');
-                  cashLines.push({ id: `paid-${p.id}`, label: isLender ? `From ${name}` : `To ${name}`, amount: isLender ? (p.amount || 0) : -(p.amount || 0), date: d, status: 'done' });
+                  const dateLabel = isLender ? 'received' : 'sent';
+                  cashLines.push({ id: `paid-${p.id}`, label: isLender ? `From ${name}` : `To ${name}`, amount: isLender ? (p.amount || 0) : -(p.amount || 0), date: d, status: 'done', dateLabel });
                 });
                 const completedThisMonth = new Set(safePayments.filter(p => {
                   if (!p || p.status !== 'completed') return false;
@@ -1960,7 +1976,7 @@ export default function Home() {
                   if (completedThisMonth.has(loan.id)) return;
                   const p = safeAllProfiles.find(pp => pp.user_id === loan.borrower_id);
                   const name = p?.full_name?.split(' ')[0] || p?.username || 'Borrower';
-                  cashLines.push({ id: `sched-in-${loan.id}`, label: `From ${name}`, amount: loan.payment_amount || 0, date: d, status: 'scheduled' });
+                  cashLines.push({ id: `sched-in-${loan.id}`, label: `From ${name}`, amount: loan.payment_amount || 0, date: d, status: 'scheduled', dateLabel: 'expect by' });
                 });
                 borrowedLoans.forEach(loan => {
                   if (!loan.next_payment_date) return;
@@ -1969,7 +1985,7 @@ export default function Home() {
                   if (completedThisMonth.has(loan.id)) return;
                   const p = safeAllProfiles.find(pp => pp.user_id === loan.lender_id);
                   const name = p?.full_name?.split(' ')[0] || p?.username || 'Lender';
-                  cashLines.push({ id: `sched-out-${loan.id}`, label: `To ${name}`, amount: -(loan.payment_amount || 0), date: d, status: 'scheduled' });
+                  cashLines.push({ id: `sched-out-${loan.id}`, label: `To ${name}`, amount: -(loan.payment_amount || 0), date: d, status: 'scheduled', dateLabel: 'due' });
                 });
                 lentLoans.forEach(loan => {
                   if (!loan.next_payment_date) return;
@@ -1978,7 +1994,7 @@ export default function Home() {
                   if (completedThisMonth.has(loan.id)) return;
                   const p = safeAllProfiles.find(pp => pp.user_id === loan.borrower_id);
                   const name = p?.full_name?.split(' ')[0] || p?.username || 'Borrower';
-                  cashLines.push({ id: `overdue-in-${loan.id}`, label: `From ${name}`, amount: loan.payment_amount || 0, date: d, status: 'overdue' });
+                  cashLines.push({ id: `overdue-in-${loan.id}`, label: `From ${name}`, amount: loan.payment_amount || 0, date: d, status: 'overdue', dateLabel: 'expect by' });
                 });
                 borrowedLoans.forEach(loan => {
                   if (!loan.next_payment_date) return;
@@ -1987,14 +2003,29 @@ export default function Home() {
                   if (completedThisMonth.has(loan.id)) return;
                   const p = safeAllProfiles.find(pp => pp.user_id === loan.lender_id);
                   const name = p?.full_name?.split(' ')[0] || p?.username || 'Lender';
-                  cashLines.push({ id: `overdue-out-${loan.id}`, label: `To ${name}`, amount: -(loan.payment_amount || 0), date: d, status: 'overdue' });
+                  cashLines.push({ id: `overdue-out-${loan.id}`, label: `To ${name}`, amount: -(loan.payment_amount || 0), date: d, status: 'overdue', dateLabel: 'due' });
                 });
                 cashLines.sort((a, b) => (a.date || new Date(0)) - (b.date || new Date(0)));
-                const allLines = [...cashLines, ...customExpenses.map(e => ({ ...e, date: e.date ? toLocalDate(e.date) : null, status: e.status || 'custom' }))];
+                const customLines = customExpenses.map(e => ({
+                  ...e,
+                  date: e.date ? toLocalDate(e.date) : null,
+                  status: e.done ? 'done' : (e.status || 'custom'),
+                  dateLabel: e.amount >= 0 ? 'expect by' : 'due',
+                }));
+                const allLines = [...cashLines, ...customLines];
                 const total = allLines.reduce((s, l) => s + l.amount, 0);
+                const soFarTotal = allLines.filter(l => l.status === 'done').reduce((s, l) => s + l.amount, 0);
+                const fmtSigned = (amt) => amt === 0 ? '$0.00' : amt > 0 ? `+${formatMoney(amt)}` : `-${formatMoney(Math.abs(amt))}`;
                 return (
                   <div className="home-card-plan-month" style={{ background: '#ffffff', borderRadius: 4, boxShadow: '2px 5px 16px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.10)', padding: '14px 18px' }}>
-                    <SectionHeader title="Plan Your Month" />
+                    {/* Header row with title + Edit button */}
+                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 2 }}>
+                      <SectionHeader title="Plan Your Month" />
+                      <button type="button" onClick={() => setEditingPlan(v => !v)}
+                        style={{ fontSize: 10, fontWeight: 600, color: editingPlan ? '#E8726E' : '#9B9A98', fontFamily: "'DM Sans', sans-serif", background: 'none', border: 'none', cursor: 'pointer', padding: '2px 0', marginTop: 1, letterSpacing: 0.2 }}>
+                        {editingPlan ? 'Done' : 'Edit'}
+                      </button>
+                    </div>
                     <div style={{ fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: -6, marginBottom: 10 }}>{monthName}</div>
 
                     {allLines.length === 0 ? (
@@ -2005,10 +2036,14 @@ export default function Home() {
                           const isPos = line.amount >= 0;
                           const isDone = line.status === 'done';
                           const isOverdue = line.status === 'overdue';
+                          const isCustom = customExpenses.some(e => e.id === line.id);
                           const dotColor = isDone ? '#03ACEA' : isOverdue ? '#E8726E' : isPos ? '#03ACEA' : '#1D5B94';
                           return (
-                            <div key={line.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '7px 0', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
-                              <div style={{ flexShrink: 0, width: 16, height: 16, borderRadius: '50%', background: isDone ? '#03ACEA' : `${dotColor}18`, border: `1.5px solid ${dotColor}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <div key={line.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 0', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+                              {/* Tick circle — clickable for custom items */}
+                              <div
+                                onClick={isCustom ? () => toggleCustomExpenseDone(line.id) : undefined}
+                                style={{ flexShrink: 0, width: 16, height: 16, borderRadius: '50%', background: isDone ? '#03ACEA' : `${dotColor}18`, border: `1.5px solid ${dotColor}`, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: isCustom ? 'pointer' : 'default', alignSelf: 'center' }}>
                                 {isDone
                                   ? <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                                   : isOverdue
@@ -2016,18 +2051,38 @@ export default function Home() {
                                     : null
                                 }
                               </div>
-                              <span style={{ flex: 1, minWidth: 0, fontSize: 12, fontWeight: 500, color: isDone ? '#B0AEA8' : '#1A1918', fontFamily: "'DM Sans', sans-serif", textDecoration: isDone ? 'line-through' : 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{line.label}</span>
-                              {line.date && <span style={{ fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", flexShrink: 0 }}>{format(line.date, 'MMM d')}</span>}
-                              <span style={{ fontSize: 12, fontWeight: 600, color: isPos ? '#03ACEA' : '#1D5B94', fontFamily: "'DM Sans', sans-serif", flexShrink: 0 }}>{isPos ? '+' : ''}{formatMoney(line.amount)}</span>
+                              {/* Two-line label block */}
+                              <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 1 }}>
+                                <span style={{ fontSize: 12, fontWeight: 500, color: isDone ? '#B0AEA8' : '#1A1918', fontFamily: "'DM Sans', sans-serif", overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{line.label}</span>
+                                {line.date && (
+                                  <span style={{ fontSize: 10, color: '#B0AEA8', fontFamily: "'DM Sans', sans-serif" }}>{line.dateLabel} {format(line.date, 'MMM d')}</span>
+                                )}
+                              </div>
+                              {/* Amount — centered between two lines */}
+                              <span style={{ fontSize: 12, fontWeight: 600, color: isPos ? '#03ACEA' : '#E8726E', fontFamily: "'DM Sans', sans-serif", flexShrink: 0, alignSelf: 'center' }}>{fmtSigned(line.amount)}</span>
+                              {/* Delete button — edit mode, custom only */}
+                              {editingPlan && isCustom && (
+                                <button type="button" onClick={() => deleteCustomExpense(line.id)}
+                                  style={{ flexShrink: 0, width: 16, height: 16, borderRadius: '50%', background: '#FEE2E1', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, marginLeft: 2 }}>
+                                  <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#E8726E" strokeWidth="3" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                </button>
+                              )}
                             </div>
                           );
                         })}
                       </div>
                     )}
 
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 10, paddingTop: 8, borderTop: '1.5px solid rgba(0,0,0,0.07)' }}>
-                      <span style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>Net {monthName}</span>
-                      <span style={{ fontSize: 13, fontWeight: 700, color: total >= 0 ? '#03ACEA' : '#1D5B94', fontFamily: "'DM Sans', sans-serif" }}>{total >= 0 ? '+' : ''}{formatMoney(total)}</span>
+                    {/* Footer: So far + Net — styled like the image */}
+                    <div style={{ marginTop: 10, borderTop: '1.5px solid rgba(0,0,0,0.08)' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
+                        <span style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", fontStyle: 'italic' }}>So far this month</span>
+                        <span style={{ fontSize: 11, fontWeight: 600, color: soFarTotal >= 0 ? '#03ACEA' : '#E8726E', fontFamily: "'DM Sans', sans-serif" }}>{fmtSigned(soFarTotal)}</span>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '7px 0 2px' }}>
+                        <span style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", fontStyle: 'italic' }}>Net {monthName}</span>
+                        <span style={{ fontSize: 13, fontWeight: 700, color: total >= 0 ? '#03ACEA' : '#E8726E', fontFamily: "'DM Sans', sans-serif" }}>{fmtSigned(total)}</span>
+                      </div>
                     </div>
 
                     {addingExpense && (
@@ -2366,25 +2421,27 @@ export default function Home() {
               {(monthlyExpectedReceive > 0 || monthlyExpectedPay > 0) && (
                 <div className="home-card-monthly-summary" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                   {monthlyExpectedReceive > 0 && (
-                    <div style={{ background: '#ffffff', borderRadius: 4, border: 'none', boxShadow: '2px 5px 16px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.10)', padding: '12px 14px', display: 'flex', alignItems: 'center', gap: 12 }}>
-                      <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(3,172,234,0.1)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-                      </div>
-                      <div>
-                        <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.3 }}>You've received <span style={{ color: '#03ACEA' }}>{formatMoney(monthlyReceived)}</span></div>
-                        <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 2 }}>of {formatMoney(monthlyExpectedReceive)} expected in {format(today, 'MMMM')}</div>
-                      </div>
+                    <div style={{ position: 'relative', background: '#FEFEF9', borderRadius: '2px 2px 2px 2px', border: 'none',
+                      boxShadow: '0 1px 3px rgba(0,0,0,0.07), 2px 4px 10px rgba(0,0,0,0.09), 8px 12px 22px rgba(0,0,0,0.10)',
+                      padding: '12px 14px 14px 14px', overflow: 'hidden' }}>
+                      <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.3 }}>You've received <span style={{ color: '#03ACEA' }}>{formatMoney(monthlyReceived)}</span></div>
+                      <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 2 }}>of {formatMoney(monthlyExpectedReceive)} expected in {format(today, 'MMMM')}</div>
+                      {/* Corner curl — bottom right */}
+                      <div style={{ position: 'absolute', bottom: 0, right: 0, width: 20, height: 20,
+                        background: 'linear-gradient(225deg, #EEEEE6 50%, transparent 50%)',
+                        boxShadow: '-2px -2px 4px rgba(0,0,0,0.08)' }} />
                     </div>
                   )}
                   {monthlyExpectedPay > 0 && (
-                    <div style={{ background: '#ffffff', borderRadius: 4, border: 'none', boxShadow: '2px 5px 16px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.10)', padding: '12px 14px', display: 'flex', alignItems: 'center', gap: 12 }}>
-                      <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(29,91,148,0.08)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1D5B94" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>
-                      </div>
-                      <div>
-                        <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.3 }}>You've paid <span style={{ color: '#1D5B94' }}>{formatMoney(monthlyPaidOut)}</span></div>
-                        <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 2 }}>of {formatMoney(monthlyExpectedPay)} due in {format(today, 'MMMM')}</div>
-                      </div>
+                    <div style={{ position: 'relative', background: '#FEFEF9', borderRadius: '2px 2px 2px 2px', border: 'none',
+                      boxShadow: '0 1px 3px rgba(0,0,0,0.07), 2px 4px 10px rgba(0,0,0,0.09), 8px 12px 22px rgba(0,0,0,0.10)',
+                      padding: '12px 14px 14px 14px', overflow: 'hidden' }}>
+                      <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.3 }}>You've paid <span style={{ color: '#1D5B94' }}>{formatMoney(monthlyPaidOut)}</span></div>
+                      <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 2 }}>of {formatMoney(monthlyExpectedPay)} due in {format(today, 'MMMM')}</div>
+                      {/* Corner curl — bottom right */}
+                      <div style={{ position: 'absolute', bottom: 0, right: 0, width: 20, height: 20,
+                        background: 'linear-gradient(225deg, #EEEEE6 50%, transparent 50%)',
+                        boxShadow: '-2px -2px 4px rgba(0,0,0,0.08)' }} />
                     </div>
                   )}
                 </div>
