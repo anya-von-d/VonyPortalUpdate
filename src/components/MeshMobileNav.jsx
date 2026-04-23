@@ -91,7 +91,7 @@ export default function MeshMobileNav({ user, activePage }) {
     <>
       {/* ── Floating top row ── */}
       <div style={{
-        position: 'fixed', top: 18, left: 0, right: 0, zIndex: 200,
+        position: 'fixed', top: 34, left: 0, right: 0, zIndex: 200,
         display: 'flex', alignItems: 'center',
         justifyContent: 'space-between',
         padding: '0 20px',
@@ -250,13 +250,13 @@ export default function MeshMobileNav({ user, activePage }) {
           onClose={() => { setFriendsOpen(false); setFriendsInitialTab(null); setFriendsInitialRequestsOpen(false); }}
           initialTab={friendsInitialTab}
           initialRequestsOpen={friendsInitialRequestsOpen}
-          positionOverride={{ top: 76, left: 12, right: 12, width: 'auto' }}
+          positionOverride={{ top: 92, left: 12, right: 12, width: 'auto' }}
         />
       )}
       {notifOpen && (
         <NotificationsPopup
           onClose={() => setNotifOpen(false)}
-          positionOverride={{ top: 76, left: 12, right: 12, width: 'auto' }}
+          positionOverride={{ top: 92, left: 12, right: 12, width: 'auto' }}
         />
       )}
     </>

@@ -109,7 +109,7 @@ export default function Layout({ children }) {
       {/* Thin blue top bar with centered date */}
       <div style={{
         position: 'fixed', top: 0, left: 0, right: 0,
-        height: 22, background: '#000000',
+        height: 22, background: '#0B2F5C',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         zIndex: 50, pointerEvents: 'none',
         fontFamily: "'DM Sans', sans-serif",
@@ -125,8 +125,8 @@ export default function Layout({ children }) {
       {/* Coarse fibre overlay — adds pulp/texture depth */}
       <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 15, backgroundImage: GRAIN_FIBRE, backgroundSize: '600px 600px', mixBlendMode: 'multiply', opacity: 0.20 }} />
 
-      {/* Main content container — offset so the nav sits below the top bar with a gap */}
-      <main className="flex-1" style={{ paddingTop: 34 }}>
+      {/* Main content container */}
+      <main className="flex-1">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={location.pathname}
