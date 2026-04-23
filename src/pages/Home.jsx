@@ -2016,11 +2016,7 @@ export default function Home() {
                 const soFarTotal = allLines.filter(l => l.status === 'done').reduce((s, l) => s + l.amount, 0);
                 const fmtSigned = (amt) => amt === 0 ? '$0.00' : amt > 0 ? `+${formatMoney(amt)}` : `-${formatMoney(Math.abs(amt))}`;
                 return (
-                  <div className="home-card-plan-month" style={{ position: 'relative' }}>
-                    {/* Stacked paper pages — visible below and to the right */}
-                  <div style={{ position: 'absolute', top: 3, bottom: -9, left: 7, right: -7, background: '#E4E0D6', borderRadius: 4, zIndex: 0 }} />
-                  <div style={{ position: 'absolute', top: 2, bottom: -5, left: 4, right: -4, background: '#F0EDE5', borderRadius: 4, zIndex: 0 }} />
-                    <div style={{ position: 'relative', zIndex: 1, background: '#FEFCF8', borderRadius: 4, boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.07)', border: '1px solid rgba(0,0,0,0.09)', padding: '14px 18px' }}>
+                  <div className="home-card-plan-month" style={{ background: '#FEFCF8', borderRadius: 4, boxShadow: '0 1px 0 2px #f0efea, 0 3px 0 3px #f5f4f0, 2px 6px 18px rgba(0,0,0,0.13)', padding: '14px 18px' }}>
                     {/* Header row with title + Edit button */}
                     <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 2 }}>
                       <SectionHeader title="Plan Your Month" />
@@ -2044,11 +2040,11 @@ export default function Home() {
                             ? `Overdue since ${format(line.date, 'MMM d')}`
                             : line.date ? `${line.dateLabel} ${format(line.date, 'MMM d')}` : null;
                           return (
-                            <div key={line.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 0', borderBottom: idx < allLines.length - 1 ? '1px solid #ECEAE5' : 'none' }}>
+                            <div key={line.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '4px 0', borderBottom: idx < allLines.length - 1 ? '1px solid #ECEAE5' : 'none' }}>
                               {/* Tick circle — clickable for custom items */}
                               <div
                                 onClick={isCustom ? () => toggleCustomExpenseDone(line.id) : undefined}
-                                style={{ flexShrink: 0, width: 16, height: 16, borderRadius: '50%', background: isDone ? '#03ACEA' : `${dotColor}18`, border: `1.5px solid ${dotColor}`, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: isCustom ? 'pointer' : 'default', alignSelf: 'center' }}>
+                                style={{ flexShrink: 0, width: 13, height: 13, borderRadius: '50%', background: isDone ? '#03ACEA' : `${dotColor}18`, border: `1.5px solid ${dotColor}`, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: isCustom ? 'pointer' : 'default', alignSelf: 'center' }}>
                                 {isDone
                                   ? <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                                   : isOverdue
@@ -2115,7 +2111,6 @@ export default function Home() {
                       <button type="button" onClick={() => { setAddingExpense(v => !v); setNewExpenseLabel(''); setNewExpenseAmount(''); setNewExpenseDate(''); setNewExpenseDir('out'); }} style={{ width: 26, height: 26, borderRadius: '50%', background: addingExpense ? '#EBF4FA' : '#F4F3F1', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }} aria-label="Add expense">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={addingExpense ? '#03ACEA' : '#787776'} strokeWidth="2.8" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                       </button>
-                    </div>
                     </div>
                   </div>
                 );
@@ -2382,7 +2377,7 @@ export default function Home() {
                       <div style={{ height: 1, background: 'rgba(173,210,230,0.55)' }} />
 
                       {/* Task rows — indented past red margin */}
-                      <div style={{ padding: '0 18px 0 48px', position: 'relative', zIndex: 1 }}>
+                      <div style={{ padding: '0 18px 0 18px', position: 'relative', zIndex: 1 }}>
                         {sortedTasks.length === 0 ? (
                           <div style={{ padding: '10px 0', fontSize: 12, color: '#9B9A98', textAlign: 'center', borderBottom: '1px solid rgba(173,210,230,0.4)' }}>Nothing on the list right now 🌿</div>
                         ) : (
@@ -2390,8 +2385,8 @@ export default function Home() {
                             const checked = checkedTasks.has(task.id);
                             return (
                               <button key={task.id} type="button" onClick={() => { if (!checked && task.onCheck) { task.onCheck(); return; } toggleTask(task.id); }}
-                                style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 0', background: 'transparent', border: 'none', borderBottom: '1px solid rgba(173,210,230,0.4)', cursor: 'pointer', textAlign: 'left', fontFamily: "'DM Sans', sans-serif", width: '100%' }}>
-                                <span style={{ width: 16, height: 16, borderRadius: '50%', flexShrink: 0, border: checked ? '1.5px solid #03ACEA' : '1.5px solid #C4C2BE', background: checked ? '#03ACEA' : 'transparent', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.15s' }}>
+                                style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '5px 0', background: 'transparent', border: 'none', borderBottom: '1px solid rgba(173,210,230,0.4)', cursor: 'pointer', textAlign: 'left', fontFamily: "'DM Sans', sans-serif", width: '100%' }}>
+                                <span style={{ width: 13, height: 13, borderRadius: '50%', flexShrink: 0, border: checked ? '1.5px solid #03ACEA' : '1.5px solid #C4C2BE', background: checked ? '#03ACEA' : 'transparent', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.15s' }}>
                                   {checked && <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>}
                                 </span>
                                 <span style={{ fontSize: 12, color: checked ? '#AEACA8' : '#2A2926', textDecoration: checked ? 'line-through' : 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{task.label}</span>
@@ -2471,8 +2466,6 @@ export default function Home() {
                   const sz = 36, r = 14, cx = 18, cy = 18;
                   const circ = 2 * Math.PI * r;
                   const dash = pct * circ;
-                  const avatarUrl = otherProfile?.avatar_url || otherProfile?.profile_picture_url;
-                  const avatarSize = 25;
                   return (
                     <div key={loan.id} style={{ padding: '9px 0', display: 'flex', alignItems: 'center', gap: 9 }}>
                       <div style={{ position: 'relative', width: sz, height: sz, flexShrink: 0 }}>
@@ -2485,14 +2478,6 @@ export default function Home() {
                             />
                           )}
                         </svg>
-                        {avatarUrl ? (
-                          <img src={avatarUrl} alt={name}
-                            style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: avatarSize, height: avatarSize, borderRadius: '50%', objectFit: 'cover' }} />
-                        ) : (
-                          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: avatarSize, height: avatarSize, borderRadius: '50%', background: `${circleColor}22`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <span style={{ fontSize: 8, fontWeight: 700, color: circleColor, fontFamily: "'DM Sans', sans-serif" }}>{name.charAt(0)}</span>
-                          </div>
-                        )}
                       </div>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
