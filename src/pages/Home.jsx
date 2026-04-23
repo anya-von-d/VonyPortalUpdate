@@ -2150,24 +2150,9 @@ export default function Home() {
                 let si = 0;
                 while (reminders.length < 3) { reminders.push(suggestions[si++ % suggestions.length]); }
                 const noteConfigs = [
-                  {
-                    bg: 'linear-gradient(168deg, #CDE6FF 0%, #A6CDF5 55%, #8FBEEC 100%)',
-                    topBand: 'linear-gradient(180deg, rgba(30,75,120,0.22) 0%, rgba(30,75,120,0.10) 45%, rgba(30,75,120,0) 100%)',
-                    curlBg: 'linear-gradient(135deg, #7AAEDB 0%, #5B95C6 100%)',
-                    rotate: '-3.5deg', ty: '7px', zIndex: 1, textColor: '#0A3550',
-                  },
-                  {
-                    bg: 'linear-gradient(168deg, #E4F1FF 0%, #C3DCF5 55%, #AECCEC 100%)',
-                    topBand: 'linear-gradient(180deg, rgba(25,70,115,0.20) 0%, rgba(25,70,115,0.08) 45%, rgba(25,70,115,0) 100%)',
-                    curlBg: 'linear-gradient(135deg, #9EC1E0 0%, #7FA6CC 100%)',
-                    rotate: '1.8deg',  ty: '0px',  zIndex: 2, textColor: '#0A3550',
-                  },
-                  {
-                    bg: 'linear-gradient(168deg, #BADBFB 0%, #8EB9E8 55%, #6FA3D6 100%)',
-                    topBand: 'linear-gradient(180deg, rgba(15,55,100,0.26) 0%, rgba(15,55,100,0.12) 45%, rgba(15,55,100,0) 100%)',
-                    curlBg: 'linear-gradient(135deg, #5F94C6 0%, #4477AE 100%)',
-                    rotate: '-1deg',   ty: '5px',  zIndex: 3, textColor: '#0A3550',
-                  },
+                  { bg: 'linear-gradient(170deg, #BFDFFF 0%, #93C5FF 100%)', rotate: '-3.5deg', ty: '7px', zIndex: 1, textColor: '#0A3550' },
+                  { bg: 'linear-gradient(170deg, #D8EDFF 0%, #B3D8FF 100%)', rotate: '1.8deg',  ty: '0px',  zIndex: 2, textColor: '#0A3550' },
+                  { bg: 'linear-gradient(170deg, #A8D4FF 0%, #7BB8FF 100%)', rotate: '-1deg',   ty: '5px',  zIndex: 3, textColor: '#0A3550' },
                 ];
                 return (
                   <div className="home-card-attention" style={{ display: 'flex', paddingBottom: 10, overflow: 'visible' }}>
@@ -2192,10 +2177,9 @@ export default function Home() {
                               : `rotate(${nc.rotate}) translateY(${nc.ty})`,
                             zIndex: hoveredPostit === i ? 10 : nc.zIndex,
                             position: 'relative',
-                            overflow: 'hidden',
                             boxShadow: hoveredPostit === i
-                              ? '0 1px 1px rgba(0,0,0,0.14), 3px 6px 10px rgba(0,0,0,0.16), 6px 14px 22px rgba(0,0,0,0.16), 10px 26px 40px rgba(0,0,0,0.12), inset 0 -1px 2px rgba(0,0,0,0.05), inset 0 1px 1px rgba(255,255,255,0.35)'
-                              : '0 1px 1px rgba(0,0,0,0.12), 2px 4px 7px rgba(0,0,0,0.14), 4px 10px 18px rgba(0,0,0,0.14), 8px 20px 32px rgba(0,0,0,0.09), inset 0 -1px 2px rgba(0,0,0,0.04), inset 0 1px 1px rgba(255,255,255,0.35)',
+                              ? '4px 12px 28px rgba(0,0,0,0.22), 0 2px 6px rgba(0,0,0,0.14)'
+                              : '2px 5px 16px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.10)',
                             cursor: rem.action ? 'pointer' : 'default',
                             display: 'flex',
                             flexDirection: 'column',
@@ -2203,16 +2187,9 @@ export default function Home() {
                             transition: 'transform 0.18s ease, box-shadow 0.18s ease',
                           }}
                         >
-                          {/* Adhesive top band — darker gradient fading down */}
-                          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 32, background: nc.topBand, pointerEvents: 'none' }} />
-                          {/* Diagonal lighting sheen */}
-                          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.08) 35%, rgba(0,0,0,0) 60%, rgba(0,0,0,0.06) 100%)', pointerEvents: 'none' }} />
-                          {/* Subtle inner vignette at bottom edge for weight */}
-                          <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: 14, background: 'linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.09) 100%)', pointerEvents: 'none' }} />
-                          {/* Corner curl / fold at bottom-right */}
-                          <div style={{ position: 'absolute', bottom: 0, right: 0, width: 14, height: 14, background: nc.curlBg, clipPath: 'polygon(100% 0, 100% 100%, 0 100%)', boxShadow: '-1px -1px 2px rgba(0,0,0,0.18)', pointerEvents: 'none' }} />
+                          {/* Top sticky strip */}
+                          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 6, background: 'rgba(0,0,0,0.08)', borderRadius: '2px 2px 0 0' }} />
                           <p style={{
-                            position: 'relative',
                             margin: 0,
                             marginTop: 8,
                             fontSize: 11,
@@ -2342,19 +2319,75 @@ export default function Home() {
             {/* Col 3: Monthly Summary + Your Loans */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 
-              {/* Monthly received / paid boxes — stacked full width */}
+              {/* Monthly received / paid boxes — sticky tab style */}
               {(monthlyExpectedReceive > 0 || monthlyExpectedPay > 0) && (
-                <div className="home-card-monthly-summary" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <div className="home-card-monthly-summary" style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
                   {monthlyExpectedReceive > 0 && (
-                    <div style={{ background: '#ffffff', borderRadius: 4, boxShadow: '2px 5px 16px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.10)', padding: '12px 14px 13px 12px' }}>
-                      <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.3 }}>You've received <span style={{ color: '#03ACEA' }}>{formatMoney(monthlyReceived)}</span></div>
-                      <div style={{ fontSize: 11, color: '#787776', fontFamily: "'DM Sans', sans-serif", marginTop: 2 }}>of {formatMoney(monthlyExpectedReceive)} expected in {format(today, 'MMMM')}</div>
+                    <div style={{ position: 'relative', paddingTop: 13 }}>
+                      {/* Tab sticking up */}
+                      <div style={{
+                        position: 'absolute', top: 0, left: 14,
+                        width: 56, height: 16,
+                        background: 'linear-gradient(180deg, #C9C0A8 0%, #BEB5A0 100%)',
+                        borderRadius: '4px 4px 0 0',
+                        boxShadow: '0 -1px 2px rgba(0,0,0,0.10)',
+                        zIndex: 2,
+                      }} />
+                      {/* Card body */}
+                      <div style={{
+                        position: 'relative', zIndex: 1,
+                        background: 'linear-gradient(168deg, #FAF7F0 0%, #F2EBE0 55%, #EAE3D6 100%)',
+                        borderRadius: '0 3px 3px 3px',
+                        boxShadow: '0 1px 1px rgba(0,0,0,0.10), 2px 4px 8px rgba(0,0,0,0.12), 5px 12px 20px rgba(0,0,0,0.09), inset 0 1px 1px rgba(255,255,255,0.55)',
+                        padding: '11px 14px 12px',
+                        transform: 'rotate(-1.0deg)',
+                        overflow: 'hidden',
+                      }}>
+                        {/* Diagonal sheen */}
+                        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, rgba(255,255,255,0.30) 0%, rgba(255,255,255,0.06) 40%, rgba(0,0,0,0) 65%, rgba(0,0,0,0.04) 100%)', pointerEvents: 'none' }} />
+                        {/* Bottom-right corner curl */}
+                        <div style={{ position: 'absolute', bottom: 0, right: 0, width: 13, height: 13, background: 'linear-gradient(135deg, #BDB49E 0%, #A8A08A 100%)', clipPath: 'polygon(100% 0, 100% 100%, 0 100%)', pointerEvents: 'none' }} />
+                        <div style={{ position: 'relative', fontSize: 12, fontWeight: 600, color: '#3B3226', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.35 }}>
+                          You've received <span style={{ color: '#4A7D6F' }}>{formatMoney(monthlyReceived)}</span>
+                        </div>
+                        <div style={{ position: 'relative', fontSize: 11, color: '#8A7E6E', fontFamily: "'DM Sans', sans-serif", marginTop: 3 }}>
+                          of {formatMoney(monthlyExpectedReceive)} expected in {format(today, 'MMMM')}
+                        </div>
+                      </div>
                     </div>
                   )}
                   {monthlyExpectedPay > 0 && (
-                    <div style={{ background: '#ffffff', borderRadius: 4, boxShadow: '2px 5px 16px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.10)', padding: '12px 14px 13px 12px' }}>
-                      <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.3 }}>You've paid <span style={{ color: '#1D5B94' }}>{formatMoney(monthlyPaidOut)}</span></div>
-                      <div style={{ fontSize: 11, color: '#787776', fontFamily: "'DM Sans', sans-serif", marginTop: 2 }}>of {formatMoney(monthlyExpectedPay)} due in {format(today, 'MMMM')}</div>
+                    <div style={{ position: 'relative', paddingTop: 13 }}>
+                      {/* Tab sticking up — offset slightly right for variety */}
+                      <div style={{
+                        position: 'absolute', top: 0, right: 18,
+                        width: 56, height: 16,
+                        background: 'linear-gradient(180deg, #C4BBAA 0%, #B9B09E 100%)',
+                        borderRadius: '4px 4px 0 0',
+                        boxShadow: '0 -1px 2px rgba(0,0,0,0.10)',
+                        zIndex: 2,
+                      }} />
+                      {/* Card body */}
+                      <div style={{
+                        position: 'relative', zIndex: 1,
+                        background: 'linear-gradient(168deg, #F7F3EC 0%, #EDE6D8 55%, #E5DDD0 100%)',
+                        borderRadius: '3px 0 3px 3px',
+                        boxShadow: '0 1px 1px rgba(0,0,0,0.10), 2px 4px 8px rgba(0,0,0,0.12), 5px 12px 20px rgba(0,0,0,0.09), inset 0 1px 1px rgba(255,255,255,0.50)',
+                        padding: '11px 14px 12px',
+                        transform: 'rotate(0.8deg)',
+                        overflow: 'hidden',
+                      }}>
+                        {/* Diagonal sheen */}
+                        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.05) 40%, rgba(0,0,0,0) 65%, rgba(0,0,0,0.04) 100%)', pointerEvents: 'none' }} />
+                        {/* Bottom-right corner curl */}
+                        <div style={{ position: 'absolute', bottom: 0, right: 0, width: 13, height: 13, background: 'linear-gradient(135deg, #B5AC98 0%, #A09588 100%)', clipPath: 'polygon(100% 0, 100% 100%, 0 100%)', pointerEvents: 'none' }} />
+                        <div style={{ position: 'relative', fontSize: 12, fontWeight: 600, color: '#3B3226', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.35 }}>
+                          You've paid <span style={{ color: '#5A6E8A' }}>{formatMoney(monthlyPaidOut)}</span>
+                        </div>
+                        <div style={{ position: 'relative', fontSize: 11, color: '#8A7E6E', fontFamily: "'DM Sans', sans-serif", marginTop: 3 }}>
+                          of {formatMoney(monthlyExpectedPay)} due in {format(today, 'MMMM')}
+                        </div>
+                      </div>
                     </div>
                   )}
                 </div>
