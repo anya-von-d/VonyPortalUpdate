@@ -519,29 +519,38 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
           const paymentFrequency = selectedLoan.payment_frequency || 'monthly';
           return (
             <>
-              {/* Spiral notebook tab — replaces the avatar+text bar */}
-              <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: 14 }}>
-                <div style={{ position: 'relative', maxWidth: 220 }}>
-                  {/* Binding holes */}
-                  <div style={{ display: 'flex', gap: 7, paddingLeft: 6, paddingRight: 6, marginBottom: -1 }}>
-                    {[0,1,2,3,4,5,6].map(ri => (
-                      <div key={ri} style={{ width: 9, height: 11, borderRadius: '4px 4px 0 0', border: '1.5px solid rgba(0,0,0,0.22)', borderBottom: 'none', background: '#DDDBD5', flexShrink: 0 }} />
+              {/* Notebook page — paper pulled from a spiral-bound notebook, to the left of upcoming */}
+              <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: 20 }}>
+                <div style={{ width: 230, flexShrink: 0 }}>
+                  {/* Spiral binding holes */}
+                  <div style={{ display: 'flex', gap: 5, paddingLeft: 8, paddingRight: 8, marginBottom: -1 }}>
+                    {[0,1,2,3,4,5,6,7,8].map(ri => (
+                      <div key={ri} style={{ width: 9, height: 13, borderRadius: '4px 4px 0 0', border: '1.5px solid rgba(0,0,0,0.24)', borderBottom: 'none', background: '#CCCAC3', flexShrink: 0 }} />
                     ))}
                   </div>
-                  {/* Paper body */}
+                  {/* Paper body with notebook lines */}
                   <div style={{
-                    background: '#FEFCF4', borderRadius: '0 4px 4px 4px',
-                    border: '1px solid rgba(0,0,0,0.09)', borderTop: '2px solid rgba(0,0,0,0.18)',
-                    boxShadow: '1px 3px 10px rgba(0,0,0,0.10)',
-                    padding: '10px 14px 12px',
-                    backgroundImage: 'repeating-linear-gradient(to bottom, transparent, transparent 20px, rgba(3,172,234,0.08) 20px, rgba(3,172,234,0.08) 21px)',
+                    background: '#FEFCF4',
+                    borderRadius: '0 4px 4px 4px',
+                    border: '1px solid rgba(0,0,0,0.10)',
+                    borderTop: '3px solid rgba(0,0,0,0.22)',
+                    boxShadow: '4px 8px 24px rgba(0,0,0,0.15), 1px 2px 6px rgba(0,0,0,0.08), -1px 0 0 rgba(0,0,0,0.04)',
+                    padding: '14px 16px 36px',
+                    backgroundImage: 'repeating-linear-gradient(to bottom, transparent, transparent 20px, rgba(3,172,234,0.09) 20px, rgba(3,172,234,0.09) 21px)',
+                    minHeight: 170,
+                    transform: 'rotate(-1deg)',
+                    transformOrigin: 'top center',
                   }}>
-                    <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.3 }}>
-                      <span style={{ fontWeight: 600 }}>{otherPartyUsername}</span>
-                      {isLending ? ' borrowed ' : ' lent you '}
-                      <span style={{ color: ringColor }}>{formatMoney(selectedLoan.amount || 0)}</span>
-                      {selectedLoan.purpose ? <><br /><span style={{ fontWeight: 400, color: '#9B9A98', fontSize: 11 }}>for {selectedLoan.purpose}</span></> : null}
+                    <div style={{ fontSize: 13, fontWeight: 700, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.4 }}>{otherPartyUsername}</div>
+                    <div style={{ fontSize: 12, color: '#787776', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.4, marginTop: 3 }}>
+                      {isLending ? 'borrowed ' : 'lent you '}
+                      <span style={{ color: ringColor, fontWeight: 700 }}>{formatMoney(selectedLoan.amount || 0)}</span>
                     </div>
+                    {selectedLoan.purpose && (
+                      <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.4, marginTop: 12 }}>
+                        for {selectedLoan.purpose}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -630,27 +639,26 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
                     </div>
                   </div>
 
-                  {/* You're Owed — right */}
-                  <div style={{ ...cardBase }}>
-                    <div style={{ marginBottom: 10 }}>
-                      {isLending ? (
-                        <svg width="26" height="26" viewBox="0 0 28 28" fill="none">
-                          <circle cx="14" cy="14" r="13" stroke="#03ACEA" strokeWidth="1.5"/>
-                          <path d="M14 9 L14 17 M10.5 12.5 L14 9 L17.5 12.5" stroke="#03ACEA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                      ) : (
-                        <svg width="26" height="26" viewBox="0 0 28 28" fill="none">
-                          <circle cx="14" cy="14" r="13" stroke="#1D5B94" strokeWidth="1.5"/>
-                          <path d="M14 9 L14 17 M10.5 13.5 L14 17 L17.5 13.5" stroke="#1D5B94" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                      )}
+                  {/* You're Owed — receipt style, no icon */}
+                  <div style={{
+                    background: '#FEFEFE', borderRadius: 3,
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.10), 0 1px 3px rgba(0,0,0,0.06)',
+                    padding: '12px 10px 10px', fontFamily: "'DM Sans', sans-serif",
+                    display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'visible',
+                  }}>
+                    <div style={{ position: 'absolute', top: -6, left: 0, right: 0, height: 6, backgroundImage: 'radial-gradient(circle at 6px -1px, #FEFEFE 6px, transparent 6px)', backgroundSize: '12px 6px', backgroundRepeat: 'repeat-x' }} />
+                    <div style={{ fontSize: 10, fontWeight: 700, color: '#1A1918', letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: 5 }}>
+                      {isLending ? "You're owed" : "You owe"}
                     </div>
-                    <div style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>
-                      {isLending
-                        ? <><span style={{ fontWeight: 600 }}>{otherPartyUsername.split(' ')[0]}</span> owes you <span style={{ color: '#03ACEA' }}>{formatMoney(remaining)}</span></>
-                        : <>You owe <span style={{ fontWeight: 600 }}>{otherPartyUsername.split(' ')[0]}</span> <span style={{ color: '#1D5B94' }}>{formatMoney(remaining)}</span></>
-                      }
+                    <div style={{ borderTop: '1.5px dashed rgba(0,0,0,0.15)', marginBottom: 8 }} />
+                    <div style={{ fontSize: 20, fontWeight: 700, letterSpacing: '-0.04em', lineHeight: 1, color: ringColor, marginBottom: 'auto', paddingBottom: 10 }}>
+                      {formatMoney(remaining)}
                     </div>
+                    <div style={{ borderTop: '1.5px dashed rgba(0,0,0,0.10)', marginBottom: 6 }} />
+                    <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                      <span style={{ fontSize: 10, color: '#9B9A98' }}>{isLending ? `${otherPartyUsername.split(' ')[0]}'s loan` : 'this loan'}</span>
+                    </div>
+                    <div style={{ position: 'absolute', bottom: -6, left: 0, right: 0, height: 6, backgroundImage: 'radial-gradient(circle at 6px 7px, #FEFEFE 6px, transparent 6px)', backgroundSize: '12px 6px', backgroundRepeat: 'repeat-x' }} />
                   </div>
                 </div>
 
@@ -947,7 +955,7 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
                 display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'visible',
               }}>
                 <div style={{ position: 'absolute', top: -6, left: 0, right: 0, height: 6, backgroundImage: 'radial-gradient(circle at 6px -1px, #FEFEFE 6px, transparent 6px)', backgroundSize: '12px 6px', backgroundRepeat: 'repeat-x' }} />
-                <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 6 }}>
+                <div style={{ fontSize: 10, fontWeight: 700, color: '#1A1918', letterSpacing: '0.07em', textTransform: 'uppercase', marginBottom: 6 }}>
                   {isLending ? "You're owed" : "You owe"}
                 </div>
                 <div style={{ borderTop: '1.5px dashed rgba(0,0,0,0.15)', marginBottom: 10 }} />
@@ -1005,10 +1013,18 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
                 insightText = isLending ? 'All your lent money is on track' : 'All your payments are on track';
               }
               return (
-                <div style={{ background: '#FDFCF7', borderRadius: 3, boxShadow: '0 2px 8px rgba(0,0,0,0.09), 0 1px 3px rgba(0,0,0,0.05)', padding: '12px 14px', borderTop: `4px solid ${accent}`, fontFamily: "'DM Sans', sans-serif" }}>
-                  <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 8 }}>
-                    <span style={{ display: 'inline-block', background: accentBg, color: accent, padding: '2px 10px', borderRadius: 4, fontSize: 11, fontWeight: 500, lineHeight: 1.5 }}>{insightText}</span>
-                  </div>
+                <div style={{
+                  background: '#FDFAF3',
+                  borderRadius: '3px 3px 3px 3px',
+                  boxShadow: '0 1px 0 2px #eeebe4, 0 3px 0 3px #f0ede8, 2px 6px 16px rgba(0,0,0,0.11)',
+                  border: '1px solid rgba(0,0,0,0.07)',
+                  padding: '12px 14px',
+                  fontFamily: "'DM Sans', sans-serif",
+                  backgroundImage: 'repeating-linear-gradient(to bottom, transparent, transparent 22px, rgba(0,0,0,0.05) 22px, rgba(0,0,0,0.05) 23px)',
+                  position: 'relative',
+                }}>
+                  <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 4, background: accent, borderRadius: '3px 3px 0 0', opacity: 0.8 }} />
+                  <div style={{ fontSize: 11, fontWeight: 500, color: accent, marginBottom: 8, marginTop: 6, lineHeight: 1.4 }}>{insightText}</div>
                   {isLending && monthlyExpectedReceive > 0 && (
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', padding: '5px 0', borderBottom: `1px solid ${accent}18`, fontSize: 11, color: '#1A1918' }}>
                       <span>Expected this month</span><span style={{ fontWeight: 700, color: accent }}>{formatMoney(monthlyExpectedReceive)}</span>
@@ -1124,11 +1140,17 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
               });
               return (
                 <div style={{ position: 'relative' }}>
-                  {/* Blue manila envelope behind */}
-                  <div style={{ position: 'absolute', top: 8, left: -6, right: 6, bottom: -8, background: isLending ? '#1C4F8C' : '#153A6B', borderRadius: 10, zIndex: 0 }}>
-                    <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', overflow: 'hidden', borderRadius: '10px 10px 0 0' }} height="32" viewBox="0 0 200 32" preserveAspectRatio="none">
-                      <polygon points="0,0 200,0 100,28" fill={isLending ? '#2563A8' : '#1A4F8A'} />
+                  {/* Blue manila file-folder envelope behind */}
+                  <div style={{ position: 'absolute', top: 8, left: -6, right: 6, bottom: -10, background: isLending ? '#1A4E8A' : '#12345E', borderRadius: 10, zIndex: 0, boxShadow: '0 4px 14px rgba(0,0,0,0.30)' }}>
+                    {/* File folder tab */}
+                    <div style={{ position: 'absolute', top: -13, right: 22, width: 46, height: 14, background: isLending ? '#2462A8' : '#1A4578', borderRadius: '5px 5px 0 0' }} />
+                    {/* Envelope flap */}
+                    <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', overflow: 'hidden', borderRadius: '10px 10px 0 0' }} height="30" viewBox="0 0 200 30" preserveAspectRatio="none">
+                      <polygon points="0,0 200,0 100,26" fill={isLending ? '#2462A8' : '#1A4578'} />
                     </svg>
+                    {/* Subtle envelope lines */}
+                    <div style={{ position: 'absolute', bottom: 10, left: 14, right: 14, height: 1, background: 'rgba(255,255,255,0.08)', borderRadius: 1 }} />
+                    <div style={{ position: 'absolute', bottom: 18, left: 14, right: 14, height: 1, background: 'rgba(255,255,255,0.06)', borderRadius: 1 }} />
                   </div>
                   <div style={{ position: 'relative', zIndex: 1 }}>
                 <PageCard tone={tone} title={titleStr} style={{ marginBottom: 0 }} headerRight={
