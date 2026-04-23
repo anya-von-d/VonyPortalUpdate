@@ -364,7 +364,7 @@ function AboutTab() {
               Delete your account?
             </div>
             <div style={{ fontSize: 13, color: '#787776', lineHeight: 1.6, marginBottom: 22 }}>
-              This will permanently delete your account. Your loans and transactions with other people will remain intact on their end — only your account will be removed. <strong style={{ color: '#1A1918' }}>This cannot be undone.</strong>
+              This will permanently delete your account. Your loans and transactions with other people will remain intact on their end, only your account will be removed. <strong style={{ color: '#1A1918' }}>This cannot be undone.</strong>
             </div>
             <div style={{ display: 'flex', gap: 10 }}>
               <button
