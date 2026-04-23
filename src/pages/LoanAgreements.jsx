@@ -1389,7 +1389,6 @@ export default function LoanAgreements() {
           </div>
           </div>
           </div>
-          </div>
 
           {/* Desktop table responsive styles */}
           <style>{`
