@@ -107,9 +107,9 @@ export default function MeshMobileNav({ user, activePage }) {
 
   return (
     <>
-      {/* ── Floating top row ── */}
+      {/* ── Top row — absolute so it stays at page top and scrolls away ── */}
       <div style={{
-        position: 'fixed', top: 34, left: 0, right: 0, zIndex: 200,
+        position: 'absolute', top: 34, left: 0, right: 0, zIndex: 200,
         display: 'flex', alignItems: 'center',
         justifyContent: 'space-between',
         padding: '0 20px',
@@ -127,6 +127,9 @@ export default function MeshMobileNav({ user, activePage }) {
 
         {/* Right side */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, pointerEvents: 'auto' }}>
+
+          {/* Demo Mode — left of the bell */}
+          <DemoModeToggle variant="mobile" />
 
           {/* Notifications — standalone glass bubble */}
           <button
@@ -155,9 +158,6 @@ export default function MeshMobileNav({ user, activePage }) {
               </span>
             )}
           </button>
-
-          {/* Demo Mode — to the right of the bell */}
-          <DemoModeToggle variant="mobile" />
 
           {/* Hamburger / App menu — bare, no bubble */}
           <div ref={menuRef} style={{ position: 'relative' }}>
