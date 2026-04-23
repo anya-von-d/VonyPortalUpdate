@@ -965,12 +965,12 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
                 background: 'linear-gradient(170deg, #FFF9DE 0%, #FFF3B0 100%)',
                 borderRadius: 3,
                 boxShadow: '0 4px 10px rgba(0,0,0,0.13), 0 1px 3px rgba(0,0,0,0.08)',
-                padding: '18px 12px 12px',
+                padding: '22px 12px 12px',
                 fontFamily: "'DM Sans', sans-serif",
                 display: 'flex', flexDirection: 'column',
               }}>
                 {/* Top strip */}
-                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 6, background: 'rgba(0,0,0,0.08)', borderRadius: '2px 2px 0 0' }} />
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 14, background: 'linear-gradient(to bottom, rgba(100,70,0,0.26) 0%, rgba(80,55,0,0.12) 100%)', borderRadius: '2px 2px 0 0', boxShadow: 'inset 0 -1px 0 rgba(0,0,0,0.08)' }} />
                 {/* Corner curl */}
                 <div style={{ position: 'absolute', bottom: 0, right: 0, width: 16, height: 16, background: '#D4C060', clipPath: 'polygon(100% 0, 100% 100%, 0 100%)', zIndex: 2 }} />
                 <div style={{ fontSize: 10, fontWeight: 700, color: '#5C4200', letterSpacing: '0.07em', textTransform: 'uppercase', marginBottom: 8 }}>
