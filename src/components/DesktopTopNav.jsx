@@ -177,7 +177,7 @@ export default function DesktopTopNav() {
           </NavBtn>
 
           {/* ≡ Menu button + dropdown */}
-          <div ref={menuRef} style={{ position: 'relative', pointerEvents: 'auto' }}>
+          <div ref={menuRef} style={{ position: 'relative', pointerEvents: 'auto', zIndex: 1 }}>
             <NavBtn onClick={() => { setMenuOpen(v => !v); setNotifOpen(false); setFriendsOpen(false); }} active={menuOpen}>
               <MenuIcon />
             </NavBtn>
