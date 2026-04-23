@@ -328,33 +328,85 @@ export default function Upcoming() {
 
             {/* Col 1: Overdue + Next 7 Days */}
             <div className="upcoming-col-1" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              {/* Overdue — post-it notes */}
-              {overdue.length > 0 && (() => {
+              {/* Status post-its — png blue notes, always shown */}
+              {(() => {
                 const noteConfigs = [
-                  { bg: 'linear-gradient(170deg, #FFE566 0%, #FFD638 100%)', rotate: '-3.5deg', ty: '7px', zIndex: 1, textColor: '#5C4200' },
-                  { bg: 'linear-gradient(170deg, #FFFDE0 0%, #FFF59D 100%)', rotate: '1.8deg',  ty: '0px',  zIndex: 2, textColor: '#5C4200' },
-                  { bg: 'linear-gradient(170deg, #FFE082 0%, #FFCA28 100%)', rotate: '-1deg',   ty: '5px',  zIndex: 3, textColor: '#5C4200' },
+                  { img: '/images/postits/1.png', rotate: '-3.5deg', ty: '7px', zIndex: 1, textColor: '#002A40' },
+                  { img: '/images/postits/2.png', rotate: '1.8deg',  ty: '0px',  zIndex: 2, textColor: '#003A52' },
+                  { img: '/images/postits/3.png', rotate: '-1deg',   ty: '5px',  zIndex: 3, textColor: '#001F30' },
                 ];
-                const postitItems = [];
-                if (overdue.length <= 3) {
-                  overdue.forEach(event => {
-                    const daysAgo = Math.abs(event.days);
-                    const text = event.isLender
-                      ? `${event.firstName}'s payment of ${formatMoney(event.amount)} is ${daysAgo} day${daysAgo !== 1 ? 's' : ''} overdue`
-                      : `Your payment of ${formatMoney(event.amount)} to ${event.firstName} is ${daysAgo} day${daysAgo !== 1 ? 's' : ''} overdue`;
-                    postitItems.push({ text, loanId: event.loanId });
-                  });
+
+                // Pending payments: submitted by borrower, awaiting lender confirmation
+                const pendingPayments = safePayments
+                  .filter(p => p?.status === 'pending_confirmation')
+                  .map(p => {
+                    const loan = myLoans.find(l => l.id === p.loan_id);
+                    if (!loan) return null;
+                    const otherUserId = loan.lender_id === user.id ? loan.borrower_id : loan.lender_id;
+                    const otherProfile = getProfile(otherUserId);
+                    const firstName = (otherProfile?.full_name || otherProfile?.username || 'User').split(' ')[0];
+                    return { amount: p.amount || 0, firstName, loanId: loan.id };
+                  })
+                  .filter(Boolean);
+
+                const hasOverdue = overdue.length > 0;
+                const hasPending = pendingPayments.length > 0;
+
+                const openPending = () => window.dispatchEvent(
+                  new CustomEvent('open-friends-popup', { detail: { initialRequestsOpen: true } })
+                );
+
+                const overdueText = (e) => {
+                  const daysAgo = Math.abs(e.days);
+                  return e.isLender
+                    ? `${e.firstName}'s payment of ${formatMoney(e.amount)} is ${daysAgo} day${daysAgo !== 1 ? 's' : ''} overdue`
+                    : `Your payment of ${formatMoney(e.amount)} to ${e.firstName} is ${daysAgo} day${daysAgo !== 1 ? 's' : ''} overdue`;
+                };
+
+                const pendingText = () => {
+                  const names = [...new Set(pendingPayments.map(p => p.firstName))];
+                  if (pendingPayments.length === 1)
+                    return `Your ${formatMoney(pendingPayments[0].amount)} payment to ${pendingPayments[0].firstName} has not been confirmed by them yet`;
+                  return names.length === 1
+                    ? `You have ${pendingPayments.length} payments that ${names[0]} has not confirmed yet`
+                    : `You have ${pendingPayments.length} payments that your friends have not confirmed yet`;
+                };
+
+                let postitItems = [];
+
+                if (!hasOverdue && !hasPending) {
+                  postitItems = [
+                    { text: '', action: null },
+                    { text: "Everything's looking good 🎆", action: null },
+                    { text: '', action: null },
+                  ];
+                } else if (hasOverdue && hasPending) {
+                  postitItems = [
+                    { text: overdueText(overdue[0]), action: null },
+                    { text: overdue.length > 1 ? `You have ${overdue.length} overdue payments` : overdueText(overdue[0]), action: null },
+                    { text: pendingText(), action: openPending, isPending: true },
+                  ];
+                } else if (hasOverdue) {
+                  if (overdue.length === 1) {
+                    postitItems = [{ text: overdueText(overdue[0]), action: null }];
+                  } else if (overdue.length === 2) {
+                    postitItems = [
+                      { text: overdueText(overdue[0]), action: null },
+                      { text: overdueText(overdue[1]), action: null },
+                    ];
+                  } else {
+                    const remaining = overdue.length - 2;
+                    postitItems = [
+                      { text: overdueText(overdue[0]), action: null },
+                      { text: overdueText(overdue[1]), action: null },
+                      { text: `You have ${remaining} other overdue payment${remaining !== 1 ? 's' : ''}`, action: null },
+                    ];
+                  }
                 } else {
-                  overdue.slice(0, 2).forEach(event => {
-                    const daysAgo = Math.abs(event.days);
-                    const text = event.isLender
-                      ? `${event.firstName}'s payment of ${formatMoney(event.amount)} is ${daysAgo} day${daysAgo !== 1 ? 's' : ''} overdue`
-                      : `Your payment of ${formatMoney(event.amount)} to ${event.firstName} is ${daysAgo} day${daysAgo !== 1 ? 's' : ''} overdue`;
-                    postitItems.push({ text, loanId: event.loanId });
-                  });
-                  const remaining = overdue.length - 2;
-                  postitItems.push({ text: `You have ${remaining} other overdue payment${remaining !== 1 ? 's' : ''}`, loanId: null });
+                  // pending only — single post-it
+                  postitItems = [{ text: pendingText(), action: openPending, isPending: true }];
                 }
+
                 return (
                   <div className="home-card-attention" style={{ display: 'flex', paddingBottom: 10, overflow: 'visible', justifyContent: postitItems.length < 3 ? 'center' : 'flex-start' }}>
                     {postitItems.map((item, i) => {
@@ -362,44 +414,55 @@ export default function Upcoming() {
                       return (
                         <div
                           key={i}
-                          onClick={() => navigate(createPageUrl('RecordPayment') + (item.loanId ? `?loanId=${item.loanId}` : ''))}
+                          onClick={item.action || undefined}
                           onMouseEnter={() => setHoveredPostitOverdue(i)}
                           onMouseLeave={() => setHoveredPostitOverdue(null)}
                           style={{
                             flex: postitItems.length === 3 ? 1 : '0 0 auto',
                             width: postitItems.length === 3 ? 'auto' : '34%',
                             minHeight: 110,
-                            background: nc.bg,
-                            borderRadius: '2px 2px 3px 3px',
-                            padding: '14px 10px 12px',
-                            marginRight: i < postitItems.length - 1 ? -11 : 0,
+                            marginRight: i < postitItems.length - 1 ? -22 : 0,
                             transform: hoveredPostitOverdue === i
                               ? `rotate(${nc.rotate}) translateY(calc(${nc.ty} - 10px))`
                               : `rotate(${nc.rotate}) translateY(${nc.ty})`,
                             zIndex: hoveredPostitOverdue === i ? 10 : nc.zIndex,
                             position: 'relative',
-                            boxShadow: hoveredPostitOverdue === i
-                              ? '4px 12px 28px rgba(0,0,0,0.22), 0 2px 6px rgba(0,0,0,0.14)'
-                              : '2px 5px 16px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.10)',
-                            cursor: 'pointer',
+                            filter: hoveredPostitOverdue === i
+                              ? 'drop-shadow(4px 10px 14px rgba(0,0,0,0.26)) drop-shadow(0 2px 5px rgba(0,0,0,0.16))'
+                              : 'drop-shadow(2px 5px 9px rgba(0,0,0,0.22)) drop-shadow(0 1px 2px rgba(0,0,0,0.12))',
+                            cursor: item.action ? 'pointer' : 'default',
                             display: 'flex',
-                            flexDirection: 'column',
-                            gap: 6,
-                            transition: 'transform 0.18s ease, box-shadow 0.18s ease',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            transition: 'transform 0.18s ease, filter 0.18s ease',
                           }}
                         >
-                          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 6, background: 'rgba(0,0,0,0.08)', borderRadius: '2px 2px 0 0' }} />
-                          <p style={{
-                            margin: 0,
-                            marginTop: 8,
-                            fontSize: 11,
-                            fontWeight: 600,
-                            color: nc.textColor,
-                            fontFamily: "'DM Sans', sans-serif",
-                            lineHeight: 1.45,
-                          }}>
-                            {item.text}
-                          </p>
+                          <img
+                            src={nc.img}
+                            alt=""
+                            draggable={false}
+                            style={{
+                              position: 'absolute', inset: 0,
+                              width: '100%', height: '100%',
+                              objectFit: 'fill',
+                              pointerEvents: 'none', userSelect: 'none',
+                              zIndex: 0,
+                            }}
+                          />
+                          {item.text ? (
+                            <p style={{
+                              position: 'relative', zIndex: 1,
+                              margin: 0, padding: '0 14px',
+                              textAlign: 'center',
+                              fontSize: 11, fontWeight: 600,
+                              color: nc.textColor,
+                              fontFamily: "'DM Sans', sans-serif",
+                              lineHeight: 1.45,
+                              textShadow: '0 1px 0 rgba(255,255,255,0.25)',
+                            }}>
+                              {item.text}
+                            </p>
+                          ) : null}
                         </div>
                       );
                     })}
