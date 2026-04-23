@@ -7,6 +7,7 @@ import NotificationsPopup from "@/components/NotificationsPopup";
 import PendingRequestsPopup from "@/components/PendingRequestsPopup";
 import AppMenuDropdown from "@/components/AppMenuDropdown";
 import DemoModeToggle from "@/components/DemoModeToggle";
+import ProfilePopup from "@/components/ProfilePopup";
 import { useNotificationCount } from "@/components/utils/notificationCount";
 
 export default function MeshMobileNav({ user, activePage }) {
@@ -37,6 +38,7 @@ export default function MeshMobileNav({ user, activePage }) {
 
   const [friendsInitialRequestsOpen, setFriendsInitialRequestsOpen] = useState(false);
   const [pendingOpen, setPendingOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
 
   // Global open-friends-popup event
   useEffect(() => {
@@ -184,6 +186,7 @@ export default function MeshMobileNav({ user, activePage }) {
                 onOpenSettings={() => setSettingsOpen(true)}
                 onOpenFriends={() => setFriendsOpen(true)}
                 onOpenPendingRequests={() => { setMenuOpen(false); setPendingOpen(true); setFriendsOpen(false); setNotifOpen(false); }}
+                onOpenProfile={() => { setMenuOpen(false); setProfileOpen(true); }}
                 showProfileAndFriends
               />
             )}
@@ -285,6 +288,7 @@ export default function MeshMobileNav({ user, activePage }) {
           positionOverride={{ top: 92, left: 12, right: 12, width: 'auto' }}
         />
       )}
+      {profileOpen && <ProfilePopup onClose={() => setProfileOpen(false)} />}
     </>
   );
 }

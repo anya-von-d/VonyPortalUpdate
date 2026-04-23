@@ -52,7 +52,7 @@ function Item({ label, icon, onClick, to, danger }) {
  *   onInviteFriend   — open FriendsPopup on Invite tab
  *   onOpenSettings   — open SettingsModal
  */
-export default function AppMenuDropdown({ style, onClose, onInviteFriend, onOpenSettings, onOpenPendingRequests, onOpenFriends, showProfileAndFriends }) {
+export default function AppMenuDropdown({ style, onClose, onInviteFriend, onOpenSettings, onOpenPendingRequests, onOpenFriends, onOpenProfile, showProfileAndFriends }) {
   const { logout } = useAuth();
 
   const close = () => { if (onClose) onClose(); };
@@ -69,8 +69,8 @@ export default function AppMenuDropdown({ style, onClose, onInviteFriend, onOpen
     }}>
       {showProfileAndFriends && (
         <>
-          <Item label="Profile"          to={createPageUrl('Profile')} onClick={close} icon={<ProfileIcon />} />
-          <Item label="Friends"          onClick={() => { close(); onOpenFriends && onOpenFriends(); }} icon={<FriendsIcon />} />
+          <Item label="Profile"  onClick={() => { close(); onOpenProfile && onOpenProfile(); }} icon={<ProfileIcon />} />
+          <Item label="Friends"  onClick={() => { close(); onOpenFriends && onOpenFriends(); }} icon={<FriendsIcon />} />
         </>
       )}
       <Item label="Pending Requests" onClick={() => { close(); onOpenPendingRequests && onOpenPendingRequests(); }} icon={<PendingIcon />} />

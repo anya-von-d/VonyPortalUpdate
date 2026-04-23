@@ -9,6 +9,7 @@ import PendingRequestsPopup from './PendingRequestsPopup';
 import AppMenuDropdown from './AppMenuDropdown';
 import UserAvatar from './ui/UserAvatar';
 import DemoModeToggle from './DemoModeToggle';
+import ProfilePopup from './ProfilePopup';
 import { useNotificationCount } from './utils/notificationCount';
 
 const isActive = (location, to) => {
@@ -80,6 +81,7 @@ export default function DesktopTopNav() {
   const [friendsInitialTab, setFriendsInitialTab] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [pendingOpen, setPendingOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
 
   const menuRef = useRef(null);
 
@@ -168,7 +170,7 @@ export default function DesktopTopNav() {
           <NavBtn to={createPageUrl('LoanAgreements')} active={isActive(location, createPageUrl('LoanAgreements'))}>
             Records
           </NavBtn>
-          <NavBtn to={createPageUrl('Profile')} active={isActive(location, createPageUrl('Profile'))}>
+          <NavBtn onClick={() => { setProfileOpen(v => !v); setNotifOpen(false); setFriendsOpen(false); setMenuOpen(false); }} active={profileOpen}>
             {user ? (
               <UserAvatar name={user.full_name || user.username} src={user.avatar_url || user.profile_picture_url} size={22} radius={11} />
             ) : <UserIcon />}
@@ -187,6 +189,7 @@ export default function DesktopTopNav() {
                 onInviteFriend={() => { setFriendsInitialTab('Invite'); setFriendsOpen(true); }}
                 onOpenSettings={() => setSettingsOpen(true)}
                 onOpenPendingRequests={() => { setPendingOpen(true); setNotifOpen(false); setFriendsOpen(false); }}
+                onOpenProfile={() => { setMenuOpen(false); setProfileOpen(true); }}
               />
             )}
           </div>
@@ -196,6 +199,7 @@ export default function DesktopTopNav() {
       </div>
 
       <SettingsModal isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
+      {profileOpen && <ProfilePopup onClose={() => setProfileOpen(false)} />}
       {pendingOpen && (
         <PendingRequestsPopup onClose={() => setPendingOpen(false)} />
       )}
