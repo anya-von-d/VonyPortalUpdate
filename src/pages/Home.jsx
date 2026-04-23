@@ -2078,9 +2078,9 @@ export default function Home() {
                 let si = 0;
                 while (reminders.length < 3) { reminders.push(suggestions[si++ % suggestions.length]); }
                 const noteConfigs = [
-                  { bg: 'linear-gradient(170deg, #BFDFFF 0%, #93C5FF 100%)', rotate: '-3.5deg', ty: '7px', zIndex: 1, textColor: '#0A3550' },
-                  { bg: 'linear-gradient(170deg, #D8EDFF 0%, #B3D8FF 100%)', rotate: '1.8deg',  ty: '0px',  zIndex: 2, textColor: '#0A3550' },
-                  { bg: 'linear-gradient(170deg, #A8D4FF 0%, #7BB8FF 100%)', rotate: '-1deg',   ty: '5px',  zIndex: 3, textColor: '#0A3550' },
+                  { bg: 'linear-gradient(170deg, #7DD4FF 0%, #3DB8FF 100%)', rotate: '-3.5deg', ty: '7px', zIndex: 1, textColor: '#003D5C' },
+                  { bg: 'linear-gradient(170deg, #B8E6FF 0%, #72CAFF 100%)', rotate: '1.8deg',  ty: '0px',  zIndex: 2, textColor: '#003D5C' },
+                  { bg: 'linear-gradient(170deg, #55C4FF 0%, #1AABF5 100%)', rotate: '-1deg',   ty: '5px',  zIndex: 3, textColor: '#002F48' },
                 ];
                 return (
                   <div className="home-card-attention" style={{ display: 'flex', paddingBottom: 10, overflow: 'visible' }}>
