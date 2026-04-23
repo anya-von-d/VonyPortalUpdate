@@ -356,7 +356,7 @@ export default function Upcoming() {
                   postitItems.push({ text: `You have ${remaining} other overdue payment${remaining !== 1 ? 's' : ''}`, loanId: null });
                 }
                 return (
-                  <div className="home-card-attention" style={{ display: 'flex', paddingBottom: 10, overflow: 'visible' }}>
+                  <div className="home-card-attention" style={{ display: 'flex', paddingBottom: 10, overflow: 'visible', justifyContent: postitItems.length < 3 ? 'center' : 'flex-start' }}>
                     {postitItems.map((item, i) => {
                       const nc = noteConfigs[i];
                       return (
@@ -366,7 +366,8 @@ export default function Upcoming() {
                           onMouseEnter={() => setHoveredPostitOverdue(i)}
                           onMouseLeave={() => setHoveredPostitOverdue(null)}
                           style={{
-                            flex: 1,
+                            flex: postitItems.length === 3 ? 1 : '0 0 auto',
+                            width: postitItems.length === 3 ? 'auto' : '34%',
                             minHeight: 110,
                             background: nc.bg,
                             borderRadius: '2px 2px 3px 3px',
@@ -421,13 +422,28 @@ export default function Upcoming() {
                         {next7Days.length > 0 && <span style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>{next7Days.length} · {formatMoney(next7Total)}</span>}
                       </div>
 
-                      {/* Insight — top line, grey subtitle style */}
-                      <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginBottom: 10, lineHeight: 1.4 }}>
-                        {next7Days.length > 0
-                          ? <>{next7Days.length} payment{next7Days.length !== 1 ? 's' : ''} due · <span style={{ fontWeight: 600, color: '#787776' }}>{formatMoney(next7Total)} total</span></>
-                          : <>You're all caught up this week 🎉</>
-                        }
-                      </div>
+                      {/* Insight — summary or sticky note when all clear */}
+                      {next7Days.length > 0 ? (
+                        <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginBottom: 10, lineHeight: 1.4 }}>
+                          {next7Days.length} payment{next7Days.length !== 1 ? 's' : ''} due · <span style={{ fontWeight: 600, color: '#787776' }}>{formatMoney(next7Total)} total</span>
+                        </div>
+                      ) : (
+                        <div style={{
+                          position: 'relative',
+                          background: 'linear-gradient(170deg, #FAF7F0 0%, #F3EFE4 100%)',
+                          borderRadius: '2px 2px 3px 3px',
+                          padding: '12px 10px 10px',
+                          marginBottom: 10,
+                          boxShadow: '1px 3px 10px rgba(0,0,0,0.10), 0 1px 2px rgba(0,0,0,0.06)',
+                          fontFamily: "'DM Sans', sans-serif",
+                          textAlign: 'center',
+                        }}>
+                          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 5, background: 'rgba(0,0,0,0.07)', borderRadius: '2px 2px 0 0' }} />
+                          <p style={{ margin: 0, marginTop: 2, fontSize: 11, fontWeight: 600, color: '#5C4A2A', lineHeight: 1.45 }}>
+                            You're all caught up this week 🎉
+                          </p>
+                        </div>
+                      )}
 
                       {/* 7-day rows — Home style: day/date column + colored bar + label */}
                       <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -487,24 +503,8 @@ export default function Upcoming() {
             {/* Col 2: Coming Later + Cashflow + So Far This Month */}
             <div className="upcoming-col-2" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 
-              {/* Coming Later — paper card + sticky insight tab */}
-              <div style={{ position: 'relative', marginTop: comingLater.length > 0 ? 30 : 0 }}>
-                {/* Sticky tab — sits above the card, protruding from top-left */}
-                {comingLater.length > 0 && (
-                  <div style={{
-                    position: 'absolute', top: -30, left: 14, zIndex: 5,
-                    background: '#FEFCE0',
-                    borderRadius: '4px 4px 0 0',
-                    padding: '5px 9px',
-                    boxShadow: '-1px -2px 6px rgba(0,0,0,0.07), 1px 0 0 rgba(0,0,0,0.04)',
-                    fontSize: 11, color: '#5C5940',
-                    fontFamily: "'DM Sans', sans-serif",
-                    whiteSpace: 'nowrap', lineHeight: 1.4,
-                  }}>
-                    You have <b style={{ color: '#1A1918' }}>{comingLater.length} payment{comingLater.length !== 1 ? 's' : ''}</b> coming up for <b style={{ color: '#1A1918' }}>{formatMoney(comingLater.reduce((s, e) => s + e.amount, 0))}</b>.
-                  </div>
-                )}
-                {/* Card — styled like Your Borrowing paper card */}
+              {/* Coming Later — paper card */}
+              <div style={{ position: 'relative' }}>
                 <div style={{
                   background: '#FFFEFD', borderRadius: 4,
                   boxShadow: '0 1px 0 2px #f0efea, 0 3px 0 3px #f5f4f0, 2px 6px 18px rgba(0,0,0,0.13)',
@@ -514,11 +514,25 @@ export default function Upcoming() {
                     <span style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>Coming Later</span>
                     {comingLater.length > 0 && <span style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>{comingLater.length} · {formatMoney(comingLater.reduce((s, e) => s + e.amount, 0))}</span>}
                   </div>
-                  {comingLater.length === 0 && (
-                    <div style={{ fontSize: 12, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.45, textAlign: 'center', padding: '4px 0' }}>
-                      Clear skies ahead ✨
-                    </div>
-                  )}
+                  {/* Beige sticky note — summary or empty state */}
+                  <div style={{
+                    position: 'relative',
+                    background: 'linear-gradient(170deg, #FAF7F0 0%, #F3EFE4 100%)',
+                    borderRadius: '2px 2px 3px 3px',
+                    padding: '12px 10px 10px',
+                    marginBottom: comingLater.length > 0 ? 10 : 0,
+                    boxShadow: '1px 3px 10px rgba(0,0,0,0.10), 0 1px 2px rgba(0,0,0,0.06)',
+                    fontFamily: "'DM Sans', sans-serif",
+                    textAlign: comingLater.length === 0 ? 'center' : 'left',
+                  }}>
+                    <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 5, background: 'rgba(0,0,0,0.07)', borderRadius: '2px 2px 0 0' }} />
+                    <p style={{ margin: 0, marginTop: 2, fontSize: 11, fontWeight: 600, color: '#5C4A2A', lineHeight: 1.45 }}>
+                      {comingLater.length > 0
+                        ? <>You have <b style={{ color: '#1A1918' }}>{comingLater.length} payment{comingLater.length !== 1 ? 's' : ''}</b> coming up for <b style={{ color: '#1A1918' }}>{formatMoney(comingLater.reduce((s, e) => s + e.amount, 0))}</b>.</>
+                        : <>Clear skies ahead ✨</>
+                      }
+                    </p>
+                  </div>
                   {comingLater.map(event => <PaymentRow key={event.loanId + '-later'} event={event} />)}
                 </div>
               </div>

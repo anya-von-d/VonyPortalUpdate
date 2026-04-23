@@ -2424,17 +2424,23 @@ export default function Home() {
               {(monthlyExpectedReceive > 0 || monthlyExpectedPay > 0) && (
                 <div className="home-card-monthly-summary" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                   {monthlyExpectedReceive > 0 && (
-                    <div style={{ position: 'relative', background: '#FEFEF5', borderRadius: '3px 12px 3px 3px', border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 1px 4px rgba(0,0,0,0.08), 3px 5px 14px rgba(0,0,0,0.09)', padding: '9px 14px 9px 12px', overflow: 'visible' }}>
-                      <div style={{ position: 'absolute', top: -1, right: -1, width: 28, height: 10, background: '#F2F0E8', borderRadius: '0 3px 0 0', border: '1px solid rgba(0,0,0,0.08)', borderBottom: 'none' }} />
-                      <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.3 }}>You've received <span style={{ color: '#03ACEA' }}>{formatMoney(monthlyReceived)}</span></div>
+                    <div style={{ position: 'relative', background: '#FEFEF5', borderRadius: '3px 3px 3px 3px', border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 1px 2px rgba(0,0,0,0.07), 0 4px 10px rgba(0,0,0,0.10), 0 10px 28px rgba(0,0,0,0.07), 6px 16px 24px rgba(0,0,0,0.06)', padding: '10px 14px 11px 12px', overflow: 'visible', transform: 'translateY(-1px)' }}>
+                      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 5, background: 'rgba(0,0,0,0.06)', borderRadius: '2px 2px 0 0' }} />
+                      <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.3, marginTop: 4 }}>You've received <span style={{ color: '#03ACEA' }}>{formatMoney(monthlyReceived)}</span></div>
                       <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 2 }}>of {formatMoney(monthlyExpectedReceive)} expected in {format(today, 'MMMM')}</div>
+                      {/* Bottom-right curl */}
+                      <div style={{ position: 'absolute', bottom: 0, right: 0, width: 18, height: 18, background: '#E8E5D6', clipPath: 'polygon(100% 0, 100% 100%, 0 100%)', zIndex: 2 }} />
+                      <div style={{ position: 'absolute', bottom: 0, right: 0, width: 22, height: 22, background: 'radial-gradient(ellipse at 100% 100%, rgba(0,0,0,0.18) 0%, transparent 65%)', zIndex: 1 }} />
                     </div>
                   )}
                   {monthlyExpectedPay > 0 && (
-                    <div style={{ position: 'relative', background: '#FEFEF5', borderRadius: '3px 12px 3px 3px', border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 1px 4px rgba(0,0,0,0.08), 3px 5px 14px rgba(0,0,0,0.09)', padding: '9px 14px 9px 12px', overflow: 'visible' }}>
-                      <div style={{ position: 'absolute', top: -1, right: -1, width: 28, height: 10, background: '#F2F0E8', borderRadius: '0 3px 0 0', border: '1px solid rgba(0,0,0,0.08)', borderBottom: 'none' }} />
-                      <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.3 }}>You've paid <span style={{ color: '#1D5B94' }}>{formatMoney(monthlyPaidOut)}</span></div>
+                    <div style={{ position: 'relative', background: '#FEFEF5', borderRadius: '3px 3px 3px 3px', border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 1px 2px rgba(0,0,0,0.07), 0 4px 10px rgba(0,0,0,0.10), 0 10px 28px rgba(0,0,0,0.07), 6px 16px 24px rgba(0,0,0,0.06)', padding: '10px 14px 11px 12px', overflow: 'visible', transform: 'translateY(-1px)' }}>
+                      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 5, background: 'rgba(0,0,0,0.06)', borderRadius: '2px 2px 0 0' }} />
+                      <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.3, marginTop: 4 }}>You've paid <span style={{ color: '#1D5B94' }}>{formatMoney(monthlyPaidOut)}</span></div>
                       <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 2 }}>of {formatMoney(monthlyExpectedPay)} due in {format(today, 'MMMM')}</div>
+                      {/* Bottom-right curl */}
+                      <div style={{ position: 'absolute', bottom: 0, right: 0, width: 18, height: 18, background: '#E8E5D6', clipPath: 'polygon(100% 0, 100% 100%, 0 100%)', zIndex: 2 }} />
+                      <div style={{ position: 'absolute', bottom: 0, right: 0, width: 22, height: 22, background: 'radial-gradient(ellipse at 100% 100%, rgba(0,0,0,0.18) 0%, transparent 65%)', zIndex: 1 }} />
                     </div>
                   )}
                 </div>
