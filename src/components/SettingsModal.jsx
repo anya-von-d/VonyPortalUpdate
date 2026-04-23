@@ -151,11 +151,74 @@ function Toggle({ checked, onChange, label, sublabel }) {
   );
 }
 
+/* ── Timezone helpers ─────────────────────────────────────── */
+function detectTimezone() {
+  try { return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'; }
+  catch { return 'UTC'; }
+}
+function getTimezoneList() {
+  try {
+    if (typeof Intl.supportedValuesOf === 'function') {
+      const list = Intl.supportedValuesOf('timeZone');
+      if (Array.isArray(list) && list.length) return list;
+    }
+  } catch {}
+  // Fallback (representative subset)
+  return [
+    'UTC',
+    'Africa/Cairo','Africa/Johannesburg','Africa/Lagos','Africa/Nairobi',
+    'America/Anchorage','America/Bogota','America/Buenos_Aires','America/Chicago',
+    'America/Denver','America/Halifax','America/Lima','America/Los_Angeles',
+    'America/Mexico_City','America/New_York','America/Phoenix','America/Sao_Paulo',
+    'America/Toronto','America/Vancouver',
+    'Asia/Bangkok','Asia/Dubai','Asia/Hong_Kong','Asia/Jakarta','Asia/Jerusalem',
+    'Asia/Karachi','Asia/Kolkata','Asia/Kuala_Lumpur','Asia/Manila','Asia/Seoul',
+    'Asia/Shanghai','Asia/Singapore','Asia/Taipei','Asia/Tehran','Asia/Tokyo',
+    'Atlantic/Reykjavik',
+    'Australia/Adelaide','Australia/Brisbane','Australia/Melbourne','Australia/Perth','Australia/Sydney',
+    'Europe/Amsterdam','Europe/Athens','Europe/Berlin','Europe/Brussels','Europe/Bucharest',
+    'Europe/Dublin','Europe/Helsinki','Europe/Istanbul','Europe/Lisbon','Europe/London',
+    'Europe/Madrid','Europe/Moscow','Europe/Oslo','Europe/Paris','Europe/Prague',
+    'Europe/Rome','Europe/Stockholm','Europe/Vienna','Europe/Warsaw','Europe/Zurich',
+    'Pacific/Auckland','Pacific/Fiji','Pacific/Honolulu',
+  ];
+}
+
 /* ── Tabs ─────────────────────────────────────────────────── */
 function GeneralTab({ user }) {
   const nameParts = (user?.full_name || '').trim().split(/\s+/);
   const firstName = nameParts[0] || '';
   const lastName = nameParts.slice(1).join(' ') || '';
+
+  // Timezone setting — defaults to automatic (detected) unless user overrides.
+  const autoZone = detectTimezone();
+  const [tzAuto, setTzAuto] = useState(() => {
+    try { const raw = localStorage.getItem('vony.tz.auto'); return raw === null ? true : raw === 'true'; }
+    catch { return true; }
+  });
+  const [tzValue, setTzValue] = useState(() => {
+    try { return localStorage.getItem('vony.tz.value') || autoZone; }
+    catch { return autoZone; }
+  });
+  const displayedTz = tzAuto ? autoZone : tzValue;
+
+  useEffect(() => {
+    try { localStorage.setItem('vony.tz.auto', String(tzAuto)); } catch {}
+    if (tzAuto) {
+      try { localStorage.setItem('vony.tz.value', autoZone); } catch {}
+      setTzValue(autoZone);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tzAuto]);
+
+  useEffect(() => {
+    if (!tzAuto) {
+      try { localStorage.setItem('vony.tz.value', tzValue); } catch {}
+    }
+  }, [tzValue, tzAuto]);
+
+  const timezones = getTimezoneList();
+  const selectOptions = timezones.includes(displayedTz) ? timezones : [displayedTz, ...timezones];
 
   const inputStyle = {
     width: '100%', padding: '9px 12px', borderRadius: 9,
@@ -177,6 +240,79 @@ function GeneralTab({ user }) {
         </div>
       </div>
       <Row label="Email"><Field value={user?.email} /></Row>
+
+      <Row label="Timezone">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+          {/* Timezone dropdown */}
+          <div style={{ position: 'relative', flex: '1 1 200px', minWidth: 180 }}>
+            <select
+              disabled={tzAuto}
+              value={displayedTz}
+              onChange={(e) => setTzValue(e.target.value)}
+              style={{
+                width: '100%', padding: '9px 32px 9px 12px', borderRadius: 9,
+                border: '1px solid rgba(0,0,0,0.08)',
+                background: tzAuto ? '#F0EFEC' : '#fafafa',
+                color: tzAuto ? '#9B9A98' : '#1A1918',
+                fontSize: 13, fontFamily: "'DM Sans', sans-serif",
+                appearance: 'none', WebkitAppearance: 'none', MozAppearance: 'none',
+                outline: 'none', boxSizing: 'border-box',
+                cursor: tzAuto ? 'not-allowed' : 'pointer',
+                pointerEvents: tzAuto ? 'none' : 'auto',
+              }}
+            >
+              {selectOptions.map((tz) => (
+                <option key={tz} value={tz}>{tz}</option>
+              ))}
+            </select>
+            <svg
+              width="14" height="14" viewBox="0 0 24 24" fill="none"
+              stroke={tzAuto ? '#C5C3C0' : '#787776'} strokeWidth="2"
+              strokeLinecap="round" strokeLinejoin="round"
+              style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}
+            >
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </div>
+
+          {/* Set-automatically slider — matches Demo Mode toggle */}
+          <div
+            onClick={() => setTzAuto((v) => !v)}
+            role="switch"
+            aria-checked={tzAuto}
+            tabIndex={0}
+            onKeyDown={(e) => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); setTzAuto(v => !v); } }}
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 8,
+              cursor: 'pointer', userSelect: 'none', outline: 'none',
+            }}
+          >
+            <span style={{
+              fontFamily: "'DM Sans', sans-serif",
+              fontSize: 13, fontWeight: tzAuto ? 600 : 500,
+              color: tzAuto ? '#1A1918' : 'rgba(0,0,0,0.55)',
+              letterSpacing: '-0.01em', whiteSpace: 'nowrap',
+            }}>
+              Set automatically
+            </span>
+            <span style={{
+              position: 'relative', width: 32, height: 18, borderRadius: 999,
+              background: tzAuto ? '#03ACEA' : 'rgba(0,0,0,0.22)',
+              transition: 'background 0.18s ease', flexShrink: 0,
+              boxShadow: tzAuto ? '0 0 0 1px rgba(3,172,234,0.3)' : 'inset 0 0 0 1px rgba(0,0,0,0.06)',
+            }}>
+              <span style={{
+                position: 'absolute', top: 2, left: tzAuto ? 16 : 2,
+                width: 14, height: 14, borderRadius: '50%',
+                background: '#ffffff',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.25)',
+                transition: 'left 0.18s ease',
+              }} />
+            </span>
+          </div>
+        </div>
+      </Row>
+
       <div style={{ marginTop: 4 }}>
         <Link to={createPageUrl('Profile')} style={{
           display: 'inline-flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 9,
