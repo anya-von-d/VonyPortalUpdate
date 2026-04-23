@@ -511,7 +511,7 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
           const paidPct = Math.round(totalWithInterest > 0 ? Math.min(100, (totalPaidAmt / totalWithInterest) * 100) : 0);
           const remaining = Math.max(0, totalWithInterest - totalPaidAmt);
           const ringColor = isLending ? '#03ACEA' : '#1D5B94';
-          const cardBase = { background: '#FEFCF8', borderRadius: 3, border: 'none', boxShadow: '0 8px 14px rgba(0,0,0,0.14), 0 1px 2px rgba(0,0,0,0.12)', padding: '14px 12px' };
+          const cardBase = { background: '#FEFEFE', borderRadius: 3, border: 'none', boxShadow: '0 8px 14px rgba(0,0,0,0.14), 0 1px 2px rgba(0,0,0,0.12)', padding: '14px 12px' };
           const C = 2 * Math.PI * 45; const ringOffset = C - (paidPct / 100) * C;
           const interestRate = selectedLoan.interest_rate || 0;
           const repaymentPeriod = selectedLoan.repayment_period || 0;
@@ -599,7 +599,7 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
                 <div className="loan-repayment-col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, alignItems: 'stretch' }}>
 
                   {/* Repayment Progress — warm ivory with folded corner */}
-                  <div style={{ background: '#FEFCF4', borderRadius: 3, border: 'none', boxShadow: '2px 5px 14px rgba(0,0,0,0.10), 0 1px 3px rgba(0,0,0,0.07)', padding: '14px 12px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+                  <div style={{ background: '#FEFEFE', borderRadius: 3, border: 'none', boxShadow: '2px 5px 14px rgba(0,0,0,0.10), 0 1px 3px rgba(0,0,0,0.07)', padding: '14px 12px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
                     <div style={{ position: 'relative', width: 80, height: 80, marginBottom: 8 }}>
                       <svg width="80" height="80" viewBox="0 0 128 128" style={{ transform: 'rotate(-90deg)' }}>
                         <circle cx="64" cy="64" r="45" fill="none" stroke={`${ringColor}26`} strokeWidth="10" />
@@ -619,7 +619,7 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
 
                   {/* You're Owed — amber-tinted stacked paper */}
                   <div style={{
-                    background: '#FFFEF6', borderRadius: 2,
+                    background: '#FEFEFE', borderRadius: 2,
                     boxShadow: '10px 12px 26px rgba(0,0,0,0.13), -2px -1px 6px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06)',
                     transform: 'rotate(0.3deg)',
                     padding: '12px 10px 10px', fontFamily: "'DM Sans', sans-serif",
@@ -771,7 +771,7 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
         </div>{/* end left column */}
 
         <div>
-        <PageCard title="Payments" shadow="tiltR" style={{ background: '#FDFBF3', borderRadius: 3, border: 'none', boxShadow: '10px 8px 22px rgba(0,0,0,0.12), 2px 2px 6px rgba(0,0,0,0.07)', transform: 'rotate(0.4deg)' }}>
+        <PageCard title="Payments" shadow="tiltR" style={{ background: '#FEFEFE', borderRadius: 3, border: 'none', boxShadow: '10px 8px 22px rgba(0,0,0,0.12), 2px 2px 6px rgba(0,0,0,0.07)', transform: 'rotate(0.4deg)' }}>
           <div>
           {(() => {
             const paymentAmt = selectedLoan.payment_amount || 0;
@@ -836,7 +836,7 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
 
         <div style={{ position: 'relative', marginBottom: 24 }}>
           <div style={{ position: 'absolute', bottom: -5, right: -4, left: 5, top: 5, background: 'rgba(0,0,0,0.07)', borderRadius: 3, transform: 'rotate(1.5deg)' }} />
-        <PageCard title="Loan Progress" wrapperStyle={{ marginBottom: 0 }} style={{ background: '#FEFCF8', borderRadius: 3, border: 'none', boxShadow: '0 20px 40px rgba(0,0,0,0.12), 0 3px 8px rgba(0,0,0,0.05)', position: 'relative', zIndex: 1 }}>
+        <PageCard title="Loan Progress" wrapperStyle={{ marginBottom: 0 }} style={{ background: '#FEFEFE', borderRadius: 2, border: 'none', boxShadow: '5px 4px 18px rgba(0,0,0,0.09), -1px 0 0 rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.06)', position: 'relative', zIndex: 1 }}>
           <div>
           {(() => {
             const repaymentPeriod = selectedLoan.repayment_period || 0;
@@ -951,7 +951,7 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
 
               {/* Box 2 — Repayment Progress — single sheet, lifted right */}
               <div style={{ flex: 1, minWidth: 0, position: 'relative' }}>
-              <div style={{ position: 'relative', zIndex: 1, background: '#FEFCF8', borderRadius: 4, border: 'none', boxShadow: '10px 8px 22px rgba(0,0,0,0.12), 2px 2px 6px rgba(0,0,0,0.07)', transform: 'rotate(0.5deg)', padding: '14px 12px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ position: 'relative', zIndex: 1, background: '#FEFEFE', borderRadius: 4, border: 'none', boxShadow: '10px 8px 22px rgba(0,0,0,0.12), 2px 2px 6px rgba(0,0,0,0.07)', transform: 'rotate(0.5deg)', padding: '14px 12px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                 {(() => {
                   const c2 = isLending ? '#03ACEA' : '#1D5B94';
                   const p2 = isLending ? percentRepaid : percentPaid;
@@ -996,7 +996,7 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
               }
               return (
                 <div style={{
-                  background: '#FEFCF8',
+                  background: '#FEFEFE',
                   borderRadius: 4,
                   boxShadow: '-10px 8px 22px rgba(0,0,0,0.12), -2px 2px 6px rgba(0,0,0,0.07)',
                   transform: 'rotate(-0.4deg)',
@@ -1049,7 +1049,7 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
             const firstDays = combined.length > 0 ? combined[0].days : null;
             const nextLabel = firstDays === null ? '' : firstDays < 0 ? 'overdue' : firstDays === 0 ? 'today' : firstDays === 1 ? 'tomorrow' : `in ${firstDays} days`;
             return (
-              <div style={{ background: '#FEFDF9', borderRadius: 4, border: 'none', boxShadow: '0 14px 34px rgba(0,0,0,0.18), 0 3px 8px rgba(0,0,0,0.10)', padding: '14px 18px' }}>
+              <div style={{ background: '#FEFEFE', borderRadius: 4, border: 'none', boxShadow: '0 14px 34px rgba(0,0,0,0.18), 0 3px 8px rgba(0,0,0,0.10)', padding: '14px 18px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 }}>
                   <div style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>Upcoming</div>
                   <Link to={createPageUrl('Upcoming')} style={{ fontSize: 11, fontWeight: 500, color: accent, textDecoration: 'none', fontFamily: "'DM Sans', sans-serif" }}>Full schedule →</Link>
@@ -1125,7 +1125,7 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
               });
               return (
                 <div>
-                <PageCard tone={tone} title={titleStr} shadow="peeled" style={{ marginBottom: 0, background: '#FEFCF8', borderRadius: 4, boxShadow: '14px 10px 24px rgba(0,0,0,0.14), -6px -4px 14px rgba(0,0,0,0.06)', transform: 'rotate(-0.3deg)' }} headerRight={
+                <PageCard tone={tone} title={titleStr} shadow="peeled" style={{ marginBottom: 0, background: '#FEFEFE', borderRadius: 4, boxShadow: '14px 10px 24px rgba(0,0,0,0.14), -6px -4px 14px rgba(0,0,0,0.06)', transform: 'rotate(-0.3deg)' }} headerRight={
                   <Select value={rankingFilter} onValueChange={setRankingFilter}>
                     <SelectTrigger className="w-auto h-7 px-2 border-0 text-xs font-medium rounded-lg" style={{ background: accentColBg, color: accentCol }}><SelectValue /></SelectTrigger>
                     <SelectContent>
@@ -1227,7 +1227,7 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
                   >
                     {/* Sharp paper card */}
                     <div style={{
-                      background: '#FEFCF8',
+                      background: '#FEFEFE',
                       borderRadius: 3,
                       border: isSelected ? `1.5px solid ${accent}` : '1px solid rgba(0,0,0,0.10)',
                       boxShadow: isSelected
@@ -1318,7 +1318,7 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
     <div style={{ position: 'relative', marginBottom: 24, ...wrapperStyle }}>
     <div style={{
       position: 'relative', zIndex: 1,
-      background: '#FEFCF8',
+      background: '#FEFEFE',
       borderRadius: 3,
       border: 'none',
       boxShadow: v.boxShadow,
