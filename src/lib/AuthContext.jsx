@@ -179,6 +179,65 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  /**
+   * Permanently delete the current user's account.
+   *
+   * What it does:
+   *  - Removes all friendships (both directions) so this user vanishes from friends lists
+   *  - Removes the public_profiles record (this user no longer appears in Find Friends)
+   *  - Removes payment-method connections
+   *  - Removes the profiles row
+   *  - Calls the `delete_user` Supabase RPC (SECURITY DEFINER function that removes
+   *    the row from auth.users, preventing re-login with the same Google account)
+   *  - Signs out
+   *
+   * Loans/payments referencing this user's UUID are intentionally left intact so the
+   * other party's records are unaffected. Because Supabase assigns a new UUID on every
+   * sign-up, a fresh account with the same email can never be mistaken for this one.
+   *
+   * Required Supabase SQL (run once in the dashboard):
+   *   create or replace function public.delete_user()
+   *   returns void language sql security definer as $$
+   *     delete from auth.users where id = auth.uid();
+   *   $$;
+   *   grant execute on function public.delete_user() to authenticated;
+   */
+  const deleteAccount = async () => {
+    const uid = user?.id;
+    if (!uid) return;
+
+    try {
+      // 1. Remove all friendship rows in either direction
+      await supabase
+        .from('friendships')
+        .delete()
+        .or(`user_id.eq.${uid},friend_id.eq.${uid}`);
+
+      // 2. Remove public profile (disappears from Find Friends)
+      await supabase.from('public_profiles').delete().eq('user_id', uid);
+
+      // 3. Remove payment-method connections
+      await supabase.from('paypal_connections').delete().eq('user_id', uid);
+      await supabase.from('venmo_connections').delete().eq('user_id', uid);
+
+      // 4. Remove profile row
+      await supabase.from('profiles').delete().eq('id', uid);
+
+      // 5. Delete the auth.users row via a security-definer RPC so a new sign-up
+      //    with the same email gets a brand-new UUID and never inherits old data.
+      await supabase.rpc('delete_user');
+    } catch (err) {
+      console.error('deleteAccount cleanup error:', err);
+      // Continue to sign-out regardless — partial cleanup is better than none
+    }
+
+    setUser(null);
+    setUserProfile(null);
+    setIsAuthenticated(false);
+    await supabase.auth.signOut();
+    window.location.href = '/';
+  };
+
   const navigateToLogin = async () => {
     try {
       if (isNativeApp()) {
@@ -228,6 +287,7 @@ export const AuthProvider = ({ children }) => {
       isLoadingAuth,
       authError,
       logout,
+      deleteAccount,
       navigateToLogin,
       checkUserAuth,
       refreshProfile

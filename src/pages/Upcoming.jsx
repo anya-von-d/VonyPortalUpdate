@@ -377,7 +377,7 @@ export default function Upcoming() {
                 if (!hasOverdue && !hasPending) {
                   postitItems = [
                     { text: '', action: null },
-                    { text: "Everything's looking good 🎆", action: null },
+                    { text: "Everything's looking good 💫", action: null },
                     { text: '', action: null },
                   ];
                 } else if (hasOverdue && hasPending) {

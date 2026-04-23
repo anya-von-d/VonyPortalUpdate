@@ -319,19 +319,100 @@ function GuideTab() {
 }
 
 function AboutTab() {
+  const { deleteAccount } = useAuth();
+  const [step, setStep] = useState(null); // null | 'confirm' | 'deleting'
+
+  const handleDelete = async () => {
+    setStep('deleting');
+    try {
+      await deleteAccount();
+    } catch (e) {
+      console.error('Delete account error:', e);
+      setStep(null);
+    }
+  };
+
   return (
     <>
       <Row label="App">
         <div style={{ fontSize: 13, color: '#787776' }}>Vony · Version 1.0</div>
       </Row>
+
       <Row label="Danger Zone">
         <button
           style={{ padding: '8px 14px', borderRadius: 9, border: '1px solid rgba(232,114,110,0.3)', background: 'rgba(232,114,110,0.06)', color: '#E8726E', fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}
-          onClick={() => window.confirm('Are you sure you want to delete your account? This cannot be undone.')}
+          onClick={() => setStep('confirm')}
         >
           Delete Account
         </button>
       </Row>
+
+      {/* Confirmation dialog */}
+      {step === 'confirm' && createPortal(
+        <div style={{
+          position: 'fixed', inset: 0, zIndex: 999999,
+          background: 'rgba(0,0,0,0.28)', backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          padding: 24,
+        }}>
+          <div style={{
+            background: '#ffffff', borderRadius: 16, maxWidth: 380, width: '100%',
+            padding: '28px 28px 24px', boxShadow: '0 24px 64px rgba(0,0,0,0.18)',
+            fontFamily: "'DM Sans', sans-serif",
+          }}>
+            <div style={{ fontSize: 17, fontWeight: 700, color: '#1A1918', marginBottom: 10 }}>
+              Delete your account?
+            </div>
+            <div style={{ fontSize: 13, color: '#787776', lineHeight: 1.6, marginBottom: 22 }}>
+              This will permanently delete your account. Your loans and transactions with other people will remain intact on their end — only your account will be removed. <strong style={{ color: '#1A1918' }}>This cannot be undone.</strong>
+            </div>
+            <div style={{ display: 'flex', gap: 10 }}>
+              <button
+                onClick={() => setStep(null)}
+                style={{
+                  flex: 1, padding: '10px 0', borderRadius: 10,
+                  border: '1px solid rgba(0,0,0,0.10)', background: 'white',
+                  fontSize: 13, fontWeight: 600, color: '#1A1918',
+                  cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDelete}
+                style={{
+                  flex: 1, padding: '10px 0', borderRadius: 10,
+                  border: 'none', background: '#E8726E',
+                  fontSize: 13, fontWeight: 600, color: 'white',
+                  cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
+                }}
+              >
+                Yes, delete it
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* Deleting spinner */}
+      {step === 'deleting' && createPortal(
+        <div style={{
+          position: 'fixed', inset: 0, zIndex: 999999,
+          background: 'rgba(0,0,0,0.28)', backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <div style={{
+            background: '#ffffff', borderRadius: 16, padding: '32px 40px',
+            textAlign: 'center', fontFamily: "'DM Sans', sans-serif",
+            boxShadow: '0 24px 64px rgba(0,0,0,0.18)',
+          }}>
+            <div style={{ width: 32, height: 32, border: '2px solid #E8726E', borderTopColor: 'transparent', borderRadius: '50%', margin: '0 auto 14px', animation: 'spin 1s linear infinite' }} />
+            <div style={{ fontSize: 13, color: '#787776' }}>Deleting your account…</div>
+          </div>
+        </div>,
+        document.body
+      )}
     </>
   );
 }
