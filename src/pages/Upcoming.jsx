@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Loan, Payment, PublicProfile } from "@/entities/all";
 import { useAuth } from "@/lib/AuthContext";
@@ -13,6 +13,7 @@ import MeshMobileNav from "@/components/MeshMobileNav";
 import DesktopSidebar from '../components/DesktopSidebar';
 
 export default function Upcoming() {
+  const navigate = useNavigate();
   const { user: authUser, userProfile, isLoadingAuth, navigateToLogin, logout } = useAuth();
   const [loans, setLoans] = useState([]);
   const [payments, setPayments] = useState([]);
@@ -28,6 +29,7 @@ export default function Upcoming() {
     try { const raw = localStorage.getItem('vony.plan-expenses'); return raw ? JSON.parse(raw) : []; } catch { return []; }
   });
   const [addingExpense, setAddingExpense] = useState(false);
+  const [hoveredPostitOverdue, setHoveredPostitOverdue] = useState(null);
   const [newExpenseLabel, setNewExpenseLabel] = useState('');
   const [newExpenseAmount, setNewExpenseAmount] = useState('');
   const [newExpenseDate, setNewExpenseDate] = useState('');
@@ -326,47 +328,83 @@ export default function Upcoming() {
 
             {/* Col 1: Overdue + Next 7 Days */}
             <div className="upcoming-col-1" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              {/* Overdue */}
-              {overdue.length > 0 && (
-                <div style={{ position: 'relative' }}>
-                  <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
-                  <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, padding: '14px 18px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
-                      <span style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>Overdue</span>
-                      <span style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>{overdue.length} · {formatMoney(overdue.reduce((s, e) => s + e.amount, 0))}</span>
-                    </div>
-                    <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginBottom: 10 }}>
-                      {overdue.length} payment{overdue.length !== 1 ? 's' : ''} past due
-                    </div>
-                    {overdue.map(event => {
-                      const daysAgo = Math.abs(event.days);
-                      const primaryText = event.isLender
-                        ? <>{event.firstName}'s <span style={{ fontWeight: 700 }}>{formatMoney(event.amount)}</span> payment is {daysAgo} day{daysAgo !== 1 ? 's' : ''} overdue</>
-                        : <>Your payment of <span style={{ fontWeight: 700 }}>{formatMoney(event.amount)}</span> to {event.firstName} is {daysAgo} day{daysAgo !== 1 ? 's' : ''} overdue</>;
+              {/* Overdue — post-it notes */}
+              {overdue.length > 0 && (() => {
+                const noteConfigs = [
+                  { bg: 'linear-gradient(170deg, #FFE566 0%, #FFD638 100%)', rotate: '-3.5deg', ty: '7px', zIndex: 1, textColor: '#5C4200' },
+                  { bg: 'linear-gradient(170deg, #FFFDE0 0%, #FFF59D 100%)', rotate: '1.8deg',  ty: '0px',  zIndex: 2, textColor: '#5C4200' },
+                  { bg: 'linear-gradient(170deg, #FFE082 0%, #FFCA28 100%)', rotate: '-1deg',   ty: '5px',  zIndex: 3, textColor: '#5C4200' },
+                ];
+                const postitItems = [];
+                if (overdue.length <= 3) {
+                  overdue.forEach(event => {
+                    const daysAgo = Math.abs(event.days);
+                    const text = event.isLender
+                      ? `${event.firstName}'s payment of ${formatMoney(event.amount)} is ${daysAgo} day${daysAgo !== 1 ? 's' : ''} overdue`
+                      : `Your payment of ${formatMoney(event.amount)} to ${event.firstName} is ${daysAgo} day${daysAgo !== 1 ? 's' : ''} overdue`;
+                    postitItems.push({ text, loanId: event.loanId });
+                  });
+                } else {
+                  overdue.slice(0, 2).forEach(event => {
+                    const daysAgo = Math.abs(event.days);
+                    const text = event.isLender
+                      ? `${event.firstName}'s payment of ${formatMoney(event.amount)} is ${daysAgo} day${daysAgo !== 1 ? 's' : ''} overdue`
+                      : `Your payment of ${formatMoney(event.amount)} to ${event.firstName} is ${daysAgo} day${daysAgo !== 1 ? 's' : ''} overdue`;
+                    postitItems.push({ text, loanId: event.loanId });
+                  });
+                  const remaining = overdue.length - 2;
+                  postitItems.push({ text: `You have ${remaining} other overdue payment${remaining !== 1 ? 's' : ''}`, loanId: null });
+                }
+                return (
+                  <div className="home-card-attention" style={{ display: 'flex', paddingBottom: 10, overflow: 'visible' }}>
+                    {postitItems.map((item, i) => {
+                      const nc = noteConfigs[i];
                       return (
-                        <div key={event.loanId + '-ov'} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, padding: '7px 0' }}>
-                          <div style={{ flex: 1, minWidth: 0 }}>
-                            <div style={{ fontSize: 12, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>
-                              {primaryText}
-                            </div>
-                            {event.purpose && (
-                              <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                {event.purpose}
-                              </div>
-                            )}
-                          </div>
-                          <Link
-                            to={createPageUrl('RecordPayment')}
-                            style={{ fontSize: 11, fontWeight: 600, color: '#E8726E', textDecoration: 'none', whiteSpace: 'nowrap', flexShrink: 0, fontFamily: "'DM Sans', sans-serif" }}
-                          >
-                            Record →
-                          </Link>
+                        <div
+                          key={i}
+                          onClick={() => navigate(createPageUrl('RecordPayment') + (item.loanId ? `?loanId=${item.loanId}` : ''))}
+                          onMouseEnter={() => setHoveredPostitOverdue(i)}
+                          onMouseLeave={() => setHoveredPostitOverdue(null)}
+                          style={{
+                            flex: 1,
+                            minHeight: 110,
+                            background: nc.bg,
+                            borderRadius: '2px 2px 3px 3px',
+                            padding: '14px 10px 12px',
+                            marginRight: i < postitItems.length - 1 ? -11 : 0,
+                            transform: hoveredPostitOverdue === i
+                              ? `rotate(${nc.rotate}) translateY(calc(${nc.ty} - 10px))`
+                              : `rotate(${nc.rotate}) translateY(${nc.ty})`,
+                            zIndex: hoveredPostitOverdue === i ? 10 : nc.zIndex,
+                            position: 'relative',
+                            boxShadow: hoveredPostitOverdue === i
+                              ? '4px 12px 28px rgba(0,0,0,0.22), 0 2px 6px rgba(0,0,0,0.14)'
+                              : '2px 5px 16px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.10)',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: 6,
+                            transition: 'transform 0.18s ease, box-shadow 0.18s ease',
+                          }}
+                        >
+                          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 6, background: 'rgba(0,0,0,0.08)', borderRadius: '2px 2px 0 0' }} />
+                          <p style={{
+                            margin: 0,
+                            marginTop: 8,
+                            fontSize: 11,
+                            fontWeight: 600,
+                            color: nc.textColor,
+                            fontFamily: "'DM Sans', sans-serif",
+                            lineHeight: 1.45,
+                          }}>
+                            {item.text}
+                          </p>
                         </div>
                       );
                     })}
                   </div>
-                </div>
-              )}
+                );
+              })()}
 
               {/* Next 7 Days — Home-style card */}
               {(() => {

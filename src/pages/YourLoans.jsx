@@ -519,20 +519,29 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
           const paymentFrequency = selectedLoan.payment_frequency || 'monthly';
           return (
             <>
-              {/* Compact loan-with bar — centered, fit to content */}
-              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 14 }}>
-                <div style={{ background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.13)', padding: '9px 16px', display: 'inline-flex', alignItems: 'center', gap: 10 }}>
-                  <div style={{ width: 30, height: 30, borderRadius: '50%', background: `${ringColor}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden' }}>
-                    {otherPartyProfile?.avatar_url || otherPartyProfile?.profile_picture_url
-                      ? <img src={otherPartyProfile.avatar_url || otherPartyProfile.profile_picture_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                      : <span style={{ fontSize: 13, fontWeight: 700, color: ringColor, fontFamily: "'DM Sans', sans-serif" }}>{otherPartyUsername.charAt(0)}</span>
-                    }
+              {/* Spiral notebook tab — replaces the avatar+text bar */}
+              <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: 14 }}>
+                <div style={{ position: 'relative', maxWidth: 220 }}>
+                  {/* Binding holes */}
+                  <div style={{ display: 'flex', gap: 7, paddingLeft: 6, paddingRight: 6, marginBottom: -1 }}>
+                    {[0,1,2,3,4,5,6].map(ri => (
+                      <div key={ri} style={{ width: 9, height: 11, borderRadius: '4px 4px 0 0', border: '1.5px solid rgba(0,0,0,0.22)', borderBottom: 'none', background: '#DDDBD5', flexShrink: 0 }} />
+                    ))}
                   </div>
-                  <div style={{ fontSize: 13, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap' }}>
-                    <span style={{ fontWeight: 600 }}>{otherPartyUsername}</span>
-                    {isLending ? ' borrowed ' : ' lent you '}
-                    <span style={{ fontWeight: 700, color: ringColor }}>{formatMoney(selectedLoan.amount || 0)}</span>
-                    {selectedLoan.purpose ? <> for <span style={{ color: '#787776' }}>{selectedLoan.purpose}</span></> : null}
+                  {/* Paper body */}
+                  <div style={{
+                    background: '#FEFCF4', borderRadius: '0 4px 4px 4px',
+                    border: '1px solid rgba(0,0,0,0.09)', borderTop: '2px solid rgba(0,0,0,0.18)',
+                    boxShadow: '1px 3px 10px rgba(0,0,0,0.10)',
+                    padding: '10px 14px 12px',
+                    backgroundImage: 'repeating-linear-gradient(to bottom, transparent, transparent 20px, rgba(3,172,234,0.08) 20px, rgba(3,172,234,0.08) 21px)',
+                  }}>
+                    <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.3 }}>
+                      <span style={{ fontWeight: 600 }}>{otherPartyUsername}</span>
+                      {isLending ? ' borrowed ' : ' lent you '}
+                      <span style={{ color: ringColor }}>{formatMoney(selectedLoan.amount || 0)}</span>
+                      {selectedLoan.purpose ? <><br /><span style={{ fontWeight: 400, color: '#9B9A98', fontSize: 11 }}>for {selectedLoan.purpose}</span></> : null}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -604,19 +613,16 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
                 {/* Right (1fr): Repayment Progress and You're Owed side-by-side */}
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, alignItems: 'stretch' }}>
 
-                  {/* Repayment Progress */}
-                  <div style={{ ...cardBase }}>
-                    <div style={{ fontSize: 11, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif", marginBottom: 10 }}>Repayment Progress</div>
-                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 8 }}>
-                      <div style={{ position: 'relative', width: 60, height: 60, flexShrink: 0 }}>
-                        <svg width="60" height="60" viewBox="0 0 128 128" style={{ transform: 'rotate(-90deg)' }}>
-                          <circle cx="64" cy="64" r="45" fill="none" stroke={`${ringColor}26`} strokeWidth="10" />
-                          <circle cx="64" cy="64" r="45" fill="none" stroke={ringColor} strokeWidth="10" strokeLinecap="round" strokeDasharray={C} strokeDashoffset={ringOffset} />
-                        </svg>
-                        <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
-                          <span style={{ fontSize: 10, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>{paidPct}%</span>
-                          <span style={{ fontSize: 7, fontWeight: 500, color: '#787776', fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>repaid</span>
-                        </div>
+                  {/* Repayment Progress — no title, bigger chart */}
+                  <div style={{ ...cardBase, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ position: 'relative', width: 80, height: 80, marginBottom: 8 }}>
+                      <svg width="80" height="80" viewBox="0 0 128 128" style={{ transform: 'rotate(-90deg)' }}>
+                        <circle cx="64" cy="64" r="45" fill="none" stroke={`${ringColor}26`} strokeWidth="10" />
+                        <circle cx="64" cy="64" r="45" fill="none" stroke={ringColor} strokeWidth="10" strokeLinecap="round" strokeDasharray={C} strokeDashoffset={ringOffset} />
+                      </svg>
+                      <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                        <span style={{ fontSize: 14, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.03em', fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>{paidPct}%</span>
+                        <span style={{ fontSize: 8, fontWeight: 500, color: '#787776', fontFamily: "'DM Sans', sans-serif", lineHeight: 1, marginTop: 2 }}>repaid</span>
                       </div>
                     </div>
                     <div style={{ fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", textAlign: 'center', lineHeight: 1.4 }}>
@@ -933,43 +939,48 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
             {/* Two side-by-side overview boxes */}
             <div style={{ display: 'flex', gap: 12 }}>
 
-              {/* Box 1 — Amount owed/owing */}
-              <div style={{ flex: 1, minWidth: 0, background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.13)', padding: '14px 12px' }}>
-                <div style={{ marginBottom: 10 }}>
-                  {isLending ? (
-                    <svg width="26" height="26" viewBox="0 0 28 28" fill="none">
-                      <circle cx="14" cy="14" r="13" stroke="#03ACEA" strokeWidth="1.5"/>
-                      <path d="M14 9 L14 17 M10.5 12.5 L14 9 L17.5 12.5" stroke="#03ACEA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  ) : (
-                    <svg width="26" height="26" viewBox="0 0 28 28" fill="none">
-                      <circle cx="14" cy="14" r="13" stroke="#1D5B94" strokeWidth="1.5"/>
-                      <path d="M14 9 L14 17 M10.5 13.5 L14 17 L17.5 13.5" stroke="#1D5B94" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  )}
+              {/* Box 1 — You're Owed / You Owe — receipt style */}
+              <div style={{
+                flex: 1, minWidth: 0, background: '#FEFEFE', borderRadius: 3,
+                boxShadow: '0 2px 8px rgba(0,0,0,0.10), 0 1px 3px rgba(0,0,0,0.06)',
+                padding: '14px 12px 10px', fontFamily: "'DM Sans', sans-serif",
+                display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'visible',
+              }}>
+                <div style={{ position: 'absolute', top: -6, left: 0, right: 0, height: 6, backgroundImage: 'radial-gradient(circle at 6px -1px, #FEFEFE 6px, transparent 6px)', backgroundSize: '12px 6px', backgroundRepeat: 'repeat-x' }} />
+                <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 6 }}>
+                  {isLending ? "You're owed" : "You owe"}
                 </div>
-                <div style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>
-                  {isLending ? (
-                    <>You're owed <span style={{ color: '#03ACEA' }}>{formatMoney(lentOwed)}</span></>
-                  ) : (
-                    <>You owe <span style={{ color: '#1D5B94' }}>{formatMoney(borrowOwed)}</span></>
-                  )}
+                <div style={{ borderTop: '1.5px dashed rgba(0,0,0,0.15)', marginBottom: 10 }} />
+                <div style={{ fontSize: 22, fontWeight: 700, letterSpacing: '-0.04em', lineHeight: 1, color: isLending ? '#03ACEA' : '#1D5B94', marginBottom: 'auto', paddingBottom: 10 }}>
+                  {isLending ? formatMoney(lentOwed) : formatMoney(borrowOwed)}
                 </div>
-                <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 3, fontFamily: "'DM Sans', sans-serif" }}>
-                  across {activeLoans.length} loan{activeLoans.length !== 1 ? 's' : ''}
+                <div style={{ borderTop: '1.5px dashed rgba(0,0,0,0.10)', marginBottom: 7 }} />
+                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                  <span style={{ fontSize: 10, color: '#9B9A98' }}>across {activeLoans.length} loan{activeLoans.length !== 1 ? 's' : ''}</span>
                 </div>
+                <div style={{ position: 'absolute', bottom: -6, left: 0, right: 0, height: 6, backgroundImage: 'radial-gradient(circle at 6px 7px, #FEFEFE 6px, transparent 6px)', backgroundSize: '12px 6px', backgroundRepeat: 'repeat-x' }} />
               </div>
 
-              {/* Box 2 — Repayment Progress */}
-              <div style={{ flex: 1, minWidth: 0, background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.13)', padding: '14px 12px' }}>
-                <div style={{ fontSize: 11, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif", marginBottom: 10 }}>Repayment Progress</div>
-                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 8 }}>
-                  {isLending ? (
-                    <OvRing percent={percentRepaid} color="#03ACEA" label="Repaid" />
-                  ) : (
-                    <OvRing percent={percentPaid} color="#1D5B94" label="Paid back" />
-                  )}
-                </div>
+              {/* Box 2 — Repayment Progress — no title, bigger chart */}
+              <div style={{ flex: 1, minWidth: 0, background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.13)', padding: '14px 12px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                {(() => {
+                  const c2 = isLending ? '#03ACEA' : '#1D5B94';
+                  const p2 = isLending ? percentRepaid : percentPaid;
+                  const l2 = isLending ? 'Repaid' : 'Paid back';
+                  const C2 = 2 * Math.PI * 45; const o2 = C2 - (p2 / 100) * C2;
+                  return (
+                    <div style={{ position: 'relative', width: 80, height: 80, marginBottom: 8 }}>
+                      <svg width="80" height="80" viewBox="0 0 128 128" style={{ transform: 'rotate(-90deg)' }}>
+                        <circle cx="64" cy="64" r="45" fill="none" stroke={`${c2}26`} strokeWidth="10" />
+                        <circle cx="64" cy="64" r="45" fill="none" stroke={c2} strokeWidth="10" strokeLinecap="round" strokeDasharray={C2} strokeDashoffset={o2} />
+                      </svg>
+                      <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                        <span style={{ fontSize: 14, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.03em', fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>{p2}%</span>
+                        <span style={{ fontSize: 8, color: '#787776', fontFamily: "'DM Sans', sans-serif", lineHeight: 1, marginTop: 2 }}>{l2}</span>
+                      </div>
+                    </div>
+                  );
+                })()}
                 <div style={{ fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", textAlign: 'center', lineHeight: 1.4 }}>
                   {isLending
                     ? <>{formatMoney(totalReceivedLending)} of {formatMoney(totalExpectedLending)} repaid to you</>
@@ -994,35 +1005,30 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
                 insightText = isLending ? 'All your lent money is on track' : 'All your payments are on track';
               }
               return (
-                <div style={{ background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.13)', padding: '14px 14px' }}>
-                  <div style={{ fontSize: 11, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif", marginBottom: 10 }}>
-                    {format(today, 'MMMM')} {isLending ? 'Lending' : 'Borrowing'} Snapshot
+                <div style={{ background: '#FDFCF7', borderRadius: 3, boxShadow: '0 2px 8px rgba(0,0,0,0.09), 0 1px 3px rgba(0,0,0,0.05)', padding: '12px 14px', borderTop: `4px solid ${accent}`, fontFamily: "'DM Sans', sans-serif" }}>
+                  <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 8 }}>
+                    <span style={{ display: 'inline-block', background: accentBg, color: accent, padding: '2px 10px', borderRadius: 4, fontSize: 11, fontWeight: 500, lineHeight: 1.5 }}>{insightText}</span>
                   </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
-                    <span style={{ display: 'inline-block', background: accentBg, color: accent, padding: '2px 8px', borderRadius: 4, fontSize: 11, fontWeight: 500, lineHeight: 1.4, fontFamily: "'DM Sans', sans-serif" }}>
-                      {insightText}
-                    </span>
-                    {isLending && monthlyExpectedReceive > 0 && (
-                      <div style={{ fontSize: 11, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.5, textAlign: 'center' }}>
-                        Expected to receive <span style={{ color: accent, fontWeight: 600 }}>{formatMoney(monthlyExpectedReceive)}</span> this month
-                      </div>
-                    )}
-                    {!isLending && monthlyExpectedPay > 0 && (
-                      <div style={{ fontSize: 11, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.5, textAlign: 'center' }}>
-                        Due to pay <span style={{ color: accent, fontWeight: 600 }}>{formatMoney(monthlyExpectedPay)}</span> this month
-                      </div>
-                    )}
-                    {isLending && monthlyReceived > 0 && (
-                      <div style={{ fontSize: 11, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.5, textAlign: 'center' }}>
-                        {formatMoney(monthlyReceived)} received so far this month
-                      </div>
-                    )}
-                    {!isLending && monthlyPaidOut > 0 && (
-                      <div style={{ fontSize: 11, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.5, textAlign: 'center' }}>
-                        {formatMoney(monthlyPaidOut)} paid out so far this month
-                      </div>
-                    )}
-                  </div>
+                  {isLending && monthlyExpectedReceive > 0 && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', padding: '5px 0', borderBottom: `1px solid ${accent}18`, fontSize: 11, color: '#1A1918' }}>
+                      <span>Expected this month</span><span style={{ fontWeight: 700, color: accent }}>{formatMoney(monthlyExpectedReceive)}</span>
+                    </div>
+                  )}
+                  {!isLending && monthlyExpectedPay > 0 && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', padding: '5px 0', borderBottom: `1px solid ${accent}18`, fontSize: 11, color: '#1A1918' }}>
+                      <span>Due this month</span><span style={{ fontWeight: 700, color: accent }}>{formatMoney(monthlyExpectedPay)}</span>
+                    </div>
+                  )}
+                  {isLending && monthlyReceived > 0 && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', padding: '5px 0', fontSize: 11, color: '#1A1918' }}>
+                      <span>Received so far</span><span style={{ fontWeight: 700, color: accent }}>{formatMoney(monthlyReceived)}</span>
+                    </div>
+                  )}
+                  {!isLending && monthlyPaidOut > 0 && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', padding: '5px 0', fontSize: 11, color: '#1A1918' }}>
+                      <span>Paid out so far</span><span style={{ fontWeight: 700, color: accent }}>{formatMoney(monthlyPaidOut)}</span>
+                    </div>
+                  )}
                 </div>
               );
             })()}
@@ -1117,6 +1123,14 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
                 return 0;
               });
               return (
+                <div style={{ position: 'relative' }}>
+                  {/* Blue manila envelope behind */}
+                  <div style={{ position: 'absolute', top: 8, left: -6, right: 6, bottom: -8, background: isLending ? '#1C4F8C' : '#153A6B', borderRadius: 10, zIndex: 0 }}>
+                    <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', overflow: 'hidden', borderRadius: '10px 10px 0 0' }} height="32" viewBox="0 0 200 32" preserveAspectRatio="none">
+                      <polygon points="0,0 200,0 100,28" fill={isLending ? '#2563A8' : '#1A4F8A'} />
+                    </svg>
+                  </div>
+                  <div style={{ position: 'relative', zIndex: 1 }}>
                 <PageCard tone={tone} title={titleStr} style={{ marginBottom: 0 }} headerRight={
                   <Select value={rankingFilter} onValueChange={setRankingFilter}>
                     <SelectTrigger className="w-auto h-7 px-2 border-0 text-xs font-medium rounded-lg" style={{ background: accentColBg, color: accentCol }}><SelectValue /></SelectTrigger>
@@ -1179,6 +1193,8 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
                     })}
                   </div>
                 </PageCard>
+                  </div>
+                </div>
               );
             })()}
           </div>{/* end col 3 */}
