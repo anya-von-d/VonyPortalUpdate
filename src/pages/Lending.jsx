@@ -1506,20 +1506,29 @@ export default function Lending({ initialTab }) {
     { id: 'active', label: 'Manage Loans' },
   ];
 
-  const PageCard = ({ title, headerRight, children, style, highlight }) => (
-    <div style={{ marginBottom: 24, ...style }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: 5, marginBottom: 2 }}>
-        <div style={{ fontSize: 12, fontWeight: 600, color: highlight ? '#03ACEA' : '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>{title}</div>
-        {headerRight && <div style={{ flexShrink: 0 }}>{headerRight}</div>}
-      </div>
-      <div style={{ position: 'relative' }}>
-        <div style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
-        <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.13)', padding: '14px 18px', overflow: 'visible' }}>
+  const PageCard = ({ title, headerRight, children, style, highlight, shadow }) => {
+    // Single-paper variants — no layered aura. Each card gets a distinct lift.
+    const shadowVariants = {
+      soft:    '0 4px 14px rgba(0,0,0,0.09), 0 1px 3px rgba(0,0,0,0.06)',
+      lifted:  '6px 7px 22px rgba(0,0,0,0.11), -2px 2px 10px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.06)',
+      strong:  '0 10px 28px rgba(0,0,0,0.14), 0 2px 6px rgba(0,0,0,0.08)',
+      tiltL:   '-6px 6px 20px rgba(0,0,0,0.10), 0 2px 5px rgba(0,0,0,0.06)',
+      tiltR:   '6px 6px 20px rgba(0,0,0,0.10), 0 2px 5px rgba(0,0,0,0.06)',
+      floaty:  '0 14px 32px rgba(0,0,0,0.10), 0 2px 6px rgba(0,0,0,0.05)',
+    };
+    const boxShadow = shadowVariants[shadow] || shadowVariants.soft;
+    return (
+      <div style={{ marginBottom: 24, ...style }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: 5, marginBottom: 2 }}>
+          <div style={{ fontSize: 12, fontWeight: 600, color: highlight ? '#03ACEA' : '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>{title}</div>
+          {headerRight && <div style={{ flexShrink: 0 }}>{headerRight}</div>}
+        </div>
+        <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', boxShadow, padding: '14px 18px', overflow: 'visible' }}>
           {children}
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <>
@@ -1774,7 +1783,7 @@ export default function Lending({ initialTab }) {
                 className="space-y-7"
               >
                 {/* Lending Overview Section */}
-                <PageCard title="Lending Overview">
+                <PageCard title="Lending Overview" shadow="floaty">
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
                     {/* Next Payment Incoming — exact Home style */}
                     {(() => {
@@ -1787,8 +1796,7 @@ export default function Lending({ initialTab }) {
                       const firstName = borrower?.full_name?.split(' ')[0] || 'User';
                       return (
                         <div style={{ position: 'relative', display: 'flex', flexDirection: 'column' }}>
-                          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 'calc(100% + 10px)', height: 'calc(100% + 10px)', background: 'linear-gradient(135deg,rgb(3,172,234) 0%,rgb(6,182,212) 30%,rgb(20,184,166) 60%,rgb(3,172,234) 100%)', filter: 'blur(5px) saturate(1.2)', opacity: 0.35, borderRadius: 18, zIndex: 0, pointerEvents: 'none' }} />
-                          <div style={{ position: 'relative', zIndex: 1, flex: 1, padding: '12px 14px', borderRadius: 10, background: '#ffffff', border: '1px solid rgba(50,138,182,0.65)', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                          <div style={{ position: 'relative', zIndex: 1, flex: 1, padding: '12px 14px', borderRadius: 10, background: '#ffffff', border: 'none', boxShadow: '-5px 5px 18px rgba(0,0,0,0.09), 0 2px 6px rgba(0,0,0,0.06)', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                             {daysLabel && nextPaymentLoan && (
                               <span style={{ position: 'absolute', top: 10, right: 12, fontSize: 9, fontWeight: 700, color: badgeColor, background: badgeBg, borderRadius: 4, padding: '2px 5px', lineHeight: 1.2 }}>{daysLabel}</span>
                             )}
@@ -1855,8 +1863,7 @@ export default function Lending({ initialTab }) {
                       const subLineStyle  = { fontSize: 12, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" };
                       return (
                         <div style={{ position: 'relative' }}>
-                          <div style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
-                          <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.13)', padding: '14px 18px' }}>
+                          <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '6px 7px 22px rgba(0,0,0,0.11), -2px 2px 10px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.06)', padding: '14px 18px' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 5, marginBottom: 2 }}>
                               <span style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>Overview</span>
                             </div>
@@ -1949,7 +1956,7 @@ export default function Lending({ initialTab }) {
                 </div>
 
                   {/* Loan Progress */}
-                  <PageCard title="Loan Progress">
+                  <PageCard title="Loan Progress" shadow="strong">
                     <div style={{ padding: 0 }}>
                       {activeLoans.length === 0 ? (
                         <p style={{ fontSize: 12, color: '#787776', margin: 0 }}>No active loans yet 🌱</p>
@@ -1978,7 +1985,7 @@ export default function Lending({ initialTab }) {
                   {/* Left column: Month Repayment Amount + Overview stacked */}
                   <div className="space-y-4">
                     {/* Month Repayment Overview Box */}
-                    <PageCard title={`${format(selectedMonth, 'MMMM')} Repayment Overview`} headerRight={
+                    <PageCard shadow="tiltL" title={`${format(selectedMonth, 'MMMM')} Repayment Overview`} headerRight={
                       <div className="relative">
                         <button
                           onClick={() => setShowMonthDropdown(!showMonthDropdown)}
@@ -2115,7 +2122,7 @@ export default function Lending({ initialTab }) {
                   </div>
 
                   {/* Loan History - Right */}
-                  <PageCard title="Loan History">
+                  <PageCard title="Loan History" shadow="lifted">
                     <div className="p-4">
                     <div className="space-y-3">
                       {/* Total Amount Lent */}
@@ -2227,8 +2234,7 @@ export default function Lending({ initialTab }) {
 
                       {/* ── White form card — only the fill-in fields ── */}
                       <div style={{ position: 'relative' }}>
-                        <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 14, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
-                        <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 12, border: 'none', padding: '18px 20px', fontSize: 12, fontFamily: "'DM Sans', sans-serif" }}>
+                        <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 12, border: 'none', boxShadow: '0 10px 30px rgba(0,0,0,0.10), 0 2px 6px rgba(0,0,0,0.06)', padding: '18px 20px', fontSize: 12, fontFamily: "'DM Sans', sans-serif" }}>
 
                         {/* Quick Pay — non-repeating amount + purpose */}
                         {loanType === 'flexible' && !formData.is_repeating && (
@@ -2509,8 +2515,7 @@ export default function Lending({ initialTab }) {
                     <div className="lending-summary-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
                       {/* Loan Summary */}
                       <div style={{ position: 'relative' }}>
-                        <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
-                        <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.13)', padding: '14px 18px' }}>
+                        <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '-6px 6px 20px rgba(0,0,0,0.10), 0 2px 5px rgba(0,0,0,0.06)', padding: '14px 18px' }}>
                           <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif", marginBottom: 10 }}>Loan Summary</div>
                           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
                             {formData.purpose && (
@@ -2536,8 +2541,7 @@ export default function Lending({ initialTab }) {
                       {loanType === 'scheduled' ? (
                         /* Borrower Will Pay */
                         <div style={{ position: 'relative' }}>
-                          <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
-                          <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.13)', padding: '14px 18px' }}>
+                          <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '6px 6px 20px rgba(0,0,0,0.10), 0 2px 5px rgba(0,0,0,0.06)', padding: '14px 18px' }}>
                             <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif", marginBottom: 10 }}>Borrower Will Pay</div>
                             <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, justifyContent: 'center', flexWrap: 'wrap' }}>
                               <span style={{ fontSize: 14, fontWeight: 700, color: '#03ACEA', letterSpacing: '-0.02em' }}>
@@ -2550,8 +2554,7 @@ export default function Lending({ initialTab }) {
                       ) : (
                         /* Repeating Request */
                         <div style={{ position: 'relative' }}>
-                          <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
-                          <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.13)', padding: '14px 18px' }}>
+                          <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '6px 6px 20px rgba(0,0,0,0.10), 0 2px 5px rgba(0,0,0,0.06)', padding: '14px 18px' }}>
                             <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif", marginBottom: 10 }}>Repeating Request</div>
                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
                               <span style={{ fontSize: 12, color: '#9B9A98' }}>Will this payment repeat regularly?</span>
@@ -2619,7 +2622,7 @@ export default function Lending({ initialTab }) {
                     <div className="w-8 h-8 border-2 border-[#03ACEA] border-t-transparent rounded-full animate-spin mx-auto" />
                   </div>
                 ) : manageableLoans.length === 0 ? (
-                  <PageCard title="Loans">
+                  <PageCard title="Loans" shadow="floaty">
                   <div className="p-8">
                     <div className="flex flex-col items-center text-center">
                       <div className="w-16 h-16 bg-[#03ACEA]/8 rounded-full flex items-center justify-center mb-4">
@@ -2641,7 +2644,7 @@ export default function Lending({ initialTab }) {
                 ) : (
                   <div className="space-y-4">
                     {/* Loan Selector Dropdown */}
-                    <PageCard title="Your Loans">
+                    <PageCard title="Your Loans" shadow="tiltR">
                     <div className="p-4">
                         <Select
                           value={manageLoanSelected?.id || ''}
@@ -2704,7 +2707,7 @@ export default function Lending({ initialTab }) {
 
                     {/* Loan Details - Below Dropdown */}
                     {!manageLoanSelected ? (
-                      <PageCard title="Loan Details">
+                      <PageCard title="Loan Details" shadow="strong">
                       <div className="flex items-center justify-center py-16">
                         <div className="text-center text-[#787776]">
                           <BarChart3 className="w-12 h-12 mx-auto mb-3 opacity-50" />
@@ -2715,7 +2718,7 @@ export default function Lending({ initialTab }) {
                     ) : (
                       <>
                           {/* Loan Information Box */}
-                          <PageCard title="Loan Information">
+                          <PageCard title="Loan Information" shadow="lifted">
                           <div className="p-4">
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                               <div className="bg-[#03ACEA]/8 rounded-xl p-4">
@@ -2840,7 +2843,7 @@ export default function Lending({ initialTab }) {
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {/* Interest Box + Loan Amounts - Left */}
                             <div className="space-y-4">
-                              <PageCard title="Interest">
+                              <PageCard title="Interest" shadow="tiltR">
                               <div className="p-4">
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                   <div className="bg-[#03ACEA]/8 rounded-xl p-4">
@@ -2870,7 +2873,7 @@ export default function Lending({ initialTab }) {
                               </div>
                               </PageCard>
                               {/* Loan Progress Box */}
-                              <PageCard title="Loan Progress">
+                              <PageCard title="Loan Progress" shadow="tiltL">
                               <div className="p-4">
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                   <div className="bg-[#03ACEA]/10 rounded-xl p-4">
@@ -2898,7 +2901,7 @@ export default function Lending({ initialTab }) {
                             </div>
 
                             {/* Document Center Box - Right */}
-                            <PageCard title="Document Center">
+                            <PageCard title="Document Center" shadow="floaty">
                             <div className="p-4">
                               {(() => {
                                 const agreement = getAgreementForLoan(manageLoanSelected.id);
@@ -2992,7 +2995,7 @@ export default function Lending({ initialTab }) {
 
                           {/* Actions Box - only show for active loans */}
                           {manageLoanSelected.status !== 'cancelled' && (
-                          <PageCard title="Loan Actions">
+                          <PageCard title="Loan Actions" shadow="strong">
                           <div className="p-4">
                             <div className="flex flex-col sm:flex-row gap-3">
                               <button
