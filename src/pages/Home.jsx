@@ -1834,23 +1834,35 @@ export default function Home() {
                 return (
                   <div className="home-card-bor-overview" style={{ display: 'flex', gap: 12 }}>
                     {/* Box 1 — You Owe */}
-                    <div style={{ flex: 1, minWidth: 0, background: '#FEFDFB', borderRadius: 4, boxShadow: '0 1px 0 2px #f0efea, 0 3px 0 3px #f5f4f0, 2px 6px 18px rgba(0,0,0,0.13)', padding: '12px 14px', display: 'flex', flexDirection: 'column', minHeight: 80 }}>
-                      <div style={{ fontSize: 11, fontWeight: 700, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.01em' }}>You owe</div>
-                      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <span style={{ fontSize: 18, fontWeight: 700, color: '#1D5B94', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.03em' }}>{formatMoney(borrowOwed)}</span>
-                      </div>
-                      <div style={{ textAlign: 'right', fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>
-                        across {borrowedLoans.length} loan{borrowedLoans.length !== 1 ? 's' : ''}
+                    <div style={{ position: 'relative', flex: 1, minWidth: 0 }}><div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 4, border: 'none', boxShadow: '2px 5px 16px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.10)', padding: '14px 14px' }}>
+                        <div style={{ marginBottom: 10 }}>
+                          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                            <circle cx="14" cy="14" r="13" stroke="#1D5B94" strokeWidth="1.5"/>
+                            <path d="M14 19 L14 11 M10.5 14.5 L14 11 L17.5 14.5" stroke="#1D5B94" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        </div>
+                        <div style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>
+                          You owe <span style={{ color: '#1D5B94' }}>{formatMoney(borrowOwed)}</span>
+                        </div>
+                        <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 3, fontFamily: "'DM Sans', sans-serif" }}>
+                          across {borrowedLoans.length} loan{borrowedLoans.length !== 1 ? 's' : ''}
+                        </div>
                       </div>
                     </div>
                     {/* Box 2 — You Are Owed */}
-                    <div style={{ flex: 1, minWidth: 0, background: '#FEFDFB', borderRadius: 4, boxShadow: '0 1px 0 2px #f0efea, 0 3px 0 3px #f5f4f0, 2px 6px 18px rgba(0,0,0,0.13)', padding: '12px 14px', display: 'flex', flexDirection: 'column', minHeight: 80 }}>
-                      <div style={{ fontSize: 11, fontWeight: 700, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.01em' }}>You are owed</div>
-                      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <span style={{ fontSize: 18, fontWeight: 700, color: '#03ACEA', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.03em' }}>{formatMoney(lentOwed)}</span>
-                      </div>
-                      <div style={{ textAlign: 'right', fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>
-                        across {lentLoans.length} loan{lentLoans.length !== 1 ? 's' : ''}
+                    <div style={{ position: 'relative', flex: 1, minWidth: 0 }}><div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 4, border: 'none', boxShadow: '2px 5px 16px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.10)', padding: '14px 14px' }}>
+                        <div style={{ marginBottom: 10 }}>
+                          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                            <circle cx="14" cy="14" r="13" stroke="#03ACEA" strokeWidth="1.5"/>
+                            <path d="M14 10 L14 18 M10.5 13.5 L14 18 L17.5 13.5" stroke="#03ACEA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        </div>
+                        <div style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>
+                          You are owed <span style={{ color: '#03ACEA' }}>{formatMoney(lentOwed)}</span>
+                        </div>
+                        <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 3, fontFamily: "'DM Sans', sans-serif" }}>
+                          across {lentLoans.length} loan{lentLoans.length !== 1 ? 's' : ''}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -2360,28 +2372,31 @@ export default function Home() {
                       </div>
 
                       {/* Ruled separator under calendar */}
-                      <div style={{ height: 1, background: 'rgba(173,210,230,0.55)' }} />
+                      <div style={{ height: 1, background: 'rgba(173,210,230,0.30)' }} />
 
-                      {/* Task rows — indented past red margin */}
-                      <div style={{ padding: '0 18px 0 18px', position: 'relative', zIndex: 1 }}>
+                      {/* Task rows — bullet aligned under Mon column */}
+                      <div style={{ padding: '0 18px', position: 'relative', zIndex: 1 }}>
                         {sortedTasks.length === 0 ? (
-                          <div style={{ padding: '10px 0', fontSize: 12, color: '#9B9A98', textAlign: 'center', borderBottom: '1px solid rgba(173,210,230,0.4)' }}>Nothing on the list right now 🌿</div>
+                          <div style={{ padding: '10px 0', fontSize: 12, color: '#9B9A98', textAlign: 'center', borderBottom: '1px solid rgba(173,210,230,0.22)' }}>Nothing on the list right now 🌿</div>
                         ) : (
                           sortedTasks.map(task => {
                             const checked = checkedTasks.has(task.id);
                             return (
                               <button key={task.id} type="button" onClick={() => { if (!checked && task.onCheck) { task.onCheck(); return; } toggleTask(task.id); }}
-                                style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '5px 0', background: 'transparent', border: 'none', borderBottom: '1px solid rgba(173,210,230,0.4)', cursor: 'pointer', textAlign: 'left', fontFamily: "'DM Sans', sans-serif", width: '100%' }}>
-                                <span style={{ width: 13, height: 13, borderRadius: '50%', flexShrink: 0, border: checked ? '1.5px solid #03ACEA' : '1.5px solid #C4C2BE', background: checked ? '#03ACEA' : 'transparent', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.15s' }}>
-                                  {checked && <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>}
-                                </span>
-                                <span style={{ fontSize: 12, color: checked ? '#AEACA8' : '#2A2926', textDecoration: checked ? 'line-through' : 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{task.label}</span>
+                                style={{ display: 'flex', alignItems: 'center', gap: 0, padding: '5px 0', background: 'transparent', border: 'none', borderBottom: '1px solid rgba(173,210,230,0.22)', cursor: 'pointer', textAlign: 'left', fontFamily: "'DM Sans', sans-serif", width: '100%' }}>
+                                {/* Bullet centered in first-day-column width */}
+                                <div style={{ width: 'calc(100% / 7)', flexShrink: 0, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                  <span style={{ width: 13, height: 13, borderRadius: '50%', border: checked ? '1.5px solid #03ACEA' : '1.5px solid #C4C2BE', background: checked ? '#03ACEA' : 'transparent', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.15s', flexShrink: 0 }}>
+                                    {checked && <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>}
+                                  </span>
+                                </div>
+                                <span style={{ flex: 1, fontSize: 12, color: checked ? '#AEACA8' : '#2A2926', textDecoration: checked ? 'line-through' : 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{task.label}</span>
                               </button>
                             );
                           })
                         )}
                         {addingTask && (
-                          <form onSubmit={e => { e.preventDefault(); addCustomTask(newTaskText); setNewTaskText(''); setAddingTask(false); }} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 0', borderBottom: '1px solid rgba(173,210,230,0.4)' }}>
+                          <form onSubmit={e => { e.preventDefault(); addCustomTask(newTaskText); setNewTaskText(''); setAddingTask(false); }} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 0', borderBottom: '1px solid rgba(173,210,230,0.22)' }}>
                             <input autoFocus value={newTaskText} onChange={e => setNewTaskText(e.target.value)} onKeyDown={e => { if (e.key === 'Escape') { setAddingTask(false); setNewTaskText(''); } }} placeholder="Add a to-do…" style={{ flex: 1, fontSize: 12, fontFamily: "'DM Sans', sans-serif", border: 'none', borderBottom: '1.5px solid #03ACEA', outline: 'none', background: 'transparent', color: '#1A1918', padding: '2px 0' }} />
                             <button type="submit" style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
                           </form>
@@ -2449,7 +2464,7 @@ export default function Home() {
                     ? `Borrowed ${formatMoney(total)} from you${loan.purpose ? ` for ${loan.purpose}` : ''}`
                     : `Lent you ${formatMoney(total)}${loan.purpose ? ` for ${loan.purpose}` : ''}`;
                   const pct = Math.min(1, Math.max(0, pctRepaid / 100));
-                  const sz = 28, r = 11, cx = 14, cy = 14;
+                  const sz = 24, r = 9, cx = 12, cy = 12;
                   const circ = 2 * Math.PI * r;
                   const dash = pct * circ;
                   return (

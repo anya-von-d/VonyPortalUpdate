@@ -67,11 +67,11 @@ export default function MeshMobileNav({ user, activePage }) {
   const glassBubble = {
     display: 'flex', alignItems: 'center', justifyContent: 'center',
     width: 44, height: 44, borderRadius: 999, textDecoration: 'none', flexShrink: 0,
-    background: 'rgba(255,255,255,0.72)',
+    background: 'rgba(255,255,255,0.82)',
     backdropFilter: 'blur(16px)',
     WebkitBackdropFilter: 'blur(16px)',
-    border: '1px solid rgba(255,255,255,0.55)',
-    boxShadow: '0 2px 10px rgba(0,0,0,0.07)',
+    border: '1px solid rgba(0,0,0,0.10)',
+    boxShadow: '0 2px 12px rgba(0,0,0,0.13)',
   };
 
   // Inner icon button style — pill-shaped like desktop NavBtn, shaded when active
@@ -142,10 +142,10 @@ export default function MeshMobileNav({ user, activePage }) {
           {/* Combined bubble: Friends + Records + Profile + Menu */}
           <div style={{
             display: 'inline-flex', alignItems: 'center',
-            background: 'rgba(255,255,255,0.72)',
+            background: 'rgba(255,255,255,0.82)',
             backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
-            border: '1px solid rgba(255,255,255,0.55)',
-            boxShadow: '0 2px 10px rgba(0,0,0,0.07)',
+            border: '1px solid rgba(0,0,0,0.10)',
+            boxShadow: '0 2px 12px rgba(0,0,0,0.13)',
             borderRadius: 999, padding: 4, gap: 2,
           }}>
             {/* Friends — opens dropdown */}
