@@ -2216,19 +2216,18 @@ export default function Home() {
               {(monthlyExpectedReceive > 0 || monthlyExpectedPay > 0) && (
                 <div className="home-card-monthly-summary" style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
                   {monthlyExpectedReceive > 0 && (
-                    <div style={{ background: 'linear-gradient(168deg, #FAF7F0 0%, #F2EBE0 55%, #EAE3D6 100%)', borderRadius: 3, boxShadow: '0 1px 1px rgba(0,0,0,0.10), 2px 4px 8px rgba(0,0,0,0.12), 5px 12px 20px rgba(0,0,0,0.09), inset 0 1px 1px rgba(255,255,255,0.55)', padding: '11px 14px 12px', position: 'relative', overflow: 'hidden' }}>
-                      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, rgba(255,255,255,0.30) 0%, rgba(255,255,255,0.06) 40%, rgba(0,0,0,0) 65%, rgba(0,0,0,0.04) 100%)', pointerEvents: 'none' }} />
-                      <div style={{ position: 'absolute', bottom: 0, right: 0, width: 13, height: 13, background: 'linear-gradient(135deg, #BDB49E 0%, #A8A08A 100%)', clipPath: 'polygon(100% 0, 100% 100%, 0 100%)', pointerEvents: 'none' }} />
-                      <div style={{ position: 'relative', fontSize: 12, fontWeight: 600, color: '#3B3226', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.35 }}>You've received <span style={{ color: '#4A7D6F' }}>{formatMoney(monthlyReceived)}</span></div>
-                      <div style={{ position: 'relative', fontSize: 11, color: '#8A7E6E', fontFamily: "'DM Sans', sans-serif", marginTop: 3 }}>of {formatMoney(monthlyExpectedReceive)} expected in {format(today, 'MMMM')}</div>
+                    <div style={{ background: '#FEFDF5', borderRadius: 4, boxShadow: '0 1px 0 2px #edeade, 0 3px 0 3px #f5f3ea, 2px 6px 18px rgba(0,0,0,0.13)', padding: '11px 14px 12px' }}>
+                      <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.35 }}>You've received <span style={{ color: '#03ACEA' }}>{formatMoney(monthlyReceived)}</span></div>
+                      <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 3 }}>of {formatMoney(monthlyExpectedReceive)} expected in {format(today, 'MMMM')}</div>
                     </div>
                   )}
                   {monthlyExpectedPay > 0 && (
-                    <div style={{ background: 'linear-gradient(168deg, #F7F3EC 0%, #EDE6D8 55%, #E5DDD0 100%)', borderRadius: 3, boxShadow: '0 1px 1px rgba(0,0,0,0.10), 2px 4px 8px rgba(0,0,0,0.12), 5px 12px 20px rgba(0,0,0,0.09), inset 0 1px 1px rgba(255,255,255,0.50)', padding: '11px 14px 12px', position: 'relative', overflow: 'hidden' }}>
-                      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.05) 40%, rgba(0,0,0,0) 65%, rgba(0,0,0,0.04) 100%)', pointerEvents: 'none' }} />
-                      <div style={{ position: 'absolute', bottom: 0, right: 0, width: 13, height: 13, background: 'linear-gradient(135deg, #B5AC98 0%, #A09588 100%)', clipPath: 'polygon(100% 0, 100% 100%, 0 100%)', pointerEvents: 'none' }} />
-                      <div style={{ position: 'relative', fontSize: 12, fontWeight: 600, color: '#3B3226', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.35 }}>You've paid <span style={{ color: '#5A6E8A' }}>{formatMoney(monthlyPaidOut)}</span></div>
-                      <div style={{ position: 'relative', fontSize: 11, color: '#8A7E6E', fontFamily: "'DM Sans', sans-serif", marginTop: 3 }}>of {formatMoney(monthlyExpectedPay)} due in {format(today, 'MMMM')}</div>
+                    <div style={{ background: '#FEFDF5', borderRadius: 4, boxShadow: '0 1px 0 2px #edeade, 0 3px 0 3px #f5f3ea, 2px 6px 18px rgba(0,0,0,0.13)', padding: '11px 14px 12px' }}>
+                      <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.35, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        You've paid{' '}
+                        <span style={{ background: 'linear-gradient(transparent 52%, rgba(3,172,234,0.45) 52%)', paddingBottom: 1 }}>{formatMoney(monthlyPaidOut)}</span>
+                        {' '}of {formatMoney(monthlyExpectedPay)} due in {format(today, 'MMMM')}
+                      </div>
                     </div>
                   )}
                 </div>
