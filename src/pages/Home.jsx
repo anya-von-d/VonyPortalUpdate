@@ -1834,35 +1834,23 @@ export default function Home() {
                 return (
                   <div className="home-card-bor-overview" style={{ display: 'flex', gap: 12 }}>
                     {/* Box 1 — You Owe */}
-                    <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>                      <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 4, border: 'none', boxShadow: '2px 5px 16px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.10)', padding: '14px 14px' }}>
-                        <div style={{ marginBottom: 10 }}>
-                          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-                            <circle cx="14" cy="14" r="13" stroke="#1D5B94" strokeWidth="1.5"/>
-                            <path d="M14 19 L14 11 M10.5 14.5 L14 11 L17.5 14.5" stroke="#1D5B94" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                        </div>
-                        <div style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>
-                          You owe <span style={{ color: '#1D5B94' }}>{formatMoney(borrowOwed)}</span>
-                        </div>
-                        <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 3, fontFamily: "'DM Sans', sans-serif" }}>
-                          across {borrowedLoans.length} loan{borrowedLoans.length !== 1 ? 's' : ''}
-                        </div>
+                    <div style={{ flex: 1, minWidth: 0, background: '#FEFDFB', borderRadius: 4, boxShadow: '0 1px 0 2px #f0efea, 0 3px 0 3px #f5f4f0, 2px 6px 18px rgba(0,0,0,0.13)', padding: '12px 14px', display: 'flex', flexDirection: 'column', minHeight: 80 }}>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.01em' }}>You owe</div>
+                      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <span style={{ fontSize: 18, fontWeight: 700, color: '#1D5B94', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.03em' }}>{formatMoney(borrowOwed)}</span>
+                      </div>
+                      <div style={{ textAlign: 'right', fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>
+                        across {borrowedLoans.length} loan{borrowedLoans.length !== 1 ? 's' : ''}
                       </div>
                     </div>
                     {/* Box 2 — You Are Owed */}
-                    <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>                      <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 4, border: 'none', boxShadow: '2px 5px 16px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.10)', padding: '14px 14px' }}>
-                        <div style={{ marginBottom: 10 }}>
-                          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-                            <circle cx="14" cy="14" r="13" stroke="#03ACEA" strokeWidth="1.5"/>
-                            <path d="M14 10 L14 18 M10.5 13.5 L14 18 L17.5 13.5" stroke="#03ACEA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                        </div>
-                        <div style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>
-                          You are owed <span style={{ color: '#03ACEA' }}>{formatMoney(lentOwed)}</span>
-                        </div>
-                        <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 3, fontFamily: "'DM Sans', sans-serif" }}>
-                          across {lentLoans.length} loan{lentLoans.length !== 1 ? 's' : ''}
-                        </div>
+                    <div style={{ flex: 1, minWidth: 0, background: '#FEFDFB', borderRadius: 4, boxShadow: '0 1px 0 2px #f0efea, 0 3px 0 3px #f5f4f0, 2px 6px 18px rgba(0,0,0,0.13)', padding: '12px 14px', display: 'flex', flexDirection: 'column', minHeight: 80 }}>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.01em' }}>You are owed</div>
+                      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <span style={{ fontSize: 18, fontWeight: 700, color: '#03ACEA', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.03em' }}>{formatMoney(lentOwed)}</span>
+                      </div>
+                      <div style={{ textAlign: 'right', fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>
+                        across {lentLoans.length} loan{lentLoans.length !== 1 ? 's' : ''}
                       </div>
                     </div>
                   </div>
@@ -1896,7 +1884,7 @@ export default function Home() {
                 const nextLabel = firstDaysAway === 0 ? 'Today' : firstDaysAway === 1 ? 'Tomorrow' : `In ${firstDaysAway} days`;
 
                 return (
-                  <div className="home-card-upcoming-payments" style={{ background: '#FFFEFD', borderRadius: 4, border: 'none', boxShadow: '0 1px 0 2px #f0efea, 0 3px 0 3px #f5f4f0, 2px 6px 18px rgba(0,0,0,0.13)', padding: '14px 18px' }}>
+                  <div className="home-card-upcoming-payments" style={{ background: '#FEFDF9', borderRadius: 4, border: 'none', boxShadow: '0 1px 0 2px #f0efea, 0 3px 0 3px #f5f4f0, 2px 6px 18px rgba(0,0,0,0.13)', padding: '14px 18px' }}>
                       {/* Header row */}
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 }}>
                         <div style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>Upcoming Payments</div>
@@ -2047,9 +2035,7 @@ export default function Home() {
                                 style={{ flexShrink: 0, width: 13, height: 13, borderRadius: '50%', background: isDone ? '#03ACEA' : `${dotColor}18`, border: `1.5px solid ${dotColor}`, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: isCustom ? 'pointer' : 'default', alignSelf: 'center' }}>
                                 {isDone
                                   ? <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                                  : isOverdue
-                                    ? <svg width="6" height="6" viewBox="0 0 24 24" fill="none" stroke={dotColor} strokeWidth="3" strokeLinecap="round"><line x1="12" y1="8" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                                    : null
+                                  : null
                                 }
                               </div>
                               {/* Two-line label block */}
@@ -2463,7 +2449,7 @@ export default function Home() {
                     ? `Borrowed ${formatMoney(total)} from you${loan.purpose ? ` for ${loan.purpose}` : ''}`
                     : `Lent you ${formatMoney(total)}${loan.purpose ? ` for ${loan.purpose}` : ''}`;
                   const pct = Math.min(1, Math.max(0, pctRepaid / 100));
-                  const sz = 36, r = 14, cx = 18, cy = 18;
+                  const sz = 28, r = 11, cx = 14, cy = 14;
                   const circ = 2 * Math.PI * r;
                   const dash = pct * circ;
                   return (
