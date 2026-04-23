@@ -2216,23 +2216,30 @@ export default function Home() {
               {(monthlyExpectedReceive > 0 || monthlyExpectedPay > 0) && (
                 <div className="home-card-monthly-summary" style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
                   {monthlyExpectedReceive > 0 && (
-                    <div style={{ position: 'relative', background: '#FEFDF5', borderRadius: '0 4px 4px 0', boxShadow: '3px 2px 6px rgba(0,0,0,0.10), 6px 5px 14px rgba(0,0,0,0.10), 9px 10px 22px rgba(0,0,0,0.07)', padding: '10px 16px 10px 18px', overflow: 'hidden' }}>
-                      {/* Left adhesive strip */}
-                      <div style={{ position: 'absolute', top: 0, left: 0, bottom: 0, width: 5, background: 'rgba(0,0,0,0.09)', borderRadius: '0' }} />
-                      <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.3 }}>
-                        You've received <span style={{ color: '#03ACEA' }}>{formatMoney(monthlyReceived)}</span>
+                    <div style={{ position: 'relative' }}>
+                      {/* Rotated lift-shadow backing — anchored left, right edge angles away */}
+                      <div style={{ position: 'absolute', top: 4, right: -3, bottom: -4, left: 2, background: '#C8C4B4', borderRadius: '0 4px 4px 0', transform: 'rotate(1.8deg)', transformOrigin: '0% 50%', zIndex: 0 }} />
+                      {/* Tab front */}
+                      <div style={{ position: 'relative', zIndex: 1, background: '#FEFDF5', borderRadius: '0 5px 5px 0', boxShadow: '2px 1px 4px rgba(0,0,0,0.10), 4px 3px 10px rgba(0,0,0,0.10)', padding: '10px 16px 10px 18px', overflow: 'hidden' }}>
+                        {/* Left adhesive strip */}
+                        <div style={{ position: 'absolute', top: 0, left: 0, bottom: 0, width: 5, background: 'rgba(0,0,0,0.11)' }} />
+                        <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.3 }}>
+                          You've received <span style={{ color: '#03ACEA' }}>{formatMoney(monthlyReceived)}</span>
+                        </div>
+                        <div style={{ fontSize: 11, fontWeight: 400, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 2 }}>of {formatMoney(monthlyExpectedReceive)} expected in {format(today, 'MMMM')}</div>
                       </div>
-                      <div style={{ fontSize: 11, fontWeight: 400, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 2 }}>of {formatMoney(monthlyExpectedReceive)} expected in {format(today, 'MMMM')}</div>
                     </div>
                   )}
                   {monthlyExpectedPay > 0 && (
-                    <div style={{ position: 'relative', background: '#FEFDF5', borderRadius: '0 4px 4px 0', boxShadow: '3px 2px 6px rgba(0,0,0,0.10), 6px 5px 14px rgba(0,0,0,0.10), 9px 10px 22px rgba(0,0,0,0.07)', padding: '10px 16px 10px 18px', overflow: 'hidden' }}>
-                      {/* Left adhesive strip */}
-                      <div style={{ position: 'absolute', top: 0, left: 0, bottom: 0, width: 5, background: 'rgba(0,0,0,0.09)', borderRadius: '0' }} />
-                      <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.3 }}>
-                        You've paid <span style={{ color: '#03ACEA' }}>{formatMoney(monthlyPaidOut)}</span>
+                    <div style={{ position: 'relative' }}>
+                      <div style={{ position: 'absolute', top: 4, right: -3, bottom: -4, left: 2, background: '#C8C4B4', borderRadius: '0 4px 4px 0', transform: 'rotate(1.8deg)', transformOrigin: '0% 50%', zIndex: 0 }} />
+                      <div style={{ position: 'relative', zIndex: 1, background: '#FEFDF5', borderRadius: '0 5px 5px 0', boxShadow: '2px 1px 4px rgba(0,0,0,0.10), 4px 3px 10px rgba(0,0,0,0.10)', padding: '10px 16px 10px 18px', overflow: 'hidden' }}>
+                        <div style={{ position: 'absolute', top: 0, left: 0, bottom: 0, width: 5, background: 'rgba(0,0,0,0.11)' }} />
+                        <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.3 }}>
+                          You've paid <span style={{ color: '#03ACEA' }}>{formatMoney(monthlyPaidOut)}</span>
+                        </div>
+                        <div style={{ fontSize: 11, fontWeight: 400, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 2 }}>of {formatMoney(monthlyExpectedPay)} due in {format(today, 'MMMM')}</div>
                       </div>
-                      <div style={{ fontSize: 11, fontWeight: 400, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 2 }}>of {formatMoney(monthlyExpectedPay)} due in {format(today, 'MMMM')}</div>
                     </div>
                   )}
                 </div>
