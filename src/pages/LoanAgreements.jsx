@@ -1173,10 +1173,8 @@ export default function LoanAgreements() {
 
           {activeTab === 'documents' ? (
           <>
-          {/* ── Main content box (matches Loan Progress style) ── */}
-          <div style={{ position: 'relative', marginBottom: 24 }}>
-          <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
-          <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.13)', padding: '14px 18px' }}>
+          <PageCard style={{ padding: '14px 18px' }}>
+
           {/* Filters */}
           <div style={{ marginBottom: 16 }}>
             <div style={{ marginBottom: 8 }}>
@@ -1387,8 +1385,7 @@ export default function LoanAgreements() {
               )}
             </div>
           </div>
-          </div>
-          </div>
+          </PageCard>
 
           {/* Desktop table responsive styles */}
           <style>{`
