@@ -2334,7 +2334,7 @@ export default function Home() {
                   <div className="home-card-loans-pair" style={{ display: 'flex', flexDirection: 'column' }}>
 
                     {/* Your Borrowing */}
-                    <div style={{ background: '#FFFEFD', borderRadius: 4, boxShadow: '0 1px 0 2px #f0efea, 0 3px 0 3px #f5f4f0, 2px 6px 18px rgba(0,0,0,0.13)', padding: '14px 18px', marginBottom: 20 }}>
+                    <div style={{ background: '#FEFEFE', borderRadius: 2, border: 'none', boxShadow: '5px 4px 18px rgba(0,0,0,0.09), -1px 0 0 rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.06)', padding: '14px 18px', marginBottom: 20 }}>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 }}>
                         <span style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>Your Borrowing</span>
                         <SortDropdown value={rankingFilterBorrowing} onChange={setRankingFilterBorrowing} />
