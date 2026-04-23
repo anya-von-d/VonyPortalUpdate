@@ -176,7 +176,7 @@ function UpcomingPaymentStack({ events }) {
 
   const CardFace = ({ narrow }) => (
     <div style={{
-      background: '#ffffff',
+      background: '#FEFEFE',
       borderRadius: 14,
       border: '1px solid #ECEAE8',
       boxShadow: '0 2px 10px rgba(0,0,0,0.06)',
@@ -544,7 +544,7 @@ function _noop() { // eslint-disable-line no-unused-vars
   };
 
   return (
-    <div ref={cardRef} style={{ position: 'relative', minWidth: 0 }} onClick={() => setHoveredPt(null)}>      <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '2px 5px 16px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.10)', padding: '14px 18px' }}>
+    <div ref={cardRef} style={{ position: 'relative', minWidth: 0 }} onClick={() => setHoveredPt(null)}>      <div style={{ position: 'relative', zIndex: 1, background: '#FEFEFE', borderRadius: 10, border: 'none', boxShadow: '2px 5px 16px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.10)', padding: '14px 18px' }}>
 
         {/* ── Header row ── */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
@@ -1578,7 +1578,7 @@ export default function Home() {
           {!hasLoans && (
             <div style={{
               marginBottom: 28, padding: '20px 22px', borderRadius: 0,
-              background: 'white',
+              background: '#FEFEFE',
               border: '1px solid rgba(0,0,0,0.07)',
               textAlign: 'center',
             }}>
@@ -1662,7 +1662,7 @@ export default function Home() {
                   <div style={{
                     position: 'relative', zIndex: 1, flex: 1,
                     padding: '12px 14px', borderRadius: 0,
-                    background: '#ffffff',
+                    background: '#FEFEFE',
                     border: '1px solid rgba(50,138,182,0.65)',
                     display: 'flex', flexDirection: 'column', justifyContent: 'center',
                   }}>
@@ -1728,7 +1728,7 @@ export default function Home() {
                   <div style={{
                     position: 'relative', zIndex: 1, flex: 1,
                     padding: '12px 14px', borderRadius: 0,
-                    background: '#ffffff',
+                    background: '#FEFEFE',
                     border: '1px solid rgba(50,138,182,0.65)',
                     display: 'flex', flexDirection: 'column', justifyContent: 'center',
                   }}>
@@ -1829,7 +1829,7 @@ export default function Home() {
                 const hasOwing = borrowedLoans.length > 0 && borrowOwed > 0;
                 const hasOwed = lentLoans.length > 0 && lentOwed > 0;
                 if (!hasOwing && !hasOwed) return (
-                  <div className="home-card-bor-overview" style={{ position: 'relative' }}>                    <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 4, border: 'none', boxShadow: '2px 5px 16px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.10)', padding: '14px 18px' }}>
+                  <div className="home-card-bor-overview" style={{ position: 'relative' }}>                    <div style={{ position: 'relative', zIndex: 1, background: '#FEFEFE', borderRadius: 4, border: 'none', boxShadow: '2px 5px 16px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.10)', padding: '14px 18px' }}>
                       <p style={{ fontSize: 12, color: '#9B9A98', margin: 0, fontFamily: "'DM Sans', sans-serif", textAlign: 'center' }}>You have no active loans yet 🌱</p>
                     </div>
                   </div>
@@ -1837,7 +1837,7 @@ export default function Home() {
                 return (
                   <div className="home-card-bor-overview" style={{ display: 'flex', gap: 12 }}>
                     {/* Box 1 — You Owe */}
-                    <div style={{ position: 'relative', flex: 1, minWidth: 0 }}><div style={{ position: 'relative', zIndex: 1, background: '#FEFDF5', borderRadius: 4, border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.10)', padding: '14px 14px' }}>
+                    <div style={{ position: 'relative', flex: 1, minWidth: 0 }}><div style={{ position: 'relative', zIndex: 1, background: '#FEFEFE', borderRadius: 4, border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.10)', padding: '14px 14px' }}>
                         <div style={{ marginBottom: 10 }}>
                           <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
                             <circle cx="14" cy="14" r="13" stroke="#1D5B94" strokeWidth="1.5"/>
@@ -1853,7 +1853,7 @@ export default function Home() {
                       </div>
                     </div>
                     {/* Box 2 — You Are Owed */}
-                    <div style={{ position: 'relative', flex: 1, minWidth: 0 }}><div style={{ position: 'relative', zIndex: 1, background: '#FEFDF5', borderRadius: 4, border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.10)', padding: '14px 14px' }}>
+                    <div style={{ position: 'relative', flex: 1, minWidth: 0 }}><div style={{ position: 'relative', zIndex: 1, background: '#FEFEFE', borderRadius: 4, border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.10)', padding: '14px 14px' }}>
                         <div style={{ marginBottom: 10 }}>
                           <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
                             <circle cx="14" cy="14" r="13" stroke="#03ACEA" strokeWidth="1.5"/>
@@ -1944,7 +1944,7 @@ export default function Home() {
                 const soFarTotal = allLines.filter(l => l.status === 'done').reduce((s, l) => s + l.amount, 0);
                 const fmtSigned = (amt) => amt === 0 ? '$0.00' : amt > 0 ? `+${formatMoney(amt)}` : `-${formatMoney(Math.abs(amt))}`;
                 return (
-                  <div className="home-card-plan-month" style={{ background: '#FEFCF8', borderRadius: 4, boxShadow: '0 4px 12px rgba(0,0,0,0.10)', padding: '14px 18px' }}>
+                  <div className="home-card-plan-month" style={{ background: '#FEFEFE', borderRadius: 4, boxShadow: '0 4px 12px rgba(0,0,0,0.10)', padding: '14px 18px' }}>
                     {/* Header row with title + Edit button */}
                     <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 2 }}>
                       <SectionHeader title="Plan Your Month" />
@@ -2175,7 +2175,7 @@ export default function Home() {
                 const nextLabel = firstDaysAway === 0 ? 'Today' : firstDaysAway === 1 ? 'Tomorrow' : `In ${firstDaysAway} days`;
 
                 return (
-                  <div className="home-card-upcoming-payments" style={{ background: '#FEFDF5', borderRadius: 4, border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.10)', padding: '14px 18px' }}>
+                  <div className="home-card-upcoming-payments" style={{ background: '#FEFEFE', borderRadius: 4, border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.10)', padding: '14px 18px' }}>
                     {/* Header row */}
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 }}>
                       <div style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>Upcoming Payments</div>
@@ -2228,7 +2228,7 @@ export default function Home() {
               {(monthlyExpectedReceive > 0 || monthlyExpectedPay > 0) && (
                 <div className="home-card-monthly-summary" style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
                   {monthlyExpectedReceive > 0 && (
-                    <div style={{ position: 'relative', background: '#FEFDF5', borderRadius: '0 4px 4px 0', boxShadow: '3px 2px 6px rgba(0,0,0,0.10), 6px 5px 14px rgba(0,0,0,0.10), 9px 10px 22px rgba(0,0,0,0.07)', padding: '10px 16px 10px 18px', overflow: 'hidden' }}>
+                    <div style={{ position: 'relative', background: '#FEFEFE', borderRadius: '0 4px 4px 0', boxShadow: '3px 2px 6px rgba(0,0,0,0.10), 6px 5px 14px rgba(0,0,0,0.10), 9px 10px 22px rgba(0,0,0,0.07)', padding: '10px 16px 10px 18px', overflow: 'hidden' }}>
                       <div style={{ position: 'absolute', top: 0, left: 0, bottom: 0, width: 5, background: 'rgba(0,0,0,0.09)' }} />
                       <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.3 }}>
                         You've received <span style={{ color: '#03ACEA' }}>{formatMoney(monthlyReceived)}</span>
@@ -2237,7 +2237,7 @@ export default function Home() {
                     </div>
                   )}
                   {monthlyExpectedPay > 0 && (
-                    <div style={{ position: 'relative', background: '#FEFDF5', borderRadius: '0 4px 4px 0', boxShadow: '3px 2px 6px rgba(0,0,0,0.10), 6px 5px 14px rgba(0,0,0,0.10), 9px 10px 22px rgba(0,0,0,0.07)', padding: '10px 16px 10px 18px', overflow: 'hidden' }}>
+                    <div style={{ position: 'relative', background: '#FEFEFE', borderRadius: '0 4px 4px 0', boxShadow: '3px 2px 6px rgba(0,0,0,0.10), 6px 5px 14px rgba(0,0,0,0.10), 9px 10px 22px rgba(0,0,0,0.07)', padding: '10px 16px 10px 18px', overflow: 'hidden' }}>
                       <div style={{ position: 'absolute', top: 0, left: 0, bottom: 0, width: 5, background: 'rgba(0,0,0,0.09)' }} />
                       <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.3 }}>
                         You've paid <span style={{ color: '#03ACEA' }}>{formatMoney(monthlyPaidOut)}</span>
