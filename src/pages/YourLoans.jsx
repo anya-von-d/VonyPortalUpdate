@@ -243,44 +243,65 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
     if (agreement) { const sched = generateAmortizationSchedule(agreement); scheduleDates = sched.map(s => s.date); }
     else { let dt = new Date(loan.created_at); for (let i = 0; i < totalPeriods; i++) { if (frequency === 'weekly') dt = addWeeks(new Date(dt), 1); else if (frequency === 'biweekly') dt = addWeeks(new Date(dt), 2); else if (frequency === 'daily') dt = addDays(new Date(dt), 1); else dt = addMonths(new Date(dt), 1); scheduleDates.push(new Date(dt)); } }
     const loanStart = new Date(loan.created_at);
-    const periodConfirmedPayments = [];
-    const periodAllPayments = [];
     const effectivePeriods = Math.min(totalPeriods, scheduleDates.length);
+
+    // ── periodAllPayments: date-window based (for pending_confirmation display) ──
+    const periodAllPayments = Array.from({ length: effectivePeriods }, () => []);
     for (let i = 0; i < effectivePeriods; i++) {
       const periodStart = i === 0 ? loanStart : scheduleDates[i - 1];
       const periodEnd = scheduleDates[i];
-      periodConfirmedPayments.push(confirmedPayments.filter(p => { const pDate = new Date(p.payment_date); return pDate > periodStart && pDate <= periodEnd; }));
-      periodAllPayments.push(allLoanPayments.filter(p => { const pDate = new Date(p.payment_date); return pDate > periodStart && pDate <= periodEnd; }));
+      periodAllPayments[i] = allLoanPayments.filter(p => {
+        const pDate = new Date(p.payment_date);
+        return pDate > periodStart && pDate <= periodEnd;
+      });
     }
-    if (scheduleDates.length > 0) {
+    if (scheduleDates.length > 0 && effectivePeriods > 0) {
       const lastDate = scheduleDates[scheduleDates.length - 1];
-      const lateConfirmed = confirmedPayments.filter(p => new Date(p.payment_date) > lastDate);
       const lateAll = allLoanPayments.filter(p => new Date(p.payment_date) > lastDate);
-      if (lateConfirmed.length > 0 && effectivePeriods > 0) periodConfirmedPayments[effectivePeriods - 1] = [...periodConfirmedPayments[effectivePeriods - 1], ...lateConfirmed];
-      if (lateAll.length > 0 && effectivePeriods > 0) periodAllPayments[effectivePeriods - 1] = [...periodAllPayments[effectivePeriods - 1], ...lateAll];
+      if (lateAll.length > 0) periodAllPayments[effectivePeriods - 1] = [...periodAllPayments[effectivePeriods - 1], ...lateAll];
+    }
+
+    // ── periodConfirmedPayments: SEQUENTIAL allocation (oldest period first) ──
+    // A payment always goes to the earliest unfilled period regardless of its
+    // date. This correctly handles late payments: if period 2 is unpaid and a
+    // payment arrives after period 3's due date, it fills period 2 first with
+    // any remainder spilling into period 3.
+    const periodConfirmedPayments = Array.from({ length: effectivePeriods }, () => []);
+    const confirmedPool = confirmedPayments.map(p => ({ ...p, _rem: p.amount || 0 }));
+    let poolIdx = 0;
+    for (let i = 0; i < effectivePeriods; i++) {
+      let bucketFilled = 0;
+      while (poolIdx < confirmedPool.length && bucketFilled < originalPaymentAmount) {
+        const p = confirmedPool[poolIdx];
+        const take = Math.min(p._rem, originalPaymentAmount - bucketFilled);
+        if (take > 0) {
+          periodConfirmedPayments[i].push({ ...p, amount: take });
+          p._rem -= take;
+          bucketFilled += take;
+        }
+        if (p._rem <= 0) poolIdx++;
+        else break; // partial used — this payment carries into the next period
+      }
     }
     let remainingPrincipal = principal;
     let totalInterestAccrued = 0;
     let totalPaid = 0;
     let fullPaymentCount = 0;
-    let carryover = 0; // Surplus from overpayments spills into subsequent periods
     const periodResults = [];
     for (let i = 0; i < effectivePeriods; i++) {
       const periodInterest = Math.round(remainingPrincipal * r * 100) / 100;
       totalInterestAccrued += periodInterest;
-      const scheduledAmount = originalPaymentAmount; // Flat contracted amount per period
-      // Actual cash received in this period's date range
+      const scheduledAmount = originalPaymentAmount;
+      // Sequential allocation already placed the right payments in each period's bucket
       const confirmedInPeriod = periodConfirmedPayments[i].reduce((sum, p) => sum + (p.amount || 0), 0);
-      const allInPeriod = periodAllPayments[i].reduce((sum, p) => sum + (p.amount || 0), 0);
-      const pendingInPeriod = allInPeriod - confirmedInPeriod;
+      // pendingInPeriod: only the pending_confirmation payments in this period's DATE window
+      const pendingInPeriod = periodAllPayments[i]
+        .filter(p => p.status === 'pending_confirmation')
+        .reduce((sum, p) => sum + (p.amount || 0), 0);
       totalPaid += confirmedInPeriod;
-      // Effective coverage = carryover from prior overpayments + this period's confirmed cash
-      const effectiveConfirmed = carryover + confirmedInPeriod;
-      const allocatedConfirmed = Math.min(effectiveConfirmed, scheduledAmount);
-      const isFullPayment = effectiveConfirmed >= scheduledAmount && scheduledAmount > 0;
+      const allocatedConfirmed = Math.min(confirmedInPeriod, scheduledAmount);
+      const isFullPayment = confirmedInPeriod >= scheduledAmount && scheduledAmount > 0;
       if (isFullPayment) fullPaymentCount++;
-      // Carry forward any surplus to the next period
-      carryover = Math.max(0, effectiveConfirmed - scheduledAmount);
       let paymentToInterest = Math.min(allocatedConfirmed, periodInterest);
       let paymentToPrincipal = Math.max(0, allocatedConfirmed - paymentToInterest);
       remainingPrincipal = Math.max(0, Math.round((remainingPrincipal - paymentToPrincipal) * 100) / 100);

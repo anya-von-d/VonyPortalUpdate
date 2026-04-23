@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Loan, Payment, PublicProfile } from "@/entities/all";
 import { useAuth } from "@/lib/AuthContext";
+import RecordPaymentModal from "@/components/loans/RecordPaymentModal";
 import {
   format, startOfMonth, endOfMonth, addMonths, addDays,
   startOfWeek, endOfWeek, isSameMonth, isSameDay,
@@ -22,6 +23,7 @@ export default function Upcoming() {
   const [activeTab, setActiveTab] = useState('summary');
   const [calendarMonth, setCalendarMonth] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState(new Date());
+  const [resolveModal, setResolveModal] = useState(null); // { loan, loans[] }
   const activeLoansRef = useRef(null);
   const [activeAnimKey, setActiveAnimKey] = useState(0);
   const activeWasOut = useRef(true);
@@ -73,7 +75,7 @@ export default function Upcoming() {
     try {
       const [allLoans, allPayments, allProfiles] = await Promise.all([
         safeEntityCall(() => Loan.list('-created_at')),
-        safeEntityCall(() => Payment.list('-created_at', 50)),
+        safeEntityCall(() => Payment.list('-created_at', 500)),
         safeEntityCall(() => PublicProfile.list()),
       ]);
       setLoans(allLoans);
@@ -124,6 +126,9 @@ export default function Upcoming() {
   const getProfile = (userId) => safeProfiles.find(p => p.user_id === userId);
 
   // Upcoming payment events
+  // A period is "covered" when confirmed+pending_confirmation payments in that period >= payment_amount.
+  // We use sequential allocation (same logic as YourLoans.analyzeLoanPayments) so payments fill
+  // the earliest unpaid period first.
   const allPaymentEvents = activeLoans.map(loan => {
     const isLender = loan.lender_id === user.id;
     const otherUserId = isLender ? loan.borrower_id : loan.lender_id;
@@ -131,24 +136,34 @@ export default function Upcoming() {
     const days = daysUntilDate(loan.next_payment_date);
     const nextPayDate = new Date(loan.next_payment_date);
     const loanPayments = safePayments.filter(p => p && p.loan_id === loan.id);
-    let periodStart = new Date(nextPayDate);
     const freq = loan.payment_frequency || 'monthly';
-    if (freq === 'weekly') periodStart.setDate(periodStart.getDate() - 7);
-    else if (freq === 'bi-weekly') periodStart.setDate(periodStart.getDate() - 14);
-    else periodStart.setMonth(periodStart.getMonth() - 1);
-    // Count completed AND pending_confirmation payments — a pending payment means the period is covered
-    const paidThisPeriod = loanPayments
-      .filter(p => { const pDate = new Date(p.payment_date || p.created_at); return pDate >= periodStart && pDate <= today && (p.status === 'completed' || p.status === 'pending_confirmation'); })
-      .reduce((sum, p) => sum + (p.amount || 0), 0);
     const originalAmount = loan.payment_amount || 0;
-    const remainingAmount = Math.max(0, originalAmount - paidThisPeriod);
+
+    // Count ONLY completed/confirmed payments for sequential allocation
+    const confirmedPayments = loanPayments
+      .filter(p => p.status === 'completed' || p.status === 'confirmed')
+      .sort((a, b) => new Date(a.payment_date) - new Date(b.payment_date));
+    const totalConfirmed = confirmedPayments.reduce((s, p) => s + (p.amount || 0), 0);
+
+    // How many full periods have been sequentially filled?
+    const fullPeriodsPaid = originalAmount > 0 ? Math.floor(totalConfirmed / originalAmount) : 0;
+    // Overpayment credit within the current (next) period
+    const creditToCurrentPeriod = totalConfirmed - fullPeriodsPaid * originalAmount;
+
+    // Also count any pending_confirmation payments dated after the last fully-paid period
+    const pendingPayments = loanPayments
+      .filter(p => p.status === 'pending_confirmation')
+      .reduce((s, p) => s + (p.amount || 0), 0);
+
+    const remainingAmount = Math.max(0, originalAmount - creditToCurrentPeriod - pendingPayments);
+
     return {
       loan, date: nextPayDate, days, amount: remainingAmount, originalAmount, isLender, frequency: freq,
       username: otherProfile?.username || 'user',
       fullName: otherProfile?.full_name || 'Unknown',
       firstName: (otherProfile?.full_name || otherProfile?.username || 'User').split(' ')[0],
       initial: (otherProfile?.full_name || 'U').charAt(0).toUpperCase(),
-      purpose: loan.purpose || '',
+      reason: loan.reason || loan.purpose || '',
       loanId: loan.id,
     };
   }).filter(e => e.amount > 0).sort((a, b) => a.date - b.date);
@@ -271,9 +286,9 @@ export default function Upcoming() {
           <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {primaryLine}
           </div>
-          {event.purpose && (
+          {(event.reason || event.purpose) && (
             <div style={{ fontSize: 11, color: '#9B9A98', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: 1 }}>
-              {event.purpose}
+              {event.reason || event.purpose}
             </div>
           )}
         </div>
@@ -522,7 +537,11 @@ export default function Upcoming() {
                           const isToday = i === 0;
                           const dayName = isToday ? 'Today' : format(day, 'EEE');
                           const dateLabel = format(day, 'MMM d');
-                          if (dayEvents.length === 0) {
+
+                          // Today row: prepend overdue "Resolve" entries before any same-day events
+                          const overdueRows = isToday ? overdue : [];
+
+                          if (dayEvents.length === 0 && overdueRows.length === 0) {
                             return (
                               <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '7px 0' }}>
                                 <div style={{ width: 52, flexShrink: 0, fontFamily: "'DM Sans', sans-serif" }}>
@@ -534,29 +553,84 @@ export default function Upcoming() {
                               </div>
                             );
                           }
-                          return dayEvents.map((event, ei) => {
-                            const barColor = event.isLender ? '#03ACEA' : '#1D5B94';
-                            const label = event.isLender
-                              ? `Expect ${formatMoney(event.amount)} from ${event.firstName}`
-                              : `${formatMoney(event.amount)} due to ${event.firstName}`;
+
+                          // Build combined row list: overdue first (as resolve items), then today's events
+                          const allRows = [
+                            ...overdueRows.map(e => ({ ...e, _isOverdue: true })),
+                            ...dayEvents.map(e => ({ ...e, _isOverdue: false })),
+                          ];
+
+                          return allRows.map((event, ei) => {
+                            const isOverdueRow = event._isOverdue;
+                            const barColor = isOverdueRow ? '#E8726E' : event.isLender ? '#03ACEA' : '#1D5B94';
+
+                            // Label and second line
+                            let label, subLabel;
+                            if (isOverdueRow) {
+                              if (overdue.length === 1) {
+                                const amt = formatMoney(event.amount);
+                                label = event.isLender
+                                  ? `Resolve ${amt} overdue payment from ${event.firstName}`
+                                  : `Resolve ${amt} overdue payment to ${event.firstName}`;
+                                subLabel = event.reason || null;
+                              } else {
+                                // Group all overdues into one row (only render for ei=0 among overdue rows)
+                                if (overdueRows.indexOf(event) > 0) return null;
+                                const names = [...new Set(overdueRows.map(e => e.firstName))];
+                                const nameStr = names.length <= 3
+                                  ? names.join(', ')
+                                  : names.slice(0, 2).join(', ') + ` and ${names.length - 2} more`;
+                                label = `Resolve your ${overdue.length} overdue payments`;
+                                subLabel = `Due to ${nameStr}`;
+                              }
+                            } else {
+                              label = event.isLender
+                                ? `Expect ${formatMoney(event.amount)} from ${event.firstName}`
+                                : `${formatMoney(event.amount)} due to ${event.firstName}`;
+                              subLabel = event.reason || null;
+                            }
+
                             return (
                               <div key={`${i}-${ei}`} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '7px 0' }}>
-                                {/* Date column — only show for first event of the day */}
+                                {/* Date column — only show for first row of the day */}
                                 <div style={{ width: 52, flexShrink: 0, fontFamily: "'DM Sans', sans-serif", opacity: ei === 0 ? 1 : 0 }}>
                                   <div style={{ fontSize: 10, fontWeight: 500, color: isToday ? '#03ACEA' : '#9B9A98', letterSpacing: '-0.01em' }}>{dayName}</div>
                                   <div style={{ fontSize: 12, fontWeight: 500, color: '#1A1918' }}>{dateLabel}</div>
                                 </div>
                                 {/* Colored bar */}
                                 <div style={{ width: 3, alignSelf: 'stretch', borderRadius: 2, background: barColor, flexShrink: 0 }} />
-                                {/* Event label */}
+                                {/* Label block */}
                                 <div style={{ flex: 1, minWidth: 0 }}>
-                                  <div style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                  <div style={{
+                                    fontSize: 12, fontWeight: isOverdueRow ? 600 : 500,
+                                    color: isOverdueRow ? '#E8726E' : '#1A1918',
+                                    fontFamily: "'DM Sans', sans-serif",
+                                    overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                                  }}>
                                     {label}
                                   </div>
-                                  {event.purpose && (
-                                    <div style={{ fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 1 }}>{event.purpose}</div>
+                                  {subLabel && (
+                                    <div style={{ fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{subLabel}</div>
                                   )}
                                 </div>
+                                {/* Resolve arrow → opens payment modal */}
+                                {isOverdueRow && (
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const overdueLoans = overdue.map(e => e.loan);
+                                      setResolveModal({ loan: overdue[0].loan, loans: overdueLoans });
+                                    }}
+                                    style={{
+                                      flexShrink: 0, background: 'none', border: 'none', cursor: 'pointer',
+                                      color: '#E8726E', padding: '2px 4px', display: 'flex', alignItems: 'center',
+                                    }}
+                                  >
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                      <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+                                    </svg>
+                                  </button>
+                                )}
                               </div>
                             );
                           });
@@ -749,6 +823,18 @@ export default function Upcoming() {
 
 
       </div>
+
+      {/* Record Payment modal — opened by "Resolve" arrow on overdue items */}
+      {resolveModal && (
+        <RecordPaymentModal
+          loan={resolveModal.loan}
+          candidateLoans={resolveModal.loans}
+          currentUserId={user?.id}
+          isLender={resolveModal.loan?.borrower_id === user?.id}
+          onClose={() => setResolveModal(null)}
+          onPaymentComplete={() => { setResolveModal(null); loadData(); }}
+        />
+      )}
 
       {/* Footer */}
       <div className="dashboard-footer" style={{ maxWidth: 1200, margin: '0 auto', padding: '12px 8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid rgba(0,0,0,0.06)' }}>
