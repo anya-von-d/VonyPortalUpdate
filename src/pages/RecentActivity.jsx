@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Loan, Payment, User, PublicProfile, Friendship } from "@/entities/all";
+import { useState, useEffect, useRef } from "react";
+import { Loan, Payment, User, PublicProfile } from "@/entities/all";
 import { Activity, ArrowUpRight, ArrowDownRight, Send, Check, X, Ban, ChevronDown, ChevronLeft, ChevronRight, Search, Download } from "lucide-react";
 import { format, subDays, subMonths, subYears } from "date-fns";
-import { Link } from "react-router-dom";
-import { createPageUrl } from "@/utils";
+import { todayInTZ, currentDateStringTZ, formatTZ } from "@/components/utils/timezone";
 import { useAuth } from "@/lib/AuthContext";
 import BorrowerSignatureModal from "@/components/loans/BorrowerSignatureModal";
 import MeshMobileNav from "@/components/MeshMobileNav";
@@ -484,7 +483,7 @@ export default function RecentActivity({ embeddedMode }) {
       }
     }
 
-    const description = activity.date ? format(new Date(activity.date), 'MMM d, yyyy \u00B7 h:mm a') : '';
+    const description = activity.date ? formatTZ(activity.date, 'MMM d, yyyy · h:mm a') : '';
     return { title, description, icon, status, friendName, amount, category };
   };
 
@@ -513,7 +512,7 @@ export default function RecentActivity({ embeddedMode }) {
 
   // Date filter
   if (dateFilter !== 'all') {
-    const now = new Date();
+    const now = todayInTZ();
     if (dateFilter === '7d') filtered = filtered.filter(a => new Date(a.date) >= subDays(now, 7));
     else if (dateFilter === '30d') filtered = filtered.filter(a => new Date(a.date) >= subDays(now, 30));
     else if (dateFilter === '3m') filtered = filtered.filter(a => new Date(a.date) >= subMonths(now, 3));
@@ -549,7 +548,7 @@ export default function RecentActivity({ embeddedMode }) {
       const info = getActivityInfo(activity);
       const catDisplay = CATEGORY_DISPLAY[info.category] || CATEGORY_DISPLAY.sent_offer;
       return [
-        activity.date ? format(new Date(activity.date), 'yyyy-MM-dd') : '',
+        activity.date ? formatTZ(activity.date, 'yyyy-MM-dd') : '',
         info.friendName,
         catDisplay.label,
         info.status || '',
@@ -561,7 +560,7 @@ export default function RecentActivity({ embeddedMode }) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `vony-activity-${format(new Date(), 'yyyy-MM-dd')}.csv`;
+    a.download = `vony-activity-${currentDateStringTZ()}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -707,7 +706,7 @@ export default function RecentActivity({ embeddedMode }) {
                 {raPageItems.map((activity, index) => {
                   const { title, description, icon: Icon, status, friendName, amount, category } = getActivityInfo(activity);
                   const { bg: iconBg, color: iconColor } = getIconStyle(Icon);
-                  const dateDisplay = activity.date ? format(new Date(activity.date), 'MMM d, yyyy') : '';
+                  const dateDisplay = activity.date ? formatTZ(activity.date, 'MMM d, yyyy') : '';
 
                   return (
                     <div
@@ -920,7 +919,7 @@ export default function RecentActivity({ embeddedMode }) {
                   {raPageItems.map((activity, index) => {
                     const { title, description, icon: Icon, status, friendName, amount, category } = getActivityInfo(activity);
                     const { bg: iconBg, color: iconColor } = getIconStyle(Icon);
-                    const dateDisplay = activity.date ? format(new Date(activity.date), 'MMM d, yyyy') : '';
+                    const dateDisplay = activity.date ? formatTZ(activity.date, 'MMM d, yyyy') : '';
 
                     return (
                       <div

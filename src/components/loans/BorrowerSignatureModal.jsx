@@ -1,12 +1,9 @@
-import React, { useState, useRef, useEffect } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { useState, useRef, useEffect } from "react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { FileText, AlertCircle, CheckCircle, X, PenLine } from "lucide-react";
+import { AlertCircle, CheckCircle, X, PenLine } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { formatMoney } from "@/components/utils/formatMoney";
-import { format } from "date-fns";
 import { SuccessAnimation } from "@/components/ui/animations";
 
 // Trust checklist items for borrower

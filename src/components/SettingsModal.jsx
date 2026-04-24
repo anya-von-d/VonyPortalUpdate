@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { useAuth } from '@/lib/AuthContext';
 import { X, LogOut } from 'lucide-react';
@@ -208,7 +208,7 @@ function GeneralTab({ user }) {
       try { localStorage.setItem('vony.tz.value', autoZone); } catch {}
       setTzValue(autoZone);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+   
   }, [tzAuto]);
 
   useEffect(() => {

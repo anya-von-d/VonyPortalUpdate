@@ -1,10 +1,14 @@
 /**
  * Consistent date utility for VonyPortal.
  *
- * All date math uses the user's LOCAL time (from their computer).
- * Dates stored as ISO strings (e.g. "2025-03-15") are parsed as local
- * midnight so they don't shift across time zones.
+ * Calendar-date strings (e.g. "2025-03-15") are parsed as local midnight so
+ * they never shift across time zones. All "today" calculations use the user's
+ * configured timezone (from Settings → General → Timezone).
+ *
+ * For displaying UTC timestamps (created_at, signed_date…) use formatTZ()
+ * from ./timezone.js instead.
  */
+import { todayInTZ } from './timezone';
 
 /**
  * Parse a date string or Date into a local-midnight Date.
@@ -33,12 +37,12 @@ export function toLocalDate(input) {
 }
 
 /**
- * Get today's date at local midnight.
+ * Get today's date at midnight in the user's configured timezone.
+ * Delegates to todayInTZ() so the result is always consistent with
+ * the user's Settings → General → Timezone preference.
  */
 export function getLocalToday() {
-  const now = new Date();
-  now.setHours(0, 0, 0, 0);
-  return now;
+  return todayInTZ();
 }
 
 /**

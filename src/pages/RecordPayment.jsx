@@ -1,19 +1,18 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Payment, Loan, User, PublicProfile } from "@/entities/all";
 import { useAuth } from "@/lib/AuthContext";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import {
   DollarSign, CheckCircle, CreditCard, Banknote, Smartphone, ChevronDown,
-  AlertCircle, ArrowRight, ArrowLeft, X, Clock, FileText
+  AlertCircle, ArrowRight, ArrowLeft, X, Clock
 } from "lucide-react";
 import { format, addMonths } from "date-fns";
+import { toLocalDate } from "@/components/utils/dateUtils";
+import { todayInTZ, currentDateStringTZ } from "@/components/utils/timezone";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import { AnimatedCheckmark } from "@/components/ui/animations";
-import MeshMobileNav from "@/components/MeshMobileNav";
-import UserAvatar from "@/components/ui/UserAvatar";
-import DesktopSidebar from '../components/DesktopSidebar';
 
 const SHADOW = '0px 50px 40px rgba(0,0,0,0.02), 0px 50px 40px rgba(0,0,0,0.04), 0px 20px 40px rgba(0,0,0,0.06), 0px 3px 10px rgba(0,0,0,0.12)';
 
@@ -173,7 +172,7 @@ export default function RecordPayment() {
   const [amount, setAmount] = useState('');
   const [currency, setCurrency] = useState('USD');
   const [paymentMethod, setPaymentMethod] = useState('');
-  const [paymentDate, setPaymentDate] = useState(format(new Date(), 'yyyy-MM-dd'));
+  const [paymentDate, setPaymentDate] = useState(() => currentDateStringTZ());
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [transactionId, setTransactionId] = useState('');
@@ -303,8 +302,8 @@ export default function RecordPayment() {
   // Compute days-until-due for a loan (negative = overdue)
   const getLoanDueDays = (loan) => {
     if (!loan.next_payment_date) return null;
-    const today = new Date(); today.setHours(0,0,0,0);
-    const due = new Date(loan.next_payment_date); due.setHours(0,0,0,0);
+    const today = todayInTZ();
+    const due = toLocalDate(loan.next_payment_date);
     return Math.ceil((due - today) / 86400000);
   };
 
@@ -334,7 +333,7 @@ export default function RecordPayment() {
     setSelectedLoan(loan);
     setAmount('');
     setPaymentMethod('');
-    setPaymentDate(format(new Date(), 'yyyy-MM-dd'));
+    setPaymentDate(currentDateStringTZ());
     setError('');
     setCurrentStep(1);
     setIsSuccess(false);
@@ -398,7 +397,7 @@ export default function RecordPayment() {
           loanUpdate.status = 'completed';
           loanUpdate.next_payment_date = null;
         } else {
-          loanUpdate.next_payment_date = format(addMonths(new Date(), 1), 'yyyy-MM-dd');
+          loanUpdate.next_payment_date = format(addMonths(todayInTZ(), 1), 'yyyy-MM-dd');
         }
         await Loan.update(loan.id, loanUpdate);
       }
@@ -444,7 +443,7 @@ export default function RecordPayment() {
       const isLender = l.lender_id === user?.id;
       const otherId = isLender ? l.borrower_id : l.lender_id;
       const otherProfile = profiles.find(p => p.user_id === otherId);
-      const days = Math.ceil((new Date(l.next_payment_date) - new Date()) / 86400000);
+      const days = Math.ceil((toLocalDate(l.next_payment_date) - todayInTZ()) / 86400000);
       return { ...l, isLender, otherName: otherProfile?.full_name?.split(' ')[0] || 'User', days };
     })
     .sort((a, b) => new Date(a.next_payment_date) - new Date(b.next_payment_date))
@@ -760,9 +759,8 @@ export default function RecordPayment() {
                           const payAmt = selectedLoan.payment_amount || selectedLoan.next_payment_amount || getRemainingBalance(selectedLoan);
                           const payAmtStr = `$${Number(payAmt).toFixed(2)}`;
                           if (selectedLoan.next_payment_date) {
-                            const due = new Date(selectedLoan.next_payment_date);
-                            const today = new Date();
-                            today.setHours(0, 0, 0, 0);
+                            const due = toLocalDate(selectedLoan.next_payment_date);
+                            const today = todayInTZ();
                             const days = Math.ceil((due - today) / 86400000);
                             if (days < 0) {
                               const n = Math.abs(days);
@@ -780,7 +778,7 @@ export default function RecordPayment() {
                         <div>
                           <label style={{ fontSize: 12, fontWeight: 600, color: '#787776', marginBottom: 6, display: 'block', fontFamily: "'DM Sans', sans-serif" }}>Payment Date</label>
                           <input
-                            type="date" value={paymentDate} max={format(new Date(), 'yyyy-MM-dd')}
+                            type="date" value={paymentDate} max={currentDateStringTZ()}
                             onChange={e => setPaymentDate(e.target.value)}
                             style={{
                               width: '100%', padding: '10px 14px', borderRadius: 12,
@@ -846,7 +844,7 @@ export default function RecordPayment() {
                         </div>
                         <div style={{ background: 'rgba(3,172,234,0.08)', borderRadius: 12, padding: 14 }}>
                           <p style={{ fontSize: 11, color: '#787776', margin: 0, fontFamily: "'DM Sans', sans-serif" }}>Date</p>
-                          <p style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', margin: '4px 0 0', fontFamily: "'DM Sans', sans-serif" }}>{format(new Date(paymentDate + 'T12:00:00'), 'MMM d, yyyy')}</p>
+                          <p style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', margin: '4px 0 0', fontFamily: "'DM Sans', sans-serif" }}>{format(toLocalDate(paymentDate), 'MMM d, yyyy')}</p>
                         </div>
                         <div style={{ background: 'rgba(3,172,234,0.08)', borderRadius: 12, padding: 14 }}>
                           <p style={{ fontSize: 11, color: '#787776', margin: 0, fontFamily: "'DM Sans', sans-serif" }}>To</p>

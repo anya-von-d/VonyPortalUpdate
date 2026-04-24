@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { createPageUrl } from "@/utils";
+import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { Loan, Payment, PublicProfile } from "@/entities/all";
 import { useAuth } from "@/lib/AuthContext";
 import RecordPaymentModal from "@/components/loans/RecordPaymentModal";
@@ -9,7 +8,8 @@ import {
   startOfWeek, endOfWeek, isSameMonth, isSameDay,
 } from "date-fns";
 import { formatMoney } from "@/components/utils/formatMoney";
-import { daysUntil as daysUntilDate, toLocalDate } from "@/components/utils/dateUtils";
+import { toLocalDate, daysUntil as daysUntilDate } from "@/components/utils/dateUtils";
+import { todayInTZ } from "@/components/utils/timezone";
 import MeshMobileNav from "@/components/MeshMobileNav";
 import DesktopSidebar from '../components/DesktopSidebar';
 
@@ -21,8 +21,8 @@ export default function Upcoming() {
   const [publicProfiles, setPublicProfiles] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('summary');
-  const [calendarMonth, setCalendarMonth] = useState(new Date());
-  const [selectedDay, setSelectedDay] = useState(new Date());
+  const [calendarMonth, setCalendarMonth] = useState(() => todayInTZ());
+  const [selectedDay, setSelectedDay] = useState(() => todayInTZ());
   const [resolveModal, setResolveModal] = useState(null); // { loan, loans[] }
   const activeLoansRef = useRef(null);
   const [activeAnimKey, setActiveAnimKey] = useState(0);
@@ -113,7 +113,7 @@ export default function Upcoming() {
   }
 
   // ── Data ──
-  const today = new Date();
+  const today = todayInTZ();
   const safeLoans = Array.isArray(loans) ? loans : [];
   const safeProfiles = Array.isArray(publicProfiles) ? publicProfiles : [];
   const safePayments = Array.isArray(payments) ? payments : [];
@@ -134,7 +134,7 @@ export default function Upcoming() {
     const otherUserId = isLender ? loan.borrower_id : loan.lender_id;
     const otherProfile = getProfile(otherUserId);
     const days = daysUntilDate(loan.next_payment_date);
-    const nextPayDate = new Date(loan.next_payment_date);
+    const nextPayDate = toLocalDate(loan.next_payment_date);
     const loanPayments = safePayments.filter(p => p && p.loan_id === loan.id);
     const freq = loan.payment_frequency || 'monthly';
     const originalAmount = loan.payment_amount || 0;
@@ -209,7 +209,7 @@ export default function Upcoming() {
     const otherUserId = isLender ? loan.borrower_id : loan.lender_id;
     const otherProfile = getProfile(otherUserId);
     const freq = loan.payment_frequency || 'monthly';
-    const nextPay = new Date(loan.next_payment_date);
+    const nextPay = toLocalDate(loan.next_payment_date);
     const amount = loan.payment_amount || 0;
     const projected = [];
     if (freq === 'weekly' || freq === 'bi-weekly') {
@@ -711,7 +711,7 @@ export default function Upcoming() {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2 }}>
                 {calendarDays.map((day, i) => {
                   const inMonth = isSameMonth(day, calendarMonth);
-                  const isToday = isSameDay(day, new Date());
+                  const isToday = isSameDay(day, today);
                   const isSelected = isSameDay(day, selectedDay);
                   const key = format(day, 'yyyy-MM-dd');
                   const dayEvents = calendarEvents[key] || [];

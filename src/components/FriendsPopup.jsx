@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Friendship, PublicProfile } from '@/entities/all';
 import { useAuth } from '@/lib/AuthContext';
 import { Star, Search, X, Send, CheckCircle, UserMinus, ChevronDown } from 'lucide-react';

@@ -1,4 +1,3 @@
-import React from "react";
 
 // Medium blue/purple palette — deterministic per name
 const AVATAR_COLORS = [

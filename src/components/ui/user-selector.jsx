@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ChevronDown, Search, Check, Star, Plus } from "lucide-react";
 import UserAvatar from "@/components/ui/UserAvatar";
 

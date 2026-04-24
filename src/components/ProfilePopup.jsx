@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { User, PublicProfile } from '@/entities/all';
 import { supabase } from '@/lib/supabaseClient';
 import { UploadFile } from '@/integrations/Core';
-import { CheckCircle, Loader2, ChevronDown, Pencil, Landmark, Image, X, Clock } from 'lucide-react';
+import { CheckCircle, Loader2, ChevronDown, Pencil, Landmark, Image, X } from 'lucide-react';
 import UserAvatar from '@/components/ui/UserAvatar';
 import { useAuth } from '@/lib/AuthContext';
 import { ICON_OPTIONS, generateIconUrl as sharedGenerateIconUrl, iconInnerSvg } from '@/lib/profileIcons';

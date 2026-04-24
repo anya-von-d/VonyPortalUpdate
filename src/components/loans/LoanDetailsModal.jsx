@@ -1,14 +1,13 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { PublicProfile, User, LoanAgreement } from "@/entities/all";
-import { Calendar, DollarSign, Percent, Clock, UserIcon, Pencil } from "lucide-react";
+import { PublicProfile, LoanAgreement } from "@/entities/all";
+import { Calendar, Percent, Clock, UserIcon, Pencil } from "lucide-react";
 import { format } from "date-fns";
+import { toLocalDate } from "@/components/utils/dateUtils";
 import SignatureModal from "./SignatureModal";
-import html2canvas from "html2canvas";
-import { UploadFile } from "@/integrations/Core";
 
 const statusColors = {
   pending: "bg-yellow-100 text-yellow-800 border-yellow-200",
@@ -188,7 +187,7 @@ export default function LoanDetailsModal({ loan, type, isOpen, onClose, user, on
                 <div>
                   <p className="text-sm text-slate-600">Next Payment</p>
                   <p className="font-semibold text-slate-900">
-                    {format(new Date(loan.next_payment_date), 'MMM d, yyyy')}
+                    {format(toLocalDate(loan.next_payment_date), 'MMM d, yyyy')}
                   </p>
                 </div>
               </div>
@@ -199,7 +198,7 @@ export default function LoanDetailsModal({ loan, type, isOpen, onClose, user, on
                 <div>
                   <p className="text-sm text-slate-600">Due Date</p>
                   <p className="font-semibold text-slate-900">
-                    {format(new Date(loan.due_date), 'MMM d, yyyy')}
+                    {format(toLocalDate(loan.due_date), 'MMM d, yyyy')}
                   </p>
                 </div>
               </div>

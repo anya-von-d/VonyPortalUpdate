@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
-import { createPageUrl } from '@/utils';
 import { Loan, Payment, PublicProfile, LoanAgreement } from '@/entities/all';
 import { useAuth } from '@/lib/AuthContext';
 import { X, CheckCircle } from 'lucide-react';
 import { format } from 'date-fns';
 import { formatMoney } from '@/components/utils/formatMoney';
+import { toLocalDate } from '@/components/utils/dateUtils';
 import UserAvatar from '@/components/ui/UserAvatar';
 
 export default function PendingRequestsPopup({ onClose, positionOverride }) {
@@ -280,13 +280,13 @@ export default function PendingRequestsPopup({ onClose, positionOverride }) {
                   {selectedRow.loan?.first_payment_date && (
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <span style={{ fontSize: 11, color: '#9B9A98', fontWeight: 500 }}>First payment</span>
-                      <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918' }}>{format(new Date(selectedRow.loan.first_payment_date), 'MMM d, yyyy')}</span>
+                      <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918' }}>{format(toLocalDate(selectedRow.loan.first_payment_date), 'MMM d, yyyy')}</span>
                     </div>
                   )}
                   {selectedRow.loan?.lender_send_funds_date && (
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <span style={{ fontSize: 11, color: '#9B9A98', fontWeight: 500 }}>Funds sent by</span>
-                      <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918' }}>{format(new Date(selectedRow.loan.lender_send_funds_date), 'MMM d, yyyy')}</span>
+                      <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918' }}>{format(toLocalDate(selectedRow.loan.lender_send_funds_date), 'MMM d, yyyy')}</span>
                     </div>
                   )}
                   {selectedRow.loan?.purpose && (
@@ -313,7 +313,7 @@ export default function PendingRequestsPopup({ onClose, positionOverride }) {
                   {selectedRow.payment?.payment_date && (
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <span style={{ fontSize: 11, color: '#9B9A98', fontWeight: 500 }}>Date recorded</span>
-                      <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918' }}>{format(new Date(selectedRow.payment.payment_date), 'MMM d, yyyy')}</span>
+                      <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918' }}>{format(toLocalDate(selectedRow.payment.payment_date), 'MMM d, yyyy')}</span>
                     </div>
                   )}
                   {selectedRow.payment?.payment_method && (

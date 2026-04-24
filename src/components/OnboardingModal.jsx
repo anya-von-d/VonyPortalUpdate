@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { User, PublicProfile } from "@/entities/all";
 import { supabase } from "@/lib/supabaseClient";
 import { CheckCircle, Loader2, ChevronDown } from "lucide-react";

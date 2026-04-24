@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { createPageUrl } from "@/utils";
+import React, { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { useAuth } from "@/lib/AuthContext";
 import { StatusBar, Style } from '@capacitor/status-bar';
 import { Keyboard } from '@capacitor/keyboard';

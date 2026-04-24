@@ -1,11 +1,9 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Loan, Payment, User, LoanAgreement, PublicProfile, Friendship } from "@/entities/all";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Loan, Payment, User, LoanAgreement, PublicProfile } from "@/entities/all";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   AlertDialog,
@@ -13,26 +11,23 @@ import {
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
-  AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import {
-  Clock, Calendar, DollarSign, AlertCircle, FileText, BarChart3,
-  Pencil, X, FolderOpen, ClipboardList, Info
+  Clock, Calendar, DollarSign, FileText, X, ClipboardList
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format, addDays, addMonths, addWeeks } from "date-fns";
 import { formatMoney } from "@/components/utils/formatMoney";
 import { toLocalDate, getLocalToday, daysUntil as daysUntilDate } from "@/components/utils/dateUtils";
+import { formatTZ } from "@/components/utils/timezone";
 import { useAuth } from "@/lib/AuthContext";
 import MeshMobileNav from "@/components/MeshMobileNav";
 import UserAvatar from "@/components/ui/UserAvatar";
 
-import LoanCard from "@/components/loans/LoanCard";
 
 import LoanDetailsModal from "@/components/loans/LoanDetailsModal";
-import MyLoanOffers from "@/components/dashboard/MyLoanOffers";
 import BorrowerSignatureModal from "@/components/loans/BorrowerSignatureModal";
 import DesktopSidebar from '../components/DesktopSidebar';
 
@@ -239,7 +234,7 @@ export default function Borrowing() {
   // Find next payment due
   const nextPaymentLoan = activeLoans
     .filter(loan => loan.next_payment_date)
-    .map(loan => ({ ...loan, date: new Date(loan.next_payment_date) }))
+    .map(loan => ({ ...loan, date: toLocalDate(loan.next_payment_date) }))
     .sort((a, b) => a.date - b.date)[0];
 
   const getNextPaymentDays = () => {
@@ -582,14 +577,14 @@ export default function Borrowing() {
             <p className="text-xs text-slate-500 mb-1">Borrower</p>
             <p className="text-lg font-serif italic text-slate-800">{agreement.borrower_name || borrowerInfo.full_name}</p>
             {agreement.borrower_signed_date && (
-              <p className="text-xs text-slate-500 mt-1">Signed {format(new Date(agreement.borrower_signed_date), 'MMM d, yyyy')}</p>
+              <p className="text-xs text-slate-500 mt-1">Signed {formatTZ(agreement.borrower_signed_date, 'MMM d, yyyy')}</p>
             )}
           </div>
           <div className="bg-slate-50 rounded-lg p-4">
             <p className="text-xs text-slate-500 mb-1">Lender</p>
             <p className="text-lg font-serif italic text-slate-800">{agreement.lender_name || lenderInfo.full_name}</p>
             {agreement.lender_signed_date && (
-              <p className="text-xs text-slate-500 mt-1">Signed {format(new Date(agreement.lender_signed_date), 'MMM d, yyyy')}</p>
+              <p className="text-xs text-slate-500 mt-1">Signed {formatTZ(agreement.lender_signed_date, 'MMM d, yyyy')}</p>
             )}
           </div>
         </div>
@@ -684,7 +679,7 @@ export default function Borrowing() {
         <div className="flex items-center justify-between border-b border-slate-200 pb-4">
           <div>
             <h2 className="text-2xl font-bold text-slate-800">Loan Summary</h2>
-            <p className="text-sm text-slate-500 mt-1">{format(new Date(agreement.created_at), 'MMMM d, yyyy')}</p>
+            <p className="text-sm text-slate-500 mt-1">{formatTZ(agreement.created_at, 'MMMM d, yyyy')}</p>
           </div>
           <Badge className={`${getStatusColor(loan?.status)} capitalize`}>{loan?.status || 'active'}</Badge>
         </div>
@@ -751,7 +746,7 @@ export default function Borrowing() {
               <Calendar className="w-4 h-4 text-slate-400" />
               <div>
                 <p className="text-slate-500">Due Date</p>
-                <p className="font-semibold text-slate-800">{agreement.due_date ? format(new Date(agreement.due_date), 'MMM d, yyyy') : 'N/A'}</p>
+                <p className="font-semibold text-slate-800">{agreement.due_date ? format(toLocalDate(agreement.due_date), 'MMM d, yyyy') : 'N/A'}</p>
               </div>
             </div>
           </div>
@@ -1097,7 +1092,7 @@ export default function Borrowing() {
                         <div>
                           <p style={{ fontSize: 11, color: '#787776', marginBottom: 2 }}>Next Payment Date</p>
                           <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
-                            <p style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', margin: 0 }}>{format(new Date(nextPaymentLoan.next_payment_date), 'EEE, MMM d')}</p>
+                            <p style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', margin: 0 }}>{format(toLocalDate(nextPaymentLoan.next_payment_date), 'EEE, MMM d')}</p>
                             {nextPaymentDays !== null && (
                               <p style={{ fontSize: 11, color: '#787776', margin: 0 }}>{nextPaymentDays > 0 ? `${nextPaymentDays}d away` : nextPaymentDays === 0 ? 'Due today' : `${Math.abs(nextPaymentDays)}d overdue`}</p>
                             )}
@@ -1168,8 +1163,8 @@ export default function Borrowing() {
                           if (rankingFilter === 'highest_interest') return (b.interest_rate || 0) - (a.interest_rate || 0);
                           if (rankingFilter === 'highest_payment') return (b.payment_amount || 0) - (a.payment_amount || 0);
                           if (rankingFilter === 'soonest_deadline') {
-                            const dateA = a.next_payment_date ? new Date(a.next_payment_date) : new Date('2099-01-01');
-                            const dateB = b.next_payment_date ? new Date(b.next_payment_date) : new Date('2099-01-01');
+                            const dateA = a.next_payment_date ? toLocalDate(a.next_payment_date) : new Date('2099-01-01');
+                            const dateB = b.next_payment_date ? toLocalDate(b.next_payment_date) : new Date('2099-01-01');
                             return dateA - dateB;
                           }
                           return 0;
@@ -1180,7 +1175,7 @@ export default function Borrowing() {
                             ? `${loan.interest_rate || 0}%`
                             : rankingFilter === 'highest_payment'
                               ? `$${(loan.payment_amount || 0).toLocaleString()}`
-                              : loan.next_payment_date ? format(new Date(loan.next_payment_date), 'MMM d') : 'N/A';
+                              : loan.next_payment_date ? format(toLocalDate(loan.next_payment_date), 'MMM d') : 'N/A';
                           return (
                             <div key={loan.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: 10, borderRadius: 10, background: 'transparent' }}>
                               <div style={{ flexShrink: 0, width: 28, height: 28, borderRadius: '50%', background: 'rgba(3,172,234,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

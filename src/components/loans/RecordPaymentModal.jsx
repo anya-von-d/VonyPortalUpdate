@@ -1,33 +1,27 @@
-import React, { useState, useEffect } from "react";
-import { Payment, Loan, User, PublicProfile, VenmoConnection, PayPalConnection } from "@/entities/all";
+import { useState, useEffect } from "react";
+import { Payment, User, PublicProfile } from "@/entities/all";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   DollarSign,
-  CheckCircle,
   AlertCircle,
   CreditCard,
   Banknote,
   Smartphone,
-  Clock,
-  ExternalLink,
-  Copy,
   Check,
   ArrowRight,
   ArrowLeft,
   Shield
 } from "lucide-react";
 import { format } from "date-fns";
-import { motion, AnimatePresence } from "framer-motion";
-import { SuccessAnimation, TransactionId, AnimatedProgress } from "@/components/ui/animations";
+import { motion } from "framer-motion";
+import { toLocalDate } from "@/components/utils/dateUtils";
+import { currentDateStringTZ } from "@/components/utils/timezone";
+import { SuccessAnimation, TransactionId } from "@/components/ui/animations";
 
 const PAYMENT_METHODS = [
   { id: 'venmo', label: 'Venmo', icon: Smartphone, color: 'text-blue-500', bgColor: 'bg-blue-500' },
@@ -51,7 +45,7 @@ export default function RecordPaymentModal({ loan: initialLoan, candidateLoans =
   const [currentUserIdState, setCurrentUserIdState] = useState(currentUserId);
   const [amount, setAmount] = useState(initialLoan._prefillAmount || initialLoan.payment_amount?.toFixed(2) || "");
   const [paymentMethod, setPaymentMethod] = useState(initialLoan._prefillMethod || "");
-  const [paymentDate, setPaymentDate] = useState(format(new Date(), 'yyyy-MM-dd'));
+  const [paymentDate, setPaymentDate] = useState(() => currentDateStringTZ());
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState("");
@@ -186,7 +180,7 @@ export default function RecordPaymentModal({ loan: initialLoan, candidateLoans =
   const loanPurpose = loan.purpose || 'Personal loan';
   const loanAmount = loan.total_amount || loan.amount || 0;
   const nextPaymentAmount = loan.payment_amount || 0;
-  const nextPaymentDate = loan.next_payment_date ? format(new Date(loan.next_payment_date), 'MMM d, yyyy') : 'N/A';
+  const nextPaymentDate = loan.next_payment_date ? format(toLocalDate(loan.next_payment_date), 'MMM d, yyyy') : 'N/A';
 
   // Step 0: Loan Selection (when multiple candidates)
   if (step === 0 && hasMultipleCandidates) {
@@ -328,7 +322,7 @@ export default function RecordPaymentModal({ loan: initialLoan, candidateLoans =
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500">Date</span>
                   <span className="font-medium text-slate-800">
-                    {format(new Date(paymentDate), 'MMM d, yyyy')}
+                    {format(toLocalDate(paymentDate), 'MMM d, yyyy')}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
@@ -571,7 +565,7 @@ export default function RecordPaymentModal({ loan: initialLoan, candidateLoans =
                 type="date"
                 value={paymentDate}
                 onChange={(e) => setPaymentDate(e.target.value)}
-                max={format(new Date(), 'yyyy-MM-dd')}
+                max={currentDateStringTZ()}
                 required
                 className="rounded-xl bg-white border-0 flex-1"
               />

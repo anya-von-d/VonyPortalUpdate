@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Loan, Payment, User, LoanAgreement, PublicProfile } from "@/entities/all";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
-  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+  AlertDialogDescription, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import {
   Clock, Calendar, DollarSign, FileText, X
@@ -15,11 +15,11 @@ import { format, addDays, addMonths, addWeeks, startOfMonth, endOfMonth } from "
 import { useAuth } from "@/lib/AuthContext";
 import { formatMoney } from "@/components/utils/formatMoney";
 import { toLocalDate, getLocalToday, daysUntil as daysUntilDate } from "@/components/utils/dateUtils";
+import { todayInTZ, formatTZ } from "@/components/utils/timezone";
 import LoanDetailsModal from "@/components/loans/LoanDetailsModal";
 import MeshMobileNav from "@/components/MeshMobileNav";
 import UserAvatar from "@/components/ui/UserAvatar";
 import DesktopSidebar from '../components/DesktopSidebar';
-import LoanTimeline from '@/components/LoanTimeline';
 
 export default function YourLoans({ defaultTab, embeddedMode }) {
   const { logout } = useAuth();
@@ -112,7 +112,7 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
 
   const nextPaymentLoanLending = activeLendingLoans
     .filter(l => l.next_payment_date)
-    .map(l => ({ ...l, date: new Date(l.next_payment_date) }))
+    .map(l => ({ ...l, date: toLocalDate(l.next_payment_date) }))
     .sort((a, b) => a.date - b.date)[0];
   const nextPaymentDaysLending = nextPaymentLoanLending ? daysUntilDate(nextPaymentLoanLending.next_payment_date) : null;
   const nextPaymentAmountLending = (() => {
@@ -132,7 +132,7 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
 
   const nextPaymentLoanBorrowing = activeBorrowingLoans
     .filter(l => l.next_payment_date)
-    .map(l => ({ ...l, date: new Date(l.next_payment_date) }))
+    .map(l => ({ ...l, date: toLocalDate(l.next_payment_date) }))
     .sort((a, b) => a.date - b.date)[0];
   const nextPaymentDaysBorrowing = nextPaymentLoanBorrowing ? daysUntilDate(nextPaymentLoanBorrowing.next_payment_date) : null;
   const nextPaymentAmountBorrowing = (() => {
@@ -358,12 +358,12 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
           <div style={{ background: 'transparent', borderRadius: 10, border: '1px solid rgba(0,0,0,0.05)', padding: 14 }}>
             <p style={{ fontSize: 11, color: '#787776', margin: '0 0 4px' }}>Borrower</p>
             <p style={{ fontSize: 13, fontStyle: 'italic', fontFamily: "'DM Sans', sans-serif", color: '#1A1918', margin: 0 }}>{agreement.borrower_name || borrowerInfo.full_name}</p>
-            {agreement.borrower_signed_date && <p style={{ fontSize: 11, color: '#787776', margin: '4px 0 0' }}>Signed {format(new Date(agreement.borrower_signed_date), 'MMM d, yyyy')}</p>}
+            {agreement.borrower_signed_date && <p style={{ fontSize: 11, color: '#787776', margin: '4px 0 0' }}>Signed {formatTZ(agreement.borrower_signed_date, 'MMM d, yyyy')}</p>}
           </div>
           <div style={{ background: 'transparent', borderRadius: 10, border: '1px solid rgba(0,0,0,0.05)', padding: 14 }}>
             <p style={{ fontSize: 11, color: '#787776', margin: '0 0 4px' }}>Lender</p>
             <p style={{ fontSize: 13, fontStyle: 'italic', fontFamily: "'DM Sans', sans-serif", color: '#1A1918', margin: 0 }}>{agreement.lender_name || lenderInfo.full_name}</p>
-            {agreement.lender_signed_date && <p style={{ fontSize: 11, color: '#787776', margin: '4px 0 0' }}>Signed {format(new Date(agreement.lender_signed_date), 'MMM d, yyyy')}</p>}
+            {agreement.lender_signed_date && <p style={{ fontSize: 11, color: '#787776', margin: '4px 0 0' }}>Signed {formatTZ(agreement.lender_signed_date, 'MMM d, yyyy')}</p>}
           </div>
         </div>
       </div>
@@ -467,7 +467,7 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <Calendar size={16} style={{ color: '#787776' }} />
-              <div><p style={{ color: '#787776', margin: 0 }}>Due Date</p><p style={{ fontWeight: 600, color: '#1A1918', margin: 0 }}>{agreement.due_date ? format(new Date(agreement.due_date), 'MMM d, yyyy') : 'N/A'}</p></div>
+              <div><p style={{ color: '#787776', margin: 0 }}>Due Date</p><p style={{ fontWeight: 600, color: '#1A1918', margin: 0 }}>{agreement.due_date ? format(toLocalDate(agreement.due_date), 'MMM d, yyyy') : 'N/A'}</p></div>
             </div>
           </div>
         </div>
@@ -1003,8 +1003,8 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
 
             {/* Snapshot — below the two boxes */}
             {(() => {
-              const today = new Date();
-              const overdueCount = activeLoans.filter(l => l.next_payment_date && new Date(l.next_payment_date) < today).length;
+              const today = todayInTZ();
+              const overdueCount = activeLoans.filter(l => l.next_payment_date && toLocalDate(l.next_payment_date) < today).length;
               let insightText = '';
               if (activeLoans.length === 0) {
                 insightText = isLending ? 'No active loans yet' : 'You have no active borrowing';
@@ -1123,20 +1123,20 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
               const accentColBg = isLending ? 'rgba(3,172,234,0.10)' : 'rgba(29,91,148,0.10)';
               const sortedLoans = [...activeLoans].sort((a, b) => {
                 if (rankingFilter === 'status') {
-                  const now = new Date();
-                  const aOv = a.next_payment_date && new Date(a.next_payment_date) < now;
-                  const bOv = b.next_payment_date && new Date(b.next_payment_date) < now;
+                  const now = todayInTZ();
+                  const aOv = a.next_payment_date && toLocalDate(a.next_payment_date) < now;
+                  const bOv = b.next_payment_date && toLocalDate(b.next_payment_date) < now;
                   if (aOv && !bOv) return -1;
                   if (!aOv && bOv) return 1;
-                  const dA = a.next_payment_date ? new Date(a.next_payment_date) : new Date('2099-01-01');
-                  const dB = b.next_payment_date ? new Date(b.next_payment_date) : new Date('2099-01-01');
+                  const dA = a.next_payment_date ? toLocalDate(a.next_payment_date) : new Date('2099-01-01');
+                  const dB = b.next_payment_date ? toLocalDate(b.next_payment_date) : new Date('2099-01-01');
                   return dA - dB;
                 }
                 if (rankingFilter === 'highest_interest') return (b.interest_rate || 0) - (a.interest_rate || 0);
                 if (rankingFilter === 'lowest_interest') return (a.interest_rate || 0) - (b.interest_rate || 0);
                 if (rankingFilter === 'highest_payment') return (b.payment_amount || 0) - (a.payment_amount || 0);
                 if (rankingFilter === 'lowest_payment') return (a.payment_amount || 0) - (b.payment_amount || 0);
-                if (rankingFilter === 'soonest_deadline') { const dA = a.next_payment_date ? new Date(a.next_payment_date) : new Date('2099-01-01'); const dB = b.next_payment_date ? new Date(b.next_payment_date) : new Date('2099-01-01'); return dA - dB; }
+                if (rankingFilter === 'soonest_deadline') { const dA = a.next_payment_date ? toLocalDate(a.next_payment_date) : new Date('2099-01-01'); const dB = b.next_payment_date ? toLocalDate(b.next_payment_date) : new Date('2099-01-01'); return dA - dB; }
                 if (rankingFilter === 'largest_amount') return (b.total_amount || b.amount || 0) - (a.total_amount || a.amount || 0);
                 if (rankingFilter === 'smallest_amount') return (a.total_amount || a.amount || 0) - (b.total_amount || b.amount || 0);
                 if (rankingFilter === 'most_repaid') { const pA = (a.total_amount||a.amount||0)>0?(a.amount_paid||0)/(a.total_amount||a.amount||1):0; const pB = (b.total_amount||b.amount||0)>0?(b.amount_paid||0)/(b.total_amount||b.amount||1):0; return pB-pA; }
@@ -1172,7 +1172,7 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
                       const totalAmt = loan.total_amount || loan.amount || 0;
                       const paidAmt = loan.amount_paid || 0;
                       const pct = totalAmt > 0 ? Math.round((paidAmt / totalAmt) * 100) : 0;
-                      const isOverdue = loan.next_payment_date && new Date(loan.next_payment_date) < new Date();
+                      const isOverdue = loan.next_payment_date && toLocalDate(loan.next_payment_date) < todayInTZ();
                       const overdueAmt = isOverdue ? (loan.payment_amount || 0) : 0;
                       let badgeLabel = '', badgeColor = accentCol, badgeBg = accentColBg;
                       if (rankingFilter === 'status') { badgeLabel = isOverdue ? `${formatMoney(overdueAmt)} overdue` : 'On track'; badgeColor = isOverdue ? '#E8726E' : accentCol; badgeBg = isOverdue ? 'rgba(232,114,110,0.08)' : accentColBg; }
@@ -1181,7 +1181,7 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
                       else if (rankingFilter === 'soonest_deadline') { const d = loan.next_payment_date ? daysUntilDate(loan.next_payment_date) : null; badgeLabel = d === null ? '—' : d < 0 ? `${Math.abs(d)}d late` : d === 0 ? 'today' : `${d}d`; if (d !== null && d < 0) { badgeColor = '#E8726E'; badgeBg = 'rgba(232,114,110,0.08)'; } }
                       else if (rankingFilter === 'largest_amount' || rankingFilter === 'smallest_amount') { badgeLabel = `${formatMoney(totalAmt)} total`; }
                       else if (rankingFilter === 'most_repaid' || rankingFilter === 'least_repaid') { badgeLabel = `${pct}% repaid`; }
-                      else if (rankingFilter === 'most_recent') { badgeLabel = loan.created_at ? format(new Date(loan.created_at), 'MMM d') : '—'; }
+                      else if (rankingFilter === 'most_recent') { badgeLabel = loan.created_at ? formatTZ(loan.created_at, 'MMM d') : '—'; }
                       return (
                         <div key={loan.id} style={{ padding: '9px 0', display: 'flex', alignItems: 'flex-start', gap: 8 }}>
                           {(() => {
@@ -1370,19 +1370,19 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
     );
   }
 
-  const today = new Date();
+  const today = todayInTZ();
   const monthStart = startOfMonth(today);
   const monthEnd = endOfMonth(today);
 
   const monthlyReceived = allPayments
     .filter(p => p.status === 'confirmed' || p.status === 'completed')
     .filter(p => { const loan = allLoans.find(l => l.id === p.loan_id); return loan && loan.lender_id === user?.id; })
-    .filter(p => { const d = new Date(p.payment_date || p.created_at); return d >= monthStart && d <= monthEnd; })
+    .filter(p => { const d = p.payment_date ? toLocalDate(p.payment_date) : toLocalDate(p.created_at); return d >= monthStart && d <= monthEnd; })
     .reduce((s, p) => s + (p.amount || 0), 0);
   const monthlyPaidOut = allPayments
     .filter(p => p.status === 'confirmed' || p.status === 'completed')
     .filter(p => { const loan = allLoans.find(l => l.id === p.loan_id); return loan && loan.borrower_id === user?.id; })
-    .filter(p => { const d = new Date(p.payment_date || p.created_at); return d >= monthStart && d <= monthEnd; })
+    .filter(p => { const d = p.payment_date ? toLocalDate(p.payment_date) : toLocalDate(p.created_at); return d >= monthStart && d <= monthEnd; })
     .reduce((s, p) => s + (p.amount || 0), 0);
   const monthlyExpectedReceive = activeLendingLoans.reduce((s, l) => s + (l.payment_amount || 0), 0);
   const monthlyExpectedPay = activeBorrowingLoans.reduce((s, l) => s + (l.payment_amount || 0), 0);

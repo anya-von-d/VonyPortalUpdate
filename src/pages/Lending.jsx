@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Loan, LoanAgreement, User, PublicProfile, Friendship } from "@/entities/all";
 import { supabase } from '@/lib/supabaseClient';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,17 +8,14 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { UserSelector } from "@/components/ui/user-selector";
 import SignatureModal from "@/components/loans/SignatureModal";
-import LoanCard from "@/components/loans/LoanCard";
 import RecordPaymentModal from "@/components/loans/RecordPaymentModal";
 import LoanDetailsModal from "@/components/loans/LoanDetailsModal";
-import MyLoanOffers from "@/components/dashboard/MyLoanOffers";
 import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
-  AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
@@ -28,15 +24,15 @@ import { createPageUrl } from "@/utils";
 import { useAuth } from "@/lib/AuthContext";
 import {
   DollarSign, Calendar, Percent, FileText, User as UserIcon,
-  AlertCircle, Zap, ClipboardList, Send, Clock,
-  TrendingUp, Pencil, X, Save, History, PlusCircle, Settings, BarChart3,
-  Download, CheckCircle, FolderOpen, Info, UserPlus, ChevronDown
+  AlertCircle, ClipboardList, Clock, Pencil, X, Save, History, PlusCircle, BarChart3,
+  Download, CheckCircle, FolderOpen, ChevronDown
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { addMonths, addWeeks, addDays, format, startOfMonth, endOfMonth, isSameMonth } from "date-fns";
+import { addMonths, addWeeks, addDays, format, endOfMonth, isSameMonth } from "date-fns";
 import { jsPDF } from "jspdf";
 import { formatMoney } from "@/components/utils/formatMoney";
-import { toLocalDate, getLocalToday, daysUntil as daysUntilDate, daysBetween } from "@/components/utils/dateUtils";
+import { toLocalDate, daysUntil as daysUntilDate } from "@/components/utils/dateUtils";
+import { todayInTZ, currentDateStringTZ, formatTZ } from "@/components/utils/timezone";
 import MeshMobileNav from "@/components/MeshMobileNav";
 import UserAvatar from "@/components/ui/UserAvatar";
 import DesktopSidebar from '../components/DesktopSidebar';
@@ -274,8 +270,8 @@ export default function Lending({ initialTab }) {
     repeating_timezone: 'EST',
     repeating_start_date: '',
     repeating_num_payments: '',
-    first_payment_date: format(addMonths(new Date(), 1), 'yyyy-MM-dd'),
-    lender_send_funds_date: format(new Date(), 'yyyy-MM-dd'),
+    first_payment_date: format(addMonths(todayInTZ(), 1), 'yyyy-MM-dd'),
+    lender_send_funds_date: currentDateStringTZ(),
     loan_day_of_week: 'monday',
     loan_day_of_month: '1',
     loan_time: '12:00',
@@ -513,13 +509,13 @@ export default function Lending({ initialTab }) {
       if (formData.repayment_unit === 'custom') {
         dueDate = new Date(formData.custom_due_date);
       } else if (formData.repayment_unit === 'days') {
-        dueDate = new Date();
+        dueDate = todayInTZ();
         dueDate.setDate(dueDate.getDate() + parseInt(formData.repayment_period));
       } else if (formData.repayment_unit === 'weeks') {
-        dueDate = new Date();
+        dueDate = todayInTZ();
         dueDate.setDate(dueDate.getDate() + parseInt(formData.repayment_period) * 7);
       } else {
-        dueDate = addMonths(new Date(), parseInt(formData.repayment_period) || 1);
+        dueDate = addMonths(todayInTZ(), parseInt(formData.repayment_period) || 1);
       }
 
       const lenderName = isCurrentUserTheLender ? (currentUser.full_name || currentUserProfile?.username || 'Lender') : (otherProfile.full_name || otherUsername);
@@ -540,7 +536,7 @@ export default function Lending({ initialTab }) {
         due_date: loanType === 'flexible' ? null : format(dueDate, 'yyyy-MM-dd'),
         total_amount: loanType === 'flexible' ? parseFloat(formData.amount) : details.totalAmount,
         payment_amount: loanType === 'flexible' ? 0 : details.paymentAmount,
-        next_payment_date: loanType === 'flexible' ? null : format(addMonths(new Date(), 1), 'yyyy-MM-dd')
+        next_payment_date: loanType === 'flexible' ? null : format(addMonths(todayInTZ(), 1), 'yyyy-MM-dd')
       };
 
       setPendingLoanData(loanData);
@@ -791,7 +787,7 @@ export default function Lending({ initialTab }) {
   // Find next expected payment (as lender receiving payment)
   const nextPaymentLoan = activeLoans
     .filter(loan => loan.next_payment_date)
-    .map(loan => ({ ...loan, date: new Date(loan.next_payment_date) }))
+    .map(loan => ({ ...loan, date: toLocalDate(loan.next_payment_date) }))
     .sort((a, b) => a.date - b.date)[0];
 
   const details = calculateLoanDetails();
@@ -1036,7 +1032,7 @@ export default function Lending({ initialTab }) {
     doc.setTextColor(0, 0, 0);
 
     doc.setFontSize(11);
-    doc.text(`Date: ${format(new Date(agreement.created_at), 'MMMM d, yyyy')}`, 20, 50);
+    doc.text(`Date: ${formatTZ(agreement.created_at, 'MMMM d, yyyy')}`, 20, 50);
     doc.text(`Location: United States`, 20, 58);
 
     doc.setFillColor(240, 240, 240);
@@ -1065,7 +1061,7 @@ export default function Lending({ initialTab }) {
       `Interest Rate: ${agreement.interest_rate}% per annum`,
       `Payment Amount: ${formatMoney(agreement.payment_amount)} ${agreement.payment_frequency}`,
       `Repayment Period: ${agreement.repayment_period} ${agreement.repayment_unit || 'months'}`,
-      `Due Date: ${agreement.due_date ? format(new Date(agreement.due_date), 'MMMM d, yyyy') : 'As per payment schedule'}`,
+      `Due Date: ${agreement.due_date ? format(toLocalDate(agreement.due_date), 'MMMM d, yyyy') : 'As per payment schedule'}`,
     ];
 
     terms.forEach(term => {
@@ -1101,7 +1097,7 @@ export default function Lending({ initialTab }) {
     doc.setFontSize(9);
     doc.setFont(undefined, 'normal');
     if (agreement.borrower_signed_date) {
-      doc.text(`Signed: ${format(new Date(agreement.borrower_signed_date), 'MMM d, yyyy h:mm a')}`, 20, yPos + 18);
+      doc.text(`Signed: ${formatTZ(agreement.borrower_signed_date, 'MMM d, yyyy h:mm a')}`, 20, yPos + 18);
     }
 
     doc.setFontSize(11);
@@ -1112,7 +1108,7 @@ export default function Lending({ initialTab }) {
     doc.setFontSize(9);
     doc.setFont(undefined, 'normal');
     if (agreement.lender_signed_date) {
-      doc.text(`Signed: ${format(new Date(agreement.lender_signed_date), 'MMM d, yyyy h:mm a')}`, 120, yPos + 18);
+      doc.text(`Signed: ${formatTZ(agreement.lender_signed_date, 'MMM d, yyyy h:mm a')}`, 120, yPos + 18);
     }
 
     if (agreement.contract_modified && agreement.modification_history) {
@@ -1124,7 +1120,7 @@ export default function Lending({ initialTab }) {
         doc.text(`AMENDMENT ${index + 1}`, 105, 25, { align: 'center' });
         doc.setFontSize(10);
         doc.setFont(undefined, 'normal');
-        doc.text(`Date of Amendment: ${mod.date ? format(new Date(mod.date), 'MMMM d, yyyy') : 'N/A'}`, 20, 45);
+        doc.text(`Date of Amendment: ${mod.date ? formatTZ(mod.date, 'MMMM d, yyyy') : 'N/A'}`, 20, 45);
         doc.setFontSize(11);
         doc.setFont(undefined, 'bold');
         doc.text('CHANGES:', 20, 60);
@@ -1285,14 +1281,14 @@ export default function Lending({ initialTab }) {
             <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-400 mb-1">Borrower</p>
             <p className="text-lg font-serif italic text-slate-800">{agreement.borrower_name || borrowerInfo.full_name}</p>
             {agreement.borrower_signed_date && (
-              <p className="text-xs text-slate-400 mt-1">Signed {format(new Date(agreement.borrower_signed_date), 'MMM d, yyyy')}</p>
+              <p className="text-xs text-slate-400 mt-1">Signed {formatTZ(agreement.borrower_signed_date, 'MMM d, yyyy')}</p>
             )}
           </div>
           <div className="glass-card rounded-2xl p-4">
             <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-400 mb-1">Lender</p>
             <p className="text-lg font-serif italic text-slate-800">{agreement.lender_name || lenderInfo.full_name}</p>
             {agreement.lender_signed_date && (
-              <p className="text-xs text-slate-400 mt-1">Signed {format(new Date(agreement.lender_signed_date), 'MMM d, yyyy')}</p>
+              <p className="text-xs text-slate-400 mt-1">Signed {formatTZ(agreement.lender_signed_date, 'MMM d, yyyy')}</p>
             )}
           </div>
         </div>
@@ -1405,7 +1401,7 @@ export default function Lending({ initialTab }) {
         <div className="flex items-center justify-between border-b border-slate-200 pb-4">
           <div>
             <h2 className="text-2xl font-bold text-slate-800">Loan Summary</h2>
-            <p className="text-sm text-slate-500 mt-1">{format(new Date(agreement.created_at), 'MMMM d, yyyy')}</p>
+            <p className="text-sm text-slate-500 mt-1">{formatTZ(agreement.created_at, 'MMMM d, yyyy')}</p>
           </div>
           <Badge className={`${getStatusColor(loan?.status)} capitalize`}>{loan?.status || 'active'}</Badge>
         </div>
@@ -1472,7 +1468,7 @@ export default function Lending({ initialTab }) {
               <Calendar className="w-4 h-4 text-slate-400" />
               <div>
                 <p className="text-slate-500">Due Date</p>
-                <p className="font-semibold text-slate-800">{agreement.due_date ? format(new Date(agreement.due_date), 'MMM d, yyyy') : 'N/A'}</p>
+                <p className="font-semibold text-slate-800">{agreement.due_date ? format(toLocalDate(agreement.due_date), 'MMM d, yyyy') : 'N/A'}</p>
               </div>
             </div>
           </div>
@@ -2043,7 +2039,7 @@ export default function Lending({ initialTab }) {
                       activeLoans.forEach(loan => {
                         if (!loan.next_payment_date) return;
 
-                        const paymentDate = new Date(loan.next_payment_date);
+                        const paymentDate = toLocalDate(loan.next_payment_date);
                         const borrower = publicProfiles.find(p => p.user_id === loan.borrower_id);
 
                         const addEventIfInMonth = (date) => {
@@ -2060,7 +2056,7 @@ export default function Lending({ initialTab }) {
 
                         const frequency = loan.payment_frequency;
                         if (frequency && frequency !== 'none') {
-                          let currentDate = new Date(loan.next_payment_date);
+                          let currentDate = toLocalDate(loan.next_payment_date);
                           let iterations = 0;
                           while (iterations < 10) {
                             if (frequency === 'weekly') {
@@ -2381,7 +2377,7 @@ export default function Lending({ initialTab }) {
                                     type="date"
                                     value={formData.repeating_start_date}
                                     onChange={(e) => handleInputChange('repeating_start_date', e.target.value)}
-                                    min={format(new Date(), 'yyyy-MM-dd')}
+                                    min={currentDateStringTZ()}
                                     className="w-auto h-8 px-3 bg-white/80 inline-flex border-0 shadow-none rounded-md"
                                   />{' '}
                                   and ending after{' '}
@@ -2445,7 +2441,7 @@ export default function Lending({ initialTab }) {
                                 />
                                 <input type="number" step="0.01" min="0" placeholder="0.00" value={formData.amount} onChange={e => handleInputChange('amount', e.target.value)} onClick={e => e.stopPropagation()} className="loan-input" style={{ width: 86, MozAppearance: 'textfield' }} />
                                 <span>on or before</span>
-                                <input type="date" value={formData.lender_send_funds_date} onChange={e => handleInputChange('lender_send_funds_date', e.target.value)} min={format(new Date(), 'yyyy-MM-dd')} onClick={e => e.stopPropagation()} className="loan-input" style={{ width: 'auto' }} />
+                                <input type="date" value={formData.lender_send_funds_date} onChange={e => handleInputChange('lender_send_funds_date', e.target.value)} min={currentDateStringTZ()} onClick={e => e.stopPropagation()} className="loan-input" style={{ width: 'auto' }} />
                                 <span>, at an annual interest rate of</span>
                                 <InlineLoanSelect
                                   value={formData.interest_rate}
@@ -2498,7 +2494,7 @@ export default function Lending({ initialTab }) {
                                   options={['EST','CST','MST','PST','HST','AKST'].map(tz => ({ value: tz, label: tz }))}
                                 />
                                 <span>, beginning on</span>
-                                <input type="date" value={formData.first_payment_date} onChange={e => handleInputChange('first_payment_date', e.target.value)} min={format(new Date(), 'yyyy-MM-dd')} onClick={e => e.stopPropagation()} className="loan-input" style={{ width: 'auto' }} />
+                                <input type="date" value={formData.first_payment_date} onChange={e => handleInputChange('first_payment_date', e.target.value)} min={currentDateStringTZ()} onClick={e => e.stopPropagation()} className="loan-input" style={{ width: 'auto' }} />
                                 <span>. The final payment will be due on</span>
                                 <span className="loan-calc">{lastPaymentDate ? format(lastPaymentDate, 'MMM d, yyyy') : '—'}</span>
                                 <span>.</span>
@@ -2802,7 +2798,7 @@ export default function Lending({ initialTab }) {
                                       </div>
                                       <div className="mt-3 text-center">
                                         <p className="text-xs text-slate-600">
-                                          <span className="text-slate-800 font-semibold">${remaining.toLocaleString()}</span> remaining{manageLoanSelected.next_payment_date ? ` due ${format(new Date(manageLoanSelected.next_payment_date), 'MMM d')}` : ''}
+                                          <span className="text-slate-800 font-semibold">${remaining.toLocaleString()}</span> remaining{manageLoanSelected.next_payment_date ? ` due ${format(toLocalDate(manageLoanSelected.next_payment_date), 'MMM d')}` : ''}
                                         </p>
                                       </div>
                                     </>
@@ -2819,7 +2815,7 @@ export default function Lending({ initialTab }) {
                               <div className="flex-1 flex flex-col items-center justify-center">
                                 <p className="text-2xl font-bold text-slate-800">
                                   {manageLoanSelected.next_payment_date
-                                    ? format(new Date(manageLoanSelected.next_payment_date), 'MMM d, yyyy')
+                                    ? format(toLocalDate(manageLoanSelected.next_payment_date), 'MMM d, yyyy')
                                     : 'N/A'}
                                 </p>
                                 {manageLoanSelected.next_payment_date && (

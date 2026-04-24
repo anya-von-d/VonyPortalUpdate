@@ -1,15 +1,15 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { LoanAgreement, User, PublicProfile, Loan, Payment } from "@/entities/all";
 import { FileText, CheckCircle, Download, ChevronDown, ChevronRight, ChevronLeft, X, Calendar, DollarSign, Percent, Clock, Search } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format, addMonths, addWeeks, addDays } from "date-fns";
 import { jsPDF } from "jspdf";
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import RecentActivity from './RecentActivity';
-import { createPageUrl } from "@/utils";
 import { useAuth } from "@/lib/AuthContext";
-import LoanActivity from "../components/loans/LoanActivity";
 import { formatMoney } from "@/components/utils/formatMoney";
+import { toLocalDate } from "@/components/utils/dateUtils";
+import { formatTZ } from "@/components/utils/timezone";
 import MeshMobileNav from "@/components/MeshMobileNav";
 import UserAvatar from "@/components/ui/UserAvatar";
 import DesktopSidebar from '../components/DesktopSidebar';
@@ -397,7 +397,7 @@ export default function LoanAgreements() {
     doc.setTextColor(0, 0, 0);
 
     doc.setFontSize(11);
-    doc.text(`Date: ${format(new Date(agreement.created_at), 'MMMM d, yyyy')}`, 20, 50);
+    doc.text(`Date: ${formatTZ(agreement.created_at, 'MMMM d, yyyy')}`, 20, 50);
     doc.text(`Location: United States`, 20, 58);
 
     doc.setFillColor(240, 240, 240);
@@ -458,7 +458,7 @@ export default function LoanAgreements() {
       `Interest Rate: ${agreement.interest_rate}% per annum`,
       `Payment Amount: ${formatMoney(agreement.payment_amount)} ${agreement.payment_frequency}`,
       `Repayment Period: ${agreement.repayment_period} ${agreement.repayment_unit || 'months'}`,
-      `Due Date: ${agreement.due_date ? format(new Date(agreement.due_date), 'MMMM d, yyyy') : 'As per payment schedule'}`,
+      `Due Date: ${agreement.due_date ? format(toLocalDate(agreement.due_date), 'MMMM d, yyyy') : 'As per payment schedule'}`,
     ];
 
     terms.forEach(term => {
@@ -493,7 +493,7 @@ export default function LoanAgreements() {
     doc.text(agreement.borrower_name || borrowerInfo.full_name, 20, yPos + 10);
     doc.setFontSize(9);
     doc.setFont(undefined, 'normal');
-    doc.text(`Signed: ${format(new Date(agreement.borrower_signed_date), 'MMM d, yyyy h:mm a')}`, 20, yPos + 18);
+    doc.text(`Signed: ${formatTZ(agreement.borrower_signed_date, 'MMM d, yyyy h:mm a')}`, 20, yPos + 18);
 
     doc.setFontSize(11);
     doc.text('Lender:', 120, yPos);
@@ -502,7 +502,7 @@ export default function LoanAgreements() {
     doc.text(agreement.lender_name || lenderInfo.full_name, 120, yPos + 10);
     doc.setFontSize(9);
     doc.setFont(undefined, 'normal');
-    doc.text(`Signed: ${format(new Date(agreement.lender_signed_date), 'MMM d, yyyy h:mm a')}`, 120, yPos + 18);
+    doc.text(`Signed: ${formatTZ(agreement.lender_signed_date, 'MMM d, yyyy h:mm a')}`, 120, yPos + 18);
 
     if (agreement.contract_modified && agreement.modification_history) {
       const modifications = JSON.parse(agreement.modification_history || '[]');
@@ -513,7 +513,7 @@ export default function LoanAgreements() {
         doc.text(`AMENDMENT ${index + 1}`, 105, 25, { align: 'center' });
         doc.setFontSize(10);
         doc.setFont(undefined, 'normal');
-        doc.text(`Date of Amendment: ${mod.date ? format(new Date(mod.date), 'MMMM d, yyyy') : 'N/A'}`, 20, 45);
+        doc.text(`Date of Amendment: ${mod.date ? formatTZ(mod.date, 'MMMM d, yyyy') : 'N/A'}`, 20, 45);
         doc.setFontSize(11);
         doc.setFont(undefined, 'bold');
         doc.text('PREVIOUS TERMS:', 20, 60);
@@ -799,12 +799,12 @@ export default function LoanAgreements() {
           <div style={{ background: '#ffffff', borderRadius: 10, padding: 16 }}>
             <p style={{ fontSize: 11, color: '#787776', marginBottom: 4 }}>Borrower</p>
             <p style={{ fontSize: 13, fontStyle: 'italic', fontFamily: "'DM Sans', sans-serif", color: '#1A1918', margin: 0 }}>{agreement.borrower_name || borrowerInfo.full_name}</p>
-            <p style={{ fontSize: 11, color: '#787776', marginTop: 4 }}>Signed {format(new Date(agreement.borrower_signed_date), 'MMM d, yyyy')}</p>
+            <p style={{ fontSize: 11, color: '#787776', marginTop: 4 }}>Signed {formatTZ(agreement.borrower_signed_date, 'MMM d, yyyy')}</p>
           </div>
           <div style={{ background: '#ffffff', borderRadius: 10, padding: 16 }}>
             <p style={{ fontSize: 11, color: '#787776', marginBottom: 4 }}>Lender</p>
             <p style={{ fontSize: 13, fontStyle: 'italic', fontFamily: "'DM Sans', sans-serif", color: '#1A1918', margin: 0 }}>{agreement.lender_name || lenderInfo.full_name}</p>
-            <p style={{ fontSize: 11, color: '#787776', marginTop: 4 }}>Signed {format(new Date(agreement.lender_signed_date), 'MMM d, yyyy')}</p>
+            <p style={{ fontSize: 11, color: '#787776', marginTop: 4 }}>Signed {formatTZ(agreement.lender_signed_date, 'MMM d, yyyy')}</p>
           </div>
         </div>
 
@@ -966,7 +966,7 @@ export default function LoanAgreements() {
               <Calendar size={16} style={{ color: '#787776' }} />
               <div>
                 <p style={{ color: '#787776', margin: 0 }}>Due Date</p>
-                <p style={{ fontWeight: 600, color: '#1A1918', margin: 0 }}>{agreement.due_date ? format(new Date(agreement.due_date), 'MMM d, yyyy') : 'N/A'}</p>
+                <p style={{ fontWeight: 600, color: '#1A1918', margin: 0 }}>{agreement.due_date ? format(toLocalDate(agreement.due_date), 'MMM d, yyyy') : 'N/A'}</p>
               </div>
             </div>
           </div>
@@ -1241,7 +1241,7 @@ export default function LoanAgreements() {
                       const loanStatus = getLoanStatus(agreement.loan_id);
                       const badgeStyle = getStatusBadgeStyle(loanStatus);
                       const isExpanded = expandedId === agreement.id;
-                      const dateFormatted = agreement.created_at ? format(new Date(agreement.created_at), 'MMM d, yyyy') : '';
+                      const dateFormatted = agreement.created_at ? formatTZ(agreement.created_at, 'MMM d, yyyy') : '';
 
                       return (
                         <div key={agreement.id}>

@@ -324,6 +324,9 @@ input[type="date"] {
   }
 }
 
+/* Your Friends card — hide mobile version on desktop by default */
+.home-card-friends-mobile { display: none; }
+
 /* Home aura glow — smaller on mobile */
 @media (max-width: 768px) {
   .home-aura-glow {
@@ -376,7 +379,9 @@ input[type="date"] {
   .home-card-monthly-summary    { order: 5 !important; }  /* you've received / paid */
   .home-card-plan-month         { order: 6 !important; }  /* plan your month */
   .home-card-loans-pair         { order: 7 !important; }  /* borrowing + lending */
-  .home-card-people-bubble      { order: 8 !important; }  /* people bubble */
+  .home-card-friends-mobile     { display: block !important; order: 8 !important; }  /* your friends (mobile) */
+  .home-card-people-bubble      { order: 9 !important; }  /* people bubble */
+  .home-card-friends-desktop    { display: none !important; }
   /* Hide desktop-only cards on mobile */
   .home-card-npd            { display: none !important; }
   .home-card-npi            { display: none !important; }

@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Payment, Loan, PublicProfile, LoanAgreement, Friendship } from '@/entities/all';
 import { useAuth } from '@/lib/AuthContext';
 import { CheckCircle, X } from 'lucide-react';
-import { format, addMonths, parseISO } from 'date-fns';
-import { toLocalDate, daysUntil as daysUntilDate } from '@/components/utils/dateUtils';
+import { format, addMonths } from 'date-fns';
+import { daysUntil as daysUntilDate } from '@/components/utils/dateUtils';
 import BorrowerSignatureModal from '@/components/loans/BorrowerSignatureModal';
 import confetti from 'canvas-confetti';
 

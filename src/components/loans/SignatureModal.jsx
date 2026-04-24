@@ -1,12 +1,10 @@
-import React, { useState, useRef, useEffect } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { useState, useRef, useEffect } from "react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { FileText, AlertCircle, CheckCircle, PenLine } from "lucide-react";
+import { AlertCircle, CheckCircle, PenLine } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { formatMoney } from "@/components/utils/formatMoney";
-import { AnimatedCheckmark, SuccessAnimation, ConfettiBurst } from "@/components/ui/animations";
+import { SuccessAnimation } from "@/components/ui/animations";
 
 // Trust checklist items for Lender
 const LENDER_CHECKLIST = [
