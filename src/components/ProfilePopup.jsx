@@ -5,7 +5,7 @@ import { UploadFile } from '@/integrations/Core';
 import { CheckCircle, Loader2, ChevronDown, Pencil, Landmark, Image, X } from 'lucide-react';
 import UserAvatar from '@/components/ui/UserAvatar';
 import { useAuth } from '@/lib/AuthContext';
-import { ICON_OPTIONS, generateIconUrl as sharedGenerateIconUrl, iconInnerSvg } from '@/lib/profileIcons';
+import { PROFILE_ICON_IMAGES } from '@/lib/profileIconImages';
 
 const CURRENCIES = [
   { code: 'USD', label: 'USD — US Dollar ($)' },
@@ -65,8 +65,6 @@ const COUNTRIES = [
   'United Kingdom','United States','Uruguay','Uzbekistan','Venezuela',
   'Vietnam','Yemen','Zambia','Zimbabwe',
 ];
-
-const generateIconUrl = sharedGenerateIconUrl;
 
 const syncPublicProfile = async (userData) => {
   if (!userData?.id || !userData?.username || !userData?.full_name) return;
@@ -160,8 +158,7 @@ export default function ProfilePopup({ onClose }) {
     }
   };
 
-  const handleIconSelect = async (icon) => {
-    const url = generateIconUrl(icon);
+  const handleIconSelect = async (url) => {
     setFormData(prev => ({ ...prev, profile_picture_url: url }));
     setShowIconPicker(false);
     // Immediately save the avatar
@@ -373,31 +370,34 @@ export default function ProfilePopup({ onClose }) {
                   gap: 6,
                   maxHeight: 180, overflowY: 'auto',
                 }}>
-                  {ICON_OPTIONS.map(icon => (
-                    <button
-                      key={icon.id}
-                      type="button"
-                      onClick={() => handleIconSelect(icon)}
-                      title={icon.id}
-                      style={{
-                        width: 34, height: 34, borderRadius: '50%',
-                        background: icon.bg,
-                        border: '2px solid transparent',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        cursor: 'pointer',
-                        transition: 'transform 0.1s',
-                        padding: 0,
-                        overflow: 'hidden',
-                      }}
-                      onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.15)'}
-                      onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
-                    >
-                      <div
-                        style={{ width: '100%', height: '100%', display: 'flex', pointerEvents: 'none' }}
-                        dangerouslySetInnerHTML={{ __html: iconInnerSvg(icon) }}
-                      />
-                    </button>
-                  ))}
+                  {PROFILE_ICON_IMAGES.map(imgUrl => {
+                    const isSelected = formData.profile_picture_url === imgUrl;
+                    return (
+                      <button
+                        key={imgUrl}
+                        type="button"
+                        onClick={() => handleIconSelect(imgUrl)}
+                        style={{
+                          width: 34, height: 34, borderRadius: '50%',
+                          border: isSelected ? '2px solid #1A1918' : '2px solid transparent',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          cursor: 'pointer',
+                          transition: 'transform 0.1s',
+                          padding: 0,
+                          overflow: 'hidden',
+                          background: 'none',
+                        }}
+                        onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.15)'}
+                        onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+                      >
+                        <img
+                          src={imgUrl}
+                          alt="icon"
+                          style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%', pointerEvents: 'none' }}
+                        />
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             )}

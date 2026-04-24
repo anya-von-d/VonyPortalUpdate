@@ -4,6 +4,7 @@ import { App as CapApp } from '@capacitor/app';
 import { Browser } from '@capacitor/browser';
 import { isDemoModeActive } from '@/lib/DemoModeContext';
 import { DEMO_USER } from '@/lib/demoData';
+import { getIconForUser, needsProfileIcon } from '@/lib/profileIconImages';
 
 const AuthContext = createContext();
 
@@ -30,13 +31,23 @@ export const AuthProvider = ({ children }) => {
   // Fetch full profile from profiles table
   const fetchUserProfile = async (userId) => {
     try {
-      const { data: profile, error } = await supabase
+      const { data: rawProfile, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', userId)
         .single();
 
-      if (!error && profile) {
+      if (!error && rawProfile) {
+        // Auto-assign a profile icon PNG if the user doesn't have one yet
+        let profile = rawProfile;
+        if (!isDemoModeActive() && needsProfileIcon(profile.profile_picture_url)) {
+          const iconUrl = getIconForUser(userId);
+          // Fire-and-forget: update both tables silently
+          supabase.from('profiles').update({ profile_picture_url: iconUrl }).eq('id', userId).then(() => {});
+          supabase.from('public_profiles').update({ profile_picture_url: iconUrl }).eq('user_id', userId).then(() => {});
+          profile = { ...profile, profile_picture_url: iconUrl };
+        }
+
         const finalProfile = isDemoModeActive()
           ? { ...profile,
               full_name: DEMO_USER.full_name,

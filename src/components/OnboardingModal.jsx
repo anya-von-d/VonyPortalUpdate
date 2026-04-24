@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { User, PublicProfile } from "@/entities/all";
 import { supabase } from "@/lib/supabaseClient";
 import { CheckCircle, Loader2, ChevronDown } from "lucide-react";
-import { ICON_OPTIONS as SHARED_ICON_OPTIONS, generateIconUrl as sharedGenerateIconUrl, iconInnerSvg } from "@/lib/profileIcons";
+import { PROFILE_ICON_IMAGES, getRandomProfileIcon } from "@/lib/profileIconImages";
 
 // Grain overlays — match Layout.jsx portal texture
 const GRAIN_FINE = `url("data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.55 0"/></filter><rect width="100%" height="100%" filter="url(#n)"/></svg>')}")`;
@@ -13,10 +13,6 @@ const CARD_WIDTH = 420;
 const PORTAL_BG = '#FDFBF9';
 // Vony brand bright blue
 const BRAND_BLUE = '#03ACEA';
-
-// ── Profile icon palette ───────────────────────────────────────────────────
-// 25 pastel/symbol icons — see src/lib/profileIcons.js
-const ICON_OPTIONS = SHARED_ICON_OPTIONS;
 
 // ── Country list ─────────────────────────────────────────────────────────────
 const COUNTRIES = [
@@ -97,9 +93,6 @@ const TERMS = [
   "I understand that Vony is not a bank or financial institution, and does not guarantee repayment of any loan.",
   "I understand that Vony provides tools for agreements and tracking, but is not liable for disputes between users.",
 ];
-
-// ── Helpers ───────────────────────────────────────────────────────────────────
-export const generateIconUrl = sharedGenerateIconUrl;
 
 // ── Shared styles (module-level so inputs aren't remounted per render) ────────
 const labelStyle = {
@@ -253,7 +246,7 @@ export default function OnboardingModal({ user, onComplete }) {
     location: '',
     username: '',
     currency: 'USD',
-    selectedIcon: null,
+    selectedIconUrl: getRandomProfileIcon(),
   });
 
   useEffect(() => {
@@ -328,10 +321,9 @@ export default function OnboardingModal({ user, onComplete }) {
     }
     setIsSubmitting(true);
     try {
-      const avatarUrl = formData.selectedIcon
-        ? generateIconUrl(formData.selectedIcon)
-        : (user?.user_metadata?.avatar_url ||
-          `https://ui-avatars.com/api/?name=${encodeURIComponent(formData.full_name.trim())}&background=54A6CF&color=fff&size=128`);
+      const avatarUrl = formData.selectedIconUrl ||
+        user?.user_metadata?.avatar_url ||
+        `https://ui-avatars.com/api/?name=${encodeURIComponent(formData.full_name.trim())}&background=54A6CF&color=fff&size=128`;
 
       await User.updateMyUserData({
         full_name: formData.full_name.trim(),
@@ -467,16 +459,16 @@ export default function OnboardingModal({ user, onComplete }) {
                     {/* Preview circle */}
                     <div style={{
                       width: 72, height: 72, borderRadius: '50%', flexShrink: 0,
-                      background: formData.selectedIcon ? formData.selectedIcon.bg : '#D4D2CF',
+                      background: '#F0EFEC',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                       border: '2px solid rgba(0,0,0,0.08)',
-                      transition: 'background 0.2s',
                       overflow: 'hidden',
                     }}>
-                      {formData.selectedIcon && (
-                        <div
-                          style={{ width: '100%', height: '100%', display: 'flex' }}
-                          dangerouslySetInnerHTML={{ __html: iconInnerSvg(formData.selectedIcon) }}
+                      {formData.selectedIconUrl && (
+                        <img
+                          src={formData.selectedIconUrl}
+                          alt="Profile icon"
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                         />
                       )}
                     </div>
@@ -488,15 +480,13 @@ export default function OnboardingModal({ user, onComplete }) {
                       padding: 10, maxHeight: 160, overflowY: 'auto', overflowX: 'hidden',
                     }}>
                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(42px, 1fr))', gap: 6 }}>
-                        {ICON_OPTIONS.map(icon => {
-                          const isSelected = formData.selectedIcon?.id === icon.id;
+                        {PROFILE_ICON_IMAGES.map(imgUrl => {
+                          const isSelected = formData.selectedIconUrl === imgUrl;
                           return (
-                            <button key={icon.id} type="button"
-                              onClick={() => set('selectedIcon', isSelected ? null : icon)}
-                              title={icon.id}
+                            <button key={imgUrl} type="button"
+                              onClick={() => set('selectedIconUrl', imgUrl)}
                               style={{
                                 width: 42, height: 42, borderRadius: '50%',
-                                background: icon.bg,
                                 border: isSelected ? '2.5px solid #1A1918' : '2.5px solid transparent',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                                 cursor: 'pointer',
@@ -505,11 +495,13 @@ export default function OnboardingModal({ user, onComplete }) {
                                 boxSizing: 'border-box',
                                 padding: 0,
                                 overflow: 'hidden',
+                                background: 'none',
                               }}
                             >
-                              <div
-                                style={{ width: '100%', height: '100%', display: 'flex', pointerEvents: 'none' }}
-                                dangerouslySetInnerHTML={{ __html: iconInnerSvg(icon) }}
+                              <img
+                                src={imgUrl}
+                                alt="icon"
+                                style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%', pointerEvents: 'none' }}
                               />
                             </button>
                           );
