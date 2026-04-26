@@ -613,6 +613,11 @@ input[type="date"] {
   }
   /* JSX already has loan col order:1, form col order:2 */
 
+  /* ── 2b. YourLoans summary: carousel on top, upcoming below ── */
+  .summary-top-grid {
+    grid-template-columns: 1fr !important;
+  }
+
   /* ── 3. Friends: stack + reorder Search→Requests→Friends ── */
   .friends-two-col {
     grid-template-columns: 1fr !important;
