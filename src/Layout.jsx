@@ -105,20 +105,6 @@ export default function Layout({ children }) {
   return (
     <div className="min-h-screen flex flex-col w-full safe-area-inset-top safe-area-inset-bottom" style={{ background: 'transparent' }}>
 
-      {/* Thin blue top bar with centered date */}
-      <div style={{
-        position: 'fixed', top: 0, left: 0, right: 0,
-        height: 22, background: '#0B2F5C',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        zIndex: 50, pointerEvents: 'none',
-        fontFamily: "'DM Sans', sans-serif",
-        fontSize: 11, fontWeight: 600, color: '#ffffff',
-        letterSpacing: '0.02em',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.16)',
-      }}>
-        {todayLabel}
-      </div>
-
       {/* Fine grain overlay — sits above all content, pointer-events off */}
       <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 15, backgroundImage: GRAIN_FINE, backgroundSize: '180px 180px', mixBlendMode: 'multiply', opacity: 0.10 }} />
       {/* Coarse fibre overlay — adds pulp/texture depth */}

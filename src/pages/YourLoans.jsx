@@ -1018,38 +1018,73 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
                   })()}
                 </div>
 
-                {/* Slide 3: Monthly expectations */}
-                <div style={{ minWidth: '100%' }}>
-                  <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif", marginBottom: 16 }}>
-                    This month
-                  </div>
-                  {(isLending ? monthlyExpectedReceive : monthlyExpectedPay) > 0 ? (
-                    <div style={{ marginBottom: 20 }}>
-                      <div style={{ fontSize: 13, color: '#787776', fontFamily: "'DM Sans', sans-serif", marginBottom: 2 }}>
-                        {isLending ? "You're expecting" : "You're expecting to pay"}
+                {/* Slide 3: Monthly gauge */}
+                {(() => {
+                  const monthlyPaidCount = activeLoans.filter(loan =>
+                    allPayments.some(p => {
+                      if (p.loan_id !== loan.id) return false;
+                      if (p.status !== 'confirmed' && p.status !== 'completed') return false;
+                      const d = p.payment_date ? toLocalDate(p.payment_date) : toLocalDate(p.created_at);
+                      return d >= monthStart && d <= monthEnd;
+                    })
+                  ).length;
+                  const totalCount = activeLoans.length;
+                  const cx = 90, cy = 85, r = 68;
+                  const circ = Math.PI * r;
+                  const pct = totalCount > 0 ? monthlyPaidCount / totalCount : 0;
+                  return (
+                    <div style={{ minWidth: '100%' }}>
+                      <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif", marginBottom: 8 }}>
+                        This month
                       </div>
-                      <div style={{ fontSize: 34, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.04em', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.05, marginBottom: 2 }}>
-                        {formatMoney(isLending ? monthlyExpectedReceive : monthlyExpectedPay)}
+                      {/* Gauge */}
+                      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 4 }}>
+                        <div style={{ position: 'relative', width: 180, height: 104 }}>
+                          <svg width="180" height="104" viewBox="0 0 180 104" style={{ display: 'block' }}>
+                            {/* Track */}
+                            <path d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 0 ${cx + r} ${cy}`} fill="none" stroke={`${accent}22`} strokeWidth="11" strokeLinecap="round" />
+                            {/* Progress */}
+                            <path d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 0 ${cx + r} ${cy}`} fill="none" stroke={accent} strokeWidth="11" strokeLinecap="round"
+                              strokeDasharray={`${circ} ${circ}`} strokeDashoffset={circ * (1 - pct)}
+                              style={{ transition: 'stroke-dashoffset 0.5s ease' }} />
+                            {/* Per-loan dots */}
+                            {totalCount > 0 && Array.from({ length: totalCount }).map((_, i) => {
+                              const angle = Math.PI * (1 - (i + 0.5) / totalCount);
+                              const dx = cx + r * Math.cos(angle);
+                              const dy = cy - r * Math.sin(angle);
+                              return <circle key={i} cx={dx} cy={dy} r={5} fill={i < monthlyPaidCount ? accent : `${accent}30`} />;
+                            })}
+                          </svg>
+                          <div style={{ position: 'absolute', bottom: 10, left: 0, right: 0, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                            <span style={{ fontSize: 24, fontWeight: 700, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.04em', lineHeight: 1 }}>
+                              {monthlyPaidCount} <span style={{ fontSize: 14, fontWeight: 500, color: '#9B9A98' }}>of {totalCount}</span>
+                            </span>
+                            <span style={{ fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 2 }}>
+                              {isLending ? 'payments received' : 'payments made'}
+                            </span>
+                          </div>
+                        </div>
                       </div>
-                      <div style={{ fontSize: 12, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>this month</div>
+                      {/* Amounts row */}
+                      <div style={{ display: 'flex', gap: 16, justifyContent: 'center' }}>
+                        <div style={{ textAlign: 'center' }}>
+                          <div style={{ fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginBottom: 1 }}>{isLending ? 'Expecting' : 'Due'}</div>
+                          <div style={{ fontSize: 16, fontWeight: 700, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.03em' }}>
+                            {formatMoney(isLending ? monthlyExpectedReceive : monthlyExpectedPay)}
+                          </div>
+                        </div>
+                        {(isLending ? monthlyReceived : monthlyPaidOut) > 0 && (
+                          <div style={{ textAlign: 'center' }}>
+                            <div style={{ fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginBottom: 1 }}>{isLending ? 'Received' : 'Paid'}</div>
+                            <div style={{ fontSize: 16, fontWeight: 700, color: accent, fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.03em' }}>
+                              {formatMoney(isLending ? monthlyReceived : monthlyPaidOut)}
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  ) : (
-                    <div style={{ fontSize: 13, color: '#787776', fontFamily: "'DM Sans', sans-serif", marginBottom: 20 }}>
-                      No {isLending ? 'payments' : 'payments due'} this month
-                    </div>
-                  )}
-                  {(isLending ? monthlyReceived : monthlyPaidOut) > 0 && (
-                    <div>
-                      <div style={{ fontSize: 13, color: '#787776', fontFamily: "'DM Sans', sans-serif", marginBottom: 2 }}>
-                        {isLending ? "You've received" : "You've paid"}
-                      </div>
-                      <div style={{ fontSize: 26, fontWeight: 700, color: accent, letterSpacing: '-0.03em', fontFamily: "'DM Sans', sans-serif" }}>
-                        {formatMoney(isLending ? monthlyReceived : monthlyPaidOut)}
-                      </div>
-                      <div style={{ fontSize: 12, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 2 }}>so far</div>
-                    </div>
-                  )}
-                </div>
+                  );
+                })()}
 
               </div>
             </div>
