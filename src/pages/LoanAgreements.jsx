@@ -232,10 +232,16 @@ export default function LoanAgreements() {
   const [activeInfoTooltip, setActiveInfoTooltip] = useState(null);
   const [expandedId, setExpandedId] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [laPage, setLaPage] = useState(0);
   const [filterOpen, setFilterOpen] = useState(false);
+  const filterRef = useRef(null);
 
   const { logout } = useAuth();
+
+  useEffect(() => {
+    const handler = (e) => { if (filterRef.current && !filterRef.current.contains(e.target)) setFilterOpen(false); };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = searchParams.get('tab') || 'documents';
@@ -1052,10 +1058,6 @@ export default function LoanAgreements() {
      RENDER
      ══════════════════════════════════════════════════════════ */
 
-  const LA_PAGE_SIZE = 20;
-  const laTotalPages = Math.max(1, Math.ceil(filteredAgreements.length / LA_PAGE_SIZE));
-  const laSafePage = Math.min(laPage, laTotalPages - 1);
-  const laPageItems = filteredAgreements.slice(laSafePage * LA_PAGE_SIZE, (laSafePage + 1) * LA_PAGE_SIZE);
 
   const PageCard = ({ title, headerRight, children, style }) => (
     <div style={{ position: 'relative', marginBottom: 24 }}>
@@ -1174,154 +1176,105 @@ export default function LoanAgreements() {
 
           {activeTab === 'documents' ? (
           <>
-          {/* Filters — outside the card */}
-          <div style={{ marginBottom: 16 }}>
-            <div style={{ marginBottom: 8, display: 'flex', alignItems: 'center', gap: 8 }}>
+          {/* Search + Filter */}
+          <div style={{ marginBottom: 16, position: 'relative', zIndex: 30 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 8, padding: '0 12px', background: 'transparent', borderRadius: 18, border: '1px solid rgba(0,0,0,0.06)', height: 36 }}>
                 <Search size={14} style={{ color: '#787776', flexShrink: 0 }} />
                 <input type="text" placeholder="Search..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
                   style={{ flex: 1, border: 'none', outline: 'none', fontSize: 13, fontFamily: "'DM Sans', sans-serif", color: '#1A1918', background: 'transparent' }} />
               </div>
-              <button className="filter-btn-mobile" onClick={() => setFilterOpen(true)} style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(0,0,0,0.07)', border: 'none', cursor: 'pointer', display: 'none', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <SlidersHorizontal size={15} style={{ color: '#5C5B5A' }} />
-              </button>
-            </div>
-            <div className="filter-row-scroll filter-row-desktop" style={{ display: 'flex', flexWrap: 'wrap', gap: 8, position: 'relative', zIndex: 20 }}>
-              <SingleSelectDropdown options={SORT_OPTIONS} selected={sortBy} onChange={setSortBy} />
-              <SingleSelectDropdown options={DATE_OPTIONS} selected={dateFilter} onChange={setDateFilter} />
-              {friendOptions.length > 1 && (
-                <SingleSelectDropdown options={friendOptions} selected={friendFilter} onChange={setFriendFilter} />
-              )}
-              <SingleSelectDropdown options={ROLE_OPTIONS} selected={roleFilter} onChange={setRoleFilter} />
-              <SingleSelectDropdown options={STATUS_OPTIONS} selected={statusFilter} onChange={setStatusFilter} />
-              <AmountFilterDropdown amountMode={amountMode} setAmountMode={setAmountMode} amountVal1={amountVal1} setAmountVal1={setAmountVal1} amountVal2={amountVal2} setAmountVal2={setAmountVal2} />
-              <button onClick={clearFilters} style={{ padding: '6px 10px', borderRadius: 8, border: hasAnyFilter ? '1px solid rgba(232,114,110,0.3)' : '1px solid rgba(0,0,0,0.08)', background: hasAnyFilter ? 'rgba(232,114,110,0.06)' : 'transparent', fontSize: 12, fontWeight: 500, color: hasAnyFilter ? '#E8726E' : '#787776', cursor: hasAnyFilter ? 'pointer' : 'default', opacity: hasAnyFilter ? 1 : 0.5, fontFamily: "'DM Sans', sans-serif" }}>Clear Filters</button>
+              <div ref={filterRef} style={{ position: 'relative', flexShrink: 0 }}>
+                <button onClick={() => setFilterOpen(!filterOpen)} style={{ width: 36, height: 36, borderRadius: '50%', background: filterOpen || hasAnyFilter ? 'rgba(3,172,234,0.12)' : 'rgba(0,0,0,0.07)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <SlidersHorizontal size={15} style={{ color: filterOpen || hasAnyFilter ? '#03ACEA' : '#5C5B5A' }} />
+                </button>
+                {filterOpen && (
+                  <div style={{ position: 'absolute', top: 'calc(100% + 8px)', right: 0, background: 'white', borderRadius: 16, boxShadow: '0 8px 32px rgba(0,0,0,0.12)', border: '1px solid rgba(0,0,0,0.06)', padding: 20, width: 300, zIndex: 100 }}>
+                    <div style={{ fontSize: 15, fontWeight: 700, color: '#1A1918', marginBottom: 16, fontFamily: "'DM Sans', sans-serif" }}>Filter by...</div>
+                    {[
+                      { label: 'Sort', options: SORT_OPTIONS, value: sortBy, onChange: setSortBy },
+                      { label: 'Date', options: DATE_OPTIONS, value: dateFilter, onChange: setDateFilter },
+                      { label: 'Category', options: ROLE_OPTIONS, value: roleFilter, onChange: setRoleFilter },
+                      { label: 'Status', options: STATUS_OPTIONS, value: statusFilter, onChange: setStatusFilter },
+                    ].map(({ label, options, value, onChange }) => (
+                      <div key={label} style={{ marginBottom: 14 }}>
+                        <div style={{ fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 8, fontFamily: "'DM Sans', sans-serif" }}>{label}</div>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                          {options.map(opt => (
+                            <button key={opt.id} onClick={() => onChange(opt.id)} style={{ padding: '6px 12px', borderRadius: 16, border: 'none', cursor: 'pointer', background: value === opt.id ? '#1A1918' : '#F0F0EE', color: value === opt.id ? 'white' : '#1A1918', fontSize: 12, fontWeight: 500, fontFamily: "'DM Sans', sans-serif", transition: 'all 0.15s' }}>
+                              {opt.label}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                    {friendOptions.length > 1 && (
+                      <div style={{ marginBottom: 14 }}>
+                        <div style={{ fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 8, fontFamily: "'DM Sans', sans-serif" }}>Friends</div>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                          {friendOptions.map(opt => (
+                            <button key={opt.id} onClick={() => setFriendFilter(opt.id)} style={{ padding: '6px 12px', borderRadius: 16, border: 'none', cursor: 'pointer', background: friendFilter === opt.id ? '#1A1918' : '#F0F0EE', color: friendFilter === opt.id ? 'white' : '#1A1918', fontSize: 12, fontWeight: 500, fontFamily: "'DM Sans', sans-serif" }}>
+                              {opt.label}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', margin: '12px 0' }} />
+                    <div style={{ display: 'flex', gap: 8 }}>
+                      <button onClick={clearFilters} style={{ flex: 1, padding: '10px', borderRadius: 10, border: 'none', cursor: 'pointer', background: '#F0F0EE', color: '#787776', fontSize: 13, fontWeight: 600, fontFamily: "'DM Sans', sans-serif" }}>Clear</button>
+                      <button onClick={() => setFilterOpen(false)} style={{ flex: 1, padding: '10px', borderRadius: 10, border: 'none', cursor: 'pointer', background: '#1A1918', color: 'white', fontSize: 13, fontWeight: 700, fontFamily: "'DM Sans', sans-serif" }}>Apply</button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
           {/* ── Agreements List ──────────────────────────────────────── */}
           <div style={{ marginBottom: 24 }}>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 6, padding: '10px 16px' }}>
-              <span style={{ fontSize: 11, fontWeight: 500, color: '#787776', marginRight: 4 }}>Page {laSafePage + 1} of {laTotalPages}</span>
-              <button onClick={() => setLaPage(Math.max(0, laSafePage - 1))} disabled={laSafePage === 0} style={{ width: 22, height: 22, borderRadius: 6, border: '1px solid rgba(0,0,0,0.09)', background: 'white', cursor: laSafePage === 0 ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: laSafePage === 0 ? 0.3 : 1, flexShrink: 0 }}>
-                <ChevronLeft size={13} style={{ color: '#787776' }} />
-              </button>
-              <button onClick={() => setLaPage(Math.min(laTotalPages - 1, laSafePage + 1))} disabled={laSafePage >= laTotalPages - 1} style={{ width: 22, height: 22, borderRadius: 6, border: '1px solid rgba(0,0,0,0.09)', background: 'white', cursor: laSafePage >= laTotalPages - 1 ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: laSafePage >= laTotalPages - 1 ? 0.3 : 1, flexShrink: 0 }}>
-                <ChevronRight size={13} style={{ color: '#787776' }} />
-              </button>
-            </div>
-            <div style={{ padding: '0 16px' }}>
-              {filteredAgreements.length === 0 ? (
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 0' }}>
-                  <p style={{ fontSize: 13, color: '#787776', margin: 0, textAlign: 'center' }}>
-                    {agreements.length === 0
-                      ? 'Once you create a loan, your signed agreements will live here 📝'
-                      : 'No agreements match the current filters'}
-                  </p>
-                  {hasAnyFilter && <p style={{ fontSize: 12, color: '#C7C6C4', margin: '4px 0 0' }}>Try adjusting your filters</p>}
-                </div>
-              ) : (
-                <>
-                  {/* Table header */}
-                  <div className="la-table-header" style={{
-                    display: 'flex', alignItems: 'center', gap: 12, padding: '0 0 12px',
-                    borderBottom: '1px solid rgba(0,0,0,0.06)', marginBottom: 4,
-                  }}>
-                    <span style={{ width: 48, flexShrink: 0 }} />
-                    <span style={{ width: 100, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', flexShrink: 0 }}>Date Signed</span>
-                    <span style={{ flex: 1.5, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', minWidth: 0 }}>Friend</span>
-                    <span style={{ flex: 1.4, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', minWidth: 0 }}>Category</span>
-                    <span style={{ flex: 1.2, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', minWidth: 0 }}>Reason</span>
-                    <span style={{ width: 100, fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', textAlign: 'right', flexShrink: 0 }}>Amount</span>
-                    <div style={{ width: 28, flexShrink: 0 }} />
-                  </div>
+            {filteredAgreements.length === 0 ? (
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 0' }}>
+                <p style={{ fontSize: 13, color: '#787776', margin: 0, textAlign: 'center' }}>
+                  {agreements.length === 0
+                    ? 'Once you create a loan, your signed agreements will live here 📝'
+                    : 'No agreements match the current filters'}
+                </p>
+                {hasAnyFilter && <p style={{ fontSize: 12, color: '#C7C6C4', margin: '4px 0 0' }}>Try adjusting your filters</p>}
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                {filteredAgreements.map((agreement) => {
+                  const isLender = agreement.lender_id === user?.id;
+                  const otherPartyId = isLender ? agreement.borrower_id : agreement.lender_id;
+                  const otherParty = getUserById(otherPartyId);
+                  const isExpanded = expandedId === agreement.id;
+                  const dateFormatted = agreement.created_at ? formatTZ(agreement.created_at, 'MMM d, yyyy') : '';
 
-                  <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    {laPageItems.map((agreement) => {
-                      const isLender = agreement.lender_id === user?.id;
-                      const otherPartyId = isLender ? agreement.borrower_id : agreement.lender_id;
-                      const otherParty = getUserById(otherPartyId);
-                      const loanStatus = getLoanStatus(agreement.loan_id);
-                      const badgeStyle = getStatusBadgeStyle(loanStatus);
-                      const isExpanded = expandedId === agreement.id;
-                      const dateFormatted = agreement.created_at ? formatTZ(agreement.created_at, 'MMM d, yyyy') : '';
-
-                      return (
-                        <div key={agreement.id}>
-                          <div
-                            onClick={() => setExpandedId(isExpanded ? null : agreement.id)}
-                            className="la-table-row"
-                            style={{
-                              display: 'flex', alignItems: 'center', gap: 12, padding: '9px 0',
-                              transition: 'background 0.15s', cursor: 'pointer',
-                            }}
-                          >
-                            {/* Receipt icon */}
-                            <div className="la-col-icon" style={{ width: 48, flexShrink: 0, display: 'flex', alignItems: 'center' }}>
-                              <div style={{
-                                width: 38, height: 38, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                background: isLender ? 'rgba(3,172,234,0.12)' : 'rgba(29,91,148,0.10)',
-                              }}>
-                                <Receipt size={17} style={{ color: isLender ? '#03ACEA' : '#1D5B94' }} />
-                              </div>
-                            </div>
-                            {/* Date Signed */}
-                            <span className="la-col-date" style={{ width: 100, fontSize: 12, fontWeight: 500, color: '#787776', flexShrink: 0 }}>
-                              <span className="la-date-text">{dateFormatted}</span>
-                              <ChevronDown className="la-date-chevron" size={16} style={{ color: '#9B9A98' }} />
-                            </span>
-                            {/* Friend */}
-                            <div className="la-col-friend" style={{ display: 'flex', flex: 1.5, minWidth: 0, alignItems: 'center' }}>
-                              <span className="la-friend-desktop" style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                {otherParty.full_name}
-                              </span>
-                              <span className="la-friend-mobile" style={{ fontSize: 13, fontWeight: 500, color: '#1A1918' }}>
-                                {isLender
-                                  ? `${otherParty.full_name} borrowed ${formatMoney(agreement.total_amount)} from you`
-                                  : `You borrowed ${formatMoney(agreement.total_amount)} from ${otherParty.full_name}`}
-                              </span>
-                            </div>
-                            {/* Category */}
-                            <div className="la-col-category" style={{ display: 'flex', flex: 1.4, minWidth: 0, alignItems: 'center' }}>
-                              <span style={{
-                                display: 'inline-flex', alignItems: 'center',
-                                padding: '3px 8px', borderRadius: 7,
-                                fontSize: 11, fontWeight: 600, whiteSpace: 'nowrap',
-                                ...(isLender
-                                  ? { background: 'rgba(3,172,234,0.10)', color: '#03ACEA', border: '1px solid rgba(3,172,234,0.25)' }
-                                  : { background: 'rgba(29,91,148,0.10)', color: '#1D5B94', border: '1px solid rgba(29,91,148,0.25)' }
-                                ),
-                              }}>
-                                {isLender ? 'You are the Lender' : 'You are the Borrower'}
-                              </span>
-                            </div>
-                            {/* Reason (replaces the old Status column on desktop);
-                                the mobile date chip still lives here so it lines up
-                                with the other mobile-only badges on the right. */}
-                            <div className="la-col-status" style={{ display: 'flex', flex: 1.2, minWidth: 0, alignItems: 'center', gap: 6 }}>
-                              <span className="la-reason-desktop" style={{
-                                fontSize: 12, color: '#1A1918', overflow: 'hidden',
-                                textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                              }}>
-                                {agreement.purpose || <span style={{ color: '#C7C6C4' }}>—</span>}
-                              </span>
-                              <span className="la-mobile-date" style={{ fontSize: 11, color: '#787776' }}>{dateFormatted}</span>
-                            </div>
-                            {/* Amount */}
-                            <span className="la-col-amount" style={{ width: 100, fontSize: 13, fontWeight: 600, color: '#1A1918', textAlign: 'right', flexShrink: 0 }}>
-                              {formatMoney(agreement.total_amount)}
-                            </span>
-
-                            {/* Expand arrow */}
-                            <div className="la-col-arrow" style={{
-                              width: 28, height: 28, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                              flexShrink: 0, transition: 'transform 0.2s',
-                              transform: isExpanded ? 'rotate(90deg)' : 'none',
-                            }}>
-                              <ChevronRight size={16} style={{ color: '#787776' }} />
-                            </div>
+                  return (
+                    <div key={agreement.id}>
+                      <div
+                        onClick={() => setExpandedId(isExpanded ? null : agreement.id)}
+                        style={{
+                          display: 'flex', alignItems: 'center', gap: 12, padding: '10px 0',
+                          cursor: 'pointer', borderBottom: '1px solid rgba(0,0,0,0.05)',
+                        }}
+                      >
+                        <div style={{ width: 38, height: 38, borderRadius: '50%', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: isLender ? 'rgba(3,172,234,0.12)' : 'rgba(29,91,148,0.10)' }}>
+                          <Receipt size={17} style={{ color: isLender ? '#03ACEA' : '#1D5B94' }} />
+                        </div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {isLender
+                              ? `${otherParty.full_name} borrowed ${formatMoney(agreement.total_amount)} from you`
+                              : `You borrowed ${formatMoney(agreement.total_amount)} from ${otherParty.full_name}`}
                           </div>
+                          <div style={{ fontSize: 11, color: '#787776', marginTop: 3 }}>{dateFormatted}</div>
+                        </div>
+                        <div style={{ width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'transform 0.2s', transform: isExpanded ? 'rotate(90deg)' : 'none' }}>
+                          <ChevronRight size={16} style={{ color: '#787776' }} />
+                        </div>
+                      </div>
 
                           {/* Expanded document buttons */}
                           {isExpanded && (
@@ -1393,25 +1346,8 @@ export default function LoanAgreements() {
                       );
                     })}
                   </div>
-                </>
-              )}
-            </div>
+          )}
           </div>
-          </div>
-
-          {/* Desktop table responsive styles */}
-          <style>{`
-            @media (min-width: 900px) {
-              .la-table-header { display: flex !important; }
-              .la-mobile-content { display: none !important; }
-              .la-mobile-status { display: none !important; }
-              .la-desktop-date { display: block !important; }
-              .la-desktop-friend { display: flex !important; }
-              .la-desktop-category { display: flex !important; }
-              .la-desktop-status { display: flex !important; }
-              .la-desktop-amount { display: block !important; }
-            }
-          `}</style>
           </>) : (
             <RecentActivity embeddedMode />
           )}
@@ -1421,50 +1357,6 @@ export default function LoanAgreements() {
 
       </div>
 
-      {/* Mobile Filter Popup */}
-      {filterOpen && (
-        <div onClick={() => setFilterOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'rgba(0,0,0,0.4)' }}>
-          <div onClick={e => e.stopPropagation()} style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'white', borderRadius: '20px 20px 0 0', padding: '8px 20px 48px', maxHeight: '85vh', overflowY: 'auto', fontFamily: "'DM Sans', sans-serif" }}>
-            <div style={{ width: 36, height: 4, background: '#E0E0E0', borderRadius: 2, margin: '12px auto 20px' }} />
-            <div style={{ textAlign: 'center', fontSize: 17, fontWeight: 700, color: '#1A1918', marginBottom: 24 }}>Filter by...</div>
-
-            {[
-              { label: 'Sort', options: SORT_OPTIONS, value: sortBy, onChange: setSortBy, single: true },
-              { label: 'Date', options: DATE_OPTIONS, value: dateFilter, onChange: setDateFilter, single: true },
-              { label: 'Category', options: ROLE_OPTIONS, value: roleFilter, onChange: setRoleFilter, single: true },
-              { label: 'Status', options: STATUS_OPTIONS, value: statusFilter, onChange: setStatusFilter, single: true },
-            ].map(({ label, options, value, onChange }) => (
-              <div key={label} style={{ marginBottom: 20 }}>
-                <div style={{ fontSize: 14, fontWeight: 700, color: '#1A1918', marginBottom: 10 }}>{label}</div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                  {options.map(opt => (
-                    <button key={opt.id} onClick={() => onChange(opt.id)} style={{ padding: '8px 16px', borderRadius: 20, border: 'none', cursor: 'pointer', background: value === opt.id ? '#1A1918' : '#F0F0EE', color: value === opt.id ? 'white' : '#1A1918', fontSize: 13, fontWeight: 500, fontFamily: "'DM Sans', sans-serif" }}>
-                      {opt.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ))}
-
-            {friendOptions.length > 1 && (
-              <div style={{ marginBottom: 20 }}>
-                <div style={{ fontSize: 14, fontWeight: 700, color: '#1A1918', marginBottom: 10 }}>Friends</div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                  {friendOptions.map(opt => (
-                    <button key={opt.id} onClick={() => setFriendFilter(opt.id)} style={{ padding: '8px 16px', borderRadius: 20, border: 'none', cursor: 'pointer', background: friendFilter === opt.id ? '#1A1918' : '#F0F0EE', color: friendFilter === opt.id ? 'white' : '#1A1918', fontSize: 13, fontWeight: 500, fontFamily: "'DM Sans', sans-serif" }}>
-                      {opt.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', margin: '16px 0' }} />
-            <button onClick={() => { clearFilters(); setFilterOpen(false); }} style={{ width: '100%', padding: '14px', borderRadius: 14, border: 'none', cursor: 'pointer', background: '#F0F0EE', color: '#787776', fontSize: 14, fontWeight: 600, fontFamily: "'DM Sans', sans-serif", marginBottom: 10 }}>Clear filters</button>
-            <button onClick={() => setFilterOpen(false)} style={{ width: '100%', padding: '14px', borderRadius: 14, border: 'none', cursor: 'pointer', background: '#1A1918', color: 'white', fontSize: 14, fontWeight: 700, fontFamily: "'DM Sans', sans-serif" }}>Apply</button>
-          </div>
-        </div>
-      )}
     </>
   );
 }

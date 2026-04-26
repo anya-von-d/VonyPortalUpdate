@@ -711,6 +711,7 @@ export default function RecentActivity({ embeddedMode }) {
               <input type="text" placeholder="Search..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
                 style={{ flex: 1, border: 'none', outline: 'none', fontSize: 13, fontFamily: "'DM Sans', sans-serif", color: '#1A1918', background: 'transparent' }} />
             </div>
+            <ExportDropdown filteredCount={filtered.length} totalCount={totalCount} hasAnyFilter={hasAnyFilter} onExport={handleExportCSV} />
             <button className="filter-btn-mobile" onClick={() => setFilterOpen(true)} style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(0,0,0,0.07)', border: 'none', cursor: 'pointer', display: 'none', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               <SlidersHorizontal size={15} style={{ color: '#5C5B5A' }} />
             </button>
@@ -729,15 +730,6 @@ export default function RecentActivity({ embeddedMode }) {
 
         {/* Activity List */}
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 6, padding: '10px 0' }}>
-            <span style={{ fontSize: 11, fontWeight: 500, color: '#787776', marginRight: 4 }}>Page {raSafePage + 1} of {raTotalPages}</span>
-            <button onClick={() => setRaPage(Math.max(0, raSafePage - 1))} disabled={raSafePage === 0} style={{ width: 22, height: 22, borderRadius: 6, border: '1px solid rgba(0,0,0,0.09)', background: 'white', cursor: raSafePage === 0 ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: raSafePage === 0 ? 0.3 : 1, flexShrink: 0 }}>
-              <ChevronLeft size={13} style={{ color: '#787776' }} />
-            </button>
-            <button onClick={() => setRaPage(Math.min(raTotalPages - 1, raSafePage + 1))} disabled={raSafePage >= raTotalPages - 1} style={{ width: 22, height: 22, borderRadius: 6, border: '1px solid rgba(0,0,0,0.09)', background: 'white', cursor: raSafePage >= raTotalPages - 1 ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: raSafePage >= raTotalPages - 1 ? 0.3 : 1, flexShrink: 0 }}>
-              <ChevronRight size={13} style={{ color: '#787776' }} />
-            </button>
-          </div>
           <div>
           {filtered.length === 0 ? (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 0' }}>
@@ -762,7 +754,7 @@ export default function RecentActivity({ embeddedMode }) {
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column' }}>
-                {raPageItems.map((activity, index) => {
+                {filtered.map((activity, index) => {
                   const { title, description, icon: Icon, status, friendName, amount, category } = getActivityInfo(activity);
                   const { bg: iconBg, color: iconColor } = getIconStyle(Icon);
                   const dateDisplay = activity.date ? formatTZ(activity.date, 'MMM d, yyyy') : '';
@@ -965,16 +957,7 @@ export default function RecentActivity({ embeddedMode }) {
           {/* ── Activity List ──────────────────────────────────── */}
           <div>
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 6, padding: '10px 0' }}>
-              <span style={{ fontSize: 11, fontWeight: 500, color: '#787776', marginRight: 4 }}>Page {raSafePage + 1} of {raTotalPages}</span>
-              <button onClick={() => setRaPage(Math.max(0, raSafePage - 1))} disabled={raSafePage === 0} style={{ width: 22, height: 22, borderRadius: 6, border: '1px solid rgba(0,0,0,0.09)', background: 'white', cursor: raSafePage === 0 ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: raSafePage === 0 ? 0.3 : 1, flexShrink: 0 }}>
-                <ChevronLeft size={13} style={{ color: '#787776' }} />
-              </button>
-              <button onClick={() => setRaPage(Math.min(raTotalPages - 1, raSafePage + 1))} disabled={raSafePage >= raTotalPages - 1} style={{ width: 22, height: 22, borderRadius: 6, border: '1px solid rgba(0,0,0,0.09)', background: 'white', cursor: raSafePage >= raTotalPages - 1 ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: raSafePage >= raTotalPages - 1 ? 0.3 : 1, flexShrink: 0 }}>
-                <ChevronRight size={13} style={{ color: '#787776' }} />
-              </button>
-            </div>
-            <div style={{ padding: '0 16px' }}>
+            <div>
             {filtered.length === 0 ? (
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 0' }}>
                 <p style={{ fontSize: 13, color: '#787776', margin: 0, textAlign: 'center' }}>Nothing to show here yet ✨</p>
@@ -998,7 +981,7 @@ export default function RecentActivity({ embeddedMode }) {
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  {raPageItems.map((activity, index) => {
+                  {filtered.map((activity, index) => {
                     const { title, description, icon: Icon, status, friendName, amount, category } = getActivityInfo(activity);
                     const { bg: iconBg, color: iconColor } = getIconStyle(Icon);
                     const dateDisplay = activity.date ? formatTZ(activity.date, 'MMM d, yyyy') : '';
