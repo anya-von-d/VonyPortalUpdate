@@ -170,6 +170,13 @@ export default function DesktopTopNav() {
           <NavBtn to={createPageUrl('LoanAgreements')} active={isActive(location, createPageUrl('LoanAgreements'))}>
             Records
           </NavBtn>
+          <NavBtn to={createPageUrl('RecordPayment')} active={isActive(location, createPageUrl('RecordPayment'))}>
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="16 12 12 8 8 12"/>
+              <line x1="12" y1="16" x2="12" y2="8"/>
+            </svg>
+          </NavBtn>
           <NavBtn onClick={() => { setProfileOpen(v => !v); setNotifOpen(false); setFriendsOpen(false); setMenuOpen(false); }} active={profileOpen}>
             {user ? (
               <UserAvatar name={user.full_name || user.username} src={user.avatar_url || user.profile_picture_url} size={22} radius={11} />
