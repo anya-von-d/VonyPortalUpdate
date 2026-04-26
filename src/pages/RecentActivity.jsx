@@ -705,26 +705,16 @@ export default function RecentActivity({ embeddedMode }) {
       <>
         {/* Filters */}
         <div style={{ marginBottom: 16 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 8, padding: '0 12px', background: 'transparent', borderRadius: 18, border: '1px solid rgba(0,0,0,0.06)', height: 36 }}>
               <Search size={14} style={{ color: '#787776', flexShrink: 0 }} />
               <input type="text" placeholder="Search..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
                 style={{ flex: 1, border: 'none', outline: 'none', fontSize: 13, fontFamily: "'DM Sans', sans-serif", color: '#1A1918', background: 'transparent' }} />
             </div>
             <ExportDropdown filteredCount={filtered.length} totalCount={totalCount} hasAnyFilter={hasAnyFilter} onExport={handleExportCSV} />
-            <button className="filter-btn-mobile" onClick={() => setFilterOpen(true)} style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(0,0,0,0.07)', border: 'none', cursor: 'pointer', display: 'none', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <SlidersHorizontal size={15} style={{ color: '#5C5B5A' }} />
+            <button onClick={() => setFilterOpen(true)} style={{ width: 36, height: 36, borderRadius: '50%', background: hasAnyFilter ? 'rgba(26,25,24,0.10)' : 'rgba(0,0,0,0.07)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <SlidersHorizontal size={15} style={{ color: hasAnyFilter ? '#1A1918' : '#5C5B5A' }} />
             </button>
-          </div>
-          <div className="filter-row-scroll filter-row-desktop" style={{ display: 'flex', flexWrap: 'wrap', gap: 8, position: 'relative', zIndex: 20 }}>
-            <SortDropdown sortBy={sortBy} onChange={setSortBy} />
-            <SingleSelectDropdown options={DATE_OPTIONS} selected={dateFilter} onChange={setDateFilter} />
-            <MultiSelectDropdown label="All Categories" options={CATEGORY_OPTIONS} selected={categoryFilter} onChange={setCategoryFilter} />
-            {friendOptions.length > 0 && (
-              <MultiSelectDropdown label="All Friends" options={friendOptions} selected={friendFilter} onChange={setFriendFilter} />
-            )}
-            <ExportDropdown filteredCount={filtered.length} totalCount={totalCount} hasAnyFilter={hasAnyFilter} onExport={handleExportCSV} />
-            <button onClick={clearFilters} style={{ padding: '6px 10px', borderRadius: 8, border: hasAnyFilter ? '1px solid rgba(232,114,110,0.3)' : '1px solid rgba(0,0,0,0.08)', background: hasAnyFilter ? 'rgba(232,114,110,0.06)' : 'transparent', fontSize: 12, fontWeight: 500, color: hasAnyFilter ? '#E8726E' : '#787776', cursor: hasAnyFilter ? 'pointer' : 'default', opacity: hasAnyFilter ? 1 : 0.5, fontFamily: "'DM Sans', sans-serif" }}>Clear</button>
           </div>
         </div>
 
@@ -750,7 +740,7 @@ export default function RecentActivity({ embeddedMode }) {
                       key={`${activity.type}-${activity.id}-${index}`}
                       style={{
                         display: 'flex', alignItems: 'center', gap: 12,
-                        padding: '10px 0', borderBottom: '1px solid rgba(0,0,0,0.05)',
+                        padding: '10px 0',
                       }}
                     >
                       <div style={{ width: 38, height: 38, borderRadius: '50%', background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -903,25 +893,16 @@ export default function RecentActivity({ embeddedMode }) {
 
           {/* Filters */}
           <div style={{ marginBottom: 16 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 8, padding: '0 12px', background: 'transparent', borderRadius: 18, border: '1px solid rgba(0,0,0,0.06)', height: 36 }}>
                 <Search size={14} style={{ color: '#787776', flexShrink: 0 }} />
                 <input type="text" placeholder="Search..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
                   style={{ flex: 1, border: 'none', outline: 'none', fontSize: 13, fontFamily: "'DM Sans', sans-serif", color: '#1A1918', background: 'transparent' }} />
               </div>
-              <button className="filter-btn-mobile" onClick={() => setFilterOpen(true)} style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(0,0,0,0.07)', border: 'none', cursor: 'pointer', display: 'none', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <SlidersHorizontal size={15} style={{ color: '#5C5B5A' }} />
-              </button>
-            </div>
-            <div className="filter-row-scroll filter-row-desktop" style={{ display: 'flex', flexWrap: 'wrap', gap: 8, position: 'relative', zIndex: 20 }}>
-              <SortDropdown sortBy={sortBy} onChange={setSortBy} />
-              <SingleSelectDropdown options={DATE_OPTIONS} selected={dateFilter} onChange={setDateFilter} />
-              <MultiSelectDropdown label="All Categories" options={CATEGORY_OPTIONS} selected={categoryFilter} onChange={setCategoryFilter} />
-              {friendOptions.length > 0 && (
-                <MultiSelectDropdown label="All Friends" options={friendOptions} selected={friendFilter} onChange={setFriendFilter} />
-              )}
               <ExportDropdown filteredCount={filtered.length} totalCount={totalCount} hasAnyFilter={hasAnyFilter} onExport={handleExportCSV} />
-              <button onClick={clearFilters} style={{ padding: '6px 10px', borderRadius: 8, border: hasAnyFilter ? '1px solid rgba(232,114,110,0.3)' : '1px solid rgba(0,0,0,0.08)', background: hasAnyFilter ? 'rgba(232,114,110,0.06)' : 'transparent', fontSize: 12, fontWeight: 500, color: hasAnyFilter ? '#E8726E' : '#787776', cursor: hasAnyFilter ? 'pointer' : 'default', opacity: hasAnyFilter ? 1 : 0.5, fontFamily: "'DM Sans', sans-serif" }}>Clear</button>
+              <button onClick={() => setFilterOpen(true)} style={{ width: 36, height: 36, borderRadius: '50%', background: hasAnyFilter ? 'rgba(26,25,24,0.10)' : 'rgba(0,0,0,0.07)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <SlidersHorizontal size={15} style={{ color: hasAnyFilter ? '#1A1918' : '#5C5B5A' }} />
+              </button>
             </div>
           </div>
 
@@ -948,7 +929,7 @@ export default function RecentActivity({ embeddedMode }) {
                         key={`${activity.type}-${activity.id}-${index}`}
                         style={{
                           display: 'flex', alignItems: 'center', gap: 12,
-                          padding: '10px 0', borderBottom: '1px solid rgba(0,0,0,0.05)',
+                          padding: '10px 0',
                         }}
                       >
                         <div style={{ width: 38, height: 38, borderRadius: '50%', background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>

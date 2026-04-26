@@ -1249,7 +1249,7 @@ export default function LoanAgreements() {
                         onClick={() => setExpandedId(isExpanded ? null : agreement.id)}
                         style={{
                           display: 'flex', alignItems: 'center', gap: 12, padding: '10px 0',
-                          cursor: 'pointer', borderBottom: '1px solid rgba(0,0,0,0.05)',
+                          cursor: 'pointer',
                         }}
                       >
                         <div style={{ width: 38, height: 38, borderRadius: '50%', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: isLender ? 'rgba(3,172,234,0.12)' : 'rgba(29,91,148,0.10)' }}>
