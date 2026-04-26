@@ -581,6 +581,10 @@ input[type="date"] {
 
 /* Filter row: scrollable on mobile */
 .filter-row-scroll { display: flex; flex-wrap: wrap; }
+/* Filter row hidden on mobile (shown via popup instead) */
+.filter-row-desktop { display: flex; }
+/* Filter icon button: hidden on desktop, shown on mobile */
+.filter-btn-mobile { display: none; }
 
 /* Hide mobile-only sentence on desktop */
 .la-friend-mobile { display: none; }
@@ -621,12 +625,18 @@ input[type="date"] {
   .ra-table-header { display: none !important; }
   .ra-table-row {
     display: grid !important;
-    grid-template-columns: 1fr auto !important;
+    grid-template-columns: 48px 1fr auto !important;
     grid-template-rows: auto auto !important;
-    grid-template-areas: "main date" "status status" !important;
+    grid-template-areas: "icon main date" "icon status status" !important;
     padding: 10px 5px !important;
     gap: 4px 0 !important;
     align-items: center !important;
+  }
+  .ra-col-icon {
+    grid-area: icon !important;
+    display: flex !important;
+    align-items: center !important;
+    align-self: center !important;
   }
   .ra-col-date {
     grid-area: date !important;
@@ -647,6 +657,8 @@ input[type="date"] {
     justify-content: flex-start !important;
     padding-top: 2px !important;
   }
+  .filter-row-desktop { display: none !important; }
+  .filter-btn-mobile { display: flex !important; }
 
   /* ── 5. Loan Agreements: row layout ── */
   .la-table-header { display: none !important; }
