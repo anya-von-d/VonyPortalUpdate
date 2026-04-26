@@ -498,8 +498,7 @@ export default function Upcoming() {
                 const sevenDays = Array.from({ length: 7 }, (_, i) => addDays(today, i));
                 const next7Total = next7Days.reduce((s, e) => s + e.amount, 0);
                 return (
-                  <div style={{ position: 'relative' }}>
-                    <div style={{ position: 'relative', zIndex: 1, background: '#FEFEFE', borderRadius: 2, border: 'none', boxShadow: '5px 4px 18px rgba(0,0,0,0.09), -1px 0 0 rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.06)', padding: '14px 18px' }}>
+                  <div>
 
                       {/* Card header */}
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 }}>
@@ -637,7 +636,6 @@ export default function Upcoming() {
                         })}
                       </div>
 
-                    </div>
                   </div>
                 );
               })()}
@@ -647,13 +645,8 @@ export default function Upcoming() {
             {/* Col 2: Coming Later + Cashflow + So Far This Month */}
             <div className="upcoming-col-2" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 
-              {/* Coming Later — paper card */}
-              <div style={{ position: 'relative' }}>
-                <div style={{
-                  background: '#FEFEFE', borderRadius: 2, border: 'none',
-                  boxShadow: '5px 4px 18px rgba(0,0,0,0.09), -1px 0 0 rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.06)',
-                  padding: '14px 18px',
-                }}>
+              {/* Coming Later */}
+              <div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
                     <span style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>Coming Later</span>
                     {comingLater.length > 0 && <span style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>{comingLater.length} · {formatMoney(comingLater.reduce((s, e) => s + e.amount, 0))}</span>}
@@ -678,7 +671,6 @@ export default function Upcoming() {
                     </p>
                   </div>
                   {comingLater.map(event => <PaymentRow key={event.loanId + '-later'} event={event} />)}
-                </div>
               </div>
 
 

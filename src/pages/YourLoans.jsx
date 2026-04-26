@@ -947,43 +947,45 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
             <div style={{ overflow: 'hidden' }}>
               <div style={{ display: 'flex', transition: 'transform 0.35s cubic-bezier(0.4,0,0.2,1)', transform: `translateX(-${carouselSlide * 100}%)` }}>
 
-                {/* Slide 1: You're owed + repaid % */}
-                <div style={{ minWidth: '100%' }}>
-                  <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif", marginBottom: 4 }}>
-                    {isLending ? "You're owed" : "You owe"}
-                  </div>
-                  <div style={{ fontSize: 34, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.04em', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.05, marginBottom: 3 }}>
-                    {formatMoney(isLending ? lentOwed : borrowOwed)}
-                  </div>
-                  <div style={{ fontSize: 13, color: '#787776', fontFamily: "'DM Sans', sans-serif", marginBottom: 20 }}>
-                    across {activeLoans.length} loan{activeLoans.length !== 1 ? 's' : ''}
-                  </div>
-                  {(() => {
-                    const p2 = isLending ? percentRepaid : percentPaid;
-                    const C2 = 2 * Math.PI * 45; const o2 = C2 - (p2 / 100) * C2;
-                    return (
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                        <div style={{ position: 'relative', width: 52, height: 52, flexShrink: 0 }}>
-                          <svg width="52" height="52" viewBox="0 0 128 128" style={{ transform: 'rotate(-90deg)' }}>
-                            <circle cx="64" cy="64" r="45" fill="none" stroke={`${accent}26`} strokeWidth="12" />
-                            <circle cx="64" cy="64" r="45" fill="none" stroke={accent} strokeWidth="12" strokeLinecap="round" strokeDasharray={C2} strokeDashoffset={o2} />
-                          </svg>
-                          <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <span style={{ fontSize: 10, fontWeight: 700, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>{p2}%</span>
-                          </div>
-                        </div>
-                        <div>
-                          <div style={{ fontSize: 15, fontWeight: 700, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.02em' }}>{p2}% Repaid</div>
-                          <div style={{ fontSize: 12, color: '#787776', fontFamily: "'DM Sans', sans-serif", marginTop: 2 }}>
-                            {isLending
-                              ? `${formatMoney(totalReceivedLending)} of ${formatMoney(totalExpectedLending)}`
-                              : `${formatMoney(totalPaidBorrowing)} of ${formatMoney(totalOwedBorrowing)}`}
-                          </div>
-                        </div>
+                {/* Slide 1: Portfolio-style breakdown */}
+                {(() => {
+                  const SLIDE_COLORS = ['#7CB5D4', '#E8953A', '#B5CC5E', '#9E4060', '#7E6EC8', '#3ABEAE'];
+                  const totalOwed = isLending ? lentOwed : borrowOwed;
+                  return (
+                    <div style={{ minWidth: '100%' }}>
+                      <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif", marginBottom: 4 }}>
+                        {isLending ? "You're owed" : "You owe"}
                       </div>
-                    );
-                  })()}
-                </div>
+                      <div style={{ fontSize: 34, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.04em', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.05, marginBottom: 14 }}>
+                        {formatMoney(totalOwed)}
+                      </div>
+                      {/* Segmented bar */}
+                      {loanCards.length > 0 && totalOwed > 0 ? (
+                        <>
+                          <div style={{ display: 'flex', borderRadius: 6, overflow: 'hidden', height: 10, marginBottom: 14, gap: 2 }}>
+                            {loanCards.map((card, i) => {
+                              const pct = (card.remaining / totalOwed) * 100;
+                              return (
+                                <div key={i} style={{ flex: pct, background: SLIDE_COLORS[i % SLIDE_COLORS.length], minWidth: pct > 0 ? 4 : 0, borderRadius: 3 }} />
+                              );
+                            })}
+                          </div>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+                            {loanCards.map((card, i) => (
+                              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                <div style={{ width: 8, height: 8, borderRadius: '50%', background: SLIDE_COLORS[i % SLIDE_COLORS.length], flexShrink: 0 }} />
+                                <span style={{ fontSize: 13, color: '#787776', fontFamily: "'DM Sans', sans-serif", flex: 1 }}>{card.name}</span>
+                                <span style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(card.remaining)}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </>
+                      ) : (
+                        <div style={{ fontSize: 13, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>No active loans</div>
+                      )}
+                    </div>
+                  );
+                })()}
 
                 {/* Slide 2: Repaid amount + insight */}
                 <div style={{ minWidth: '100%' }}>
