@@ -664,12 +664,19 @@ input[type="date"] {
   .la-table-header { display: none !important; }
   .la-table-row {
     display: grid !important;
-    grid-template-columns: 1fr auto !important;
+    grid-template-columns: 48px 1fr auto !important;
     grid-template-rows: auto auto !important;
-    grid-template-areas: "friend friend" "status date" !important;
+    grid-template-areas: "icon friend friend" "icon status date" !important;
     gap: 4px 8px !important;
     padding: 12px 0 !important;
     align-items: start !important;
+  }
+  .la-col-icon {
+    grid-area: icon !important;
+    display: flex !important;
+    align-items: center !important;
+    align-self: center !important;
+    width: auto !important;
   }
   .la-col-date {
     grid-area: date !important;
