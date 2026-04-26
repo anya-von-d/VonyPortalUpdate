@@ -711,8 +711,11 @@ export default function RecentActivity({ embeddedMode }) {
               <input type="text" placeholder="Search..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
                 style={{ flex: 1, border: 'none', outline: 'none', fontSize: 13, fontFamily: "'DM Sans', sans-serif", color: '#1A1918', background: 'transparent' }} />
             </div>
+            <button className="filter-btn-mobile" onClick={() => setFilterOpen(true)} style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(0,0,0,0.07)', border: 'none', cursor: 'pointer', display: 'none', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <SlidersHorizontal size={15} style={{ color: '#5C5B5A' }} />
+            </button>
           </div>
-          <div className="filter-row-scroll" style={{ display: 'flex', flexWrap: 'wrap', gap: 8, position: 'relative', zIndex: 20 }}>
+          <div className="filter-row-scroll filter-row-desktop" style={{ display: 'flex', flexWrap: 'wrap', gap: 8, position: 'relative', zIndex: 20 }}>
             <SortDropdown sortBy={sortBy} onChange={setSortBy} />
             <SingleSelectDropdown options={DATE_OPTIONS} selected={dateFilter} onChange={setDateFilter} />
             <MultiSelectDropdown label="All Categories" options={CATEGORY_OPTIONS} selected={categoryFilter} onChange={setCategoryFilter} />
@@ -725,8 +728,8 @@ export default function RecentActivity({ embeddedMode }) {
         </div>
 
         {/* Activity List */}
-        <div style={{ background: '#FEFEFE', borderRadius: 4, boxShadow: '0 4px 12px rgba(0,0,0,0.10)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 6, padding: '10px 16px' }}>
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 6, padding: '10px 0' }}>
             <span style={{ fontSize: 11, fontWeight: 500, color: '#787776', marginRight: 4 }}>Page {raSafePage + 1} of {raTotalPages}</span>
             <button onClick={() => setRaPage(Math.max(0, raSafePage - 1))} disabled={raSafePage === 0} style={{ width: 22, height: 22, borderRadius: 6, border: '1px solid rgba(0,0,0,0.09)', background: 'white', cursor: raSafePage === 0 ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: raSafePage === 0 ? 0.3 : 1, flexShrink: 0 }}>
               <ChevronLeft size={13} style={{ color: '#787776' }} />
@@ -735,7 +738,7 @@ export default function RecentActivity({ embeddedMode }) {
               <ChevronRight size={13} style={{ color: '#787776' }} />
             </button>
           </div>
-          <div style={{ padding: '0 16px' }}>
+          <div>
           {filtered.length === 0 ? (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 0' }}>
               <p style={{ fontSize: 13, color: '#787776', margin: 0, textAlign: 'center' }}>Nothing to show here yet ✨</p>
@@ -746,14 +749,15 @@ export default function RecentActivity({ embeddedMode }) {
               {/* Table header */}
               <div className="ra-table-header" style={{
                 display: 'grid',
-                gridTemplateColumns: '120px 1fr 200px',
+                gridTemplateColumns: '44px 120px 1fr 200px',
                 alignItems: 'center',
                 padding: '0 0 12px',
                 borderBottom: '1px solid rgba(0,0,0,0.06)',
                 marginBottom: 8,
               }}>
+                <span />
                 <span style={{ fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Date</span>
-                <span style={{ fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', textAlign: 'center' }}>Category</span>
+                <span style={{ fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Category</span>
                 <span style={{ fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', textAlign: 'center' }}>Status</span>
               </div>
 
@@ -769,22 +773,26 @@ export default function RecentActivity({ embeddedMode }) {
                       className="ra-table-row"
                       style={{
                         display: 'grid',
-                        gridTemplateColumns: '120px 1fr 200px',
+                        gridTemplateColumns: '44px 120px 1fr 200px',
                         alignItems: 'center',
                         padding: '9px 0',
                         borderBottom: 'none',
                       }}
                     >
+                      {/* Col 0: Receipt icon */}
+                      <div className="ra-col-icon" style={{ display: 'flex', alignItems: 'center' }}>
+                        <div style={{ width: 38, height: 38, borderRadius: '50%', background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                          <Receipt size={17} style={{ color: iconColor }} />
+                        </div>
+                      </div>
+
                       {/* Col 1: Date */}
                       <span className="ra-col-date" style={{ fontSize: 12, color: '#787776', fontWeight: 500 }}>
                         {dateDisplay}
                       </span>
 
-                      {/* Col 2: Category — icon + title */}
+                      {/* Col 2: Title */}
                       <div className="ra-col-main" style={{ display: 'flex', alignItems: 'center' }}>
-                        <div style={{ width: 20, height: 20, borderRadius: 6, background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginRight: 8 }}>
-                          <Icon size={13} style={{ color: iconColor }} />
-                        </div>
                         <span style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                           {title}
                         </span>
@@ -802,6 +810,22 @@ export default function RecentActivity({ embeddedMode }) {
           )}
           </div>
         </div>
+
+        {/* Mobile Filter Popup */}
+        <FilterPopup
+          open={filterOpen}
+          onClose={() => setFilterOpen(false)}
+          sortBy={sortBy}
+          onSortChange={setSortBy}
+          dateFilter={dateFilter}
+          onDateChange={setDateFilter}
+          categoryFilter={categoryFilter}
+          onCategoryChange={setCategoryFilter}
+          friendFilter={friendFilter}
+          onFriendChange={setFriendFilter}
+          friendOptions={friendOptions}
+          onClear={() => { clearFilters(); setFilterOpen(false); }}
+        />
 
         {/* Loan Offer View Modal */}
         {viewingLoanOffer && (
