@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Loan, Payment, User, PublicProfile } from "@/entities/all";
-import { Activity, ArrowUpRight, ArrowDownRight, Send, Check, X, Ban, ChevronDown, ChevronLeft, ChevronRight, Search, Download, Receipt, SlidersHorizontal } from "lucide-react";
+import { Activity, ArrowUpRight, ArrowDownRight, Send, Check, X, Ban, ChevronDown, ChevronRight, Search, Download, SlidersHorizontal } from "lucide-react";
 import { format, subDays, subMonths, subYears } from "date-fns";
 import { todayInTZ, currentDateStringTZ, formatTZ } from "@/components/utils/timezone";
 import { useAuth } from "@/lib/AuthContext";
@@ -738,62 +738,33 @@ export default function RecentActivity({ embeddedMode }) {
             </div>
           ) : (
             <>
-              {/* Table header */}
-              <div className="ra-table-header" style={{
-                display: 'grid',
-                gridTemplateColumns: '44px 120px 1fr 200px',
-                alignItems: 'center',
-                padding: '0 0 12px',
-                borderBottom: '1px solid rgba(0,0,0,0.06)',
-                marginBottom: 8,
-              }}>
-                <span />
-                <span style={{ fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Date</span>
-                <span style={{ fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Category</span>
-                <span style={{ fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', textAlign: 'center' }}>Status</span>
-              </div>
-
               <div style={{ display: 'flex', flexDirection: 'column' }}>
                 {filtered.map((activity, index) => {
                   const { title, description, icon: Icon, status, friendName, amount, category } = getActivityInfo(activity);
                   const { bg: iconBg, color: iconColor } = getIconStyle(Icon);
                   const dateDisplay = activity.date ? formatTZ(activity.date, 'MMM d, yyyy') : '';
+                  const badge = renderStatusBadge(activity, status);
 
                   return (
                     <div
                       key={`${activity.type}-${activity.id}-${index}`}
-                      className="ra-table-row"
                       style={{
-                        display: 'grid',
-                        gridTemplateColumns: '44px 120px 1fr 200px',
-                        alignItems: 'center',
-                        padding: '9px 0',
-                        borderBottom: 'none',
+                        display: 'flex', alignItems: 'center', gap: 12,
+                        padding: '10px 0', borderBottom: '1px solid rgba(0,0,0,0.05)',
                       }}
                     >
-                      {/* Col 0: Receipt icon */}
-                      <div className="ra-col-icon" style={{ display: 'flex', alignItems: 'center' }}>
-                        <div style={{ width: 38, height: 38, borderRadius: '50%', background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                          <Receipt size={17} style={{ color: iconColor }} />
+                      <div style={{ width: 38, height: 38, borderRadius: '50%', background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <Icon size={17} style={{ color: iconColor }} />
+                      </div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {title}
+                        </div>
+                        <div style={{ fontSize: 11, color: '#787776', marginTop: 2 }}>
+                          {dateDisplay}
                         </div>
                       </div>
-
-                      {/* Col 1: Date */}
-                      <span className="ra-col-date" style={{ fontSize: 12, color: '#787776', fontWeight: 500 }}>
-                        {dateDisplay}
-                      </span>
-
-                      {/* Col 2: Title */}
-                      <div className="ra-col-main" style={{ display: 'flex', alignItems: 'center' }}>
-                        <span style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                          {title}
-                        </span>
-                      </div>
-
-                      {/* Col 3: Status badge */}
-                      <div className="ra-col-status" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        {renderStatusBadge(activity, status)}
-                      </div>
+                      {badge && <div style={{ flexShrink: 0 }}>{badge}</div>}
                     </div>
                   );
                 })}
@@ -965,62 +936,33 @@ export default function RecentActivity({ embeddedMode }) {
               </div>
             ) : (
               <>
-                {/* Table header */}
-                <div className="ra-table-header" style={{
-                  display: 'grid',
-                  gridTemplateColumns: '44px 120px 1fr 200px',
-                  alignItems: 'center',
-                  padding: '0 0 12px',
-                  borderBottom: '1px solid rgba(0,0,0,0.06)',
-                  marginBottom: 8,
-                }}>
-                  <span />
-                  <span style={{ fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Date</span>
-                  <span style={{ fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Category</span>
-                  <span style={{ fontSize: 11, fontWeight: 600, color: '#787776', textTransform: 'uppercase', letterSpacing: '0.04em', textAlign: 'center' }}>Status</span>
-                </div>
-
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                   {filtered.map((activity, index) => {
                     const { title, description, icon: Icon, status, friendName, amount, category } = getActivityInfo(activity);
                     const { bg: iconBg, color: iconColor } = getIconStyle(Icon);
                     const dateDisplay = activity.date ? formatTZ(activity.date, 'MMM d, yyyy') : '';
+                    const badge = renderStatusBadge(activity, status);
 
                     return (
                       <div
                         key={`${activity.type}-${activity.id}-${index}`}
-                        className="ra-table-row"
                         style={{
-                          display: 'grid',
-                          gridTemplateColumns: '44px 120px 1fr 200px',
-                          alignItems: 'center',
-                          padding: '9px 0',
-                          borderBottom: 'none',
+                          display: 'flex', alignItems: 'center', gap: 12,
+                          padding: '10px 0', borderBottom: '1px solid rgba(0,0,0,0.05)',
                         }}
                       >
-                        {/* Col 0: Receipt icon */}
-                        <div className="ra-col-icon" style={{ display: 'flex', alignItems: 'center' }}>
-                          <div style={{ width: 38, height: 38, borderRadius: '50%', background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                            <Receipt size={17} style={{ color: iconColor }} />
+                        <div style={{ width: 38, height: 38, borderRadius: '50%', background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                          <Icon size={17} style={{ color: iconColor }} />
+                        </div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {title}
+                          </div>
+                          <div style={{ fontSize: 11, color: '#787776', marginTop: 2 }}>
+                            {dateDisplay}
                           </div>
                         </div>
-
-                        {/* Col 1: Date */}
-                        <span className="ra-col-date" style={{ fontSize: 12, color: '#787776', fontWeight: 500 }}>
-                          {dateDisplay}
-                        </span>
-
-                        {/* Col 2: Category — icon + title */}
-                        <div className="ra-col-main" style={{ display: 'flex', alignItems: 'center' }}>
-                          <span style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                            {title}
-                          </span>
-                        </div>
-
-                        {/* Col 3: Status badge */}
-                        <div className="ra-col-status" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          {renderStatusBadge(activity, status)}
-                        </div>
+                        {badge && <div style={{ flexShrink: 0 }}>{badge}</div>}
                       </div>
                     );
                   })}

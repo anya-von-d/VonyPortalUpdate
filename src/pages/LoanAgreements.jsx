@@ -1138,7 +1138,7 @@ export default function LoanAgreements() {
 
           {/* Tab nav */}
           <div style={{ marginBottom: 20 }}>
-            <div style={{ display: 'flex', gap: 0 }}>
+            <div style={{ display: 'inline-flex', background: '#F0F0EE', borderRadius: 12, padding: 3, gap: 2 }}>
               {[
                 { key: 'documents', label: 'Loan Documents' },
                 { key: 'activity', label: 'Transactions & Activity' },
@@ -1149,29 +1149,21 @@ export default function LoanAgreements() {
                     key={key}
                     onClick={() => setTab(key)}
                     style={{
-                      position: 'relative',
-                      flex: 1,
-                      background: 'none', border: 'none', cursor: 'pointer',
-                      padding: '10px 0 12px',
+                      padding: '7px 16px', borderRadius: 9, border: 'none', cursor: 'pointer',
+                      background: active ? 'white' : 'transparent',
+                      color: active ? '#1A1918' : '#787776',
+                      fontSize: 13, fontWeight: active ? 600 : 500,
                       fontFamily: "'DM Sans', sans-serif",
-                      fontSize: 14, fontWeight: active ? 700 : 500,
-                      color: active ? '#1A1918' : '#9B9A98',
-                      letterSpacing: '-0.02em',
-                      transition: 'color 0.15s',
+                      letterSpacing: '-0.01em',
+                      boxShadow: active ? '0 1px 4px rgba(0,0,0,0.10)' : 'none',
+                      transition: 'all 0.15s',
                     }}
                   >
                     {label}
-                    {active && (
-                      <div style={{
-                        position: 'absolute', bottom: 0, left: 0, right: 0,
-                        height: 2, borderRadius: 2, background: '#1A1918',
-                      }} />
-                    )}
                   </button>
                 );
               })}
             </div>
-            <div style={{ height: 1, background: '#E8E7E5' }} />
           </div>
 
           {activeTab === 'documents' ? (
