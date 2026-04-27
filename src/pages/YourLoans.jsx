@@ -1215,7 +1215,7 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
                     <div key={loan.id} style={{ padding: '10px 0', display: 'flex', alignItems: 'center', gap: 8 }}>
                       {(() => {
                         const lendGrad = ['#7FD9FF','#3DC4F5','#03ACEA','#0291C0','#027AA3'];
-                        const borrGrad = ['#7AAED4','#4D8DBF','#2B6EA8','#1D5B94','#154578'];
+                        const borrGrad = ['#B8B7B5','#9B9A98','#787776','#5C5B5A','#464543'];
                         const circleColor = (isLending ? lendGrad : borrGrad)[idx] || accentCol;
                         return (
                           <div style={{ width: 22, height: 22, borderRadius: '50%', background: circleColor, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>

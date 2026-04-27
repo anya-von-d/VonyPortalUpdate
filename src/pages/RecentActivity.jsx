@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Loan, Payment, User, PublicProfile } from "@/entities/all";
-import { Activity, ArrowUpRight, ArrowDownRight, Send, Check, X, Ban, ChevronDown, ChevronRight, Search, Download, SlidersHorizontal } from "lucide-react";
+import { Activity, ArrowUp, ArrowDown, Send, Check, X, Ban, ChevronDown, ChevronRight, Search, Download, SlidersHorizontal } from "lucide-react";
 import { format, subDays, subMonths, subYears } from "date-fns";
 import { todayInTZ, currentDateStringTZ, formatTZ } from "@/components/utils/timezone";
 import { useAuth } from "@/lib/AuthContext";
@@ -506,7 +506,7 @@ export default function RecentActivity({ embeddedMode }) {
 
       if (activity.status === 'pending' || !activity.status) {
         title = isLender ? `Sent ${amount} loan offer to ${username}` : `Received ${amount} loan offer from ${username}`;
-        icon = isLender ? Send : ArrowDownRight;
+        icon = isLender ? Send : ArrowDown;
       } else if (activity.status === 'active') {
         title = isLender ? `${username} accepted your ${amount} loan` : `You accepted ${amount} loan from ${username}`;
         icon = Check;
@@ -533,7 +533,7 @@ export default function RecentActivity({ embeddedMode }) {
         const username = otherParty?.full_name || otherParty?.username || 'User';
         friendName = otherParty?.full_name || otherParty?.username || 'Unknown';
         title = isBorrower ? `You made a ${amount} payment to ${username}` : `Received ${amount} payment from ${username}`;
-        icon = isBorrower ? ArrowUpRight : ArrowDownRight;
+        icon = isBorrower ? ArrowDown : ArrowUp;
         status = activity.status || 'completed';
       }
     }
@@ -543,13 +543,13 @@ export default function RecentActivity({ embeddedMode }) {
   };
 
   const getIconStyle = (IconComp) => {
-    if (IconComp === Send)           return { bg: 'rgba(84,166,207,0.14)',   color: '#54A6CF' };
-    if (IconComp === ArrowDownRight) return { bg: 'rgba(126,192,234,0.16)',  color: '#7EC0EA' };
-    if (IconComp === ArrowUpRight)   return { bg: 'rgba(139,92,246,0.13)',   color: '#8B5CF6' };
-    if (IconComp === Check)          return { bg: 'rgba(34,197,94,0.13)',    color: '#22C55E' };
-    if (IconComp === X)              return { bg: 'rgba(232,114,110,0.14)',  color: '#E8726E' };
-    if (IconComp === Ban)            return { bg: 'rgba(245,158,11,0.14)',   color: '#F59E0B' };
-    return                                  { bg: 'rgba(155,154,152,0.13)', color: '#9B9A98' };
+    if (IconComp === ArrowUp)   return { bg: 'rgba(3,172,234,0.15)',     color: '#03ACEA' };
+    if (IconComp === ArrowDown) return { bg: 'rgba(120,119,118,0.13)',   color: '#5C5B5A' };
+    if (IconComp === Send)      return { bg: 'rgba(29,91,148,0.13)',     color: '#1D5B94' };
+    if (IconComp === Check)     return { bg: 'rgba(22,163,74,0.14)',     color: '#16A34A' };
+    if (IconComp === X)         return { bg: 'rgba(217,79,75,0.14)',     color: '#D94F4B' };
+    if (IconComp === Ban)       return { bg: 'rgba(202,138,4,0.14)',     color: '#B45309' };
+    return                             { bg: 'rgba(120,119,118,0.13)',   color: '#5C5B5A' };
   };
 
   /* ── Apply filters ────────────────────────────────────────── */
@@ -706,7 +706,7 @@ export default function RecentActivity({ embeddedMode }) {
         {/* Filters */}
         <div style={{ marginBottom: 16 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 8, padding: '0 12px', background: 'transparent', borderRadius: 18, border: '1px solid rgba(0,0,0,0.06)', height: 36 }}>
+            <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 8, padding: '0 12px', background: 'white', borderRadius: 18, border: '1px solid rgba(0,0,0,0.06)', height: 36 }}>
               <Search size={14} style={{ color: '#787776', flexShrink: 0 }} />
               <input type="text" placeholder="Search..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
                 style={{ flex: 1, border: 'none', outline: 'none', fontSize: 13, fontFamily: "'DM Sans', sans-serif", color: '#1A1918', background: 'transparent' }} />
@@ -733,28 +733,54 @@ export default function RecentActivity({ embeddedMode }) {
                   const { title, description, icon: Icon, status, friendName, amount, category } = getActivityInfo(activity);
                   const { bg: iconBg, color: iconColor } = getIconStyle(Icon);
                   const dateDisplay = activity.date ? formatTZ(activity.date, 'MMM d, yyyy') : '';
-                  const badge = renderStatusBadge(activity, status);
+
+                  const isPendingConfirmation = activity.type === 'payment' && status === 'pending_confirmation';
+                  const isPendingSignature = activity.type === 'loan' && status === 'pending' && activity.lender_id !== user.id;
+                  const showArrow = isPendingConfirmation || isPendingSignature;
+
+                  const handleArrowClick = () => {
+                    if (isPendingSignature) {
+                      setViewingLoanOffer(activity);
+                    } else if (isPendingConfirmation) {
+                      const associatedLoan = safeLoans.find(l => l && l.id === activity.loan_id);
+                      if (associatedLoan) setViewingLoanOffer(associatedLoan);
+                    }
+                  };
 
                   return (
                     <div
                       key={`${activity.type}-${activity.id}-${index}`}
-                      style={{
-                        display: 'flex', alignItems: 'center', gap: 12,
-                        padding: '10px 0',
-                      }}
+                      style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 0' }}
                     >
                       <div style={{ width: 38, height: 38, borderRadius: '50%', background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                        <Icon size={17} style={{ color: iconColor }} />
+                        <Icon size={17} strokeWidth={2.3} style={{ color: iconColor }} />
                       </div>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                           {title}
                         </div>
-                        <div style={{ fontSize: 11, color: '#787776', marginTop: 2 }}>
-                          {dateDisplay}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 2, flexWrap: 'wrap' }}>
+                          <span style={{ fontSize: 11, color: '#787776' }}>{dateDisplay}</span>
+                          {isPendingConfirmation && (
+                            <span style={{ fontSize: 10, fontWeight: 600, color: '#8B5CF6', background: 'rgba(139,92,246,0.12)', border: '1px solid rgba(139,92,246,0.22)', borderRadius: 5, padding: '1px 6px', whiteSpace: 'nowrap' }}>
+                              Pending payment confirmation
+                            </span>
+                          )}
+                          {isPendingSignature && (
+                            <span style={{ fontSize: 10, fontWeight: 600, color: '#54A6CF', background: 'rgba(84,166,207,0.12)', border: '1px solid rgba(84,166,207,0.22)', borderRadius: 5, padding: '1px 6px', whiteSpace: 'nowrap' }}>
+                              Pending your signature
+                            </span>
+                          )}
                         </div>
                       </div>
-                      {badge && <div style={{ flexShrink: 0 }}>{badge}</div>}
+                      {showArrow && (
+                        <button
+                          onClick={handleArrowClick}
+                          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, flexShrink: 0, display: 'flex', alignItems: 'center' }}
+                        >
+                          <ChevronRight size={16} style={{ color: '#9B9A98' }} />
+                        </button>
+                      )}
                     </div>
                   );
                 })}
@@ -922,28 +948,54 @@ export default function RecentActivity({ embeddedMode }) {
                     const { title, description, icon: Icon, status, friendName, amount, category } = getActivityInfo(activity);
                     const { bg: iconBg, color: iconColor } = getIconStyle(Icon);
                     const dateDisplay = activity.date ? formatTZ(activity.date, 'MMM d, yyyy') : '';
-                    const badge = renderStatusBadge(activity, status);
+
+                    const isPendingConfirmation = activity.type === 'payment' && status === 'pending_confirmation';
+                    const isPendingSignature = activity.type === 'loan' && status === 'pending' && activity.lender_id !== user.id;
+                    const showArrow = isPendingConfirmation || isPendingSignature;
+
+                    const handleArrowClick = () => {
+                      if (isPendingSignature) {
+                        setViewingLoanOffer(activity);
+                      } else if (isPendingConfirmation) {
+                        const associatedLoan = safeLoans.find(l => l && l.id === activity.loan_id);
+                        if (associatedLoan) setViewingLoanOffer(associatedLoan);
+                      }
+                    };
 
                     return (
                       <div
                         key={`${activity.type}-${activity.id}-${index}`}
-                        style={{
-                          display: 'flex', alignItems: 'center', gap: 12,
-                          padding: '10px 0',
-                        }}
+                        style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 0' }}
                       >
                         <div style={{ width: 38, height: 38, borderRadius: '50%', background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                          <Icon size={17} style={{ color: iconColor }} />
+                          <Icon size={17} strokeWidth={2.3} style={{ color: iconColor }} />
                         </div>
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <div style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                             {title}
                           </div>
-                          <div style={{ fontSize: 11, color: '#787776', marginTop: 2 }}>
-                            {dateDisplay}
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 2, flexWrap: 'wrap' }}>
+                            <span style={{ fontSize: 11, color: '#787776' }}>{dateDisplay}</span>
+                            {isPendingConfirmation && (
+                              <span style={{ fontSize: 10, fontWeight: 600, color: '#8B5CF6', background: 'rgba(139,92,246,0.12)', border: '1px solid rgba(139,92,246,0.22)', borderRadius: 5, padding: '1px 6px', whiteSpace: 'nowrap' }}>
+                                Pending payment confirmation
+                              </span>
+                            )}
+                            {isPendingSignature && (
+                              <span style={{ fontSize: 10, fontWeight: 600, color: '#54A6CF', background: 'rgba(84,166,207,0.12)', border: '1px solid rgba(84,166,207,0.22)', borderRadius: 5, padding: '1px 6px', whiteSpace: 'nowrap' }}>
+                                Pending your signature
+                              </span>
+                            )}
                           </div>
                         </div>
-                        {badge && <div style={{ flexShrink: 0 }}>{badge}</div>}
+                        {showArrow && (
+                          <button
+                            onClick={handleArrowClick}
+                            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, flexShrink: 0, display: 'flex', alignItems: 'center' }}
+                          >
+                            <ChevronRight size={16} style={{ color: '#9B9A98' }} />
+                          </button>
+                        )}
                       </div>
                     );
                   })}

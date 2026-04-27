@@ -1138,7 +1138,7 @@ export default function LoanAgreements() {
 
           {/* Tab nav */}
           <div style={{ marginBottom: 20 }}>
-            <div style={{ display: 'inline-flex', background: '#F0F0EE', borderRadius: 12, padding: 3, gap: 2 }}>
+            <div style={{ display: 'flex', background: '#F0F0EE', borderRadius: 12, padding: 3, gap: 2 }}>
               {[
                 { key: 'documents', label: 'Loan Documents' },
                 { key: 'activity', label: 'Transactions & Activity' },
@@ -1149,7 +1149,7 @@ export default function LoanAgreements() {
                     key={key}
                     onClick={() => setTab(key)}
                     style={{
-                      padding: '7px 16px', borderRadius: 9, border: 'none', cursor: 'pointer',
+                      flex: 1, padding: '7px 16px', borderRadius: 9, border: 'none', cursor: 'pointer',
                       background: active ? 'white' : 'transparent',
                       color: active ? '#1A1918' : '#787776',
                       fontSize: 13, fontWeight: active ? 600 : 500,
