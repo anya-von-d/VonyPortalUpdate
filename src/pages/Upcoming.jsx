@@ -475,8 +475,27 @@ export default function Upcoming() {
             const firstCustomIdx = isDemoMode
               ? (rawCustomExpenses.length > 0 ? effectiveCashLines.length : -1)
               : allLines.findIndex(line => customExpenses.some(e => e.id === line.id));
+            const loanIncomeLines = allLines.filter(l => !customExpenses.some(e => e.id === l.id) && l.amount > 0);
+            const customIncomeLines = allLines.filter(l => customExpenses.some(e => e.id === l.id) && l.amount > 0);
+            const loanExpenseLines = allLines.filter(l => !customExpenses.some(e => e.id === l.id) && l.amount < 0);
+            const customExpenseLines = allLines.filter(l => customExpenses.some(e => e.id === l.id) && l.amount < 0);
+            const loanIncomeTotal = loanIncomeLines.reduce((s, l) => s + l.amount, 0);
+            const customIncomeTotal = customIncomeLines.reduce((s, l) => s + l.amount, 0);
+            const loanExpenseTotal = Math.abs(loanExpenseLines.reduce((s, l) => s + l.amount, 0));
+            const customExpenseTotal = Math.abs(customExpenseLines.reduce((s, l) => s + l.amount, 0));
+            const totalIncome = loanIncomeTotal + customIncomeTotal;
+            const totalExpenses = loanExpenseTotal + customExpenseTotal;
+            const netTotal = totalIncome - totalExpenses;
             return (
-              <div style={{ maxWidth: 520 }}>
+              <div>
+                <style>{`
+                  @media (max-width: 768px) {
+                    .plan-month-layout { flex-direction: column !important; }
+                    .plan-summary-box { order: -1; }
+                  }
+                `}</style>
+                <div className="plan-month-layout" style={{ display: 'flex', flexDirection: 'row', gap: 16, alignItems: 'flex-start' }}>
+                <div style={{ maxWidth: 520, flex: '0 0 auto' }}>
                 <div style={{ background: '#FEFEFE', borderRadius: 4, boxShadow: '0 4px 12px rgba(0,0,0,0.10)', padding: '14px 18px' }}>
                   <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 8 }}>
                     <span style={{ fontSize: 13, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', fontFamily: "'DM Sans', sans-serif" }}>{monthName}</span>
@@ -600,6 +619,52 @@ export default function Upcoming() {
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={addingExpense ? '#03ACEA' : '#787776'} strokeWidth="2.8" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                     </button>
                   </div>
+                </div>
+                </div>
+
+                {/* Summary breakdown box */}
+                <div className="plan-summary-box" style={{ flex: '0 0 auto', width: 200, background: '#FEFEFE', borderRadius: 4, boxShadow: '0 4px 12px rgba(0,0,0,0.10)', padding: '14px 16px', fontFamily: "'DM Sans', sans-serif" }}>
+                  {/* Income */}
+                  <div style={{ marginBottom: 12 }}>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 6 }}>Income</div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 3 }}>
+                      <span style={{ fontSize: 11, color: '#787776' }}>Repayments received</span>
+                      <span style={{ fontSize: 11, fontWeight: 600, color: '#03ACEA' }}>{formatMoney(loanIncomeTotal)}</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 6 }}>
+                      <span style={{ fontSize: 11, color: '#787776' }}>Additional income</span>
+                      <span style={{ fontSize: 11, fontWeight: 600, color: '#03ACEA' }}>{formatMoney(customIncomeTotal)}</span>
+                    </div>
+                    <div style={{ borderTop: '1px solid rgba(0,0,0,0.08)', paddingTop: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                      <span style={{ fontSize: 11, fontWeight: 700, color: '#1A1918' }}>Total Income</span>
+                      <span style={{ fontSize: 12, fontWeight: 700, color: '#03ACEA' }}>{formatMoney(totalIncome)}</span>
+                    </div>
+                  </div>
+
+                  {/* Expenses */}
+                  <div style={{ marginBottom: 12 }}>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 6 }}>Expenses</div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 3 }}>
+                      <span style={{ fontSize: 11, color: '#787776' }}>Repayments sent</span>
+                      <span style={{ fontSize: 11, fontWeight: 600, color: '#1D5B94' }}>{formatMoney(loanExpenseTotal)}</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 6 }}>
+                      <span style={{ fontSize: 11, color: '#787776' }}>Additional expenses</span>
+                      <span style={{ fontSize: 11, fontWeight: 600, color: '#1D5B94' }}>{formatMoney(customExpenseTotal)}</span>
+                    </div>
+                    <div style={{ borderTop: '1px solid rgba(0,0,0,0.08)', paddingTop: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                      <span style={{ fontSize: 11, fontWeight: 700, color: '#1A1918' }}>Total Expenses</span>
+                      <span style={{ fontSize: 12, fontWeight: 700, color: '#1D5B94' }}>{formatMoney(totalExpenses)}</span>
+                    </div>
+                  </div>
+
+                  {/* Net */}
+                  <div style={{ borderTop: '1.5px solid rgba(0,0,0,0.13)', paddingTop: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: '#1A1918' }}>Net {monthName}</span>
+                    <span style={{ fontSize: 13, fontWeight: 700, color: netTotal >= 0 ? '#03ACEA' : '#1D5B94' }}>{netTotal >= 0 ? '+' : '-'}{formatMoney(Math.abs(netTotal))}</span>
+                  </div>
+                </div>
+
                 </div>
               </div>
             );

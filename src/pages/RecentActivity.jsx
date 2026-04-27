@@ -544,7 +544,7 @@ export default function RecentActivity({ embeddedMode }) {
 
   const getIconStyle = (IconComp) => {
     if (IconComp === ArrowUp)   return { bg: 'rgba(3,172,234,0.15)',     color: '#03ACEA' };
-    if (IconComp === ArrowDown) return { bg: 'rgba(120,119,118,0.13)',   color: '#5C5B5A' };
+    if (IconComp === ArrowDown) return { bg: 'rgba(29,91,148,0.13)',     color: '#1D5B94' };
     if (IconComp === Send)      return { bg: 'rgba(29,91,148,0.13)',     color: '#1D5B94' };
     if (IconComp === Check)     return { bg: 'rgba(22,163,74,0.14)',     color: '#16A34A' };
     if (IconComp === X)         return { bg: 'rgba(217,79,75,0.14)',     color: '#D94F4B' };
