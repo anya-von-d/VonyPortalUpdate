@@ -1189,7 +1189,7 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
                 <span style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>{titleStr}</span>
                 <Select value={rankingFilter} onValueChange={setRankingFilter}>
-                  <SelectTrigger className="w-auto h-7 px-2 border-0 text-xs font-medium rounded-lg" style={{ background: accentColBg, color: accentCol }}><SelectValue /></SelectTrigger>
+                  <SelectTrigger className="w-auto h-7 px-2 border-0 text-xs font-medium rounded-lg" style={{ background: accentColBg, color: accentCol, maxWidth: 130 }}><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="status">Status</SelectItem>
                     <SelectItem value="highest_interest">Highest Interest Rate</SelectItem>
@@ -1224,7 +1224,7 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
                   else if (rankingFilter === 'most_repaid' || rankingFilter === 'least_repaid') { badgeLabel = `${pct}% repaid`; }
                   else if (rankingFilter === 'most_recent') { badgeLabel = loan.created_at ? formatTZ(loan.created_at, 'MMM d') : '—'; }
                   return (
-                    <div key={loan.id} style={{ padding: '10px 0', display: 'flex', alignItems: 'center', gap: 8, borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+                    <div key={loan.id} style={{ padding: '10px 0', display: 'flex', alignItems: 'center', gap: 8 }}>
                       {(() => {
                         const lendGrad = ['#7FD9FF','#3DC4F5','#03ACEA','#0291C0','#027AA3'];
                         const borrGrad = ['#7AAED4','#4D8DBF','#2B6EA8','#1D5B94','#154578'];

@@ -65,7 +65,7 @@ export default function LendingBorrowing() {
           </div>
 
           {/* ── Tab nav — pill/segmented style ── */}
-          <div style={{ marginBottom: 20 }}>
+          <div style={{ marginBottom: 20, display: 'flex', justifyContent: 'center' }}>
             <div style={{ display: 'inline-flex', background: '#F0F0EE', borderRadius: 12, padding: 3, gap: 2 }}>
               {[
                 { key: 'lending',   label: 'Lending' },
