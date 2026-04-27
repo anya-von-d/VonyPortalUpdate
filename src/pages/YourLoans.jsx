@@ -939,221 +939,209 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
 
     return (
       <>
-        {/* ── Summary top: carousel (left) + upcoming (right) ── */}
-        <div className="summary-top-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, alignItems: 'start', marginBottom: 24 }}>
+        {/* ── Summary slides: peek carousel (mobile) / 4-col grid (desktop) ── */}
+        <div
+          className="summary-slides-outer"
+          style={{ marginBottom: 8 }}
+          onScroll={(e) => {
+            const el = e.currentTarget;
+            const cardWidth = el.firstElementChild?.offsetWidth || 1;
+            setCarouselSlide(Math.min(3, Math.round(el.scrollLeft / (cardWidth + 12))));
+          }}
+        >
 
-          {/* ── Carousel (white box, 3 slides) ── */}
-          <div style={{ background: 'white', borderRadius: 14, boxShadow: '0 2px 16px rgba(0,0,0,0.08)', padding: '20px 20px 16px' }}>
-            <div style={{ overflow: 'hidden' }}>
-              <div style={{ display: 'flex', transition: 'transform 0.35s cubic-bezier(0.4,0,0.2,1)', transform: `translateX(-${carouselSlide * 100}%)` }}>
-
-                {/* Slide 1: Portfolio-style breakdown */}
-                {(() => {
-                  const SLIDE_COLORS = ['#7CB5D4', '#E8953A', '#B5CC5E', '#9E4060', '#7E6EC8', '#3ABEAE'];
-                  const totalOwed = isLending ? lentOwed : borrowOwed;
-                  return (
-                    <div style={{ minWidth: '100%' }}>
-                      <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif", marginBottom: 4 }}>
-                        {isLending ? "You're owed" : "You owe"}
-                      </div>
-                      <div style={{ fontSize: 34, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.04em', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.05, marginBottom: 14 }}>
-                        {formatMoney(totalOwed)}
-                      </div>
-                      {/* Segmented bar */}
-                      {loanCards.length > 0 && totalOwed > 0 ? (
-                        <>
-                          <div style={{ display: 'flex', borderRadius: 6, overflow: 'hidden', height: 10, marginBottom: 14, gap: 2 }}>
-                            {loanCards.map((card, i) => {
-                              const pct = (card.remaining / totalOwed) * 100;
-                              return (
-                                <div key={i} style={{ flex: pct, background: SLIDE_COLORS[i % SLIDE_COLORS.length], minWidth: pct > 0 ? 4 : 0, borderRadius: 3 }} />
-                              );
-                            })}
-                          </div>
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
-                            {loanCards.map((card, i) => (
-                              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                <div style={{ width: 8, height: 8, borderRadius: '50%', background: SLIDE_COLORS[i % SLIDE_COLORS.length], flexShrink: 0 }} />
-                                <span style={{ fontSize: 13, color: '#787776', fontFamily: "'DM Sans', sans-serif", flex: 1 }}>{card.name}</span>
-                                <span style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(card.remaining)}</span>
-                              </div>
-                            ))}
-                          </div>
-                        </>
-                      ) : (
-                        <div style={{ fontSize: 13, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>No active loans</div>
-                      )}
-                    </div>
-                  );
-                })()}
-
-                {/* Slide 2: Repaid amount + insight */}
-                <div style={{ minWidth: '100%' }}>
-                  {(() => {
-                    const today2 = todayInTZ();
-                    const overdueCount = activeLoans.filter(l => l.next_payment_date && toLocalDate(l.next_payment_date) < today2).length;
-                    let insightText = activeLoans.length === 0
-                      ? (isLending ? 'No active loans yet' : 'You have no active borrowing')
-                      : overdueCount > 1
-                        ? (isLending ? `${overdueCount} borrowers are behind on payments` : `${overdueCount} payments need your attention`)
-                        : overdueCount === 1
-                          ? (isLending ? 'One borrower is behind — follow up when ready' : "One quick payment and you're back on track")
-                          : (isLending ? 'All your lent money is on track' : 'All your payments are on track');
-                    return (
-                      <>
-                        <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif", marginBottom: 4 }}>
-                          {isLending ? 'Repaid to you' : 'Paid back'}
-                        </div>
-                        <div style={{ fontSize: 34, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.04em', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.05, marginBottom: 3 }}>
-                          {formatMoney(isLending ? totalReceivedLending : totalPaidBorrowing)}
-                        </div>
-                        <div style={{ fontSize: 13, color: '#787776', fontFamily: "'DM Sans', sans-serif", marginBottom: 20 }}>
-                          of {formatMoney(isLending ? totalExpectedLending : totalOwedBorrowing)} {isLending ? 'repaid to you' : 'paid back'}
-                        </div>
-                        <div style={{ fontSize: 13, fontWeight: 600, color: accent, fontFamily: "'DM Sans', sans-serif", lineHeight: 1.5 }}>
-                          {insightText}
-                        </div>
-                      </>
-                    );
-                  })()}
+          {/* Card 1: Owed breakdown */}
+          {(() => {
+            const SLIDE_COLORS = ['#7CB5D4', '#E8953A', '#B5CC5E', '#9E4060', '#7E6EC8', '#3ABEAE'];
+            const totalOwed = isLending ? lentOwed : borrowOwed;
+            return (
+              <div className="summary-slide-card">
+                <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif", marginBottom: 4 }}>
+                  {isLending ? "You're owed" : "You owe"}
                 </div>
-
-                {/* Slide 3: Monthly gauge */}
-                {(() => {
-                  const monthlyPaidCount = activeLoans.filter(loan =>
-                    allPayments.some(p => {
-                      if (p.loan_id !== loan.id) return false;
-                      if (p.status !== 'confirmed' && p.status !== 'completed') return false;
-                      const d = p.payment_date ? toLocalDate(p.payment_date) : toLocalDate(p.created_at);
-                      return d >= monthStart && d <= monthEnd;
-                    })
-                  ).length;
-                  const totalCount = activeLoans.length;
-                  const cx = 90, cy = 85, r = 68;
-                  const circ = Math.PI * r;
-                  const pct = totalCount > 0 ? monthlyPaidCount / totalCount : 0;
-                  return (
-                    <div style={{ minWidth: '100%' }}>
-                      <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif", marginBottom: 8 }}>
-                        This month
-                      </div>
-                      {/* Gauge */}
-                      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 4 }}>
-                        <div style={{ position: 'relative', width: 180, height: 104 }}>
-                          <svg width="180" height="104" viewBox="0 0 180 104" style={{ display: 'block' }}>
-                            {/* Track */}
-                            <path d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 0 ${cx + r} ${cy}`} fill="none" stroke={`${accent}22`} strokeWidth="11" strokeLinecap="round" />
-                            {/* Progress */}
-                            <path d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 0 ${cx + r} ${cy}`} fill="none" stroke={accent} strokeWidth="11" strokeLinecap="round"
-                              strokeDasharray={`${circ} ${circ}`} strokeDashoffset={circ * (1 - pct)}
-                              style={{ transition: 'stroke-dashoffset 0.5s ease' }} />
-                            {/* Per-loan dots */}
-                            {totalCount > 0 && Array.from({ length: totalCount }).map((_, i) => {
-                              const angle = Math.PI * (1 - (i + 0.5) / totalCount);
-                              const dx = cx + r * Math.cos(angle);
-                              const dy = cy - r * Math.sin(angle);
-                              return <circle key={i} cx={dx} cy={dy} r={5} fill={i < monthlyPaidCount ? accent : `${accent}30`} />;
-                            })}
-                          </svg>
-                          <div style={{ position: 'absolute', bottom: 10, left: 0, right: 0, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                            <span style={{ fontSize: 24, fontWeight: 700, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.04em', lineHeight: 1 }}>
-                              {monthlyPaidCount} <span style={{ fontSize: 14, fontWeight: 500, color: '#9B9A98' }}>of {totalCount}</span>
-                            </span>
-                            <span style={{ fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 2 }}>
-                              {isLending ? 'payments received' : 'payments made'}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      {/* Amounts row */}
-                      <div style={{ display: 'flex', gap: 16, justifyContent: 'center' }}>
-                        <div style={{ textAlign: 'center' }}>
-                          <div style={{ fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginBottom: 1 }}>{isLending ? 'Expecting' : 'Due'}</div>
-                          <div style={{ fontSize: 16, fontWeight: 700, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.03em' }}>
-                            {formatMoney(isLending ? monthlyExpectedReceive : monthlyExpectedPay)}
-                          </div>
-                        </div>
-                        {(isLending ? monthlyReceived : monthlyPaidOut) > 0 && (
-                          <div style={{ textAlign: 'center' }}>
-                            <div style={{ fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginBottom: 1 }}>{isLending ? 'Received' : 'Paid'}</div>
-                            <div style={{ fontSize: 16, fontWeight: 700, color: accent, fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.03em' }}>
-                              {formatMoney(isLending ? monthlyReceived : monthlyPaidOut)}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })()}
-
-              </div>
-            </div>
-            {/* Dots */}
-            <div style={{ display: 'flex', justifyContent: 'center', gap: 6, marginTop: 16 }}>
-              {[0, 1, 2].map(i => (
-                <button key={i} onClick={() => setCarouselSlide(i)} style={{ width: 6, height: 6, borderRadius: '50%', border: 'none', cursor: 'pointer', padding: 0, background: carouselSlide === i ? '#1A1918' : '#D4D3D1', transition: 'background 0.2s' }} />
-              ))}
-            </div>
-          </div>
-
-          {/* ── Upcoming (right on desktop, below on mobile) ── */}
-          <div style={{ background: 'white', borderRadius: 14, boxShadow: '0 2px 16px rgba(0,0,0,0.08)', padding: '20px' }}>
-            {(() => {
-              const allPaymentLoans2 = activeLoans
-                .filter(l => l.next_payment_date)
-                .map(l => {
-                  const otherParty = publicProfiles.find(p => p.user_id === l[otherKey]);
-                  const days = daysUntilDate(l.next_payment_date);
-                  const payDate = toLocalDate(l.next_payment_date);
-                  const firstName = otherParty?.full_name?.split(' ')[0] || otherParty?.username || 'User';
-                  return { ...l, firstName, days, payDate };
-                })
-                .sort((a, b) => a.payDate - b.payDate);
-              const combined = [...allPaymentLoans2.filter(l => l.days < 0), ...allPaymentLoans2.filter(l => l.days >= 0).slice(0, 6)];
-              const firstDays = combined.length > 0 ? combined[0].days : null;
-              const nextLabel = firstDays === null ? '' : firstDays < 0 ? 'overdue' : firstDays === 0 ? 'today' : firstDays === 1 ? 'tomorrow' : `in ${firstDays} days`;
-              return (
-                <>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', fontFamily: "'DM Sans', sans-serif" }}>Upcoming</div>
-                    <Link to={createPageUrl('Upcoming')} style={{ fontSize: 12, fontWeight: 500, color: accent, textDecoration: 'none', fontFamily: "'DM Sans', sans-serif" }}>Full schedule →</Link>
-                  </div>
-                  {firstDays !== null && (
-                    <div style={{ fontSize: 12, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginBottom: 12 }}>
-                      Next payment {nextLabel}
-                    </div>
-                  )}
-                  {combined.length === 0 ? (
-                    <div style={{ padding: '16px 0', fontSize: 13, color: '#787776', textAlign: 'center', fontFamily: "'DM Sans', sans-serif" }}>You're all caught up! 🎉</div>
-                  ) : (
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                      {combined.map(loan => {
-                        const isOverdue = loan.days < 0;
-                        const barColor = isOverdue ? '#E8726E' : accent;
-                        const amtStr = formatMoney(loan.payment_amount || 0);
-                        const label = isOverdue
-                          ? (isLending ? `${loan.firstName}'s ${amtStr} payment is overdue` : `Your ${amtStr} payment to ${loan.firstName} is overdue`)
-                          : (isLending ? `Expect ${amtStr} from ${loan.firstName}` : `${amtStr} due to ${loan.firstName}`);
-                        return (
-                          <div key={loan.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '7px 0' }}>
-                            <div style={{ width: 52, flexShrink: 0, fontFamily: "'DM Sans', sans-serif" }}>
-                              <div style={{ fontSize: 10, fontWeight: 500, color: '#9B9A98', letterSpacing: '-0.01em' }}>{format(loan.payDate, 'EEE')}</div>
-                              <div style={{ fontSize: 12, fontWeight: 500, color: isOverdue ? '#E8726E' : '#1A1918' }}>{format(loan.payDate, 'MMM d')}</div>
-                            </div>
-                            <div style={{ width: 3, alignSelf: 'stretch', borderRadius: 2, background: barColor, flexShrink: 0 }} />
-                            <div style={{ flex: 1, minWidth: 0, fontSize: 12, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                              {label}
-                            </div>
-                          </div>
-                        );
+                <div style={{ fontSize: 34, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.04em', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.05, marginBottom: 14 }}>
+                  {formatMoney(totalOwed)}
+                </div>
+                {loanCards.length > 0 && totalOwed > 0 ? (
+                  <>
+                    <div style={{ display: 'flex', borderRadius: 6, overflow: 'hidden', height: 10, marginBottom: 14, gap: 2 }}>
+                      {loanCards.map((card, i) => {
+                        const pct = (card.remaining / totalOwed) * 100;
+                        return <div key={i} style={{ flex: pct, background: SLIDE_COLORS[i % SLIDE_COLORS.length], minWidth: pct > 0 ? 4 : 0, borderRadius: 3 }} />;
                       })}
                     </div>
-                  )}
-                </>
-              );
-            })()}
-          </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+                      {loanCards.map((card, i) => (
+                        <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <div style={{ width: 8, height: 8, borderRadius: '50%', background: SLIDE_COLORS[i % SLIDE_COLORS.length], flexShrink: 0 }} />
+                          <span style={{ fontSize: 13, color: '#787776', fontFamily: "'DM Sans', sans-serif", flex: 1 }}>{card.name}</span>
+                          <span style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(card.remaining)}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  <div style={{ fontSize: 13, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>No active loans</div>
+                )}
+              </div>
+            );
+          })()}
 
+          {/* Card 2: Repaid */}
+          {(() => {
+            const today2 = todayInTZ();
+            const overdueCount = activeLoans.filter(l => l.next_payment_date && toLocalDate(l.next_payment_date) < today2).length;
+            const insightText = activeLoans.length === 0
+              ? (isLending ? 'No active loans yet' : 'You have no active borrowing')
+              : overdueCount > 1
+                ? (isLending ? `${overdueCount} borrowers are behind on payments` : `${overdueCount} payments need your attention`)
+                : overdueCount === 1
+                  ? (isLending ? 'One borrower is behind — follow up when ready' : "One quick payment and you're back on track")
+                  : (isLending ? 'All your lent money is on track' : 'All your payments are on track');
+            return (
+              <div className="summary-slide-card">
+                <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif", marginBottom: 4 }}>
+                  {isLending ? 'Repaid to you' : 'Paid back'}
+                </div>
+                <div style={{ fontSize: 34, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.04em', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.05, marginBottom: 3 }}>
+                  {formatMoney(isLending ? totalReceivedLending : totalPaidBorrowing)}
+                </div>
+                <div style={{ fontSize: 13, color: '#787776', fontFamily: "'DM Sans', sans-serif", marginBottom: 20 }}>
+                  of {formatMoney(isLending ? totalExpectedLending : totalOwedBorrowing)} {isLending ? 'repaid to you' : 'paid back'}
+                </div>
+                <div style={{ fontSize: 13, fontWeight: 600, color: accent, fontFamily: "'DM Sans', sans-serif", lineHeight: 1.5 }}>
+                  {insightText}
+                </div>
+              </div>
+            );
+          })()}
+
+          {/* Card 3: Monthly gauge */}
+          {(() => {
+            const monthlyPaidCount = activeLoans.filter(loan =>
+              allPayments.some(p => {
+                if (p.loan_id !== loan.id) return false;
+                if (p.status !== 'confirmed' && p.status !== 'completed') return false;
+                const d = p.payment_date ? toLocalDate(p.payment_date) : toLocalDate(p.created_at);
+                return d >= monthStart && d <= monthEnd;
+              })
+            ).length;
+            const totalCount = activeLoans.length;
+            const cx = 90, cy = 85, r = 68;
+            const circ = Math.PI * r;
+            const pct = totalCount > 0 ? monthlyPaidCount / totalCount : 0;
+            return (
+              <div className="summary-slide-card">
+                <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif", marginBottom: 8 }}>
+                  This month
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 4 }}>
+                  <div style={{ position: 'relative', width: 180, height: 104 }}>
+                    <svg width="180" height="104" viewBox="0 0 180 104" style={{ display: 'block' }}>
+                      <path d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 0 ${cx + r} ${cy}`} fill="none" stroke={`${accent}22`} strokeWidth="11" strokeLinecap="round" />
+                      <path d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 0 ${cx + r} ${cy}`} fill="none" stroke={accent} strokeWidth="11" strokeLinecap="round"
+                        strokeDasharray={`${circ} ${circ}`} strokeDashoffset={circ * (1 - pct)}
+                        style={{ transition: 'stroke-dashoffset 0.5s ease' }} />
+                      {totalCount > 0 && Array.from({ length: totalCount }).map((_, i) => {
+                        const angle = Math.PI * (1 - (i + 0.5) / totalCount);
+                        const dx = cx + r * Math.cos(angle);
+                        const dy = cy - r * Math.sin(angle);
+                        return <circle key={i} cx={dx} cy={dy} r={5} fill={i < monthlyPaidCount ? accent : `${accent}30`} />;
+                      })}
+                    </svg>
+                    <div style={{ position: 'absolute', bottom: 10, left: 0, right: 0, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                      <span style={{ fontSize: 24, fontWeight: 700, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.04em', lineHeight: 1 }}>
+                        {monthlyPaidCount} <span style={{ fontSize: 14, fontWeight: 500, color: '#9B9A98' }}>of {totalCount}</span>
+                      </span>
+                      <span style={{ fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 2 }}>
+                        {isLending ? 'payments received' : 'payments made'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: 16, justifyContent: 'center' }}>
+                  <div style={{ textAlign: 'center' }}>
+                    <div style={{ fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginBottom: 1 }}>{isLending ? 'Expecting' : 'Due'}</div>
+                    <div style={{ fontSize: 16, fontWeight: 700, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.03em' }}>
+                      {formatMoney(isLending ? monthlyExpectedReceive : monthlyExpectedPay)}
+                    </div>
+                  </div>
+                  {(isLending ? monthlyReceived : monthlyPaidOut) > 0 && (
+                    <div style={{ textAlign: 'center' }}>
+                      <div style={{ fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginBottom: 1 }}>{isLending ? 'Received' : 'Paid'}</div>
+                      <div style={{ fontSize: 16, fontWeight: 700, color: accent, fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.03em' }}>
+                        {formatMoney(isLending ? monthlyReceived : monthlyPaidOut)}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })()}
+
+          {/* Card 4: Upcoming */}
+          {(() => {
+            const allPaymentLoans2 = activeLoans
+              .filter(l => l.next_payment_date)
+              .map(l => {
+                const otherParty = publicProfiles.find(p => p.user_id === l[otherKey]);
+                const days = daysUntilDate(l.next_payment_date);
+                const payDate = toLocalDate(l.next_payment_date);
+                const firstName = otherParty?.full_name?.split(' ')[0] || otherParty?.username || 'User';
+                return { ...l, firstName, days, payDate };
+              })
+              .sort((a, b) => a.payDate - b.payDate);
+            const combined = [...allPaymentLoans2.filter(l => l.days < 0), ...allPaymentLoans2.filter(l => l.days >= 0).slice(0, 6)];
+            const firstDays = combined.length > 0 ? combined[0].days : null;
+            const nextLabel = firstDays === null ? '' : firstDays < 0 ? 'overdue' : firstDays === 0 ? 'today' : firstDays === 1 ? 'tomorrow' : `in ${firstDays} days`;
+            return (
+              <div className="summary-slide-card">
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', fontFamily: "'DM Sans', sans-serif" }}>Upcoming</div>
+                  <Link to={createPageUrl('Upcoming')} style={{ fontSize: 12, fontWeight: 500, color: accent, textDecoration: 'none', fontFamily: "'DM Sans', sans-serif" }}>Full schedule →</Link>
+                </div>
+                {firstDays !== null && (
+                  <div style={{ fontSize: 12, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginBottom: 12 }}>
+                    Next payment {nextLabel}
+                  </div>
+                )}
+                {combined.length === 0 ? (
+                  <div style={{ padding: '16px 0', fontSize: 13, color: '#787776', textAlign: 'center', fontFamily: "'DM Sans', sans-serif" }}>You're all caught up! 🎉</div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    {combined.map(loan => {
+                      const isOverdue = loan.days < 0;
+                      const barColor = isOverdue ? '#E8726E' : accent;
+                      const amtStr = formatMoney(loan.payment_amount || 0);
+                      const label = isOverdue
+                        ? (isLending ? `${loan.firstName}'s ${amtStr} payment is overdue` : `Your ${amtStr} payment to ${loan.firstName} is overdue`)
+                        : (isLending ? `Expect ${amtStr} from ${loan.firstName}` : `${amtStr} due to ${loan.firstName}`);
+                      return (
+                        <div key={loan.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '7px 0' }}>
+                          <div style={{ width: 52, flexShrink: 0, fontFamily: "'DM Sans', sans-serif" }}>
+                            <div style={{ fontSize: 10, fontWeight: 500, color: '#9B9A98', letterSpacing: '-0.01em' }}>{format(loan.payDate, 'EEE')}</div>
+                            <div style={{ fontSize: 12, fontWeight: 500, color: isOverdue ? '#E8726E' : '#1A1918' }}>{format(loan.payDate, 'MMM d')}</div>
+                          </div>
+                          <div style={{ width: 3, alignSelf: 'stretch', borderRadius: 2, background: barColor, flexShrink: 0 }} />
+                          <div style={{ flex: 1, minWidth: 0, fontSize: 12, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {label}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          })()}
+
+        </div>
+
+        {/* Dots — mobile only, controlled by scroll position */}
+        <div className="summary-slides-dots" style={{ display: 'flex', justifyContent: 'center', gap: 6, marginBottom: 24 }}>
+          {[0, 1, 2, 3].map(i => (
+            <div key={i} style={{ width: 6, height: 6, borderRadius: '50%', background: carouselSlide === i ? '#1A1918' : '#D4D3D1', transition: 'background 0.2s' }} />
+          ))}
         </div>
 
         {/* Your Lending / Borrowing — bare list */}
