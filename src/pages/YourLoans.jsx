@@ -952,8 +952,11 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
 
           {/* Card 1: Owed breakdown */}
           {(() => {
-            const SLIDE_COLORS = ['#7CB5D4', '#E8953A', '#B5CC5E', '#9E4060', '#7E6EC8', '#3ABEAE'];
+            const SLIDE_COLORS = isLending
+              ? ['#7FD9FF', '#3DC4F5', '#03ACEA', '#0291C0', '#027AA3', '#1D5B94']
+              : ['#C8C7C5', '#A8A7A5', '#888786', '#686765', '#4A4948', '#2C2B2A'];
             const totalOwed = isLending ? lentOwed : borrowOwed;
+            const sortedCards = [...loanCards].sort((a, b) => b.remaining - a.remaining);
             return (
               <div className="summary-slide-card">
                 <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif", marginBottom: 4 }}>
@@ -962,16 +965,16 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
                 <div style={{ fontSize: 34, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.04em', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.05, marginBottom: 14 }}>
                   {formatMoney(totalOwed)}
                 </div>
-                {loanCards.length > 0 && totalOwed > 0 ? (
+                {sortedCards.length > 0 && totalOwed > 0 ? (
                   <>
                     <div style={{ display: 'flex', borderRadius: 6, overflow: 'hidden', height: 10, marginBottom: 14, gap: 2 }}>
-                      {loanCards.map((card, i) => {
+                      {sortedCards.map((card, i) => {
                         const pct = (card.remaining / totalOwed) * 100;
                         return <div key={i} style={{ flex: pct, background: SLIDE_COLORS[i % SLIDE_COLORS.length], minWidth: pct > 0 ? 4 : 0, borderRadius: 3 }} />;
                       })}
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
-                      {loanCards.map((card, i) => (
+                      {sortedCards.map((card, i) => (
                         <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                           <div style={{ width: 8, height: 8, borderRadius: '50%', background: SLIDE_COLORS[i % SLIDE_COLORS.length], flexShrink: 0 }} />
                           <span style={{ fontSize: 13, color: '#787776', fontFamily: "'DM Sans', sans-serif", flex: 1 }}>{card.name}</span>
