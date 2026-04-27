@@ -1466,8 +1466,8 @@ export default function Home() {
                 );
               })()}
 
-              {/* ── Plan Your Month ── */}
-              {(() => {
+              {/* Plan Your Month moved to Upcoming page → Plan Your Month tab */}
+              {false && (() => {
                 const monthStart = startOfMonth(today);
                 const monthEnd = endOfMonth(today);
                 const monthName = format(today, 'MMMM');
