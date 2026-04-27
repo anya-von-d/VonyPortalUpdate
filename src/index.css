@@ -33,7 +33,7 @@ input[type="date"] {
 @layer base {
   html, body {
     scroll-behavior: smooth;
-    background-color: #FDFBF9;
+    background-color: #ffffff;
   }
 
   /* Scrollbar styling */
@@ -252,7 +252,7 @@ input[type="date"] {
   }
 }
 
-/* Let html paper texture show through all page containers */
+/* Let white background show through all page containers */
 .home-with-sidebar {
   background: transparent !important;
 }

@@ -6,7 +6,7 @@ const UserNotRegisteredError = () => {
     <div style={{
       display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
       minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", padding: 24,
-      background: '#F5F4F0',
+      background: '#ffffff',
     }}>
       <div style={{ background: '#F4F4F5', borderRadius: 20, maxWidth: 440, width: '100%', boxShadow: SHADOW, overflow: 'hidden' }}>
         {/* Header strip */}

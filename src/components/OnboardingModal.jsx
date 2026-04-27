@@ -4,13 +4,9 @@ import { supabase } from "@/lib/supabaseClient";
 import { CheckCircle, Loader2, ChevronDown } from "lucide-react";
 import { PROFILE_ICON_IMAGES, getRandomProfileIcon } from "@/lib/profileIconImages";
 
-// Grain overlays — match Layout.jsx portal texture
-const GRAIN_FINE = `url("data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.55 0"/></filter><rect width="100%" height="100%" filter="url(#n)"/></svg>')}")`;
-const GRAIN_FIBRE = `url("data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600"><filter id="f"><feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 0.96  0 0 0 0 0.94  0 0 0 0 0.90  0 0 0 0 0.35 0"/></filter><rect width="100%" height="100%" filter="url(#f)"/></svg>')}")`;
-
 const CARD_WIDTH = 420;
 // Portal background — matches html/body in index.css
-const PORTAL_BG = '#FDFBF9';
+const PORTAL_BG = '#ffffff';
 // Vony brand bright blue
 const BRAND_BLUE = '#03ACEA';
 
@@ -378,16 +374,6 @@ export default function OnboardingModal({ user, onComplete }) {
     }}>
       {/* Portal-matching background */}
       <div style={{ position: 'fixed', inset: 0, background: PORTAL_BG, zIndex: 0 }} />
-      <div style={{
-        position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 1,
-        backgroundImage: GRAIN_FINE, backgroundSize: '180px 180px',
-        mixBlendMode: 'multiply', opacity: 0.10,
-      }} />
-      <div style={{
-        position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 1,
-        backgroundImage: GRAIN_FIBRE, backgroundSize: '600px 600px',
-        mixBlendMode: 'multiply', opacity: 0.20,
-      }} />
 
       {/* Centered column */}
       <div style={{
