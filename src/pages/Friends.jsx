@@ -473,23 +473,29 @@ function AddSection({ searchQuery, setSearchQuery, searchResults, profiles, proc
 
   return (
     <div>
-      {/* Search bar */}
-      <div style={{ position: 'relative', marginBottom: 20 }}>
-        <Search size={16} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#B0AEA8', pointerEvents: 'none', zIndex: 2 }} />
+      {/* Search bar — white bg lives on the container so the overlay is visible through the transparent input */}
+      <div style={{
+        position: 'relative', marginBottom: 20,
+        background: '#fff', borderRadius: 14,
+        border: '1px solid rgba(0,0,0,0.08)',
+        boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
+        transition: 'border-color 0.15s',
+      }}>
+        <Search size={16} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#B0AEA8', pointerEvents: 'none' }} />
 
-        {/* Animated placeholder — visible only when input is empty */}
+        {/* Animated placeholder — only when input is empty */}
         {!searchQuery && (
           <div style={{
             position: 'absolute', left: 42, top: '50%', transform: 'translateY(-50%)',
             display: 'flex', alignItems: 'center',
-            pointerEvents: 'none', userSelect: 'none', zIndex: 1,
+            pointerEvents: 'none', userSelect: 'none',
             fontSize: 14, fontFamily: "'DM Sans', sans-serif",
             color: '#B5B3AD', lineHeight: TICKER_LINE_H,
             overflow: 'hidden', height: TICKER_LINE_H,
             whiteSpace: 'nowrap',
           }}>
             <span>Search by&nbsp;</span>
-            {/* Clipping window for the scrolling word */}
+            {/* Clipping window — one line tall, words scroll up through it */}
             <span style={{ display: 'inline-block', overflow: 'hidden', height: TICKER_LINE_H, verticalAlign: 'top' }}>
               <span style={{
                 display: 'inline-flex', flexDirection: 'column',
@@ -505,6 +511,7 @@ function AddSection({ searchQuery, setSearchQuery, searchResults, profiles, proc
           </div>
         )}
 
+        {/* Input is transparent so the overlay below shows through */}
         <input
           type="text"
           placeholder=""
@@ -514,17 +521,16 @@ function AddSection({ searchQuery, setSearchQuery, searchResults, profiles, proc
           style={{
             width: '100%', boxSizing: 'border-box',
             padding: '12px 40px 12px 42px',
-            borderRadius: 14, border: '1px solid rgba(0,0,0,0.08)',
-            background: '#fff', fontSize: 14,
+            borderRadius: 14, border: 'none',
+            background: 'transparent', fontSize: 14,
             color: '#1A1918', fontFamily: "'DM Sans', sans-serif",
-            outline: 'none', boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
-            position: 'relative', zIndex: 2,
+            outline: 'none', display: 'block',
           }}
-          onFocus={e => e.target.style.borderColor = 'rgba(3,172,234,0.4)'}
-          onBlur={e => e.target.style.borderColor = 'rgba(0,0,0,0.08)'}
+          onFocus={e => e.target.parentElement.style.borderColor = 'rgba(3,172,234,0.4)'}
+          onBlur={e => e.target.parentElement.style.borderColor = 'rgba(0,0,0,0.08)'}
         />
         {searchQuery && (
-          <button onClick={() => setSearchQuery('')} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'rgba(0,0,0,0.07)', border: 'none', cursor: 'pointer', color: '#787776', padding: 0, width: 20, height: 20, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 3 }}>
+          <button onClick={() => setSearchQuery('')} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'rgba(0,0,0,0.07)', border: 'none', cursor: 'pointer', color: '#787776', padding: 0, width: 20, height: 20, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <X size={12} />
           </button>
         )}
