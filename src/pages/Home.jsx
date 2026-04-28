@@ -1503,27 +1503,36 @@ export default function Home() {
                 else if (filter === 'most_recent') { badgeLabel = loan.created_at ? formatTZ(loan.created_at, 'MMM d') : '—'; }
                 return (
                   <div key={loan.id} style={{ padding: '9px 0', display: 'flex', alignItems: 'center', gap: 9, borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
-                    <div style={{ position: 'relative', width: sz, height: sz, flexShrink: 0 }}>
-                      <svg width={sz} height={sz} viewBox={`0 0 ${sz} ${sz}`}>
-                        <circle cx={cx} cy={cy} r={r} fill="none" stroke={`${ringColor}22`} strokeWidth="3"/>
-                        {pct > 0 && (
-                          <circle cx={cx} cy={cy} r={r} fill="none" stroke={ringColor} strokeWidth="3"
-                            strokeDasharray={`${dash} ${circ}`} strokeLinecap="round"
-                            transform={`rotate(-90 ${cx} ${cy})`}
-                          />
-                        )}
-                      </svg>
-                      <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <span style={{ fontSize: 11, fontWeight: 700, color: ringColor, lineHeight: 1, fontFamily: "'DM Sans', sans-serif" }}>{idx + 1}</span>
+                    {/* Profile photo + pie chart overlay */}
+                    <div style={{ position: 'relative', width: 38, height: 38, flexShrink: 0 }}>
+                      <UserAvatar
+                        name={name}
+                        src={otherProfile?.profile_picture_url}
+                        size={38}
+                        radius={19}
+                      />
+                      {/* Pie chart bottom-right */}
+                      <div style={{ position: 'absolute', bottom: -2, right: -2, width: 16, height: 16 }}>
+                        <svg width="16" height="16" viewBox="0 0 16 16">
+                          <circle cx="8" cy="8" r="6" fill="white" stroke="white" strokeWidth="1.5"/>
+                          <circle cx="8" cy="8" r="6" fill="none" stroke={`${accentCol}33`} strokeWidth="3"/>
+                          {pct > 0 && (
+                            <circle cx="8" cy="8" r="6" fill="none" stroke={accentCol} strokeWidth="3"
+                              strokeDasharray={`${pct * 2 * Math.PI * 6} ${2 * Math.PI * 6}`}
+                              strokeLinecap="round"
+                              transform="rotate(-90 8 8)"
+                            />
+                          )}
+                        </svg>
                       </div>
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
-                        <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name}</span>
-                        <span style={{ flexShrink: 0, fontSize: 10, fontWeight: 700, color: badgeColor, background: badgeBg, borderRadius: 5, padding: '2px 6px', lineHeight: 1.2, whiteSpace: 'nowrap' }}>{badgeLabel}</span>
-                      </div>
+                      <div style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name}</div>
                       <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{subLine}</div>
                     </div>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C4C3C1" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                      <polyline points="9 18 15 12 9 6"/>
+                    </svg>
                   </div>
                 );
               };
@@ -1554,13 +1563,17 @@ export default function Home() {
 
               return (
                 <div className="home-card-loans-pair">
-                  {/* Tab bar */}
-                  <div style={{ display: 'flex', borderBottom: '1px solid rgba(0,0,0,0.07)' }}>
+                  {/* Section label */}
+                  <div style={{ fontSize: 13, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.04em', textTransform: 'uppercase', padding: '16px 18px 8px', fontFamily: "'DM Sans', sans-serif" }}>
+                    Lending and Borrowing agreements
+                  </div>
+                  {/* Tab bar — left-aligned, compact */}
+                  <div style={{ display: 'flex', borderBottom: '1px solid rgba(0,0,0,0.07)', paddingLeft: 18 }}>
                     {['lending', 'borrowing'].map(tab => {
                       const active = lbTab === tab;
                       return (
                         <button key={tab} onClick={() => setLbTab(tab)} style={{
-                          flex: 1, padding: '12px 0', fontSize: 12, fontWeight: active ? 700 : 500,
+                          padding: '7px 14px', fontSize: 12, fontWeight: active ? 700 : 500,
                           color: active ? '#1A1918' : '#9B9A98',
                           background: 'none', border: 'none', borderBottom: active ? '2px solid #1A1918' : '2px solid transparent',
                           marginBottom: -1, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
@@ -1759,7 +1772,7 @@ export default function Home() {
                       style={{
                         display: 'flex', alignItems: 'center', gap: 14,
                         padding: '14px 4px',
-                        borderBottom: i < quickLinks.length - 1 ? '1px solid rgba(0,0,0,0.06)' : 'none',
+                        borderBottom: 'none',
                         cursor: 'pointer',
                       }}
                     >
