@@ -3,8 +3,6 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import SettingsModal from "@/components/SettingsModal";
 import FriendsPopup from "@/components/FriendsPopup";
-import NotificationsPopup from "@/components/NotificationsPopup";
-import PendingRequestsPopup from "@/components/PendingRequestsPopup";
 import AppMenuDropdown from "@/components/AppMenuDropdown";
 import DemoModeToggle from "@/components/DemoModeToggle";
 import { useNotificationCount } from "@/components/utils/notificationCount";
@@ -113,7 +111,6 @@ export default function MeshMobileNav({ user, activePage }) {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [friendsOpen, setFriendsOpen] = useState(false);
   const [friendsInitialTab, setFriendsInitialTab] = useState(null);
-  const [notifOpen, setNotifOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const menuRef = useRef(null);
@@ -147,30 +144,16 @@ export default function MeshMobileNav({ user, activePage }) {
   }, [bottomPopup]);
 
   const [friendsInitialRequestsOpen, setFriendsInitialRequestsOpen] = useState(false);
-  const [pendingOpen, setPendingOpen] = useState(false);
 
   useEffect(() => {
     const handler = (e) => {
       setFriendsOpen(true);
-      setNotifOpen(false);
-      setPendingOpen(false);
       setMenuOpen(false);
       if (e?.detail?.initialTab) setFriendsInitialTab(e.detail.initialTab);
       if (e?.detail?.initialRequestsOpen) setFriendsInitialRequestsOpen(true);
     };
     window.addEventListener('open-friends-popup', handler);
     return () => window.removeEventListener('open-friends-popup', handler);
-  }, []);
-
-  useEffect(() => {
-    const handler = () => {
-      setPendingOpen(true);
-      setFriendsOpen(false);
-      setNotifOpen(false);
-      setMenuOpen(false);
-    };
-    window.addEventListener('open-pending-requests-popup', handler);
-    return () => window.removeEventListener('open-pending-requests-popup', handler);
   }, []);
 
   const isActivePage = (page) => {
@@ -332,13 +315,12 @@ export default function MeshMobileNav({ user, activePage }) {
           <DemoModeToggle variant="mobile" />
 
           <button
-            onClick={() => { setNotifOpen(v => !v); setFriendsOpen(false); setMenuOpen(false); setBottomPopup(null); }}
+            onClick={() => { navigate(createPageUrl('Notifications')); setFriendsOpen(false); setMenuOpen(false); setBottomPopup(null); }}
             style={{
               ...glassBubble, position: 'relative', cursor: 'pointer',
-              background: notifOpen ? 'rgba(0,0,0,0.08)' : glassBubble.background,
             }}
           >
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke={notifOpen ? '#1A1918' : 'rgba(0,0,0,0.6)'} strokeWidth="1.8" strokeLinecap="round">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="rgba(0,0,0,0.6)" strokeWidth="1.8" strokeLinecap="round">
               <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
               <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
             </svg>
@@ -360,7 +342,7 @@ export default function MeshMobileNav({ user, activePage }) {
 
           <div ref={menuRef} style={{ position: 'relative' }}>
             <button
-              onClick={() => { setMenuOpen(v => !v); setNotifOpen(false); setFriendsOpen(false); setBottomPopup(null); }}
+              onClick={() => { setMenuOpen(v => !v); setFriendsOpen(false); setBottomPopup(null); }}
               style={{
                 ...innerBtnBase,
                 width: 36, height: 36,
@@ -382,7 +364,7 @@ export default function MeshMobileNav({ user, activePage }) {
                 onInviteFriend={() => { setFriendsInitialTab('Invite'); setFriendsOpen(true); }}
                 onOpenSettings={() => setSettingsOpen(true)}
                 onOpenFriends={() => setFriendsOpen(true)}
-                onOpenPendingRequests={() => { setMenuOpen(false); setPendingOpen(true); setFriendsOpen(false); setNotifOpen(false); }}
+                onOpenPendingRequests={() => { setMenuOpen(false); navigate(createPageUrl('Notifications')); }}
                 onOpenProfile={() => { setMenuOpen(false); navigate(createPageUrl('Profile')); }}
                 showProfileAndFriends
               />
@@ -426,18 +408,6 @@ export default function MeshMobileNav({ user, activePage }) {
           onClose={() => { setFriendsOpen(false); setFriendsInitialTab(null); setFriendsInitialRequestsOpen(false); }}
           initialTab={friendsInitialTab}
           initialRequestsOpen={friendsInitialRequestsOpen}
-          positionOverride={{ top: 92, left: 12, right: 12, width: 'auto' }}
-        />
-      )}
-      {notifOpen && (
-        <NotificationsPopup
-          onClose={() => setNotifOpen(false)}
-          positionOverride={{ top: 92, left: 12, right: 12, width: 'auto' }}
-        />
-      )}
-      {pendingOpen && (
-        <PendingRequestsPopup
-          onClose={() => setPendingOpen(false)}
           positionOverride={{ top: 92, left: 12, right: 12, width: 'auto' }}
         />
       )}

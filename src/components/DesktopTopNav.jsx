@@ -5,7 +5,6 @@ import { useAuth } from '@/lib/AuthContext';
 import SettingsModal from './SettingsModal';
 import NotificationsPopup from './NotificationsPopup';
 import FriendsPopup from './FriendsPopup';
-import PendingRequestsPopup from './PendingRequestsPopup';
 import AppMenuDropdown from './AppMenuDropdown';
 import UserAvatar from './ui/UserAvatar';
 import DemoModeToggle from './DemoModeToggle';
@@ -226,7 +225,6 @@ export default function DesktopTopNav() {
   const [friendsOpen, setFriendsOpen] = useState(false);
   const [friendsInitialTab, setFriendsInitialTab] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [pendingOpen, setPendingOpen] = useState(false);
 
   const menuRef = useRef(null);
 
@@ -393,7 +391,7 @@ export default function DesktopTopNav() {
                   onClose={() => setMenuOpen(false)}
                   onInviteFriend={() => { setFriendsInitialTab('Invite'); setFriendsOpen(true); }}
                   onOpenSettings={() => setSettingsOpen(true)}
-                  onOpenPendingRequests={() => { setPendingOpen(true); setNotifOpen(false); setFriendsOpen(false); }}
+                  onOpenPendingRequests={() => { setNotifOpen(true); setFriendsOpen(false); setMenuOpen(false); }}
                   onOpenProfile={() => { setMenuOpen(false); navigate(createPageUrl('Profile')); }}
                 />
               )}
@@ -404,7 +402,6 @@ export default function DesktopTopNav() {
       </div>
 
       <SettingsModal isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
-      {pendingOpen && <PendingRequestsPopup onClose={() => setPendingOpen(false)} />}
       {notifOpen && (
         <NotificationsPopup
           onClose={() => setNotifOpen(false)}

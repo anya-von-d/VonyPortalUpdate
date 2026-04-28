@@ -6,18 +6,33 @@ import { useAuth } from '@/lib/AuthContext';
 import { CheckCircle, X } from 'lucide-react';
 import { format, addMonths } from 'date-fns';
 import { daysUntil as daysUntilDate } from '@/components/utils/dateUtils';
+import { formatMoney } from '@/components/utils/formatMoney';
 import BorrowerSignatureModal from '@/components/loans/BorrowerSignatureModal';
 import confetti from 'canvas-confetti';
+
+// ── Tab config ────────────────────────────────────────────────────────────────
+const POPUP_TABS = [
+  { key: 'all', label: 'All' },
+  { key: 'attention', label: 'Needs attention' },
+  { key: 'pending', label: 'Pending' },
+  { key: 'offers', label: 'Offers' },
+  { key: 'support', label: 'Support' },
+  { key: 'priority', label: 'Priority' },
+];
 
 export default function NotificationsPopup({ onClose, positionOverride, onOpenFriends }) {
   const { user: authUser, userProfile } = useAuth();
   const user = userProfile ? { ...userProfile, id: authUser?.id } : null;
   const navigate = useNavigate();
 
+  const [activeTab, setActiveTab] = useState('all');
+
   const [paymentsToConfirm, setPaymentsToConfirm] = useState([]);
   const [termChangeRequests, setTermChangeRequests] = useState([]);
   const [loanOffersReceived, setLoanOffersReceived] = useState([]);
   const [friendRequestsReceived, setFriendRequestsReceived] = useState([]);
+  const [pendingLoanOffersSent, setPendingLoanOffersSent] = useState([]);
+  const [pendingPaymentsSentByMe, setPendingPaymentsSentByMe] = useState([]);
   const [loans, setLoans] = useState([]);
   const [profiles, setProfiles] = useState([]);
   const [allPayments, setAllPayments] = useState([]);
@@ -81,10 +96,15 @@ export default function NotificationsPopup({ onClose, positionOverride, onOpenFr
         f.friend_id === user.id && f.status === 'pending'
       );
 
+      const loanOffersSent = allLoans.filter(l => l.lender_id === user.id && l.status === 'pending');
+      const paymentsSentByMe = fetchedPayments.filter(p => p.recorded_by === user.id && p.status === 'pending_confirmation');
+
       setPaymentsToConfirm(toConfirm);
       setTermChangeRequests(termChanges);
       setLoanOffersReceived(offersReceived);
       setFriendRequestsReceived(friendRequests);
+      setPendingLoanOffersSent(loanOffersSent);
+      setPendingPaymentsSentByMe(paymentsSentByMe);
       setLoans(allLoans);
       setProfiles(allProfiles);
     } catch (error) {
@@ -104,7 +124,6 @@ export default function NotificationsPopup({ onClose, positionOverride, onOpenFr
     activeLoans.forEach(loan => {
       const daysUntil = daysUntilDate(loan.next_payment_date);
       if (daysUntil > 5) return;
-      // If there's a pending_confirmation payment, don't treat this loan as overdue
       const hasPendingPayment = allPayments.some(p => p.loan_id === loan.id && p.status === 'pending_confirmation');
       if (daysUntil < 0 && hasPendingPayment) return;
       const isBorrower = loan.borrower_id === user.id;
@@ -117,21 +136,13 @@ export default function NotificationsPopup({ onClose, positionOverride, onOpenFr
       const paymentAmount = Math.min(loan.payment_amount || 0, remainingAmount);
       if (paymentAmount <= 0) return;
       if (isBorrower) {
-        if (daysUntil < 0) {
-          reminders.push({ id: `reminder-owe-${loan.id}`, type: 'overdue_owe', loan, title: `Your payment to ${otherName} is overdue`, daysUntil, paymentAmount, otherName });
-        } else if (daysUntil === 0) {
-          reminders.push({ id: `reminder-owe-${loan.id}`, type: 'due_today_owe', loan, title: `You have a payment due today to ${otherName}`, daysUntil, paymentAmount, otherName });
-        } else {
-          reminders.push({ id: `reminder-owe-${loan.id}`, type: 'upcoming_owe', loan, title: `You have an upcoming payment to ${otherName}`, daysUntil, paymentAmount, otherName });
-        }
+        if (daysUntil < 0) reminders.push({ id: `reminder-owe-${loan.id}`, type: 'overdue_owe', loan, title: `Your payment to ${otherName} is overdue`, daysUntil, paymentAmount, otherName });
+        else if (daysUntil === 0) reminders.push({ id: `reminder-owe-${loan.id}`, type: 'due_today_owe', loan, title: `You have a payment due today to ${otherName}`, daysUntil, paymentAmount, otherName });
+        else reminders.push({ id: `reminder-owe-${loan.id}`, type: 'upcoming_owe', loan, title: `You have an upcoming payment to ${otherName}`, daysUntil, paymentAmount, otherName });
       } else {
-        if (daysUntil < 0) {
-          reminders.push({ id: `reminder-receive-${loan.id}`, type: 'overdue_receive', loan, title: `${otherName}'s payment to you is overdue`, daysUntil, paymentAmount, otherName });
-        } else if (daysUntil === 0) {
-          reminders.push({ id: `reminder-receive-${loan.id}`, type: 'due_today_receive', loan, title: `You are due to receive a payment from ${otherName} today`, daysUntil, paymentAmount, otherName });
-        } else {
-          reminders.push({ id: `reminder-receive-${loan.id}`, type: 'upcoming_receive', loan, title: `You are due to receive a payment from ${otherName}`, daysUntil, paymentAmount, otherName });
-        }
+        if (daysUntil < 0) reminders.push({ id: `reminder-receive-${loan.id}`, type: 'overdue_receive', loan, title: `${otherName}'s payment to you is overdue`, daysUntil, paymentAmount, otherName });
+        else if (daysUntil === 0) reminders.push({ id: `reminder-receive-${loan.id}`, type: 'due_today_receive', loan, title: `You are due to receive a payment from ${otherName} today`, daysUntil, paymentAmount, otherName });
+        else reminders.push({ id: `reminder-receive-${loan.id}`, type: 'upcoming_receive', loan, title: `You are due to receive a payment from ${otherName}`, daysUntil, paymentAmount, otherName });
       }
     });
     reminders.sort((a, b) => a.daysUntil - b.daysUntil);
@@ -208,13 +219,12 @@ export default function NotificationsPopup({ onClose, positionOverride, onOpenFr
       setShowSignatureModal(false);
       setSelectedOffer(null);
       loadRequests();
-      // Tell other pages (Home, etc.) to refresh their loan data
       window.dispatchEvent(new CustomEvent('loan-status-changed'));
     } catch (error) { console.error('Error declining loan offer:', error); }
     setProcessingId(null);
   };
 
-  // ── Icon map — plain symbols, no background ──────────────────
+  // ── Icon map ──────────────────────────────────────────────────────────────
   const TypeIcon = ({ type }) => {
     const isOverdue = type.startsWith('overdue');
     if (type === 'overdue_owe' || type === 'due_today_owe' || type === 'upcoming_owe') {
@@ -227,26 +237,11 @@ export default function NotificationsPopup({ onClose, positionOverride, onOpenFr
     if (type === 'offer_received') return <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2563EB" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{flexShrink:0,marginTop:1}}><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>;
     if (type === 'payment_confirm') return <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{flexShrink:0,marginTop:1}}><polyline points="20 6 9 17 4 12"/></svg>;
     if (type === 'term_change') return <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#D97706" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{flexShrink:0,marginTop:1}}><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>;
+    if (type === 'loan_sent' || type === 'payment_sent') return <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9B9A98" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{flexShrink:0,marginTop:1}}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>;
     return null;
   };
 
-  // ── Action button — plain text link style ────────────────────
-  const ActionBtn = ({ label, color = '#03ACEA', onClick, disabled }) => (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={disabled}
-      style={{
-        background: 'none', border: 'none', padding: 0, cursor: disabled ? 'default' : 'pointer',
-        fontSize: 12, fontWeight: 600, color: disabled ? '#C7C6C4' : color,
-        fontFamily: "'DM Sans', sans-serif", flexShrink: 0, whiteSpace: 'nowrap',
-      }}
-    >
-      {label}
-    </button>
-  );
-
-  // ── Arrow chevron button ──────────────────────────────────────
+  // ── Arrow chevron button ──────────────────────────────────────────────────
   const ArrowBtn = ({ onClick, disabled }) => (
     <button
       type="button"
@@ -265,32 +260,94 @@ export default function NotificationsPopup({ onClose, positionOverride, onOpenFr
     </button>
   );
 
-  // ── Build allItems ───────────────────────────────────────────
-  const allItems = [];
-  friendRequestsReceived.forEach(request => {
-    const senderProfile = profiles.find(p => p.user_id === request.user_id);
-    const name = senderProfile?.full_name || senderProfile?.username || 'Unknown';
-    allItems.push({ type: 'friend', id: `friend-${request.id}`, timestamp: new Date(request.created_at || 0), data: request, name });
-  });
-  loanOffersReceived.forEach(offer => {
-    const lender = getUserById(offer.lender_id);
-    const name = lender?.full_name || lender?.username || 'Unknown';
-    allItems.push({ type: 'offer_received', id: `offer-recv-${offer.id}`, timestamp: new Date(offer.created_at || 0), data: offer, name, purpose: offer.purpose, lenderName: name });
-  });
-  paymentsToConfirm.forEach(payment => {
-    const recorderProfile = profiles.find(p => p.user_id === payment.recorded_by);
-    const name = recorderProfile?.full_name || recorderProfile?.username || 'Unknown';
-    const pmtLoan = loans.find(l => l.id === payment.loan_id);
-    allItems.push({ type: 'payment_confirm', id: `pmt-confirm-${payment.id}`, timestamp: new Date(payment.created_at || payment.payment_date || 0), data: payment, name, purpose: pmtLoan?.purpose || null, amount: payment.amount, paymentMethod: payment.payment_method || null, paymentDate: payment.payment_date || null });
-  });
-  termChangeRequests.forEach(loan => {
-    const otherProfile = profiles.find(p => p.user_id === (loan.lender_id === user?.id ? loan.borrower_id : loan.lender_id));
-    const name = otherProfile?.full_name || otherProfile?.username || getLoanOtherParty(loan);
-    allItems.push({ type: 'term_change', id: `term-${loan.id}`, timestamp: new Date(loan.updated_at || loan.created_at || 0), data: loan, name });
-  });
-  allItems.sort((a, b) => b.timestamp - a.timestamp);
+  // ── Build all unified items ───────────────────────────────────────────────
+  const buildAllItems = () => {
+    const items = [];
 
-  const isEmpty = reminders.length === 0 && allItems.length === 0;
+    friendRequestsReceived.forEach(request => {
+      const senderProfile = profiles.find(p => p.user_id === request.user_id);
+      const name = senderProfile?.full_name || senderProfile?.username || 'Unknown';
+      items.push({ type: 'friend', id: `friend-${request.id}`, category: 'attention', timestamp: new Date(request.created_at || 0), data: request, name });
+    });
+
+    loanOffersReceived.forEach(offer => {
+      const lender = getUserById(offer.lender_id);
+      const name = lender?.full_name || lender?.username || 'Unknown';
+      items.push({ type: 'offer_received', id: `offer-recv-${offer.id}`, category: 'attention', timestamp: new Date(offer.created_at || 0), data: offer, name, purpose: offer.purpose, lenderName: name });
+    });
+
+    paymentsToConfirm.forEach(payment => {
+      const recorderProfile = profiles.find(p => p.user_id === payment.recorded_by);
+      const name = recorderProfile?.full_name || recorderProfile?.username || 'Unknown';
+      const pmtLoan = loans.find(l => l.id === payment.loan_id);
+      items.push({ type: 'payment_confirm', id: `pmt-confirm-${payment.id}`, category: 'attention', timestamp: new Date(payment.created_at || payment.payment_date || 0), data: payment, name, purpose: pmtLoan?.purpose || null, amount: payment.amount, paymentMethod: payment.payment_method || null, paymentDate: payment.payment_date || null });
+    });
+
+    termChangeRequests.forEach(loan => {
+      const otherProfile = profiles.find(p => p.user_id === (loan.lender_id === user?.id ? loan.borrower_id : loan.lender_id));
+      const name = otherProfile?.full_name || otherProfile?.username || getLoanOtherParty(loan);
+      items.push({ type: 'term_change', id: `term-${loan.id}`, category: 'attention', timestamp: new Date(loan.updated_at || loan.created_at || 0), data: loan, name });
+    });
+
+    pendingLoanOffersSent.forEach(loan => {
+      const borrowerProfile = profiles.find(p => p.user_id === loan.borrower_id);
+      const firstName = borrowerProfile?.full_name?.split(' ')[0] || borrowerProfile?.username || 'them';
+      items.push({ type: 'loan_sent', id: `loan-sent-${loan.id}`, category: 'pending', timestamp: new Date(loan.created_at || 0), data: loan, name: firstName, loan, profile: borrowerProfile });
+    });
+
+    pendingPaymentsSentByMe.forEach(payment => {
+      const loanForPay = loans.find(l => l.id === payment.loan_id);
+      const otherUserId = loanForPay ? (loanForPay.lender_id === user?.id ? loanForPay.borrower_id : loanForPay.lender_id) : null;
+      const otherProfile = otherUserId ? profiles.find(p => p.user_id === otherUserId) : null;
+      const firstName = otherProfile?.full_name?.split(' ')[0] || otherProfile?.username || 'them';
+      items.push({ type: 'payment_sent', id: `pay-sent-${payment.id}`, category: 'pending', timestamp: new Date(payment.created_at || payment.payment_date || 0), data: payment, name: firstName, payment, loan: loanForPay, profile: otherProfile });
+    });
+
+    reminders.forEach(reminder => {
+      const isOverdue = reminder.type.startsWith('overdue');
+      items.push({ ...reminder, id: reminder.id, category: 'support', timestamp: new Date(), isOverdue });
+    });
+
+    items.sort((a, b) => b.timestamp - a.timestamp);
+    return items;
+  };
+
+  const allUnifiedItems = buildAllItems();
+
+  const getTabItems = (tab) => {
+    if (tab === 'all') return allUnifiedItems;
+    if (tab === 'attention') return allUnifiedItems.filter(i => i.category === 'attention');
+    if (tab === 'pending') return allUnifiedItems.filter(i => i.category === 'pending');
+    if (tab === 'offers') return allUnifiedItems.filter(i => i.type === 'offer_received' || i.type === 'loan_sent');
+    if (tab === 'support') return allUnifiedItems.filter(i => i.category === 'support');
+    if (tab === 'priority') return allUnifiedItems.filter(i => i.isOverdue || i.type === 'payment_confirm');
+    return allUnifiedItems;
+  };
+
+  const tabItems = getTabItems(activeTab);
+  const isEmpty = tabItems.length === 0;
+
+  const renderItemText = (item) => {
+    if (item.type === 'friend') return `${item.name} sent you a friend request`;
+    if (item.type === 'offer_received') return `${item.name} sent you a loan offer`;
+    if (item.type === 'payment_confirm') return `${item.name} paid you $${item.amount?.toFixed(2)}${item.paymentMethod ? ` via ${item.paymentMethod}` : ''}`;
+    if (item.type === 'term_change') return `${item.name} sent you a loan change request`;
+    if (item.type === 'loan_sent') return `Waiting for ${item.name} to review your loan offer`;
+    if (item.type === 'payment_sent') return `${item.name} has not confirmed your ${formatMoney(item.payment?.amount || 0)} payment yet`;
+    // reminders
+    return item.title;
+  };
+
+  const renderItemAction = (item) => {
+    if (item.type === 'friend') return <ArrowBtn onClick={() => { onClose(); onOpenFriends?.(); }} />;
+    if (item.type === 'offer_received') return <ArrowBtn disabled={processingId === item.data.id} onClick={() => { setSelectedOffer(item.data); setShowSignatureModal(true); }} />;
+    if (item.type === 'payment_confirm') return <ArrowBtn disabled={processingId === item.data.id} onClick={() => { onClose(); navigate(createPageUrl('RecordPayment')); }} />;
+    if (item.type === 'term_change') return <ArrowBtn onClick={() => { onClose(); navigate(createPageUrl('LendingBorrowing')); }} />;
+    if (item.type === 'loan_sent' || item.type === 'payment_sent') return <ArrowBtn onClick={() => { /* detail sheet not shown in popup, just close */ onClose(); navigate(createPageUrl('Notifications')); }} />;
+    // reminders
+    if (item.isOverdue) return <Link to={createPageUrl('RecordPayment')} onClick={onClose} style={{ fontSize: 12, fontWeight: 600, color: '#E8726E', textDecoration: 'none', flexShrink: 0 }}>Record</Link>;
+    return <ArrowBtn onClick={() => { onClose(); navigate(createPageUrl('Upcoming')); }} />;
+  };
 
   return (
     <>
@@ -320,8 +377,36 @@ export default function NotificationsPopup({ onClose, positionOverride, onOpenFr
           </button>
         </div>
 
+        {/* Tabs */}
+        <div style={{
+          display: 'flex', gap: 6, overflowX: 'auto', padding: '0 16px 10px',
+          scrollbarWidth: 'none', msOverflowStyle: 'none', flexShrink: 0,
+        }}>
+          {POPUP_TABS.map(tab => {
+            const isActive = activeTab === tab.key;
+            return (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                style={{
+                  flexShrink: 0, padding: '5px 11px', borderRadius: 999,
+                  border: isActive ? 'none' : '1.5px solid rgba(0,0,0,0.18)',
+                  background: isActive ? '#1A1918' : 'transparent',
+                  color: isActive ? '#fff' : '#1A1918',
+                  fontSize: 11, fontWeight: 600, cursor: 'pointer',
+                  fontFamily: "'DM Sans', sans-serif",
+                  whiteSpace: 'nowrap',
+                  transition: 'background 0.15s, color 0.15s',
+                }}
+              >
+                {tab.label}
+              </button>
+            );
+          })}
+        </div>
+
         {/* Content */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '10px 16px 14px' }}>
+        <div style={{ flex: 1, overflowY: 'auto', padding: '4px 16px 14px' }}>
           {isLoading ? (
             <div style={{ display: 'flex', justifyContent: 'center', padding: '32px 0' }}>
               <div style={{ width: 22, height: 22, border: '2px solid #03ACEA', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
@@ -333,59 +418,14 @@ export default function NotificationsPopup({ onClose, positionOverride, onOpenFr
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              {/* Payment reminders */}
-              {reminders.map(reminder => {
-                const isOverdue = reminder.type.startsWith('overdue');
-                return (
-                  <div key={reminder.id} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, padding: '7px 0' }}>
-                    <TypeIcon type={reminder.type} />
-                    <span style={{ flex: 1, fontSize: 12, fontWeight: 500, color: '#1A1918', lineHeight: 1.4 }}>
-                      {reminder.title}
-                    </span>
-                    {isOverdue ? (
-                      <Link
-                        to={createPageUrl('RecordPayment')}
-                        onClick={onClose}
-                        style={{ fontSize: 12, fontWeight: 600, color: '#E8726E', textDecoration: 'none', flexShrink: 0 }}
-                      >
-                        Record
-                      </Link>
-                    ) : (
-                      <ArrowBtn onClick={() => { onClose(); navigate(createPageUrl('Upcoming')); }} />
-                    )}
-                  </div>
-                );
-              })}
-
-              {/* Action items */}
-              {allItems.map(item => (
+              {tabItems.map(item => (
                 <div key={item.id} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, padding: '7px 0' }}>
                   <TypeIcon type={item.type} />
                   <span style={{ flex: 1, fontSize: 12, fontWeight: 500, color: '#1A1918', lineHeight: 1.4 }}>
-                    {item.type === 'friend' && `${item.name} sent you a friend request`}
-                    {item.type === 'offer_received' && `${item.name} sent you a loan offer`}
-                    {item.type === 'payment_confirm' && `${item.name} paid you $${item.amount?.toFixed(2)}${item.paymentMethod ? ` via ${item.paymentMethod}` : ''}`}
-                    {item.type === 'term_change' && `${item.name} sent you a loan change request`}
+                    {renderItemText(item)}
                   </span>
                   <div style={{ display: 'flex', flexShrink: 0, alignItems: 'center' }}>
-                    {item.type === 'friend' && (
-                      <ArrowBtn onClick={() => { onClose(); onOpenFriends?.(); }} />
-                    )}
-                    {item.type === 'offer_received' && (
-                      <ArrowBtn
-                        disabled={processingId === item.data.id}
-                        onClick={() => { setSelectedOffer(item.data); setShowSignatureModal(true); }}
-                      />
-                    )}
-                    {item.type === 'payment_confirm' && (
-                      <ArrowBtn
-                        disabled={processingId === item.data.id}
-                        onClick={() => { onClose(); navigate(createPageUrl('RecordPayment')); }}
-                      />
-                    )}
-                    {item.type === 'term_change' && (
-                      <ArrowBtn onClick={() => { onClose(); navigate(createPageUrl('LendingBorrowing')); }} />
-                    )}
+                    {renderItemAction(item)}
                   </div>
                 </div>
               ))}
@@ -420,7 +460,10 @@ export default function NotificationsPopup({ onClose, positionOverride, onOpenFr
         />
       )}
 
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      <style>{`
+        @keyframes spin { to { transform: rotate(360deg); } }
+        div[style*="overflow-x: auto"]::-webkit-scrollbar { display: none; }
+      `}</style>
     </>
   );
 }
