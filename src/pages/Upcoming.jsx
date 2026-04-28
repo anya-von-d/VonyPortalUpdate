@@ -33,7 +33,6 @@ export default function Upcoming() {
     try { const raw = localStorage.getItem('vony.plan-expenses'); return raw ? JSON.parse(raw) : []; } catch { return []; }
   });
   const [addingExpense, setAddingExpense] = useState(false);
-  const [hoveredPostitOverdue, setHoveredPostitOverdue] = useState(null);
   const [newExpenseLabel, setNewExpenseLabel] = useState('');
   const [newExpenseAmount, setNewExpenseAmount] = useState('');
   const [newExpenseDate, setNewExpenseDate] = useState('');
@@ -288,59 +287,6 @@ export default function Upcoming() {
       firstName, purpose: loan.purpose || '', isCompleted: true,
     });
   });
-
-  // ── PaymentRow component (Coming Later) ──
-  // Badge color: incoming = light blue, outgoing = dark blue
-  const PaymentRow = ({ event }) => {
-    const isOverdueItem = event.days < 0;
-    const daysLabel = format(event.date, 'MMM d');
-    const amountStr = formatMoney(event.amount);
-    const badgeColor = event.isLender ? '#03ACEA' : '#1D5B94';
-    const badgeBg = event.isLender ? 'rgba(3,172,234,0.09)' : 'rgba(29,91,148,0.09)';
-    let primaryLine;
-    if (isOverdueItem) {
-      primaryLine = event.isLender
-        ? <>{amountStr} from {event.firstName} is overdue</>
-        : <>{amountStr} to {event.firstName} is overdue</>;
-    } else {
-      primaryLine = event.isLender
-        ? <>Due to receive {amountStr} from {event.firstName}</>
-        : <>{amountStr} due to {event.firstName}</>;
-    }
-    return (
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 0' }}>
-        <div style={{
-          flexShrink: 0,
-          fontSize: 10, fontWeight: 700, lineHeight: 1.2,
-          color: badgeColor,
-          background: badgeBg,
-          borderRadius: 5, padding: '2px 5px',
-          fontFamily: "'DM Sans', sans-serif",
-        }}>
-          {daysLabel}
-        </div>
-        <div style={{ flex: 1, minWidth: 0, fontSize: 12, color: '#1A1918', overflow: 'hidden' }}>
-          <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-            {primaryLine}
-          </div>
-          {(event.reason || event.purpose) && (
-            <div style={{ fontSize: 11, color: '#9B9A98', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: 1 }}>
-              {event.reason || event.purpose}
-            </div>
-          )}
-        </div>
-      </div>
-    );
-  };
-
-  // ── Section heading ──
-  const SectionHead = ({ label, count, total }) => (
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 5, marginBottom: 2, marginTop: 28 }}>
-      <span style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>{label}</span>
-      {count > 0 && <span style={{ fontSize: 11, color: '#9B9A98' }}>{count} · {formatMoney(total)}</span>}
-    </div>
-  );
-
 
   return (
     <div style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, lineHeight: 1.5, color: '#1A1918', WebkitFontSmoothing: 'antialiased' }}>
@@ -673,192 +619,50 @@ export default function Upcoming() {
           {/* Three-column: overdue+7days | coming later+cashflow+so far | calendar */}
           {activeTab === 'summary' && <div className="upcoming-three-col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 24, alignItems: 'start' }}>
 
-            {/* Col 1: Overdue + Next 7 Days */}
+            {/* Col 1: Next 7 Days */}
             <div className="upcoming-col-1" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              {/* Status post-its — png blue notes, always shown */}
-              {(() => {
-                const noteConfigs = [
-                  { img: '/images/postits/1.png', rotate: '-3.5deg', ty: '7px', zIndex: 1, textColor: '#002A40' },
-                  { img: '/images/postits/2.png', rotate: '1.8deg',  ty: '0px',  zIndex: 2, textColor: '#003A52' },
-                  { img: '/images/postits/3.png', rotate: '-1deg',   ty: '5px',  zIndex: 3, textColor: '#001F30' },
-                ];
 
-                // Pending payments: submitted by borrower, awaiting lender confirmation
-                const pendingPayments = safePayments
-                  .filter(p => p?.status === 'pending_confirmation')
-                  .map(p => {
-                    const loan = myLoans.find(l => l.id === p.loan_id);
-                    if (!loan) return null;
-                    const otherUserId = loan.lender_id === user.id ? loan.borrower_id : loan.lender_id;
-                    const otherProfile = getProfile(otherUserId);
-                    const firstName = (otherProfile?.full_name || otherProfile?.username || 'User').split(' ')[0];
-                    return { amount: p.amount || 0, firstName, loanId: loan.id };
-                  })
-                  .filter(Boolean);
-
-                const hasOverdue = overdue.length > 0;
-                const hasPending = pendingPayments.length > 0;
-
-                const openPending = () => window.dispatchEvent(
-                  new CustomEvent('open-pending-requests-popup')
-                );
-
-                const overdueText = (e) => {
-                  const daysAgo = Math.abs(e.days);
-                  return e.isLender
-                    ? `${e.firstName}'s payment of ${formatMoney(e.amount)} is ${daysAgo} day${daysAgo !== 1 ? 's' : ''} overdue`
-                    : `Your payment of ${formatMoney(e.amount)} to ${e.firstName} is ${daysAgo} day${daysAgo !== 1 ? 's' : ''} overdue`;
-                };
-
-                const pendingText = () => {
-                  const names = [...new Set(pendingPayments.map(p => p.firstName))];
-                  if (pendingPayments.length === 1)
-                    return `Your ${formatMoney(pendingPayments[0].amount)} payment to ${pendingPayments[0].firstName} has not been confirmed by them yet`;
-                  return names.length === 1
-                    ? `You have ${pendingPayments.length} payments that ${names[0]} has not confirmed yet`
-                    : `You have ${pendingPayments.length} payments that your friends have not confirmed yet`;
-                };
-
-                let postitItems = [];
-
-                if (!hasOverdue && !hasPending) {
-                  postitItems = [
-                    { text: '', action: null },
-                    { text: "Everything's looking good 💫", action: null },
-                    { text: '', action: null },
-                  ];
-                } else if (hasOverdue && hasPending) {
-                  postitItems = [
-                    { text: overdueText(overdue[0]), action: null },
-                    { text: overdue.length > 1 ? `You have ${overdue.length} overdue payments` : overdueText(overdue[0]), action: null },
-                    { text: pendingText(), action: openPending, isPending: true },
-                  ];
-                } else if (hasOverdue) {
-                  if (overdue.length === 1) {
-                    postitItems = [
-                      { text: '', action: null },
-                      { text: overdueText(overdue[0]), action: null },
-                      { text: '', action: null },
-                    ];
-                  } else if (overdue.length === 2) {
-                    postitItems = [
-                      { text: overdueText(overdue[0]), action: null },
-                      { text: overdueText(overdue[1]), action: null },
-                      { text: '', action: null },
-                    ];
-                  } else {
-                    const remaining = overdue.length - 2;
-                    postitItems = [
-                      { text: overdueText(overdue[0]), action: null },
-                      { text: overdueText(overdue[1]), action: null },
-                      { text: `You have ${remaining} other overdue payment${remaining !== 1 ? 's' : ''}`, action: null },
-                    ];
-                  }
-                } else {
-                  // pending only
-                  postitItems = [
-                    { text: '', action: null },
-                    { text: pendingText(), action: openPending, isPending: true },
-                    { text: '', action: null },
-                  ];
-                }
-
-                return (
-                  <div className="home-card-attention" style={{ display: 'flex', paddingBottom: 10, overflow: 'visible' }}>
-                    {postitItems.map((item, i) => {
-                      const nc = noteConfigs[i];
-                      return (
-                        <div
-                          key={i}
-                          onClick={item.action || undefined}
-                          onMouseEnter={() => setHoveredPostitOverdue(i)}
-                          onMouseLeave={() => setHoveredPostitOverdue(null)}
-                          style={{
-                            flex: 1,
-                            minHeight: 150,
-                            marginRight: i < 2 ? -22 : 0,
-                            transform: hoveredPostitOverdue === i
-                              ? `rotate(${nc.rotate}) translateY(calc(${nc.ty} - 10px))`
-                              : `rotate(${nc.rotate}) translateY(${nc.ty})`,
-                            zIndex: hoveredPostitOverdue === i ? 10 : nc.zIndex,
-                            position: 'relative',
-                            filter: hoveredPostitOverdue === i
-                              ? 'drop-shadow(4px 10px 14px rgba(0,0,0,0.26)) drop-shadow(0 2px 5px rgba(0,0,0,0.16))'
-                              : 'drop-shadow(2px 5px 9px rgba(0,0,0,0.22)) drop-shadow(0 1px 2px rgba(0,0,0,0.12))',
-                            cursor: item.action ? 'pointer' : 'default',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            transition: 'transform 0.18s ease, filter 0.18s ease',
-                          }}
-                        >
-                          <img
-                            src={nc.img}
-                            alt=""
-                            draggable={false}
-                            style={{
-                              position: 'absolute', inset: 0,
-                              width: '100%', height: '100%',
-                              objectFit: 'fill',
-                              pointerEvents: 'none', userSelect: 'none',
-                              zIndex: 0,
-                            }}
-                          />
-                          {item.text ? (
-                            <p style={{
-                              position: 'relative', zIndex: 1,
-                              margin: 0, padding: '0 14px',
-                              textAlign: 'center',
-                              fontSize: 11, fontWeight: 600,
-                              color: nc.textColor,
-                              fontFamily: "'DM Sans', sans-serif",
-                              lineHeight: 1.45,
-                              textShadow: '0 1px 0 rgba(255,255,255,0.25)',
-                            }}>
-                              {item.text}
-                            </p>
-                          ) : null}
-                        </div>
-                      );
-                    })}
-                  </div>
-                );
-              })()}
-
-              {/* Next 7 Days — Home-style card */}
+              {/* Next 7 Days */}
               {(() => {
                 const sevenDays = Array.from({ length: 7 }, (_, i) => addDays(today, i));
                 const next7Total = next7Days.reduce((s, e) => s + e.amount, 0);
                 return (
                   <div>
 
+                      {/* ── Date bar ── */}
+                      <div style={{ display: 'flex', marginBottom: 16, borderBottom: '1px solid rgba(0,0,0,0.07)', paddingBottom: 12 }}>
+                        {sevenDays.map((day, i) => {
+                          const isToday = i === 0;
+                          const dayHasEvents = next7Days.some(e => isSameDay(e.date, day)) || (i === 0 && overdue.length > 0);
+                          return (
+                            <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5 }}>
+                              <span style={{ fontSize: 10, fontWeight: 500, color: isToday ? '#03ACEA' : '#9B9A98', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>
+                                {isToday ? 'Today' : format(day, 'EEE')}
+                              </span>
+                              <div style={{
+                                width: 27, height: 27, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                background: isToday ? '#03ACEA' : 'transparent',
+                              }}>
+                                <span style={{ fontSize: 12, fontWeight: isToday ? 700 : 500, color: isToday ? '#fff' : '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>
+                                  {format(day, 'd')}
+                                </span>
+                              </div>
+                              {dayHasEvents && (
+                                <span style={{ width: 4, height: 4, borderRadius: '50%', background: isToday ? '#E8726E' : '#03ACEA', display: 'block' }} />
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+
                       {/* Card header */}
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
                         <div style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>Next 7 Days</div>
                         {next7Days.length > 0 && <span style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>{next7Days.length} · {formatMoney(next7Total)}</span>}
                       </div>
 
-                      {/* Insight — summary or sticky note when all clear */}
-                      {next7Days.length > 0 ? (
-                        <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginBottom: 10, lineHeight: 1.4 }}>
-                          {next7Days.length} payment{next7Days.length !== 1 ? 's' : ''} due · <span style={{ fontWeight: 600, color: '#787776' }}>{formatMoney(next7Total)} total</span>
-                        </div>
-                      ) : (
-                        <div style={{
-                          position: 'relative',
-                          background: 'linear-gradient(170deg, #FAF7F0 0%, #F3EFE4 100%)',
-                          borderRadius: '2px 2px 3px 3px',
-                          padding: '12px 10px 10px',
-                          marginBottom: 10,
-                          boxShadow: '1px 3px 10px rgba(0,0,0,0.10), 0 1px 2px rgba(0,0,0,0.06)',
-                          fontFamily: "'DM Sans', sans-serif",
-                          textAlign: 'center',
-                        }}>
-                          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 5, background: 'rgba(0,0,0,0.07)', borderRadius: '2px 2px 0 0' }} />
-                          <p style={{ margin: 0, marginTop: 2, fontSize: 11, fontWeight: 600, color: '#5C4A2A', lineHeight: 1.45 }}>
-                            You're all caught up this week 🎉
-                          </p>
-                        </div>
+                      {next7Days.length === 0 && overdue.length === 0 && (
+                        <div style={{ fontSize: 12, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", padding: '4px 0' }}>All clear this week 🎉</div>
                       )}
 
                       {/* 7-day rows — Home style: day/date column + colored bar + label */}
@@ -979,30 +783,38 @@ export default function Upcoming() {
 
               {/* Coming Later */}
               <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-                    <span style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>Coming Later</span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>Coming Later</span>
                     {comingLater.length > 0 && <span style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>{comingLater.length} · {formatMoney(comingLater.reduce((s, e) => s + e.amount, 0))}</span>}
                   </div>
-                  {/* Beige sticky note — summary or empty state */}
-                  <div style={{
-                    position: 'relative',
-                    background: 'linear-gradient(170deg, #FAF7F0 0%, #F3EFE4 100%)',
-                    borderRadius: '2px 2px 3px 3px',
-                    padding: '12px 10px 10px',
-                    marginBottom: comingLater.length > 0 ? 10 : 0,
-                    boxShadow: '1px 3px 10px rgba(0,0,0,0.10), 0 1px 2px rgba(0,0,0,0.06)',
-                    fontFamily: "'DM Sans', sans-serif",
-                    textAlign: comingLater.length === 0 ? 'center' : 'left',
-                  }}>
-                    <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 5, background: 'rgba(0,0,0,0.07)', borderRadius: '2px 2px 0 0' }} />
-                    <p style={{ margin: 0, marginTop: 2, fontSize: 11, fontWeight: 600, color: '#5C4A2A', lineHeight: 1.45 }}>
-                      {comingLater.length > 0
-                        ? <>You have <b style={{ color: '#1A1918' }}>{comingLater.length} payment{comingLater.length !== 1 ? 's' : ''}</b> coming up for <b style={{ color: '#1A1918' }}>{formatMoney(comingLater.reduce((s, e) => s + e.amount, 0))}</b>.</>
-                        : <>Clear skies ahead ✨</>
-                      }
-                    </p>
-                  </div>
-                  {comingLater.map(event => <PaymentRow key={event.loanId + '-later'} event={event} />)}
+                  {comingLater.length === 0 ? (
+                    <div style={{ fontSize: 12, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", padding: '4px 0' }}>Nothing coming up ✨</div>
+                  ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                      {comingLater.map((event) => {
+                        const barColor = event.isLender ? '#03ACEA' : '#1D5B94';
+                        const label = event.isLender
+                          ? `Expect ${formatMoney(event.amount)} from ${event.firstName}`
+                          : `${formatMoney(event.amount)} due to ${event.firstName}`;
+                        const subLabel = event.reason || null;
+                        return (
+                          <div key={event.loanId + '-later'} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '7px 0' }}>
+                            <div style={{ width: 52, flexShrink: 0, fontFamily: "'DM Sans', sans-serif" }}>
+                              <div style={{ fontSize: 10, fontWeight: 500, color: '#9B9A98', letterSpacing: '-0.01em' }}>{format(event.date, 'EEE')}</div>
+                              <div style={{ fontSize: 12, fontWeight: 500, color: '#1A1918' }}>{format(event.date, 'MMM d')}</div>
+                            </div>
+                            <div style={{ width: 3, alignSelf: 'stretch', borderRadius: 2, background: barColor, flexShrink: 0 }} />
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <div style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                {label}
+                              </div>
+                              {subLabel && <div style={{ fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{subLabel}</div>}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
               </div>
 
 
@@ -1011,7 +823,7 @@ export default function Upcoming() {
 
             {/* Col 3: Calendar */}
             <div className="upcoming-col-3" style={{ position: 'relative' }}>
-            <div style={{ position: 'relative', zIndex: 1, background: '#FEFEFE', borderRadius: 2, border: 'none', boxShadow: '5px 4px 18px rgba(0,0,0,0.09), -1px 0 0 rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.06)', padding: '14px 18px' }}>
+            <div style={{ position: 'relative', zIndex: 1 }}>
 
               {/* Month nav */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
