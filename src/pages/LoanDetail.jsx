@@ -341,49 +341,60 @@ export default function LoanDetail() {
   const C = 2 * Math.PI * 45;
   const ringOffset = C - (paidPct / 100) * C;
 
-  const cardStyle = {
+  // Only Promissory Note and Amortization Table get the card treatment
+  const docCardStyle = {
     background: "#FEFEFE",
     borderRadius: 3,
     border: "none",
     boxShadow: "0 2px 10px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.06)",
-    padding: "18px 20px",
-    marginBottom: 20,
+    padding: "22px 24px",
+    marginBottom: 32,
   };
 
+  // Plain section wrapper — no box
+  const sectionWrap = { marginBottom: 36 };
+
   const sectionTitle = {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: 700,
-    color: "#1A1918",
+    color: "#9B9A98",
     fontFamily: "'DM Sans', sans-serif",
-    letterSpacing: "-0.02em",
-    marginBottom: 14,
+    letterSpacing: "0.06em",
+    textTransform: "uppercase",
+    marginBottom: 16,
     marginTop: 0,
   };
 
   return (
     <>
+      <style>{`
+        @media (min-width: 901px) {
+          .loan-detail-center { padding-left: 80px !important; padding-right: 80px !important; }
+        }
+      `}</style>
+
       <MeshMobileNav user={currentUser} activePage={isLending ? "Lending" : "Borrowing"} />
 
       <div className="mesh-layout" style={{ minHeight: "100vh", display: "grid", gridTemplateColumns: "200px 1fr", gap: 0, fontFamily: "'DM Sans', sans-serif" }}>
         <DesktopSidebar />
 
-        <div className="mesh-center" style={{ background: "transparent", padding: "24px 32px 80px" }}>
+        <div className="mesh-center loan-detail-center" style={{ background: "transparent", padding: "24px 28px 80px" }}>
 
           {/* ── Back button ── */}
           <button
             onClick={() => navigate(-1)}
-            style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", cursor: "pointer", color: "#787776", fontSize: 13, fontFamily: "'DM Sans', sans-serif", padding: "0 0 20px", marginLeft: -4 }}
+            style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", cursor: "pointer", color: "#787776", fontSize: 13, fontFamily: "'DM Sans', sans-serif", padding: "0 0 24px", marginLeft: -4 }}
           >
             <ChevronLeft size={16} />
             Back
           </button>
 
           {/* ── Agreement header ── */}
-          <div style={{ marginBottom: 6 }}>
-            <h1 style={{ fontSize: 22, fontWeight: 700, color: "#1A1918", margin: "0 0 8px", fontFamily: "'DM Sans', sans-serif", letterSpacing: "-0.03em" }}>
+          <div style={{ marginBottom: 32 }}>
+            <h1 style={{ fontSize: 22, fontWeight: 700, color: "#1A1918", margin: "0 0 10px", fontFamily: "'DM Sans', sans-serif", letterSpacing: "-0.03em" }}>
               Lending Agreement between {lenderName} and {borrowerName}
             </h1>
-            <p style={{ fontSize: 14, color: "#5C5B5A", margin: 0, lineHeight: 1.65, fontFamily: "'DM Sans', sans-serif" }}>
+            <p style={{ fontSize: 14, color: "#5C5B5A", margin: 0, lineHeight: 1.7, fontFamily: "'DM Sans', sans-serif" }}>
               On {signedDateFmt} both parties signed a lending agreement where{" "}
               <strong style={{ color: "#1A1918" }}>{lenderName}</strong> agreed to lend{" "}
               <strong style={{ color: "#1A1918" }}>{borrowerName}</strong>{" "}
@@ -394,12 +405,10 @@ export default function LoanDetail() {
             </p>
           </div>
 
-          <div style={{ height: 1, background: "rgba(0,0,0,0.06)", margin: "20px 0 24px" }} />
-
-          {/* ── Stats grid (image 2 style) ── */}
-          <div style={cardStyle}>
+          {/* ── Loan Overview — single column, no lines, no box ── */}
+          <div style={sectionWrap}>
             <p style={sectionTitle}>Loan Overview</p>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
               {[
                 { label: "Loan Amount", value: formatMoney(loan.amount || 0) },
                 { label: "Interest Rate", value: `${loan.interest_rate || 0}%` },
@@ -410,26 +419,19 @@ export default function LoanDetail() {
                 { label: "Payments Made", value: `${fullPaymentCount}/${totalPeriods}`, sub: "full payments" },
                 { label: `${freqLabel} Payments`, value: formatMoney(displayPaymentAmt), sub: isLending ? `from ${otherName.split(" ")[0]}` : `to ${otherName.split(" ")[0]}` },
               ].map((item, idx) => (
-                <div key={idx} style={{
-                  padding: "12px 16px",
-                  borderBottom: idx < 6 ? "1px solid rgba(0,0,0,0.05)" : "none",
-                  borderRight: idx % 2 === 0 ? "1px solid rgba(0,0,0,0.05)" : "none",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}>
-                  <span style={{ fontSize: 13, color: "#787776", fontFamily: "'DM Sans', sans-serif" }}>{item.label}</span>
+                <div key={idx} style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                  <span style={{ fontSize: 14, color: "#787776", fontFamily: "'DM Sans', sans-serif" }}>{item.label}</span>
                   <div style={{ textAlign: "right" }}>
-                    <span style={{ fontSize: 14, fontWeight: 700, color: "#1A1918", fontFamily: "'DM Sans', sans-serif" }}>{item.value}</span>
-                    {item.sub && <p style={{ fontSize: 10, color: "#9B9A98", margin: "2px 0 0", fontFamily: "'DM Sans', sans-serif" }}>{item.sub}</p>}
+                    <span style={{ fontSize: 15, fontWeight: 700, color: "#1A1918", fontFamily: "'DM Sans', sans-serif" }}>{item.value}</span>
+                    {item.sub && <p style={{ fontSize: 10, color: "#9B9A98", margin: "1px 0 0", fontFamily: "'DM Sans', sans-serif" }}>{item.sub}</p>}
                   </div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* ── Repayment ring summary ── */}
-          <div style={{ ...cardStyle, display: "flex", alignItems: "center", gap: 24 }}>
+          {/* ── Repayment ring — no box ── */}
+          <div style={{ ...sectionWrap, display: "flex", alignItems: "center", gap: 24 }}>
             <div style={{ position: "relative", width: 80, height: 80, flexShrink: 0 }}>
               <svg width="80" height="80" viewBox="0 0 128 128" style={{ transform: "rotate(-90deg)" }}>
                 <circle cx="64" cy="64" r="45" fill="none" stroke={`${accent}26`} strokeWidth="10" />
@@ -441,7 +443,7 @@ export default function LoanDetail() {
               </div>
             </div>
             <div>
-              <p style={{ margin: "0 0 4px", fontSize: 15, fontWeight: 700, color: accent, fontFamily: "'DM Sans', sans-serif", letterSpacing: "-0.02em" }}>
+              <p style={{ margin: "0 0 4px", fontSize: 17, fontWeight: 700, color: accent, fontFamily: "'DM Sans', sans-serif", letterSpacing: "-0.02em" }}>
                 {formatMoney(remaining)} remaining
               </p>
               <p style={{ margin: 0, fontSize: 13, color: "#787776", fontFamily: "'DM Sans', sans-serif" }}>
@@ -450,11 +452,11 @@ export default function LoanDetail() {
             </div>
           </div>
 
-          {/* ── Payment History bar chart ── */}
-          <div style={cardStyle}>
+          {/* ── Payment History bar chart — no box ── */}
+          <div style={sectionWrap}>
             <p style={sectionTitle}>Payment History</p>
             {chartData.length === 0 ? (
-              <p style={{ fontSize: 12, color: "#C7C6C4", textAlign: "center", margin: "24px 0" }}>No payment schedule yet</p>
+              <p style={{ fontSize: 12, color: "#C7C6C4", margin: 0 }}>No payment schedule yet</p>
             ) : (
               <div style={{ position: "relative" }}>
                 <div style={{ display: "flex", alignItems: "flex-end", gap: 2, height: chartHeight }}>
@@ -496,23 +498,23 @@ export default function LoanDetail() {
                   </div>
                 </div>
                 {/* Legend */}
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12, marginTop: 10, paddingTop: 10, borderTop: "1px solid rgba(0,0,0,0.06)", flexWrap: "wrap" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 4 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: "#03ACEA" }} /><span style={{ fontSize: 11, color: "#4B4A48" }}>Completed</span></div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 4 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: "rgba(0,0,0,0.1)", border: "1px dashed rgba(0,0,0,0.15)" }} /><span style={{ fontSize: 11, color: "#4B4A48" }}>Pending</span></div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 4 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: "rgba(84,166,207,0.28)", border: "1px dashed rgba(84,166,207,0.5)" }} /><span style={{ fontSize: 11, color: "#4B4A48" }}>Expected</span></div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 4 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: "rgba(232,114,110,0.3)", border: "1px dashed rgba(232,114,110,0.5)" }} /><span style={{ fontSize: 11, color: "#4B4A48" }}>Missed</span></div>
+                <div style={{ display: "flex", alignItems: "center", gap: 14, marginTop: 12, flexWrap: "wrap" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 4 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: "#03ACEA" }} /><span style={{ fontSize: 11, color: "#787776" }}>Completed</span></div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 4 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: "rgba(0,0,0,0.1)", border: "1px dashed rgba(0,0,0,0.15)" }} /><span style={{ fontSize: 11, color: "#787776" }}>Pending</span></div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 4 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: "rgba(84,166,207,0.28)", border: "1px dashed rgba(84,166,207,0.5)" }} /><span style={{ fontSize: 11, color: "#787776" }}>Expected</span></div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 4 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: "rgba(232,114,110,0.3)", border: "1px dashed rgba(232,114,110,0.5)" }} /><span style={{ fontSize: 11, color: "#787776" }}>Missed</span></div>
                 </div>
               </div>
             )}
           </div>
 
-          {/* ── Payments list ── */}
-          <div style={cardStyle}>
+          {/* ── Payments list — no box, no row lines ── */}
+          <div style={sectionWrap}>
             <p style={sectionTitle}>Payments</p>
             {paymentRows.length === 0 ? (
-              <p style={{ fontSize: 12, color: "#C7C6C4", textAlign: "center", margin: "24px 0" }}>No payments scheduled</p>
+              <p style={{ fontSize: 12, color: "#C7C6C4", margin: 0 }}>No payments scheduled</p>
             ) : (
-              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                 {paymentRows.map(row => {
                   const statusConfig = {
                     completed: { label: "Completed", color: "#16A34A", bg: "rgba(22,163,74,0.1)" },
@@ -526,7 +528,7 @@ export default function LoanDetail() {
                   const circ = 2 * Math.PI * 12;
                   const dash = r2 * circ;
                   return (
-                    <div key={row.number} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 12px", borderRadius: 10, background: "transparent", borderBottom: "1px solid rgba(0,0,0,0.04)" }}>
+                    <div key={row.number} style={{ display: "flex", alignItems: "center", gap: 12 }}>
                       {/* Pie circle */}
                       <svg width="30" height="30" viewBox="0 0 30 30" style={{ flexShrink: 0 }}>
                         <circle cx="15" cy="15" r="12" fill="none" stroke="#E5E4E2" strokeWidth="4" />
@@ -542,7 +544,7 @@ export default function LoanDetail() {
                           <p style={{ fontSize: 13, fontWeight: 500, color: "#1A1918", margin: 0 }}>
                             Payment {row.number}: {formatMoney(row.amount)}
                           </p>
-                          <span style={{ fontSize: 10, fontWeight: 600, color: cfg.color, background: cfg.bg, borderRadius: 5, padding: "2px 7px" }}>{cfg.label}</span>
+                          <span style={{ fontSize: 10, fontWeight: 600, color: cfg.color, background: cfg.bg, borderRadius: 5, padding: "2px 7px", flexShrink: 0 }}>{cfg.label}</span>
                         </div>
                         {row.status === "partial" && row.paidAmount > 0 && (
                           <p style={{ fontSize: 12, margin: "2px 0 0", color: "#787776" }}>
@@ -563,23 +565,21 @@ export default function LoanDetail() {
             )}
           </div>
 
-          {/* ── Activity timeline ── */}
-          <div style={cardStyle}>
+          {/* ── Activity timeline — no box ── */}
+          <div style={sectionWrap}>
             <p style={sectionTitle}>Activity</p>
             {activities.length === 0 ? (
-              <p style={{ fontSize: 12, color: "#C7C6C4", textAlign: "center", margin: "24px 0" }}>No activity recorded yet</p>
+              <p style={{ fontSize: 12, color: "#C7C6C4", margin: 0 }}>No activity recorded yet</p>
             ) : (
               <div style={{ display: "flex", flexDirection: "column" }}>
                 {activities.map((activity, idx) => {
                   const cfg = activityIconConfig[activity.type] || activityIconConfig.created;
                   return (
                     <div key={idx} style={{ display: "flex", alignItems: "flex-start", gap: 12, position: "relative" }}>
-                      {/* vertical line */}
                       {idx < activities.length - 1 && (
                         <div style={{ position: "absolute", left: 13, top: 30, width: 1, bottom: -8, background: "rgba(84,166,207,0.2)" }} />
                       )}
-                      {/* icon dot */}
-                      <div style={{ width: 28, height: 28, borderRadius: 8, background: cfg.bg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, position: "relative", zIndex: 1, boxShadow: "0 0 0 3px white", marginTop: 4 }}>
+                      <div style={{ width: 28, height: 28, borderRadius: 8, background: cfg.bg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, position: "relative", zIndex: 1, marginTop: 4 }}>
                         <svg width={cfg.sz} height={cfg.sz} fill="none" viewBox="0 0 24 24" stroke={cfg.stroke} strokeWidth={cfg.sw}>
                           <path strokeLinecap="round" strokeLinejoin="round" d={cfg.path} />
                         </svg>
@@ -591,7 +591,7 @@ export default function LoanDetail() {
                             <span style={{ fontSize: 9, fontWeight: 700, color: "#F59E0B", background: "rgba(245,158,11,0.12)", border: "1px solid rgba(245,158,11,0.3)", borderRadius: 4, padding: "2px 5px", whiteSpace: "nowrap" }}>Awaiting Confirmation</span>
                           )}
                         </div>
-                        <p style={{ fontSize: 11, color: "#9B9A98", margin: "3px 0 0", fontFamily: "'DM Sans', sans-serif" }}>
+                        <p style={{ fontSize: 11, color: "#9B9A98", margin: "3px 0 0" }}>
                           {format(activity.timestamp, "MMM d, yyyy · h:mm a")}
                         </p>
                       </div>
@@ -602,25 +602,23 @@ export default function LoanDetail() {
             )}
           </div>
 
-          {/* ── Promissory Note ── */}
+          {/* ── Promissory Note — keeps card style ── */}
           {agreement && (
-            <div style={cardStyle}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-                <p style={sectionTitle}>Promissory Note</p>
+            <div style={docCardStyle}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
+                <p style={{ ...sectionTitle, marginBottom: 0 }}>Promissory Note</p>
                 <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                   <FileText size={14} style={{ color: "#9B9A98" }} />
                   <span style={{ fontSize: 10, color: "#9B9A98", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase" }}>Legal Document</span>
                 </div>
               </div>
 
-              {/* Principal highlight */}
               <div style={{ background: "rgba(3,172,234,0.06)", borderRadius: 10, border: "1px solid rgba(3,172,234,0.15)", padding: "12px 16px", marginBottom: 16 }}>
-                <p style={{ fontSize: 11, color: "#787776", margin: "0 0 3px", fontFamily: "'DM Sans', sans-serif" }}>Principal Amount</p>
-                <p style={{ fontSize: 20, fontWeight: 700, color: accent, margin: 0, letterSpacing: "-0.03em", fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(agreement.amount)}</p>
+                <p style={{ fontSize: 11, color: "#787776", margin: "0 0 3px" }}>Principal Amount</p>
+                <p style={{ fontSize: 20, fontWeight: 700, color: accent, margin: 0, letterSpacing: "-0.03em" }}>{formatMoney(agreement.amount)}</p>
               </div>
 
-              {/* Agreement paragraph */}
-              <p style={{ fontSize: 13, lineHeight: 1.75, color: "#1A1918", margin: "0 0 16px", fontFamily: "'DM Sans', sans-serif" }}>
+              <p style={{ fontSize: 13, lineHeight: 1.75, color: "#1A1918", margin: "0 0 16px" }}>
                 <strong>{lenderName}</strong> agrees to lend <strong>{borrowerName}</strong> <strong>{formatMoney(agreement.amount)}</strong>
                 {agreement.purpose ? <>, for <strong>{agreement.purpose}</strong>,</> : ","} with <strong>{agreement.interest_rate || 0}%</strong> interest per annum.{" "}
                 <strong>{borrowerName}</strong> agrees to repay <strong>{formatMoney(agreement.total_amount)}</strong> in{" "}
@@ -628,7 +626,6 @@ export default function LoanDetail() {
                 <strong>{agreement.repayment_period} {agreement.repayment_unit || "months"}</strong>.
               </p>
 
-              {/* Terms grid */}
               <div style={{ background: "rgba(0,0,0,0.02)", borderRadius: 10, border: "1px solid rgba(0,0,0,0.06)", padding: "12px 16px", marginBottom: 16 }}>
                 <p style={{ fontSize: 11, fontWeight: 700, color: "#1A1918", margin: "0 0 10px", letterSpacing: "0.04em", textTransform: "uppercase" }}>Terms of Repayment</p>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
@@ -646,18 +643,17 @@ export default function LoanDetail() {
                 </div>
               </div>
 
-              {/* Signatures */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                 <div style={{ background: "rgba(0,0,0,0.02)", borderRadius: 10, border: "1px solid rgba(0,0,0,0.06)", padding: "12px 14px" }}>
                   <p style={{ fontSize: 10, color: "#787776", margin: "0 0 4px", textTransform: "uppercase", letterSpacing: "0.05em" }}>Borrower</p>
-                  <p style={{ fontSize: 14, fontStyle: "italic", color: "#1A1918", margin: 0, fontFamily: "'DM Sans', sans-serif" }}>{agreement.borrower_name || borrowerName}</p>
+                  <p style={{ fontSize: 14, fontStyle: "italic", color: "#1A1918", margin: 0 }}>{agreement.borrower_name || borrowerName}</p>
                   {agreement.borrower_signed_date && (
                     <p style={{ fontSize: 11, color: "#787776", margin: "4px 0 0" }}>Signed {formatTZ(agreement.borrower_signed_date, "MMM d, yyyy")}</p>
                   )}
                 </div>
                 <div style={{ background: "rgba(0,0,0,0.02)", borderRadius: 10, border: "1px solid rgba(0,0,0,0.06)", padding: "12px 14px" }}>
                   <p style={{ fontSize: 10, color: "#787776", margin: "0 0 4px", textTransform: "uppercase", letterSpacing: "0.05em" }}>Lender</p>
-                  <p style={{ fontSize: 14, fontStyle: "italic", color: "#1A1918", margin: 0, fontFamily: "'DM Sans', sans-serif" }}>{agreement.lender_name || lenderName}</p>
+                  <p style={{ fontSize: 14, fontStyle: "italic", color: "#1A1918", margin: 0 }}>{agreement.lender_name || lenderName}</p>
                   {agreement.lender_signed_date && (
                     <p style={{ fontSize: 11, color: "#787776", margin: "4px 0 0" }}>Signed {formatTZ(agreement.lender_signed_date, "MMM d, yyyy")}</p>
                   )}
@@ -666,13 +662,12 @@ export default function LoanDetail() {
             </div>
           )}
 
-          {/* ── Amortization Table ── */}
+          {/* ── Amortization Table — keeps card style ── */}
           {amortSchedule.length > 0 && (
-            <div style={cardStyle}>
+            <div style={docCardStyle}>
               <p style={sectionTitle}>Amortization Table</p>
 
-              {/* Summary row */}
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10, marginBottom: 16 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10, marginBottom: 18 }}>
                 {[
                   { label: "Principal", value: formatMoney(agreement?.amount || loan.amount || 0) },
                   { label: "Total Interest", value: formatMoney((agreement?.total_amount || 0) - (agreement?.amount || 0)) },
@@ -685,7 +680,6 @@ export default function LoanDetail() {
                 ))}
               </div>
 
-              {/* Table */}
               <div style={{ overflowX: "auto", borderRadius: 8, border: "1px solid rgba(0,0,0,0.07)" }}>
                 <table style={{ width: "100%", fontSize: 12, borderCollapse: "collapse", minWidth: 640 }}>
                   <thead>
