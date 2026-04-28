@@ -1678,22 +1678,18 @@ export default function Home() {
                   </h2>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                     {monthlyExpectedReceive > 0 && (
-                      <div>
-                        <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.3 }}>
-                          You've received <span style={{ color: '#03ACEA' }}>{formatMoney(monthlyReceived)}</span>
-                        </div>
-                        <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 2 }}>of {formatMoney(monthlyExpectedReceive)} expected this month</div>
+                      <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.3 }}>
+                        You've received <span style={{ color: '#03ACEA' }}>{formatMoney(monthlyReceived)}</span>{' '}
+                        <span style={{ fontWeight: 400, color: '#9B9A98' }}>of {formatMoney(monthlyExpectedReceive)} expected this month</span>
                       </div>
                     )}
                     {monthlyExpectedReceive > 0 && monthlyExpectedPay > 0 && (
                       <div style={{ height: 1, background: 'rgba(0,0,0,0.06)' }} />
                     )}
                     {monthlyExpectedPay > 0 && (
-                      <div>
-                        <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.3 }}>
-                          You've paid <span style={{ color: '#03ACEA' }}>{formatMoney(monthlyPaidOut)}</span>
-                        </div>
-                        <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 2 }}>of {formatMoney(monthlyExpectedPay)} due this month</div>
+                      <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.3 }}>
+                        You've paid <span style={{ color: '#03ACEA' }}>{formatMoney(monthlyPaidOut)}</span>{' '}
+                        <span style={{ fontWeight: 400, color: '#9B9A98' }}>of {formatMoney(monthlyExpectedPay)} due this month</span>
                       </div>
                     )}
                     <div
