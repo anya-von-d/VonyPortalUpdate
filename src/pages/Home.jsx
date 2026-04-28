@@ -1501,34 +1501,44 @@ export default function Home() {
                 else if (filter === 'largest_amount' || filter === 'smallest_amount') { badgeLabel = `${formatMoney(total)} total`; }
                 else if (filter === 'most_repaid' || filter === 'least_repaid') { badgeLabel = `${pctRepaid}% repaid`; }
                 else if (filter === 'most_recent') { badgeLabel = loan.created_at ? formatTZ(loan.created_at, 'MMM d') : '—'; }
+                const amountPaid = loan.amount_paid || 0;
+                const remaining = total - amountPaid;
+                const topLine = isLending
+                  ? `${name} borrowed ${formatMoney(total)}`
+                  : `${name} lent you ${formatMoney(total)}`;
                 return (
-                  <div key={loan.id} style={{ padding: '9px 0', display: 'flex', alignItems: 'center', gap: 9, borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+                  <div key={loan.id} style={{ padding: '10px 0', display: 'flex', alignItems: 'center', gap: 10, borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
                     {/* Profile photo + pie chart overlay */}
-                    <div style={{ position: 'relative', width: 38, height: 38, flexShrink: 0 }}>
+                    <div style={{ position: 'relative', width: 48, height: 48, flexShrink: 0 }}>
                       <UserAvatar
                         name={name}
                         src={otherProfile?.profile_picture_url}
-                        size={38}
-                        radius={19}
+                        size={48}
+                        radius={24}
                       />
                       {/* Pie chart bottom-right */}
-                      <div style={{ position: 'absolute', bottom: -2, right: -2, width: 16, height: 16 }}>
-                        <svg width="16" height="16" viewBox="0 0 16 16">
-                          <circle cx="8" cy="8" r="6" fill="white" stroke="white" strokeWidth="1.5"/>
-                          <circle cx="8" cy="8" r="6" fill="none" stroke={`${accentCol}33`} strokeWidth="3"/>
+                      <div style={{ position: 'absolute', bottom: -2, right: -2, width: 18, height: 18 }}>
+                        <svg width="18" height="18" viewBox="0 0 18 18">
+                          <circle cx="9" cy="9" r="7" fill="white" stroke="white" strokeWidth="1.5"/>
+                          <circle cx="9" cy="9" r="7" fill="none" stroke={`${accentCol}33`} strokeWidth="3.5"/>
                           {pct > 0 && (
-                            <circle cx="8" cy="8" r="6" fill="none" stroke={accentCol} strokeWidth="3"
-                              strokeDasharray={`${pct * 2 * Math.PI * 6} ${2 * Math.PI * 6}`}
+                            <circle cx="9" cy="9" r="7" fill="none" stroke={accentCol} strokeWidth="3.5"
+                              strokeDasharray={`${pct * 2 * Math.PI * 7} ${2 * Math.PI * 7}`}
                               strokeLinecap="round"
-                              transform="rotate(-90 8 8)"
+                              transform="rotate(-90 9 9)"
                             />
                           )}
                         </svg>
                       </div>
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name}</div>
-                      <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{subLine}</div>
+                      <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: "'DM Sans', sans-serif" }}>{topLine}</div>
+                      {loan.purpose && (
+                        <div style={{ fontSize: 11, color: '#787776', marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: "'DM Sans', sans-serif" }}>{loan.purpose}</div>
+                      )}
+                      <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: "'DM Sans', sans-serif" }}>
+                        <span style={{ color: accentCol, fontWeight: 600 }}>{formatMoney(amountPaid)}</span> repaid · <span>{formatMoney(remaining)}</span> remaining
+                      </div>
                     </div>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C4C3C1" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
                       <polyline points="9 18 15 12 9 6"/>
@@ -1685,15 +1695,9 @@ export default function Home() {
                 </div>
               )}
 
-              {/* Your Friends — desktop */}
-              {renderFriendsCard('home-card-friends-desktop')}
-
             </div>{/* end right col */}
 
           </div>{/* end two-column layout */}
-
-          {/* Your Friends — mobile only */}
-          {renderFriendsCard('home-card-friends-mobile')}
 
           {/* Quick Links section */}
           {(() => {
