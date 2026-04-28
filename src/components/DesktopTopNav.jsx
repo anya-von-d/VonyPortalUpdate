@@ -224,7 +224,7 @@ export default function DesktopTopNav() {
   return (
     <>
       <div className="desktop-top-nav" style={{
-        position: 'fixed', top: 34, left: 0, right: 0, zIndex: 300,
+        position: 'fixed', top: 16, left: 0, right: 0, zIndex: 300,
         display: 'flex', alignItems: 'flex-start',
         padding: '0 56px', gap: 12,
         background: 'none',
@@ -258,16 +258,16 @@ export default function DesktopTopNav() {
           </NavBtnPopup>
         </Pill>
 
-        {/* ── Centre search bar ── */}
+        {/* ── Centre search bar — matches glassPill style exactly ── */}
         <div style={{ flex: 1, display: 'flex', justifyContent: 'center', pointerEvents: 'auto' }}>
           <div style={{
-            display: 'flex', alignItems: 'center', gap: 8,
+            display: 'flex', alignItems: 'center', gap: 6,
             background: 'rgba(255,255,255,0.82)',
             backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)',
             border: '1px solid rgba(255,255,255,0.72)',
             boxShadow: '0 2px 12px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.04)',
-            borderRadius: 30, padding: '7px 16px',
-            width: '100%', maxWidth: 340,
+            borderRadius: 30, padding: '4px 16px 4px 12px',
+            width: '100%', maxWidth: 480,
             transition: 'box-shadow 0.15s',
           }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(0,0,0,0.35)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
@@ -275,13 +275,12 @@ export default function DesktopTopNav() {
             </svg>
             <input
               type="text"
-              placeholder="Search…"
               style={{
                 flex: 1, border: 'none', outline: 'none', background: 'transparent',
                 fontSize: 13, fontFamily: "'DM Sans', sans-serif",
-                color: '#1A1918', fontWeight: 400,
+                color: '#1A1918', fontWeight: 400, padding: '7px 0',
               }}
-              onFocus={e => e.currentTarget.parentElement.style.boxShadow = '0 2px 16px rgba(0,0,0,0.12), 0 0 0 2px rgba(3,172,234,0.15)'}
+              onFocus={e => e.currentTarget.parentElement.style.boxShadow = '0 2px 16px rgba(0,0,0,0.11), 0 0 0 2px rgba(3,172,234,0.14)'}
               onBlur={e => e.currentTarget.parentElement.style.boxShadow = '0 2px 12px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.04)'}
             />
           </div>

@@ -140,7 +140,7 @@ export default function MeshMobileNav({ user, activePage }) {
     <>
       {/* ── Top row: Vony logo + bell ── */}
       <div style={{
-        position: 'absolute', top: 34, left: 0, right: 0, zIndex: 200,
+        position: 'absolute', top: 16, left: 0, right: 0, zIndex: 200,
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         padding: '0 20px',
         fontFamily: "'DM Sans', sans-serif",
@@ -155,6 +155,21 @@ export default function MeshMobileNav({ user, activePage }) {
         }}>Vony</Link>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, pointerEvents: 'auto' }}>
+          {/* Search icon */}
+          <button
+            onClick={() => {/* future: open search */}}
+            style={{
+              background: 'none', border: 'none', cursor: 'pointer', padding: '4px',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: 'rgba(0,0,0,0.55)',
+            }}
+          >
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+          </button>
+
+          {/* Bell */}
           <button
             onClick={() => navigate(createPageUrl('Notifications'))}
             style={{
@@ -181,20 +196,6 @@ export default function MeshMobileNav({ user, activePage }) {
                 {notifCount > 99 ? '99+' : notifCount}
               </span>
             )}
-          </button>
-
-          {/* Search icon */}
-          <button
-            onClick={() => {/* future: open search */}}
-            style={{
-              background: 'none', border: 'none', cursor: 'pointer', padding: '4px',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: 'rgba(0,0,0,0.55)',
-            }}
-          >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-            </svg>
           </button>
         </div>
       </div>
