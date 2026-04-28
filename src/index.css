@@ -371,6 +371,8 @@ input[type="date"] {
   .home-two-col-row > div {
     display: contents !important;
   }
+  /* Loan summary cards — stack vertically on mobile, lending on top */
+  .home-loan-cards-row { flex-direction: column !important; }
   /* Mobile card order */
   .home-card-attention          { display: none !important; }  /* post-it reminders — hidden */
   .home-card-bor-overview       { display: none !important; }  /* you owe / you are owed — hidden on mobile (split card shown instead) */

@@ -1336,111 +1336,98 @@ export default function Home() {
 
           </div>
 
-          {/* ── You are owed / You owe — connected split card ── */}
+          {/* ── You are owed / You owe — separate cards ── */}
           {(lentLoans.length > 0 || borrowedLoans.length > 0) && (() => {
             const lentOwed = Math.max(0, totalLentAmount - totalRepaid);
             const borrowOwed = Math.max(0, totalBorrowedAmount - totalPaidBack);
+            const lendingPct = totalLentAmount > 0 ? Math.min(100, (totalRepaid / totalLentAmount) * 100) : 0;
+            const borrowingPct = totalBorrowedAmount > 0 ? Math.min(100, (totalPaidBack / totalBorrowedAmount) * 100) : 0;
 
-            // Loan count progress (all loans including completed)
-            const allLentLoans = myLoans.filter(l => l && l.lender_id === user.id);
-            const allBorrowedLoans = myLoans.filter(l => l && l.borrower_id === user.id);
-            const completedLent = allLentLoans.filter(l => l.status === 'completed').length;
-            const completedBorrowed = allBorrowedLoans.filter(l => l.status === 'completed').length;
-            const allLentCount = allLentLoans.length;
-            const allBorrowedCount = allBorrowedLoans.length;
-            const lendingPct = allLentCount > 0 ? (completedLent / allLentCount) * 100 : 0;
-            const borrowingPct = allBorrowedCount > 0 ? (completedBorrowed / allBorrowedCount) * 100 : 0;
-
-            const CashIcon = () => (
+            const cashIconSvg = (
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="2" y="6" width="20" height="12" rx="2"/>
                 <circle cx="12" cy="12" r="3"/>
                 <path d="M6 12h.01M18 12h.01"/>
               </svg>
             );
-            const Chevron = () => (
+            const chevronSvg = (
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C4C3C1" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="9 18 15 12 9 6"/>
               </svg>
             );
 
+            const cardStyle = { background: '#ffffff', borderRadius: 14, boxShadow: '0 2px 12px rgba(0,0,0,0.08)', border: '1px solid rgba(0,0,0,0.06)', overflow: 'hidden', display: 'flex', flexDirection: 'column', flex: 1 };
+
             return (
-              <div style={{ display: 'flex', background: '#ffffff', borderRadius: 14, boxShadow: '0 2px 12px rgba(0,0,0,0.08)', marginBottom: 28, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.06)' }}>
+              <div className="home-loan-cards-row" style={{ display: 'flex', gap: 14, marginBottom: 28 }}>
 
-                {/* Left: You are owed */}
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                  <div style={{ padding: '18px 20px 14px', display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>
-                      You are owed
-                    </div>
-                    <div style={{ fontSize: 26, fontWeight: 700, color: '#03ACEA', letterSpacing: '-0.03em', fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>
-                      {formatMoney(lentOwed)}
-                    </div>
-                    {/* Progress bar */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 2 }}>
-                      <div style={{ flex: 1, height: 4, borderRadius: 2, background: 'rgba(0,0,0,0.08)', overflow: 'hidden' }}>
-                        <div style={{ width: `${Math.min(100, lendingPct)}%`, height: '100%', borderRadius: 2, background: '#1A1918' }} />
+                {/* Lending card */}
+                {lentLoans.length > 0 && (
+                  <div style={cardStyle}>
+                    <div style={{ padding: '18px 20px 14px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+                      {/* Label + amount on same line */}
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+                        <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif", flexShrink: 0 }}>
+                          You are owed
+                        </span>
+                        <span style={{ fontSize: 22, fontWeight: 700, color: '#03ACEA', letterSpacing: '-0.03em', fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>
+                          {formatMoney(lentOwed)}
+                        </span>
                       </div>
-                      <span style={{ fontSize: 10, fontWeight: 600, color: '#9B9A98', whiteSpace: 'nowrap', fontFamily: "'DM Sans', sans-serif" }}>
-                        {completedLent}/{allLentCount} Completed
-                      </span>
-                    </div>
-                    {/* Repaid amount */}
-                    <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>
-                      {formatMoney(totalRepaid)} repaid / {formatMoney(totalLentAmount)}
-                    </div>
-                  </div>
-                  {/* Lending Progress row */}
-                  <div
-                    onClick={() => navigate(createPageUrl('LendingBorrowing') + '?tab=lending')}
-                    style={{ borderTop: '1px solid rgba(0,0,0,0.06)', padding: '10px 20px', display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}
-                  >
-                    <div style={{ width: 32, height: 32, borderRadius: 8, background: '#F4F4F5', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#1A1918', flexShrink: 0 }}>
-                      <CashIcon />
-                    </div>
-                    <span style={{ flex: 1, fontSize: 13, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>Lending Progress</span>
-                    <Chevron />
-                  </div>
-                </div>
-
-                {/* Vertical divider */}
-                <div style={{ width: 1, background: 'rgba(0,0,0,0.07)', flexShrink: 0 }} />
-
-                {/* Right: You owe */}
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                  <div style={{ padding: '18px 20px 14px', display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>
-                      You owe
-                    </div>
-                    <div style={{ fontSize: 26, fontWeight: 700, color: '#1D5B94', letterSpacing: '-0.03em', fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>
-                      {formatMoney(borrowOwed)}
-                    </div>
-                    {/* Progress bar */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 2 }}>
-                      <div style={{ flex: 1, height: 4, borderRadius: 2, background: 'rgba(0,0,0,0.08)', overflow: 'hidden' }}>
-                        <div style={{ width: `${Math.min(100, borrowingPct)}%`, height: '100%', borderRadius: 2, background: '#1A1918' }} />
+                      {/* Progress bar */}
+                      <div style={{ height: 4, borderRadius: 2, background: 'rgba(0,0,0,0.08)', overflow: 'hidden' }}>
+                        <div style={{ width: `${lendingPct}%`, height: '100%', borderRadius: 2, background: '#03ACEA' }} />
                       </div>
-                      <span style={{ fontSize: 10, fontWeight: 600, color: '#9B9A98', whiteSpace: 'nowrap', fontFamily: "'DM Sans', sans-serif" }}>
-                        {completedBorrowed}/{allBorrowedCount} Completed
-                      </span>
+                      {/* Repaid amount */}
+                      <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>
+                        {formatMoney(totalRepaid)} repaid / {formatMoney(totalLentAmount)}
+                      </div>
                     </div>
-                    {/* Repaid amount */}
-                    <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>
-                      {formatMoney(totalPaidBack)} repaid / {formatMoney(totalBorrowedAmount)}
+                    {/* Lending Progress row */}
+                    <div onClick={() => navigate(createPageUrl('LendingBorrowing') + '?tab=lending')}
+                      style={{ borderTop: '1px solid rgba(0,0,0,0.06)', padding: '10px 20px', display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}>
+                      <div style={{ width: 32, height: 32, borderRadius: 8, background: '#F4F4F5', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#1A1918', flexShrink: 0 }}>
+                        {cashIconSvg}
+                      </div>
+                      <span style={{ flex: 1, fontSize: 13, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>Lending Progress</span>
+                      {chevronSvg}
                     </div>
                   </div>
-                  {/* Borrowing Progress row */}
-                  <div
-                    onClick={() => navigate(createPageUrl('LendingBorrowing') + '?tab=borrowing')}
-                    style={{ borderTop: '1px solid rgba(0,0,0,0.06)', padding: '10px 20px', display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}
-                  >
-                    <div style={{ width: 32, height: 32, borderRadius: 8, background: '#F4F4F5', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#1A1918', flexShrink: 0 }}>
-                      <CashIcon />
+                )}
+
+                {/* Borrowing card */}
+                {borrowedLoans.length > 0 && (
+                  <div style={cardStyle}>
+                    <div style={{ padding: '18px 20px 14px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+                      {/* Label + amount on same line */}
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+                        <span style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif", flexShrink: 0 }}>
+                          You owe
+                        </span>
+                        <span style={{ fontSize: 22, fontWeight: 700, color: '#1D5B94', letterSpacing: '-0.03em', fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>
+                          {formatMoney(borrowOwed)}
+                        </span>
+                      </div>
+                      {/* Progress bar */}
+                      <div style={{ height: 4, borderRadius: 2, background: 'rgba(0,0,0,0.08)', overflow: 'hidden' }}>
+                        <div style={{ width: `${borrowingPct}%`, height: '100%', borderRadius: 2, background: '#1D5B94' }} />
+                      </div>
+                      {/* Repaid amount */}
+                      <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>
+                        {formatMoney(totalPaidBack)} repaid / {formatMoney(totalBorrowedAmount)}
+                      </div>
                     </div>
-                    <span style={{ flex: 1, fontSize: 13, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>Borrowing Progress</span>
-                    <Chevron />
+                    {/* Borrowing Progress row */}
+                    <div onClick={() => navigate(createPageUrl('LendingBorrowing') + '?tab=borrowing')}
+                      style={{ borderTop: '1px solid rgba(0,0,0,0.06)', padding: '10px 20px', display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}>
+                      <div style={{ width: 32, height: 32, borderRadius: 8, background: '#F4F4F5', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#1A1918', flexShrink: 0 }}>
+                        {cashIconSvg}
+                      </div>
+                      <span style={{ flex: 1, fontSize: 13, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>Borrowing Progress</span>
+                      {chevronSvg}
+                    </div>
                   </div>
-                </div>
+                )}
 
               </div>
             );
