@@ -135,7 +135,7 @@ export default function MeshMobileNav({ user, activePage }) {
     <>
       {/* ── Top row: Vony logo + bell ── */}
       <div style={{
-        position: 'absolute', top: 10, left: 0, right: 0, zIndex: 200,
+        position: 'absolute', top: 16, left: 0, right: 0, zIndex: 200,
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         padding: '0 20px',
         fontFamily: "'DM Sans', sans-serif",
