@@ -1577,8 +1577,8 @@ export default function Home() {
                   <div style={{ fontSize: 13, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.04em', textTransform: 'uppercase', padding: '16px 18px 8px', fontFamily: "'DM Sans', sans-serif" }}>
                     Lending and Borrowing agreements
                   </div>
-                  {/* Tab bar — left-aligned, compact */}
-                  <div style={{ display: 'flex', borderBottom: '1px solid rgba(0,0,0,0.07)', paddingLeft: 18 }}>
+                  {/* Tab bar + sort dropdown on same row */}
+                  <div style={{ display: 'flex', alignItems: 'center', paddingLeft: 18, paddingRight: 12 }}>
                     {['lending', 'borrowing'].map(tab => {
                       const active = lbTab === tab;
                       return (
@@ -1586,19 +1586,19 @@ export default function Home() {
                           padding: '7px 14px', fontSize: 12, fontWeight: active ? 700 : 500,
                           color: active ? '#1A1918' : '#9B9A98',
                           background: 'none', border: 'none', borderBottom: active ? '2px solid #1A1918' : '2px solid transparent',
-                          marginBottom: -1, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
+                          cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
                           letterSpacing: '-0.01em', transition: 'color 0.15s',
                         }}>
                           {tab === 'lending' ? 'Lending' : 'Borrowing'}
                         </button>
                       );
                     })}
+                    <div style={{ flex: 1 }} />
+                    <SortDropdown value={activeFilter} onChange={setActiveFilter} />
                   </div>
-                  {/* Sort row + loan list */}
+                  {/* Loan list */}
                   <div style={{ padding: '0 18px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '8px 0 4px' }}>
-                      <SortDropdown value={activeFilter} onChange={setActiveFilter} />
-                    </div>
+                    <div style={{ height: 4 }} />
                     {activeLoans.length === 0
                       ? <div style={{ fontSize: 12, color: '#9B9A98', textAlign: 'center', padding: '16px 0' }}>No active {lbTab} 🌱</div>
                       : <div style={{ display: 'flex', flexDirection: 'column' }}>{activeLoans.map((l, idx) => renderLoanRow(l, isLendingTab, idx, activeFilter))}</div>
