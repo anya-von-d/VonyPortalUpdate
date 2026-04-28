@@ -1509,23 +1509,23 @@ export default function Home() {
                 return (
                   <div style={{ padding: '14px 16px', display: 'flex', alignItems: 'center', gap: 14 }}>
                     {/* Profile photo + pie chart overlay */}
-                    <div style={{ position: 'relative', width: 48, height: 48, flexShrink: 0 }}>
+                    <div style={{ position: 'relative', width: 38, height: 38, flexShrink: 0 }}>
                       <UserAvatar
                         name={name}
                         src={otherProfile?.profile_picture_url}
-                        size={48}
-                        radius={24}
+                        size={38}
+                        radius={19}
                       />
                       {/* Pie chart bottom-right */}
-                      <div style={{ position: 'absolute', bottom: -2, right: -2, width: 18, height: 18 }}>
-                        <svg width="18" height="18" viewBox="0 0 18 18">
-                          <circle cx="9" cy="9" r="7" fill="white" stroke="white" strokeWidth="1.5"/>
-                          <circle cx="9" cy="9" r="7" fill="none" stroke={`${accentCol}33`} strokeWidth="3.5"/>
+                      <div style={{ position: 'absolute', bottom: -2, right: -2, width: 15, height: 15 }}>
+                        <svg width="15" height="15" viewBox="0 0 15 15">
+                          <circle cx="7.5" cy="7.5" r="5.5" fill="white" stroke="white" strokeWidth="1.5"/>
+                          <circle cx="7.5" cy="7.5" r="5.5" fill="none" stroke={`${accentCol}33`} strokeWidth="3"/>
                           {pct > 0 && (
-                            <circle cx="9" cy="9" r="7" fill="none" stroke={accentCol} strokeWidth="3.5"
-                              strokeDasharray={`${pct * 2 * Math.PI * 7} ${2 * Math.PI * 7}`}
+                            <circle cx="7.5" cy="7.5" r="5.5" fill="none" stroke={accentCol} strokeWidth="3"
+                              strokeDasharray={`${pct * 2 * Math.PI * 5.5} ${2 * Math.PI * 5.5}`}
                               strokeLinecap="round"
-                              transform="rotate(-90 9 9)"
+                              transform="rotate(-90 7.5 7.5)"
                             />
                           )}
                         </svg>
@@ -1533,9 +1533,6 @@ export default function Home() {
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ fontSize: 15, fontWeight: 600, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.01em' }}>{topLine}</div>
-                      {loan.purpose && (
-                        <div style={{ fontSize: 13, color: '#787776', marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: "'DM Sans', sans-serif" }}>{loan.purpose}</div>
-                      )}
                       <div style={{ fontSize: 13, color: '#787776', marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: "'DM Sans', sans-serif" }}>
                         <span style={{ color: accentCol, fontWeight: 600 }}>{formatMoney(amountPaid)}</span> repaid · <span>{formatMoney(remaining)}</span> remaining
                       </div>
@@ -1575,7 +1572,7 @@ export default function Home() {
                 <div>
                   {/* Title — same style as "Quick actions" h2 */}
                   <h2 style={{ fontSize: 22, fontWeight: 700, color: '#1A1918', margin: '0 0 16px', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.02em' }}>
-                    Lending and Borrowing
+                    Lending &amp; Borrowing
                   </h2>
                   {/* Tab selector + sort — same font as Quick Actions item label */}
                   <div style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
@@ -1600,10 +1597,9 @@ export default function Home() {
                   {/* Loan rows — no card wrapper */}
                   {activeLoans.length === 0
                     ? <div style={{ fontSize: 13, color: '#9B9A98', padding: '8px 0' }}>No active {lbTab} 🌱</div>
-                    : activeLoans.map((l, idx, arr) => (
+                    : activeLoans.map((l, idx) => (
                         <div key={l.id}>
                           {renderLoanRow(l, isLendingTab, idx, activeFilter)}
-                          {idx < arr.length - 1 && <div style={{ height: 1, background: 'rgba(0,0,0,0.05)' }} />}
                         </div>
                       ))
                   }
