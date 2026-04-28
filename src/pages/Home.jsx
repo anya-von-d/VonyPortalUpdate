@@ -1075,8 +1075,8 @@ export default function Home() {
 
           {/* Desktop page title */}
           <div className="desktop-page-title" style={{ marginBottom: 28 }}>
-            <div style={{ fontFamily: "'Inter var', Inter, sans-serif", fontWeight: 530, letterSpacing: '-0.02em', lineHeight: 1.3, color: '#1A1918' }}>
-              <div style={{ fontSize: 24 }}>Hi {firstName}</div>
+            <div style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, letterSpacing: '-0.02em', lineHeight: 1.3, color: '#1A1918' }}>
+              <div style={{ fontSize: 28 }}>Hi {firstName}</div>
               <div style={{ fontSize: 20, display: 'flex', alignItems: 'center', gap: 6 }}>
                 Happy {dayOfWeek}!
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -1088,8 +1088,8 @@ export default function Home() {
 
           {/* Mobile-only greeting */}
           <div className="mobile-home-greeting">
-            <div style={{ fontFamily: "'Inter var', Inter, sans-serif", fontWeight: 530, letterSpacing: '-0.02em', lineHeight: 1.3, color: '#1A1918', marginBottom: 12 }}>
-              <div style={{ fontSize: 24 }}>Hi {firstName}</div>
+            <div style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, letterSpacing: '-0.02em', lineHeight: 1.3, color: '#1A1918', marginBottom: 12 }}>
+              <div style={{ fontSize: 22 }}>Hi {firstName}</div>
               <div style={{ fontSize: 16, display: 'flex', alignItems: 'center', gap: 5 }}>
                 Happy {dayOfWeek}!
                 <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
