@@ -1629,61 +1629,22 @@ export default function Lending({ initialTab }) {
         signingAs="Lender"
       />
 
-      <div
-        style={initialTab === 'create' ? {
-          position: 'fixed', inset: 0, zIndex: 1000,
-          background: 'rgba(20,30,50,0.45)',
-          backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)',
-          overflowY: 'auto',
-          padding: '40px 20px',
-          fontFamily: "'DM Sans', system-ui, sans-serif",
-        } : { minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", background: 'transparent' }}
-        onClick={initialTab === 'create' ? (e) => { if (e.target === e.currentTarget) { try { navigate(-1); } catch { navigate('/'); } } } : undefined}
-      >
-        {initialTab !== 'create' && <MeshMobileNav user={currentUser} activePage="Create Loan" />}
+      <div style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", background: 'transparent' }}>
+        <MeshMobileNav user={currentUser} activePage="Create Loan" />
         <div
           className="mesh-layout"
-          style={initialTab === 'create' ? {
-            display: 'block',
-            maxWidth: 1000, margin: '0 auto',
-            background: '#ffffff', borderRadius: 20,
-            boxShadow: '0 24px 80px rgba(0,0,0,0.28), 0 4px 16px rgba(0,0,0,0.08)',
-            position: 'relative',
-            padding: '28px 32px 40px',
-          } : { display: 'grid', gridTemplateColumns: '200px 1fr', gap: 0, minHeight: '100vh' }}
+          style={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: 0, minHeight: '100vh' }}
         >
-          {initialTab === 'create' && (
-            <button
-              onClick={() => { try { navigate(-1); } catch { navigate('/'); } }}
-              aria-label="Close"
-              style={{
-                position: 'absolute', top: 14, right: 14, zIndex: 10,
-                width: 34, height: 34, borderRadius: 17,
-                background: 'rgba(0,0,0,0.06)', border: 'none', cursor: 'pointer',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: '#1A1918',
-              }}
-            >
-              <X size={17} />
-            </button>
-          )}
-          {initialTab === 'create' && (
-            <div style={{ fontSize: 18, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', marginBottom: 18, fontFamily: "'DM Sans', sans-serif" }}>
-              Create Loan
-            </div>
-          )}
-          {/* COL 1 - left nav (hidden in modal mode) */}
-          {initialTab !== 'create' && <DesktopSidebar />}
+          {/* COL 1 - sidebar */}
+          <DesktopSidebar />
 
           {/* COL 2 - main content */}
-          <div className="mesh-center" style={initialTab === 'create' ? { background: 'transparent', padding: 0 } : { background: 'transparent', padding: '24px 32px 80px' }}>
+          <div className="mesh-center" style={{ background: 'transparent', padding: '24px 32px 80px' }}>
 
-          {/* Mobile-only page title (desktop shows it in top bar) */}
-          {initialTab !== 'create' && (
-            <div className="mobile-page-title">
-              <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 12, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', marginBottom: 12 }}>Create Loan</div>
-            </div>
-          )}
+          {/* Page title */}
+          <h1 style={{ fontSize: 26, fontWeight: 700, color: '#1A1918', margin: '0 0 24px', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.03em' }}>
+            Create Loan
+          </h1>
 
           {/* ── No Friends Banner at the very top ── */}
           {activeSection === 'create' && !isLoadingUsers && friends.length === 0 && (
