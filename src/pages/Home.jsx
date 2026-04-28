@@ -1454,73 +1454,38 @@ export default function Home() {
 
               const renderLoanRow = (loan, isLending, idx, filter) => {
                 const accentCol = isLending ? '#03ACEA' : '#1D5B94';
-                const accentColBg = isLending ? 'rgba(3,172,234,0.10)' : 'rgba(29,91,148,0.10)';
-                const ringColor = accentCol;
                 const otherId = isLending ? loan.borrower_id : loan.lender_id;
                 const otherProfile = safeAllProfiles.find(p => p.user_id === otherId);
                 const name = otherProfile?.full_name?.split(' ')[0] || otherProfile?.username || 'User';
                 const total = loan.total_amount || loan.amount || 0;
+                const amountPaid = loan.amount_paid || 0;
+                const pct = total > 0 ? Math.min(1, amountPaid / total) : 0;
                 const nextDue = loan.next_payment_date ? toLocalDate(loan.next_payment_date) : null;
                 const hasPending = safePayments.some(p => p && p.loan_id === loan.id && p.status === 'pending_confirmation');
                 const isBehind = nextDue && nextDue < today && !hasPending;
-                const behindAmt = isBehind ? (loan.payment_amount || 0) : 0;
-                const pctRepaid = total > 0 ? Math.round(((loan.amount_paid || 0) / total) * 100) : 0;
-                const subLine = isLending
-                  ? `Borrowed ${formatMoney(total)} from you${loan.purpose ? ` for ${loan.purpose}` : ''}`
-                  : `Lent you ${formatMoney(total)}${loan.purpose ? ` for ${loan.purpose}` : ''}`;
-                const pct = Math.min(1, Math.max(0, pctRepaid / 100));
-                const sz = 34, r = 13, cx = 17, cy = 17;
-                const circ = 2 * Math.PI * r;
-                const dash = pct * circ;
-                let badgeLabel = '', badgeColor = accentCol, badgeBg = accentColBg;
-                if (filter === 'status') { badgeLabel = isBehind ? `${formatMoney(behindAmt)} ${isLending ? 'behind' : 'overdue'}` : 'On track'; badgeColor = isBehind ? '#E8726E' : accentCol; badgeBg = isBehind ? 'rgba(232,114,110,0.08)' : accentColBg; }
-                else if (filter === 'highest_interest' || filter === 'lowest_interest') { badgeLabel = `${loan.interest_rate || 0}% interest`; }
-                else if (filter === 'highest_payment' || filter === 'lowest_payment') { badgeLabel = `${formatMoney(loan.payment_amount || 0)}/period`; }
-                else if (filter === 'soonest_deadline') { const d = loan.next_payment_date ? daysUntilDate(loan.next_payment_date) : null; badgeLabel = d === null ? '—' : d < 0 ? `${Math.abs(d)}d late` : d === 0 ? 'today' : `${d}d`; if (d !== null && d < 0) { badgeColor = '#E8726E'; badgeBg = 'rgba(232,114,110,0.08)'; } }
-                else if (filter === 'largest_amount' || filter === 'smallest_amount') { badgeLabel = `${formatMoney(total)} total`; }
-                else if (filter === 'most_repaid' || filter === 'least_repaid') { badgeLabel = `${pctRepaid}% repaid`; }
-                else if (filter === 'most_recent') { badgeLabel = loan.created_at ? formatTZ(loan.created_at, 'MMM d') : '—'; }
-                const amountPaid = loan.amount_paid || 0;
-                const remaining = total - amountPaid;
-                const topLine = isLending
-                  ? `${name} borrowed ${formatMoney(total)}`
-                  : `${name} lent you ${formatMoney(total)}`;
-                const pieEndX = 7.5 + 5.5 * Math.sin(2 * Math.PI * pct);
-                const pieEndY = 7.5 - 5.5 * Math.cos(2 * Math.PI * pct);
-                const pieLargeArc = pct > 0.5 ? 1 : 0;
                 return (
                   <div style={{ padding: '10px 0', display: 'flex', alignItems: 'center', gap: 14 }}>
-                    {/* Profile photo + pie chart overlay */}
-                    <div style={{ position: 'relative', width: 38, height: 38, flexShrink: 0 }}>
+                    {/* Avatar */}
+                    <div style={{ width: 40, height: 40, borderRadius: 20, background: '#F4F4F5', flexShrink: 0, overflow: 'hidden' }}>
                       <UserAvatar
                         name={name}
                         src={otherProfile?.profile_picture_url}
-                        size={38}
-                        radius={19}
+                        size={40}
+                        radius={20}
                       />
-                      {/* Pie chart bottom-right */}
-                      <div style={{ position: 'absolute', bottom: -2, right: -2, width: 15, height: 15 }}>
-                        <svg width="15" height="15" viewBox="0 0 15 15">
-                          <circle cx="7.5" cy="7.5" r="5.5" fill="white" stroke="white" strokeWidth="1.5"/>
-                          <circle cx="7.5" cy="7.5" r="5.5" fill={`${accentCol}22`}/>
-                          {pct > 0 && pct < 1 && (
-                            <path
-                              d={`M 7.5 7.5 L 7.5 2 A 5.5 5.5 0 ${pieLargeArc} 1 ${pieEndX} ${pieEndY} Z`}
-                              fill={accentCol}
-                            />
-                          )}
-                          {pct >= 1 && <circle cx="7.5" cy="7.5" r="5.5" fill={accentCol}/>}
-                        </svg>
-                      </div>
                     </div>
+                    {/* Name + amount + bar */}
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: 15, fontWeight: 600, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.01em' }}>
-                        {isLending ? <>{name} borrowed <span style={{ color: '#787776', fontWeight: 500 }}>{formatMoney(total)}</span></> : <>{name} lent you <span style={{ color: '#787776', fontWeight: 500 }}>{formatMoney(total)}</span></>}
+                      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 5 }}>
+                        <span style={{ fontSize: 15, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.01em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '55%' }}>{name}</span>
+                        <span style={{ fontSize: 15, fontWeight: 600, color: isBehind ? '#E8726E' : '#1A1918', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.01em', flexShrink: 0, marginLeft: 8 }}>{formatMoney(total)}</span>
                       </div>
-                      <div style={{ fontSize: 13, color: '#787776', marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: "'DM Sans', sans-serif" }}>
-                        <span style={{ color: accentCol, fontWeight: 600 }}>{formatMoney(amountPaid)}</span> repaid · <span>{formatMoney(remaining)}</span> remaining
+                      {/* Progress bar */}
+                      <div style={{ height: 6, borderRadius: 3, background: 'rgba(0,0,0,0.07)', overflow: 'hidden' }}>
+                        <div style={{ height: '100%', width: `${Math.round(pct * 100)}%`, borderRadius: 3, background: isBehind ? '#E8726E' : accentCol, transition: 'width 0.3s' }} />
                       </div>
                     </div>
+                    {/* Arrow */}
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C4C3C1" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
                       <polyline points="9 18 15 12 9 6"/>
                     </svg>
@@ -1554,22 +1519,20 @@ export default function Home() {
 
               return (
                 <div>
-                  {/* Title — same style as "Quick actions" h2 */}
-                  <h2 style={{ fontSize: 22, fontWeight: 700, color: '#1A1918', margin: '0 0 4px', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.02em' }}>
-                    Lending &amp; Borrowing
-                  </h2>
-                  {/* Tab selector + sort — same font size as "Next payment in X days" */}
-                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
+                  {/* Pill tab selector + sort */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
                     {['lending', 'borrowing'].map(tab => {
                       const active = lbTab === tab;
                       return (
                         <button key={tab} onClick={() => setLbTab(tab)} style={{
-                          padding: '3px 0', marginRight: 16,
-                          fontSize: 13, fontWeight: active ? 600 : 400,
-                          color: active ? '#1A1918' : 'rgba(0,0,0,0.35)',
-                          background: 'none', border: 'none', borderBottom: active ? '1.5px solid #1A1918' : '1.5px solid transparent',
+                          padding: '6px 18px',
+                          fontSize: 13, fontWeight: active ? 600 : 500,
+                          color: active ? '#fff' : '#1A1918',
+                          background: active ? '#1A1918' : 'transparent',
+                          border: active ? '1.5px solid #1A1918' : '1.5px solid rgba(0,0,0,0.18)',
+                          borderRadius: 20,
                           cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
-                          letterSpacing: '-0.01em', transition: 'color 0.15s',
+                          letterSpacing: '-0.01em', transition: 'all 0.15s',
                         }}>
                           {tab === 'lending' ? 'Lending' : 'Borrowing'}
                         </button>
@@ -1578,7 +1541,7 @@ export default function Home() {
                     <div style={{ flex: 1 }} />
                     <SortDropdown value={activeFilter} onChange={setActiveFilter} />
                   </div>
-                  {/* Loan rows — no card wrapper */}
+                  {/* Loan rows */}
                   {activeLoans.length === 0
                     ? <div style={{ fontSize: 13, color: '#9B9A98', padding: '8px 0' }}>No active {lbTab} 🌱</div>
                     : activeLoans.map((l, idx) => (
