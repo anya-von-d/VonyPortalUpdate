@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Loan, Payment, User, LoanAgreement, PublicProfile } from "@/entities/all";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -23,6 +23,7 @@ import DesktopSidebar from '../components/DesktopSidebar';
 
 export default function YourLoans({ defaultTab, embeddedMode }) {
   const { logout } = useAuth();
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -1215,7 +1216,7 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
                   else if (rankingFilter === 'most_repaid' || rankingFilter === 'least_repaid') { badgeLabel = `${pct}% repaid`; }
                   else if (rankingFilter === 'most_recent') { badgeLabel = loan.created_at ? formatTZ(loan.created_at, 'MMM d') : '—'; }
                   return (
-                    <div key={loan.id} style={{ padding: '10px 0', display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <div key={loan.id} onClick={() => navigate(createPageUrl('LoanDetail') + '?id=' + loan.id)} style={{ padding: '10px 0', display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
                       {(() => {
                         const lendGrad = ['#7FD9FF','#3DC4F5','#03ACEA','#0291C0','#027AA3'];
                         const borrGrad = ['#B8B7B5','#9B9A98','#787776','#5C5B5A','#464543'];
@@ -1265,7 +1266,7 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
                 return (
                   <div
                     key={loan.id}
-                    onClick={() => setSelectedScrollLoan(isSelected ? null : loan)}
+                    onClick={() => navigate(createPageUrl('LoanDetail') + '?id=' + loan.id)}
                     style={{
                       width: 100, flexShrink: 0, position: 'relative', zIndex: zIdx,
                       cursor: 'pointer',
