@@ -1687,6 +1687,9 @@ export default function Home() {
                 </div>
               )}
 
+              {/* Feature highlight carousel */}
+              <FeatureCarousel navigate={navigate} />
+
             </div>{/* end right col */}
 
           </div>{/* end two-column layout */}
@@ -2163,5 +2166,205 @@ export default function Home() {
       document.body
     )}
     </>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Feature Carousel — shown under "Month at a glance" on Home
+   ───────────────────────────────────────────────────────────── */
+const FEATURE_SLIDES = [
+  {
+    color: '#7C3AED', bg: 'rgba(124,58,237,0.09)',
+    title: 'Set payment reminders',
+    desc: 'Never miss a due date. Get notified automatically when payments are coming up.',
+    cta: 'View schedule →', page: 'Upcoming',
+    icon: (
+      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+        <line x1="12" y1="2" x2="12" y2="4"/>
+      </svg>
+    ),
+  },
+  {
+    color: '#03ACEA', bg: 'rgba(3,172,234,0.09)',
+    title: 'Create loan agreements',
+    desc: 'Generate signed promissory notes and repayment schedules in seconds.',
+    cta: 'Create a loan →', page: 'CreateOffer',
+    icon: (
+      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+        <line x1="12" y1="18" x2="12" y2="12"/>
+        <line x1="9" y1="15" x2="15" y2="15"/>
+      </svg>
+    ),
+  },
+  {
+    color: '#10B981', bg: 'rgba(16,185,129,0.09)',
+    title: 'Lend to people you trust',
+    desc: 'Add friends and start lending between people you know — safely and transparently.',
+    cta: 'Add friends →', page: 'Friends',
+    icon: (
+      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+        <circle cx="9" cy="7" r="4"/>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+      </svg>
+    ),
+  },
+  {
+    color: '#F59E0B', bg: 'rgba(245,158,11,0.09)',
+    title: 'Track every transaction',
+    desc: 'Your full payment history and loan activity, always at your fingertips.',
+    cta: 'View records →', page: 'RecentActivity',
+    icon: (
+      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+      </svg>
+    ),
+  },
+  {
+    color: '#EF4444', bg: 'rgba(239,68,68,0.09)',
+    title: 'Plan your month ahead',
+    desc: 'See upcoming cash flow and manage payments before they sneak up on you.',
+    cta: 'Plan ahead →', page: 'PlanYourMonth',
+    icon: (
+      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="4" width="18" height="18" rx="2"/>
+        <line x1="16" y1="2" x2="16" y2="6"/>
+        <line x1="8" y1="2" x2="8" y2="6"/>
+        <line x1="3" y1="10" x2="21" y2="10"/>
+      </svg>
+    ),
+  },
+];
+
+function FeatureCarousel({ navigate }) {
+  const [idx, setIdx] = useState(0);
+  const [dismissed, setDismissed] = useState(() =>
+    typeof window !== 'undefined' && localStorage.getItem('vony-feature-carousel-dismissed') === '1'
+  );
+  const [animKey, setAnimKey] = useState(0);
+
+  useEffect(() => {
+    if (dismissed) return;
+    const t = setInterval(() => {
+      setIdx(i => (i + 1) % FEATURE_SLIDES.length);
+      setAnimKey(k => k + 1);
+    }, 5000);
+    return () => clearInterval(t);
+  }, [dismissed]);
+
+  if (dismissed) return null;
+
+  const slide = FEATURE_SLIDES[idx];
+
+  const goTo = (i) => {
+    setIdx(i);
+    setAnimKey(k => k + 1);
+  };
+
+  return (
+    <div style={{
+      marginTop: 20,
+      background: '#fff',
+      borderRadius: 16,
+      border: '1px solid rgba(0,0,0,0.06)',
+      boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
+      padding: '16px 16px 14px',
+      overflow: 'hidden',
+      position: 'relative',
+    }}>
+      {/* Dismiss */}
+      <button
+        onClick={() => {
+          localStorage.setItem('vony-feature-carousel-dismissed', '1');
+          setDismissed(true);
+        }}
+        style={{
+          position: 'absolute', top: 10, right: 10,
+          background: 'none', border: 'none', cursor: 'pointer',
+          width: 22, height: 22, borderRadius: '50%',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          color: 'rgba(0,0,0,0.35)',
+          fontSize: 14, lineHeight: 1,
+        }}
+        aria-label="Dismiss"
+      >
+        ×
+      </button>
+
+      {/* Slide content */}
+      <div
+        key={animKey}
+        style={{
+          display: 'flex', alignItems: 'center', gap: 14,
+          animation: 'featureSlideIn 0.35s cubic-bezier(0.22,1,0.36,1) both',
+        }}
+      >
+        {/* Big icon */}
+        <div style={{
+          width: 58, height: 58, borderRadius: 16, flexShrink: 0,
+          background: slide.bg,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          color: slide.color,
+        }}>
+          {slide.icon}
+        </div>
+
+        {/* Text */}
+        <div style={{ flex: 1, minWidth: 0, paddingRight: 18 }}>
+          <div style={{
+            fontSize: 13, fontWeight: 700, color: '#1A1918',
+            fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.01em',
+            marginBottom: 3,
+          }}>
+            {slide.title}
+          </div>
+          <div style={{
+            fontSize: 12, color: '#787776', lineHeight: 1.45,
+            fontFamily: "'DM Sans', sans-serif", marginBottom: 8,
+          }}>
+            {slide.desc}
+          </div>
+          <button
+            onClick={() => navigate(createPageUrl(slide.page))}
+            style={{
+              background: 'none', border: 'none', cursor: 'pointer', padding: 0,
+              fontSize: 12, fontWeight: 600, color: slide.color,
+              fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.005em',
+            }}
+          >
+            {slide.cta}
+          </button>
+        </div>
+      </div>
+
+      {/* Dot indicators */}
+      <div style={{ display: 'flex', justifyContent: 'center', gap: 5, marginTop: 14 }}>
+        {FEATURE_SLIDES.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => goTo(i)}
+            style={{
+              width: i === idx ? 18 : 6, height: 6,
+              borderRadius: 3, border: 'none', cursor: 'pointer', padding: 0,
+              background: i === idx ? slide.color : 'rgba(0,0,0,0.12)',
+              transition: 'all 0.25s ease',
+            }}
+            aria-label={`Slide ${i + 1}`}
+          />
+        ))}
+      </div>
+
+      <style>{`
+        @keyframes featureSlideIn {
+          from { opacity: 0; transform: translateY(10px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
+    </div>
   );
 }
