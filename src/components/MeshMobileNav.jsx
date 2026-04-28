@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import SettingsModal from "@/components/SettingsModal";
 import FriendsPopup from "@/components/FriendsPopup";
@@ -7,7 +7,6 @@ import NotificationsPopup from "@/components/NotificationsPopup";
 import PendingRequestsPopup from "@/components/PendingRequestsPopup";
 import AppMenuDropdown from "@/components/AppMenuDropdown";
 import DemoModeToggle from "@/components/DemoModeToggle";
-import ProfilePopup from "@/components/ProfilePopup";
 import { useNotificationCount } from "@/components/utils/notificationCount";
 
 export default function MeshMobileNav({ user, activePage }) {
@@ -38,7 +37,7 @@ export default function MeshMobileNav({ user, activePage }) {
 
   const [friendsInitialRequestsOpen, setFriendsInitialRequestsOpen] = useState(false);
   const [pendingOpen, setPendingOpen] = useState(false);
-  const [profileOpen, setProfileOpen] = useState(false);
+  const navigate = useNavigate();
 
   // Global open-friends-popup event
   useEffect(() => {
@@ -186,7 +185,7 @@ export default function MeshMobileNav({ user, activePage }) {
                 onOpenSettings={() => setSettingsOpen(true)}
                 onOpenFriends={() => setFriendsOpen(true)}
                 onOpenPendingRequests={() => { setMenuOpen(false); setPendingOpen(true); setFriendsOpen(false); setNotifOpen(false); }}
-                onOpenProfile={() => { setMenuOpen(false); setProfileOpen(true); }}
+                onOpenProfile={() => { setMenuOpen(false); navigate(createPageUrl('Profile')); }}
                 showProfileAndFriends
               />
             )}
@@ -302,7 +301,6 @@ export default function MeshMobileNav({ user, activePage }) {
           positionOverride={{ top: 92, left: 12, right: 12, width: 'auto' }}
         />
       )}
-      {profileOpen && <ProfilePopup onClose={() => setProfileOpen(false)} />}
     </>
   );
 }

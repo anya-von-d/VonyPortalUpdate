@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useAuth } from '@/lib/AuthContext';
 import SettingsModal from './SettingsModal';
@@ -9,7 +9,6 @@ import PendingRequestsPopup from './PendingRequestsPopup';
 import AppMenuDropdown from './AppMenuDropdown';
 import UserAvatar from './ui/UserAvatar';
 import DemoModeToggle from './DemoModeToggle';
-import ProfilePopup from './ProfilePopup';
 import { useNotificationCount } from './utils/notificationCount';
 
 const isActive = (location, to) => {
@@ -86,13 +85,13 @@ export default function DesktopTopNav() {
   const user = userProfile ? { ...userProfile, id: authUser?.id } : null;
   const notifCount = useNotificationCount(user?.id);
 
+  const navigate = useNavigate();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [friendsOpen, setFriendsOpen] = useState(false);
   const [friendsInitialTab, setFriendsInitialTab] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [pendingOpen, setPendingOpen] = useState(false);
-  const [profileOpen, setProfileOpen] = useState(false);
 
   const menuRef = useRef(null);
 
@@ -187,7 +186,7 @@ export default function DesktopTopNav() {
           <NavBtn to={createPageUrl('LoanAgreements')} active={isActive(location, createPageUrl('LoanAgreements'))}>
             Records
           </NavBtn>
-          <NavBtn onClick={() => { setProfileOpen(v => !v); setNotifOpen(false); setFriendsOpen(false); setMenuOpen(false); }} active={profileOpen}>
+          <NavBtn onClick={() => { navigate(createPageUrl('Profile')); setNotifOpen(false); setFriendsOpen(false); setMenuOpen(false); }} active={isActive(location, createPageUrl('Profile'))}>
             {user ? (
               <UserAvatar name={user.full_name || user.username} src={user.avatar_url || user.profile_picture_url} size={22} radius={11} />
             ) : <UserIcon />}
@@ -206,7 +205,7 @@ export default function DesktopTopNav() {
                 onInviteFriend={() => { setFriendsInitialTab('Invite'); setFriendsOpen(true); }}
                 onOpenSettings={() => setSettingsOpen(true)}
                 onOpenPendingRequests={() => { setPendingOpen(true); setNotifOpen(false); setFriendsOpen(false); }}
-                onOpenProfile={() => { setMenuOpen(false); setProfileOpen(true); }}
+                onOpenProfile={() => { setMenuOpen(false); navigate(createPageUrl('Profile')); }}
               />
             )}
           </div>
@@ -216,7 +215,6 @@ export default function DesktopTopNav() {
       </div>
 
       <SettingsModal isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
-      {profileOpen && <ProfilePopup onClose={() => setProfileOpen(false)} />}
       {pendingOpen && (
         <PendingRequestsPopup onClose={() => setPendingOpen(false)} />
       )}
