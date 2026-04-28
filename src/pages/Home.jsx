@@ -1336,7 +1336,7 @@ export default function Home() {
 
           </div>
 
-          {/* ── You are owed / You owe — separate cards ── */}
+          {/* ── You are owed / You owe — one connected box with centre divider ── */}
           {(lentLoans.length > 0 || borrowedLoans.length > 0) && (() => {
             const lentOwed = Math.max(0, totalLentAmount - totalRepaid);
             const borrowOwed = Math.max(0, totalBorrowedAmount - totalPaidBack);
@@ -1344,86 +1344,77 @@ export default function Home() {
             const borrowingPct = totalBorrowedAmount > 0 ? Math.min(100, (totalPaidBack / totalBorrowedAmount) * 100) : 0;
 
             const cashIconSvg = (
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="2" y="6" width="20" height="12" rx="2"/>
                 <circle cx="12" cy="12" r="3"/>
                 <path d="M6 12h.01M18 12h.01"/>
               </svg>
             );
             const chevronSvg = (
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C4C3C1" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#C4C3C1" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="9 18 15 12 9 6"/>
               </svg>
             );
 
-            const cardStyle = { background: '#ffffff', borderRadius: 14, boxShadow: '0 2px 12px rgba(0,0,0,0.08)', border: '1px solid rgba(0,0,0,0.06)', overflow: 'hidden', display: 'flex', flexDirection: 'column', flex: 1 };
-
             return (
-              <div className="home-loan-cards-row" style={{ display: 'flex', gap: 14, marginBottom: 28 }}>
+              <div style={{ display: 'flex', background: '#ffffff', borderRadius: 14, boxShadow: '0 2px 12px rgba(0,0,0,0.08)', border: '1px solid rgba(0,0,0,0.06)', overflow: 'hidden', marginBottom: 28 }}>
 
-                {/* Lending card */}
+                {/* Left: You are owed */}
                 {lentLoans.length > 0 && (
-                  <div style={cardStyle}>
-                    <div style={{ padding: '18px 20px 14px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-                      {/* Label + amount left-aligned on same line */}
-                      <div style={{ display: 'flex', alignItems: 'baseline', gap: 7, flexWrap: 'wrap' }}>
-                        <span style={{ fontSize: 16, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', fontFamily: "'DM Sans', sans-serif" }}>
-                          You are owed
-                        </span>
-                        <span style={{ fontSize: 26, fontWeight: 700, color: '#03ACEA', letterSpacing: '-0.03em', fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>
-                          {formatMoney(lentOwed)}
-                        </span>
-                      </div>
-                      {/* Progress bar */}
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ padding: '16px 20px 14px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+                      <span style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.04em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>
+                        You are owed
+                      </span>
+                      <span style={{ fontSize: 24, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.03em', fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>
+                        {formatMoney(lentOwed)}
+                      </span>
                       <div style={{ height: 4, borderRadius: 2, background: 'rgba(0,0,0,0.08)', overflow: 'hidden' }}>
                         <div style={{ width: `${lendingPct}%`, height: '100%', borderRadius: 2, background: '#03ACEA' }} />
                       </div>
-                      {/* Repaid amount */}
                       <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>
                         {formatMoney(totalRepaid)} repaid / {formatMoney(totalLentAmount)}
                       </div>
                     </div>
-                    {/* Lending Progress row */}
                     <div onClick={() => navigate(createPageUrl('LendingBorrowing') + '?tab=lending')}
-                      style={{ borderTop: '1px solid rgba(0,0,0,0.06)', padding: '10px 20px', display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}>
-                      <div style={{ width: 32, height: 32, borderRadius: 8, background: '#F4F4F5', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#1A1918', flexShrink: 0 }}>
+                      style={{ borderTop: '1px solid rgba(0,0,0,0.06)', padding: '9px 20px', display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
+                      <div style={{ width: 28, height: 28, borderRadius: 7, background: '#F4F4F5', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#1A1918', flexShrink: 0 }}>
                         {cashIconSvg}
                       </div>
-                      <span style={{ flex: 1, fontSize: 13, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>Lending Progress</span>
+                      <span style={{ flex: 1, fontSize: 12, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>Lending Progress</span>
                       {chevronSvg}
                     </div>
                   </div>
                 )}
 
-                {/* Borrowing card */}
+                {/* Vertical divider */}
+                {lentLoans.length > 0 && borrowedLoans.length > 0 && (
+                  <div style={{ width: 1, background: 'rgba(0,0,0,0.07)', flexShrink: 0 }} />
+                )}
+
+                {/* Right: You owe */}
                 {borrowedLoans.length > 0 && (
-                  <div style={cardStyle}>
-                    <div style={{ padding: '18px 20px 14px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-                      {/* Label + amount left-aligned on same line */}
-                      <div style={{ display: 'flex', alignItems: 'baseline', gap: 7, flexWrap: 'wrap' }}>
-                        <span style={{ fontSize: 16, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', fontFamily: "'DM Sans', sans-serif" }}>
-                          You owe
-                        </span>
-                        <span style={{ fontSize: 26, fontWeight: 700, color: '#1D5B94', letterSpacing: '-0.03em', fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>
-                          {formatMoney(borrowOwed)}
-                        </span>
-                      </div>
-                      {/* Progress bar */}
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ padding: '16px 20px 14px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+                      <span style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.04em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>
+                        You owe
+                      </span>
+                      <span style={{ fontSize: 24, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.03em', fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>
+                        {formatMoney(borrowOwed)}
+                      </span>
                       <div style={{ height: 4, borderRadius: 2, background: 'rgba(0,0,0,0.08)', overflow: 'hidden' }}>
                         <div style={{ width: `${borrowingPct}%`, height: '100%', borderRadius: 2, background: '#1D5B94' }} />
                       </div>
-                      {/* Repaid amount */}
                       <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>
                         {formatMoney(totalPaidBack)} repaid / {formatMoney(totalBorrowedAmount)}
                       </div>
                     </div>
-                    {/* Borrowing Progress row */}
                     <div onClick={() => navigate(createPageUrl('LendingBorrowing') + '?tab=borrowing')}
-                      style={{ borderTop: '1px solid rgba(0,0,0,0.06)', padding: '10px 20px', display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}>
-                      <div style={{ width: 32, height: 32, borderRadius: 8, background: '#F4F4F5', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#1A1918', flexShrink: 0 }}>
+                      style={{ borderTop: '1px solid rgba(0,0,0,0.06)', padding: '9px 20px', display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
+                      <div style={{ width: 28, height: 28, borderRadius: 7, background: '#F4F4F5', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#1A1918', flexShrink: 0 }}>
                         {cashIconSvg}
                       </div>
-                      <span style={{ flex: 1, fontSize: 13, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>Borrowing Progress</span>
+                      <span style={{ flex: 1, fontSize: 12, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>Borrowing Progress</span>
                       {chevronSvg}
                     </div>
                   </div>
@@ -1562,7 +1553,7 @@ export default function Home() {
               );
 
               return (
-                <div className="home-card-loans-pair" style={{ background: '#ffffff', borderRadius: 14, boxShadow: '0 2px 12px rgba(0,0,0,0.08)', border: '1px solid rgba(0,0,0,0.06)', overflow: 'hidden' }}>
+                <div className="home-card-loans-pair">
                   {/* Tab bar */}
                   <div style={{ display: 'flex', borderBottom: '1px solid rgba(0,0,0,0.07)' }}>
                     {['lending', 'borrowing'].map(tab => {
