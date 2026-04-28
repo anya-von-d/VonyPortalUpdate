@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Friendship, PublicProfile } from '@/entities/all';
 import { useAuth } from '@/lib/AuthContext';
 import { createPageUrl } from '@/utils';
-import { Star, Search, X, Send, CheckCircle, UserMinus, ChevronDown } from 'lucide-react';
+import { Star, Search, X, Send, ChevronDown, ArrowLeft } from 'lucide-react';
 import UserAvatar from '@/components/ui/UserAvatar';
 import confetti from 'canvas-confetti';
 import MoreMenu from '@/components/MoreMenu';
@@ -11,16 +11,12 @@ import BlockConfirmModal from '@/components/BlockConfirmModal';
 import MeshMobileNav from '@/components/MeshMobileNav';
 import DesktopSidebar from '@/components/DesktopSidebar';
 
-const TABS = ['Friends', 'Add', 'Invite'];
-
 export default function Friends() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { user: authUser, userProfile } = useAuth();
   const user = userProfile ? { ...userProfile, id: authUser?.id } : null;
 
-  const initialTab = searchParams.get('tab') || 'Friends';
-  const [activeTab, setActiveTab] = useState(initialTab);
   const [friends, setFriends] = useState([]);
   const [sentRequests, setSentRequests] = useState([]);
   const [receivedRequests, setReceivedRequests] = useState([]);
@@ -30,9 +26,10 @@ export default function Friends() {
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [processingId, setProcessingId] = useState(null);
-  const [inviteLinkCopied, setInviteLinkCopied] = useState(false);
   const [requestsOpen, setRequestsOpen] = useState(searchParams.get('requests') === '1');
   const [blockTarget, setBlockTarget] = useState(null);
+  // Mobile: show the add-friends sub-view
+  const [mobileAddOpen, setMobileAddOpen] = useState(searchParams.get('tab') === 'Add');
 
   useEffect(() => {
     if (user?.id) loadFriendsData();
@@ -83,7 +80,6 @@ export default function Friends() {
     return profiles.find(p => p.user_id === friendId);
   };
 
-  const getReceivedRequestFrom = (userId) => receivedRequests.find(r => r.user_id === userId);
   const getSentRequestTo = (userId) => sentRequests.find(r => r.friend_id === userId);
 
   const sortedFriends = [...friends].sort((a, b) => {
@@ -137,86 +133,121 @@ export default function Friends() {
 
   if (!user) return null;
 
+  // Shared props for add section
+  const addProps = {
+    searchQuery, setSearchQuery, searchResults,
+    profiles, processingId,
+    getSentRequestTo,
+    handleSendRequest, handleCancelRequest,
+    setBlockTarget, user,
+  };
+
+  // Shared props for friends list
+  const friendsProps = {
+    sortedFriends, receivedRequests, profiles, user, processingId,
+    requestsOpen, setRequestsOpen,
+    getFriendProfile, handleToggleStar, handleAccept, handleCancelRequest,
+    setBlockTarget,
+    onAddFriends: () => setMobileAddOpen(true),
+  };
+
   return (
     <div style={{ minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", background: 'transparent' }}>
       <MeshMobileNav user={user} activePage="Friends" />
+
+      {/* ── MOBILE add-friends sub-view ── */}
+      {mobileAddOpen && (
+        <div className="mobile-only" style={{
+          position: 'fixed', inset: 0, zIndex: 300,
+          background: '#FCFCFC',
+          overflowY: 'auto',
+          paddingBottom: 120,
+        }}>
+          {/* Back bar */}
+          <div style={{
+            position: 'sticky', top: 0, zIndex: 10,
+            background: 'rgba(252,252,252,0.92)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
+            padding: '56px 20px 12px',
+            borderBottom: '1px solid rgba(0,0,0,0.05)',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <button
+                onClick={() => { setMobileAddOpen(false); setSearchQuery(''); }}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0', display: 'flex', alignItems: 'center', color: '#1A1918' }}
+              >
+                <ArrowLeft size={22} strokeWidth={2} />
+              </button>
+              <span style={{ fontSize: 17, fontWeight: 700, letterSpacing: '-0.025em', color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>
+                Add Friends
+              </span>
+            </div>
+          </div>
+
+          {/* Add content */}
+          <div style={{ padding: '20px 20px 0' }}>
+            <AddSection {...addProps} />
+          </div>
+        </div>
+      )}
+
+      {/* ── Main layout ── */}
       <div className="mesh-layout" style={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: 0, minHeight: '100vh' }}>
         <DesktopSidebar />
 
-        <div className="mesh-center" style={{ background: 'transparent', padding: '24px 40px 80px', maxWidth: 680, margin: '0 auto', width: '100%', boxSizing: 'border-box' }}>
+        <div className="mesh-center" style={{ background: 'transparent', padding: '24px 40px 80px', boxSizing: 'border-box' }}>
 
-          {/* Page title */}
+          {/* Desktop page title */}
           <div className="desktop-page-title" style={{ marginBottom: 28 }}>
             <h1 style={{ fontSize: 26, fontWeight: 700, color: '#1A1918', margin: 0, letterSpacing: '-0.03em', fontFamily: "'DM Sans', sans-serif" }}>Friends</h1>
           </div>
-          <div className="mobile-page-title">
-            <h1 style={{ fontSize: 22, fontWeight: 700, color: '#1A1918', margin: '0 0 16px', letterSpacing: '-0.03em', fontFamily: "'DM Sans', sans-serif" }}>Friends</h1>
-          </div>
 
-          {/* Tab selector */}
-          <div style={{ display: 'flex', background: 'rgba(0,0,0,0.05)', borderRadius: 12, padding: 3, gap: 2, marginBottom: 28 }}>
-            {TABS.map(tab => {
-              const active = activeTab === tab;
-              const badge = tab === 'Friends' && receivedRequests.length > 0 ? receivedRequests.length : null;
-              return (
-                <button key={tab} onClick={() => setActiveTab(tab)} style={{
-                  flex: 1, padding: '8px 12px', borderRadius: 9, border: 'none', cursor: 'pointer',
-                  background: active ? '#fff' : 'transparent',
-                  color: active ? '#1A1918' : '#787776',
-                  fontSize: 13, fontWeight: active ? 600 : 500,
-                  fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.01em',
-                  boxShadow: active ? '0 1px 4px rgba(0,0,0,0.10)' : 'none',
-                  transition: 'all 0.15s',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-                }}>
-                  {tab}
-                  {badge && (
-                    <span style={{ minWidth: 18, height: 18, borderRadius: 9, background: '#03ACEA', color: '#fff', fontSize: 10, fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px' }}>
-                      {badge}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
+          {/* Mobile page title + Add Friends button */}
+          <div className="mobile-page-title" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+            <h1 style={{ fontSize: 22, fontWeight: 700, color: '#1A1918', margin: 0, letterSpacing: '-0.03em', fontFamily: "'DM Sans', sans-serif" }}>Friends</h1>
+            <button
+              onClick={() => setMobileAddOpen(true)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 6,
+                padding: '8px 14px', borderRadius: 999,
+                background: '#03ACEA', color: '#fff',
+                border: 'none', cursor: 'pointer',
+                fontSize: 13, fontWeight: 600,
+                fontFamily: "'DM Sans', sans-serif",
+                letterSpacing: '-0.01em',
+              }}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              Add Friends
+            </button>
           </div>
 
           {isLoading ? (
             <div style={{ display: 'flex', justifyContent: 'center', padding: '60px 0' }}>
               <div style={{ width: 28, height: 28, border: '2px solid #03ACEA', borderTopColor: 'transparent', borderRadius: '50%' }} className="animate-spin" />
             </div>
-          ) : activeTab === 'Friends' ? (
-            <FriendsTab
-              sortedFriends={sortedFriends}
-              receivedRequests={receivedRequests}
-              profiles={profiles}
-              user={user}
-              processingId={processingId}
-              requestsOpen={requestsOpen}
-              setRequestsOpen={setRequestsOpen}
-              getFriendProfile={getFriendProfile}
-              handleToggleStar={handleToggleStar}
-              handleAccept={handleAccept}
-              handleCancelRequest={handleCancelRequest}
-              setBlockTarget={setBlockTarget}
-            />
-          ) : activeTab === 'Add' ? (
-            <AddTab
-              searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
-              searchResults={searchResults}
-              receivedRequests={receivedRequests}
-              profiles={profiles}
-              processingId={processingId}
-              getReceivedRequestFrom={getReceivedRequestFrom}
-              getSentRequestTo={getSentRequestTo}
-              handleSendRequest={handleSendRequest}
-              handleCancelRequest={handleCancelRequest}
-              handleAccept={handleAccept}
-              setBlockTarget={setBlockTarget}
-              user={user}
-            />
           ) : (
-            <InviteTab inviteLinkCopied={inviteLinkCopied} setInviteLinkCopied={setInviteLinkCopied} />
+            <>
+              {/* Desktop two-column, mobile single-column */}
+              <div className="friends-layout">
+                {/* Left / main: friends list + invite box */}
+                <div className="friends-main">
+                  <FriendsList {...friendsProps} />
+                  <InviteBox />
+                </div>
+
+                {/* Right: add friends (desktop only) */}
+                <div className="friends-add-col desktop-only">
+                  <div style={{ fontSize: 13, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: 14, fontFamily: "'DM Sans', sans-serif" }}>
+                    Add Friends
+                  </div>
+                  <AddSection {...addProps} />
+                </div>
+              </div>
+            </>
           )}
         </div>
       </div>
@@ -234,12 +265,26 @@ export default function Friends() {
           setBlockTarget(null);
         }}
       />
+
+      <style>{`
+        .mobile-only { display: block; }
+        .desktop-only { display: none; }
+        .friends-layout { display: flex; flex-direction: column; gap: 28px; }
+        .friends-main { flex: 1; min-width: 0; }
+        .friends-add-col { width: 320px; flex-shrink: 0; }
+
+        @media (min-width: 900px) {
+          .mobile-only { display: none !important; }
+          .desktop-only { display: block !important; }
+          .friends-layout { flex-direction: row; align-items: flex-start; gap: 32px; }
+        }
+      `}</style>
     </div>
   );
 }
 
-/* ── Friends tab ── */
-function FriendsTab({ sortedFriends, receivedRequests, profiles, user, processingId, requestsOpen, setRequestsOpen, getFriendProfile, handleToggleStar, handleAccept, handleCancelRequest, setBlockTarget }) {
+/* ── Friends list with pending requests card ── */
+function FriendsList({ sortedFriends, receivedRequests, profiles, user, processingId, requestsOpen, setRequestsOpen, getFriendProfile, handleToggleStar, handleAccept, handleCancelRequest, setBlockTarget }) {
   return (
     <div>
       {/* Pending requests card */}
@@ -306,14 +351,14 @@ function FriendsTab({ sortedFriends, receivedRequests, profiles, user, processin
 
       {/* Friends list */}
       {sortedFriends.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '60px 24px' }}>
-          <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(0,0,0,0.25)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <div style={{ textAlign: 'center', padding: '48px 24px' }}>
+          <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px' }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(0,0,0,0.25)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
               <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
             </svg>
           </div>
-          <p style={{ fontSize: 15, fontWeight: 600, color: '#1A1918', margin: '0 0 6px', fontFamily: "'DM Sans', sans-serif" }}>No friends yet</p>
+          <p style={{ fontSize: 15, fontWeight: 600, color: '#1A1918', margin: '0 0 5px', fontFamily: "'DM Sans', sans-serif" }}>No friends yet</p>
           <p style={{ fontSize: 13, color: '#9B9A98', margin: 0, fontFamily: "'DM Sans', sans-serif" }}>Search for people to connect with</p>
         </div>
       ) : (
@@ -346,12 +391,80 @@ function FriendsTab({ sortedFriends, receivedRequests, profiles, user, processin
   );
 }
 
-/* ── Add tab ── */
-function AddTab({ searchQuery, setSearchQuery, searchResults, receivedRequests, profiles, processingId, getReceivedRequestFrom, getSentRequestTo, handleSendRequest, handleCancelRequest, handleAccept, setBlockTarget, user }) {
+/* ── Invite box ── */
+function InviteBox() {
+  const inviteUrl = 'https://www.vony-lending.com';
+  const smsBody = encodeURIComponent(`Hey! Join me on Vony, an easy way to manage loans with friends. Sign up here: ${inviteUrl}`);
+  const smsHref = `sms:?body=${smsBody}`;
+
+  return (
+    <div style={{
+      marginTop: 20,
+      background: '#fff',
+      borderRadius: 20,
+      border: '1px solid rgba(0,0,0,0.06)',
+      boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
+      padding: '28px 24px 24px',
+      textAlign: 'center',
+    }}>
+      {/* Floating avatars decoration */}
+      <div style={{ position: 'relative', height: 56, marginBottom: 20 }}>
+        {[
+          { x: '12%',  y: 4,  size: 36, bg: '#E8D5F5', letter: 'A' },
+          { x: '28%',  y: 16, size: 28, bg: '#FDE68A', letter: 'B' },
+          { x: '44%',  y: 0,  size: 44, bg: '#BFDBFE', letter: 'C' },
+          { x: '62%',  y: 12, size: 30, bg: '#BBF7D0', letter: 'D' },
+          { x: '78%',  y: 4,  size: 34, bg: '#FECACA', letter: 'E' },
+        ].map(({ x, y, size, bg, letter }) => (
+          <div key={letter} style={{
+            position: 'absolute', left: x, top: y,
+            width: size, height: size, borderRadius: '50%',
+            background: bg,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: size * 0.38, fontWeight: 700, color: 'rgba(0,0,0,0.35)',
+            fontFamily: "'DM Sans', sans-serif",
+            border: '2px solid #fff',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.10)',
+          }}>
+            {letter}
+          </div>
+        ))}
+      </div>
+
+      <p style={{ fontSize: 16, fontWeight: 700, color: '#1A1918', margin: '0 0 6px', letterSpacing: '-0.02em', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.3 }}>
+        Don't see your friends on Vony?
+      </p>
+      <p style={{ fontSize: 13, color: '#787776', margin: '0 0 20px', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.5 }}>
+        Invite them to join you.
+      </p>
+
+      <a
+        href={smsHref}
+        style={{
+          display: 'inline-flex', alignItems: 'center', gap: 8,
+          padding: '12px 28px', borderRadius: 999,
+          background: '#1A1918', color: '#fff',
+          fontSize: 14, fontWeight: 700,
+          fontFamily: "'DM Sans', sans-serif",
+          textDecoration: 'none', letterSpacing: '-0.01em',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.18)',
+        }}
+      >
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+        Invite
+      </a>
+    </div>
+  );
+}
+
+/* ── Add friends section (shared between desktop right panel and mobile overlay) ── */
+function AddSection({ searchQuery, setSearchQuery, searchResults, profiles, processingId, getSentRequestTo, handleSendRequest, handleCancelRequest, setBlockTarget, user }) {
   return (
     <div>
       {/* Search bar */}
-      <div style={{ position: 'relative', marginBottom: 24 }}>
+      <div style={{ position: 'relative', marginBottom: 20 }}>
         <Search size={16} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#B0AEA8', pointerEvents: 'none' }} />
         <input
           type="text"
@@ -379,27 +492,23 @@ function AddTab({ searchQuery, setSearchQuery, searchResults, receivedRequests, 
 
       {searchQuery.trim() ? (
         searchResults.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '40px 0', color: '#9B9A98', fontSize: 14, fontFamily: "'DM Sans', sans-serif" }}>No users found for "{searchQuery}"</div>
+          <div style={{ textAlign: 'center', padding: '32px 0', color: '#9B9A98', fontSize: 14, fontFamily: "'DM Sans', sans-serif" }}>
+            No users found for "{searchQuery}"
+          </div>
         ) : (
           <div style={{ background: '#fff', borderRadius: 16, border: '1px solid rgba(0,0,0,0.06)', boxShadow: '0 1px 4px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
             {searchResults.map((profile, idx) => {
-              const receivedRequest = getReceivedRequestFrom(profile.user_id);
               const sentRequest = getSentRequestTo(profile.user_id);
               const displayName = profile.full_name || profile.username;
               const isLast = idx === searchResults.length - 1;
               return (
-                <div key={profile.user_id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '13px 18px', borderBottom: isLast ? 'none' : '1px solid rgba(0,0,0,0.05)' }}>
-                  <UserAvatar name={displayName} src={profile.profile_picture_url || profile.avatar_url} size={42} radius={21} />
+                <div key={profile.user_id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '13px 16px', borderBottom: isLast ? 'none' : '1px solid rgba(0,0,0,0.05)' }}>
+                  <UserAvatar name={displayName} src={profile.profile_picture_url || profile.avatar_url} size={40} radius={20} />
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: 14, fontWeight: 600, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: "'DM Sans', sans-serif" }}>{displayName}</div>
                     <div style={{ fontSize: 12, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>@{profile.username}</div>
                   </div>
-                  {receivedRequest ? (
-                    <button onClick={() => handleAccept(receivedRequest.id)} disabled={processingId === receivedRequest.id}
-                      style={{ padding: '7px 14px', borderRadius: 10, border: 'none', background: '#03ACEA', fontSize: 12, fontWeight: 600, color: '#fff', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", opacity: processingId === receivedRequest.id ? 0.5 : 1, whiteSpace: 'nowrap' }}>
-                      Accept
-                    </button>
-                  ) : sentRequest ? (
+                  {sentRequest ? (
                     <button onClick={() => handleCancelRequest(sentRequest.id)} disabled={processingId === sentRequest.id}
                       style={{ padding: '7px 14px', borderRadius: 10, border: '1px solid rgba(0,0,0,0.09)', background: 'transparent', fontSize: 12, fontWeight: 600, color: '#787776', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", opacity: processingId === sentRequest.id ? 0.5 : 1, whiteSpace: 'nowrap' }}>
                       Requested
@@ -416,98 +525,15 @@ function AddTab({ searchQuery, setSearchQuery, searchResults, receivedRequests, 
             })}
           </div>
         )
-      ) : receivedRequests.length > 0 ? (
-        <div>
-          <div style={{ fontSize: 11, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 12, fontFamily: "'DM Sans', sans-serif" }}>Pending requests</div>
-          <div style={{ background: '#fff', borderRadius: 16, border: '1px solid rgba(0,0,0,0.06)', boxShadow: '0 1px 4px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
-            {receivedRequests.map((request, idx) => {
-              const profile = profiles.find(p => p.user_id === request.user_id);
-              if (!profile) return null;
-              const displayName = profile.full_name || profile.username;
-              const isLast = idx === receivedRequests.length - 1;
-              return (
-                <div key={request.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '13px 18px', borderBottom: isLast ? 'none' : '1px solid rgba(0,0,0,0.05)' }}>
-                  <UserAvatar name={displayName} src={profile.profile_picture_url || profile.avatar_url} size={42} radius={21} />
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 14, fontWeight: 600, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: "'DM Sans', sans-serif" }}>{displayName}</div>
-                    <div style={{ fontSize: 12, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>@{profile.username}</div>
-                  </div>
-                  <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
-                    <button onClick={() => handleAccept(request.id)} disabled={processingId === request.id}
-                      style={{ padding: '7px 14px', borderRadius: 10, border: 'none', background: '#03ACEA', fontSize: 12, fontWeight: 600, color: '#fff', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", opacity: processingId === request.id ? 0.5 : 1 }}>
-                      Confirm
-                    </button>
-                    <button onClick={() => handleCancelRequest(request.id)} disabled={processingId === request.id}
-                      style={{ padding: '7px 14px', borderRadius: 10, border: '1px solid rgba(0,0,0,0.09)', background: 'transparent', fontSize: 12, fontWeight: 600, color: '#787776', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", opacity: processingId === request.id ? 0.5 : 1 }}>
-                      Delete
-                    </button>
-                  </div>
-                  <MoreMenu items={[{ label: 'Block', danger: true, onClick: () => setBlockTarget({ userId: profile.user_id, name: displayName, requestId: request.id }) }]} />
-                </div>
-              );
-            })}
-          </div>
-        </div>
       ) : (
-        <div style={{ textAlign: 'center', padding: '60px 24px' }}>
-          <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'rgba(3,172,234,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
-            <Search size={26} style={{ color: '#03ACEA', opacity: 0.6 }} />
+        <div style={{ textAlign: 'center', padding: '48px 16px' }}>
+          <div style={{ width: 52, height: 52, borderRadius: '50%', background: 'rgba(3,172,234,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px' }}>
+            <Search size={22} style={{ color: '#03ACEA', opacity: 0.6 }} />
           </div>
-          <p style={{ fontSize: 15, fontWeight: 600, color: '#1A1918', margin: '0 0 6px', fontFamily: "'DM Sans', sans-serif" }}>Find friends</p>
-          <p style={{ fontSize: 13, color: '#9B9A98', margin: 0, fontFamily: "'DM Sans', sans-serif" }}>Search by name or username above</p>
+          <p style={{ fontSize: 14, fontWeight: 600, color: '#1A1918', margin: '0 0 5px', fontFamily: "'DM Sans', sans-serif" }}>Find friends</p>
+          <p style={{ fontSize: 13, color: '#9B9A98', margin: 0, fontFamily: "'DM Sans', sans-serif" }}>Search by name or username</p>
         </div>
       )}
-    </div>
-  );
-}
-
-/* ── Invite tab ── */
-function InviteTab({ inviteLinkCopied, setInviteLinkCopied }) {
-  return (
-    <div>
-      <p style={{ fontSize: 14, color: '#787776', marginBottom: 24, marginTop: 0, fontFamily: "'DM Sans', sans-serif", lineHeight: 1.5 }}>
-        Don't see your friends on Vony? Invite them to join you.
-      </p>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        {[
-          {
-            href: "sms:?body=Hey! Join me on Vony, an easy way to manage loans with friends. Sign up here: https://www.vony-lending.com",
-            icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>,
-            label: 'Send via SMS', color: '#22c55e',
-          },
-          {
-            href: "mailto:?subject=Join me on Vony&body=Hey!%0A%0AI've been using Vony to manage loans with friends and wanted to invite you.%0A%0ASign up here: https://www.vony-lending.com",
-            icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>,
-            label: 'Send via Email', color: '#03ACEA',
-          },
-        ].map(({ href, icon, label, color }) => (
-          <a key={label} href={href} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 18px', borderRadius: 16, background: '#fff', border: '1px solid rgba(0,0,0,0.06)', boxShadow: '0 1px 4px rgba(0,0,0,0.04)', fontSize: 14, color: '#1A1918', textDecoration: 'none', fontWeight: 500, fontFamily: "'DM Sans', sans-serif" }}>
-            <div style={{ width: 38, height: 38, borderRadius: 10, background: `${color}14`, display: 'flex', alignItems: 'center', justifyContent: 'center', color, flexShrink: 0 }}>
-              {icon}
-            </div>
-            {label}
-          </a>
-        ))}
-
-        <button
-          type="button"
-          onClick={() => {
-            navigator.clipboard.writeText('https://www.vony-lending.com').then(() => {
-              setInviteLinkCopied(true);
-              setTimeout(() => setInviteLinkCopied(false), 2000);
-            });
-          }}
-          style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 18px', borderRadius: 16, background: inviteLinkCopied ? 'rgba(22,163,74,0.06)' : '#fff', border: `1px solid ${inviteLinkCopied ? 'rgba(22,163,74,0.2)' : 'rgba(0,0,0,0.06)'}`, boxShadow: '0 1px 4px rgba(0,0,0,0.04)', fontSize: 14, color: inviteLinkCopied ? '#16A34A' : '#1A1918', fontWeight: 500, cursor: 'pointer', width: '100%', textAlign: 'left', fontFamily: "'DM Sans', sans-serif", transition: 'all 0.2s' }}
-        >
-          <div style={{ width: 38, height: 38, borderRadius: 10, background: inviteLinkCopied ? 'rgba(22,163,74,0.1)' : 'rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: inviteLinkCopied ? '#16A34A' : '#787776', flexShrink: 0 }}>
-            {inviteLinkCopied
-              ? <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-              : <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-            }
-          </div>
-          {inviteLinkCopied ? 'Link copied!' : 'Copy invite link'}
-        </button>
-      </div>
     </div>
   );
 }
