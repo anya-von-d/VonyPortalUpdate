@@ -576,7 +576,8 @@ export default function Profile() {
         <DesktopSidebar />
 
         {subContent ? subContent : (
-          <div className="mesh-center" style={{ background: 'transparent', borderRight: '1px solid rgba(0,0,0,0.06)', padding: '24px 32px 80px', maxWidth: 600 }}>
+          <div className="mesh-center" style={{ background: 'transparent', display: 'flex', justifyContent: 'center', padding: '24px 24px 80px' }}>
+          <div style={{ width: '100%', maxWidth: 600 }}>
 
             {/* ── Avatar + Name ── */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 36 }}>
@@ -745,6 +746,7 @@ export default function Profile() {
                 <a href="https://www.vony-lending.com/privacy" target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#787776', textDecoration: 'none' }}>Privacy</a>
               </div>
             </div>
+          </div>
           </div>
         )}
       </div>

@@ -7,6 +7,7 @@ import { useAuth } from "@/lib/AuthContext";
 import BorrowerSignatureModal from "@/components/loans/BorrowerSignatureModal";
 import MeshMobileNav from "@/components/MeshMobileNav";
 import DesktopSidebar from '../components/DesktopSidebar';
+import PaymentReceiptModal from "@/components/PaymentReceiptModal";
 
 
 const CATEGORY_OPTIONS = [
@@ -358,6 +359,9 @@ export default function RecentActivity({ embeddedMode }) {
   const [showSignModal, setShowSignModal] = useState(false);
   const [raPage, setRaPage] = useState(0);
 
+  // Payment receipt modal
+  const [receiptData, setReceiptData] = useState(null);
+
   const { logout } = useAuth();
 
   useEffect(() => { loadData(); }, []);
@@ -596,6 +600,36 @@ export default function RecentActivity({ embeddedMode }) {
     setSearchQuery('');
   };
 
+  /* ── Payment receipt helper ─────────────────────────────── */
+  const openReceipt = (activity) => {
+    if (activity.type !== 'payment') return;
+    const loan = safeLoans.find(l => l && l.id === activity.loan_id);
+    const otherPartyId = loan
+      ? (loan.borrower_id === user.id ? loan.lender_id : loan.borrower_id)
+      : null;
+    const otherProfile = otherPartyId ? getUserById(otherPartyId) : null;
+    const isSender = loan ? loan.borrower_id === user.id : false;
+    const fromName = isSender
+      ? (user.full_name || user.username || 'You')
+      : (otherProfile?.full_name || otherProfile?.username || 'User');
+    const toName = isSender
+      ? (otherProfile?.full_name || otherProfile?.username || 'User')
+      : (user.full_name || user.username || 'You');
+    setReceiptData({
+      amount: activity.amount,
+      date: activity.payment_date || activity.date,
+      method: activity.payment_method,
+      notes: activity.notes,
+      status: activity.status,
+      id: activity.id,
+      fromName,
+      toName,
+      purpose: loan?.purpose,
+      loanTotal: loan?.total_amount || loan?.amount,
+      isSender,
+    });
+  };
+
   /* ── Export CSV ──────────────────────────────────────────── */
   const handleExportCSV = () => {
     const headers = ['Date', 'Friend', 'Category', 'Status', 'Description'];
@@ -747,10 +781,14 @@ export default function RecentActivity({ embeddedMode }) {
                     }
                   };
 
+                  const isPayment = activity.type === 'payment';
                   return (
                     <div
                       key={`${activity.type}-${activity.id}-${index}`}
-                      style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 0' }}
+                      onClick={() => isPayment && openReceipt(activity)}
+                      style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 0', cursor: isPayment ? 'pointer' : 'default', borderRadius: 8, transition: 'background 0.12s' }}
+                      onMouseEnter={e => { if (isPayment) e.currentTarget.style.background = 'rgba(0,0,0,0.03)'; }}
+                      onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
                     >
                       <div style={{ width: 38, height: 38, borderRadius: '50%', background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                         <Icon size={17} strokeWidth={2.3} style={{ color: iconColor }} />
@@ -773,9 +811,12 @@ export default function RecentActivity({ embeddedMode }) {
                           )}
                         </div>
                       </div>
+                      {isPayment && !showArrow && (
+                        <ChevronRight size={14} style={{ color: '#C4C3C1', flexShrink: 0 }} />
+                      )}
                       {showArrow && (
                         <button
-                          onClick={handleArrowClick}
+                          onClick={e => { e.stopPropagation(); handleArrowClick(); }}
                           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, flexShrink: 0, display: 'flex', alignItems: 'center' }}
                         >
                           <ChevronRight size={16} style={{ color: '#9B9A98' }} />
@@ -962,10 +1003,14 @@ export default function RecentActivity({ embeddedMode }) {
                       }
                     };
 
+                    const isPayment2 = activity.type === 'payment';
                     return (
                       <div
                         key={`${activity.type}-${activity.id}-${index}`}
-                        style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 0' }}
+                        onClick={() => isPayment2 && openReceipt(activity)}
+                        style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 0', cursor: isPayment2 ? 'pointer' : 'default', borderRadius: 8, transition: 'background 0.12s' }}
+                        onMouseEnter={e => { if (isPayment2) e.currentTarget.style.background = 'rgba(0,0,0,0.03)'; }}
+                        onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
                       >
                         <div style={{ width: 38, height: 38, borderRadius: '50%', background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                           <Icon size={17} strokeWidth={2.3} style={{ color: iconColor }} />
@@ -988,9 +1033,12 @@ export default function RecentActivity({ embeddedMode }) {
                             )}
                           </div>
                         </div>
+                        {isPayment2 && !showArrow && (
+                          <ChevronRight size={14} style={{ color: '#C4C3C1', flexShrink: 0 }} />
+                        )}
                         {showArrow && (
                           <button
-                            onClick={handleArrowClick}
+                            onClick={e => { e.stopPropagation(); handleArrowClick(); }}
                             style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, flexShrink: 0, display: 'flex', alignItems: 'center' }}
                           >
                             <ChevronRight size={16} style={{ color: '#9B9A98' }} />
@@ -1102,6 +1150,9 @@ export default function RecentActivity({ embeddedMode }) {
           lenderName={getUserById(viewingLoanOffer.lender_id)?.full_name || 'Lender'}
         />
       )}
+
+      {/* ── Payment Receipt Modal ────────────────────────────── */}
+      <PaymentReceiptModal data={receiptData} onClose={() => setReceiptData(null)} />
 
       {/* ── Mobile Filter Popup ───────────────────────────────── */}
       <FilterPopup
