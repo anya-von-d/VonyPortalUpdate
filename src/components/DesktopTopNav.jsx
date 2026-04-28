@@ -258,7 +258,34 @@ export default function DesktopTopNav() {
           </NavBtnPopup>
         </Pill>
 
-        <div style={{ flex: 1 }} />
+        {/* ── Centre search bar ── */}
+        <div style={{ flex: 1, display: 'flex', justifyContent: 'center', pointerEvents: 'auto' }}>
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 8,
+            background: 'rgba(255,255,255,0.82)',
+            backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)',
+            border: '1px solid rgba(255,255,255,0.72)',
+            boxShadow: '0 2px 12px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.04)',
+            borderRadius: 30, padding: '7px 16px',
+            width: '100%', maxWidth: 340,
+            transition: 'box-shadow 0.15s',
+          }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(0,0,0,0.35)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input
+              type="text"
+              placeholder="Search…"
+              style={{
+                flex: 1, border: 'none', outline: 'none', background: 'transparent',
+                fontSize: 13, fontFamily: "'DM Sans', sans-serif",
+                color: '#1A1918', fontWeight: 400,
+              }}
+              onFocus={e => e.currentTarget.parentElement.style.boxShadow = '0 2px 16px rgba(0,0,0,0.12), 0 0 0 2px rgba(3,172,234,0.15)'}
+              onBlur={e => e.currentTarget.parentElement.style.boxShadow = '0 2px 12px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.04)'}
+            />
+          </div>
+        </div>
 
         {/* Right pill — Friends, Bell, Records, Profile, Menu */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8, pointerEvents: 'auto' }}>
