@@ -1670,48 +1670,43 @@ export default function Home() {
                 );
               })()}
 
-              {/* Monthly at a glance — no box, plain content */}
+              {/* Monthly at a glance — no box */}
               {(monthlyExpectedReceive > 0 || monthlyExpectedPay > 0) && (
                 <div className="home-card-monthly-summary">
-                  {/* Title */}
                   <h2 style={{ fontSize: 22, fontWeight: 700, color: '#1A1918', margin: '0 0 16px', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.02em' }}>
                     {format(today, 'MMMM')} at a glance
                   </h2>
-                  {/* Rows */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                     {monthlyExpectedReceive > 0 && (
                       <div>
-                        <div style={{ fontSize: 15, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.01em' }}>
+                        <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.3 }}>
                           You've received <span style={{ color: '#03ACEA' }}>{formatMoney(monthlyReceived)}</span>
                         </div>
-                        <div style={{ fontSize: 13, color: '#787776', fontFamily: "'DM Sans', sans-serif", marginTop: 1 }}>of {formatMoney(monthlyExpectedReceive)} expected this month</div>
+                        <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 2 }}>of {formatMoney(monthlyExpectedReceive)} expected this month</div>
                       </div>
+                    )}
+                    {monthlyExpectedReceive > 0 && monthlyExpectedPay > 0 && (
+                      <div style={{ height: 1, background: 'rgba(0,0,0,0.06)' }} />
                     )}
                     {monthlyExpectedPay > 0 && (
                       <div>
-                        <div style={{ fontSize: 15, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.01em' }}>
-                          You've paid <span style={{ color: '#1D5B94' }}>{formatMoney(monthlyPaidOut)}</span>
+                        <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.3 }}>
+                          You've paid <span style={{ color: '#03ACEA' }}>{formatMoney(monthlyPaidOut)}</span>
                         </div>
-                        <div style={{ fontSize: 13, color: '#787776', fontFamily: "'DM Sans', sans-serif", marginTop: 1 }}>of {formatMoney(monthlyExpectedPay)} due this month</div>
+                        <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 2 }}>of {formatMoney(monthlyExpectedPay)} due this month</div>
                       </div>
                     )}
-                    {/* Plan your month */}
                     <div
                       onClick={() => navigate(createPageUrl('Upcoming'))}
-                      style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '4px 0', cursor: 'pointer', marginTop: 4 }}
+                      style={{ borderTop: '1px solid rgba(0,0,0,0.06)', paddingTop: 10, display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}
                     >
-                      <div style={{ color: '#1A1918', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', width: 36, height: 36 }}>
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+                      <div style={{ width: 28, height: 28, borderRadius: 7, background: '#F4F4F5', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#1A1918', flexShrink: 0 }}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
                         </svg>
                       </div>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontSize: 15, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.01em' }}>Plan your month</div>
-                        <div style={{ fontSize: 13, color: '#787776', fontFamily: "'DM Sans', sans-serif", marginTop: 1 }}>View upcoming payments and schedule</div>
-                      </div>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C4C3C1" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
-                        <polyline points="9 18 15 12 9 6"/>
-                      </svg>
+                      <span style={{ flex: 1, fontSize: 12, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>Plan your month</span>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C4C3C1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
                     </div>
                   </div>
                 </div>
