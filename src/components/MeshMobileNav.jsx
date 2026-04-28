@@ -134,11 +134,11 @@ export default function MeshMobileNav({ user, activePage }) {
   // Page title logic — show Vony logo only on Home and Profile
   const PAGE_TITLE_MAP = {
     PlanYourMonth: 'Plan Your Month',
-    Records: 'Loan Agreements',
+    Records: 'Lending & Borrowing Records',
     RecordPayment: 'Log a Payment',
     LendingBorrowing: 'Lending & Borrowing',
     RecentActivity: 'Recent Activity',
-    LoanAgreements: 'Loan Agreements',
+    LoanAgreements: 'Lending & Borrowing Records',
     LoanHelp: 'Loan Help',
     CreateOffer: 'Create a Loan',
     YourLoans: 'Your Loans',

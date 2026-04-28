@@ -1542,11 +1542,13 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
           </div>
           )}
 
-          {/* Page title — shown when accessed as a dedicated Lending or Borrowing page */}
+          {/* Page title — desktop only (mobile top bar handles it) */}
           {defaultTab && (
-            <h1 style={{ fontSize: 26, fontWeight: 700, color: '#1A1918', margin: '0 0 24px', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.03em' }}>
-              {defaultTab === 'lending' ? 'Lending' : 'Borrowing'}
-            </h1>
+            <div className="desktop-page-title" style={{ marginBottom: 24 }}>
+              <h1 style={{ fontSize: 26, fontWeight: 700, color: '#1A1918', margin: 0, fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.03em' }}>
+                {defaultTab === 'lending' ? 'Lending' : 'Borrowing'}
+              </h1>
+            </div>
           )}
 
           {activeTab === 'lending' && renderSummaryTab('lending')}

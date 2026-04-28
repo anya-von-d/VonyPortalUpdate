@@ -191,7 +191,7 @@ export default function DesktopTopNav() {
   // Records popup (no title)
   const recordsPopup = {
     items: [
-      { label: 'Loan Agreements',  to: createPageUrl('LoanAgreements'), icon: <IcoDocs /> },
+      { label: 'Lending & Borrowing Records', to: createPageUrl('LoanAgreements'), icon: <IcoDocs /> },
       { label: 'Recent Activity',  to: createPageUrl('RecentActivity'), icon: <IcoActivity /> },
       { label: 'Your Loans',       to: createPageUrl('YourLoans'),      icon: <IcoLoans /> },
     ],

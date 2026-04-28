@@ -288,6 +288,10 @@ input[type="date"] {
   .mobile-page-title {
     display: none !important;
   }
+  /* Home greeting is mobile-only — hide on desktop */
+  .mobile-home-greeting {
+    display: none !important;
+  }
   /* Desktop-only page title — show on desktop */
   .desktop-page-title {
     display: block !important;
