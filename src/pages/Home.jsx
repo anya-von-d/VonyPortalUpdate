@@ -1507,7 +1507,7 @@ export default function Home() {
                   ? `${name} borrowed ${formatMoney(total)}`
                   : `${name} lent you ${formatMoney(total)}`;
                 return (
-                  <div key={loan.id} style={{ padding: '10px 0', display: 'flex', alignItems: 'center', gap: 10, borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+                  <div key={loan.id} style={{ padding: '14px 16px', display: 'flex', alignItems: 'center', gap: 14 }}>
                     {/* Profile photo + pie chart overlay */}
                     <div style={{ position: 'relative', width: 48, height: 48, flexShrink: 0 }}>
                       <UserAvatar
@@ -1572,36 +1572,36 @@ export default function Home() {
               );
 
               return (
-                <div className="home-card-loans-pair">
-                  {/* Section label */}
-                  <div style={{ fontSize: 13, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.04em', textTransform: 'uppercase', padding: '16px 18px 8px', fontFamily: "'DM Sans', sans-serif" }}>
+                <div>
+                  {/* Section label — above the card, matching Quick Actions heading style */}
+                  <div style={{ fontSize: 13, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.04em', textTransform: 'uppercase', padding: '0 0 10px', fontFamily: "'DM Sans', sans-serif" }}>
                     Lending and Borrowing agreements
                   </div>
-                  {/* Tab bar + sort dropdown on same row */}
-                  <div style={{ display: 'flex', alignItems: 'center', paddingLeft: 18, paddingRight: 12 }}>
-                    {['lending', 'borrowing'].map(tab => {
-                      const active = lbTab === tab;
-                      return (
-                        <button key={tab} onClick={() => setLbTab(tab)} style={{
-                          padding: '7px 14px', fontSize: 12, fontWeight: active ? 700 : 500,
-                          color: active ? '#1A1918' : '#9B9A98',
-                          background: 'none', border: 'none', borderBottom: active ? '2px solid #1A1918' : '2px solid transparent',
-                          cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
-                          letterSpacing: '-0.01em', transition: 'color 0.15s',
-                        }}>
-                          {tab === 'lending' ? 'Lending' : 'Borrowing'}
-                        </button>
-                      );
-                    })}
-                    <div style={{ flex: 1 }} />
-                    <SortDropdown value={activeFilter} onChange={setActiveFilter} />
-                  </div>
-                  {/* Loan list */}
-                  <div style={{ padding: '0 18px' }}>
-                    <div style={{ height: 4 }} />
+                  {/* White card — same style as Quick Actions */}
+                  <div style={{ background: '#ffffff', borderRadius: 14, overflow: 'hidden' }}>
+                    {/* Tab bar + sort dropdown on same row */}
+                    <div style={{ display: 'flex', alignItems: 'center', padding: '4px 12px 0 16px' }}>
+                      {['lending', 'borrowing'].map(tab => {
+                        const active = lbTab === tab;
+                        return (
+                          <button key={tab} onClick={() => setLbTab(tab)} style={{
+                            padding: '8px 12px', fontSize: 12, fontWeight: active ? 700 : 500,
+                            color: active ? '#1A1918' : '#9B9A98',
+                            background: 'none', border: 'none', borderBottom: active ? '2px solid #1A1918' : '2px solid transparent',
+                            cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
+                            letterSpacing: '-0.01em', transition: 'color 0.15s',
+                          }}>
+                            {tab === 'lending' ? 'Lending' : 'Borrowing'}
+                          </button>
+                        );
+                      })}
+                      <div style={{ flex: 1 }} />
+                      <SortDropdown value={activeFilter} onChange={setActiveFilter} />
+                    </div>
+                    {/* Loan rows */}
                     {activeLoans.length === 0
                       ? <div style={{ fontSize: 12, color: '#9B9A98', textAlign: 'center', padding: '16px 0' }}>No active {lbTab} 🌱</div>
-                      : <div style={{ display: 'flex', flexDirection: 'column' }}>{activeLoans.map((l, idx) => renderLoanRow(l, isLendingTab, idx, activeFilter))}</div>
+                      : activeLoans.map((l, idx) => renderLoanRow(l, isLendingTab, idx, activeFilter))
                     }
                   </div>
                 </div>
