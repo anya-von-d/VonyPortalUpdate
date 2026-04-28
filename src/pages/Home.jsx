@@ -1532,11 +1532,11 @@ export default function Home() {
                       </div>
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: "'DM Sans', sans-serif" }}>{topLine}</div>
+                      <div style={{ fontSize: 15, fontWeight: 600, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.01em' }}>{topLine}</div>
                       {loan.purpose && (
-                        <div style={{ fontSize: 11, color: '#787776', marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: "'DM Sans', sans-serif" }}>{loan.purpose}</div>
+                        <div style={{ fontSize: 13, color: '#787776', marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: "'DM Sans', sans-serif" }}>{loan.purpose}</div>
                       )}
-                      <div style={{ fontSize: 11, color: '#9B9A98', marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: "'DM Sans', sans-serif" }}>
+                      <div style={{ fontSize: 13, color: '#787776', marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: "'DM Sans', sans-serif" }}>
                         <span style={{ color: accentCol, fontWeight: 600 }}>{formatMoney(amountPaid)}</span> repaid · <span>{formatMoney(remaining)}</span> remaining
                       </div>
                     </div>
@@ -1573,42 +1573,40 @@ export default function Home() {
 
               return (
                 <div>
-                  {/* Section label — above the card, matching Quick Actions heading style */}
-                  <div style={{ fontSize: 13, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.04em', textTransform: 'uppercase', padding: '0 0 10px', fontFamily: "'DM Sans', sans-serif" }}>
-                    Lending and Borrowing agreements
+                  {/* Title — same style as "Quick actions" h2 */}
+                  <h2 style={{ fontSize: 22, fontWeight: 700, color: '#1A1918', margin: '0 0 16px', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.02em' }}>
+                    Lending and Borrowing
+                  </h2>
+                  {/* Tab selector + sort — same font as Quick Actions item label */}
+                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
+                    {['lending', 'borrowing'].map(tab => {
+                      const active = lbTab === tab;
+                      return (
+                        <button key={tab} onClick={() => setLbTab(tab)} style={{
+                          padding: '4px 0', marginRight: 20,
+                          fontSize: 15, fontWeight: active ? 600 : 400,
+                          color: active ? '#1A1918' : 'rgba(0,0,0,0.35)',
+                          background: 'none', border: 'none', borderBottom: active ? '2px solid #1A1918' : '2px solid transparent',
+                          cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
+                          letterSpacing: '-0.01em', transition: 'color 0.15s',
+                        }}>
+                          {tab === 'lending' ? 'Lending' : 'Borrowing'}
+                        </button>
+                      );
+                    })}
+                    <div style={{ flex: 1 }} />
+                    <SortDropdown value={activeFilter} onChange={setActiveFilter} />
                   </div>
-                  {/* White card — same style as Quick Actions */}
-                  <div style={{ background: '#ffffff', borderRadius: 14, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.08)' }}>
-                    {/* Tab bar + sort dropdown on same row */}
-                    <div style={{ display: 'flex', alignItems: 'center', padding: '4px 12px 0 16px' }}>
-                      {['lending', 'borrowing'].map(tab => {
-                        const active = lbTab === tab;
-                        return (
-                          <button key={tab} onClick={() => setLbTab(tab)} style={{
-                            padding: '8px 12px', fontSize: 12, fontWeight: active ? 700 : 500,
-                            color: active ? '#1A1918' : '#9B9A98',
-                            background: 'none', border: 'none', borderBottom: active ? '2px solid #1A1918' : '2px solid transparent',
-                            cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
-                            letterSpacing: '-0.01em', transition: 'color 0.15s',
-                          }}>
-                            {tab === 'lending' ? 'Lending' : 'Borrowing'}
-                          </button>
-                        );
-                      })}
-                      <div style={{ flex: 1 }} />
-                      <SortDropdown value={activeFilter} onChange={setActiveFilter} />
-                    </div>
-                    {/* Loan rows */}
-                    {activeLoans.length === 0
-                      ? <div style={{ fontSize: 12, color: '#9B9A98', textAlign: 'center', padding: '16px 0' }}>No active {lbTab} 🌱</div>
-                      : activeLoans.map((l, idx, arr) => (
-                          <div key={l.id}>
-                            {renderLoanRow(l, isLendingTab, idx, activeFilter)}
-                            {idx < arr.length - 1 && <div style={{ height: 1, background: 'rgba(0,0,0,0.05)', margin: '0 16px' }} />}
-                          </div>
-                        ))
-                    }
-                  </div>
+                  {/* Loan rows — no card wrapper */}
+                  {activeLoans.length === 0
+                    ? <div style={{ fontSize: 13, color: '#9B9A98', padding: '8px 0' }}>No active {lbTab} 🌱</div>
+                    : activeLoans.map((l, idx, arr) => (
+                        <div key={l.id}>
+                          {renderLoanRow(l, isLendingTab, idx, activeFilter)}
+                          {idx < arr.length - 1 && <div style={{ height: 1, background: 'rgba(0,0,0,0.05)' }} />}
+                        </div>
+                      ))
+                  }
                 </div>
               );
             })()}
@@ -1773,7 +1771,7 @@ export default function Home() {
                 <h2 style={{ fontSize: 22, fontWeight: 700, color: '#1A1918', margin: '0 0 16px', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.02em' }}>
                   Quick actions
                 </h2>
-                <div style={{ background: '#ffffff', borderRadius: 14, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.08)' }}>
+                <div style={{ background: '#ffffff', borderRadius: 14, overflow: 'hidden' }}>
                   {quickLinks.map((item, i) => (
                     <div
                       key={i}
