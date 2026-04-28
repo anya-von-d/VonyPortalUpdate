@@ -359,8 +359,7 @@ export default function LoanDetail() {
     fontWeight: 700,
     color: "#9B9A98",
     fontFamily: "'DM Sans', sans-serif",
-    letterSpacing: "0.06em",
-    textTransform: "uppercase",
+    letterSpacing: "-0.01em",
     marginBottom: 16,
     marginTop: 0,
   };
@@ -369,7 +368,7 @@ export default function LoanDetail() {
     <>
       <style>{`
         @media (min-width: 901px) {
-          .loan-detail-center { padding-left: 80px !important; padding-right: 80px !important; }
+          .loan-detail-center { padding-left: 160px !important; padding-right: 160px !important; }
         }
       `}</style>
 
@@ -414,10 +413,10 @@ export default function LoanDetail() {
                 { label: "Interest Rate", value: `${loan.interest_rate || 0}%` },
                 { label: "Term", value: `${loan.repayment_period || 0} ${loan.repayment_unit || "months"}` },
                 { label: "Frequency", value: freqLabel },
-                { label: isLending ? "Total Owed to You" : "Total Owed", value: formatMoney(totalOwedDisplay), sub: "with interest" },
+                { label: "Total Owed Including Interest", value: formatMoney(totalOwedDisplay) },
                 { label: isLending ? "Amount Received" : "Amount Paid", value: formatMoney(totalPaidAmt) },
-                { label: "Payments Made", value: `${fullPaymentCount}/${totalPeriods}`, sub: "full payments" },
-                { label: `${freqLabel} Payments`, value: formatMoney(displayPaymentAmt), sub: isLending ? `from ${otherName.split(" ")[0]}` : `to ${otherName.split(" ")[0]}` },
+                { label: "Payments Made", value: `${fullPaymentCount}/${totalPeriods}` },
+                { label: `${freqLabel} Payments`, value: formatMoney(displayPaymentAmt) },
               ].map((item, idx) => (
                 <div key={idx} style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
                   <span style={{ fontSize: 14, color: "#787776", fontFamily: "'DM Sans', sans-serif" }}>{item.label}</span>
