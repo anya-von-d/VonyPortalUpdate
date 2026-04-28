@@ -1363,7 +1363,7 @@ export default function Home() {
                 {lentLoans.length > 0 && (
                   <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                     <div style={{ padding: '16px 20px 14px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-                      <span style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.04em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>
+                      <span style={{ fontSize: 11, fontWeight: 600, color: '#1A1918', letterSpacing: '0.04em', fontFamily: "'DM Sans', sans-serif" }}>
                         You are owed
                       </span>
                       <span style={{ fontSize: 24, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.03em', fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>
@@ -1377,7 +1377,7 @@ export default function Home() {
                       </div>
                     </div>
                     <div onClick={() => navigate(createPageUrl('LendingBorrowing') + '?tab=lending')}
-                      style={{ borderTop: '1px solid rgba(0,0,0,0.06)', padding: '9px 20px', display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
+                      style={{ padding: '9px 20px', display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
                       <div style={{ width: 28, height: 28, borderRadius: 7, background: '#F4F4F5', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#1A1918', flexShrink: 0 }}>
                         {cashIconSvg}
                       </div>
@@ -1396,7 +1396,7 @@ export default function Home() {
                 {borrowedLoans.length > 0 && (
                   <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                     <div style={{ padding: '16px 20px 14px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-                      <span style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.04em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>
+                      <span style={{ fontSize: 11, fontWeight: 600, color: '#1A1918', letterSpacing: '0.04em', fontFamily: "'DM Sans', sans-serif" }}>
                         You owe
                       </span>
                       <span style={{ fontSize: 24, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.03em', fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>
@@ -1410,7 +1410,7 @@ export default function Home() {
                       </div>
                     </div>
                     <div onClick={() => navigate(createPageUrl('LendingBorrowing') + '?tab=borrowing')}
-                      style={{ borderTop: '1px solid rgba(0,0,0,0.06)', padding: '9px 20px', display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
+                      style={{ padding: '9px 20px', display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
                       <div style={{ width: 28, height: 28, borderRadius: 7, background: '#F4F4F5', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#1A1918', flexShrink: 0 }}>
                         {cashIconSvg}
                       </div>
