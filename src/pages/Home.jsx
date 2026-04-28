@@ -1337,6 +1337,68 @@ export default function Home() {
 
           </div>
 
+          {/* ── You are owed / You owe — connected split card ── */}
+          {(lentLoans.length > 0 || borrowedLoans.length > 0) && (() => {
+            const lentOwed = Math.max(0, totalLentAmount - totalRepaid);
+            const borrowOwed = Math.max(0, totalBorrowedAmount - totalPaidBack);
+            // Profiles of borrowers (people who owe me)
+            const owedProfiles = lentLoans.slice(0, 5).map(l => {
+              const p = safeAllProfiles.find(pr => pr.user_id === l.borrower_id);
+              return { name: p?.full_name || p?.username || '?', src: needsProfileIcon(p?.profile_picture_url) ? getIconForUser(l.borrower_id) : p?.profile_picture_url };
+            });
+            // Profiles of lenders (people I owe)
+            const oweProfiles = borrowedLoans.slice(0, 5).map(l => {
+              const p = safeAllProfiles.find(pr => pr.user_id === l.lender_id);
+              return { name: p?.full_name || p?.username || '?', src: needsProfileIcon(p?.profile_picture_url) ? getIconForUser(l.lender_id) : p?.profile_picture_url };
+            });
+            const AvatarStack = ({ profiles }) => (
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                {profiles.map((p, i) => (
+                  <UserAvatar key={i} name={p.name} src={p.src} size={28}
+                    style={{ border: '2px solid white', marginLeft: i > 0 ? -9 : 0, zIndex: profiles.length - i, flexShrink: 0 }} />
+                ))}
+              </div>
+            );
+            return (
+              <div style={{ display: 'flex', background: '#ffffff', borderRadius: 14, boxShadow: '0 2px 12px rgba(0,0,0,0.08)', marginBottom: 28, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.06)' }}>
+                {/* Left: You are owed */}
+                <div style={{ flex: 1, padding: '18px 20px', display: 'flex', flexDirection: 'column', gap: 10, cursor: 'pointer' }} onClick={() => navigate(createPageUrl('LendingBorrowing') + '?tab=lending')}>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>
+                    You are owed
+                  </div>
+                  <div style={{ fontSize: 26, fontWeight: 700, color: '#03ACEA', letterSpacing: '-0.03em', fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>
+                    {formatMoney(lentOwed)}
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 4 }}>
+                    <AvatarStack profiles={owedProfiles} />
+                    <span style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>
+                      View All →
+                    </span>
+                  </div>
+                </div>
+
+                {/* Vertical divider */}
+                <div style={{ width: 1, background: 'rgba(0,0,0,0.07)', margin: '14px 0', flexShrink: 0 }} />
+
+                {/* Right: You owe */}
+                <div style={{ flex: 1, padding: '18px 20px', display: 'flex', flexDirection: 'column', gap: 10, cursor: 'pointer' }} onClick={() => navigate(createPageUrl('LendingBorrowing') + '?tab=borrowing')}>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>
+                    You owe
+                  </div>
+                  <div style={{ fontSize: 26, fontWeight: 700, color: '#1D5B94', letterSpacing: '-0.03em', fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>
+                    {formatMoney(borrowOwed)}
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 4 }}>
+                    <AvatarStack profiles={oweProfiles} />
+                    <span style={{ fontSize: 11, fontWeight: 600, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>
+                      View All →
+                    </span>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+
           {/* Masonry three-column layout */}
           <div className="home-two-col-row" style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)', gap: 24 }}>
             {/* Col 1: Reminders + Coming Up This Week */}
