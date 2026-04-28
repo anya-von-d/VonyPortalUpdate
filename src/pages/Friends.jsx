@@ -278,6 +278,14 @@ export default function Friends() {
           .desktop-only { display: block !important; }
           .friends-layout { flex-direction: row; align-items: flex-start; gap: 32px; }
         }
+
+        @keyframes placeholderTicker {
+          0%,  17% { transform: translateY(0);       }
+          21%, 42% { transform: translateY(-1.5em);  }
+          46%, 67% { transform: translateY(-3em);    }
+          71%, 92% { transform: translateY(-4.5em);  }
+          96%, 100%{ transform: translateY(-6em);    }
+        }
       `}</style>
     </div>
   );
@@ -461,14 +469,46 @@ function InviteBox() {
 
 /* ── Add friends section (shared between desktop right panel and mobile overlay) ── */
 function AddSection({ searchQuery, setSearchQuery, searchResults, profiles, processingId, getSentRequestTo, handleSendRequest, handleCancelRequest, setBlockTarget, user }) {
+  const TICKER_LINE_H = '1.5em';
+  const tickerWords = ['name', 'phone number', 'username', 'email', 'name']; // last = duplicate for seamless loop
+
   return (
     <div>
       {/* Search bar */}
       <div style={{ position: 'relative', marginBottom: 20 }}>
-        <Search size={16} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#B0AEA8', pointerEvents: 'none' }} />
+        <Search size={16} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#B0AEA8', pointerEvents: 'none', zIndex: 2 }} />
+
+        {/* Animated placeholder — visible only when input is empty */}
+        {!searchQuery && (
+          <div style={{
+            position: 'absolute', left: 42, top: '50%', transform: 'translateY(-50%)',
+            display: 'flex', alignItems: 'center',
+            pointerEvents: 'none', userSelect: 'none', zIndex: 1,
+            fontSize: 14, fontFamily: "'DM Sans', sans-serif",
+            color: '#B5B3AD', lineHeight: TICKER_LINE_H,
+            overflow: 'hidden', height: TICKER_LINE_H,
+            whiteSpace: 'nowrap',
+          }}>
+            <span>Search by&nbsp;</span>
+            {/* Clipping window for the scrolling word */}
+            <span style={{ display: 'inline-block', overflow: 'hidden', height: TICKER_LINE_H, verticalAlign: 'top' }}>
+              <span style={{
+                display: 'inline-flex', flexDirection: 'column',
+                animation: `placeholderTicker 9s cubic-bezier(0.4, 0, 0.2, 1) infinite`,
+              }}>
+                {tickerWords.map((word, i) => (
+                  <span key={i} style={{ display: 'block', height: TICKER_LINE_H, lineHeight: TICKER_LINE_H }}>
+                    {word}
+                  </span>
+                ))}
+              </span>
+            </span>
+          </div>
+        )}
+
         <input
           type="text"
-          placeholder="Search by name or username…"
+          placeholder=""
           value={searchQuery}
           onChange={e => setSearchQuery(e.target.value)}
           autoFocus
@@ -479,12 +519,13 @@ function AddSection({ searchQuery, setSearchQuery, searchResults, profiles, proc
             background: '#fff', fontSize: 14,
             color: '#1A1918', fontFamily: "'DM Sans', sans-serif",
             outline: 'none', boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
+            position: 'relative', zIndex: 2,
           }}
           onFocus={e => e.target.style.borderColor = 'rgba(3,172,234,0.4)'}
           onBlur={e => e.target.style.borderColor = 'rgba(0,0,0,0.08)'}
         />
         {searchQuery && (
-          <button onClick={() => setSearchQuery('')} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'rgba(0,0,0,0.07)', border: 'none', cursor: 'pointer', color: '#787776', padding: 0, width: 20, height: 20, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <button onClick={() => setSearchQuery('')} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'rgba(0,0,0,0.07)', border: 'none', cursor: 'pointer', color: '#787776', padding: 0, width: 20, height: 20, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 3 }}>
             <X size={12} />
           </button>
         )}
