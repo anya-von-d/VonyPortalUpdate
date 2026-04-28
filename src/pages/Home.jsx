@@ -1670,27 +1670,44 @@ export default function Home() {
                 );
               })()}
 
-              {/* Monthly received / paid */}
+              {/* Monthly received / paid — single unified box */}
               {(monthlyExpectedReceive > 0 || monthlyExpectedPay > 0) && (
-                <div className="home-card-monthly-summary" style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-                  {monthlyExpectedReceive > 0 && (
-                    <div style={{ position: 'relative', background: '#FEFEFE', borderRadius: '0 4px 4px 0', boxShadow: '3px 2px 6px rgba(0,0,0,0.10), 6px 5px 14px rgba(0,0,0,0.10), 9px 10px 22px rgba(0,0,0,0.07)', padding: '10px 16px 10px 18px', overflow: 'hidden' }}>
-                      <div style={{ position: 'absolute', top: 0, left: 0, bottom: 0, width: 5, background: 'rgba(0,0,0,0.09)' }} />
-                      <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.3 }}>
-                        You've received <span style={{ color: '#03ACEA' }}>{formatMoney(monthlyReceived)}</span>
+                <div className="home-card-monthly-summary" style={{ background: '#ffffff', borderRadius: 14, boxShadow: '0 2px 12px rgba(0,0,0,0.08)', border: '1px solid rgba(0,0,0,0.06)', overflow: 'hidden' }}>
+                  {/* Body rows */}
+                  <div style={{ padding: '14px 20px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    {monthlyExpectedReceive > 0 && (
+                      <div>
+                        <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.3 }}>
+                          You've received <span style={{ color: '#03ACEA' }}>{formatMoney(monthlyReceived)}</span>
+                        </div>
+                        <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 2 }}>of {formatMoney(monthlyExpectedReceive)} expected in {format(today, 'MMMM')}</div>
                       </div>
-                      <div style={{ fontSize: 11, fontWeight: 400, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 2 }}>of {formatMoney(monthlyExpectedReceive)} expected in {format(today, 'MMMM')}</div>
-                    </div>
-                  )}
-                  {monthlyExpectedPay > 0 && (
-                    <div style={{ position: 'relative', background: '#FEFEFE', borderRadius: '0 4px 4px 0', boxShadow: '3px 2px 6px rgba(0,0,0,0.10), 6px 5px 14px rgba(0,0,0,0.10), 9px 10px 22px rgba(0,0,0,0.07)', padding: '10px 16px 10px 18px', overflow: 'hidden' }}>
-                      <div style={{ position: 'absolute', top: 0, left: 0, bottom: 0, width: 5, background: 'rgba(0,0,0,0.09)' }} />
-                      <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.3 }}>
-                        You've paid <span style={{ color: '#03ACEA' }}>{formatMoney(monthlyPaidOut)}</span>
+                    )}
+                    {monthlyExpectedReceive > 0 && monthlyExpectedPay > 0 && (
+                      <div style={{ height: 1, background: 'rgba(0,0,0,0.06)' }} />
+                    )}
+                    {monthlyExpectedPay > 0 && (
+                      <div>
+                        <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.3 }}>
+                          You've paid <span style={{ color: '#03ACEA' }}>{formatMoney(monthlyPaidOut)}</span>
+                        </div>
+                        <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 2 }}>of {formatMoney(monthlyExpectedPay)} due in {format(today, 'MMMM')}</div>
                       </div>
-                      <div style={{ fontSize: 11, fontWeight: 400, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 2 }}>of {formatMoney(monthlyExpectedPay)} due in {format(today, 'MMMM')}</div>
+                    )}
+                  </div>
+                  {/* Footer — Plan your month, same style as Lending/Borrowing Progress rows */}
+                  <div
+                    onClick={() => navigate(createPageUrl('Upcoming'))}
+                    style={{ borderTop: '1px solid rgba(0,0,0,0.06)', padding: '9px 20px', display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}
+                  >
+                    <div style={{ width: 28, height: 28, borderRadius: 7, background: '#F4F4F5', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#1A1918', flexShrink: 0 }}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+                      </svg>
                     </div>
-                  )}
+                    <span style={{ flex: 1, fontSize: 12, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>Plan your month</span>
+                    {chevronSvg}
+                  </div>
                 </div>
               )}
 
