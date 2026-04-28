@@ -203,9 +203,8 @@ export default function Friends() {
             <h1 style={{ fontSize: 26, fontWeight: 700, color: '#1A1918', margin: 0, letterSpacing: '-0.03em', fontFamily: "'DM Sans', sans-serif" }}>Friends</h1>
           </div>
 
-          {/* Mobile page title + Add Friends button */}
-          <div className="mobile-page-title" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-            <h1 style={{ fontSize: 22, fontWeight: 700, color: '#1A1918', margin: 0, letterSpacing: '-0.03em', fontFamily: "'DM Sans', sans-serif" }}>Friends</h1>
+          {/* Mobile-only Add Friends button — title already in top bar */}
+          <div className="mobile-only" style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
             <button
               onClick={() => setMobileAddOpen(true)}
               style={{

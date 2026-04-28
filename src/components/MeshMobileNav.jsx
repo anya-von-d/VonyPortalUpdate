@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import SettingsModal from "@/components/SettingsModal";
-import UserAvatar from "@/components/ui/UserAvatar";
 import { useNotificationCount } from "@/components/utils/notificationCount";
 
 /* ── Small icons for radial popup items ── */
@@ -19,25 +18,31 @@ const RADIAL_ITEMS = [
     to: 'Lending',
     icon: <IcoLend />,
     // offsets from button center (px): x = horiz, yAbove = how far above nav pill top
-    x: -85, yAbove: 20,
+    x: -80, yAbove: 18,
   },
   {
     label: 'Borrowing',
     to: 'Borrowing',
     icon: <IcoBorrow />,
-    x: 85, yAbove: 20,
+    x: 80, yAbove: 18,
+  },
+  {
+    label: 'Records',
+    to: 'LoanAgreements',
+    icon: <IcoRecords />,
+    x: 0, yAbove: 60,
   },
   {
     label: 'Log Payment',
     to: 'RecordPayment',
     icon: <IcoUp />,
-    x: -30, yAbove: 90,
+    x: -55, yAbove: 110,
   },
   {
     label: 'Create Loan',
     to: 'CreateOffer',
     icon: <IcoCreate />,
-    x: 30, yAbove: 90,
+    x: 55, yAbove: 110,
   },
 ];
 
@@ -211,20 +216,6 @@ export default function MeshMobileNav({ user, activePage }) {
             )}
           </button>
 
-          {/* Profile avatar */}
-          <button
-            onClick={() => navigate(createPageUrl('Profile'))}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-          >
-            <div style={{ width: 28, height: 28, borderRadius: '50%', overflow: 'hidden', border: '1.5px solid rgba(0,0,0,0.10)' }}>
-              <UserAvatar
-                name={user?.full_name || user?.username || ''}
-                src={user?.profile_picture_url || user?.avatar_url}
-                size={28}
-                radius={14}
-              />
-            </div>
-          </button>
         </div>
       </div>
 
@@ -359,11 +350,16 @@ export default function MeshMobileNav({ user, activePage }) {
           }
         />
 
-        {/* Records */}
+        {/* Profile */}
         <NavBtn
-          active={isActivePage('RecentActivity') || isActivePage('LoanAgreements') || isActivePage('YourLoans')}
-          onTap={() => navigate(createPageUrl('RecentActivity'))}
-          icon={<IcoRecords />}
+          active={isActivePage('Profile')}
+          onTap={() => navigate(createPageUrl('Profile'))}
+          icon={
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          }
         />
       </div>
 

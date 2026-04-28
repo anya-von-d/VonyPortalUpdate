@@ -1086,8 +1086,8 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Mobile-only page title */}
-          <div className="mobile-page-title">
+          {/* Mobile-only greeting */}
+          <div className="mobile-home-greeting">
             <div style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, letterSpacing: '-0.02em', lineHeight: 1.3, color: '#1A1918', marginBottom: 12 }}>
               <div style={{ fontSize: 22 }}>Hi {firstName}</div>
               <div style={{ fontSize: 16, display: 'flex', alignItems: 'center', gap: 5 }}>

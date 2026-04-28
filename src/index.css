@@ -367,7 +367,13 @@ input[type="date"] {
   .desktop-page-title {
     display: none !important;
   }
+  /* Nav top bar already shows the page title on mobile — suppress in-content duplicates */
   .mobile-page-title {
+    display: none !important;
+  }
+  /* Home greeting ("Hi X / Happy Tuesday") is NOT a duplicate — keep it visible */
+  .mobile-home-greeting {
+    display: block !important;
     text-align: left;
     margin-top: 6px !important;
     margin-bottom: 4px !important;
