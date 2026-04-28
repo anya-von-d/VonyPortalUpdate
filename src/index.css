@@ -281,7 +281,7 @@ input[type="date"] {
   /* Desktop-only page title — show on desktop */
   .desktop-page-title {
     display: block !important;
-    text-align: center;
+    text-align: left;
     margin-bottom: 40px !important;
   }
   /* Elements only needed on mobile — hidden on desktop */
@@ -358,7 +358,7 @@ input[type="date"] {
     display: none !important;
   }
   .mobile-page-title {
-    text-align: center;
+    text-align: left;
     margin-top: 6px !important;
     margin-bottom: 4px !important;
   }
