@@ -126,10 +126,10 @@ const NavBtnPopup = ({ children, active, popupDef, popupLeft }) => {
 
 const glassPill = {
   display: 'inline-flex', alignItems: 'center', gap: 2,
-  background: 'rgba(255,255,255,0.38)',
-  backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
-  border: '1px solid rgba(255,255,255,0.28)',
-  boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
+  background: 'rgba(255,255,255,0.82)',
+  backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)',
+  border: '1px solid rgba(255,255,255,0.72)',
+  boxShadow: '0 2px 12px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.04)',
   borderRadius: 30, padding: 4,
   pointerEvents: 'auto',
 };

@@ -219,13 +219,13 @@ export default function MeshMobileNav({ user, activePage }) {
         style={{
           position: 'fixed', bottom: 16, left: '50%', transform: 'translateX(-50%)',
           zIndex: 200,
-          background: 'rgba(255,255,255,0.92)',
-          backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
-          border: '1px solid rgba(0,0,0,0.10)',
+          background: 'rgba(255,255,255,0.82)',
+          backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)',
+          border: '1px solid rgba(255,255,255,0.72)',
           borderRadius: 40,
           padding: '6px 4px 8px',
           display: 'flex', alignItems: 'center', gap: 0,
-          boxShadow: '0 4px 24px rgba(0,0,0,0.12)',
+          boxShadow: '0 2px 16px rgba(0,0,0,0.09), 0 1px 4px rgba(0,0,0,0.05)',
           fontFamily: "'DM Sans', sans-serif",
         }}
       >
