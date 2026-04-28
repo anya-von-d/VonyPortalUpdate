@@ -616,11 +616,11 @@ export default function Upcoming() {
             );
           })()}
 
-          {/* Three-column: overdue+7days | coming later+cashflow+so far | calendar */}
-          {activeTab === 'summary' && <div className="upcoming-three-col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 24, alignItems: 'start' }}>
+          {/* Two-column: [next 7 days + coming later] | [calendar] */}
+          {activeTab === 'summary' && <div className="upcoming-three-col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, alignItems: 'start' }}>
 
-            {/* Col 1: Next 7 Days */}
-            <div className="upcoming-col-1" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            {/* Col 1: Next 7 Days + Coming Later */}
+            <div className="upcoming-col-1" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 
               {/* Next 7 Days */}
               {(() => {
@@ -629,36 +629,37 @@ export default function Upcoming() {
                 return (
                   <div>
 
-                      {/* ── Date bar ── */}
-                      <div style={{ display: 'flex', marginBottom: 16, borderBottom: '1px solid rgba(0,0,0,0.07)', paddingBottom: 12 }}>
+                      {/* Section header — above the bar */}
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+                        <div style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>Next 7 Days</div>
+                        {next7Days.length > 0 && <span style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>{next7Days.length} · {formatMoney(next7Total)}</span>}
+                      </div>
+
+                      {/* ── Date bar — calendar style ── */}
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', marginBottom: 16, borderBottom: '1px solid rgba(0,0,0,0.07)', paddingBottom: 10 }}>
                         {sevenDays.map((day, i) => {
                           const isToday = i === 0;
                           const dayHasEvents = next7Days.some(e => isSameDay(e.date, day)) || (i === 0 && overdue.length > 0);
                           return (
-                            <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5 }}>
-                              <span style={{ fontSize: 10, fontWeight: 500, color: isToday ? '#03ACEA' : '#9B9A98', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>
-                                {isToday ? 'Today' : format(day, 'EEE')}
+                            <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                              <span style={{ fontSize: 10, fontWeight: 500, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>
+                                {format(day, 'EEE')}
                               </span>
                               <div style={{
-                                width: 27, height: 27, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                width: 26, height: 26, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
                                 background: isToday ? '#03ACEA' : 'transparent',
                               }}>
-                                <span style={{ fontSize: 12, fontWeight: isToday ? 700 : 500, color: isToday ? '#fff' : '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>
+                                <span style={{ fontSize: 12, fontWeight: isToday ? 700 : 400, color: isToday ? '#fff' : '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>
                                   {format(day, 'd')}
                                 </span>
                               </div>
-                              {dayHasEvents && (
-                                <span style={{ width: 4, height: 4, borderRadius: '50%', background: isToday ? '#E8726E' : '#03ACEA', display: 'block' }} />
-                              )}
+                              {dayHasEvents
+                                ? <span style={{ width: 4, height: 4, borderRadius: '50%', background: isToday ? '#E8726E' : '#03ACEA', display: 'block' }} />
+                                : <span style={{ width: 4, height: 4, display: 'block' }} />
+                              }
                             </div>
                           );
                         })}
-                      </div>
-
-                      {/* Card header */}
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-                        <div style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>Next 7 Days</div>
-                        {next7Days.length > 0 && <span style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>{next7Days.length} · {formatMoney(next7Total)}</span>}
                       </div>
 
                       {next7Days.length === 0 && overdue.length === 0 && (
@@ -776,52 +777,45 @@ export default function Upcoming() {
                 );
               })()}
 
-            </div>{/* end col 1 */}
-
-            {/* Col 2: Coming Later + Cashflow + So Far This Month */}
-            <div className="upcoming-col-2" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-
-              {/* Coming Later */}
+              {/* Coming Later — same column as Next 7 Days */}
               <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                    <span style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>Coming Later</span>
-                    {comingLater.length > 0 && <span style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>{comingLater.length} · {formatMoney(comingLater.reduce((s, e) => s + e.amount, 0))}</span>}
-                  </div>
-                  {comingLater.length === 0 ? (
-                    <div style={{ fontSize: 12, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", padding: '4px 0' }}>Nothing coming up ✨</div>
-                  ) : (
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                      {comingLater.map((event) => {
-                        const barColor = event.isLender ? '#03ACEA' : '#1D5B94';
-                        const label = event.isLender
-                          ? `Expect ${formatMoney(event.amount)} from ${event.firstName}`
-                          : `${formatMoney(event.amount)} due to ${event.firstName}`;
-                        const subLabel = event.reason || null;
-                        return (
-                          <div key={event.loanId + '-later'} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '7px 0' }}>
-                            <div style={{ width: 52, flexShrink: 0, fontFamily: "'DM Sans', sans-serif" }}>
-                              <div style={{ fontSize: 10, fontWeight: 500, color: '#9B9A98', letterSpacing: '-0.01em' }}>{format(event.date, 'EEE')}</div>
-                              <div style={{ fontSize: 12, fontWeight: 500, color: '#1A1918' }}>{format(event.date, 'MMM d')}</div>
-                            </div>
-                            <div style={{ width: 3, alignSelf: 'stretch', borderRadius: 2, background: barColor, flexShrink: 0 }} />
-                            <div style={{ flex: 1, minWidth: 0 }}>
-                              <div style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                {label}
-                              </div>
-                              {subLabel && <div style={{ fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{subLabel}</div>}
-                            </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>Coming Later</span>
+                  {comingLater.length > 0 && <span style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>{comingLater.length} · {formatMoney(comingLater.reduce((s, e) => s + e.amount, 0))}</span>}
+                </div>
+                {comingLater.length === 0 ? (
+                  <div style={{ fontSize: 12, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", padding: '4px 0' }}>Nothing coming up ✨</div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    {comingLater.map((event) => {
+                      const barColor = event.isLender ? '#03ACEA' : '#1D5B94';
+                      const label = event.isLender
+                        ? `Expect ${formatMoney(event.amount)} from ${event.firstName}`
+                        : `${formatMoney(event.amount)} due to ${event.firstName}`;
+                      const subLabel = event.reason || null;
+                      return (
+                        <div key={event.loanId + '-later'} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '7px 0' }}>
+                          <div style={{ width: 52, flexShrink: 0, fontFamily: "'DM Sans', sans-serif" }}>
+                            <div style={{ fontSize: 10, fontWeight: 500, color: '#9B9A98', letterSpacing: '-0.01em' }}>{format(event.date, 'EEE')}</div>
+                            <div style={{ fontSize: 12, fontWeight: 500, color: '#1A1918' }}>{format(event.date, 'MMM d')}</div>
                           </div>
-                        );
-                      })}
-                    </div>
-                  )}
+                          <div style={{ width: 3, alignSelf: 'stretch', borderRadius: 2, background: barColor, flexShrink: 0 }} />
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                              {label}
+                            </div>
+                            {subLabel && <div style={{ fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{subLabel}</div>}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
 
+            </div>{/* end col 1 */}
 
-
-            </div>{/* end col 2 */}
-
-            {/* Col 3: Calendar */}
+            {/* Col 2: Calendar */}
             <div className="upcoming-col-3" style={{ position: 'relative' }}>
             <div style={{ position: 'relative', zIndex: 1 }}>
 
