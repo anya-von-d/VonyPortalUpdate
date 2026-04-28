@@ -61,6 +61,7 @@ import Upcoming from './pages/Upcoming';
 import YourLoans from './pages/YourLoans';
 import LendingBorrowing from './pages/LendingBorrowing';
 import Notifications from './pages/Notifications';
+import PlanYourMonth from './pages/PlanYourMonth';
 import __Layout from './Layout.jsx';
 
 
@@ -80,6 +81,7 @@ export const PAGES = {
     "YourLoans": YourLoans,
     "LendingBorrowing": LendingBorrowing,
     "Notifications": Notifications,
+    "PlanYourMonth": PlanYourMonth,
 }
 
 export const pagesConfig = {
