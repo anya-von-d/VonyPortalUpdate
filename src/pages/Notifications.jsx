@@ -646,7 +646,7 @@ export default function Notifications() {
                   style={{
                     display: 'flex', alignItems: 'center', gap: 14,
                     padding: '14px 16px',
-                    borderBottom: idx < tabItems.length - 1 ? '1px solid rgba(0,0,0,0.06)' : 'none',
+                    borderBottom: 'none',
                     cursor: 'pointer',
                     borderRadius: 12,
                     transition: 'background 0.1s',
