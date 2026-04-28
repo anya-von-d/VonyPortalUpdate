@@ -341,28 +341,21 @@ export default function LoanDetail() {
   const C = 2 * Math.PI * 45;
   const ringOffset = C - (paidPct / 100) * C;
 
-  // Only Promissory Note and Amortization Table get the card treatment
-  const docCardStyle = {
-    background: "#FEFEFE",
-    borderRadius: 3,
-    border: "none",
-    boxShadow: "0 2px 10px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.06)",
-    padding: "22px 24px",
-    marginBottom: 32,
-  };
-
-  // Plain section wrapper — no box
-  const sectionWrap = { marginBottom: 36 };
+  // Shared styles
+  const sectionWrap = { marginBottom: 40 };
 
   const sectionTitle = {
-    fontSize: 12,
-    fontWeight: 700,
+    fontSize: 13,
+    fontWeight: 400,
     color: "#9B9A98",
     fontFamily: "'DM Sans', sans-serif",
-    letterSpacing: "-0.01em",
-    marginBottom: 16,
+    letterSpacing: "0",
+    marginBottom: 18,
     marginTop: 0,
   };
+
+  const rowText = { fontSize: 15, fontWeight: 400, color: "#1A1918", fontFamily: "'DM Sans', sans-serif", margin: 0, lineHeight: 1.5 };
+  const rowMeta = { fontSize: 13, color: "#9B9A98", fontFamily: "'DM Sans', sans-serif" };
 
   return (
     <>
@@ -382,32 +375,29 @@ export default function LoanDetail() {
           {/* ── Back button ── */}
           <button
             onClick={() => navigate(-1)}
-            style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", cursor: "pointer", color: "#787776", fontSize: 13, fontFamily: "'DM Sans', sans-serif", padding: "0 0 24px", marginLeft: -4 }}
+            style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", cursor: "pointer", color: "#9B9A98", fontSize: 14, fontFamily: "'DM Sans', sans-serif", padding: "0 0 28px", marginLeft: -4 }}
           >
-            <ChevronLeft size={16} />
+            <ChevronLeft size={15} />
             Back
           </button>
 
           {/* ── Agreement header ── */}
-          <div style={{ marginBottom: 32 }}>
-            <h1 style={{ fontSize: 22, fontWeight: 700, color: "#1A1918", margin: "0 0 10px", fontFamily: "'DM Sans', sans-serif", letterSpacing: "-0.03em" }}>
+          <div style={{ marginBottom: 40 }}>
+            <h1 style={{ fontSize: 24, fontWeight: 700, color: "#1A1918", margin: "0 0 12px", fontFamily: "'DM Sans', sans-serif", letterSpacing: "-0.03em", lineHeight: 1.25 }}>
               Lending Agreement between {lenderName} and {borrowerName}
             </h1>
-            <p style={{ fontSize: 14, color: "#5C5B5A", margin: 0, lineHeight: 1.7, fontFamily: "'DM Sans', sans-serif" }}>
+            <p style={{ fontSize: 15, color: "#5C5B5A", margin: 0, lineHeight: 1.7, fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>
               On {signedDateFmt} both parties signed a lending agreement where{" "}
-              <strong style={{ color: "#1A1918" }}>{lenderName}</strong> agreed to lend{" "}
-              <strong style={{ color: "#1A1918" }}>{borrowerName}</strong>{" "}
-              <strong style={{ color: accent }}>{formatMoney(loan.amount || 0)}</strong>
-              {loan.purpose ? (
-                <> for <strong style={{ color: "#1A1918" }}>{loan.purpose}</strong></>
-              ) : ""}.
+              {lenderName} agreed to lend {borrowerName}{" "}
+              <span style={{ color: "#1A1918", fontWeight: 500 }}>{formatMoney(loan.amount || 0)}</span>
+              {loan.purpose ? <> for {loan.purpose}</> : ""}.
             </p>
           </div>
 
-          {/* ── Loan Overview — single column, no lines, no box ── */}
+          {/* ── Loan Overview ── */}
           <div style={sectionWrap}>
             <p style={sectionTitle}>Loan Overview</p>
-            <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               {[
                 { label: "Loan Amount", value: formatMoney(loan.amount || 0) },
                 { label: "Interest Rate", value: `${loan.interest_rate || 0}%` },
@@ -419,50 +409,25 @@ export default function LoanDetail() {
                 { label: `${freqLabel} Payments`, value: formatMoney(displayPaymentAmt) },
               ].map((item, idx) => (
                 <div key={idx} style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-                  <span style={{ fontSize: 14, color: "#787776", fontFamily: "'DM Sans', sans-serif" }}>{item.label}</span>
-                  <div style={{ textAlign: "right" }}>
-                    <span style={{ fontSize: 15, fontWeight: 700, color: "#1A1918", fontFamily: "'DM Sans', sans-serif" }}>{item.value}</span>
-                    {item.sub && <p style={{ fontSize: 10, color: "#9B9A98", margin: "1px 0 0", fontFamily: "'DM Sans', sans-serif" }}>{item.sub}</p>}
-                  </div>
+                  <span style={{ fontSize: 15, color: "#787776", fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>{item.label}</span>
+                  <span style={{ fontSize: 15, fontWeight: 500, color: "#1A1918", fontFamily: "'DM Sans', sans-serif" }}>{item.value}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* ── Repayment ring — no box ── */}
-          <div style={{ ...sectionWrap, display: "flex", alignItems: "center", gap: 24 }}>
-            <div style={{ position: "relative", width: 80, height: 80, flexShrink: 0 }}>
-              <svg width="80" height="80" viewBox="0 0 128 128" style={{ transform: "rotate(-90deg)" }}>
-                <circle cx="64" cy="64" r="45" fill="none" stroke={`${accent}26`} strokeWidth="10" />
-                <circle cx="64" cy="64" r="45" fill="none" stroke={accent} strokeWidth="10" strokeLinecap="round" strokeDasharray={C} strokeDashoffset={ringOffset} />
-              </svg>
-              <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-                <span style={{ fontSize: 16, fontWeight: 700, color: "#1A1918", letterSpacing: "-0.03em", fontFamily: "'DM Sans', sans-serif" }}>{paidPct}%</span>
-                <span style={{ fontSize: 9, fontWeight: 500, color: "#787776", fontFamily: "'DM Sans', sans-serif" }}>repaid</span>
-              </div>
-            </div>
-            <div>
-              <p style={{ margin: "0 0 4px", fontSize: 17, fontWeight: 700, color: accent, fontFamily: "'DM Sans', sans-serif", letterSpacing: "-0.02em" }}>
-                {formatMoney(remaining)} remaining
-              </p>
-              <p style={{ margin: 0, fontSize: 13, color: "#787776", fontFamily: "'DM Sans', sans-serif" }}>
-                {formatMoney(totalPaidAmt)} of {formatMoney(totalWithInterest)} {isLending ? "repaid to you" : "paid back"}
-              </p>
-            </div>
-          </div>
-
-          {/* ── Payment History bar chart — no box ── */}
+          {/* ── Payment History ── */}
           <div style={sectionWrap}>
             <p style={sectionTitle}>Payment History</p>
             {chartData.length === 0 ? (
-              <p style={{ fontSize: 12, color: "#C7C6C4", margin: 0 }}>No payment schedule yet</p>
+              <p style={{ ...rowMeta, margin: 0 }}>No payment schedule yet</p>
             ) : (
-              <div style={{ position: "relative" }}>
+              <div>
                 <div style={{ display: "flex", alignItems: "flex-end", gap: 2, height: chartHeight }}>
-                  <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", paddingRight: 8, flexShrink: 0, height: "100%" }}>
-                    <p style={{ fontSize: 10, color: "#787776", margin: 0 }}>${maxChartVal.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
-                    <p style={{ fontSize: 10, color: "#787776", margin: 0 }}>${Math.round(maxChartVal / 2).toLocaleString()}</p>
-                    <p style={{ fontSize: 10, color: "#787776", margin: 0 }}>$0</p>
+                  <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", paddingRight: 10, flexShrink: 0, height: "100%" }}>
+                    <span style={rowMeta}>${maxChartVal.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
+                    <span style={rowMeta}>${Math.round(maxChartVal / 2).toLocaleString()}</span>
+                    <span style={rowMeta}>$0</span>
                   </div>
                   <div style={{ flex: 1, display: "flex", alignItems: "flex-end", justifyContent: "space-between", height: "100%" }}>
                     {chartData.map((d, i) => {
@@ -478,213 +443,207 @@ export default function LoanDetail() {
                           <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
                             {isInProgress && !isFullPmt ? (
                               <div style={{ position: "relative", height: Math.max(scheduledBarHeight, 4), width: 16 }}>
-                                <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "100%", borderRadius: "4px 4px 0 0", background: "rgba(3,172,234,0.08)", border: "1px dashed rgba(3,172,234,0.2)" }} />
-                                <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: Math.max(barHeight, 4), borderRadius: "4px 4px 0 0", background: "#03ACEA" }} />
+                                <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "100%", borderRadius: "3px 3px 0 0", background: "rgba(3,172,234,0.08)", border: "1px dashed rgba(3,172,234,0.2)" }} />
+                                <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: Math.max(barHeight, 4), borderRadius: "3px 3px 0 0", background: "#03ACEA" }} />
                               </div>
                             ) : (
                               <div style={{
-                                borderRadius: "4px 4px 0 0", transition: "all 0.3s",
+                                borderRadius: "3px 3px 0 0",
                                 height: Math.max(barHeight, d.amount > 0 ? 4 : 2), width: 16,
-                                background: d.isProjected ? "rgba(84,166,207,0.28)" : d.isMissed ? "rgba(232,114,110,0.3)" : d.amount === 0 ? "#E5E4E2" : isPendingOnly ? "rgba(0,0,0,0.1)" : isFullPmt ? "#03ACEA" : isPartialPmt ? "rgba(245,158,11,0.6)" : "rgba(3,172,234,0.25)",
-                                border: d.isProjected ? "1px dashed rgba(84,166,207,0.5)" : d.isMissed ? "1px dashed rgba(232,114,110,0.5)" : isPendingOnly ? "1px dashed rgba(0,0,0,0.15)" : "none",
+                                background: d.isProjected ? "rgba(84,166,207,0.25)" : d.isMissed ? "rgba(232,114,110,0.3)" : d.amount === 0 ? "#E5E4E2" : isPendingOnly ? "rgba(0,0,0,0.1)" : isFullPmt ? "#03ACEA" : isPartialPmt ? "rgba(245,158,11,0.55)" : "rgba(3,172,234,0.25)",
+                                border: d.isProjected ? "1px dashed rgba(84,166,207,0.4)" : d.isMissed ? "1px dashed rgba(232,114,110,0.4)" : isPendingOnly ? "1px dashed rgba(0,0,0,0.12)" : "none",
                               }} />
                             )}
                           </div>
-                          <p style={{ fontSize: 10, marginTop: 5, lineHeight: 1, color: isInProgress ? "#03ACEA" : d.isProjected ? "#54A6CF" : d.isMissed ? "#E8726E" : isPendingOnly ? "#9B9A98" : "#4B4A48" }}>{d.label}</p>
+                          <span style={{ fontSize: 10, marginTop: 5, lineHeight: 1, color: isInProgress ? "#03ACEA" : d.isProjected ? "#54A6CF" : d.isMissed ? "#E8726E" : isPendingOnly ? "#9B9A98" : "#787776" }}>{d.label}</span>
                         </div>
                       );
                     })}
                   </div>
                 </div>
-                {/* Legend */}
-                <div style={{ display: "flex", alignItems: "center", gap: 14, marginTop: 12, flexWrap: "wrap" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 4 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: "#03ACEA" }} /><span style={{ fontSize: 11, color: "#787776" }}>Completed</span></div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 4 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: "rgba(0,0,0,0.1)", border: "1px dashed rgba(0,0,0,0.15)" }} /><span style={{ fontSize: 11, color: "#787776" }}>Pending</span></div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 4 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: "rgba(84,166,207,0.28)", border: "1px dashed rgba(84,166,207,0.5)" }} /><span style={{ fontSize: 11, color: "#787776" }}>Expected</span></div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 4 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: "rgba(232,114,110,0.3)", border: "1px dashed rgba(232,114,110,0.5)" }} /><span style={{ fontSize: 11, color: "#787776" }}>Missed</span></div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* ── Payments list — no box, no row lines ── */}
-          <div style={sectionWrap}>
-            <p style={sectionTitle}>Payments</p>
-            {paymentRows.length === 0 ? (
-              <p style={{ fontSize: 12, color: "#C7C6C4", margin: 0 }}>No payments scheduled</p>
-            ) : (
-              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                {paymentRows.map(row => {
-                  const statusConfig = {
-                    completed: { label: "Completed", color: "#16A34A", bg: "rgba(22,163,74,0.1)" },
-                    partial:   { label: "Partial",   color: "#0288CE", bg: "rgba(3,172,234,0.1)" },
-                    pending:   { label: "Pending",   color: "#9B9A98", bg: "rgba(0,0,0,0.05)" },
-                    missed:    { label: "Missed",    color: "#E8726E", bg: "rgba(232,114,110,0.1)" },
-                    upcoming:  { label: "Upcoming",  color: "#787776", bg: "rgba(0,0,0,0.03)" },
-                  };
-                  const cfg = statusConfig[row.status] || statusConfig.upcoming;
-                  const r2 = row.amount > 0 ? (row.paidAmount / row.amount) : 0;
-                  const circ = 2 * Math.PI * 12;
-                  const dash = r2 * circ;
-                  return (
-                    <div key={row.number} style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                      {/* Pie circle */}
-                      <svg width="30" height="30" viewBox="0 0 30 30" style={{ flexShrink: 0 }}>
-                        <circle cx="15" cy="15" r="12" fill="none" stroke="#E5E4E2" strokeWidth="4" />
-                        {row.paidAmount > 0 && (
-                          <circle cx="15" cy="15" r="12" fill="none" stroke="#03ACEA" strokeWidth="4"
-                            strokeDasharray={`${dash} ${circ - dash}`} strokeLinecap="round"
-                            transform="rotate(-90 15 15)" />
-                        )}
-                        <text x="15" y="15" textAnchor="middle" dominantBaseline="central" fill="#1A1918" fontSize="9" fontWeight="bold" fontFamily="'DM Sans', sans-serif">{row.number}</text>
-                      </svg>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                          <p style={{ fontSize: 13, fontWeight: 500, color: "#1A1918", margin: 0 }}>
-                            Payment {row.number}: {formatMoney(row.amount)}
-                          </p>
-                          <span style={{ fontSize: 10, fontWeight: 600, color: cfg.color, background: cfg.bg, borderRadius: 5, padding: "2px 7px", flexShrink: 0 }}>{cfg.label}</span>
-                        </div>
-                        {row.status === "partial" && row.paidAmount > 0 && (
-                          <p style={{ fontSize: 12, margin: "2px 0 0", color: "#787776" }}>
-                            Paid: <strong style={{ color: "#15803D" }}>{formatMoney(row.paidAmount)}</strong>
-                            <span style={{ margin: "0 6px" }}>·</span>
-                            Remaining: <strong style={{ color: "#03ACEA" }}>{formatMoney(Math.max(0, row.amount - row.paidAmount))}</strong>
-                          </p>
-                        )}
-                        {row.status !== "partial" && row.paidAmount > 0 && (
-                          <p style={{ fontSize: 12, margin: "2px 0 0", fontWeight: 700, color: "#15803D" }}>Paid: {formatMoney(row.paidAmount)}</p>
-                        )}
-                        <p style={{ fontSize: 11, color: "#9B9A98", margin: "2px 0 0" }}>Due: {format(row.date, "MMM d, yyyy")}</p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-
-          {/* ── Activity timeline — no box ── */}
-          <div style={sectionWrap}>
-            <p style={sectionTitle}>Activity</p>
-            {activities.length === 0 ? (
-              <p style={{ fontSize: 12, color: "#C7C6C4", margin: 0 }}>No activity recorded yet</p>
-            ) : (
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                {activities.map((activity, idx) => {
-                  const cfg = activityIconConfig[activity.type] || activityIconConfig.created;
-                  return (
-                    <div key={idx} style={{ display: "flex", alignItems: "flex-start", gap: 12, position: "relative" }}>
-                      {idx < activities.length - 1 && (
-                        <div style={{ position: "absolute", left: 13, top: 30, width: 1, bottom: -8, background: "rgba(84,166,207,0.2)" }} />
-                      )}
-                      <div style={{ width: 28, height: 28, borderRadius: 8, background: cfg.bg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, position: "relative", zIndex: 1, marginTop: 4 }}>
-                        <svg width={cfg.sz} height={cfg.sz} fill="none" viewBox="0 0 24 24" stroke={cfg.stroke} strokeWidth={cfg.sw}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d={cfg.path} />
-                        </svg>
-                      </div>
-                      <div style={{ flex: 1, paddingBottom: 20 }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-                          <p style={{ fontSize: 13, fontWeight: 500, color: "#1A1918", margin: 0, lineHeight: 1.45 }}>{activity.description}</p>
-                          {activity.isAwaitingConfirmation && (
-                            <span style={{ fontSize: 9, fontWeight: 700, color: "#F59E0B", background: "rgba(245,158,11,0.12)", border: "1px solid rgba(245,158,11,0.3)", borderRadius: 4, padding: "2px 5px", whiteSpace: "nowrap" }}>Awaiting Confirmation</span>
-                          )}
-                        </div>
-                        <p style={{ fontSize: 11, color: "#9B9A98", margin: "3px 0 0" }}>
-                          {format(activity.timestamp, "MMM d, yyyy · h:mm a")}
-                        </p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-
-          {/* ── Promissory Note — keeps card style ── */}
-          {agreement && (
-            <div style={docCardStyle}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
-                <p style={{ ...sectionTitle, marginBottom: 0 }}>Promissory Note</p>
-                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                  <FileText size={14} style={{ color: "#9B9A98" }} />
-                  <span style={{ fontSize: 10, color: "#9B9A98", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase" }}>Legal Document</span>
-                </div>
-              </div>
-
-              <div style={{ background: "rgba(3,172,234,0.06)", borderRadius: 10, border: "1px solid rgba(3,172,234,0.15)", padding: "12px 16px", marginBottom: 16 }}>
-                <p style={{ fontSize: 11, color: "#787776", margin: "0 0 3px" }}>Principal Amount</p>
-                <p style={{ fontSize: 20, fontWeight: 700, color: accent, margin: 0, letterSpacing: "-0.03em" }}>{formatMoney(agreement.amount)}</p>
-              </div>
-
-              <p style={{ fontSize: 13, lineHeight: 1.75, color: "#1A1918", margin: "0 0 16px" }}>
-                <strong>{lenderName}</strong> agrees to lend <strong>{borrowerName}</strong> <strong>{formatMoney(agreement.amount)}</strong>
-                {agreement.purpose ? <>, for <strong>{agreement.purpose}</strong>,</> : ","} with <strong>{agreement.interest_rate || 0}%</strong> interest per annum.{" "}
-                <strong>{borrowerName}</strong> agrees to repay <strong>{formatMoney(agreement.total_amount)}</strong> in{" "}
-                <strong>{agreement.payment_frequency}</strong> instalments of <strong>{formatMoney(agreement.payment_amount)}</strong> over{" "}
-                <strong>{agreement.repayment_period} {agreement.repayment_unit || "months"}</strong>.
-              </p>
-
-              <div style={{ background: "rgba(0,0,0,0.02)", borderRadius: 10, border: "1px solid rgba(0,0,0,0.06)", padding: "12px 16px", marginBottom: 16 }}>
-                <p style={{ fontSize: 11, fontWeight: 700, color: "#1A1918", margin: "0 0 10px", letterSpacing: "0.04em", textTransform: "uppercase" }}>Terms of Repayment</p>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 16, marginTop: 14, flexWrap: "wrap" }}>
                   {[
-                    { label: "Total Amount Due", value: formatMoney(agreement.total_amount) },
-                    { label: "Interest Rate", value: `${agreement.interest_rate || 0}%` },
-                    { label: "Payment Amount", value: `${formatMoney(agreement.payment_amount)} ${agreement.payment_frequency}` },
-                    { label: "Term", value: `${agreement.repayment_period} ${agreement.repayment_unit || "months"}` },
-                  ].map((item, idx) => (
-                    <div key={idx}>
-                      <span style={{ fontSize: 11, color: "#787776" }}>{item.label}: </span>
-                      <span style={{ fontSize: 12, fontWeight: 600, color: "#1A1918" }}>{item.value}</span>
+                    { label: "Completed", color: "#03ACEA", dashed: false },
+                    { label: "Pending",   color: "rgba(0,0,0,0.15)", dashed: true },
+                    { label: "Expected",  color: "rgba(84,166,207,0.4)", dashed: true },
+                    { label: "Missed",    color: "rgba(232,114,110,0.4)", dashed: true },
+                  ].map(l => (
+                    <div key={l.label} style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                      <div style={{ width: 8, height: 8, borderRadius: 2, background: l.dashed ? "transparent" : l.color, border: l.dashed ? `1px dashed ${l.color}` : "none", flexShrink: 0 }} />
+                      <span style={{ ...rowMeta, fontSize: 12 }}>{l.label}</span>
                     </div>
                   ))}
                 </div>
               </div>
+            )}
+          </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                <div style={{ background: "rgba(0,0,0,0.02)", borderRadius: 10, border: "1px solid rgba(0,0,0,0.06)", padding: "12px 14px" }}>
-                  <p style={{ fontSize: 10, color: "#787776", margin: "0 0 4px", textTransform: "uppercase", letterSpacing: "0.05em" }}>Borrower</p>
-                  <p style={{ fontSize: 14, fontStyle: "italic", color: "#1A1918", margin: 0 }}>{agreement.borrower_name || borrowerName}</p>
-                  {agreement.borrower_signed_date && (
-                    <p style={{ fontSize: 11, color: "#787776", margin: "4px 0 0" }}>Signed {formatTZ(agreement.borrower_signed_date, "MMM d, yyyy")}</p>
-                  )}
-                </div>
-                <div style={{ background: "rgba(0,0,0,0.02)", borderRadius: 10, border: "1px solid rgba(0,0,0,0.06)", padding: "12px 14px" }}>
-                  <p style={{ fontSize: 10, color: "#787776", margin: "0 0 4px", textTransform: "uppercase", letterSpacing: "0.05em" }}>Lender</p>
-                  <p style={{ fontSize: 14, fontStyle: "italic", color: "#1A1918", margin: 0 }}>{agreement.lender_name || lenderName}</p>
-                  {agreement.lender_signed_date && (
-                    <p style={{ fontSize: 11, color: "#787776", margin: "4px 0 0" }}>Signed {formatTZ(agreement.lender_signed_date, "MMM d, yyyy")}</p>
-                  )}
+          {/* ── Payments — timeline style ── */}
+          <div style={sectionWrap}>
+            <p style={sectionTitle}>Payments</p>
+            {paymentRows.length === 0 ? (
+              <p style={{ ...rowMeta, margin: 0 }}>No payments scheduled</p>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                {paymentRows.map((row, idx) => {
+                  const statusColors = {
+                    completed: "#16A34A",
+                    partial:   "#03ACEA",
+                    pending:   "#9B9A98",
+                    missed:    "#E8726E",
+                    upcoming:  "#C7C6C4",
+                  };
+                  const statusLabels = { completed: "Completed", partial: "Partial", pending: "Pending", missed: "Missed", upcoming: "Upcoming" };
+                  const dotColor = statusColors[row.status] || "#C7C6C4";
+                  return (
+                    <div key={row.number} style={{ display: "flex", alignItems: "flex-start", gap: 14, position: "relative" }}>
+                      {/* connecting line */}
+                      {idx < paymentRows.length - 1 && (
+                        <div style={{ position: "absolute", left: 4, top: 18, width: 1, bottom: -6, background: "rgba(0,0,0,0.08)" }} />
+                      )}
+                      {/* dot */}
+                      <div style={{ width: 9, height: 9, borderRadius: "50%", background: dotColor, flexShrink: 0, marginTop: 5 }} />
+                      {/* content */}
+                      <div style={{ flex: 1, display: "flex", justifyContent: "space-between", alignItems: "flex-start", paddingBottom: 18 }}>
+                        <div>
+                          <p style={rowText}>Payment {row.number} · {formatMoney(row.amount)}</p>
+                          {row.status === "partial" && row.paidAmount > 0 && (
+                            <p style={{ ...rowMeta, fontSize: 13, marginTop: 2 }}>
+                              Paid {formatMoney(row.paidAmount)} · {formatMoney(Math.max(0, row.amount - row.paidAmount))} remaining
+                            </p>
+                          )}
+                          {row.status === "completed" && (
+                            <p style={{ fontSize: 13, color: "#16A34A", marginTop: 2, fontFamily: "'DM Sans', sans-serif" }}>Paid {formatMoney(row.paidAmount)}</p>
+                          )}
+                        </div>
+                        <div style={{ textAlign: "right", flexShrink: 0, marginLeft: 16 }}>
+                          <p style={rowMeta}>{format(row.date, "MMM d, yyyy")}</p>
+                          <p style={{ fontSize: 12, color: dotColor, marginTop: 2, fontFamily: "'DM Sans', sans-serif" }}>{statusLabels[row.status]}</p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* ── Activity — timeline style matching screenshot ── */}
+          <div style={sectionWrap}>
+            <p style={sectionTitle}>Activity</p>
+            {activities.length === 0 ? (
+              <p style={{ ...rowMeta, margin: 0 }}>No activity recorded yet</p>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                {activities.map((activity, idx) => (
+                  <div key={idx} style={{ display: "flex", alignItems: "flex-start", gap: 14, position: "relative" }}>
+                    {idx < activities.length - 1 && (
+                      <div style={{ position: "absolute", left: 4, top: 18, width: 1, bottom: -6, background: "rgba(0,0,0,0.08)" }} />
+                    )}
+                    {/* small grey dot */}
+                    <div style={{ width: 9, height: 9, borderRadius: "50%", background: "#C7C6C4", flexShrink: 0, marginTop: 5 }} />
+                    <div style={{ flex: 1, display: "flex", justifyContent: "space-between", alignItems: "flex-start", paddingBottom: 20 }}>
+                      <div style={{ flex: 1, paddingRight: 16 }}>
+                        <p style={rowText}>{activity.description}</p>
+                        {activity.isAwaitingConfirmation && (
+                          <span style={{ display: "inline-block", marginTop: 4, fontSize: 11, color: "#F59E0B", fontFamily: "'DM Sans', sans-serif" }}>Awaiting confirmation</span>
+                        )}
+                      </div>
+                      <p style={{ ...rowMeta, flexShrink: 0 }}>{format(activity.timestamp, "MMM d, HH:mm")}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* ── Promissory Note ── */}
+          {agreement && (
+            <div style={sectionWrap}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
+                <p style={{ ...sectionTitle, marginBottom: 0 }}>Promissory Note</p>
+                <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                  <FileText size={13} style={{ color: "#C7C6C4" }} />
+                  <span style={{ fontSize: 13, color: "#9B9A98", fontFamily: "'DM Sans', sans-serif" }}>Legal document</span>
                 </div>
               </div>
-            </div>
-          )}
 
-          {/* ── Amortization Table — keeps card style ── */}
-          {amortSchedule.length > 0 && (
-            <div style={docCardStyle}>
-              <p style={sectionTitle}>Amortization Table</p>
+              {/* Principal */}
+              <div style={{ marginBottom: 20 }}>
+                <p style={{ ...rowMeta, marginBottom: 2 }}>Principal amount</p>
+                <p style={{ fontSize: 22, fontWeight: 600, color: "#1A1918", margin: 0, letterSpacing: "-0.02em", fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(agreement.amount)}</p>
+              </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10, marginBottom: 18 }}>
+              {/* Agreement paragraph */}
+              <p style={{ fontSize: 15, lineHeight: 1.75, color: "#1A1918", margin: "0 0 24px", fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>
+                {lenderName} agrees to lend {borrowerName} {formatMoney(agreement.amount)}
+                {agreement.purpose ? `, for ${agreement.purpose},` : ","} with {agreement.interest_rate || 0}% interest per annum.{" "}
+                {borrowerName} agrees to repay {formatMoney(agreement.total_amount)} in {agreement.payment_frequency} instalments of {formatMoney(agreement.payment_amount)} over {agreement.repayment_period} {agreement.repayment_unit || "months"}.
+              </p>
+
+              {/* Terms — same label/value style as Loan Overview */}
+              <p style={{ ...sectionTitle, marginBottom: 14 }}>Terms of repayment</p>
+              <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: 28 }}>
                 {[
-                  { label: "Principal", value: formatMoney(agreement?.amount || loan.amount || 0) },
-                  { label: "Total Interest", value: formatMoney((agreement?.total_amount || 0) - (agreement?.amount || 0)) },
-                  { label: "Total Repayment", value: formatMoney(agreement?.total_amount || 0) },
+                  { label: "Total amount due", value: formatMoney(agreement.total_amount) },
+                  { label: "Interest rate", value: `${agreement.interest_rate || 0}%` },
+                  { label: "Payment amount", value: `${formatMoney(agreement.payment_amount)} ${agreement.payment_frequency}` },
+                  { label: "Term", value: `${agreement.repayment_period} ${agreement.repayment_unit || "months"}` },
                 ].map((item, idx) => (
-                  <div key={idx} style={{ background: "rgba(0,0,0,0.02)", borderRadius: 8, border: "1px solid rgba(0,0,0,0.05)", padding: "10px 14px", textAlign: "center" }}>
-                    <p style={{ fontSize: 10, color: "#787776", margin: "0 0 4px" }}>{item.label}</p>
-                    <p style={{ fontSize: 16, fontWeight: 700, color: "#1A1918", margin: 0 }}>{item.value}</p>
+                  <div key={idx} style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                    <span style={{ fontSize: 15, color: "#787776", fontFamily: "'DM Sans', sans-serif" }}>{item.label}</span>
+                    <span style={{ fontSize: 15, fontWeight: 500, color: "#1A1918", fontFamily: "'DM Sans', sans-serif" }}>{item.value}</span>
                   </div>
                 ))}
               </div>
 
-              <div style={{ overflowX: "auto", borderRadius: 8, border: "1px solid rgba(0,0,0,0.07)" }}>
-                <table style={{ width: "100%", fontSize: 12, borderCollapse: "collapse", minWidth: 640 }}>
+              {/* Signatures — same style */}
+              <p style={{ ...sectionTitle, marginBottom: 14 }}>Signatures</p>
+              <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                {[
+                  { role: "Borrower", name: agreement.borrower_name || borrowerName, signed: agreement.borrower_signed_date },
+                  { role: "Lender",   name: agreement.lender_name   || lenderName,   signed: agreement.lender_signed_date },
+                ].map((sig, idx) => (
+                  <div key={idx} style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                    <div>
+                      <p style={{ fontSize: 13, color: "#9B9A98", margin: "0 0 2px", fontFamily: "'DM Sans', sans-serif" }}>{sig.role}</p>
+                      <p style={{ fontSize: 15, fontStyle: "italic", color: "#1A1918", margin: 0, fontFamily: "'DM Sans', sans-serif" }}>{sig.name}</p>
+                    </div>
+                    {sig.signed && (
+                      <p style={rowMeta}>Signed {formatTZ(sig.signed, "MMM d, yyyy")}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ── Amortization Table ── */}
+          {amortSchedule.length > 0 && (
+            <div style={sectionWrap}>
+              <p style={sectionTitle}>Amortization table</p>
+
+              {/* Summary rows — same label/value style */}
+              <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: 28 }}>
+                {[
+                  { label: "Principal", value: formatMoney(agreement?.amount || loan.amount || 0) },
+                  { label: "Total interest", value: formatMoney((agreement?.total_amount || 0) - (agreement?.amount || 0)) },
+                  { label: "Total repayment", value: formatMoney(agreement?.total_amount || 0) },
+                ].map((item, idx) => (
+                  <div key={idx} style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                    <span style={{ fontSize: 15, color: "#787776", fontFamily: "'DM Sans', sans-serif" }}>{item.label}</span>
+                    <span style={{ fontSize: 15, fontWeight: 500, color: "#1A1918", fontFamily: "'DM Sans', sans-serif" }}>{item.value}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Table */}
+              <div style={{ overflowX: "auto" }}>
+                <table style={{ width: "100%", fontSize: 13, borderCollapse: "collapse", minWidth: 640 }}>
                   <thead>
-                    <tr style={{ background: "rgba(0,0,0,0.03)" }}>
+                    <tr style={{ borderBottom: "1px solid rgba(0,0,0,0.08)" }}>
                       {["#", "Date", "Starting Balance", "Principal", "Interest", "Principal to Date", "Interest to Date", "Ending Balance"].map((h, i) => (
-                        <th key={i} style={{ padding: "8px 10px", textAlign: i <= 1 ? "left" : "right", fontWeight: 600, color: "#787776", fontSize: 11, whiteSpace: "nowrap" }}>{h}</th>
+                        <th key={i} style={{ padding: "8px 10px 10px", textAlign: i <= 1 ? "left" : "right", fontWeight: 400, color: "#9B9A98", fontSize: 13, whiteSpace: "nowrap" }}>{h}</th>
                       ))}
                     </tr>
                   </thead>
@@ -692,15 +651,15 @@ export default function LoanDetail() {
                     {amortSchedule.map((row, index) => {
                       const isPaid = index < fullPaymentCount;
                       return (
-                        <tr key={row.number} style={{ background: isPaid ? "rgba(3,172,234,0.05)" : "transparent", borderTop: "1px solid rgba(0,0,0,0.04)" }}>
-                          <td style={{ padding: "7px 10px", color: "#787776" }}>{row.number}</td>
-                          <td style={{ padding: "7px 10px", color: "#1A1918", whiteSpace: "nowrap" }}>{format(row.date, "MMM d, yyyy")}</td>
-                          <td style={{ padding: "7px 10px", textAlign: "right", color: "#787776" }}>{formatMoney(row.startingBalance)}</td>
-                          <td style={{ padding: "7px 10px", textAlign: "right", fontWeight: 500, color: "#1A1918" }}>{formatMoney(row.principal)}</td>
-                          <td style={{ padding: "7px 10px", textAlign: "right", color: "#787776" }}>{formatMoney(row.interest)}</td>
-                          <td style={{ padding: "7px 10px", textAlign: "right", color: "#787776" }}>{formatMoney(row.principalToDate)}</td>
-                          <td style={{ padding: "7px 10px", textAlign: "right", color: "#787776" }}>{formatMoney(row.interestToDate)}</td>
-                          <td style={{ padding: "7px 10px", textAlign: "right", fontWeight: 500, color: "#1A1918" }}>{formatMoney(row.endingBalance)}</td>
+                        <tr key={row.number} style={{ borderBottom: "1px solid rgba(0,0,0,0.05)", opacity: isPaid ? 1 : 0.7 }}>
+                          <td style={{ padding: "10px 10px", color: "#9B9A98", fontSize: 13 }}>{row.number}</td>
+                          <td style={{ padding: "10px 10px", color: "#1A1918", whiteSpace: "nowrap", fontSize: 13 }}>{format(row.date, "MMM d, yyyy")}</td>
+                          <td style={{ padding: "10px 10px", textAlign: "right", color: "#787776", fontSize: 13 }}>{formatMoney(row.startingBalance)}</td>
+                          <td style={{ padding: "10px 10px", textAlign: "right", color: isPaid ? "#1A1918" : "#787776", fontWeight: isPaid ? 500 : 400, fontSize: 13 }}>{formatMoney(row.principal)}</td>
+                          <td style={{ padding: "10px 10px", textAlign: "right", color: "#787776", fontSize: 13 }}>{formatMoney(row.interest)}</td>
+                          <td style={{ padding: "10px 10px", textAlign: "right", color: "#787776", fontSize: 13 }}>{formatMoney(row.principalToDate)}</td>
+                          <td style={{ padding: "10px 10px", textAlign: "right", color: "#787776", fontSize: 13 }}>{formatMoney(row.interestToDate)}</td>
+                          <td style={{ padding: "10px 10px", textAlign: "right", color: "#1A1918", fontWeight: 500, fontSize: 13 }}>{formatMoney(row.endingBalance)}</td>
                         </tr>
                       );
                     })}
