@@ -1706,7 +1706,7 @@ export default function Home() {
                       </svg>
                     </div>
                     <span style={{ flex: 1, fontSize: 12, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>Plan your month</span>
-                    {chevronSvg}
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C4C3C1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
                   </div>
                 </div>
               )}
