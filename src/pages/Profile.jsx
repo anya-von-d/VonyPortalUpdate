@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import { User, PublicProfile, Friendship } from "@/entities/all";
+import { User, PublicProfile, Friendship, Loan, Payment } from "@/entities/all";
 import { UploadFile } from "@/integrations/Core";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -463,6 +463,123 @@ function CurrencyPage({ formData, onBack, onSave }) {
   );
 }
 
+/* ── Sub-page: History ───────────────────────────────────── */
+function HistoryPage({ user, onBack }) {
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!user?.id) return;
+    (async () => {
+      setLoading(true);
+      try {
+        const [lentLoans, borrowedLoans, payments] = await Promise.all([
+          Loan.filter({ lender_id: { eq: user.id } }),
+          Loan.filter({ borrower_id: { eq: user.id } }),
+          Payment.filter({ payer_id: { eq: user.id } }),
+        ]);
+        const totalLent = lentLoans.reduce((s, l) => s + (Number(l.amount) || Number(l.total_amount) || 0), 0);
+        const totalBorrowed = borrowedLoans.reduce((s, l) => s + (Number(l.amount) || Number(l.total_amount) || 0), 0);
+        const loanCount = lentLoans.length + borrowedLoans.length;
+        const paymentCount = payments.length;
+        const amountRepaid = payments.reduce((s, p) => s + (Number(p.amount) || 0), 0);
+        setStats({ totalLent, totalBorrowed, loanCount, paymentCount, amountRepaid });
+      } catch (e) {
+        console.error(e);
+        setStats({ totalLent: 0, totalBorrowed: 0, loanCount: 0, paymentCount: 0, amountRepaid: 0 });
+      }
+      setLoading(false);
+    })();
+  }, [user?.id]);
+
+  const fmt = (n) => Number(n || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  const statCards = stats ? [
+    { emoji: '💸', label: 'Total lent', value: `$${fmt(stats.totalLent)}`, sub: 'across all loans you created' },
+    { emoji: '🤝', label: 'Total borrowed', value: `$${fmt(stats.totalBorrowed)}`, sub: 'across all loans you received' },
+    { emoji: '📋', label: 'Loans', value: stats.loanCount, sub: stats.loanCount === 1 ? 'loan in total' : 'loans in total' },
+    { emoji: '💳', label: 'Payments made', value: stats.paymentCount, sub: stats.paymentCount === 1 ? 'payment recorded' : 'payments recorded' },
+    { emoji: '✅', label: 'Amount repaid', value: `$${fmt(stats.amountRepaid)}`, sub: 'total paid back by you' },
+  ] : [];
+
+  return (
+    <SubPageShell title="History" onBack={onBack}>
+      {loading ? (
+        <div style={{ display: 'flex', justifyContent: 'center', paddingTop: 48 }}>
+          <div style={{ width: 28, height: 28, border: '2px solid #03ACEA', borderTopColor: 'transparent', borderRadius: '50%' }} className="animate-spin" />
+        </div>
+      ) : (
+        <>
+          {/* ── Hero celebratory banner ── */}
+          <div style={{
+            background: 'linear-gradient(135deg, #1A1918 0%, #2d2c2b 100%)',
+            borderRadius: 20,
+            padding: '28px 24px 24px',
+            marginBottom: 24,
+            textAlign: 'center',
+            position: 'relative',
+            overflow: 'hidden',
+          }}>
+            {/* decorative blobs */}
+            <div style={{ position: 'absolute', top: -20, right: -20, width: 100, height: 100, borderRadius: '50%', background: 'rgba(3,172,234,0.12)', pointerEvents: 'none' }} />
+            <div style={{ position: 'absolute', bottom: -10, left: -10, width: 70, height: 70, borderRadius: '50%', background: 'rgba(255,255,255,0.05)', pointerEvents: 'none' }} />
+            <div style={{ fontSize: 36, marginBottom: 10 }}>🏆</div>
+            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.45)', fontFamily: "'DM Sans', sans-serif", marginBottom: 6 }}>
+              Your lending history
+            </div>
+            <div style={{ fontSize: 42, fontWeight: 800, color: 'white', letterSpacing: '-0.04em', fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>
+              ${fmt((stats?.totalLent || 0) + (stats?.totalBorrowed || 0))}
+            </div>
+            <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.40)', fontFamily: "'DM Sans', sans-serif", marginTop: 6 }}>
+              total across {stats?.loanCount || 0} {stats?.loanCount === 1 ? 'loan' : 'loans'} 🎉
+            </div>
+          </div>
+
+          {/* ── Stat rows ── */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            {statCards.map((card, i) => (
+              <div key={i} style={{
+                display: 'flex', alignItems: 'center', gap: 16,
+                padding: '16px 0',
+                borderBottom: i < statCards.length - 1 ? '1px solid rgba(0,0,0,0.06)' : 'none',
+              }}>
+                <div style={{
+                  width: 44, height: 44, borderRadius: 14,
+                  background: '#F4F4F5',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 20, flexShrink: 0,
+                }}>
+                  {card.emoji}
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 13, color: '#787776', fontFamily: "'DM Sans', sans-serif", marginBottom: 2 }}>{card.label}</div>
+                  <div style={{ fontSize: 12, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>{card.sub}</div>
+                </div>
+                <div style={{ fontSize: 17, fontWeight: 700, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", flexShrink: 0 }}>
+                  {card.value}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* ── Footer note ── */}
+          {stats?.loanCount === 0 && (
+            <div style={{ textAlign: 'center', paddingTop: 32 }}>
+              <div style={{ fontSize: 28, marginBottom: 10 }}>📣</div>
+              <div style={{ fontSize: 14, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", marginBottom: 4 }}>
+                No loans yet
+              </div>
+              <div style={{ fontSize: 13, color: '#787776', fontFamily: "'DM Sans', sans-serif" }}>
+                Your history will appear here once you create or receive a loan.
+              </div>
+            </div>
+          )}
+        </>
+      )}
+    </SubPageShell>
+  );
+}
+
 /* ═══════════════════════════════════════════════════════════
    MAIN PROFILE PAGE
 ═══════════════════════════════════════════════════════════ */
@@ -557,6 +674,7 @@ export default function Profile() {
 
   const renderSubPage = () => {
     if (subPage === 'account') return <AccountInfoPage user={user} formData={formData} setFormData={setFormData} setUser={setUser} onBack={() => setSubPage(null)} />;
+    if (subPage === 'history') return <HistoryPage user={user} onBack={() => setSubPage(null)} />;
     if (subPage === 'currency') return <CurrencyPage formData={formData} onBack={() => setSubPage(null)} onSave={handleSaveCurrency} />;
     if (subPage === 'notifications') return <NotificationsPage onBack={() => setSubPage(null)} />;
     if (subPage === 'timezone') return <TimezonePage onBack={() => setSubPage(null)} />;
@@ -638,6 +756,12 @@ export default function Profile() {
                 label="Account info"
                 sub="Update your name, username, phone and more"
                 onClick={() => setSubPage('account')}
+              />
+              <ListRow
+                icon={<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>}
+                label="History"
+                sub="Total lent, borrowed, and loans over time"
+                onClick={() => setSubPage('history')}
               />
             </div>
 
