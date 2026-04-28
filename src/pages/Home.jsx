@@ -987,7 +987,7 @@ export default function Home() {
     };
 
     return (
-      <div className={cardClass} style={{ background: '#FEFEFE', borderRadius: 4, border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.10)', padding: '14px 18px' }}>
+      <div className={cardClass}>
         {/* Header */}
         <div style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif", marginBottom: 12 }}>Your Friends</div>
 
@@ -1462,18 +1462,10 @@ export default function Home() {
             </button>
           </div>
 
-          {/* Masonry three-column layout */}
-          <div className="home-two-col-row" style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)', gap: 24 }}>
-            {/* Col 1: Reminders + Coming Up This Week */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-              {/* ── Overview ── two equal-width mini-boxes */}
+          {/* Single-column content: Upcoming → Monthly Summary → Your Loans → Your Friends */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 
-            </div>
-
-            {/* Col 2: You Owe/Owed + To Do This Week */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-
-              {/* ── Upcoming Payments ── */}
+              {/* ── Upcoming Payments — no box ── */}
               {(() => {
                 const now = todayInTZ();
                 const incoming = lentLoans
@@ -1500,7 +1492,7 @@ export default function Home() {
                 const nextLabel = firstDaysAway === 0 ? 'Today' : firstDaysAway === 1 ? 'Tomorrow' : `In ${firstDaysAway} days`;
 
                 return (
-                  <div className="home-card-upcoming-payments" style={{ background: '#FEFEFE', borderRadius: 4, border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.10)', padding: '14px 18px' }}>
+                  <div className="home-card-upcoming-payments">
                     {/* Header row */}
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 }}>
                       <div style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>Upcoming Payments</div>
@@ -1545,14 +1537,6 @@ export default function Home() {
                   </div>
                 );
               })()}
-
-              {/* Your Friends — desktop only */}
-              {renderFriendsCard('home-card-friends-desktop')}
-
-            </div>{/* end col 2 */}
-
-            {/* Col 3: Monthly Summary + Your Loans */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 
               {/* Monthly received / paid boxes — sticky tab style */}
               {(monthlyExpectedReceive > 0 || monthlyExpectedPay > 0) && (
@@ -1702,11 +1686,13 @@ export default function Home() {
                 );
               })()}
 
-              {/* Your Friends — mobile only */}
-              {renderFriendsCard('home-card-friends-mobile')}
+              {/* Your Friends — desktop; hidden on mobile (mobile version below) */}
+              {renderFriendsCard('home-card-friends-desktop')}
 
-            </div>{/* end col 3 */}
-          </div>
+          </div>{/* end single-column layout */}
+
+          {/* Your Friends — mobile only */}
+          {renderFriendsCard('home-card-friends-mobile')}
         </div>
 
       </div>
