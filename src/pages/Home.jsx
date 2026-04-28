@@ -1637,13 +1637,13 @@ export default function Home() {
                 const nextLabel = firstDaysAway === 0 ? 'Today' : firstDaysAway === 1 ? 'Tomorrow' : `In ${firstDaysAway} days`;
                 return (
                   <div className="home-card-upcoming-payments">
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 }}>
-                      <div style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>Upcoming Payments</div>
-                      <Link to={createPageUrl('Upcoming')} style={{ fontSize: 11, fontWeight: 500, color: '#03ACEA', textDecoration: 'none', fontFamily: "'DM Sans', sans-serif" }}>
-                        View full schedule →
+                    <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 4 }}>
+                      <h2 style={{ fontSize: 22, fontWeight: 700, color: '#1A1918', margin: 0, fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.02em' }}>Upcoming Payments</h2>
+                      <Link to={createPageUrl('Upcoming')} style={{ fontSize: 13, fontWeight: 500, color: '#03ACEA', textDecoration: 'none', fontFamily: "'DM Sans', sans-serif", flexShrink: 0 }}>
+                        View all →
                       </Link>
                     </div>
-                    <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginBottom: 10 }}>
+                    <div style={{ fontSize: 13, color: '#787776', fontFamily: "'DM Sans', sans-serif", marginBottom: 12 }}>
                       Next payment {nextLabel.toLowerCase()}
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -1656,15 +1656,15 @@ export default function Home() {
                           ? `Expect ${formatMoney(item.amount)} from ${item.name}`
                           : `${formatMoney(item.amount)} due to ${item.name}`;
                         return (
-                          <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '7px 0' }}>
+                          <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '8px 0' }}>
                             <div style={{ width: 52, flexShrink: 0, fontFamily: "'DM Sans', sans-serif" }}>
-                              <div style={{ fontSize: 10, fontWeight: 500, color: '#9B9A98', letterSpacing: '-0.01em' }}>{dayOfWeek}</div>
-                              <div style={{ fontSize: 12, fontWeight: 500, color: '#1A1918' }}>{dateNum}</div>
+                              <div style={{ fontSize: 11, fontWeight: 500, color: '#9B9A98', letterSpacing: '-0.01em' }}>{dayOfWeek}</div>
+                              <div style={{ fontSize: 13, fontWeight: 500, color: '#787776' }}>{dateNum}</div>
                             </div>
                             <div style={{ width: 3, alignSelf: 'stretch', borderRadius: 2, background: barColor, flexShrink: 0 }} />
-                            <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 1 }}>
-                              <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{label}</span>
-                              {item.reason && <span style={{ fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.reason}</span>}
+                            <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 2 }}>
+                              <span style={{ fontSize: 15, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.01em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{label}</span>
+                              {item.reason && <span style={{ fontSize: 13, color: '#787776', fontFamily: "'DM Sans', sans-serif", overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.reason}</span>}
                             </div>
                           </div>
                         );
