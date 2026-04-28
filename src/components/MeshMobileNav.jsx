@@ -6,84 +6,66 @@ import FriendsPopup from "@/components/FriendsPopup";
 import DemoModeToggle from "@/components/DemoModeToggle";
 import { useNotificationCount } from "@/components/utils/notificationCount";
 
-/* ── Small icons for popup items ── */
-const IcoLend   = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>;
-const IcoBorrow = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>;
-const IcoCreate = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>;
-const IcoUp     = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="16 12 12 8 8 12"/><line x1="12" y1="16" x2="12" y2="8"/></svg>;
+/* ── Small icons for radial popup items ── */
+const IcoLend   = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>;
+const IcoBorrow = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>;
+const IcoCreate = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>;
+const IcoUp     = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="16 12 12 8 8 12"/><line x1="12" y1="16" x2="12" y2="8"/></svg>;
 
-/* ── Popup item ── */
-function PopupItem({ label, to, icon, onClick }) {
-  const [hovered, setHovered] = useState(false);
-  const base = {
-    display: 'flex', alignItems: 'center', gap: 9, padding: '9px 12px',
-    borderRadius: 8, background: hovered ? 'rgba(0,0,0,0.04)' : 'transparent',
-    color: '#1A1918', fontSize: 13, fontWeight: 500,
-    fontFamily: "'DM Sans', sans-serif", transition: 'background 0.12s',
-  };
-  if (onClick) return (
-    <button onClick={onClick} onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
-      style={{ ...base, border: 'none', cursor: 'pointer', width: '100%', textAlign: 'left' }}>
-      {icon && <span style={{ opacity: 0.45, flexShrink: 0 }}>{icon}</span>}
-      {label}
+/* ── Radial popup items that fly out from the center button ── */
+const RADIAL_ITEMS = [
+  {
+    label: 'Lending',
+    to: 'Lending',
+    icon: <IcoLend />,
+    // offsets from button center (px): x = horiz, yAbove = how far above nav pill top
+    x: -85, yAbove: 20,
+  },
+  {
+    label: 'Borrowing',
+    to: 'Borrowing',
+    icon: <IcoBorrow />,
+    x: 85, yAbove: 20,
+  },
+  {
+    label: 'Log Payment',
+    to: 'RecordPayment',
+    icon: <IcoUp />,
+    x: -30, yAbove: 90,
+  },
+  {
+    label: 'Create Loan',
+    to: 'CreateOffer',
+    icon: <IcoCreate />,
+    x: 30, yAbove: 90,
+  },
+];
+
+/* ── Single bottom nav button (no label) ── */
+function NavBtn({ icon, text, active, isOpen, onTap }) {
+  return (
+    <button
+      onClick={onTap}
+      style={{
+        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+        gap: 0, padding: '4px 6px',
+        background: 'none', border: 'none', cursor: 'pointer',
+        minWidth: text ? 'auto' : 50,
+      }}
+    >
+      <div style={{
+        minWidth: 44, height: 36, borderRadius: 20, padding: text ? '0 10px' : '0',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        background: active || isOpen ? 'rgba(0,0,0,0.08)' : 'transparent',
+        color: active || isOpen ? '#1A1918' : 'rgba(0,0,0,0.45)',
+        transition: 'background 0.15s, color 0.15s',
+        fontSize: 11, fontWeight: active || isOpen ? 700 : 600,
+        fontFamily: "'DM Sans', sans-serif",
+        letterSpacing: '-0.02em', whiteSpace: 'nowrap',
+      }}>
+        {icon || text}
+      </div>
     </button>
-  );
-  return (
-    <Link to={to} onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
-      style={{ ...base, textDecoration: 'none', display: 'flex' }}>
-      {icon && <span style={{ opacity: 0.45, flexShrink: 0 }}>{icon}</span>}
-      {label}
-    </Link>
-  );
-}
-
-/* ── Popup card (no title) ── */
-function NavPopupCard({ items, style }) {
-  return (
-    <div style={{
-      position: 'absolute', bottom: 'calc(100% + 12px)', left: '50%', transform: 'translateX(-50%)',
-      background: '#fff', borderRadius: 14,
-      border: '1px solid rgba(0,0,0,0.08)',
-      boxShadow: '0 8px 32px rgba(0,0,0,0.13), 0 2px 8px rgba(0,0,0,0.06)',
-      padding: 6, minWidth: 200, zIndex: 500,
-      fontFamily: "'DM Sans', sans-serif",
-      ...style,
-    }}>
-      {items.map((item, i) => <PopupItem key={i} {...item} />)}
-    </div>
-  );
-}
-
-/* ── Bottom nav item ── */
-function BottomNavItem({ label, icon, active, popupOpen, onTap, popupDef }) {
-  return (
-    <div style={{ position: 'relative', minWidth: 58 }}>
-      {popupOpen && popupDef && <NavPopupCard items={popupDef.items} />}
-      <button
-        onClick={onTap}
-        style={{ display: 'flex', flexDirection: 'column', alignItems: 'center',
-          gap: 4, padding: '2px 6px', background: 'none', border: 'none',
-          cursor: 'pointer', width: '100%' }}
-      >
-        <div style={{
-          width: 50, height: 32, borderRadius: 20,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          background: active || popupOpen ? 'rgba(0,0,0,0.08)' : 'transparent',
-          color: active || popupOpen ? '#1A1918' : 'rgba(0,0,0,0.45)',
-          transition: 'background 0.15s, color 0.15s',
-        }}>
-          {icon}
-        </div>
-        <span style={{
-          fontSize: 10, fontWeight: active || popupOpen ? 600 : 400,
-          color: active || popupOpen ? '#1A1918' : 'rgba(0,0,0,0.45)',
-          letterSpacing: '-0.01em', lineHeight: 1,
-          fontFamily: "'DM Sans', sans-serif", transition: 'color 0.15s',
-        }}>
-          {label}
-        </span>
-      </button>
-    </div>
   );
 }
 
@@ -95,9 +77,9 @@ export default function MeshMobileNav({ user, activePage }) {
   const [friendsInitialTab, setFriendsInitialTab] = useState(null);
   const [friendsInitialRequestsOpen, setFriendsInitialRequestsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-  const bottomNavRef = useRef(null);
+  const navRef = useRef(null);
   const notifCount = useNotificationCount(user?.id);
-  const [bottomPopup, setBottomPopup] = useState(null);
+  const [lbOpen, setLbOpen] = useState(false);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -105,21 +87,25 @@ export default function MeshMobileNav({ user, activePage }) {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Close popup on outside click
+  // Close radial menu on outside tap
   useEffect(() => {
-    if (!bottomPopup) return;
+    if (!lbOpen) return;
     const handler = (e) => {
-      if (bottomNavRef.current && !bottomNavRef.current.contains(e.target)) setBottomPopup(null);
+      if (navRef.current && !navRef.current.contains(e.target)) setLbOpen(false);
     };
     document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, [bottomPopup]);
+    document.addEventListener('touchstart', handler);
+    return () => {
+      document.removeEventListener('mousedown', handler);
+      document.removeEventListener('touchstart', handler);
+    };
+  }, [lbOpen]);
 
   // Listen for friends popup event
   useEffect(() => {
     const handler = (e) => {
       setFriendsOpen(true);
-      setBottomPopup(null);
+      setLbOpen(false);
       if (e?.detail?.initialTab) setFriendsInitialTab(e.detail.initialTab);
       if (e?.detail?.initialRequestsOpen) setFriendsInitialRequestsOpen(true);
     };
@@ -139,83 +125,17 @@ export default function MeshMobileNav({ user, activePage }) {
     <SettingsModal isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
   );
 
-  const handleBottomTap = (key) => {
-    if (key === 'home')     { setBottomPopup(null); navigate('/'); }
-    else if (key === 'upcoming') { setBottomPopup(null); navigate(createPageUrl('Upcoming')); }
-    else if (key === 'friends')  { setBottomPopup(null); setFriendsOpen(true); }
-    else if (key === 'profile')  { setBottomPopup(null); navigate(createPageUrl('Profile')); }
-    else if (key === 'lending')  { setBottomPopup(prev => prev === 'lending' ? null : 'lending'); }
+  const handleRadialTap = (to) => {
+    setLbOpen(false);
+    navigate(createPageUrl(to));
   };
-
-  const lendingPopupDef = {
-    items: [
-      { label: 'Lending',      to: createPageUrl('Lending'),       icon: <IcoLend /> },
-      { label: 'Borrowing',    to: createPageUrl('Borrowing'),     icon: <IcoBorrow /> },
-      { label: 'Log Payment',  to: createPageUrl('RecordPayment'), icon: <IcoUp /> },
-      { label: 'Create Loan',  to: createPageUrl('CreateOffer'),   icon: <IcoCreate /> },
-    ],
-  };
-
-  const navItems = [
-    {
-      key: 'home', label: 'Home', active: isActivePage('Home'),
-      icon: (
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-          <polyline points="9 22 9 12 15 12 15 22"/>
-        </svg>
-      ),
-    },
-    {
-      key: 'upcoming', label: 'Calendar', active: isActivePage('Upcoming'),
-      icon: (
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <rect x="3" y="4" width="18" height="18" rx="2"/>
-          <line x1="16" y1="2" x2="16" y2="6"/>
-          <line x1="8" y1="2" x2="8" y2="6"/>
-          <line x1="3" y1="10" x2="21" y2="10"/>
-          <text x="12" y="19.5" textAnchor="middle" fontSize="8" fontWeight="bold" fill="currentColor" stroke="none" fontFamily="system-ui, sans-serif">{new Date().getDate()}</text>
-        </svg>
-      ),
-    },
-    {
-      key: 'lending', label: 'Lending', active: isLendingActive, popupDef: lendingPopupDef,
-      icon: (
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M7 16V4m0 0L3 8m4-4l4 4"/>
-          <path d="M17 8v12m0 0l4-4m-4 4l-4-4"/>
-        </svg>
-      ),
-    },
-    {
-      key: 'friends', label: 'Friends', active: false,
-      icon: (
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-          <circle cx="9" cy="7" r="4"/>
-          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-        </svg>
-      ),
-    },
-    {
-      key: 'profile', label: 'Profile', active: isActivePage('Profile'),
-      icon: (
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-          <circle cx="12" cy="7" r="4"/>
-        </svg>
-      ),
-    },
-  ];
 
   return (
     <>
-      {/* ── Top row ── */}
+      {/* ── Top row: Vony logo + bell ── */}
       <div style={{
         position: 'absolute', top: 34, left: 0, right: 0, zIndex: 200,
-        display: 'flex', alignItems: 'center',
-        justifyContent: 'space-between',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         padding: '0 20px',
         fontFamily: "'DM Sans', sans-serif",
         pointerEvents: 'none',
@@ -230,8 +150,6 @@ export default function MeshMobileNav({ user, activePage }) {
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, pointerEvents: 'auto' }}>
           <DemoModeToggle variant="mobile" />
-
-          {/* Bell — plain, no bubble */}
           <button
             onClick={() => navigate(createPageUrl('Notifications'))}
             style={{
@@ -262,33 +180,148 @@ export default function MeshMobileNav({ user, activePage }) {
         </div>
       </div>
 
+      {/* ── Keyframes for radial pop ── */}
+      <style>{`
+        @keyframes radialPop {
+          0%   { opacity: 0; transform: translateX(-50%) scale(0.25); }
+          70%  { transform: translateX(-50%) scale(1.08); }
+          100% { opacity: 1; transform: translateX(-50%) scale(1); }
+        }
+        @keyframes radialFadeIn {
+          from { opacity: 0; }
+          to   { opacity: 1; }
+        }
+      `}</style>
+
+      {/* ── Backdrop when L&B menu is open ── */}
+      {lbOpen && (
+        <div
+          onClick={() => setLbOpen(false)}
+          style={{
+            position: 'fixed', inset: 0, zIndex: 195,
+            background: 'rgba(0,0,0,0.18)',
+            backdropFilter: 'blur(2px)', WebkitBackdropFilter: 'blur(2px)',
+            animation: 'radialFadeIn 0.15s ease both',
+          }}
+        />
+      )}
+
       {/* ── Floating bottom pill nav ── */}
       <div
-        ref={bottomNavRef}
+        ref={navRef}
         style={{
           position: 'fixed', bottom: 16, left: '50%', transform: 'translateX(-50%)',
           zIndex: 200,
-          background: 'rgba(255,255,255,0.88)',
+          background: 'rgba(255,255,255,0.92)',
           backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
           border: '1px solid rgba(0,0,0,0.10)',
           borderRadius: 40,
-          padding: '8px 6px 10px',
-          display: 'flex', alignItems: 'flex-end', gap: 0,
+          padding: '6px 4px 8px',
+          display: 'flex', alignItems: 'center', gap: 0,
           boxShadow: '0 4px 24px rgba(0,0,0,0.12)',
           fontFamily: "'DM Sans', sans-serif",
         }}
       >
-        {navItems.map((item) => (
-          <BottomNavItem
-            key={item.key}
-            label={item.label}
-            icon={item.icon}
-            active={item.active}
-            popupOpen={bottomPopup === item.key}
-            onTap={() => handleBottomTap(item.key)}
-            popupDef={item.popupDef}
+        {/* Home */}
+        <NavBtn
+          active={isActivePage('Home')}
+          onTap={() => navigate('/')}
+          icon={
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+              <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+          }
+        />
+
+        {/* Calendar */}
+        <NavBtn
+          active={isActivePage('Upcoming')}
+          onTap={() => navigate(createPageUrl('Upcoming'))}
+          icon={
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+              <text x="12" y="19.5" textAnchor="middle" fontSize="8" fontWeight="bold" fill="currentColor" stroke="none" fontFamily="system-ui, sans-serif">{new Date().getDate()}</text>
+            </svg>
+          }
+        />
+
+        {/* Lending & Borrowing — text button with radial menu */}
+        <div style={{ position: 'relative' }}>
+          {/* Radial items */}
+          {lbOpen && RADIAL_ITEMS.map((item, i) => (
+            <div
+              key={item.to}
+              onClick={() => handleRadialTap(item.to)}
+              style={{
+                position: 'absolute',
+                bottom: `calc(100% + ${item.yAbove}px)`,
+                left: `calc(50% + ${item.x}px)`,
+                transform: 'translateX(-50%)',
+                zIndex: 210,
+                cursor: 'pointer',
+                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5,
+                animation: `radialPop 0.22s cubic-bezier(0.34, 1.56, 0.64, 1) ${i * 0.055}s both`,
+              }}
+            >
+              <div style={{
+                width: 54, height: 54, borderRadius: 27,
+                background: 'white',
+                boxShadow: '0 6px 22px rgba(0,0,0,0.16), 0 1px 6px rgba(0,0,0,0.08)',
+                border: '1px solid rgba(0,0,0,0.06)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: '#1A1918',
+              }}>
+                {item.icon}
+              </div>
+              <span style={{
+                fontSize: 10, fontWeight: 600, color: '#1A1918',
+                fontFamily: "'DM Sans', sans-serif",
+                whiteSpace: 'nowrap',
+                textShadow: '0 1px 4px rgba(255,255,255,0.9)',
+              }}>
+                {item.label}
+              </span>
+            </div>
+          ))}
+
+          {/* The center text button */}
+          <NavBtn
+            text="Lending & Borrowing"
+            active={isLendingActive}
+            isOpen={lbOpen}
+            onTap={() => setLbOpen(v => !v)}
           />
-        ))}
+        </div>
+
+        {/* Friends */}
+        <NavBtn
+          active={false}
+          onTap={() => setFriendsOpen(true)}
+          icon={
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          }
+        />
+
+        {/* Profile */}
+        <NavBtn
+          active={isActivePage('Profile')}
+          onTap={() => navigate(createPageUrl('Profile'))}
+          icon={
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          }
+        />
       </div>
 
       <SettingsModal isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
