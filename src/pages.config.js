@@ -47,11 +47,9 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
-import Borrowing from './pages/Borrowing';
 import BorrowingSummary from './pages/BorrowingSummary';
 import CreateOffer from './pages/CreateOffer';
 import Home from './pages/Home';
-import Lending from './pages/Lending';
 import LendingSummary from './pages/LendingSummary';
 import LoanAgreements from './pages/LoanAgreements';
 import Profile from './pages/Profile';
