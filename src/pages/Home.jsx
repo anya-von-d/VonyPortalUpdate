@@ -1485,8 +1485,11 @@ export default function Home() {
                 const topLine = isLending
                   ? `${name} borrowed ${formatMoney(total)}`
                   : `${name} lent you ${formatMoney(total)}`;
+                const pieEndX = 7.5 + 5.5 * Math.sin(2 * Math.PI * pct);
+                const pieEndY = 7.5 - 5.5 * Math.cos(2 * Math.PI * pct);
+                const pieLargeArc = pct > 0.5 ? 1 : 0;
                 return (
-                  <div style={{ padding: '14px 16px', display: 'flex', alignItems: 'center', gap: 14 }}>
+                  <div style={{ padding: '10px 0', display: 'flex', alignItems: 'center', gap: 14 }}>
                     {/* Profile photo + pie chart overlay */}
                     <div style={{ position: 'relative', width: 38, height: 38, flexShrink: 0 }}>
                       <UserAvatar
@@ -1499,19 +1502,21 @@ export default function Home() {
                       <div style={{ position: 'absolute', bottom: -2, right: -2, width: 15, height: 15 }}>
                         <svg width="15" height="15" viewBox="0 0 15 15">
                           <circle cx="7.5" cy="7.5" r="5.5" fill="white" stroke="white" strokeWidth="1.5"/>
-                          <circle cx="7.5" cy="7.5" r="5.5" fill="none" stroke={`${accentCol}33`} strokeWidth="3"/>
-                          {pct > 0 && (
-                            <circle cx="7.5" cy="7.5" r="5.5" fill="none" stroke={accentCol} strokeWidth="3"
-                              strokeDasharray={`${pct * 2 * Math.PI * 5.5} ${2 * Math.PI * 5.5}`}
-                              strokeLinecap="round"
-                              transform="rotate(-90 7.5 7.5)"
+                          <circle cx="7.5" cy="7.5" r="5.5" fill={`${accentCol}22`}/>
+                          {pct > 0 && pct < 1 && (
+                            <path
+                              d={`M 7.5 7.5 L 7.5 2 A 5.5 5.5 0 ${pieLargeArc} 1 ${pieEndX} ${pieEndY} Z`}
+                              fill={accentCol}
                             />
                           )}
+                          {pct >= 1 && <circle cx="7.5" cy="7.5" r="5.5" fill={accentCol}/>}
                         </svg>
                       </div>
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: 15, fontWeight: 600, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.01em' }}>{topLine}</div>
+                      <div style={{ fontSize: 15, fontWeight: 600, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.01em' }}>
+                        {isLending ? <>{name} borrowed <span style={{ color: '#787776', fontWeight: 500 }}>{formatMoney(total)}</span></> : <>{name} lent you <span style={{ color: '#787776', fontWeight: 500 }}>{formatMoney(total)}</span></>}
+                      </div>
                       <div style={{ fontSize: 13, color: '#787776', marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: "'DM Sans', sans-serif" }}>
                         <span style={{ color: accentCol, fontWeight: 600 }}>{formatMoney(amountPaid)}</span> repaid · <span>{formatMoney(remaining)}</span> remaining
                       </div>
@@ -1550,19 +1555,19 @@ export default function Home() {
               return (
                 <div>
                   {/* Title — same style as "Quick actions" h2 */}
-                  <h2 style={{ fontSize: 22, fontWeight: 700, color: '#1A1918', margin: '0 0 16px', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.02em' }}>
+                  <h2 style={{ fontSize: 22, fontWeight: 700, color: '#1A1918', margin: '0 0 4px', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.02em' }}>
                     Lending &amp; Borrowing
                   </h2>
-                  {/* Tab selector + sort — same font as Quick Actions item label */}
-                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
+                  {/* Tab selector + sort — same font size as "Next payment in X days" */}
+                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
                     {['lending', 'borrowing'].map(tab => {
                       const active = lbTab === tab;
                       return (
                         <button key={tab} onClick={() => setLbTab(tab)} style={{
-                          padding: '4px 0', marginRight: 20,
-                          fontSize: 15, fontWeight: active ? 600 : 400,
+                          padding: '3px 0', marginRight: 16,
+                          fontSize: 13, fontWeight: active ? 600 : 400,
                           color: active ? '#1A1918' : 'rgba(0,0,0,0.35)',
-                          background: 'none', border: 'none', borderBottom: active ? '2px solid #1A1918' : '2px solid transparent',
+                          background: 'none', border: 'none', borderBottom: active ? '1.5px solid #1A1918' : '1.5px solid transparent',
                           cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
                           letterSpacing: '-0.01em', transition: 'color 0.15s',
                         }}>
