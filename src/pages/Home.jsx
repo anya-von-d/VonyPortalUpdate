@@ -1670,27 +1670,32 @@ export default function Home() {
                 );
               })()}
 
-              {/* Monthly received / paid — side-by-side, sharp corners */}
+              {/* Monthly received / paid — single unified box */}
               {(monthlyExpectedReceive > 0 || monthlyExpectedPay > 0) && (
-                <div className="home-card-monthly-summary" style={{ background: '#ffffff', borderRadius: 0, boxShadow: '0 2px 12px rgba(0,0,0,0.08)', border: '1px solid rgba(0,0,0,0.06)', overflow: 'hidden' }}>
-                  {/* Side-by-side body */}
-                  <div style={{ display: 'flex', padding: '14px 20px', gap: 16 }}>
+                <div className="home-card-monthly-summary" style={{ background: '#ffffff', borderRadius: 14, boxShadow: '0 2px 12px rgba(0,0,0,0.08)', border: '1px solid rgba(0,0,0,0.06)', overflow: 'hidden' }}>
+                  {/* Body rows */}
+                  <div style={{ padding: '14px 20px', display: 'flex', flexDirection: 'column', gap: 12 }}>
                     {monthlyExpectedReceive > 0 && (
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontSize: 11, fontWeight: 500, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>You've received</div>
-                        <div style={{ fontSize: 18, fontWeight: 700, color: '#03ACEA', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.02em', lineHeight: 1.2, marginTop: 2 }}>{formatMoney(monthlyReceived)}</div>
+                      <div>
+                        <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.3 }}>
+                          You've received <span style={{ color: '#03ACEA' }}>{formatMoney(monthlyReceived)}</span>
+                        </div>
                         <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 2 }}>of {formatMoney(monthlyExpectedReceive)} expected in {format(today, 'MMMM')}</div>
                       </div>
                     )}
+                    {monthlyExpectedReceive > 0 && monthlyExpectedPay > 0 && (
+                      <div style={{ height: 1, background: 'rgba(0,0,0,0.06)' }} />
+                    )}
                     {monthlyExpectedPay > 0 && (
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontSize: 11, fontWeight: 500, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>You've paid</div>
-                        <div style={{ fontSize: 18, fontWeight: 700, color: '#1D5B94', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.02em', lineHeight: 1.2, marginTop: 2 }}>{formatMoney(monthlyPaidOut)}</div>
+                      <div>
+                        <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.3 }}>
+                          You've paid <span style={{ color: '#03ACEA' }}>{formatMoney(monthlyPaidOut)}</span>
+                        </div>
                         <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginTop: 2 }}>of {formatMoney(monthlyExpectedPay)} due in {format(today, 'MMMM')}</div>
                       </div>
                     )}
                   </div>
-                  {/* Footer — Plan your month */}
+                  {/* Footer — Plan your month, same style as Lending/Borrowing Progress rows */}
                   <div
                     onClick={() => navigate(createPageUrl('Upcoming'))}
                     style={{ borderTop: '1px solid rgba(0,0,0,0.06)', padding: '9px 20px', display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}
