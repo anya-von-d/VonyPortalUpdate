@@ -3,54 +3,42 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import SettingsModal from "@/components/SettingsModal";
 import FriendsPopup from "@/components/FriendsPopup";
-import AppMenuDropdown from "@/components/AppMenuDropdown";
 import DemoModeToggle from "@/components/DemoModeToggle";
 import { useNotificationCount } from "@/components/utils/notificationCount";
 
 /* ── Small icons for popup items ── */
-const IcoHome      = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>;
-const IcoCal       = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>;
-const IcoLend      = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 16V4m0 0L3 8m4-4l4 4"/><path d="M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>;
-const IcoDocs      = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>;
-const IcoActivity  = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>;
-const IcoProfile   = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>;
-const IcoCreate    = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>;
-const IcoLoans     = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>;
-const IcoUp        = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="16 12 12 8 8 12"/><line x1="12" y1="16" x2="12" y2="8"/></svg>;
+const IcoLend   = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>;
+const IcoBorrow = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>;
+const IcoCreate = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>;
+const IcoUp     = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="16 12 12 8 8 12"/><line x1="12" y1="16" x2="12" y2="8"/></svg>;
 
 /* ── Popup item ── */
 function PopupItem({ label, to, icon, onClick }) {
   const [hovered, setHovered] = useState(false);
-  if (onClick) {
-    return (
-      <button
-        onClick={onClick}
-        onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
-        style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '9px 12px', width: '100%',
-          borderRadius: 8, background: hovered ? 'rgba(0,0,0,0.04)' : 'transparent',
-          border: 'none', cursor: 'pointer', color: '#1A1918', fontSize: 13, fontWeight: 500,
-          fontFamily: "'DM Sans', sans-serif", textAlign: 'left', transition: 'background 0.12s' }}>
-        {icon && <span style={{ opacity: 0.45, flexShrink: 0 }}>{icon}</span>}
-        {label}
-      </button>
-    );
-  }
+  const base = {
+    display: 'flex', alignItems: 'center', gap: 9, padding: '9px 12px',
+    borderRadius: 8, background: hovered ? 'rgba(0,0,0,0.04)' : 'transparent',
+    color: '#1A1918', fontSize: 13, fontWeight: 500,
+    fontFamily: "'DM Sans', sans-serif", transition: 'background 0.12s',
+  };
+  if (onClick) return (
+    <button onClick={onClick} onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
+      style={{ ...base, border: 'none', cursor: 'pointer', width: '100%', textAlign: 'left' }}>
+      {icon && <span style={{ opacity: 0.45, flexShrink: 0 }}>{icon}</span>}
+      {label}
+    </button>
+  );
   return (
-    <Link
-      to={to}
-      onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
-      style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '9px 12px',
-        borderRadius: 8, background: hovered ? 'rgba(0,0,0,0.04)' : 'transparent',
-        color: '#1A1918', textDecoration: 'none', fontSize: 13, fontWeight: 500,
-        fontFamily: "'DM Sans', sans-serif", transition: 'background 0.12s' }}>
+    <Link to={to} onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
+      style={{ ...base, textDecoration: 'none', display: 'flex' }}>
       {icon && <span style={{ opacity: 0.45, flexShrink: 0 }}>{icon}</span>}
       {label}
     </Link>
   );
 }
 
-/* ── Popup card ── */
-function NavPopupCard({ title, items, style }) {
+/* ── Popup card (no title) ── */
+function NavPopupCard({ items, style }) {
   return (
     <div style={{
       position: 'absolute', bottom: 'calc(100% + 12px)', left: '50%', transform: 'translateX(-50%)',
@@ -61,22 +49,16 @@ function NavPopupCard({ title, items, style }) {
       fontFamily: "'DM Sans', sans-serif",
       ...style,
     }}>
-      <div style={{ fontSize: 10, fontWeight: 700, color: 'rgba(0,0,0,0.35)',
-        padding: '5px 12px 3px', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
-        {title}
-      </div>
       {items.map((item, i) => <PopupItem key={i} {...item} />)}
     </div>
   );
 }
 
-/* ── Bottom nav item with optional popup ── */
+/* ── Bottom nav item ── */
 function BottomNavItem({ label, icon, active, popupOpen, onTap, popupDef }) {
   return (
     <div style={{ position: 'relative', minWidth: 58 }}>
-      {popupOpen && popupDef && (
-        <NavPopupCard title={popupDef.title} items={popupDef.items} />
-      )}
+      {popupOpen && popupDef && <NavPopupCard items={popupDef.items} />}
       <button
         onClick={onTap}
         style={{ display: 'flex', flexDirection: 'column', alignItems: 'center',
@@ -111,12 +93,11 @@ export default function MeshMobileNav({ user, activePage }) {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [friendsOpen, setFriendsOpen] = useState(false);
   const [friendsInitialTab, setFriendsInitialTab] = useState(null);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [friendsInitialRequestsOpen, setFriendsInitialRequestsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-  const menuRef = useRef(null);
   const bottomNavRef = useRef(null);
   const notifCount = useNotificationCount(user?.id);
-  const [bottomPopup, setBottomPopup] = useState(null); // 'home'|'upcoming'|'lending'|'create'|'log'
+  const [bottomPopup, setBottomPopup] = useState(null);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -124,16 +105,7 @@ export default function MeshMobileNav({ user, activePage }) {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  useEffect(() => {
-    if (!menuOpen) return;
-    const handler = (e) => {
-      if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false);
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, [menuOpen]);
-
-  // Close bottom popup on outside click
+  // Close popup on outside click
   useEffect(() => {
     if (!bottomPopup) return;
     const handler = (e) => {
@@ -143,12 +115,11 @@ export default function MeshMobileNav({ user, activePage }) {
     return () => document.removeEventListener('mousedown', handler);
   }, [bottomPopup]);
 
-  const [friendsInitialRequestsOpen, setFriendsInitialRequestsOpen] = useState(false);
-
+  // Listen for friends popup event
   useEffect(() => {
     const handler = (e) => {
       setFriendsOpen(true);
-      setMenuOpen(false);
+      setBottomPopup(null);
       if (e?.detail?.initialTab) setFriendsInitialTab(e.detail.initialTab);
       if (e?.detail?.initialRequestsOpen) setFriendsInitialRequestsOpen(true);
     };
@@ -168,79 +139,26 @@ export default function MeshMobileNav({ user, activePage }) {
     <SettingsModal isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
   );
 
-  const glassBubble = {
-    display: 'flex', alignItems: 'center', justifyContent: 'center',
-    width: 44, height: 44, borderRadius: 999, textDecoration: 'none', flexShrink: 0,
-    background: 'rgba(255,255,255,0.82)',
-    backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
-    border: '1px solid rgba(0,0,0,0.10)',
-    boxShadow: '0 2px 12px rgba(0,0,0,0.13)',
+  const handleBottomTap = (key) => {
+    if (key === 'home')     { setBottomPopup(null); navigate('/'); }
+    else if (key === 'upcoming') { setBottomPopup(null); navigate(createPageUrl('Upcoming')); }
+    else if (key === 'friends')  { setBottomPopup(null); setFriendsOpen(true); }
+    else if (key === 'profile')  { setBottomPopup(null); navigate(createPageUrl('Profile')); }
+    else if (key === 'lending')  { setBottomPopup(prev => prev === 'lending' ? null : 'lending'); }
   };
 
-  const innerBtnBase = {
-    display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-    width: 36, height: 36, borderRadius: 24,
-    background: 'transparent', border: 'none', cursor: 'pointer',
-    color: 'rgba(0,0,0,0.6)', textDecoration: 'none', flexShrink: 0,
-    transition: 'background 0.15s, color 0.15s',
-  };
-
-  const handleBottomTap = (key, defaultTo) => {
-    if (bottomPopup === key) { setBottomPopup(null); }
-    else { setBottomPopup(key); }
-  };
-
-  const closePopupAndNav = (to) => { setBottomPopup(null); navigate(to); };
-
-  // Popup definitions for each bottom nav item
-  const popupDefs = {
-    home: {
-      title: 'Home',
-      items: [
-        { label: 'Dashboard', to: '/', icon: <IcoHome /> },
-        { label: 'Upcoming Payments', to: createPageUrl('Upcoming'), icon: <IcoCal /> },
-        { label: 'Loan Agreements', to: createPageUrl('LoanAgreements'), icon: <IcoDocs /> },
-        { label: 'Recent Activity', to: createPageUrl('RecentActivity'), icon: <IcoActivity /> },
-        { label: 'Profile', to: createPageUrl('Profile'), icon: <IcoProfile /> },
-      ],
-    },
-    upcoming: {
-      title: 'Upcoming',
-      items: [
-        { label: 'All Upcoming', to: createPageUrl('Upcoming'), icon: <IcoCal /> },
-        { label: 'Lending & Borrowing', to: createPageUrl('LendingBorrowing'), icon: <IcoLend /> },
-        { label: 'Your Loans', to: createPageUrl('YourLoans'), icon: <IcoLoans /> },
-      ],
-    },
-    lending: {
-      title: 'Lending & Borrowing',
-      items: [
-        { label: 'Overview', to: createPageUrl('LendingBorrowing'), icon: <IcoLend /> },
-        { label: 'Loan Agreements', to: createPageUrl('LoanAgreements'), icon: <IcoDocs /> },
-        { label: 'Your Loans', to: createPageUrl('YourLoans'), icon: <IcoLoans /> },
-        { label: 'Recent Activity', to: createPageUrl('RecentActivity'), icon: <IcoActivity /> },
-      ],
-    },
-    create: {
-      title: 'Create',
-      items: [
-        { label: 'Create a Loan', to: createPageUrl('CreateOffer'), icon: <IcoCreate /> },
-        { label: 'Record a Payment', to: createPageUrl('RecordPayment'), icon: <IcoUp /> },
-      ],
-    },
-    log: {
-      title: 'Log',
-      items: [
-        { label: 'Record a Payment', to: createPageUrl('RecordPayment'), icon: <IcoUp /> },
-        { label: 'Recent Activity', to: createPageUrl('RecentActivity'), icon: <IcoActivity /> },
-        { label: 'Your Loans', to: createPageUrl('YourLoans'), icon: <IcoLoans /> },
-      ],
-    },
+  const lendingPopupDef = {
+    items: [
+      { label: 'Lending',      to: createPageUrl('Lending'),       icon: <IcoLend /> },
+      { label: 'Borrowing',    to: createPageUrl('Borrowing'),     icon: <IcoBorrow /> },
+      { label: 'Log Payment',  to: createPageUrl('RecordPayment'), icon: <IcoUp /> },
+      { label: 'Create Loan',  to: createPageUrl('CreateOffer'),   icon: <IcoCreate /> },
+    ],
   };
 
   const navItems = [
     {
-      key: 'home', active: isActivePage('Home'), label: 'Home',
+      key: 'home', label: 'Home', active: isActivePage('Home'),
       icon: (
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
@@ -249,7 +167,7 @@ export default function MeshMobileNav({ user, activePage }) {
       ),
     },
     {
-      key: 'upcoming', active: isActivePage('Upcoming'), label: 'Upcoming',
+      key: 'upcoming', label: 'Calendar', active: isActivePage('Upcoming'),
       icon: (
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <rect x="3" y="4" width="18" height="18" rx="2"/>
@@ -261,7 +179,7 @@ export default function MeshMobileNav({ user, activePage }) {
       ),
     },
     {
-      key: 'lending', active: isLendingActive, label: 'Lending',
+      key: 'lending', label: 'Lending', active: isLendingActive, popupDef: lendingPopupDef,
       icon: (
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M7 16V4m0 0L3 8m4-4l4 4"/>
@@ -270,23 +188,22 @@ export default function MeshMobileNav({ user, activePage }) {
       ),
     },
     {
-      key: 'create', active: isActivePage('CreateOffer'), label: 'Create',
+      key: 'friends', label: 'Friends', active: false,
       icon: (
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-          <polyline points="14 2 14 8 20 8"/>
-          <line x1="12" y1="18" x2="12" y2="12"/>
-          <line x1="9" y1="15" x2="15" y2="15"/>
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
         </svg>
       ),
     },
     {
-      key: 'log', active: isActivePage('RecordPayment'), label: 'Log',
+      key: 'profile', label: 'Profile', active: isActivePage('Profile'),
       icon: (
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="12" cy="12" r="10"/>
-          <polyline points="16 12 12 8 8 12"/>
-          <line x1="12" y1="16" x2="12" y2="8"/>
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
         </svg>
       ),
     },
@@ -311,65 +228,37 @@ export default function MeshMobileNav({ user, activePage }) {
           textDecoration: 'none',
         }}>Vony</Link>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, pointerEvents: 'auto' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, pointerEvents: 'auto' }}>
           <DemoModeToggle variant="mobile" />
 
+          {/* Bell — plain, no bubble */}
           <button
-            onClick={() => { navigate(createPageUrl('Notifications')); setFriendsOpen(false); setMenuOpen(false); setBottomPopup(null); }}
+            onClick={() => navigate(createPageUrl('Notifications'))}
             style={{
-              ...glassBubble, position: 'relative', cursor: 'pointer',
+              position: 'relative', background: 'none', border: 'none',
+              cursor: 'pointer', padding: '4px',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: 'rgba(0,0,0,0.55)',
             }}
           >
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="rgba(0,0,0,0.6)" strokeWidth="1.8" strokeLinecap="round">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
               <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
               <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
             </svg>
             {notifCount > 0 && (
               <span style={{
-                position: 'absolute', top: 2, right: 2,
-                minWidth: 17, height: 17, borderRadius: 9,
+                position: 'absolute', top: 0, right: 0,
+                minWidth: 16, height: 16, borderRadius: 8,
                 background: '#14324D', color: '#fff',
                 fontSize: 9, fontWeight: 800,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 padding: '0 3px', lineHeight: 1,
-                border: '1.5px solid rgba(255,255,255,0.9)',
-                boxShadow: '0 1px 4px rgba(20,50,77,0.35)',
+                border: '1.5px solid white',
               }}>
                 {notifCount > 99 ? '99+' : notifCount}
               </span>
             )}
           </button>
-
-          <div ref={menuRef} style={{ position: 'relative' }}>
-            <button
-              onClick={() => { setMenuOpen(v => !v); setFriendsOpen(false); setBottomPopup(null); }}
-              style={{
-                ...innerBtnBase,
-                width: 36, height: 36,
-                color: menuOpen ? '#1A1918' : 'rgba(0,0,0,0.6)',
-                background: 'none', cursor: 'pointer',
-              }}
-              aria-label="Menu"
-            >
-              <svg width="17" height="13" viewBox="0 0 17 13" fill="none">
-                <line x1="0" y1="1"   x2="17" y2="1"   stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" opacity="0.9"/>
-                <line x1="0" y1="6.5" x2="17" y2="6.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" opacity="0.9"/>
-                <line x1="0" y1="12"  x2="17" y2="12"  stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" opacity="0.9"/>
-              </svg>
-            </button>
-            {menuOpen && (
-              <AppMenuDropdown
-                style={{ position: 'absolute', top: 'calc(100% + 8px)', right: 0, zIndex: 400 }}
-                onClose={() => setMenuOpen(false)}
-                onInviteFriend={() => { setFriendsInitialTab('Invite'); setFriendsOpen(true); }}
-                onOpenSettings={() => setSettingsOpen(true)}
-                onOpenFriends={() => setFriendsOpen(true)}
-                onOpenPendingRequests={() => { setMenuOpen(false); navigate(createPageUrl('Notifications')); }}
-                onOpenProfile={() => { setMenuOpen(false); navigate(createPageUrl('Profile')); }}
-                showProfileAndFriends
-              />
-            )}
-          </div>
         </div>
       </div>
 
@@ -397,7 +286,7 @@ export default function MeshMobileNav({ user, activePage }) {
             active={item.active}
             popupOpen={bottomPopup === item.key}
             onTap={() => handleBottomTap(item.key)}
-            popupDef={popupDefs[item.key]}
+            popupDef={item.popupDef}
           />
         ))}
       </div>

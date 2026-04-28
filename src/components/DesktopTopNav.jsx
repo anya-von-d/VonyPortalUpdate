@@ -16,7 +16,7 @@ const isActive = (location, to) => {
   return location.pathname.includes(segment);
 };
 
-/* ── Popup item (link or button) ── */
+/* ── Popup item ── */
 function NavPopupItem({ label, to, icon, onClick }) {
   const [hovered, setHovered] = useState(false);
   const style = {
@@ -41,8 +41,8 @@ function NavPopupItem({ label, to, icon, onClick }) {
   );
 }
 
-/* ── Popup card ── */
-function NavPopupCard({ title, items, style }) {
+/* ── Popup card (no title) ── */
+function NavPopupCard({ items, style }) {
   return (
     <div style={{
       position: 'absolute', top: 'calc(100% + 10px)', left: '50%', transform: 'translateX(-50%)',
@@ -53,89 +53,40 @@ function NavPopupCard({ title, items, style }) {
       fontFamily: "'DM Sans', sans-serif",
       ...style,
     }}>
-      {title && (
-        <div style={{ fontSize: 10, fontWeight: 700, color: 'rgba(0,0,0,0.35)',
-          padding: '5px 12px 3px', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
-          {title}
-        </div>
-      )}
       {items.map((item, i) => <NavPopupItem key={i} {...item} />)}
     </div>
   );
 }
 
-/* ── NavBtn with optional popup ── */
-const NavBtn = ({ to, children, onClick, active, popupDef }) => {
+/* ── Plain nav button ── */
+const NavBtn = ({ to, children, onClick, active }) => {
   const [hovered, setHovered] = React.useState(false);
-  const [popupOpen, setPopupOpen] = React.useState(false);
-  const ref = useRef(null);
-
-  useEffect(() => {
-    if (!popupOpen) return;
-    const handler = (e) => {
-      if (ref.current && !ref.current.contains(e.target)) setPopupOpen(false);
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, [popupOpen]);
-
   const style = {
     display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
     padding: '7px 11px', borderRadius: 24, cursor: 'pointer', border: 'none',
-    background: active || popupOpen ? 'rgba(0,0,0,0.08)' : hovered ? 'rgba(0,0,0,0.05)' : 'transparent',
-    color: active || popupOpen ? '#1A1918' : hovered ? 'rgba(0,0,0,0.85)' : 'rgba(0,0,0,0.5)',
+    background: active ? 'rgba(0,0,0,0.08)' : hovered ? 'rgba(0,0,0,0.05)' : 'transparent',
+    color: active ? '#1A1918' : hovered ? 'rgba(0,0,0,0.85)' : 'rgba(0,0,0,0.5)',
     fontWeight: active ? 600 : 500,
     fontSize: 13, fontFamily: "'DM Sans', sans-serif",
     textDecoration: 'none', transition: 'background 0.15s, color 0.15s',
-    whiteSpace: 'nowrap', position: 'relative',
+    whiteSpace: 'nowrap',
   };
-
-  const handleClick = (e) => {
-    if (popupDef) {
-      e.preventDefault();
-      setPopupOpen(v => !v);
-    } else if (onClick) {
-      onClick(e);
-    }
-  };
-
-  const content = (
-    <>
+  if (onClick) return (
+    <button type="button" onClick={onClick} style={style}
+      onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
       {children}
-      {popupOpen && popupDef && (
-        <NavPopupCard title={popupDef.title} items={popupDef.items} />
-      )}
-    </>
+    </button>
   );
-
-  if (onClick || popupDef) {
-    return (
-      <div ref={ref} style={{ position: 'relative' }}>
-        <button type="button"
-          onClick={popupDef ? handleClick : onClick}
-          onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
-          style={style}>
-          {children}
-        </button>
-        {popupOpen && popupDef && (
-          <NavPopupCard title={popupDef.title} items={popupDef.items} />
-        )}
-      </div>
-    );
-  }
   return (
-    <div ref={ref} style={{ position: 'relative' }}>
-      <Link to={to}
-        onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
-        style={style}>
-        {children}
-      </Link>
-    </div>
+    <Link to={to} style={style}
+      onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
+      {children}
+    </Link>
   );
 };
 
-/* ── NavBtnPopup: a nav button that ALWAYS opens a popup (no direct navigation) ── */
-const NavBtnPopup = ({ children, active, popupDef }) => {
+/* ── Nav button that opens a popup ── */
+const NavBtnPopup = ({ children, active, popupDef, popupLeft }) => {
   const [hovered, setHovered] = React.useState(false);
   const [popupOpen, setPopupOpen] = React.useState(false);
   const ref = useRef(null);
@@ -167,7 +118,7 @@ const NavBtnPopup = ({ children, active, popupDef }) => {
         {children}
       </button>
       {popupOpen && popupDef && (
-        <NavPopupCard title={popupDef.title} items={popupDef.items} style={{ left: 0, transform: 'none' }} />
+        <NavPopupCard items={popupDef.items} style={popupLeft ? { left: 0, transform: 'none' } : {}} />
       )}
     </div>
   );
@@ -205,13 +156,11 @@ const UserIcon     = () => <svg width="16" height="16" viewBox="0 0 24 24" fill=
 const MenuIcon     = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>;
 const IcoDocs      = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>;
 const IcoActivity  = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>;
-const IcoCal       = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>;
-const IcoLend      = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 16V4m0 0L3 8m4-4l4 4"/><path d="M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>;
-const IcoLoans     = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>;
+const IcoLend      = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>;
+const IcoBorrow    = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>;
 const IcoCreate    = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>;
 const IcoUp        = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="16 12 12 8 8 12"/><line x1="12" y1="16" x2="12" y2="8"/></svg>;
-const IcoHome      = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>;
-const IcoProfile   = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>;
+const IcoLoans     = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>;
 
 export default function DesktopTopNav() {
   const location = useLocation();
@@ -224,6 +173,7 @@ export default function DesktopTopNav() {
   const [notifOpen, setNotifOpen] = useState(false);
   const [friendsOpen, setFriendsOpen] = useState(false);
   const [friendsInitialTab, setFriendsInitialTab] = useState(null);
+  const [friendsInitialRequestsOpen, setFriendsInitialRequestsOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
   const menuRef = useRef(null);
@@ -237,8 +187,6 @@ export default function DesktopTopNav() {
     return () => document.removeEventListener('mousedown', handler);
   }, [menuOpen]);
 
-  const [friendsInitialRequestsOpen, setFriendsInitialRequestsOpen] = useState(false);
-
   useEffect(() => {
     const handler = (e) => {
       setFriendsOpen(true);
@@ -251,54 +199,28 @@ export default function DesktopTopNav() {
     return () => window.removeEventListener('open-friends-popup', handler);
   }, []);
 
-  // Popup definitions
-  const homePopup = {
-    title: 'Home',
-    items: [
-      { label: 'Dashboard', to: '/', icon: <IcoHome /> },
-      { label: 'Upcoming Payments', to: createPageUrl('Upcoming'), icon: <IcoCal /> },
-      { label: 'Loan Agreements', to: createPageUrl('LoanAgreements'), icon: <IcoDocs /> },
-      { label: 'Recent Activity', to: createPageUrl('RecentActivity'), icon: <IcoActivity /> },
-      { label: 'Profile', to: createPageUrl('Profile'), icon: <IcoProfile /> },
-    ],
-  };
-
-  const upcomingPopup = {
-    title: 'Upcoming',
-    items: [
-      { label: 'All Upcoming', to: createPageUrl('Upcoming'), icon: <IcoCal /> },
-      { label: 'Lending & Borrowing', to: createPageUrl('LendingBorrowing'), icon: <IcoLend /> },
-      { label: 'Your Loans', to: createPageUrl('YourLoans'), icon: <IcoLoans /> },
-    ],
-  };
-
+  // Lending & Borrowing popup (no title)
   const lendingPopup = {
-    title: 'Lending & Borrowing',
     items: [
-      { label: 'Overview', to: createPageUrl('LendingBorrowing'), icon: <IcoLend /> },
-      { label: 'Loan Agreements', to: createPageUrl('LoanAgreements'), icon: <IcoDocs /> },
-      { label: 'Your Loans', to: createPageUrl('YourLoans'), icon: <IcoLoans /> },
-      { label: 'Recent Activity', to: createPageUrl('RecentActivity'), icon: <IcoActivity /> },
+      { label: 'Lending',     to: createPageUrl('Lending'),       icon: <IcoLend /> },
+      { label: 'Borrowing',   to: createPageUrl('Borrowing'),     icon: <IcoBorrow /> },
+      { label: 'Log Payment', to: createPageUrl('RecordPayment'), icon: <IcoUp /> },
+      { label: 'Create Loan', to: createPageUrl('CreateOffer'),   icon: <IcoCreate /> },
     ],
   };
 
-  const logPopup = {
-    title: 'Log',
-    items: [
-      { label: 'Record a Payment', to: createPageUrl('RecordPayment'), icon: <IcoUp /> },
-      { label: 'Create a Loan', to: createPageUrl('CreateOffer'), icon: <IcoCreate /> },
-      { label: 'Recent Activity', to: createPageUrl('RecentActivity'), icon: <IcoActivity /> },
-    ],
-  };
-
+  // Records popup (no title)
   const recordsPopup = {
-    title: 'Records',
     items: [
-      { label: 'Loan Agreements', to: createPageUrl('LoanAgreements'), icon: <IcoDocs /> },
-      { label: 'Recent Activity', to: createPageUrl('RecentActivity'), icon: <IcoActivity /> },
-      { label: 'Your Loans', to: createPageUrl('YourLoans'), icon: <IcoLoans /> },
+      { label: 'Loan Agreements',  to: createPageUrl('LoanAgreements'), icon: <IcoDocs /> },
+      { label: 'Recent Activity',  to: createPageUrl('RecentActivity'), icon: <IcoActivity /> },
+      { label: 'Your Loans',       to: createPageUrl('YourLoans'),      icon: <IcoLoans /> },
     ],
   };
+
+  const isLendingActive = isActive(location, createPageUrl('LendingBorrowing'))
+    || isActive(location, createPageUrl('Lending'))
+    || isActive(location, createPageUrl('Borrowing'));
 
   return (
     <>
@@ -318,60 +240,56 @@ export default function DesktopTopNav() {
           pointerEvents: 'auto', marginRight: 8,
         }}>Vony</Link>
 
-        {/* Left pill — all items now have popups */}
+        {/* Left pill — Home (plain), Calendar (plain), Lending & Borrowing (popup) */}
         <Pill>
-          <NavBtnPopup active={isActive(location, '/')} popupDef={homePopup}>
+          <NavBtn to="/" active={isActive(location, '/')}>
             <HouseIcon />
-          </NavBtnPopup>
-          <NavBtnPopup active={isActive(location, createPageUrl('Upcoming'))} popupDef={upcomingPopup}>
+          </NavBtn>
+          <NavBtn to={createPageUrl('Upcoming')} active={isActive(location, createPageUrl('Upcoming'))}>
             <CalendarIcon />
-          </NavBtnPopup>
-          <NavBtnPopup
-            active={isActive(location, createPageUrl('LendingBorrowing'))}
-            popupDef={lendingPopup}>
+          </NavBtn>
+          <NavBtnPopup active={isLendingActive} popupDef={lendingPopup}>
             Lending &amp; Borrowing
-          </NavBtnPopup>
-          <NavBtnPopup active={isActive(location, createPageUrl('RecordPayment'))} popupDef={logPopup}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 20h9"/>
-              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
-            </svg>
           </NavBtnPopup>
         </Pill>
 
         <div style={{ flex: 1 }} />
 
-        {/* Notifications */}
-        <div style={{ ...glassPill, padding: '4px 6px', position: 'relative' }}>
-          <NavBtn onClick={() => { setNotifOpen(v => !v); setFriendsOpen(false); setMenuOpen(false); }} active={notifOpen}>
-            <BellIcon />
-          </NavBtn>
-          {notifCount > 0 && (
-            <span style={{
-              position: 'absolute', top: -2, right: -2,
-              minWidth: 17, height: 17, borderRadius: 9,
-              background: '#14324D', color: '#fff',
-              fontSize: 9, fontWeight: 800,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              padding: '0 4px', lineHeight: 1,
-              border: '1.5px solid rgba(255,255,255,0.95)',
-              boxShadow: '0 1px 4px rgba(20,50,77,0.35)',
-              pointerEvents: 'none',
-            }}>
-              {notifCount > 99 ? '99+' : notifCount}
-            </span>
-          )}
-        </div>
-
-        {/* Right pill */}
+        {/* Right pill — Friends, Bell, Records, Profile, Menu */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8, pointerEvents: 'auto' }}>
           <Pill>
+            {/* Friends */}
             <NavBtn onClick={() => { setFriendsOpen(v => !v); setNotifOpen(false); setMenuOpen(false); }} active={friendsOpen}>
               <UsersIcon />
             </NavBtn>
-            <NavBtnPopup active={isActive(location, createPageUrl('LoanAgreements'))} popupDef={recordsPopup}>
+
+            {/* Bell — no standalone bubble, just a NavBtn inside the pill */}
+            <div style={{ position: 'relative' }}>
+              <NavBtn onClick={() => { setNotifOpen(v => !v); setFriendsOpen(false); setMenuOpen(false); }} active={notifOpen}>
+                <BellIcon />
+              </NavBtn>
+              {notifCount > 0 && (
+                <span style={{
+                  position: 'absolute', top: 2, right: 2,
+                  minWidth: 15, height: 15, borderRadius: 8,
+                  background: '#14324D', color: '#fff',
+                  fontSize: 8, fontWeight: 800,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  padding: '0 3px', lineHeight: 1,
+                  border: '1.5px solid rgba(255,255,255,0.95)',
+                  pointerEvents: 'none',
+                }}>
+                  {notifCount > 99 ? '99+' : notifCount}
+                </span>
+              )}
+            </div>
+
+            {/* Records popup */}
+            <NavBtnPopup active={isActive(location, createPageUrl('LoanAgreements'))} popupDef={recordsPopup} popupLeft>
               Records
             </NavBtnPopup>
+
+            {/* Profile */}
             <NavBtn
               onClick={() => { navigate(createPageUrl('Profile')); setNotifOpen(false); setFriendsOpen(false); setMenuOpen(false); }}
               active={isActive(location, createPageUrl('Profile'))}>
@@ -380,8 +298,8 @@ export default function DesktopTopNav() {
               ) : <UserIcon />}
             </NavBtn>
 
-            {/* ≡ Menu button + dropdown */}
-            <div ref={menuRef} style={{ position: 'relative', pointerEvents: 'auto', zIndex: 1 }}>
+            {/* Menu */}
+            <div ref={menuRef} style={{ position: 'relative', zIndex: 1 }}>
               <NavBtn onClick={() => { setMenuOpen(v => !v); setNotifOpen(false); setFriendsOpen(false); }} active={menuOpen}>
                 <MenuIcon />
               </NavBtn>
