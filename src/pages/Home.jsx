@@ -201,7 +201,6 @@ export default function Home() {
   const [newTaskText, setNewTaskText] = useState('');
   const [lbTab, setLbTab] = useState('lending'); // 'lending' | 'borrowing'
   const [selectedBubblePerson, setSelectedBubblePerson] = useState(null);
-  const [hoveredPostit, setHoveredPostit] = useState(null);
   const [rankingFilterLending, setRankingFilterLending] = useState('status');
   const [rankingFilterBorrowing, setRankingFilterBorrowing] = useState('status');
   const [friendPopup, setFriendPopup] = useState(null); // { friendId, profile, x, y }
@@ -1399,6 +1398,35 @@ export default function Home() {
             );
           })()}
 
+          {/* ── Create Loan / Log Payment buttons ── */}
+          <div style={{ display: 'flex', gap: 10, marginBottom: 28 }}>
+            <button
+              onClick={() => navigate(createPageUrl('CreateOffer'))}
+              style={{
+                flex: 1, height: 40, borderRadius: 10, fontSize: 13, fontWeight: 600,
+                cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.01em',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                background: '#ffffff', color: '#1A1918',
+                border: '1.5px solid rgba(0,0,0,0.15)',
+                boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
+              }}
+            >
+              Create Loan
+            </button>
+            <button
+              onClick={() => navigate(createPageUrl('RecordPayment'))}
+              style={{
+                flex: 1, height: 40, borderRadius: 10, fontSize: 13, fontWeight: 600,
+                cursor: 'pointer', border: 'none', fontFamily: "'DM Sans', sans-serif",
+                letterSpacing: '-0.01em',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                background: '#1A1918', color: '#ffffff',
+              }}
+            >
+              Log Payment
+            </button>
+          </div>
+
           {/* Masonry three-column layout */}
           <div className="home-two-col-row" style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)', gap: 24 }}>
             {/* Col 1: Reminders + Coming Up This Week */}
@@ -1458,105 +1486,6 @@ export default function Home() {
 
             {/* Col 2: You Owe/Owed + To Do This Week */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-
-              {/* ── Reminders as post-it notes (always 3) ── */}
-              {(() => {
-                const reminders = [];
-                if (overdueYouOwe.length === 1) {
-                  reminders.push({ type: 'overdue', text: 'You have an overdue payment', emoji: '⚠️', action: () => navigate(createPageUrl('RecordPayment')) });
-                } else if (overdueYouOwe.length > 1) {
-                  reminders.push({ type: 'overdue', text: `${overdueYouOwe.length} overdue payments`, emoji: '⚠️', action: () => navigate(createPageUrl('RecordPayment')) });
-                }
-                if (upcomingEvents.length > 0) {
-                  const s = upcomingEvents[0];
-                  const dText = s.days === 0 ? 'today' : s.days === 1 ? 'tomorrow' : `in ${s.days} days`;
-                  reminders.push({ type: 'due', text: `Payment due ${dText}`, emoji: '📅', action: () => navigate(createPageUrl('RecordPayment')) });
-                }
-                if (pendingOffers.length === 1) {
-                  const lenderProf = safeAllProfiles.find(p => p.user_id === pendingOffers[0].lender_id);
-                  reminders.push({ type: 'loan_offer', text: 'New loan offer to review', emoji: '📋', action: () => setReviewOfferTarget({ loan: pendingOffers[0], lenderProf }) });
-                } else if (pendingOffers.length > 1) {
-                  reminders.push({ type: 'loan_offer', text: `${pendingOffers.length} loan offers`, emoji: '📋', action: () => navigate(createPageUrl('LendingBorrowing')) });
-                }
-                // Pad to exactly 3 with friendly suggestions
-                const suggestions = [
-                  { type: 'suggestion', text: 'Connect with your friends', emoji: '👥', action: () => window.dispatchEvent(new CustomEvent('open-friends-popup')) },
-                  { type: 'suggestion', text: 'Review your loans', emoji: '🔍', action: () => navigate(createPageUrl('LendingBorrowing')) },
-                  { type: 'suggestion', text: 'Record a payment', emoji: '✏️', action: () => navigate(createPageUrl('RecordPayment')) },
-                  { type: 'suggestion', text: 'Plan your month', emoji: '📆', action: () => navigate(createPageUrl('Upcoming')) },
-                ];
-                let si = 0;
-                while (reminders.length < 3) { reminders.push(suggestions[si++ % suggestions.length]); }
-                const noteConfigs = [
-                  { img: '/images/postits/1.png', rotate: '-3.5deg', ty: '7px', zIndex: 1, textColor: '#002A40' },
-                  { img: '/images/postits/2.png', rotate: '1.8deg',  ty: '0px',  zIndex: 2, textColor: '#003A52' },
-                  { img: '/images/postits/3.png', rotate: '-1deg',   ty: '5px',  zIndex: 3, textColor: '#001F30' },
-                ];
-                return (
-                  <div className="home-card-attention" style={{ display: 'flex', paddingBottom: 10, overflow: 'visible' }}>
-                    {reminders.slice(0, 3).map((rem, i) => {
-                      const nc = noteConfigs[i];
-                      const isSuggestion = rem.type === 'suggestion';
-                      return (
-                        <div
-                          key={i}
-                          onClick={rem.action}
-                          onMouseEnter={() => setHoveredPostit(i)}
-                          onMouseLeave={() => setHoveredPostit(null)}
-                          style={{
-                            flex: 1,
-                            minHeight: 150,
-                            marginRight: i < 2 ? -22 : 0,
-                            transform: hoveredPostit === i
-                              ? `rotate(${nc.rotate}) translateY(calc(${nc.ty} - 10px))`
-                              : `rotate(${nc.rotate}) translateY(${nc.ty})`,
-                            zIndex: hoveredPostit === i ? 10 : nc.zIndex,
-                            position: 'relative',
-                            // drop-shadow follows the PNG's alpha so shadow hugs the paper edge
-                            filter: hoveredPostit === i
-                              ? 'drop-shadow(4px 10px 14px rgba(0,0,0,0.26)) drop-shadow(0 2px 5px rgba(0,0,0,0.16))'
-                              : 'drop-shadow(2px 5px 9px rgba(0,0,0,0.22)) drop-shadow(0 1px 2px rgba(0,0,0,0.12))',
-                            cursor: rem.action ? 'pointer' : 'default',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            transition: 'transform 0.18s ease, filter 0.18s ease',
-                          }}
-                        >
-                          {/* Post-it paper image — fills the container, inherits parent rotation */}
-                          <img
-                            src={nc.img}
-                            alt=""
-                            draggable={false}
-                            style={{
-                              position: 'absolute', inset: 0,
-                              width: '100%', height: '100%',
-                              objectFit: 'fill',
-                              pointerEvents: 'none', userSelect: 'none',
-                              zIndex: 0,
-                            }}
-                          />
-                          {/* Centered text — already inherits the post-it's rotation via the parent */}
-                          <p style={{
-                            position: 'relative', zIndex: 1,
-                            margin: 0, padding: '0 16px',
-                            textAlign: 'center',
-                            fontSize: 12,
-                            fontWeight: isSuggestion ? 500 : 700,
-                            color: nc.textColor,
-                            fontFamily: "'DM Sans', sans-serif",
-                            lineHeight: 1.45,
-                            opacity: isSuggestion ? 0.9 : 1,
-                            textShadow: '0 1px 0 rgba(255,255,255,0.25)',
-                          }}>
-                            {rem.text}
-                          </p>
-                        </div>
-                      );
-                    })}
-                  </div>
-                );
-              })()}
 
               {/* ── Upcoming Payments ── */}
               {(() => {
