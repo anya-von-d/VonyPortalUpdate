@@ -1463,28 +1463,60 @@ export default function Home() {
                 const nextDue = loan.next_payment_date ? toLocalDate(loan.next_payment_date) : null;
                 const hasPending = safePayments.some(p => p && p.loan_id === loan.id && p.status === 'pending_confirmation');
                 const isBehind = nextDue && nextDue < today && !hasPending;
+                const titleLine = isLending
+                  ? `${name} borrowed ${formatMoney(total)}`
+                  : `${name} lent you ${formatMoney(total)}`;
                 return (
                   <div style={{ padding: '10px 0', display: 'flex', alignItems: 'center', gap: 14 }}>
-                    {/* Avatar */}
-                    <div style={{ width: 40, height: 40, borderRadius: 20, background: '#F4F4F5', flexShrink: 0, overflow: 'hidden' }}>
-                      <UserAvatar
-                        name={name}
-                        src={otherProfile?.profile_picture_url}
-                        size={40}
-                        radius={20}
-                      />
+                    {/* Avatar with icon badge */}
+                    <div style={{ position: 'relative', flexShrink: 0, width: 36, height: 36 }}>
+                      <div style={{ width: 36, height: 36, borderRadius: 18, background: '#F4F4F5', overflow: 'hidden' }}>
+                        <UserAvatar
+                          name={name}
+                          src={otherProfile?.profile_picture_url}
+                          size={36}
+                          radius={18}
+                        />
+                      </div>
+                      {/* Badge */}
+                      <div style={{
+                        position: 'absolute', bottom: -2, right: -2,
+                        width: 16, height: 16, borderRadius: '50%',
+                        background: isLending ? '#03ACEA' : '#1D5B94',
+                        border: '1.5px solid white',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      }}>
+                        {isLending ? (
+                          /* arrow up-right = lent out */
+                          <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>
+                          </svg>
+                        ) : (
+                          /* arrow down-left = borrowed/received */
+                          <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="17" y1="7" x2="7" y2="17"/><polyline points="17 17 7 17 7 7"/>
+                          </svg>
+                        )}
+                      </div>
                     </div>
-                    {/* Name + amount + bar */}
+
+                    {/* Name line + repaid subtitle + bar */}
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 5 }}>
-                        <span style={{ fontSize: 15, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.01em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '55%' }}>{name}</span>
-                        <span style={{ fontSize: 15, fontWeight: 600, color: isBehind ? '#E8726E' : '#1A1918', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.01em', flexShrink: 0, marginLeft: 8 }}>{formatMoney(total)}</span>
+                      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 2 }}>
+                        <span style={{ fontSize: 14, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.01em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '100%' }}>
+                          {titleLine}
+                        </span>
+                      </div>
+                      {/* Repaid subtitle */}
+                      <div style={{ fontSize: 12, color: isBehind ? '#E8726E' : '#787776', fontFamily: "'DM Sans', sans-serif", marginBottom: 5 }}>
+                        {formatMoney(amountPaid)} repaid of {formatMoney(total)}
                       </div>
                       {/* Progress bar */}
-                      <div style={{ height: 6, borderRadius: 3, background: 'rgba(0,0,0,0.07)', overflow: 'hidden' }}>
+                      <div style={{ height: 5, borderRadius: 3, background: 'rgba(0,0,0,0.07)', overflow: 'hidden' }}>
                         <div style={{ height: '100%', width: `${Math.round(pct * 100)}%`, borderRadius: 3, background: isBehind ? '#E8726E' : accentCol, transition: 'width 0.3s' }} />
                       </div>
                     </div>
+
                     {/* Arrow */}
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C4C3C1" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
                       <polyline points="9 18 15 12 9 6"/>
