@@ -126,9 +126,24 @@ export default function MeshMobileNav({ user, activePage }) {
     navigate(createPageUrl(to));
   };
 
+  // Page title logic — show Vony logo only on Home and Profile
+  const PAGE_TITLE_MAP = {
+    PlanYourMonth: 'Plan Your Month',
+    Records: 'Loan Agreements',
+    RecordPayment: 'Log a Payment',
+    LendingBorrowing: 'Lending & Borrowing',
+    RecentActivity: 'Recent Activity',
+    LoanAgreements: 'Loan Agreements',
+    LoanHelp: 'Loan Help',
+    CreateOffer: 'Create a Loan',
+    YourLoans: 'Your Loans',
+  };
+  const showLogo = !activePage || activePage === 'Home' || activePage === 'Profile';
+  const pageTitle = PAGE_TITLE_MAP[activePage] || activePage || 'Vony';
+
   return (
     <>
-      {/* ── Top row: Vony logo + bell ── */}
+      {/* ── Top row: logo/title + icons ── */}
       <div style={{
         position: 'absolute', top: 16, left: 0, right: 0, zIndex: 200,
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
@@ -136,13 +151,21 @@ export default function MeshMobileNav({ user, activePage }) {
         fontFamily: "'DM Sans', sans-serif",
         pointerEvents: 'none',
       }}>
-        <Link to="/" style={{
-          pointerEvents: 'auto',
-          fontFamily: "'Cormorant Garamond', Georgia, serif",
-          fontWeight: 600, fontStyle: 'italic', fontSize: '1.5rem',
-          color: '#1A1918', lineHeight: 1, letterSpacing: '-0.02em',
-          textDecoration: 'none',
-        }}>Vony</Link>
+        {showLogo ? (
+          <Link to="/" style={{
+            pointerEvents: 'auto',
+            fontFamily: "'Cormorant Garamond', Georgia, serif",
+            fontWeight: 600, fontStyle: 'italic', fontSize: '1.5rem',
+            color: '#1A1918', lineHeight: 1, letterSpacing: '-0.02em',
+            textDecoration: 'none',
+          }}>Vony</Link>
+        ) : (
+          <span style={{
+            fontFamily: "'DM Sans', sans-serif",
+            fontWeight: 700, fontSize: '1.05rem',
+            color: '#1A1918', lineHeight: 1, letterSpacing: '-0.025em',
+          }}>{pageTitle}</span>
+        )}
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, pointerEvents: 'auto' }}>
           {/* Search icon */}

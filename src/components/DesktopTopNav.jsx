@@ -4,7 +4,6 @@ import { createPageUrl } from '@/utils';
 import { useAuth } from '@/lib/AuthContext';
 import SettingsModal from './SettingsModal';
 import NotificationsPopup from './NotificationsPopup';
-import AppMenuDropdown from './AppMenuDropdown';
 import UserAvatar from './ui/UserAvatar';
 import { useNotificationCount } from './utils/notificationCount';
 
@@ -169,23 +168,9 @@ export default function DesktopTopNav() {
   const navigate = useNavigate();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
-
-  const menuRef = useRef(null);
-
-  useEffect(() => {
-    if (!menuOpen) return;
-    const handler = (e) => {
-      if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false);
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, [menuOpen]);
-
   useEffect(() => {
     const handler = (e) => {
       setNotifOpen(false);
-      setMenuOpen(false);
       const tab = e?.detail?.initialTab;
       navigate(createPageUrl('Friends') + (tab ? `?tab=${tab}` : ''));
     };
@@ -318,29 +303,13 @@ export default function DesktopTopNav() {
 
             {/* Profile */}
             <NavBtn
-              onClick={() => { navigate(createPageUrl('Profile')); setNotifOpen(false); setMenuOpen(false); }}
+              onClick={() => { navigate(createPageUrl('Profile')); setNotifOpen(false); }}
               active={isActive(location, createPageUrl('Profile'))}>
               {user ? (
                 <UserAvatar name={user.full_name || user.username} src={user.avatar_url || user.profile_picture_url} size={22} radius={11} />
               ) : <UserIcon />}
             </NavBtn>
 
-            {/* Menu */}
-            <div ref={menuRef} style={{ position: 'relative', zIndex: 1 }}>
-              <NavBtn onClick={() => { setMenuOpen(v => !v); setNotifOpen(false); }} active={menuOpen}>
-                <MenuIcon />
-              </NavBtn>
-              {menuOpen && (
-                <AppMenuDropdown
-                  style={{ position: 'absolute', top: 'calc(100% + 10px)', right: 0, zIndex: 400 }}
-                  onClose={() => setMenuOpen(false)}
-                  onInviteFriend={() => { navigate(createPageUrl('Friends') + '?tab=Invite'); setMenuOpen(false); }}
-                  onOpenSettings={() => setSettingsOpen(true)}
-                  onOpenPendingRequests={() => { setNotifOpen(true); setMenuOpen(false); }}
-                  onOpenProfile={() => { setMenuOpen(false); navigate(createPageUrl('Profile')); }}
-                />
-              )}
-            </div>
           </Pill>
         </div>
       </div>
