@@ -310,9 +310,13 @@ input[type="date"] {
     border-right: none !important;
   }
   /* Home: summary row (NPI/NPD) — React sets maxWidth and centers. */
-  /* Sidebar replaced by fixed top nav — collapse sidebar column */
+  /* Sidebar is now a fixed 80px left panel — content offset via padding-left */
   .mesh-layout { grid-template-columns: 1fr !important; }
   .mesh-left { display: none !important; }
+  /* Offset center content so it doesn't hide behind the fixed sidebar */
+  .mesh-center { padding-left: calc(80px + 56px) !important; }
+  /* Show the desktop sidebar */
+  .desktop-sidebar { display: flex !important; }
 }
 
 /* Loan details responsive */
@@ -337,6 +341,9 @@ input[type="date"] {
 /* Your Friends card — hide mobile version on desktop by default */
 .home-card-friends-mobile { display: none; }
 
+/* Desktop sidebar — hidden by default, shown via desktop media query */
+.desktop-sidebar { display: none; }
+
 /* Home aura glow — smaller on mobile */
 @media (max-width: 768px) {
   .home-aura-glow {
@@ -349,6 +356,7 @@ input[type="date"] {
 
 /* Mesh layout responsive */
 @media (max-width: 768px) {
+  .desktop-sidebar { display: none !important; }
   .mesh-layout {
     grid-template-columns: 1fr !important;
     gap: 0 !important;
