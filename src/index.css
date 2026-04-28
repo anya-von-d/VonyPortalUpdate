@@ -357,7 +357,7 @@ input[type="date"] {
     display: none !important;
   }
   .mesh-center {
-    padding: 96px 20px 110px !important;
+    padding: 78px 20px 110px !important;
     min-width: 0 !important;
     width: 100% !important;
     display: flex !important;
