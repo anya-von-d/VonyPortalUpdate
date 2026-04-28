@@ -374,6 +374,8 @@ input[type="date"] {
   }
   /* Loan summary cards — stack vertically on mobile, lending on top */
   .home-loan-cards-row { flex-direction: column !important; }
+  /* On mobile: show right col (Upcoming + April at a glance) before left col (Lending) */
+  .home-main-two-col { flex-direction: column-reverse !important; }
   /* Friends: desktop version hidden on mobile, mobile version shown */
   .home-card-friends-desktop    { display: none !important; }
   .home-card-friends-mobile     { display: block !important; }
