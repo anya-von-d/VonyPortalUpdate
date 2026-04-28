@@ -1662,18 +1662,16 @@ export default function Home() {
                         <span style={{ fontWeight: 400, color: '#9B9A98' }}>of {formatMoney(monthlyExpectedReceive)} expected this month</span>
                       </div>
                     )}
-                    {monthlyExpectedReceive > 0 && monthlyExpectedPay > 0 && (
-                      <div style={{ height: 1, background: 'rgba(0,0,0,0.06)' }} />
-                    )}
                     {monthlyExpectedPay > 0 && (
                       <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.3 }}>
                         You've paid <span style={{ color: '#03ACEA' }}>{formatMoney(monthlyPaidOut)}</span>{' '}
                         <span style={{ fontWeight: 400, color: '#9B9A98' }}>of {formatMoney(monthlyExpectedPay)} due this month</span>
                       </div>
                     )}
+                    {/* Plan your month — boxed like Create Loan */}
                     <div
                       onClick={() => navigate(createPageUrl('Upcoming'))}
-                      style={{ borderTop: '1px solid rgba(0,0,0,0.06)', paddingTop: 10, display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}
+                      style={{ background: '#ffffff', borderRadius: 14, boxShadow: '0 2px 12px rgba(0,0,0,0.08)', border: '1px solid rgba(0,0,0,0.06)', padding: '9px 14px', display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}
                     >
                       <div style={{ width: 28, height: 28, borderRadius: 7, background: '#F4F4F5', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#1A1918', flexShrink: 0 }}>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -1681,7 +1679,7 @@ export default function Home() {
                         </svg>
                       </div>
                       <span style={{ flex: 1, fontSize: 12, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>Plan your month</span>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C4C3C1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C4C3C1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><polyline points="9 18 15 12 9 6"/></svg>
                     </div>
                   </div>
                 </div>
