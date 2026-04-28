@@ -7,7 +7,6 @@ import NotificationsPopup from './NotificationsPopup';
 import FriendsPopup from './FriendsPopup';
 import AppMenuDropdown from './AppMenuDropdown';
 import UserAvatar from './ui/UserAvatar';
-import DemoModeToggle from './DemoModeToggle';
 import { useNotificationCount } from './utils/notificationCount';
 
 const isActive = (location, to) => {
@@ -231,14 +230,20 @@ export default function DesktopTopNav() {
         background: 'none',
         pointerEvents: 'none',
       }}>
-        {/* Logo */}
+        {/* V bubble logo */}
         <Link to="/" style={{
+          pointerEvents: 'auto', marginRight: 8, flexShrink: 0,
+          display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+          width: 38, height: 38, borderRadius: '50%',
+          background: 'rgba(255,255,255,0.82)',
+          backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)',
+          border: '1px solid rgba(255,255,255,0.72)',
+          boxShadow: '0 2px 12px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.04)',
           fontFamily: "'Cormorant Garamond', Georgia, serif",
-          fontStyle: 'italic', fontWeight: 600, fontSize: '1.5rem',
+          fontStyle: 'italic', fontWeight: 600, fontSize: '1.25rem',
           color: '#1A1918', textDecoration: 'none', lineHeight: 1,
-          letterSpacing: '-0.02em', flexShrink: 0,
-          pointerEvents: 'auto', marginRight: 8,
-        }}>Vony</Link>
+          letterSpacing: '-0.02em',
+        }}>V</Link>
 
         {/* Left pill — Home (plain), Calendar (plain), Lending & Borrowing (popup) */}
         <Pill>
@@ -260,6 +265,7 @@ export default function DesktopTopNav() {
           <Pill>
             {/* Friends */}
             <NavBtn onClick={() => { setFriendsOpen(v => !v); setNotifOpen(false); setMenuOpen(false); }} active={friendsOpen}>
+
               <UsersIcon />
             </NavBtn>
 
@@ -315,7 +321,6 @@ export default function DesktopTopNav() {
               )}
             </div>
           </Pill>
-          <DemoModeToggle variant="desktop" />
         </div>
       </div>
 

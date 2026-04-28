@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { useAuth } from "@/lib/AuthContext";
 import MeshMobileNav from "@/components/MeshMobileNav";
+import DemoModeToggle from "@/components/DemoModeToggle";
 import UserAvatar from "@/components/ui/UserAvatar";
 import DesktopSidebar from '../components/DesktopSidebar';
 import { Camera, Image as ImageIcon, Trash2, LogOut } from "lucide-react";
@@ -703,7 +704,8 @@ export default function Profile() {
                 <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1A1918', margin: '0 0 4px', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.03em' }}>
                   {displayName}
                 </h1>
-                {joinedDate && <p style={{ fontSize: 14, color: '#787776', margin: 0, fontFamily: "'DM Sans', sans-serif" }}>Joined {joinedDate}</p>}
+                {joinedDate && <p style={{ fontSize: 14, color: '#787776', margin: '0 0 10px', fontFamily: "'DM Sans', sans-serif" }}>Joined {joinedDate}</p>}
+                <DemoModeToggle variant="profile" />
               </div>
               <div style={{ position: 'relative', flexShrink: 0 }}>
                 <div style={{ width: 72, height: 72, borderRadius: '50%', padding: 3, background: 'linear-gradient(135deg, #03ACEA, #1D5B94)', display: 'inline-flex' }}>

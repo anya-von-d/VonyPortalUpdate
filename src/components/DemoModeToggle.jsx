@@ -54,6 +54,14 @@ export default function DemoModeToggle({ variant = 'desktop' }) {
         cursor: 'pointer',
         pointerEvents: 'auto',
       }
+    : variant === 'profile'
+    ? {
+        display: 'inline-flex', alignItems: 'center', gap: 10,
+        padding: '6px 0',
+        background: 'none',
+        border: 'none',
+        cursor: 'pointer',
+      }
     : {
         display: 'inline-flex', alignItems: 'center', gap: 8,
         padding: '6px 12px',

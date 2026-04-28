@@ -3,7 +3,6 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import SettingsModal from "@/components/SettingsModal";
 import FriendsPopup from "@/components/FriendsPopup";
-import DemoModeToggle from "@/components/DemoModeToggle";
 import { useNotificationCount } from "@/components/utils/notificationCount";
 
 /* ── Small icons for radial popup items ── */
@@ -156,7 +155,6 @@ export default function MeshMobileNav({ user, activePage }) {
         }}>Vony</Link>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, pointerEvents: 'auto' }}>
-          <DemoModeToggle variant="mobile" />
           <button
             onClick={() => navigate(createPageUrl('Notifications'))}
             style={{
