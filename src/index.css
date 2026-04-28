@@ -269,6 +269,16 @@ input[type="date"] {
   }
 }
 
+/* Home: two-column layout — loans left, upcoming+summary+friends right */
+@media (min-width: 901px) {
+  .home-main-two-col {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+    align-items: start;
+  }
+}
+
 /* Content area: offset for floating desktop nav bubbles (top:18 + ~44px bubble + 18px breathing room) */
 @media (min-width: 901px) {
   .mesh-center {
