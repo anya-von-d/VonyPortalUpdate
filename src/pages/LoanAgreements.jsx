@@ -4,8 +4,6 @@ import { FileText, CheckCircle, Download, ChevronDown, ChevronRight, ChevronLeft
 import { motion, AnimatePresence } from "framer-motion";
 import { format, addMonths, addWeeks, addDays } from "date-fns";
 import { jsPDF } from "jspdf";
-import { useSearchParams } from "react-router-dom";
-import RecentActivity from './RecentActivity';
 import { useAuth } from "@/lib/AuthContext";
 import { formatMoney } from "@/components/utils/formatMoney";
 import { toLocalDate } from "@/components/utils/dateUtils";
@@ -242,10 +240,6 @@ export default function LoanAgreements() {
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, []);
-
-  const [searchParams, setSearchParams] = useSearchParams();
-  const activeTab = searchParams.get('tab') || 'documents';
-  const setTab = (t) => setSearchParams({ tab: t });
 
   useEffect(() => {
     loadData();
@@ -1127,47 +1121,15 @@ export default function LoanAgreements() {
           {/* Desktop page title */}
           <div className="desktop-page-title" style={{ marginBottom: 20 }}>
             <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 22, fontWeight: 700, letterSpacing: '-0.03em', lineHeight: 1.2, color: '#1A1918' }}>
-              Records
+              Lending & Borrowing Records
             </div>
           </div>
 
-          {/* Mobile-only page title (desktop shows it in top bar) */}
+          {/* Mobile-only page title */}
           <div className="mobile-page-title">
-            <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', marginBottom: 12 }}>Records</div>
+            <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', marginBottom: 12 }}>Lending & Borrowing Records</div>
           </div>
 
-          {/* Tab nav */}
-          <div style={{ marginBottom: 20 }}>
-            <div style={{ display: 'flex', background: '#F0F0EE', borderRadius: 12, padding: 3, gap: 2 }}>
-              {[
-                { key: 'documents', label: 'Loan Documents' },
-                { key: 'activity', label: 'Transactions & Activity' },
-              ].map(({ key, label }) => {
-                const active = activeTab === key;
-                return (
-                  <button
-                    key={key}
-                    onClick={() => setTab(key)}
-                    style={{
-                      flex: 1, padding: '7px 16px', borderRadius: 9, border: 'none', cursor: 'pointer',
-                      background: active ? 'white' : 'transparent',
-                      color: active ? '#1A1918' : '#787776',
-                      fontSize: 13, fontWeight: active ? 600 : 500,
-                      fontFamily: "'DM Sans', sans-serif",
-                      letterSpacing: '-0.01em',
-                      boxShadow: active ? '0 1px 4px rgba(0,0,0,0.10)' : 'none',
-                      transition: 'all 0.15s',
-                    }}
-                  >
-                    {label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {activeTab === 'documents' ? (
-          <>
           {/* Search + Filter */}
           <div style={{ marginBottom: 16, position: 'relative', zIndex: 30 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -1340,9 +1302,6 @@ export default function LoanAgreements() {
                   </div>
           )}
           </div>
-          </>) : (
-            <RecentActivity embeddedMode />
-          )}
 
         </div>
 
