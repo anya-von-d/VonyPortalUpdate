@@ -1376,20 +1376,12 @@ export default function Home() {
                         {formatMoney(totalRepaid)} repaid / {formatMoney(totalLentAmount)}
                       </div>
                     </div>
-                    <div onClick={() => navigate(createPageUrl('LendingBorrowing') + '?tab=lending')}
-                      style={{ padding: '9px 20px', display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
-                      <div style={{ width: 28, height: 28, borderRadius: 7, background: '#F4F4F5', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#1A1918', flexShrink: 0 }}>
-                        {cashIconSvg}
-                      </div>
-                      <span style={{ flex: 1, fontSize: 12, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>Lending Progress</span>
-                      {chevronSvg}
-                    </div>
                   </div>
                 )}
 
                 {/* Vertical divider */}
                 {lentLoans.length > 0 && borrowedLoans.length > 0 && (
-                  <div style={{ width: 1, background: 'rgba(0,0,0,0.07)', flexShrink: 0 }} />
+                  <div style={{ width: 1, background: 'rgba(0,0,0,0.07)', flexShrink: 0, margin: '16px 0' }} />
                 )}
 
                 {/* Right: You owe */}
@@ -1408,14 +1400,6 @@ export default function Home() {
                       <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>
                         {formatMoney(totalPaidBack)} repaid / {formatMoney(totalBorrowedAmount)}
                       </div>
-                    </div>
-                    <div onClick={() => navigate(createPageUrl('LendingBorrowing') + '?tab=borrowing')}
-                      style={{ padding: '9px 20px', display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
-                      <div style={{ width: 28, height: 28, borderRadius: 7, background: '#F4F4F5', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#1A1918', flexShrink: 0 }}>
-                        {cashIconSvg}
-                      </div>
-                      <span style={{ flex: 1, fontSize: 12, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>Borrowing Progress</span>
-                      {chevronSvg}
                     </div>
                   </div>
                 )}
