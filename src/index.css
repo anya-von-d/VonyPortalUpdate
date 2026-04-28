@@ -274,7 +274,7 @@ input[type="date"] {
   .home-main-two-col {
     display: grid !important;
     grid-template-columns: 1fr 1fr;
-    gap: 64px;
+    gap: 64px !important;
     align-items: start;
   }
 }
