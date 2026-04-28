@@ -1659,7 +1659,7 @@ export default function Lending({ initialTab }) {
               <div style={{ display: 'flex', gap: 8, flexShrink: 0, flexWrap: 'wrap' }}>
                 <button
                   type="button"
-                  onClick={() => window.dispatchEvent(new CustomEvent('open-friends-popup'))}
+                  onClick={() => navigate(createPageUrl('Friends'))}
                   style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '6px 11px', borderRadius: 9, background: '#03ACEA', color: 'white', textDecoration: 'none', fontSize: 12, fontWeight: 600, fontFamily: "'DM Sans', system-ui, sans-serif", border: 'none', cursor: 'pointer' }}
                 >
                   Add a Friend
@@ -2190,13 +2190,13 @@ export default function Lending({ initialTab }) {
                         <div>
                           <div style={{ fontSize: 11, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 7 }}>Lender</div>
                           {isLoadingUsers ? <div style={{ height: 38 }} /> : (
-                            <UserSelector users={lenderUsers} value={formData.lender_username} onSelect={handleLenderSelect} placeholder="Choose a person..." showAddFriends onAddFriends={() => { setActiveSection('lending'); window.dispatchEvent(new CustomEvent('open-friends-popup', { detail: { initialTab: 'Invite' } })); }} />
+                            <UserSelector users={lenderUsers} value={formData.lender_username} onSelect={handleLenderSelect} placeholder="Choose a person..." showAddFriends onAddFriends={() => { setActiveSection('lending'); navigate(createPageUrl('Friends') + '?tab=Invite'); }} />
                           )}
                         </div>
                         <div>
                           <div style={{ fontSize: 11, fontWeight: 700, color: '#9B9A98', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 7 }}>Borrower</div>
                           {isLoadingUsers ? <div style={{ height: 38 }} /> : (
-                            <UserSelector users={borrowerUsers} value={formData.borrower_username} onSelect={handleBorrowerSelect} placeholder="Choose a person..." showAddFriends onAddFriends={() => { setActiveSection('lending'); window.dispatchEvent(new CustomEvent('open-friends-popup', { detail: { initialTab: 'Invite' } })); }} />
+                            <UserSelector users={borrowerUsers} value={formData.borrower_username} onSelect={handleBorrowerSelect} placeholder="Choose a person..." showAddFriends onAddFriends={() => { setActiveSection('lending'); navigate(createPageUrl('Friends') + '?tab=Invite'); }} />
                           )}
                         </div>
                       </div>

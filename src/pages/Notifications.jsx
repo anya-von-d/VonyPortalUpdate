@@ -548,7 +548,7 @@ export default function Notifications() {
   };
 
   const handleItemTap = (item) => {
-    if (item.type === 'friend')          { window.dispatchEvent(new CustomEvent('open-friends-popup', { detail: { initialRequestsOpen: true } })); }
+    if (item.type === 'friend')          { navigate(createPageUrl('Friends') + '?requests=1'); }
     else if (item.type === 'offer_received') { setSelectedOffer(item.data); setShowSignatureModal(true); }
     else if (item.type === 'payment_confirm'){ navigate(createPageUrl('RecordPayment')); }
     else if (item.type === 'term_change')    { navigate(createPageUrl('LendingBorrowing')); }

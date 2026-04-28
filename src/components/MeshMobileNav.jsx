@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import SettingsModal from "@/components/SettingsModal";
-import FriendsPopup from "@/components/FriendsPopup";
 import UserAvatar from "@/components/ui/UserAvatar";
 import { useNotificationCount } from "@/components/utils/notificationCount";
 
@@ -74,9 +73,6 @@ export default function MeshMobileNav({ user, activePage }) {
   const location = useLocation();
   const navigate = useNavigate();
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [friendsOpen, setFriendsOpen] = useState(false);
-  const [friendsInitialTab, setFriendsInitialTab] = useState(null);
-  const [friendsInitialRequestsOpen, setFriendsInitialRequestsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const navRef = useRef(null);
   const notifCount = useNotificationCount(user?.id);
@@ -102,17 +98,16 @@ export default function MeshMobileNav({ user, activePage }) {
     };
   }, [lbOpen]);
 
-  // Listen for friends popup event
+  // Listen for friends navigation event (legacy — now navigates to Friends page)
   useEffect(() => {
     const handler = (e) => {
-      setFriendsOpen(true);
       setLbOpen(false);
-      if (e?.detail?.initialTab) setFriendsInitialTab(e.detail.initialTab);
-      if (e?.detail?.initialRequestsOpen) setFriendsInitialRequestsOpen(true);
+      const tab = e?.detail?.initialTab;
+      navigate(createPageUrl('Friends') + (tab ? `?tab=${tab}` : ''));
     };
     window.addEventListener('open-friends-popup', handler);
     return () => window.removeEventListener('open-friends-popup', handler);
-  }, []);
+  }, [navigate]);
 
   const isActivePage = (page) => {
     if (page === 'Home') return location.pathname === '/' || location.pathname === '';
@@ -329,8 +324,8 @@ export default function MeshMobileNav({ user, activePage }) {
 
         {/* Friends */}
         <NavBtn
-          active={false}
-          onTap={() => setFriendsOpen(true)}
+          active={isActivePage('Friends')}
+          onTap={() => navigate(createPageUrl('Friends'))}
           icon={
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
@@ -350,14 +345,6 @@ export default function MeshMobileNav({ user, activePage }) {
       </div>
 
       <SettingsModal isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
-      {friendsOpen && (
-        <FriendsPopup
-          onClose={() => { setFriendsOpen(false); setFriendsInitialTab(null); setFriendsInitialRequestsOpen(false); }}
-          initialTab={friendsInitialTab}
-          initialRequestsOpen={friendsInitialRequestsOpen}
-          positionOverride={{ top: 92, left: 12, right: 12, width: 'auto' }}
-        />
-      )}
     </>
   );
 }

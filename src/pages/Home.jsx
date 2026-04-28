@@ -1030,7 +1030,7 @@ export default function Home() {
             {hasMore && (
               <button
                 type="button"
-                onClick={() => window.dispatchEvent(new CustomEvent('open-friends-popup'))}
+                onClick={() => navigate(createPageUrl('Friends'))}
                 style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}
               >
                 <div style={{ width: 40, height: 40, borderRadius: '50%', background: '#F4F3F1', border: '2px solid #D1D5DB', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -1046,7 +1046,7 @@ export default function Home() {
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 10 }}>
           <button
             type="button"
-            onClick={() => window.dispatchEvent(new CustomEvent('open-friends-popup'))}
+            onClick={() => navigate(createPageUrl('Friends'))}
             style={{ width: 26, height: 26, borderRadius: '50%', background: '#F4F3F1', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             aria-label="Add friend"
           >
@@ -1117,7 +1117,7 @@ export default function Home() {
               <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
                 <button
                   type="button"
-                  onClick={() => window.dispatchEvent(new CustomEvent('open-friends-popup'))}
+                  onClick={() => navigate(createPageUrl('Friends'))}
                   style={{
                     display: 'inline-flex', alignItems: 'center', gap: 6,
                     padding: '8px 14px', borderRadius: 0,

@@ -4,7 +4,6 @@ import { createPageUrl } from '@/utils';
 import { useAuth } from '@/lib/AuthContext';
 import SettingsModal from './SettingsModal';
 import NotificationsPopup from './NotificationsPopup';
-import FriendsPopup from './FriendsPopup';
 import AppMenuDropdown from './AppMenuDropdown';
 import UserAvatar from './ui/UserAvatar';
 import { useNotificationCount } from './utils/notificationCount';
@@ -170,9 +169,6 @@ export default function DesktopTopNav() {
   const navigate = useNavigate();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
-  const [friendsOpen, setFriendsOpen] = useState(false);
-  const [friendsInitialTab, setFriendsInitialTab] = useState(null);
-  const [friendsInitialRequestsOpen, setFriendsInitialRequestsOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
   const menuRef = useRef(null);
@@ -188,15 +184,14 @@ export default function DesktopTopNav() {
 
   useEffect(() => {
     const handler = (e) => {
-      setFriendsOpen(true);
       setNotifOpen(false);
       setMenuOpen(false);
-      if (e?.detail?.initialTab) setFriendsInitialTab(e.detail.initialTab);
-      if (e?.detail?.initialRequestsOpen) setFriendsInitialRequestsOpen(true);
+      const tab = e?.detail?.initialTab;
+      navigate(createPageUrl('Friends') + (tab ? `?tab=${tab}` : ''));
     };
     window.addEventListener('open-friends-popup', handler);
     return () => window.removeEventListener('open-friends-popup', handler);
-  }, []);
+  }, [navigate]);
 
   // Lending & Borrowing popup (no title)
   const lendingPopup = {
@@ -290,14 +285,14 @@ export default function DesktopTopNav() {
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8, pointerEvents: 'auto' }}>
           <Pill>
             {/* Friends */}
-            <NavBtn onClick={() => { setFriendsOpen(v => !v); setNotifOpen(false); setMenuOpen(false); }} active={friendsOpen}>
+            <NavBtn onClick={() => { navigate(createPageUrl('Friends')); setNotifOpen(false); setMenuOpen(false); }} active={isActive(location, createPageUrl('Friends'))}>
 
               <UsersIcon />
             </NavBtn>
 
             {/* Bell — no standalone bubble, just a NavBtn inside the pill */}
             <div style={{ position: 'relative' }}>
-              <NavBtn onClick={() => { setNotifOpen(v => !v); setFriendsOpen(false); setMenuOpen(false); }} active={notifOpen}>
+              <NavBtn onClick={() => { setNotifOpen(v => !v); setMenuOpen(false); }} active={notifOpen}>
                 <BellIcon />
               </NavBtn>
               {notifCount > 0 && (
@@ -323,7 +318,7 @@ export default function DesktopTopNav() {
 
             {/* Profile */}
             <NavBtn
-              onClick={() => { navigate(createPageUrl('Profile')); setNotifOpen(false); setFriendsOpen(false); setMenuOpen(false); }}
+              onClick={() => { navigate(createPageUrl('Profile')); setNotifOpen(false); setMenuOpen(false); }}
               active={isActive(location, createPageUrl('Profile'))}>
               {user ? (
                 <UserAvatar name={user.full_name || user.username} src={user.avatar_url || user.profile_picture_url} size={22} radius={11} />
@@ -332,16 +327,16 @@ export default function DesktopTopNav() {
 
             {/* Menu */}
             <div ref={menuRef} style={{ position: 'relative', zIndex: 1 }}>
-              <NavBtn onClick={() => { setMenuOpen(v => !v); setNotifOpen(false); setFriendsOpen(false); }} active={menuOpen}>
+              <NavBtn onClick={() => { setMenuOpen(v => !v); setNotifOpen(false); }} active={menuOpen}>
                 <MenuIcon />
               </NavBtn>
               {menuOpen && (
                 <AppMenuDropdown
                   style={{ position: 'absolute', top: 'calc(100% + 10px)', right: 0, zIndex: 400 }}
                   onClose={() => setMenuOpen(false)}
-                  onInviteFriend={() => { setFriendsInitialTab('Invite'); setFriendsOpen(true); }}
+                  onInviteFriend={() => { navigate(createPageUrl('Friends') + '?tab=Invite'); setMenuOpen(false); }}
                   onOpenSettings={() => setSettingsOpen(true)}
-                  onOpenPendingRequests={() => { setNotifOpen(true); setFriendsOpen(false); setMenuOpen(false); }}
+                  onOpenPendingRequests={() => { setNotifOpen(true); setMenuOpen(false); }}
                   onOpenProfile={() => { setMenuOpen(false); navigate(createPageUrl('Profile')); }}
                 />
               )}
@@ -354,14 +349,7 @@ export default function DesktopTopNav() {
       {notifOpen && (
         <NotificationsPopup
           onClose={() => setNotifOpen(false)}
-          onOpenFriends={() => { setNotifOpen(false); setFriendsOpen(true); }}
-        />
-      )}
-      {friendsOpen && (
-        <FriendsPopup
-          onClose={() => { setFriendsOpen(false); setFriendsInitialTab(null); setFriendsInitialRequestsOpen(false); }}
-          initialTab={friendsInitialTab}
-          initialRequestsOpen={friendsInitialRequestsOpen}
+          onOpenFriends={() => { setNotifOpen(false); navigate(createPageUrl('Friends')); }}
         />
       )}
     </>
