@@ -583,32 +583,36 @@ export default function Notifications() {
             <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', lineHeight: 1 }}>Inbox</h1>
           </div>
 
-          {/* Scrollable tabs */}
-          <div style={{
-            display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 2, marginBottom: 20,
-            scrollbarWidth: 'none', msOverflowStyle: 'none',
-          }}>
-            {TABS.map(tab => {
-              const isActive = activeTab === tab.key;
-              return (
-                <button
-                  key={tab.key}
-                  onClick={() => setActiveTab(tab.key)}
-                  style={{
-                    flexShrink: 0, padding: '7px 14px', borderRadius: 999,
-                    border: isActive ? 'none' : '1.5px solid rgba(0,0,0,0.18)',
-                    background: isActive ? '#1A1918' : 'transparent',
-                    color: isActive ? '#fff' : '#1A1918',
-                    fontSize: 13, fontWeight: 600, cursor: 'pointer',
-                    fontFamily: "'DM Sans', sans-serif",
-                    whiteSpace: 'nowrap',
-                    transition: 'background 0.15s, color 0.15s',
-                  }}
-                >
-                  {tab.label}
-                </button>
-              );
-            })}
+          {/* Tabs — row 1: first 3, row 2: last 2 */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 20 }}>
+            {[TABS.slice(0, 3), TABS.slice(3)].map((row, rowIdx) => (
+              <div key={rowIdx} style={{
+                display: 'flex', gap: 8, overflowX: 'auto',
+                scrollbarWidth: 'none', msOverflowStyle: 'none',
+              }}>
+                {row.map(tab => {
+                  const isActive = activeTab === tab.key;
+                  return (
+                    <button
+                      key={tab.key}
+                      onClick={() => setActiveTab(tab.key)}
+                      style={{
+                        flexShrink: 0, padding: '7px 14px', borderRadius: 999,
+                        border: isActive ? 'none' : '1.5px solid rgba(0,0,0,0.18)',
+                        background: isActive ? '#1A1918' : 'transparent',
+                        color: isActive ? '#fff' : '#1A1918',
+                        fontSize: 13, fontWeight: 600, cursor: 'pointer',
+                        fontFamily: "'DM Sans', sans-serif",
+                        whiteSpace: 'nowrap',
+                        transition: 'background 0.15s, color 0.15s',
+                      }}
+                    >
+                      {tab.label}
+                    </button>
+                  );
+                })}
+              </div>
+            ))}
           </div>
 
           {/* Content */}
