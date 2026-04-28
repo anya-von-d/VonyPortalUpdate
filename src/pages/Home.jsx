@@ -1507,7 +1507,7 @@ export default function Home() {
                   ? `${name} borrowed ${formatMoney(total)}`
                   : `${name} lent you ${formatMoney(total)}`;
                 return (
-                  <div key={loan.id} style={{ padding: '14px 16px', display: 'flex', alignItems: 'center', gap: 14 }}>
+                  <div style={{ padding: '14px 16px', display: 'flex', alignItems: 'center', gap: 14 }}>
                     {/* Profile photo + pie chart overlay */}
                     <div style={{ position: 'relative', width: 48, height: 48, flexShrink: 0 }}>
                       <UserAvatar
@@ -1578,7 +1578,7 @@ export default function Home() {
                     Lending and Borrowing agreements
                   </div>
                   {/* White card — same style as Quick Actions */}
-                  <div style={{ background: '#ffffff', borderRadius: 14, overflow: 'hidden' }}>
+                  <div style={{ background: '#ffffff', borderRadius: 14, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.08)' }}>
                     {/* Tab bar + sort dropdown on same row */}
                     <div style={{ display: 'flex', alignItems: 'center', padding: '4px 12px 0 16px' }}>
                       {['lending', 'borrowing'].map(tab => {
@@ -1601,7 +1601,12 @@ export default function Home() {
                     {/* Loan rows */}
                     {activeLoans.length === 0
                       ? <div style={{ fontSize: 12, color: '#9B9A98', textAlign: 'center', padding: '16px 0' }}>No active {lbTab} 🌱</div>
-                      : activeLoans.map((l, idx) => renderLoanRow(l, isLendingTab, idx, activeFilter))
+                      : activeLoans.map((l, idx, arr) => (
+                          <div key={l.id}>
+                            {renderLoanRow(l, isLendingTab, idx, activeFilter)}
+                            {idx < arr.length - 1 && <div style={{ height: 1, background: 'rgba(0,0,0,0.05)', margin: '0 16px' }} />}
+                          </div>
+                        ))
                     }
                   </div>
                 </div>
@@ -1768,7 +1773,7 @@ export default function Home() {
                 <h2 style={{ fontSize: 22, fontWeight: 700, color: '#1A1918', margin: '0 0 16px', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.02em' }}>
                   Quick actions
                 </h2>
-                <div style={{ background: '#ffffff', borderRadius: 14, overflow: 'hidden' }}>
+                <div style={{ background: '#ffffff', borderRadius: 14, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.08)' }}>
                   {quickLinks.map((item, i) => (
                     <div
                       key={i}
