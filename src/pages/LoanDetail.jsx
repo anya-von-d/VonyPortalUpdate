@@ -338,6 +338,42 @@ export default function LoanDetail() {
   const signedDate = agreement?.lender_signed_date || agreement?.borrower_signed_date || loan.created_at;
   const signedDateFmt = signedDate ? format(new Date(signedDate), "MMMM d, yyyy") : "an unknown date";
 
+  // Promissory note paragraph calculations (mirrors LoanAgreements.jsx)
+  const pnFrequency = agreement?.payment_frequency || 'monthly';
+  const pnRepaymentPeriod = parseInt(agreement?.repayment_period) || 0;
+  const pnRepaymentUnit = agreement?.repayment_unit || 'months';
+  const pnNumPayments = pnFrequency === 'weekly'
+    ? Math.ceil(pnRepaymentPeriod * (pnRepaymentUnit === 'months' ? 4 : 1))
+    : pnRepaymentPeriod;
+  const pnSendFundsDate = agreement?.lender_send_funds_date
+    ? new Date(agreement.lender_send_funds_date)
+    : (agreement ? new Date(agreement.created_at) : new Date());
+  const pnFirstPaymentDate = agreement?.first_payment_date
+    ? new Date(agreement.first_payment_date)
+    : (pnFrequency === 'weekly' ? addWeeks(pnSendFundsDate, 1) : addMonths(pnSendFundsDate, 1));
+  let pnLastPaymentDate = null;
+  if (pnNumPayments > 0) {
+    pnLastPaymentDate = pnFrequency === 'weekly'
+      ? addWeeks(pnFirstPaymentDate, pnNumPayments - 1)
+      : addMonths(pnFirstPaymentDate, pnNumPayments - 1);
+  } else if (agreement?.due_date) {
+    pnLastPaymentDate = new Date(agreement.due_date);
+  }
+  const pnDayOfMonth = agreement?.loan_day_of_month
+    ? parseInt(agreement.loan_day_of_month)
+    : pnFirstPaymentDate.getDate();
+  const pnDaySuffix = pnDayOfMonth === 1 ? 'st' : pnDayOfMonth === 2 ? 'nd' : pnDayOfMonth === 3 ? 'rd' : 'th';
+  const pnDayOfWeek = agreement?.loan_day_of_week
+    || ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'][pnFirstPaymentDate.getDay()];
+  const pnDayOfWeekLabel = pnDayOfWeek.charAt(0).toUpperCase() + pnDayOfWeek.slice(1);
+  const pnTimeString = agreement?.loan_time || '12:00';
+  const [pnHourStr, pnMinStr] = pnTimeString.split(':');
+  const pnHour = parseInt(pnHourStr);
+  const pnHour12 = pnHour === 0 ? 12 : pnHour > 12 ? pnHour - 12 : pnHour;
+  const pnAmpm = pnHour >= 12 ? 'PM' : 'AM';
+  const pnFormattedTime = `${pnHour12}:${pnMinStr || '00'} ${pnAmpm}`;
+  const pnTimezone = agreement?.loan_timezone || 'EST';
+
   const C = 2 * Math.PI * 45;
   const ringOffset = C - (paidPct / 100) * C;
 
@@ -405,8 +441,6 @@ export default function LoanDetail() {
                 { label: "Frequency", value: freqLabel },
                 { label: "Total Owed Including Interest", value: formatMoney(totalOwedDisplay) },
                 { label: isLending ? "Amount Received" : "Amount Paid", value: formatMoney(totalPaidAmt) },
-                { label: "Payments Made", value: `${fullPaymentCount}/${totalPeriods}` },
-                { label: `${freqLabel} Payments`, value: formatMoney(displayPaymentAmt) },
               ].map((item, idx) => (
                 <div key={idx} style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
                   <span style={{ fontSize: 15, color: "#787776", fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>{item.label}</span>
@@ -576,9 +610,7 @@ export default function LoanDetail() {
 
               {/* Agreement paragraph */}
               <p style={{ fontSize: 15, lineHeight: 1.75, color: "#1A1918", margin: "0 0 24px", fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>
-                {lenderName} agrees to lend {borrowerName} {formatMoney(agreement.amount)}
-                {agreement.purpose ? `, for ${agreement.purpose},` : ","} with {agreement.interest_rate || 0}% interest per annum.{" "}
-                {borrowerName} agrees to repay {formatMoney(agreement.total_amount)} in {agreement.payment_frequency} instalments of {formatMoney(agreement.payment_amount)} over {agreement.repayment_period} {agreement.repayment_unit || "months"}.
+                The lender agrees to lend <strong>{borrowerName}</strong> <strong>{formatMoney(agreement.amount)}</strong> before <strong>{format(pnSendFundsDate, 'MMM d, yyyy')}</strong> at an interest rate of <strong>{agreement.interest_rate || 0}%</strong>. The loan will be repaid over <strong>{pnRepaymentPeriod} {pnRepaymentUnit}</strong> in <strong>{pnFrequency}</strong> payments of <strong>{formatMoney(agreement.payment_amount)}</strong>. Payments will be due {pnFrequency === 'weekly' ? <>on <strong>{pnDayOfWeekLabel}</strong></> : <>on the <strong>{pnDayOfMonth}{pnDaySuffix}</strong></>} at <strong>{pnFormattedTime} {pnTimezone}</strong>, with the first of the <strong>{pnNumPayments}</strong> payments due on <strong>{format(pnFirstPaymentDate, 'MMM d, yyyy')}</strong> and the last payment due on <strong>{pnLastPaymentDate ? format(pnLastPaymentDate, 'MMM d, yyyy') : '—'}</strong>.{agreement.purpose ? <> This loan is for <strong>{agreement.purpose}</strong>.</> : ''}
               </p>
 
               {/* Terms — same label/value style as Loan Overview */}
@@ -597,20 +629,39 @@ export default function LoanDetail() {
                 ))}
               </div>
 
-              {/* Signatures — same style */}
+              {/* Signatures */}
               <p style={{ ...sectionTitle, marginBottom: 14 }}>Signatures</p>
-              <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
                 {[
-                  { role: "Borrower", name: agreement.borrower_name || borrowerName, signed: agreement.borrower_signed_date },
                   { role: "Lender",   name: agreement.lender_name   || lenderName,   signed: agreement.lender_signed_date },
+                  { role: "Borrower", name: agreement.borrower_name || borrowerName, signed: agreement.borrower_signed_date },
                 ].map((sig, idx) => (
-                  <div key={idx} style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-                    <div>
-                      <p style={{ fontSize: 13, color: "#9B9A98", margin: "0 0 2px", fontFamily: "'DM Sans', sans-serif" }}>{sig.role}</p>
-                      <p style={{ fontSize: 15, fontStyle: "italic", color: "#1A1918", margin: 0, fontFamily: "'DM Sans', sans-serif" }}>{sig.name}</p>
+                  <div key={idx}>
+                    {/* Generated cursive signature */}
+                    <div style={{
+                      background: "#F9F8F6",
+                      borderRadius: 10,
+                      padding: "12px 16px 10px",
+                      marginBottom: 10,
+                      borderBottom: "1.5px solid #1A1918",
+                      display: "inline-block",
+                      minWidth: 180,
+                    }}>
+                      <span style={{
+                        fontSize: 26,
+                        fontFamily: "'Dancing Script', 'Brush Script MT', 'Segoe Script', cursive",
+                        color: "#1A1918",
+                        letterSpacing: "0.02em",
+                        lineHeight: 1.2,
+                        display: "block",
+                      }}>
+                        {sig.name}
+                      </span>
                     </div>
+                    <p style={{ fontSize: 13, color: "#9B9A98", margin: "0 0 1px", fontFamily: "'DM Sans', sans-serif" }}>{sig.role}</p>
+                    <p style={{ fontSize: 14, fontWeight: 500, color: "#1A1918", margin: "0 0 1px", fontFamily: "'DM Sans', sans-serif" }}>{sig.name}</p>
                     {sig.signed && (
-                      <p style={rowMeta}>Signed {formatTZ(sig.signed, "MMM d, yyyy")}</p>
+                      <p style={{ fontSize: 13, color: "#9B9A98", margin: 0, fontFamily: "'DM Sans', sans-serif" }}>Signed {formatTZ(sig.signed, "MMM d, yyyy")}</p>
                     )}
                   </div>
                 ))}
