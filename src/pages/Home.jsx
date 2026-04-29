@@ -1465,7 +1465,7 @@ export default function Home() {
           {/* ── Centered shortcuts ── */}
           {(() => {
             const iconCircle = (icon, size = 52, bg = '#1A1918') => {
-              const ring = 6;
+              const ring = 3;
               return (
                 <div style={{
                   width: size + ring * 2, height: size + ring * 2, borderRadius: '50%',
@@ -1495,10 +1495,10 @@ export default function Home() {
             );
             return (
               <div style={{ display: 'flex', justifyContent: 'center', gap: 36, marginBottom: 32 }}>
-                {item(<Plus />, 'Create loan', () => navigate(createPageUrl('CreateOffer')), 52, '#3A6EA8')}
-                {item(<CreditCard />, 'Log payment', () => navigate(createPageUrl('RecordPayment')), 52, '#4D8FAD')}
-                {item(<ArrowUpRight />, 'Lending', () => navigate(createPageUrl('LendingBorrowing') + '?tab=lending'), 52, '#2C5282')}
-                {item(<ArrowDownLeft />, 'Borrowing', () => navigate(createPageUrl('LendingBorrowing') + '?tab=borrowing'), 52, '#5A9CBF')}
+                {item(<Plus />, 'Create loan', () => navigate(createPageUrl('CreateOffer')), 52, '#2779D9')}
+                {item(<CreditCard />, 'Log payment', () => navigate(createPageUrl('RecordPayment')), 52, '#199DC7')}
+                {item(<ArrowUpRight />, 'Lending', () => navigate(createPageUrl('LendingBorrowing') + '?tab=lending'), 52, '#1A5FBF')}
+                {item(<ArrowDownLeft />, 'Borrowing', () => navigate(createPageUrl('LendingBorrowing') + '?tab=borrowing'), 52, '#3AADD4')}
               </div>
             );
           })()}
