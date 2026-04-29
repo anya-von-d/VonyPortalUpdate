@@ -1416,84 +1416,57 @@ export default function Home() {
 
           {/* ── Quick-action 5-card carousel ── */}
           {(() => {
-            const cardStyle = { width: 260, minHeight: 130, flexShrink: 0, scrollSnapAlign: 'start', background: '#fff', borderRadius: 12, padding: '22px 20px', boxShadow: '0 1px 4px rgba(0,0,0,0.05)', border: '1px solid rgba(0,0,0,0.09)', cursor: 'pointer', display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 18 };
-            const iconStyle = () => ({ width: 48, height: 90, borderRadius: 10, background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 });
-            const labelStyle = { fontSize: 12, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", fontWeight: 400, marginBottom: 2 };
-            const valueStyle = { fontSize: 20, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.03em', lineHeight: 1 };
-            const subStyle = { fontSize: 13, color: '#787776', fontFamily: "'DM Sans', sans-serif", marginTop: 3, lineHeight: 1.4 };
-            const ctaStyle = { fontSize: 12, fontWeight: 500, color: '#03ACEA', fontFamily: "'DM Sans', sans-serif", marginTop: 6 };
+            const cardStyle = {
+              width: 200, minHeight: 190, flexShrink: 0, scrollSnapAlign: 'start',
+              background: '#fff', borderRadius: 12, padding: '20px 18px 18px',
+              boxShadow: '0 1px 4px rgba(0,0,0,0.05)', border: '1px solid rgba(0,0,0,0.09)',
+              cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: 0,
+            };
+            const imgStyle = { width: 48, height: 48, objectFit: 'contain', marginBottom: 14 };
+            const line1Style = { fontSize: 12, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", fontWeight: 400, lineHeight: 1.3, marginBottom: 4 };
+            const line2Style = { fontSize: 14, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.35 };
+            const ctaStyle  = { fontSize: 12, fontWeight: 500, color: '#03ACEA', fontFamily: "'DM Sans', sans-serif", marginTop: 6 };
             return (
-              <div className="home-qac-scroll" style={{ display: 'flex', gap: 12, overflowX: 'auto', scrollbarWidth: 'none', msOverflowStyle: 'none', scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch', marginBottom: 28, paddingBottom: 2, marginLeft: -72, marginRight: -72, paddingLeft: 72, paddingRight: 72 }}>
+              <div className="home-qac-scroll" style={{ display: 'flex', gap: 10, overflowX: 'auto', scrollbarWidth: 'none', msOverflowStyle: 'none', scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch', marginBottom: 28, paddingBottom: 2, marginLeft: -72, marginRight: -72, paddingLeft: 72, paddingRight: 72 }}>
 
                 {/* 1 — Notifications */}
                 <div className="home-qac-card" onClick={() => navigate(createPageUrl('Notifications'))} style={cardStyle}>
-                  <div className="home-qac-icon" style={iconStyle('#F9F8F6')}>
-                    <img src="/images/Art/mailbox.png" alt="Notifications" style={{ width: 38, height: 38, objectFit: 'contain' }} />
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-                    <div style={labelStyle}>Notifications</div>
-                    {notifCount > 0 ? (
-                      <>
-                        <div style={{ ...valueStyle, color: '#E8726E' }}>{notifCount}</div>
-                        <div style={subStyle}>{notifCount === 1 ? 'item' : 'items'} waiting</div>
-                      </>
-                    ) : (
-                      <>
-                        <div style={{ ...valueStyle, fontSize: 15, fontWeight: 500 }}>All caught up</div>
-                        <div style={subStyle}>No new activity</div>
-                      </>
-                    )}
-                  </div>
+                  <img src="/images/Art/mailbox.png" alt="Notifications" style={imgStyle} />
+                  <div style={line1Style}>Notifications</div>
+                  {notifCount > 0
+                    ? <div style={{ ...line2Style, color: '#E8726E' }}>{notifCount} {notifCount === 1 ? 'item' : 'items'} waiting</div>
+                    : <div style={line2Style}>All caught up</div>
+                  }
                 </div>
 
                 {/* 2 — Received this month */}
                 <div className="home-qac-card" onClick={() => navigate(createPageUrl('PlanYourMonth'))} style={cardStyle}>
-                  <div className="home-qac-icon" style={iconStyle('#F9F8F6')}>
-                    <img src="/images/Art/coins.png" alt="Received" style={{ width: 38, height: 38, objectFit: 'contain' }} />
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-                    <div style={labelStyle}>Received this month</div>
-                    <div style={valueStyle}>{formatMoney(monthlyReceived)}</div>
-                    <div style={subStyle}>of <span style={{ color: '#1A1918', fontWeight: 500 }}>{formatMoney(monthlyExpectedReceive)}</span> expected</div>
-                    <div style={ctaStyle}>Plan your month →</div>
-                  </div>
+                  <img src="/images/Art/coins.png" alt="Received" style={imgStyle} />
+                  <div style={line1Style}>Received this month</div>
+                  <div style={line2Style}>{formatMoney(monthlyReceived)} <span style={{ fontWeight: 400, color: '#787776' }}>of {formatMoney(monthlyExpectedReceive)}</span></div>
+                  <div style={ctaStyle}>Plan your month →</div>
                 </div>
 
                 {/* 3 — Paid this month */}
                 <div className="home-qac-card" onClick={() => navigate(createPageUrl('PlanYourMonth'))} style={cardStyle}>
-                  <div className="home-qac-icon" style={iconStyle('#F9F8F6')}>
-                    <img src="/images/Art/paperPlane.png" alt="Paid" style={{ width: 38, height: 38, objectFit: 'contain' }} />
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-                    <div style={labelStyle}>Paid this month</div>
-                    <div style={valueStyle}>{formatMoney(monthlyPaidOut)}</div>
-                    <div style={subStyle}>of <span style={{ color: '#1A1918', fontWeight: 500 }}>{formatMoney(monthlyExpectedPay)}</span> due</div>
-                    <div style={ctaStyle}>Plan your month →</div>
-                  </div>
+                  <img src="/images/Art/paperPlane.png" alt="Paid" style={imgStyle} />
+                  <div style={line1Style}>Paid this month</div>
+                  <div style={line2Style}>{formatMoney(monthlyPaidOut)} <span style={{ fontWeight: 400, color: '#787776' }}>of {formatMoney(monthlyExpectedPay)}</span></div>
+                  <div style={ctaStyle}>Plan your month →</div>
                 </div>
 
                 {/* 4 — Create Loan */}
                 <div className="home-qac-card" onClick={() => navigate(createPageUrl('CreateOffer'))} style={cardStyle}>
-                  <div className="home-qac-icon" style={iconStyle('#F9F8F6')}>
-                    <img src="/images/Art/document.png" alt="Create Loan" style={{ width: 38, height: 38, objectFit: 'contain' }} />
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-                    <div style={labelStyle}>New agreement</div>
-                    <div style={{ ...valueStyle, fontSize: 16, fontWeight: 500 }}>Create Loan</div>
-                    <div style={subStyle}>Set up a lending agreement</div>
-                  </div>
+                  <img src="/images/Art/document.png" alt="Create Loan" style={imgStyle} />
+                  <div style={line1Style}>New agreement</div>
+                  <div style={line2Style}>Create Loan</div>
                 </div>
 
                 {/* 5 — Record Payment */}
                 <div className="home-qac-card" onClick={() => navigate(createPageUrl('RecordPayment'))} style={cardStyle}>
-                  <div className="home-qac-icon" style={iconStyle('#F9F8F6')}>
-                    <img src="/images/Art/file.png" alt="Record Payment" style={{ width: 38, height: 38, objectFit: 'contain' }} />
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-                    <div style={labelStyle}>Log activity</div>
-                    <div style={{ ...valueStyle, fontSize: 16, fontWeight: 500 }}>Record Payment</div>
-                    <div style={subStyle}>Log a payment made or received</div>
-                  </div>
+                  <img src="/images/Art/file.png" alt="Record Payment" style={imgStyle} />
+                  <div style={line1Style}>Log activity</div>
+                  <div style={line2Style}>Record Payment</div>
                 </div>
 
               </div>

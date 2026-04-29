@@ -902,11 +902,8 @@ input[type="date"] {
     padding-right: 20px !important;
   }
   .home-qac-card {
-    width: 210px !important;
-  }
-  .home-qac-icon {
-    width: 44px !important;
-    height: 76px !important;
+    width: 160px !important;
+    min-height: 170px !important;
   }
 }
 
