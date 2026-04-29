@@ -242,7 +242,7 @@ export default function LoanDetail() {
     return (
       <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 12 }}>
         <p style={{ fontSize: 16, color: "#1A1918", fontFamily: "'DM Sans', sans-serif" }}>Loan not found.</p>
-        <button onClick={() => navigate(-1)} style={{ fontSize: 13, color: "#03ACEA", background: "none", border: "none", cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>← Go back</button>
+        <button onClick={() => navigate(createPageUrl('YourLoans'))} style={{ fontSize: 13, color: "#03ACEA", background: "none", border: "none", cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>← Go back</button>
       </div>
     );
   }
@@ -374,7 +374,7 @@ export default function LoanDetail() {
 
           {/* ── Back button ── */}
           <button
-            onClick={() => navigate(-1)}
+            onClick={() => navigate(createPageUrl('YourLoans'))}
             style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", cursor: "pointer", color: "#9B9A98", fontSize: 14, fontFamily: "'DM Sans', sans-serif", padding: "0 0 28px", marginLeft: -4 }}
           >
             <ChevronLeft size={15} />
