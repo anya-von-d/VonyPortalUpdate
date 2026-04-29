@@ -1476,7 +1476,6 @@ export default function Home() {
                   <div style={{
                     width: size, height: size, borderRadius: '50%',
                     background: bg,
-                    boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.18), inset 0 -1px 2px rgba(255,255,255,0.12)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
                   }}>
                     {React.cloneElement(icon, { size: size * 0.42, color: '#ffffff', strokeWidth: 1.8 })}
