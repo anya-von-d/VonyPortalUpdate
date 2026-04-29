@@ -1477,8 +1477,8 @@ export default function Home() {
           {/* ── Centered shortcuts ── */}
           {(() => {
             const iconCircle = (icon, size = 52) => (
-              <div style={{ width: size, height: size, borderRadius: '50%', background: '#FCFCFC', border: '1.5px solid #1A1918', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                {React.cloneElement(icon, { size: size * 0.42, color: '#1A1918', strokeWidth: 1.8 })}
+              <div style={{ width: size, height: size, borderRadius: '50%', background: '#1A1918', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                {React.cloneElement(icon, { size: size * 0.42, color: '#ffffff', strokeWidth: 1.8 })}
               </div>
             );
             const label = (text) => (
@@ -1491,21 +1491,11 @@ export default function Home() {
               </div>
             );
             return (
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20, marginBottom: 32 }}>
-                {/* Row 1 — primary actions */}
-                <div style={{ display: 'flex', gap: 36, justifyContent: 'center' }}>
-                  {item(<Plus />, 'Create loan', () => navigate(createPageUrl('CreateOffer')), 56)}
-                  {item(<CreditCard />, 'Log payment', () => navigate(createPageUrl('RecordPayment')), 56)}
-                </div>
-                {/* Row 2 — page shortcuts */}
-                <div style={{ display: 'flex', gap: 28, justifyContent: 'center', flexWrap: 'wrap' }}>
-                  {item(<TrendingUp />, 'Lending', () => navigate(createPageUrl('LendingBorrowing') + '?tab=lending'), 44)}
-                  {item(<TrendingDown />, 'Borrowing', () => navigate(createPageUrl('LendingBorrowing') + '?tab=borrowing'), 44)}
-                  {item(<Calendar />, 'Upcoming', () => navigate(createPageUrl('Upcoming')), 44)}
-                  {item(<BarChart2 />, 'Plan month', () => navigate(createPageUrl('PlanYourMonth')), 44)}
-                  {item(<Users />, 'Friends', () => navigate(createPageUrl('Friends')), 44)}
-                  {item(<User />, 'Profile', () => navigate(createPageUrl('Profile')), 44)}
-                </div>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: 36, marginBottom: 32 }}>
+                {item(<Plus />, 'Create loan', () => navigate(createPageUrl('CreateOffer')), 52)}
+                {item(<CreditCard />, 'Log payment', () => navigate(createPageUrl('RecordPayment')), 52)}
+                {item(<TrendingUp />, 'Lending', () => navigate(createPageUrl('LendingBorrowing') + '?tab=lending'), 52)}
+                {item(<TrendingDown />, 'Borrowing', () => navigate(createPageUrl('LendingBorrowing') + '?tab=borrowing'), 52)}
               </div>
             );
           })()}
