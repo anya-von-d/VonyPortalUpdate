@@ -4,7 +4,7 @@ const AL = 'https://raw.githubusercontent.com/alohe/memojis/main/png/';
 // Tapback 1–58, excluding: #7 (cap), #21 (cowboy hat+sunglasses), #22 (beanie),
 //   #29 (kufi cap), #35 (baseball cap), #43 (face mask)
 const TAPBACK_KEEP = [
-  1,2,3,4,5,6,8,9,10,11,12,13,14,15,16,17,18,19,20,
+  1,2,3,4,5,6,8,9,10,11,12,13,15,16,17,18,19,20,
   23,24,25,26,27,28,30,31,32,33,34,
   36,37,38,39,40,41,42,
   44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,
@@ -12,7 +12,7 @@ const TAPBACK_KEEP = [
 
 // alohe memo_1–35, keeping only: no hat, no sunglasses, no mask, no visible hands.
 // Kept: 2,6,10(hijab),12,13,16(turban),20,21,27,28(hijab),33,34,35
-const ALOHE_KEEP = [2, 6, 10, 12, 13, 16, 20, 21, 27, 28, 33, 34, 35];
+const ALOHE_KEEP = [2, 6, 10, 12, 13, 16, 20, 21, 27, 28, 34, 35];
 
 export const PROFILE_ICON_IMAGES = [
   ...TAPBACK_KEEP.map(n => `${TB}${n}.png`),

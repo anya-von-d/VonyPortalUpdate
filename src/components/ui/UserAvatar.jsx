@@ -11,12 +11,12 @@ const MEMOJI_BG_COLORS = [
 const _TB = 'https://raw.githubusercontent.com/Wimell/Tapback-Memojis/main/src/public/images/avatars/v1/';
 const _AL = 'https://raw.githubusercontent.com/alohe/memojis/main/png/';
 const _TB_KEEP = [
-  1,2,3,4,5,6,8,9,10,11,12,13,14,15,16,17,18,19,20,
+  1,2,3,4,5,6,8,9,10,11,12,13,15,16,17,18,19,20,
   23,24,25,26,27,28,30,31,32,33,34,
   36,37,38,39,40,41,42,
   44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,
 ];
-const _AL_KEEP = [2, 6, 10, 12, 13, 16, 20, 21, 27, 28, 33, 34, 35];
+const _AL_KEEP = [2, 6, 10, 12, 13, 16, 20, 21, 27, 28, 34, 35];
 const MEMOJI_POOL = [
   ..._TB_KEEP.map(n => `${_TB}${n}.png`),
   ..._AL_KEEP.map(n => `${_AL}memo_${n}.png`),

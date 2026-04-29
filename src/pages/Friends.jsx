@@ -383,7 +383,15 @@ function InviteBox() {
   const smsHref = `sms:?body=${smsBody}`;
 
   return (
-    <div style={{ marginTop: 28, textAlign: 'center', padding: '0 8px' }}>
+    <div style={{
+      marginTop: 20,
+      background: '#fff',
+      borderRadius: 20,
+      border: '1px solid rgba(0,0,0,0.06)',
+      boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
+      padding: '28px 24px 24px',
+      textAlign: 'center',
+    }}>
       {/* Scattered memoji cloud */}
       <div style={{ position: 'relative', height: 120, marginBottom: 24 }}>
         {SCATTER.map(({ url, bg, x, y, size }) => (
