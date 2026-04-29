@@ -882,10 +882,14 @@ input[type="date"] {
   border-color: rgba(0,0,0,0.14);
 }
 
+/* ── Home page: pin the content column so it can't grow past 1fr ── */
+.home-mesh .mesh-center {
+  min-width: 0;
+}
+
 /* ── Home quick-action carousel ── */
 .home-qac-scroll {
   -webkit-overflow-scrolling: touch;
-  /* min-width:0 is critical — stops this flex child from escaping the grid column */
   min-width: 0;
 }
 .home-qac-scroll::-webkit-scrollbar { display: none; }
