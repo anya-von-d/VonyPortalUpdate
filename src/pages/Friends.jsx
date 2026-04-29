@@ -415,25 +415,32 @@ function InviteBox() {
       textAlign: 'center',
     }}>
       {/* Floating avatars decoration */}
-      <div style={{ position: 'relative', height: 56, marginBottom: 20 }}>
+      <div style={{ position: 'relative', height: 64, marginBottom: 20 }}>
         {[
-          { x: '12%',  y: 4,  size: 36, bg: '#E8D5F5', letter: 'A' },
-          { x: '28%',  y: 16, size: 28, bg: '#FDE68A', letter: 'B' },
-          { x: '44%',  y: 0,  size: 44, bg: '#BFDBFE', letter: 'C' },
-          { x: '62%',  y: 12, size: 30, bg: '#BBF7D0', letter: 'D' },
-          { x: '78%',  y: 4,  size: 34, bg: '#FECACA', letter: 'E' },
-        ].map(({ x, y, size, bg, letter }) => (
-          <div key={letter} style={{
+          { x: '10%',  y: 6,  size: 38, bg: '#E8D5F5', memoji: 5  },
+          { x: '27%',  y: 18, size: 30, bg: '#FDE68A', memoji: 14 },
+          { x: '43%',  y: 0,  size: 48, bg: '#BFDBFE', memoji: 22 },
+          { x: '61%',  y: 14, size: 32, bg: '#BBF7D0', memoji: 37 },
+          { x: '77%',  y: 6,  size: 36, bg: '#FECACA', memoji: 51 },
+        ].map(({ x, y, size, bg, memoji }) => (
+          <div key={memoji} style={{
             position: 'absolute', left: x, top: y,
-            width: size, height: size, borderRadius: '50%',
-            background: bg,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: size * 0.38, fontWeight: 700, color: 'rgba(0,0,0,0.35)',
-            fontFamily: "'DM Sans', sans-serif",
-            border: '2px solid #fff',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.10)',
+            borderRadius: '50%',
+            padding: 3,
+            background: 'white',
+            boxShadow: '0 4px 16px rgba(0,0,0,0.13)',
           }}>
-            {letter}
+            <div style={{
+              width: size, height: size, borderRadius: '50%',
+              background: bg, overflow: 'hidden',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <img
+                src={`https://raw.githubusercontent.com/Wimell/Tapback-Memojis/main/src/public/images/avatars/v1/${memoji}.png`}
+                alt=""
+                style={{ width: '92%', height: '92%', objectFit: 'contain', objectPosition: 'center 8%', pointerEvents: 'none' }}
+              />
+            </div>
           </div>
         ))}
       </div>
