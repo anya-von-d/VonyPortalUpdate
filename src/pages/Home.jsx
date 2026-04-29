@@ -1465,10 +1465,20 @@ export default function Home() {
           {/* ── Centered shortcuts ── */}
           {(() => {
             const iconCircle = (icon, size = 52, bg = '#1A1918') => {
-              const ring = 4;
+              const ring = 6;
               return (
-                <div style={{ width: size + ring * 2, height: size + ring * 2, borderRadius: '50%', background: 'white', boxShadow: '0 4px 18px rgba(0,0,0,0.18), 0 1px 4px rgba(0,0,0,0.10)', padding: ring, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxSizing: 'border-box' }}>
-                  <div style={{ width: size, height: size, borderRadius: '50%', background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <div style={{
+                  width: size + ring * 2, height: size + ring * 2, borderRadius: '50%',
+                  background: 'white',
+                  boxShadow: '0 8px 28px rgba(0,0,0,0.22), 0 2px 8px rgba(0,0,0,0.14), 0 0 0 1px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.9)',
+                  padding: ring, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxSizing: 'border-box',
+                }}>
+                  <div style={{
+                    width: size, height: size, borderRadius: '50%',
+                    background: bg,
+                    boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.18), inset 0 -1px 2px rgba(255,255,255,0.12)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                  }}>
                     {React.cloneElement(icon, { size: size * 0.42, color: '#ffffff', strokeWidth: 1.8 })}
                   </div>
                 </div>
@@ -1485,10 +1495,10 @@ export default function Home() {
             );
             return (
               <div style={{ display: 'flex', justifyContent: 'center', gap: 36, marginBottom: 32 }}>
-                {item(<Plus />, 'Create loan', () => navigate(createPageUrl('CreateOffer')), 52, '#2563EB')}
-                {item(<CreditCard />, 'Log payment', () => navigate(createPageUrl('RecordPayment')), 52, '#0EA5E9')}
-                {item(<ArrowUpRight />, 'Lending', () => navigate(createPageUrl('LendingBorrowing') + '?tab=lending'), 52, '#1D4ED8')}
-                {item(<ArrowDownLeft />, 'Borrowing', () => navigate(createPageUrl('LendingBorrowing') + '?tab=borrowing'), 52, '#38BDF8')}
+                {item(<Plus />, 'Create loan', () => navigate(createPageUrl('CreateOffer')), 52, '#3A6EA8')}
+                {item(<CreditCard />, 'Log payment', () => navigate(createPageUrl('RecordPayment')), 52, '#4D8FAD')}
+                {item(<ArrowUpRight />, 'Lending', () => navigate(createPageUrl('LendingBorrowing') + '?tab=lending'), 52, '#2C5282')}
+                {item(<ArrowDownLeft />, 'Borrowing', () => navigate(createPageUrl('LendingBorrowing') + '?tab=borrowing'), 52, '#5A9CBF')}
               </div>
             );
           })()}
