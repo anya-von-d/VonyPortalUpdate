@@ -12,7 +12,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toLocalDate, daysUntil as daysUntilDate } from "@/components/utils/dateUtils";
 import { todayInTZ, currentDateStringTZ, formatTZ } from "@/components/utils/timezone";
 import { countNotifications } from "@/components/utils/notificationCount";
-import { getIconForUser, needsProfileIcon } from "@/lib/profileIconImages";
 
 import DesktopSidebar from '../components/DesktopSidebar';
 import MeshMobileNav from "@/components/MeshMobileNav";
@@ -1012,14 +1011,12 @@ export default function Home() {
                   }}
                   style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}
                 >
-                  <div style={{ width: 40, height: 40, borderRadius: '50%', background: ringBg, padding: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', boxSizing: 'border-box' }}>
-                    <div style={{ width: 36, height: 36, borderRadius: '50%', overflow: 'hidden', background: '#fff', flexShrink: 0 }}>
-                      <UserAvatar
-                        name={profile?.full_name || profile?.username || '?'}
-                        src={needsProfileIcon(profile?.profile_picture_url) ? getIconForUser(fId) : profile?.profile_picture_url}
-                        size={36}
-                      />
-                    </div>
+                  <div style={{ width: 44, height: 44, borderRadius: '50%', background: ringBg, padding: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', boxSizing: 'border-box' }}>
+                    <UserAvatar
+                      name={profile?.full_name || profile?.username || '?'}
+                      src={profile?.profile_picture_url || null}
+                      size={40}
+                    />
                   </div>
                   <span style={{ fontSize: 9, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", maxWidth: 44, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {profile?.username || '?'}
