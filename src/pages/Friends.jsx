@@ -368,11 +368,11 @@ function FriendsList({ sortedFriends, receivedRequests, profiles, user, processi
 /* ── Invite box ── */
 const AL = 'https://raw.githubusercontent.com/alohe/memojis/main/png/';
 const SCATTER = [
-  { url: `${AL}memo_8.png`,  bg: '#BFDBFE', x: '0%',  y: 44, size: 50 },
-  { url: `${AL}memo_15.png`, bg: '#E8D5F5', x: '16%', y: 8,  size: 38 },
-  { url: `${AL}memo_22.png`, bg: '#BBF7D0', x: '29%', y: 62, size: 32 },
-  { url: `${AL}memo_3.png`,  bg: '#FDE68A', x: '43%', y: 0,  size: 66 },
-  { url: `${AL}memo_11.png`, bg: '#FECACA', x: '62%', y: 38, size: 40 },
+  { url: `${AL}memo_2.png`,  bg: '#BFDBFE', x: '0%',  y: 44, size: 50 },
+  { url: `${AL}memo_6.png`,  bg: '#E8D5F5', x: '16%', y: 8,  size: 38 },
+  { url: `${AL}memo_12.png`, bg: '#BBF7D0', x: '29%', y: 62, size: 32 },
+  { url: `${AL}memo_13.png`, bg: '#FDE68A', x: '43%', y: 0,  size: 66 },
+  { url: `${AL}memo_21.png`, bg: '#FECACA', x: '62%', y: 38, size: 40 },
   { url: `${AL}memo_20.png`, bg: '#A5ED9A', x: '75%', y: 6,  size: 44 },
   { url: `${AL}memo_27.png`, bg: '#FFD6A5', x: '89%', y: 52, size: 30 },
 ];
