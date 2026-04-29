@@ -9,7 +9,15 @@ import MeshMobileNav from "@/components/MeshMobileNav";
 import DemoModeToggle from "@/components/DemoModeToggle";
 import UserAvatar from "@/components/ui/UserAvatar";
 import DesktopSidebar from '../components/DesktopSidebar';
-import { Camera, Image as ImageIcon, Trash2, LogOut } from "lucide-react";
+import { Camera, Image as ImageIcon, Trash2, LogOut, Smile, X } from "lucide-react";
+import { PROFILE_ICON_IMAGES } from "@/lib/profileIconImages";
+
+const AVATAR_PICKER_COLORS = [
+  '#F794E9', '#A5ED9A', '#87C6ED', '#F9E784', '#FF8FAD',
+  '#B5DEFF', '#FFB3C6', '#C8F5E0', '#B8B8FF', '#FFD6A5',
+  '#A8DADC', '#FFD3B6', '#D4A5F5', '#CAFFBF', '#FDFFB6',
+  '#F0B8D9', '#C9F0D3', '#FFDAB9',
+];
 import { motion } from "framer-motion";
 
 /* ── Public profile sync ─────────────────────────────────── */
@@ -593,6 +601,7 @@ export default function Profile() {
   const [formData, setFormData] = useState({ full_name: '', username: '', phone: '', location: '', profile_picture_url: '', currency: 'USD' });
   const [isSaving, setIsSaving] = useState(false);
   const [showPhotoMenu, setShowPhotoMenu] = useState(false);
+  const [showAvatarPicker, setShowAvatarPicker] = useState(false);
   const fileInputRef = useRef(null);
   const cameraInputRef = useRef(null);
   const photoMenuRef = useRef(null);
@@ -626,6 +635,18 @@ export default function Profile() {
       setUser(prev => ({ ...prev, profile_picture_url: file_url }));
       await User.updateMyUserData({ profile_picture_url: file_url });
       await syncPublicProfile({ ...user, profile_picture_url: file_url });
+    } catch (err) { console.error(err); }
+    setIsSaving(false);
+  };
+
+  const handleSelectMemoji = async (memojiUrl) => {
+    setShowAvatarPicker(false);
+    setIsSaving(true);
+    try {
+      setFormData(prev => ({ ...prev, profile_picture_url: memojiUrl }));
+      setUser(prev => ({ ...prev, profile_picture_url: memojiUrl }));
+      await User.updateMyUserData({ profile_picture_url: memojiUrl });
+      await syncPublicProfile({ ...user, profile_picture_url: memojiUrl });
     } catch (err) { console.error(err); }
     setIsSaving(false);
   };
@@ -723,6 +744,7 @@ export default function Profile() {
                   <motion.div ref={photoMenuRef} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
                     style={{ position: 'absolute', top: 'calc(100% + 8px)', right: 0, background: 'white', borderRadius: 12, boxShadow: '0 8px 32px rgba(0,0,0,0.12)', border: '1px solid rgba(0,0,0,0.06)', overflow: 'hidden', zIndex: 10, minWidth: 200 }}>
                     {[
+                      { label: 'Choose Avatar', icon: <Smile size={15} style={{ color: '#787776' }} />, onClick: () => { setShowPhotoMenu(false); setShowAvatarPicker(true); } },
                       { label: 'Choose from Library', icon: <ImageIcon size={15} style={{ color: '#787776' }} />, onClick: () => fileInputRef.current?.click() },
                       { label: 'Take Photo', icon: <Camera size={15} style={{ color: '#787776' }} />, onClick: () => cameraInputRef.current?.click() },
                       ...(formData.profile_picture_url ? [{ label: 'Remove Photo', icon: <Trash2 size={15} style={{ color: '#E8726E' }} />, onClick: handleRemovePhoto, danger: true }] : []),
@@ -738,6 +760,42 @@ export default function Profile() {
                 )}
               </div>
             </div>
+
+            {/* ── Avatar picker modal ── */}
+            {showAvatarPicker && createPortal(
+              <div
+                onClick={() => setShowAvatarPicker(false)}
+                style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 1000, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }}
+              >
+                <div
+                  onClick={e => e.stopPropagation()}
+                  style={{ background: 'white', borderRadius: '20px 20px 0 0', width: '100%', maxWidth: 540, padding: '20px 20px 36px', maxHeight: '80vh', display: 'flex', flexDirection: 'column' }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+                    <span style={{ fontSize: 16, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>Choose Avatar</span>
+                    <button onClick={() => setShowAvatarPicker(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#787776', padding: 4 }}>
+                      <X size={20} />
+                    </button>
+                  </div>
+                  <div style={{ overflowY: 'auto', flex: 1 }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(60px, 1fr))', gap: 10 }}>
+                      {PROFILE_ICON_IMAGES.map((imgUrl, idx) => {
+                        const isSelected = formData.profile_picture_url === imgUrl;
+                        const bg = AVATAR_PICKER_COLORS[idx % AVATAR_PICKER_COLORS.length];
+                        return (
+                          <button key={imgUrl} type="button" onClick={() => handleSelectMemoji(imgUrl)}
+                            style={{ width: 60, height: 60, borderRadius: '50%', border: isSelected ? '3px solid #1A1918' : '3px solid transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', background: bg, padding: 0, overflow: 'hidden', transition: 'transform 0.12s', transform: isSelected ? 'scale(1.1)' : 'scale(1)' }}
+                          >
+                            <img src={imgUrl} alt="avatar" style={{ width: '92%', height: '92%', objectFit: 'contain', objectPosition: 'center 8%', pointerEvents: 'none' }} />
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              </div>,
+              document.body
+            )}
 
             {/* ── Refer a Friend ── */}
             <SectionTitle first>Refer a Friend</SectionTitle>

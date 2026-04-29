@@ -80,7 +80,7 @@ export default function UserAvatar({ name, src, size = 32, radius = '50%', style
     }}>
       {isRealPhoto
         ? <img src={src} alt={name || ''} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-        : <img src={memojiSrc} alt={name || ''} style={{ width: '85%', height: '85%', objectFit: 'contain', pointerEvents: 'none' }} />
+        : <img src={memojiSrc} alt={name || ''} style={{ width: '92%', height: '92%', objectFit: 'contain', objectPosition: 'center 8%', pointerEvents: 'none' }} />
       }
     </div>
   );

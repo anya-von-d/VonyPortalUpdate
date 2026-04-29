@@ -463,7 +463,7 @@ export default function OnboardingModal({ user, onComplete }) {
                         <img
                           src={formData.selectedIconUrl}
                           alt="Profile icon"
-                          style={{ width: '85%', height: '85%', objectFit: 'contain' }}
+                          style={{ width: '92%', height: '92%', objectFit: 'contain', objectPosition: 'center 8%' }}
                         />
                       )}
                     </div>
@@ -497,7 +497,7 @@ export default function OnboardingModal({ user, onComplete }) {
                               <img
                                 src={imgUrl}
                                 alt="icon"
-                                style={{ width: '85%', height: '85%', objectFit: 'contain', pointerEvents: 'none' }}
+                                style={{ width: '92%', height: '92%', objectFit: 'contain', objectPosition: 'center 8%', pointerEvents: 'none' }}
                               />
                             </button>
                           );
