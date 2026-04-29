@@ -13,6 +13,7 @@ import { toLocalDate, daysUntil as daysUntilDate } from "@/components/utils/date
 import { todayInTZ, currentDateStringTZ, formatTZ } from "@/components/utils/timezone";
 import { countNotifications } from "@/components/utils/notificationCount";
 
+import { Plus, CreditCard, TrendingUp, TrendingDown, Calendar, Users, User, BarChart2 } from "lucide-react";
 import DesktopSidebar from '../components/DesktopSidebar';
 import MeshMobileNav from "@/components/MeshMobileNav";
 import UserAvatar from "@/components/ui/UserAvatar";
@@ -1469,6 +1470,42 @@ export default function Home() {
                   <div style={line2Style}>Record Payment</div>
                 </div>
 
+              </div>
+            );
+          })()}
+
+          {/* ── Centered shortcuts ── */}
+          {(() => {
+            const iconCircle = (icon, size = 52) => (
+              <div style={{ width: size, height: size, borderRadius: '50%', background: '#1A1918', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                {React.cloneElement(icon, { size: size * 0.42, color: '#ffffff', strokeWidth: 1.8 })}
+              </div>
+            );
+            const label = (text) => (
+              <span style={{ fontSize: 11, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.01em', marginTop: 2 }}>{text}</span>
+            );
+            const item = (icon, text, onClick, size) => (
+              <div key={text} onClick={onClick} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, cursor: 'pointer' }}>
+                {iconCircle(icon, size)}
+                {label(text)}
+              </div>
+            );
+            return (
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20, marginBottom: 32 }}>
+                {/* Row 1 — primary actions */}
+                <div style={{ display: 'flex', gap: 36, justifyContent: 'center' }}>
+                  {item(<Plus />, 'Create loan', () => navigate(createPageUrl('CreateOffer')), 56)}
+                  {item(<CreditCard />, 'Log payment', () => navigate(createPageUrl('RecordPayment')), 56)}
+                </div>
+                {/* Row 2 — page shortcuts */}
+                <div style={{ display: 'flex', gap: 28, justifyContent: 'center', flexWrap: 'wrap' }}>
+                  {item(<TrendingUp />, 'Lending', () => navigate(createPageUrl('LendingBorrowing') + '?tab=lending'), 44)}
+                  {item(<TrendingDown />, 'Borrowing', () => navigate(createPageUrl('LendingBorrowing') + '?tab=borrowing'), 44)}
+                  {item(<Calendar />, 'Upcoming', () => navigate(createPageUrl('Upcoming')), 44)}
+                  {item(<BarChart2 />, 'Plan month', () => navigate(createPageUrl('PlanYourMonth')), 44)}
+                  {item(<Users />, 'Friends', () => navigate(createPageUrl('Friends')), 44)}
+                  {item(<User />, 'Profile', () => navigate(createPageUrl('Profile')), 44)}
+                </div>
               </div>
             );
           })()}
