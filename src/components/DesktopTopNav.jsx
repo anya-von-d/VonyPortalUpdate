@@ -3,7 +3,6 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useAuth } from '@/lib/AuthContext';
 import SettingsModal from './SettingsModal';
-import NotificationsPopup from './NotificationsPopup';
 import UserAvatar from './ui/UserAvatar';
 import { useNotificationCount } from './utils/notificationCount';
 
@@ -167,10 +166,8 @@ export default function DesktopTopNav() {
 
   const navigate = useNavigate();
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [notifOpen, setNotifOpen] = useState(false);
   useEffect(() => {
     const handler = (e) => {
-      setNotifOpen(false);
       const tab = e?.detail?.initialTab;
       navigate(createPageUrl('Friends') + (tab ? `?tab=${tab}` : ''));
     };
@@ -270,14 +267,17 @@ export default function DesktopTopNav() {
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8, pointerEvents: 'auto' }}>
           <Pill>
             {/* Friends */}
-            <NavBtn onClick={() => { navigate(createPageUrl('Friends')); setNotifOpen(false); setMenuOpen(false); }} active={isActive(location, createPageUrl('Friends'))}>
+            <NavBtn onClick={() => { navigate(createPageUrl('Friends')); setMenuOpen(false); }} active={isActive(location, createPageUrl('Friends'))}>
 
               <UsersIcon />
             </NavBtn>
 
-            {/* Bell — no standalone bubble, just a NavBtn inside the pill */}
+            {/* Bell — navigates to Notifications page */}
             <div style={{ position: 'relative' }}>
-              <NavBtn onClick={() => { setNotifOpen(v => !v); setMenuOpen(false); }} active={notifOpen}>
+              <NavBtn
+                onClick={() => navigate(createPageUrl('Notifications'))}
+                active={isActive(location, createPageUrl('Notifications'))}
+              >
                 <BellIcon />
               </NavBtn>
               {notifCount > 0 && (
@@ -303,7 +303,7 @@ export default function DesktopTopNav() {
 
             {/* Profile */}
             <NavBtn
-              onClick={() => { navigate(createPageUrl('Profile')); setNotifOpen(false); }}
+              onClick={() => navigate(createPageUrl('Profile'))}
               active={isActive(location, createPageUrl('Profile'))}>
               {user ? (
                 <UserAvatar name={user.full_name || user.username} src={user.avatar_url || user.profile_picture_url} size={22} radius={11} />
@@ -315,12 +315,6 @@ export default function DesktopTopNav() {
       </div>
 
       <SettingsModal isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
-      {notifOpen && (
-        <NotificationsPopup
-          onClose={() => setNotifOpen(false)}
-          onOpenFriends={() => { setNotifOpen(false); navigate(createPageUrl('Friends')); }}
-        />
-      )}
     </>
   );
 }
