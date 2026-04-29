@@ -13,7 +13,7 @@ import { toLocalDate, daysUntil as daysUntilDate } from "@/components/utils/date
 import { todayInTZ, currentDateStringTZ, formatTZ } from "@/components/utils/timezone";
 import { countNotifications } from "@/components/utils/notificationCount";
 
-import { Plus, CreditCard, TrendingUp, TrendingDown, Calendar, Users, User, BarChart2 } from "lucide-react";
+import { Plus, CreditCard, ArrowUpRight, ArrowDownLeft, Calendar, Users, User, BarChart2 } from "lucide-react";
 import DesktopSidebar from '../components/DesktopSidebar';
 import MeshMobileNav from "@/components/MeshMobileNav";
 import UserAvatar from "@/components/ui/UserAvatar";
@@ -1464,11 +1464,11 @@ export default function Home() {
 
           {/* ── Centered shortcuts ── */}
           {(() => {
-            const iconCircle = (icon, size = 52) => {
+            const iconCircle = (icon, size = 52, bg = '#1A1918') => {
               const ring = 4;
               return (
                 <div style={{ width: size + ring * 2, height: size + ring * 2, borderRadius: '50%', background: 'white', boxShadow: '0 4px 18px rgba(0,0,0,0.18), 0 1px 4px rgba(0,0,0,0.10)', padding: ring, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxSizing: 'border-box' }}>
-                  <div style={{ width: size, height: size, borderRadius: '50%', background: '#1A1918', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <div style={{ width: size, height: size, borderRadius: '50%', background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                     {React.cloneElement(icon, { size: size * 0.42, color: '#ffffff', strokeWidth: 1.8 })}
                   </div>
                 </div>
@@ -1477,18 +1477,18 @@ export default function Home() {
             const label = (text) => (
               <span style={{ fontSize: 11, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.01em', marginTop: 2 }}>{text}</span>
             );
-            const item = (icon, text, onClick, size) => (
+            const item = (icon, text, onClick, size, bg) => (
               <div key={text} onClick={onClick} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, cursor: 'pointer' }}>
-                {iconCircle(icon, size)}
+                {iconCircle(icon, size, bg)}
                 {label(text)}
               </div>
             );
             return (
               <div style={{ display: 'flex', justifyContent: 'center', gap: 36, marginBottom: 32 }}>
-                {item(<Plus />, 'Create loan', () => navigate(createPageUrl('CreateOffer')), 52)}
-                {item(<CreditCard />, 'Log payment', () => navigate(createPageUrl('RecordPayment')), 52)}
-                {item(<TrendingUp />, 'Lending', () => navigate(createPageUrl('LendingBorrowing') + '?tab=lending'), 52)}
-                {item(<TrendingDown />, 'Borrowing', () => navigate(createPageUrl('LendingBorrowing') + '?tab=borrowing'), 52)}
+                {item(<Plus />, 'Create loan', () => navigate(createPageUrl('CreateOffer')), 52, '#2563EB')}
+                {item(<CreditCard />, 'Log payment', () => navigate(createPageUrl('RecordPayment')), 52, '#0EA5E9')}
+                {item(<ArrowUpRight />, 'Lending', () => navigate(createPageUrl('LendingBorrowing') + '?tab=lending'), 52, '#1D4ED8')}
+                {item(<ArrowDownLeft />, 'Borrowing', () => navigate(createPageUrl('LendingBorrowing') + '?tab=borrowing'), 52, '#38BDF8')}
               </div>
             );
           })()}
