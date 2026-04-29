@@ -882,6 +882,27 @@ input[type="date"] {
   border-color: rgba(0,0,0,0.14);
 }
 
+/* ── Home quick-action carousel — mobile full-width 2-column grid ── */
+@media (max-width: 768px) {
+  .home-qac-scroll {
+    overflow-x: visible !important;
+  }
+  .home-qac-inner {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    width: auto !important;
+    gap: 10px !important;
+  }
+  .home-qac-card {
+    width: auto !important;
+    flex-shrink: unset !important;
+  }
+  .home-qac-icon {
+    width: 48px !important;
+    height: 72px !important;
+  }
+}
+
 /* Inline Select trigger (no border, pill-shaped) */
 .loan-select-trigger {
   display: inline-flex !important;
