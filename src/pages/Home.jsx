@@ -1415,7 +1415,9 @@ export default function Home() {
 
 
           {/* ── Quick-action 5-card carousel ── */}
-          <div className="home-qac-scroll" style={{ overflowX: 'auto', width: '100%', marginBottom: 28, scrollbarWidth: 'none', msOverflowStyle: 'none', scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch' }}>
+          {/* Clip wrapper stops max-content child from blowing out page margins */}
+          <div style={{ width: '100%', overflow: 'hidden', marginBottom: 28 }}>
+          <div className="home-qac-scroll" style={{ overflowX: 'auto', scrollbarWidth: 'none', msOverflowStyle: 'none', scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch' }}>
             <div className="home-qac-inner" style={{ display: 'flex', gap: 12, width: 'max-content', paddingBottom: 2 }}>
 
               {/* Shared card shell */}
@@ -1514,6 +1516,7 @@ export default function Home() {
 
             </div>
           </div>
+          </div>{/* end clip wrapper */}
 
           {/* Two-column: left = loans, right = upcoming + summary + friends */}
           <div className="home-main-two-col" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>

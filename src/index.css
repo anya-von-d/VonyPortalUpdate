@@ -885,15 +885,9 @@ input[type="date"] {
 /* ── Home quick-action carousel — single-row scroll on all sizes ── */
 .home-qac-scroll {
   -webkit-overflow-scrolling: touch;
-  /* Hard-clip to column width so cards overflow and scroll on desktop */
-  max-width: 100%;
   overflow-x: auto;
 }
 .home-qac-scroll::-webkit-scrollbar { display: none; }
-.home-qac-inner {
-  /* Prevent inner from pushing the column wider */
-  min-width: 0;
-}
 @media (max-width: 768px) {
   .home-qac-card {
     width: 210px !important;
