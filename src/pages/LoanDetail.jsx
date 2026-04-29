@@ -395,12 +395,6 @@ export default function LoanDetail() {
 
   return (
     <>
-      <style>{`
-        @media (min-width: 901px) {
-          .loan-detail-center { padding-left: 160px !important; padding-right: 160px !important; }
-        }
-      `}</style>
-
       <MeshMobileNav user={currentUser} activePage={isLending ? "Lending" : "Borrowing"} />
 
       <div className="mesh-layout" style={{ minHeight: "100vh", display: "grid", gridTemplateColumns: "200px 1fr", gap: 0, fontFamily: "'DM Sans', sans-serif" }}>

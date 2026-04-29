@@ -887,12 +887,29 @@ input[type="date"] {
   min-width: 0;
 }
 
+/* ── Desktop side padding: all pages except Upcoming ── */
+@media (min-width: 901px) {
+  .mesh-center:not(.upcoming-center) {
+    padding-left: 200px !important;
+    padding-right: 200px !important;
+  }
+}
+
 /* ── Home quick-action carousel ── */
 .home-qac-scroll {
   -webkit-overflow-scrolling: touch;
   min-width: 0;
 }
 .home-qac-scroll::-webkit-scrollbar { display: none; }
+@media (min-width: 901px) {
+  /* Full-bleed carousel: counteract the 200px desktop side padding */
+  .home-qac-scroll {
+    margin-left: -200px !important;
+    margin-right: -200px !important;
+    padding-left: 200px !important;
+    padding-right: 200px !important;
+  }
+}
 @media (max-width: 768px) {
   /* Override inline desktop margins with mobile values */
   .home-qac-scroll {

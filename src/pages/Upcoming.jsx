@@ -681,7 +681,7 @@ export default function Upcoming() {
       <div className="mesh-layout" style={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: 0, minHeight: '100vh' }}>
         <DesktopSidebar />
 
-        <div className="mesh-center" style={{ background: 'transparent', display: 'flex', flexDirection: 'column' }}>
+        <div className="mesh-center upcoming-center" style={{ background: 'transparent', display: 'flex', flexDirection: 'column' }}>
 
           {/* Desktop title */}
           <div className="desktop-page-title" style={{ padding: '24px 56px 20px' }}>
