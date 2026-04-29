@@ -1415,7 +1415,7 @@ export default function Home() {
 
 
           {/* ── Quick-action 5-card carousel ── */}
-          <div className="home-qac-scroll" style={{ overflowX: 'auto', marginBottom: 28, scrollbarWidth: 'none', msOverflowStyle: 'none', scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch' }}>
+          <div className="home-qac-scroll" style={{ overflowX: 'auto', width: '100%', marginBottom: 28, scrollbarWidth: 'none', msOverflowStyle: 'none', scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch' }}>
             <div className="home-qac-inner" style={{ display: 'flex', gap: 14, width: 'max-content', paddingBottom: 2 }}>
 
               {/* 1 — Notifications */}
