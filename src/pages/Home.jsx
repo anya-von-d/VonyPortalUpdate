@@ -1477,8 +1477,8 @@ export default function Home() {
           {/* ── Centered shortcuts ── */}
           {(() => {
             const iconCircle = (icon, size = 52) => (
-              <div style={{ width: size, height: size, borderRadius: '50%', background: '#1A1918', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                {React.cloneElement(icon, { size: size * 0.42, color: '#ffffff', strokeWidth: 1.8 })}
+              <div style={{ width: size, height: size, borderRadius: '50%', background: '#FCFCFC', border: '1.5px solid #1A1918', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                {React.cloneElement(icon, { size: size * 0.42, color: '#1A1918', strokeWidth: 1.8 })}
               </div>
             );
             const label = (text) => (
