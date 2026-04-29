@@ -44,14 +44,15 @@ function isMemojiOrIcon(url) {
 }
 
 /**
- * UserAvatar — shows a Tapback memoji on a pastel circle, or a real photo if the user uploaded one.
+ * UserAvatar — shows a Tapback memoji on a pastel circle with a white ring + shadow,
+ * or a real uploaded photo if the user has set one.
  *
  * Props:
  *   name     {string}         — full name or username (used for memoji + colour selection)
  *   src      {string|null}    — profile picture URL (optional)
- *   size     {number}         — pixel size (default 32)
+ *   size     {number}         — total pixel size including the white ring (default 32)
  *   radius   {string|number}  — border-radius (default '50%')
- *   style    {object}         — extra style overrides on the container
+ *   style    {object}         — extra style overrides on the outer (white ring) container
  *   fontSize {number}         — unused, kept for API compatibility
  */
 export default function UserAvatar({ name, src, size = 32, radius = '50%', style, fontSize: _fontSize }) {
@@ -65,23 +66,41 @@ export default function UserAvatar({ name, src, size = 32, radius = '50%', style
     ? src
     : getMemojiForName(name);
 
+  // White ring padding scales with avatar size; inner circle fills the rest
+  const ring = size < 30 ? 2 : size < 50 ? 2.5 : 3;
+  const inner = size - ring * 2;
+
   return (
     <div style={{
       width: size,
       height: size,
       borderRadius: radius,
-      background: isRealPhoto ? '#E5E4E2' : bgColor,
+      padding: ring,
+      background: 'white',
+      boxShadow: '0 2px 10px rgba(0,0,0,0.13)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
       flexShrink: 0,
-      overflow: 'hidden',
+      boxSizing: 'border-box',
       ...style,
     }}>
-      {isRealPhoto
-        ? <img src={src} alt={name || ''} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-        : <img src={memojiSrc} alt={name || ''} style={{ width: '92%', height: '92%', objectFit: 'contain', objectPosition: 'center 8%', pointerEvents: 'none' }} />
-      }
+      <div style={{
+        width: inner,
+        height: inner,
+        borderRadius: radius,
+        background: isRealPhoto ? '#E5E4E2' : bgColor,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflow: 'hidden',
+        flexShrink: 0,
+      }}>
+        {isRealPhoto
+          ? <img src={src} alt={name || ''} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          : <img src={memojiSrc} alt={name || ''} style={{ width: '92%', height: '92%', objectFit: 'contain', objectPosition: 'center 8%', pointerEvents: 'none' }} />
+        }
+      </div>
     </div>
   );
 }

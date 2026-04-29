@@ -728,12 +728,8 @@ export default function Profile() {
                 {joinedDate && <p style={{ fontSize: 14, color: '#787776', margin: '0 0 10px', fontFamily: "'DM Sans', sans-serif" }}>Joined {joinedDate}</p>}
                 <DemoModeToggle variant="profile" />
               </div>
-              <div style={{ position: 'relative', flexShrink: 0 }}>
-                <div style={{ width: 72, height: 72, borderRadius: '50%', padding: 3, background: 'linear-gradient(135deg, #03ACEA, #1D5B94)', display: 'inline-flex' }}>
-                  <div style={{ width: '100%', height: '100%', borderRadius: '50%', overflow: 'hidden', background: '#F4F4F5' }}>
-                    <UserAvatar name={formData.full_name || user.username} src={formData.profile_picture_url} size={66} style={{ display: 'block', width: '100%', height: '100%', objectFit: 'cover' }} />
-                  </div>
-                </div>
+              <div style={{ position: 'relative', flexShrink: 0, display: 'inline-flex' }}>
+                <UserAvatar name={formData.full_name || user.username} src={formData.profile_picture_url} size={78} />
                 <button onClick={() => setShowPhotoMenu(!showPhotoMenu)} disabled={isSaving}
                   style={{ position: 'absolute', bottom: 0, right: 0, width: 24, height: 24, borderRadius: '50%', background: 'white', border: '1.5px solid rgba(0,0,0,0.10)', boxShadow: '0 2px 8px rgba(0,0,0,0.14)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
                   <Camera size={11} style={{ color: '#1A1918' }} />
