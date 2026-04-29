@@ -1535,7 +1535,7 @@ export default function Home() {
                   ? `${name} borrowed ${formatMoney(total)}`
                   : `${name} lent you ${formatMoney(total)}`;
                 return (
-                  <div style={{ padding: '10px 0', display: 'flex', alignItems: 'center', gap: 14 }}>
+                  <div onClick={() => navigate(createPageUrl('LoanDetail') + '?id=' + loan.id)} style={{ padding: '10px 0', display: 'flex', alignItems: 'center', gap: 14, cursor: 'pointer' }}>
                     {/* Avatar with icon badge */}
                     <div style={{ position: 'relative', flexShrink: 0, width: 36, height: 36 }}>
                       <div style={{ width: 36, height: 36, borderRadius: 18, background: '#F4F4F5', overflow: 'hidden' }}>
@@ -1619,25 +1619,21 @@ export default function Home() {
 
               return (
                 <div>
-                  {/* Pill tab selector + sort */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
-                    {['lending', 'borrowing'].map(tab => {
-                      const active = lbTab === tab;
-                      return (
+                  {/* Section title + sort */}
+                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: 16 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                      {['lending', 'borrowing'].map(tab => (
                         <button key={tab} onClick={() => setLbTab(tab)} style={{
-                          padding: '6px 18px',
-                          fontSize: 13, fontWeight: active ? 600 : 500,
-                          color: active ? '#fff' : '#1A1918',
-                          background: active ? '#1A1918' : 'transparent',
-                          border: active ? '1.5px solid #1A1918' : '1.5px solid rgba(0,0,0,0.18)',
-                          borderRadius: 20,
-                          cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
-                          letterSpacing: '-0.01em', transition: 'all 0.15s',
+                          background: 'none', border: 'none', padding: 0, cursor: 'pointer',
+                          fontSize: 22, fontWeight: 700, fontFamily: "'DM Sans', sans-serif",
+                          letterSpacing: '-0.02em',
+                          color: lbTab === tab ? '#1A1918' : '#C4C3C1',
+                          transition: 'color 0.15s',
                         }}>
                           {tab === 'lending' ? 'Lending' : 'Borrowing'}
                         </button>
-                      );
-                    })}
+                      ))}
+                    </div>
                     <div style={{ flex: 1 }} />
                     <SortDropdown value={activeFilter} onChange={setActiveFilter} />
                   </div>
@@ -1717,35 +1713,6 @@ export default function Home() {
                 );
               })()}
 
-              {/* Monthly at a glance — no box */}
-              {(monthlyExpectedReceive > 0 || monthlyExpectedPay > 0) && (
-                <div className="home-card-monthly-summary">
-                  <h2 style={{ fontSize: 22, fontWeight: 700, color: '#1A1918', margin: '0 0 16px', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.02em' }}>
-                    {format(today, 'MMMM')} at a glance
-                  </h2>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                    {monthlyExpectedReceive > 0 && (
-                      <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.3 }}>
-                        You've received <span style={{ color: '#03ACEA' }}>{formatMoney(monthlyReceived)}</span>{' '}
-                        <span style={{ fontWeight: 400, color: '#9B9A98' }}>of {formatMoney(monthlyExpectedReceive)} expected this month</span>
-                      </div>
-                    )}
-                    {monthlyExpectedPay > 0 && (
-                      <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.3 }}>
-                        You've paid <span style={{ color: '#03ACEA' }}>{formatMoney(monthlyPaidOut)}</span>{' '}
-                        <span style={{ fontWeight: 400, color: '#9B9A98' }}>of {formatMoney(monthlyExpectedPay)} due this month</span>
-                      </div>
-                    )}
-                    {/* Plan your month — plain text link */}
-                    <div
-                      onClick={() => navigate(createPageUrl('PlanYourMonth'))}
-                      style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', padding: '2px 0' }}
-                    >
-                      <span style={{ fontSize: 12, fontWeight: 500, color: '#03ACEA', fontFamily: "'DM Sans', sans-serif" }}>Plan your month →</span>
-                    </div>
-                  </div>
-                </div>
-              )}
 
 
             </div>{/* end right col */}
