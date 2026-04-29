@@ -1415,108 +1415,100 @@ export default function Home() {
 
 
           {/* ── Quick-action 5-card carousel ── */}
-          {/* Clip wrapper stops max-content child from blowing out page margins */}
-          <div style={{ width: '100%', overflow: 'hidden', marginBottom: 28 }}>
-          <div className="home-qac-scroll" style={{ overflowX: 'auto', scrollbarWidth: 'none', msOverflowStyle: 'none', scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch' }}>
-            <div className="home-qac-inner" style={{ display: 'flex', gap: 12, width: 'max-content', paddingBottom: 2 }}>
+          {(() => {
+            const cardStyle = { width: 260, minHeight: 130, flexShrink: 0, scrollSnapAlign: 'start', background: '#fff', borderRadius: 12, padding: '22px 20px', boxShadow: '0 1px 4px rgba(0,0,0,0.05)', border: '1px solid rgba(0,0,0,0.09)', cursor: 'pointer', display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 18 };
+            const iconStyle = (bg) => ({ width: 48, height: 90, borderRadius: 10, background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 });
+            const labelStyle = { fontSize: 12, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", fontWeight: 400, marginBottom: 2 };
+            const valueStyle = { fontSize: 20, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.03em', lineHeight: 1 };
+            const subStyle = { fontSize: 13, color: '#787776', fontFamily: "'DM Sans', sans-serif", marginTop: 3, lineHeight: 1.4 };
+            const ctaStyle = { fontSize: 12, fontWeight: 500, color: '#03ACEA', fontFamily: "'DM Sans', sans-serif", marginTop: 6 };
+            return (
+              <div className="home-qac-scroll" style={{ display: 'flex', gap: 12, overflowX: 'auto', scrollbarWidth: 'none', msOverflowStyle: 'none', scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch', marginBottom: 28, paddingBottom: 2 }}>
 
-              {/* Shared card shell */}
-              {(() => {
-                const cardStyle = { width: 260, minHeight: 130, flexShrink: 0, scrollSnapAlign: 'start', background: '#fff', borderRadius: 12, padding: '22px 20px', boxShadow: '0 1px 4px rgba(0,0,0,0.05)', border: '1px solid rgba(0,0,0,0.09)', cursor: 'pointer', display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 18 };
-                const iconStyle = (bg) => ({ width: 48, height: 90, borderRadius: 10, background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 });
-                const labelStyle = { fontSize: 12, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", fontWeight: 400, marginBottom: 2 };
-                const valueStyle = { fontSize: 20, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.03em', lineHeight: 1 };
-                const subStyle = { fontSize: 13, color: '#787776', fontFamily: "'DM Sans', sans-serif", marginTop: 3, lineHeight: 1.4 };
-                const ctaStyle = { fontSize: 12, fontWeight: 500, color: '#03ACEA', fontFamily: "'DM Sans', sans-serif", marginTop: 6 };
-                return (
-                  <>
-                    {/* 1 — Notifications */}
-                    <div className="home-qac-card" onClick={() => navigate(createPageUrl('Notifications'))} style={cardStyle}>
-                      <div className="home-qac-icon" style={iconStyle('#F9F8F6')}>
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={notifCount > 0 ? '#E8726E' : '#9B9A98'} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-                        </svg>
-                      </div>
-                      <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-                        <div style={labelStyle}>Notifications</div>
-                        {notifCount > 0 ? (
-                          <>
-                            <div style={{ ...valueStyle, color: '#E8726E' }}>{notifCount}</div>
-                            <div style={subStyle}>{notifCount === 1 ? 'item' : 'items'} waiting</div>
-                          </>
-                        ) : (
-                          <>
-                            <div style={{ ...valueStyle, fontSize: 15, fontWeight: 500 }}>All caught up</div>
-                            <div style={subStyle}>No new activity</div>
-                          </>
-                        )}
-                      </div>
-                    </div>
+                {/* 1 — Notifications */}
+                <div className="home-qac-card" onClick={() => navigate(createPageUrl('Notifications'))} style={cardStyle}>
+                  <div className="home-qac-icon" style={iconStyle('#F9F8F6')}>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={notifCount > 0 ? '#E8726E' : '#9B9A98'} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                    </svg>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+                    <div style={labelStyle}>Notifications</div>
+                    {notifCount > 0 ? (
+                      <>
+                        <div style={{ ...valueStyle, color: '#E8726E' }}>{notifCount}</div>
+                        <div style={subStyle}>{notifCount === 1 ? 'item' : 'items'} waiting</div>
+                      </>
+                    ) : (
+                      <>
+                        <div style={{ ...valueStyle, fontSize: 15, fontWeight: 500 }}>All caught up</div>
+                        <div style={subStyle}>No new activity</div>
+                      </>
+                    )}
+                  </div>
+                </div>
 
-                    {/* 2 — Received this month */}
-                    <div className="home-qac-card" onClick={() => navigate(createPageUrl('PlanYourMonth'))} style={cardStyle}>
-                      <div className="home-qac-icon" style={iconStyle('#F9F8F6')}>
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#34C759" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-                          <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>
-                        </svg>
-                      </div>
-                      <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-                        <div style={labelStyle}>Received this month</div>
-                        <div style={valueStyle}>{formatMoney(monthlyReceived)}</div>
-                        <div style={subStyle}>of <span style={{ color: '#1A1918', fontWeight: 500 }}>{formatMoney(monthlyExpectedReceive)}</span> expected</div>
-                        <div style={ctaStyle}>Plan your month →</div>
-                      </div>
-                    </div>
+                {/* 2 — Received this month */}
+                <div className="home-qac-card" onClick={() => navigate(createPageUrl('PlanYourMonth'))} style={cardStyle}>
+                  <div className="home-qac-icon" style={iconStyle('#F9F8F6')}>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#34C759" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>
+                    </svg>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+                    <div style={labelStyle}>Received this month</div>
+                    <div style={valueStyle}>{formatMoney(monthlyReceived)}</div>
+                    <div style={subStyle}>of <span style={{ color: '#1A1918', fontWeight: 500 }}>{formatMoney(monthlyExpectedReceive)}</span> expected</div>
+                    <div style={ctaStyle}>Plan your month →</div>
+                  </div>
+                </div>
 
-                    {/* 3 — Paid this month */}
-                    <div className="home-qac-card" onClick={() => navigate(createPageUrl('PlanYourMonth'))} style={cardStyle}>
-                      <div className="home-qac-icon" style={iconStyle('#F9F8F6')}>
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FF9500" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-                          <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/>
-                        </svg>
-                      </div>
-                      <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-                        <div style={labelStyle}>Paid this month</div>
-                        <div style={valueStyle}>{formatMoney(monthlyPaidOut)}</div>
-                        <div style={subStyle}>of <span style={{ color: '#1A1918', fontWeight: 500 }}>{formatMoney(monthlyExpectedPay)}</span> due</div>
-                        <div style={ctaStyle}>Plan your month →</div>
-                      </div>
-                    </div>
+                {/* 3 — Paid this month */}
+                <div className="home-qac-card" onClick={() => navigate(createPageUrl('PlanYourMonth'))} style={cardStyle}>
+                  <div className="home-qac-icon" style={iconStyle('#F9F8F6')}>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FF9500" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/>
+                    </svg>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+                    <div style={labelStyle}>Paid this month</div>
+                    <div style={valueStyle}>{formatMoney(monthlyPaidOut)}</div>
+                    <div style={subStyle}>of <span style={{ color: '#1A1918', fontWeight: 500 }}>{formatMoney(monthlyExpectedPay)}</span> due</div>
+                    <div style={ctaStyle}>Plan your month →</div>
+                  </div>
+                </div>
 
-                    {/* 4 — Create Loan */}
-                    <div className="home-qac-card" onClick={() => navigate(createPageUrl('CreateOffer'))} style={cardStyle}>
-                      <div className="home-qac-icon" style={iconStyle('#F9F8F6')}>
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9B9A98" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/>
-                        </svg>
-                      </div>
-                      <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-                        <div style={labelStyle}>New agreement</div>
-                        <div style={{ ...valueStyle, fontSize: 16, fontWeight: 500 }}>Create Loan</div>
-                        <div style={subStyle}>Set up a lending agreement</div>
-                      </div>
-                    </div>
+                {/* 4 — Create Loan */}
+                <div className="home-qac-card" onClick={() => navigate(createPageUrl('CreateOffer'))} style={cardStyle}>
+                  <div className="home-qac-icon" style={iconStyle('#F9F8F6')}>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9B9A98" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/>
+                    </svg>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+                    <div style={labelStyle}>New agreement</div>
+                    <div style={{ ...valueStyle, fontSize: 16, fontWeight: 500 }}>Create Loan</div>
+                    <div style={subStyle}>Set up a lending agreement</div>
+                  </div>
+                </div>
 
-                    {/* 5 — Record Payment */}
-                    <div className="home-qac-card" onClick={() => navigate(createPageUrl('RecordPayment'))} style={cardStyle}>
-                      <div className="home-qac-icon" style={iconStyle('#F9F8F6')}>
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9B9A98" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-                          <rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/>
-                        </svg>
-                      </div>
-                      <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-                        <div style={labelStyle}>Log activity</div>
-                        <div style={{ ...valueStyle, fontSize: 16, fontWeight: 500 }}>Record Payment</div>
-                        <div style={subStyle}>Log a payment made or received</div>
-                      </div>
-                    </div>
-                  </>
-                );
-              })()}
+                {/* 5 — Record Payment */}
+                <div className="home-qac-card" onClick={() => navigate(createPageUrl('RecordPayment'))} style={cardStyle}>
+                  <div className="home-qac-icon" style={iconStyle('#F9F8F6')}>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9B9A98" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/>
+                    </svg>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+                    <div style={labelStyle}>Log activity</div>
+                    <div style={{ ...valueStyle, fontSize: 16, fontWeight: 500 }}>Record Payment</div>
+                    <div style={subStyle}>Log a payment made or received</div>
+                  </div>
+                </div>
 
-            </div>
-          </div>
-          </div>{/* end clip wrapper */}
+              </div>
+            );
+          })()}
 
           {/* Two-column: left = loans, right = upcoming + summary + friends */}
           <div className="home-main-two-col" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>

@@ -882,10 +882,11 @@ input[type="date"] {
   border-color: rgba(0,0,0,0.14);
 }
 
-/* ── Home quick-action carousel — single-row scroll on all sizes ── */
+/* ── Home quick-action carousel ── */
 .home-qac-scroll {
   -webkit-overflow-scrolling: touch;
-  overflow-x: auto;
+  /* min-width:0 is critical — stops this flex child from escaping the grid column */
+  min-width: 0;
 }
 .home-qac-scroll::-webkit-scrollbar { display: none; }
 @media (max-width: 768px) {
