@@ -440,58 +440,97 @@ export default function Upcoming() {
         {calView === 'month' && (
           <div>
             {/* Day-of-week headers */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', marginBottom: 4 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', marginBottom: 0 }}>
               {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(d => (
-                <div key={d} style={{ textAlign: 'center', fontSize: 11, fontWeight: 500, color: '#9B9A98', paddingBottom: 6 }}>{d}</div>
+                <div key={d} style={{ textAlign: 'center', fontSize: 10, fontWeight: 600, color: '#9B9A98', letterSpacing: '0.04em', paddingBottom: 6, textTransform: 'uppercase' }}>{d}</div>
               ))}
             </div>
 
-            {/* Calendar grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 1 }}>
+            {/* macOS-style calendar grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 10, overflow: 'hidden' }}>
               {monthDays.map((day, i) => {
-                const inMonth   = isSameMonth(day, currentViewDate);
-                const isToday   = isSameDay(day, today);
+                const inMonth    = isSameMonth(day, currentViewDate);
+                const isToday    = isSameDay(day, today);
                 const isSelected = isSameDay(day, selectedDay);
-                const key = format(day, 'yyyy-MM-dd');
-                const dayEvs = calendarEvents[key] || [];
-                const hasIn  = dayEvs.some(e => !e.isCompleted && e.isLender);
-                const hasOut = dayEvs.some(e => !e.isCompleted && !e.isLender);
-                const hasDone = dayEvs.some(e => e.isCompleted);
+                const key        = format(day, 'yyyy-MM-dd');
+                const dayEvs     = calendarEvents[key] || [];
+                const shown      = dayEvs.slice(0, 3);
+                const moreCount  = dayEvs.length - shown.length;
+                const isLastRow  = i >= monthDays.length - 7;
+                const isLastCol  = (i + 1) % 7 === 0;
 
                 return (
-                  <button
+                  <div
                     key={i}
+                    className="cal-cell"
                     onClick={() => setSelectedDay(day)}
                     style={{
-                      display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
-                      padding: '5px 2px 6px', borderRadius: 8, border: 'none',
-                      background: isSelected && !isToday ? 'rgba(0,0,0,0.04)' : 'transparent',
-                      cursor: 'pointer', opacity: inMonth ? 1 : 0.22,
+                      minHeight: 76,
+                      borderRight:  !isLastCol  ? '1px solid rgba(0,0,0,0.07)' : 'none',
+                      borderBottom: !isLastRow  ? '1px solid rgba(0,0,0,0.07)' : 'none',
+                      padding: '4px 3px 4px',
+                      background: isSelected && !isToday
+                        ? 'rgba(3,172,234,0.05)'
+                        : inMonth ? 'white' : '#F9F8F6',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 2,
+                      boxSizing: 'border-box',
                     }}
                   >
-                    <span style={{
-                      width: 26, height: 26, borderRadius: '50%', fontSize: 12,
-                      fontWeight: isToday ? 700 : 400,
-                      color: isToday ? 'white' : '#1A1918',
-                      background: isToday ? '#03ACEA' : isSelected ? 'rgba(0,0,0,0.07)' : 'transparent',
-                      display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                    }}>
-                      {format(day, 'd')}
-                    </span>
-                    {(hasIn || hasOut || hasDone) && (
-                      <div style={{ display: 'flex', gap: 2 }}>
-                        {hasOut  && <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#1D5B94' }} />}
-                        {hasIn   && <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#03ACEA' }} />}
-                        {hasDone && <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#22c55e' }} />}
+                    {/* Day number — centred, circle for today */}
+                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 2 }}>
+                      <span style={{
+                        width: 22, height: 22, borderRadius: '50%',
+                        fontSize: 11, fontWeight: isToday ? 700 : 400,
+                        color: isToday ? 'white' : inMonth ? '#1A1918' : '#C7C6C4',
+                        background: isToday ? '#03ACEA' : 'transparent',
+                        display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                        flexShrink: 0,
+                      }}>
+                        {format(day, 'd')}
+                      </span>
+                    </div>
+
+                    {/* Event pills */}
+                    {shown.map((ev, ei) => {
+                      const bg    = ev.isCompleted ? '#dcfce7' : ev.isLender ? '#e0f2fe' : '#dbeafe';
+                      const fg    = ev.isCompleted ? '#15803d' : ev.isLender ? '#0369a1' : '#1e40af';
+                      return (
+                        <div
+                          key={ei}
+                          className="cal-cell-pill"
+                          style={{
+                            background: bg,
+                            borderRadius: 3,
+                            padding: '1px 4px',
+                            fontSize: 9,
+                            fontWeight: 600,
+                            color: fg,
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                            lineHeight: 1.5,
+                            fontFamily: "'DM Sans', sans-serif",
+                          }}
+                        >
+                          {formatMoney(ev.amount)} {ev.firstName}
+                        </div>
+                      );
+                    })}
+                    {moreCount > 0 && (
+                      <div style={{ fontSize: 9, color: '#9B9A98', paddingLeft: 3, fontFamily: "'DM Sans', sans-serif" }}>
+                        +{moreCount} more
                       </div>
                     )}
-                  </button>
+                  </div>
                 );
               })}
             </div>
 
             {/* Selected day detail */}
-            <div style={{ marginTop: 18, paddingTop: 14, borderTop: '1px solid rgba(0,0,0,0.07)' }}>
+            <div style={{ marginTop: 16, paddingTop: 14, borderTop: '1px solid rgba(0,0,0,0.07)' }}>
               <div style={{ fontSize: 10, fontWeight: 700, color: '#787776', letterSpacing: '0.09em', textTransform: 'uppercase', marginBottom: 10 }}>
                 {format(selectedDay, 'EEEE, MMMM d')}
               </div>
@@ -645,11 +684,13 @@ export default function Upcoming() {
       <style>{`
         @media (max-width: 900px) {
           .upcoming-panels  { flex-direction: column !important; }
-          .up-list-panel    { order: 2; padding: 24px 20px 40px !important; width: 100% !important; }
-          .up-cal-panel     { order: 1; padding: 20px 20px 0 !important; }
+          .up-list-panel    { order: 1; padding: 24px 20px 8px !important; width: 100% !important; }
+          .up-cal-panel     { order: 2; padding: 0 20px 40px !important; }
           .up-divider       { display: none !important; }
           .desktop-page-title { display: none !important; }
           .up-restore-btn   { display: none !important; }
+          .cal-cell         { min-height: 52px !important; }
+          .cal-cell-pill    { font-size: 8px !important; }
         }
         @media (min-width: 901px) {
           .mobile-page-title { display: none !important; }
