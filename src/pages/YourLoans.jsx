@@ -1150,7 +1150,7 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
 
         {/* Your Lending / Borrowing — bare list */}
         {activeLoans.length > 0 && (() => {
-          const titleStr = isLending ? 'Your Lending' : 'Your Borrowing';
+          const titleStr = 'Select a loan for more details';
           const accentCol = isLending ? '#03ACEA' : '#1D5B94';
           const accentColBg = isLending ? 'rgba(3,172,234,0.10)' : 'rgba(29,91,148,0.10)';
           const sortedLoans = [...activeLoans].sort((a, b) => {
@@ -1245,105 +1245,6 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
           );
         })()}
 
-        {/* Loan carousel */}
-        {loanCards.length > 0 && (
-          <div style={{ marginTop: 28 }}>
-            <div style={{ fontSize: 12, fontWeight: 500, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", marginBottom: 24, textAlign: 'center', letterSpacing: '-0.01em' }}>
-              Select a loan to view details
-            </div>
-
-            {/* Cards fan row */}
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-end', gap: 16, padding: '8px 24px 32px', overflowX: 'auto', overflowY: 'visible' }}>
-              {loanCards.map(({ loan, profile, name, remaining }, idx) => {
-                const isSelected = selectedIdx === idx;
-                const diff = selectedIdx === -1 ? 0 : idx - selectedIdx;
-                const rotate = isSelected || selectedIdx === -1 ? 0 : diff * 9;
-                const scale = isSelected ? 1.07 : Math.max(0.80, 1 - Math.abs(diff) * 0.05);
-                const ty = isSelected || selectedIdx === -1 ? 0 : Math.abs(diff) * 5;
-                const zIdx = isSelected ? 10 : Math.max(1, 6 - Math.abs(diff));
-                const avatarUrl = profile?.avatar_url || profile?.profile_picture_url;
-                const initials = name.charAt(0).toUpperCase();
-                return (
-                  <div
-                    key={loan.id}
-                    onClick={() => navigate(createPageUrl('LoanDetail') + '?id=' + loan.id)}
-                    style={{
-                      width: 100, flexShrink: 0, position: 'relative', zIndex: zIdx,
-                      cursor: 'pointer',
-                      transform: `rotate(${rotate}deg) scale(${scale}) translateY(${ty}px)`,
-                      transformOrigin: 'bottom center',
-                      transition: 'transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)',
-                      userSelect: 'none',
-                    }}
-                  >
-                    {/* Sharp paper card */}
-                    <div style={{
-                      background: '#FEFEFE',
-                      borderRadius: 3,
-                      border: isSelected ? `1.5px solid ${accent}` : '1px solid rgba(0,0,0,0.10)',
-                      boxShadow: isSelected
-                        ? `0 6px 20px ${accent}30, 2px 4px 12px rgba(0,0,0,0.12)`
-                        : '2px 4px 12px rgba(0,0,0,0.13), 1px 1px 0 rgba(0,0,0,0.05)',
-                      padding: '10px 8px 12px',
-                      display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5,
-                    }}>
-                      {/* Profile photo */}
-                      {avatarUrl ? (
-                        <img src={avatarUrl} alt={name} style={{ width: 34, height: 34, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
-                      ) : (
-                        <div style={{ width: 34, height: 34, borderRadius: '50%', background: `${accent}20`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                          <span style={{ fontSize: 14, fontWeight: 700, color: accent, fontFamily: "'DM Sans', sans-serif" }}>{initials}</span>
-                        </div>
-                      )}
-                      <div style={{ fontSize: 11, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", textAlign: 'center', lineHeight: 1.25 }}>{name}</div>
-                      <div style={{ fontSize: 13, fontWeight: 700, color: accent, fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(remaining)}</div>
-                      {loan.purpose && (
-                        <div style={{ fontSize: 9, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", textAlign: 'center', lineHeight: 1.35, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
-                          {loan.purpose}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Selected loan sticky note description */}
-            {selectedScrollLoan && (() => {
-              const selCard = loanCards.find(c => c.loan.id === selectedScrollLoan.id);
-              const fullName = selCard?.profile?.full_name || selCard?.name || 'User';
-              const amt = formatMoney(selectedScrollLoan.amount || 0);
-              const purpose = selectedScrollLoan.purpose;
-              const desc = isLending
-                ? `${fullName} borrowed ${amt}${purpose ? ` for ${purpose}` : ''}`
-                : `You borrowed ${amt} from ${fullName}${purpose ? ` for ${purpose}` : ''}`;
-              return (
-                <div style={{ display: 'flex', justifyContent: 'center', margin: '8px 0 20px', padding: '0 16px' }}>
-                  <div style={{
-                    position: 'relative',
-                    background: 'linear-gradient(170deg, #FFE566 0%, #FFD638 100%)',
-                    borderRadius: 3,
-                    padding: '14px 18px 12px',
-                    boxShadow: '2px 5px 16px rgba(0,0,0,0.14), 0 1px 3px rgba(0,0,0,0.08)',
-                    maxWidth: '100%',
-                  }}>
-                    <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 6, background: 'rgba(0,0,0,0.08)', borderRadius: '2px 2px 0 0' }} />
-                    <p style={{ margin: 0, fontSize: 12, fontWeight: 600, color: '#5C4200', fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                      {desc}
-                    </p>
-                  </div>
-                </div>
-              );
-            })()}
-
-            {/* Detail panel */}
-            {selectedScrollLoan && (
-              <div style={{ marginTop: 4 }}>
-                {renderLoanDetailBody(selectedScrollLoan)}
-              </div>
-            )}
-          </div>
-        )}
       </>
     );
   };
