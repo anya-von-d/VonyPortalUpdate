@@ -4,6 +4,13 @@ import { supabase } from "@/lib/supabaseClient";
 import { CheckCircle, Loader2, ChevronDown } from "lucide-react";
 import { PROFILE_ICON_IMAGES, getRandomProfileIcon } from "@/lib/profileIconImages";
 
+const PICKER_BG_COLORS = [
+  '#F794E9', '#A5ED9A', '#87C6ED', '#F9E784', '#FF8FAD',
+  '#B5DEFF', '#FFB3C6', '#C8F5E0', '#B8B8FF', '#FFD6A5',
+  '#A8DADC', '#FFD3B6', '#D4A5F5', '#CAFFBF', '#FDFFB6',
+  '#F0B8D9', '#C9F0D3', '#FFDAB9',
+];
+
 const CARD_WIDTH = 420;
 // Portal background — matches html/body in index.css
 const PORTAL_BG = '#ffffff';
@@ -445,7 +452,9 @@ export default function OnboardingModal({ user, onComplete }) {
                     {/* Preview circle */}
                     <div style={{
                       width: 72, height: 72, borderRadius: '50%', flexShrink: 0,
-                      background: '#F0EFEC',
+                      background: formData.selectedIconUrl
+                        ? PICKER_BG_COLORS[PROFILE_ICON_IMAGES.indexOf(formData.selectedIconUrl) % PICKER_BG_COLORS.length]
+                        : '#F0EFEC',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                       border: '2px solid rgba(0,0,0,0.08)',
                       overflow: 'hidden',
@@ -454,7 +463,7 @@ export default function OnboardingModal({ user, onComplete }) {
                         <img
                           src={formData.selectedIconUrl}
                           alt="Profile icon"
-                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                          style={{ width: '85%', height: '85%', objectFit: 'contain' }}
                         />
                       )}
                     </div>
@@ -466,8 +475,9 @@ export default function OnboardingModal({ user, onComplete }) {
                       padding: 10, maxHeight: 160, overflowY: 'auto', overflowX: 'hidden',
                     }}>
                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(42px, 1fr))', gap: 6 }}>
-                        {PROFILE_ICON_IMAGES.map(imgUrl => {
+                        {PROFILE_ICON_IMAGES.map((imgUrl, idx) => {
                           const isSelected = formData.selectedIconUrl === imgUrl;
+                          const bg = PICKER_BG_COLORS[idx % PICKER_BG_COLORS.length];
                           return (
                             <button key={imgUrl} type="button"
                               onClick={() => set('selectedIconUrl', imgUrl)}
@@ -481,13 +491,13 @@ export default function OnboardingModal({ user, onComplete }) {
                                 boxSizing: 'border-box',
                                 padding: 0,
                                 overflow: 'hidden',
-                                background: 'none',
+                                background: bg,
                               }}
                             >
                               <img
                                 src={imgUrl}
                                 alt="icon"
-                                style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%', pointerEvents: 'none' }}
+                                style={{ width: '85%', height: '85%', objectFit: 'contain', pointerEvents: 'none' }}
                               />
                             </button>
                           );

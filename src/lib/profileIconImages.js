@@ -1,13 +1,13 @@
-// PNG profile icon images from /public/images/profileIcons/
-// Files: 5.png through 22.png (18 total)
-export const PROFILE_ICON_IMAGES = Array.from({ length: 18 }, (_, i) => `/images/profileIcons/${i + 5}.png`);
+// Tapback Memoji images — 58 PNGs from GitHub
+const MEMOJI_BASE = 'https://raw.githubusercontent.com/Wimell/Tapback-Memojis/main/src/public/images/avatars/v1/';
+export const PROFILE_ICON_IMAGES = Array.from({ length: 58 }, (_, i) => `${MEMOJI_BASE}${i + 1}.png`);
 
-/** Pick a random icon URL */
+/** Pick a random memoji URL */
 export function getRandomProfileIcon() {
   return PROFILE_ICON_IMAGES[Math.floor(Math.random() * PROFILE_ICON_IMAGES.length)];
 }
 
-/** Pick a deterministic icon for a given userId (stable across sessions) */
+/** Pick a deterministic memoji for a given userId (stable across sessions) */
 export function getIconForUser(userId) {
   if (!userId) return getRandomProfileIcon();
   let hash = 0;
@@ -18,15 +18,15 @@ export function getIconForUser(userId) {
   return PROFILE_ICON_IMAGES[Math.abs(hash) % PROFILE_ICON_IMAGES.length];
 }
 
-/** Returns true if the given URL is one of our profile icon PNGs */
+/** Returns true if the given URL is one of our memoji or legacy profile icon PNGs */
 export function isProfileIconImage(url) {
   if (!url) return false;
-  return PROFILE_ICON_IMAGES.some(img => url === img || url.endsWith(img));
+  return url.includes('Tapback-Memojis') || url.includes('/images/profileIcons/');
 }
 
 /**
  * Returns true if the user needs a profile icon assigned.
- * Covers: null/empty, SVG data-URIs (old icon system), and ui-avatars.com fallbacks.
+ * Covers: null/empty, SVG data-URIs (old system), and ui-avatars.com fallbacks.
  */
 export function needsProfileIcon(url) {
   if (!url) return true;

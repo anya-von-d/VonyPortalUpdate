@@ -1,47 +1,76 @@
 
-// Medium blue/purple palette — deterministic per name
-const AVATAR_COLORS = [
-  '#5B6EE8', // blue-indigo
-  '#7C5CBF', // medium purple
-  '#4F86C6', // slate blue
-  '#8B5CF6', // violet
-  '#6366F1', // indigo
-  '#7C3AED', // deep violet
-  '#4A90D9', // sky blue
-  '#9061EA', // lavender purple
+// Pastel background colours designed for the Tapback memoji set
+const MEMOJI_BG_COLORS = [
+  '#F794E9', '#A5ED9A', '#87C6ED', '#F9E784', '#FF8FAD',
+  '#B5DEFF', '#FFB3C6', '#C8F5E0', '#B8B8FF', '#FFD6A5',
+  '#A8DADC', '#FFD3B6', '#D4A5F5', '#CAFFBF', '#FDFFB6',
+  '#F0B8D9', '#C9F0D3', '#FFDAB9',
 ];
 
-function getAvatarColor(name) {
-  if (!name) return AVATAR_COLORS[0];
-  let hash = 0;
-  for (let i = 0; i < name.length; i++) {
-    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+const MEMOJI_BASE = 'https://raw.githubusercontent.com/Wimell/Tapback-Memojis/main/src/public/images/avatars/v1/';
+const MEMOJI_COUNT = 58;
+
+function hashStr(str) {
+  if (!str) return 0;
+  let h = 0;
+  for (let i = 0; i < str.length; i++) {
+    h = str.charCodeAt(i) + ((h << 5) - h);
   }
-  return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
+  return Math.abs(h);
+}
+
+/** Pick a memoji URL deterministically from a name */
+function getMemojiForName(name) {
+  return `${MEMOJI_BASE}${(hashStr(name) % MEMOJI_COUNT) + 1}.png`;
+}
+
+/** Pick a background colour deterministically from a name */
+function getBgColorForName(name) {
+  return MEMOJI_BG_COLORS[hashStr(name) % MEMOJI_BG_COLORS.length];
 }
 
 /**
- * UserAvatar — shows a colored initial avatar, or a photo if the user has set one.
+ * Returns true if the URL is a memoji or legacy icon rather than a real user photo.
+ * These should be rendered on a coloured circle, not as a full-bleed cover image.
+ */
+function isMemojiOrIcon(url) {
+  if (!url) return false;
+  return (
+    url.includes('Tapback-Memojis') ||
+    url.includes('/images/profileIcons/') ||
+    url.includes('ui-avatars.com') ||
+    url.startsWith('data:image/svg+xml')
+  );
+}
+
+/**
+ * UserAvatar — shows a Tapback memoji on a pastel circle, or a real photo if the user uploaded one.
  *
  * Props:
- *   name    {string}           — full name or username (used for initial + color)
- *   src     {string|null}      — profile picture URL (optional)
- *   size    {number}           — pixel size (default 32)
- *   radius  {string|number}    — border-radius (default '50%')
- *   style   {object}           — extra style overrides on the container
- *   fontSize {number}          — override font size for the initial
+ *   name     {string}         — full name or username (used for memoji + colour selection)
+ *   src      {string|null}    — profile picture URL (optional)
+ *   size     {number}         — pixel size (default 32)
+ *   radius   {string|number}  — border-radius (default '50%')
+ *   style    {object}         — extra style overrides on the container
+ *   fontSize {number}         — unused, kept for API compatibility
  */
-export default function UserAvatar({ name, src, size = 32, radius = '50%', style, fontSize }) {
-  const initial = (name || '?').charAt(0).toUpperCase();
-  const color = getAvatarColor(name);
-  const computedFontSize = fontSize || Math.round(size * 0.38);
+export default function UserAvatar({ name, src, size = 32, radius = '50%', style, fontSize: _fontSize }) {
+  const bgColor = getBgColorForName(name);
+
+  // A real uploaded photo is any URL that isn't one of our icon types
+  const isRealPhoto = src && !isMemojiOrIcon(src);
+
+  // Which memoji to show: prefer an explicitly chosen icon URL, otherwise derive from name
+  const memojiSrc = src && src.includes('Tapback-Memojis')
+    ? src
+    : getMemojiForName(name);
 
   return (
     <div style={{
       width: size,
       height: size,
       borderRadius: radius,
-      background: color,
+      background: isRealPhoto ? '#E5E4E2' : bgColor,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -49,9 +78,9 @@ export default function UserAvatar({ name, src, size = 32, radius = '50%', style
       overflow: 'hidden',
       ...style,
     }}>
-      {src
+      {isRealPhoto
         ? <img src={src} alt={name || ''} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-        : <span style={{ fontSize: computedFontSize, fontWeight: 700, color: 'white', lineHeight: 1, userSelect: 'none', fontFamily: "'DM Sans', sans-serif" }}>{initial}</span>
+        : <img src={memojiSrc} alt={name || ''} style={{ width: '85%', height: '85%', objectFit: 'contain', pointerEvents: 'none' }} />
       }
     </div>
   );
