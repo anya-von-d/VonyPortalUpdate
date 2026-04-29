@@ -1,6 +1,16 @@
-// Tapback Memoji images — 58 PNGs from GitHub
-const MEMOJI_BASE = 'https://raw.githubusercontent.com/Wimell/Tapback-Memojis/main/src/public/images/avatars/v1/';
-export const PROFILE_ICON_IMAGES = Array.from({ length: 58 }, (_, i) => `${MEMOJI_BASE}${i + 1}.png`);
+// ── Tapback Memojis (1–58, excluding #43 — face mask) ──────────────────────
+const TAPBACK_BASE = 'https://raw.githubusercontent.com/Wimell/Tapback-Memojis/main/src/public/images/avatars/v1/';
+const tapbackUrls = [
+  ...Array.from({ length: 42 }, (_, i) => `${TAPBACK_BASE}${i + 1}.png`),  // 1–42
+  ...Array.from({ length: 15 }, (_, i) => `${TAPBACK_BASE}${i + 44}.png`), // 44–58
+];
+
+// ── alohe/memojis — memo_ series (35 Apple Memoji-style, transparent PNGs) ─
+const ALOHE_BASE = 'https://raw.githubusercontent.com/alohe/memojis/main/png/';
+const aloheUrls = Array.from({ length: 35 }, (_, i) => `${ALOHE_BASE}memo_${i + 1}.png`);
+
+// Combined pool: 57 Tapback + 35 alohe = 92 memojis
+export const PROFILE_ICON_IMAGES = [...tapbackUrls, ...aloheUrls];
 
 /** Pick a random memoji URL */
 export function getRandomProfileIcon() {
@@ -21,7 +31,7 @@ export function getIconForUser(userId) {
 /** Returns true if the given URL is one of our memoji or legacy profile icon PNGs */
 export function isProfileIconImage(url) {
   if (!url) return false;
-  return url.includes('Tapback-Memojis') || url.includes('/images/profileIcons/');
+  return url.includes('Tapback-Memojis') || url.includes('/images/profileIcons/') || url.includes('alohe/memojis');
 }
 
 /**

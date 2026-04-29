@@ -7,8 +7,14 @@ const MEMOJI_BG_COLORS = [
   '#F0B8D9', '#C9F0D3', '#FFDAB9',
 ];
 
-const MEMOJI_BASE = 'https://raw.githubusercontent.com/Wimell/Tapback-Memojis/main/src/public/images/avatars/v1/';
-const MEMOJI_COUNT = 58;
+// Same pool as profileIconImages.js — Tapback (excluding #43) + alohe memo_
+const _TB = 'https://raw.githubusercontent.com/Wimell/Tapback-Memojis/main/src/public/images/avatars/v1/';
+const _AL = 'https://raw.githubusercontent.com/alohe/memojis/main/png/';
+const MEMOJI_POOL = [
+  ...Array.from({ length: 42 }, (_, i) => `${_TB}${i + 1}.png`),
+  ...Array.from({ length: 15 }, (_, i) => `${_TB}${i + 44}.png`),
+  ...Array.from({ length: 35 }, (_, i) => `${_AL}memo_${i + 1}.png`),
+];
 
 function hashStr(str) {
   if (!str) return 0;
@@ -21,7 +27,7 @@ function hashStr(str) {
 
 /** Pick a memoji URL deterministically from a name */
 function getMemojiForName(name) {
-  return `${MEMOJI_BASE}${(hashStr(name) % MEMOJI_COUNT) + 1}.png`;
+  return MEMOJI_POOL[hashStr(name) % MEMOJI_POOL.length];
 }
 
 /** Pick a background colour deterministically from a name */
@@ -37,6 +43,7 @@ function isMemojiOrIcon(url) {
   if (!url) return false;
   return (
     url.includes('Tapback-Memojis') ||
+    url.includes('alohe/memojis') ||
     url.includes('/images/profileIcons/') ||
     url.includes('ui-avatars.com') ||
     url.startsWith('data:image/svg+xml')
@@ -62,7 +69,7 @@ export default function UserAvatar({ name, src, size = 32, radius = '50%', style
   const isRealPhoto = src && !isMemojiOrIcon(src);
 
   // Which memoji to show: prefer an explicitly chosen icon URL, otherwise derive from name
-  const memojiSrc = src && src.includes('Tapback-Memojis')
+  const memojiSrc = src && (src.includes('Tapback-Memojis') || src.includes('alohe/memojis'))
     ? src
     : getMemojiForName(name);
 
