@@ -894,6 +894,13 @@ input[type="date"] {
 }
 .home-qac-scroll::-webkit-scrollbar { display: none; }
 @media (max-width: 768px) {
+  /* Override inline desktop margins with mobile values */
+  .home-qac-scroll {
+    margin-left: -20px !important;
+    margin-right: -20px !important;
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
   .home-qac-card {
     width: 210px !important;
   }

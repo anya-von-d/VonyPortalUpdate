@@ -1423,7 +1423,7 @@ export default function Home() {
             const subStyle = { fontSize: 13, color: '#787776', fontFamily: "'DM Sans', sans-serif", marginTop: 3, lineHeight: 1.4 };
             const ctaStyle = { fontSize: 12, fontWeight: 500, color: '#03ACEA', fontFamily: "'DM Sans', sans-serif", marginTop: 6 };
             return (
-              <div className="home-qac-scroll" style={{ display: 'flex', gap: 12, overflowX: 'auto', scrollbarWidth: 'none', msOverflowStyle: 'none', scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch', marginBottom: 28, paddingBottom: 2 }}>
+              <div className="home-qac-scroll" style={{ display: 'flex', gap: 12, overflowX: 'auto', scrollbarWidth: 'none', msOverflowStyle: 'none', scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch', marginBottom: 28, paddingBottom: 2, marginLeft: -72, marginRight: -72, paddingLeft: 72, paddingRight: 72 }}>
 
                 {/* 1 — Notifications */}
                 <div className="home-qac-card" onClick={() => navigate(createPageUrl('Notifications'))} style={cardStyle}>
