@@ -1074,26 +1074,14 @@ export default function Home() {
           {/* Desktop page title */}
           <div className="desktop-page-title" style={{ marginBottom: 28 }}>
             <div style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, letterSpacing: '-0.02em', lineHeight: 1.3, color: '#1A1918' }}>
-              <div style={{ fontSize: 28 }}>Hi {firstName}</div>
-              <div style={{ fontSize: 20, display: 'flex', alignItems: 'center', gap: 6 }}>
-                Happy {dayOfWeek}!
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-                </svg>
-              </div>
+              <div style={{ fontSize: 28 }}>Welcome back, {firstName} 👋</div>
             </div>
           </div>
 
           {/* Mobile-only greeting */}
           <div className="mobile-home-greeting">
             <div style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, letterSpacing: '-0.02em', lineHeight: 1.3, color: '#1A1918', marginBottom: 12 }}>
-              <div style={{ fontSize: 22 }}>Hi {firstName}</div>
-              <div style={{ fontSize: 16, display: 'flex', alignItems: 'center', gap: 5 }}>
-                Happy {dayOfWeek}!
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-                </svg>
-              </div>
+              <div style={{ fontSize: 22 }}>Welcome back, {firstName} 👋</div>
             </div>
           </div>
 
