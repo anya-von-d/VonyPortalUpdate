@@ -244,148 +244,106 @@ export default function Upcoming() {
   // ── Shared styles ───────────────────────────────────────────────────────
   const fontBase = { fontFamily: "'DM Sans', system-ui, sans-serif" };
 
-  // ── Left panel: Next 7 Days + Coming Later ──────────────────────────────
-  const ListPanel = () => (
+  // ── Flip-board tile primitives ─────────────────────────────────────────
+  const FTile = ({ ch, dim }) => (
+    <div style={{
+      width: 16, height: 21, flexShrink: 0,
+      background: dim
+        ? 'linear-gradient(180deg,#272624 0%,#272624 49%,#1A1918 51%,#1A1918 100%)'
+        : 'linear-gradient(180deg,#2F2D2B 0%,#2F2D2B 49%,#1F1E1C 51%,#1F1E1C 100%)',
+      borderRadius: 3,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      position: 'relative',
+      boxShadow: '0 1px 3px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.05)',
+    }}>
+      <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, height: 1, background: 'rgba(0,0,0,0.75)' }} />
+      <span style={{
+        fontSize: 10, fontWeight: 700, lineHeight: 1,
+        color: dim ? '#5A5856' : '#ECE9E2',
+        fontFamily: "'DM Sans', system-ui",
+        position: 'relative', zIndex: 1, letterSpacing: 0,
+      }}>{ch}</span>
+    </div>
+  );
+
+  const FlipLine = ({ text, dim = false }) => (
+    <div style={{ display: 'flex', gap: 2, flexWrap: 'wrap', rowGap: 2 }}>
+      {String(text).toUpperCase().split('').map((ch, i) =>
+        ch === ' '
+          ? <div key={i} style={{ width: 7, flexShrink: 0 }} />
+          : <FTile key={i} ch={ch} dim={dim} />
+      )}
+    </div>
+  );
+
+  // ── Left panel: Flip board ──────────────────────────────────────────────
+  const ListPanel = () => {
+    // Build rows: overdue → next 7 → coming later
+    const rows = [
+      ...overdue.map(ev => ({
+        date: 'OVERDUE',
+        text: ev.isLender
+          ? `EXPECT ${formatMoney(ev.amount)} ${ev.firstName}`
+          : `PAY ${formatMoney(ev.amount)} ${ev.firstName}`,
+        dim: false, isOverdue: true,
+        onClick: () => setResolveModal({ loan: ev.loan, loans: overdue.map(e => e.loan) }),
+      })),
+      ...next7Days.map(ev => ({
+        date: ev.days === 0 ? 'TODAY' : format(ev.date, 'EEE MMM d').toUpperCase(),
+        text: ev.isLender
+          ? `EXPECT ${formatMoney(ev.amount)} ${ev.firstName}`
+          : `PAY ${formatMoney(ev.amount)} ${ev.firstName}`,
+        dim: false, isOverdue: false,
+      })),
+      ...comingLater.map(ev => ({
+        date: format(ev.date, 'EEE MMM d').toUpperCase(),
+        text: ev.isLender
+          ? `EXPECT ${formatMoney(ev.amount)} ${ev.firstName}`
+          : `PAY ${formatMoney(ev.amount)} ${ev.firstName}`,
+        dim: true, isOverdue: false,
+      })),
+    ];
+
+    return (
     <div style={{ ...fontBase, display: 'flex', flexDirection: 'column', gap: 32 }}>
 
-      {/* Next 7 Days */}
-      <div>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-          <span style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.01em' }}>Next 7 Days</span>
-          {next7Days.length > 0 && (
-            <span style={{ fontSize: 11, color: '#9B9A98' }}>
-              {next7Days.length} · {formatMoney(next7Days.reduce((s, e) => s + e.amount, 0))}
-            </span>
-          )}
-        </div>
-
-        {/* Date strip */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', marginBottom: 14, paddingBottom: 12, borderBottom: '1px solid rgba(0,0,0,0.07)' }}>
-          {sevenDays.map((day, i) => {
-            const isToday = i === 0;
-            const hasEv = next7Days.some(e => isSameDay(e.date, day)) || (i === 0 && overdue.length > 0);
-            return (
-              <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
-                <span style={{ fontSize: 10, fontWeight: 500, color: '#9B9A98' }}>{format(day, 'EEE')}</span>
-                <div style={{ width: 26, height: 26, borderRadius: '50%', background: isToday ? '#03ACEA' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <span style={{ fontSize: 12, fontWeight: isToday ? 700 : 400, color: isToday ? '#fff' : '#1A1918' }}>{format(day, 'd')}</span>
-                </div>
-                {hasEv
-                  ? <span style={{ width: 4, height: 4, borderRadius: '50%', background: isToday ? '#E8726E' : '#03ACEA', display: 'block' }} />
-                  : <span style={{ width: 4, height: 4, display: 'block' }} />
-                }
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Event rows — empty days skipped */}
-        {next7Days.length === 0 && overdue.length === 0 ? (
-          <div style={{ fontSize: 12, color: '#9B9A98' }}>All clear this week 🎉</div>
+      {/* ── Flip board ── */}
+      <div style={{
+        background: '#181715',
+        borderRadius: 14,
+        padding: '22px 18px',
+        display: 'flex', flexDirection: 'column', gap: 0,
+        boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04)',
+      }}>
+        {rows.length === 0 ? (
+          <FlipLine text="ALL CLEAR" dim />
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-
-            {/* Overdue */}
-            {overdue.length > 0 && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '7px 0' }}>
-                <div style={{ width: 52, flexShrink: 0 }}>
-                  <div style={{ fontSize: 10, fontWeight: 500, color: '#E8726E' }}>Today</div>
-                  <div style={{ fontSize: 12, fontWeight: 500, color: '#1A1918' }}>{format(today, 'MMM d')}</div>
-                </div>
-                <div style={{ width: 3, alignSelf: 'stretch', borderRadius: 2, background: '#E8726E', flexShrink: 0 }} />
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 12, fontWeight: 600, color: '#E8726E', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {overdue.length === 1
-                      ? (overdue[0].isLender
-                          ? `Resolve ${formatMoney(overdue[0].amount)} overdue from ${overdue[0].firstName}`
-                          : `Resolve ${formatMoney(overdue[0].amount)} overdue to ${overdue[0].firstName}`)
-                      : `Resolve ${overdue.length} overdue payments`}
-                  </div>
-                </div>
-                <button
-                  onClick={() => setResolveModal({ loan: overdue[0].loan, loans: overdue.map(e => e.loan) })}
-                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#E8726E', padding: '2px 4px', flexShrink: 0 }}
-                >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-                  </svg>
-                </button>
+          rows.map((row, i) => (
+            <div
+              key={i}
+              onClick={row.onClick}
+              style={{
+                cursor: row.onClick ? 'pointer' : 'default',
+                padding: '13px 0',
+                borderTop: i > 0 ? '1px solid rgba(255,255,255,0.05)' : 'none',
+                borderLeft: row.isOverdue ? '2px solid #7A3530' : '2px solid transparent',
+                paddingLeft: row.isOverdue ? 10 : 0,
+              }}
+            >
+              {/* Date / status line — smaller, dimmer */}
+              <div style={{ marginBottom: 5 }}>
+                <FlipLine text={row.date} dim />
               </div>
-            )}
-
-            {/* Next 7 — only days that have events */}
-            {sevenDays.map((day, i) => {
-              const dayEvents = next7Days.filter(e => isSameDay(e.date, day));
-              if (dayEvents.length === 0) return null;
-              const isToday = i === 0;
-              const dayName  = isToday ? 'Today' : format(day, 'EEE');
-              const dateLbl  = format(day, 'MMM d');
-              return dayEvents.map((event, ei) => (
-                <div key={`${i}-${ei}`} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '7px 0' }}>
-                  <div style={{ width: 52, flexShrink: 0, opacity: ei === 0 ? 1 : 0 }}>
-                    <div style={{ fontSize: 10, fontWeight: 500, color: isToday ? '#03ACEA' : '#9B9A98' }}>{dayName}</div>
-                    <div style={{ fontSize: 12, fontWeight: 500, color: '#1A1918' }}>{dateLbl}</div>
-                  </div>
-                  <div style={{ width: 3, alignSelf: 'stretch', borderRadius: 2, background: event.isLender ? '#03ACEA' : '#1D5B94', flexShrink: 0 }} />
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {event.isLender
-                        ? `Expect ${formatMoney(event.amount)} from ${event.firstName}`
-                        : `${formatMoney(event.amount)} due to ${event.firstName}`}
-                    </div>
-                    {event.reason && (
-                      <div style={{ fontSize: 10, color: '#9B9A98', marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{event.reason}</div>
-                    )}
-                  </div>
-                </div>
-              ));
-            })}
-          </div>
-        )}
-      </div>
-
-      {/* Coming Later */}
-      <div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-          <span style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.01em' }}>Coming Later</span>
-          {comingLater.length > 0 && (
-            <span style={{ fontSize: 11, color: '#9B9A98' }}>
-              {comingLater.length} · {formatMoney(comingLater.reduce((s, e) => s + e.amount, 0))}
-            </span>
-          )}
-        </div>
-        {comingLater.length === 0 ? (
-          <div style={{ fontSize: 12, color: '#9B9A98' }}>Nothing coming up ✨</div>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            {comingLater.map(event => {
-              const barColor = event.isLender ? '#03ACEA' : '#1D5B94';
-              return (
-                <div key={event.loanId + '-later'} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '7px 0' }}>
-                  <div style={{ width: 52, flexShrink: 0 }}>
-                    <div style={{ fontSize: 10, fontWeight: 500, color: '#9B9A98' }}>{format(event.date, 'EEE')}</div>
-                    <div style={{ fontSize: 12, fontWeight: 500, color: '#1A1918' }}>{format(event.date, 'MMM d')}</div>
-                  </div>
-                  <div style={{ width: 3, alignSelf: 'stretch', borderRadius: 2, background: barColor, flexShrink: 0 }} />
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {event.isLender
-                        ? `Expect ${formatMoney(event.amount)} from ${event.firstName}`
-                        : `${formatMoney(event.amount)} due to ${event.firstName}`}
-                    </div>
-                    {event.reason && (
-                      <div style={{ fontSize: 10, color: '#9B9A98', marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{event.reason}</div>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+              {/* Main event line */}
+              <FlipLine text={row.text} dim={row.dim} />
+            </div>
+          ))
         )}
       </div>
 
     </div>
-  );
+    );
+  };
 
   // ── Calendar panel ──────────────────────────────────────────────────────
   const CalPanel = () => {
