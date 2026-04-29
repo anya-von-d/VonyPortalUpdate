@@ -1415,27 +1415,27 @@ export default function Home() {
 
 
           {/* ── Quick-action 5-card carousel ── */}
-          <div className="home-qac-scroll" style={{ overflowX: 'auto', marginBottom: 28, scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-            <div className="home-qac-inner" style={{ display: 'flex', gap: 14, width: 'max-content' }}>
+          <div className="home-qac-scroll" style={{ overflowX: 'auto', marginBottom: 28, scrollbarWidth: 'none', msOverflowStyle: 'none', scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch' }}>
+            <div className="home-qac-inner" style={{ display: 'flex', gap: 14, width: 'max-content', paddingBottom: 2 }}>
 
               {/* 1 — Notifications */}
               <div className="home-qac-card" onClick={() => navigate(createPageUrl('Notifications'))}
-                style={{ width: 220, flexShrink: 0, background: '#fff', borderRadius: 16, padding: '16px 18px', boxShadow: '0 2px 12px rgba(0,0,0,0.07)', border: '1px solid rgba(0,0,0,0.06)', cursor: 'pointer', display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
-                <div className="home-qac-icon" style={{ width: 44, height: 62, borderRadius: 12, background: notifCount > 0 ? 'rgba(232,114,110,0.1)' : 'rgba(3,172,234,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={notifCount > 0 ? '#E8726E' : '#03ACEA'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                style={{ width: 240, minHeight: 100, flexShrink: 0, scrollSnapAlign: 'start', background: '#fff', borderRadius: 18, padding: '20px 20px', boxShadow: '0 2px 12px rgba(0,0,0,0.07)', border: '1px solid rgba(0,0,0,0.06)', cursor: 'pointer', display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <div className="home-qac-icon" style={{ width: 48, height: 76, borderRadius: 14, background: notifCount > 0 ? 'rgba(232,114,110,0.1)' : 'rgba(3,172,234,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={notifCount > 0 ? '#E8726E' : '#03ACEA'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
                   </svg>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 3, minWidth: 0 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0 }}>
                   {notifCount > 0 ? (
                     <>
-                      <div style={{ fontSize: 22, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.03em', lineHeight: 1, fontFamily: "'DM Sans', sans-serif" }}>{notifCount}</div>
-                      <div style={{ fontSize: 11, color: '#787776', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.4 }}>{notifCount === 1 ? 'notification' : 'notifications'} waiting</div>
+                      <div style={{ fontSize: 26, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.04em', lineHeight: 1, fontFamily: "'DM Sans', sans-serif" }}>{notifCount}</div>
+                      <div style={{ fontSize: 12, color: '#787776', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.4 }}>{notifCount === 1 ? 'notification' : 'notifications'} waiting</div>
                     </>
                   ) : (
                     <>
-                      <div style={{ fontSize: 13, fontWeight: 700, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>All caught up!</div>
-                      <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>No new notifications</div>
+                      <div style={{ fontSize: 14, fontWeight: 700, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>All caught up!</div>
+                      <div style={{ fontSize: 12, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>No new notifications</div>
                     </>
                   )}
                 </div>
@@ -1443,69 +1443,69 @@ export default function Home() {
 
               {/* 2 — Received this month */}
               <div className="home-qac-card" onClick={() => navigate(createPageUrl('PlanYourMonth'))}
-                style={{ width: 220, flexShrink: 0, background: '#fff', borderRadius: 16, padding: '16px 18px', boxShadow: '0 2px 12px rgba(0,0,0,0.07)', border: '1px solid rgba(0,0,0,0.06)', cursor: 'pointer', display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
-                <div className="home-qac-icon" style={{ width: 44, height: 62, borderRadius: 12, background: 'rgba(52,199,89,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#34C759" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                style={{ width: 240, minHeight: 100, flexShrink: 0, scrollSnapAlign: 'start', background: '#fff', borderRadius: 18, padding: '20px 20px', boxShadow: '0 2px 12px rgba(0,0,0,0.07)', border: '1px solid rgba(0,0,0,0.06)', cursor: 'pointer', display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <div className="home-qac-icon" style={{ width: 48, height: 76, borderRadius: 14, background: 'rgba(52,199,89,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#34C759" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>
                   </svg>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 5, minWidth: 0 }}>
-                  <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", fontWeight: 500 }}>You've received</div>
-                  <div style={{ fontSize: 15, fontWeight: 800, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.02em', lineHeight: 1 }}>
+                  <div style={{ fontSize: 12, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", fontWeight: 500 }}>You've received</div>
+                  <div style={{ fontSize: 17, fontWeight: 800, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.02em', lineHeight: 1 }}>
                     {formatMoney(monthlyReceived)}
                   </div>
-                  <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>
+                  <div style={{ fontSize: 12, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>
                     of <span style={{ color: '#1A1918', fontWeight: 600 }}>{formatMoney(monthlyExpectedReceive)}</span> expected
                   </div>
-                  <div style={{ fontSize: 11, fontWeight: 600, color: '#03ACEA', fontFamily: "'DM Sans', sans-serif", marginTop: 2 }}>Plan your month →</div>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: '#03ACEA', fontFamily: "'DM Sans', sans-serif", marginTop: 3 }}>Plan your month →</div>
                 </div>
               </div>
 
               {/* 3 — Paid this month */}
               <div className="home-qac-card" onClick={() => navigate(createPageUrl('PlanYourMonth'))}
-                style={{ width: 220, flexShrink: 0, background: '#fff', borderRadius: 16, padding: '16px 18px', boxShadow: '0 2px 12px rgba(0,0,0,0.07)', border: '1px solid rgba(0,0,0,0.06)', cursor: 'pointer', display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
-                <div className="home-qac-icon" style={{ width: 44, height: 62, borderRadius: 12, background: 'rgba(255,149,0,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FF9500" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                style={{ width: 240, minHeight: 100, flexShrink: 0, scrollSnapAlign: 'start', background: '#fff', borderRadius: 18, padding: '20px 20px', boxShadow: '0 2px 12px rgba(0,0,0,0.07)', border: '1px solid rgba(0,0,0,0.06)', cursor: 'pointer', display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <div className="home-qac-icon" style={{ width: 48, height: 76, borderRadius: 14, background: 'rgba(255,149,0,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FF9500" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/>
                   </svg>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 5, minWidth: 0 }}>
-                  <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", fontWeight: 500 }}>You've paid</div>
-                  <div style={{ fontSize: 15, fontWeight: 800, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.02em', lineHeight: 1 }}>
+                  <div style={{ fontSize: 12, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", fontWeight: 500 }}>You've paid</div>
+                  <div style={{ fontSize: 17, fontWeight: 800, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.02em', lineHeight: 1 }}>
                     {formatMoney(monthlyPaidOut)}
                   </div>
-                  <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>
+                  <div style={{ fontSize: 12, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>
                     of <span style={{ color: '#1A1918', fontWeight: 600 }}>{formatMoney(monthlyExpectedPay)}</span> due
                   </div>
-                  <div style={{ fontSize: 11, fontWeight: 600, color: '#03ACEA', fontFamily: "'DM Sans', sans-serif", marginTop: 2 }}>Plan your month →</div>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: '#03ACEA', fontFamily: "'DM Sans', sans-serif", marginTop: 3 }}>Plan your month →</div>
                 </div>
               </div>
 
               {/* 4 — Create Loan */}
               <div className="home-qac-card" onClick={() => navigate(createPageUrl('CreateOffer'))}
-                style={{ width: 220, flexShrink: 0, background: '#fff', borderRadius: 16, padding: '16px 18px', boxShadow: '0 2px 12px rgba(0,0,0,0.07)', border: '1px solid rgba(0,0,0,0.06)', cursor: 'pointer', display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
-                <div className="home-qac-icon" style={{ width: 44, height: 62, borderRadius: 12, background: 'rgba(3,172,234,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                style={{ width: 240, minHeight: 100, flexShrink: 0, scrollSnapAlign: 'start', background: '#fff', borderRadius: 18, padding: '20px 20px', boxShadow: '0 2px 12px rgba(0,0,0,0.07)', border: '1px solid rgba(0,0,0,0.06)', cursor: 'pointer', display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <div className="home-qac-icon" style={{ width: 48, height: 76, borderRadius: 14, background: 'rgba(3,172,234,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/>
                   </svg>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0 }}>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>Create Loan</div>
-                  <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.4 }}>Set up a new lending agreement</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 5, minWidth: 0 }}>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>Create Loan</div>
+                  <div style={{ fontSize: 12, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.4 }}>Set up a new lending agreement</div>
                 </div>
               </div>
 
               {/* 5 — Record Payment */}
               <div className="home-qac-card" onClick={() => navigate(createPageUrl('RecordPayment'))}
-                style={{ width: 220, flexShrink: 0, background: '#fff', borderRadius: 16, padding: '16px 18px', boxShadow: '0 2px 12px rgba(0,0,0,0.07)', border: '1px solid rgba(0,0,0,0.06)', cursor: 'pointer', display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
-                <div className="home-qac-icon" style={{ width: 44, height: 62, borderRadius: 12, background: 'rgba(3,172,234,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                style={{ width: 240, minHeight: 100, flexShrink: 0, scrollSnapAlign: 'start', background: '#fff', borderRadius: 18, padding: '20px 20px', boxShadow: '0 2px 12px rgba(0,0,0,0.07)', border: '1px solid rgba(0,0,0,0.06)', cursor: 'pointer', display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <div className="home-qac-icon" style={{ width: 48, height: 76, borderRadius: 14, background: 'rgba(3,172,234,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/>
                   </svg>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0 }}>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>Record Payment</div>
-                  <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.4 }}>Log a payment made or received</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 5, minWidth: 0 }}>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>Record Payment</div>
+                  <div style={{ fontSize: 12, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.4 }}>Log a payment made or received</div>
                 </div>
               </div>
 

@@ -882,24 +882,18 @@ input[type="date"] {
   border-color: rgba(0,0,0,0.14);
 }
 
-/* ── Home quick-action carousel — mobile full-width 2-column grid ── */
+/* ── Home quick-action carousel — single-row scroll on all sizes ── */
+.home-qac-scroll {
+  -webkit-overflow-scrolling: touch;
+}
+.home-qac-scroll::-webkit-scrollbar { display: none; }
 @media (max-width: 768px) {
-  .home-qac-scroll {
-    overflow-x: visible !important;
-  }
-  .home-qac-inner {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    width: auto !important;
-    gap: 10px !important;
-  }
   .home-qac-card {
-    width: auto !important;
-    flex-shrink: unset !important;
+    width: 200px !important;
   }
   .home-qac-icon {
-    width: 48px !important;
-    height: 72px !important;
+    width: 44px !important;
+    height: 68px !important;
   }
 }
 
