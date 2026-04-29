@@ -1428,9 +1428,7 @@ export default function Home() {
                 {/* 1 — Notifications */}
                 <div className="home-qac-card" onClick={() => navigate(createPageUrl('Notifications'))} style={cardStyle}>
                   <div className="home-qac-icon" style={iconStyle('#F9F8F6')}>
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={notifCount > 0 ? '#E8726E' : '#9B9A98'} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-                    </svg>
+                    <img src="/images/Art/mailbox.png" alt="Notifications" style={{ width: 38, height: 38, objectFit: 'contain' }} />
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
                     <div style={labelStyle}>Notifications</div>
@@ -1451,9 +1449,7 @@ export default function Home() {
                 {/* 2 — Received this month */}
                 <div className="home-qac-card" onClick={() => navigate(createPageUrl('PlanYourMonth'))} style={cardStyle}>
                   <div className="home-qac-icon" style={iconStyle('#F9F8F6')}>
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#34C759" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>
-                    </svg>
+                    <img src="/images/Art/coins.png" alt="Received" style={{ width: 38, height: 38, objectFit: 'contain' }} />
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
                     <div style={labelStyle}>Received this month</div>
@@ -1466,9 +1462,7 @@ export default function Home() {
                 {/* 3 — Paid this month */}
                 <div className="home-qac-card" onClick={() => navigate(createPageUrl('PlanYourMonth'))} style={cardStyle}>
                   <div className="home-qac-icon" style={iconStyle('#F9F8F6')}>
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FF9500" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/>
-                    </svg>
+                    <img src="/images/Art/paperPlane.png" alt="Paid" style={{ width: 38, height: 38, objectFit: 'contain' }} />
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
                     <div style={labelStyle}>Paid this month</div>
@@ -1481,9 +1475,7 @@ export default function Home() {
                 {/* 4 — Create Loan */}
                 <div className="home-qac-card" onClick={() => navigate(createPageUrl('CreateOffer'))} style={cardStyle}>
                   <div className="home-qac-icon" style={iconStyle('#F9F8F6')}>
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9B9A98" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/>
-                    </svg>
+                    <img src="/images/Art/document.png" alt="Create Loan" style={{ width: 38, height: 38, objectFit: 'contain' }} />
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
                     <div style={labelStyle}>New agreement</div>
@@ -1495,9 +1487,7 @@ export default function Home() {
                 {/* 5 — Record Payment */}
                 <div className="home-qac-card" onClick={() => navigate(createPageUrl('RecordPayment'))} style={cardStyle}>
                   <div className="home-qac-icon" style={iconStyle('#F9F8F6')}>
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9B9A98" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-                      <rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/>
-                    </svg>
+                    <img src="/images/Art/file.png" alt="Record Payment" style={{ width: 38, height: 38, objectFit: 'contain' }} />
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
                     <div style={labelStyle}>Log activity</div>
