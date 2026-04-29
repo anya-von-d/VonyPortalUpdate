@@ -1464,11 +1464,16 @@ export default function Home() {
 
           {/* ── Centered shortcuts ── */}
           {(() => {
-            const iconCircle = (icon, size = 52) => (
-              <div style={{ width: size, height: size, borderRadius: '50%', background: '#1A1918', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                {React.cloneElement(icon, { size: size * 0.42, color: '#ffffff', strokeWidth: 1.8 })}
-              </div>
-            );
+            const iconCircle = (icon, size = 52) => {
+              const ring = 4;
+              return (
+                <div style={{ width: size + ring * 2, height: size + ring * 2, borderRadius: '50%', background: 'white', boxShadow: '0 4px 18px rgba(0,0,0,0.18), 0 1px 4px rgba(0,0,0,0.10)', padding: ring, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxSizing: 'border-box' }}>
+                  <div style={{ width: size, height: size, borderRadius: '50%', background: '#1A1918', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    {React.cloneElement(icon, { size: size * 0.42, color: '#ffffff', strokeWidth: 1.8 })}
+                  </div>
+                </div>
+              );
+            };
             const label = (text) => (
               <span style={{ fontSize: 11, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.01em', marginTop: 2 }}>{text}</span>
             );
