@@ -1413,29 +1413,6 @@ export default function Home() {
             );
           })()}
 
-          {/* ── Create Loan / Log Payment — side by side cards ── */}
-          <div style={{ display: 'flex', gap: 10, marginBottom: 28 }}>
-            <div onClick={() => navigate(createPageUrl('CreateOffer'))}
-              style={{ flex: 1, background: '#ffffff', borderRadius: 14, boxShadow: '0 2px 12px rgba(0,0,0,0.08)', border: '1px solid rgba(0,0,0,0.06)', padding: '9px 14px', display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
-              <div style={{ width: 28, height: 28, borderRadius: 7, background: '#F4F4F5', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#1A1918', flexShrink: 0 }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/>
-                </svg>
-              </div>
-              <span style={{ flex: 1, fontSize: 12, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>Create Loan</span>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C4C3C1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><polyline points="9 18 15 12 9 6"/></svg>
-            </div>
-            <div onClick={() => navigate(createPageUrl('RecordPayment'))}
-              style={{ flex: 1, background: '#ffffff', borderRadius: 14, boxShadow: '0 2px 12px rgba(0,0,0,0.08)', border: '1px solid rgba(0,0,0,0.06)', padding: '9px 14px', display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
-              <div style={{ width: 28, height: 28, borderRadius: 7, background: '#F4F4F5', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#1A1918', flexShrink: 0 }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="10"/><polyline points="16 12 12 8 8 12"/><line x1="12" y1="16" x2="12" y2="8"/>
-                </svg>
-              </div>
-              <span style={{ flex: 1, fontSize: 12, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>Log Payment</span>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C4C3C1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><polyline points="9 18 15 12 9 6"/></svg>
-            </div>
-          </div>
 
           {/* Two-column: left = loans, right = upcoming + summary + friends */}
           <div className="home-main-two-col" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
@@ -1684,8 +1661,103 @@ export default function Home() {
                 </div>
               )}
 
-              {/* Feature highlight carousel */}
-              <FeatureCarousel navigate={navigate} />
+              {/* ── Quick-action 4-card carousel ── */}
+              {(() => {
+                const qCards = [
+                  // 1 — Notifications
+                  {
+                    key: 'notif',
+                    content: (
+                      <div onClick={() => navigate(createPageUrl('Notifications'))} style={{ width: 180, flexShrink: 0, background: '#fff', borderRadius: 16, padding: '16px 16px 14px', boxShadow: '0 2px 12px rgba(0,0,0,0.07)', border: '1px solid rgba(0,0,0,0.06)', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                        <div style={{ width: 36, height: 36, borderRadius: 10, background: notifCount > 0 ? 'rgba(232,114,110,0.1)' : 'rgba(3,172,234,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={notifCount > 0 ? '#E8726E' : '#03ACEA'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                          </svg>
+                        </div>
+                        {notifCount > 0 ? (
+                          <>
+                            <div style={{ fontSize: 22, fontWeight: 800, color: '#1A1918', letterSpacing: '-0.03em', lineHeight: 1, fontFamily: "'DM Sans', sans-serif" }}>{notifCount}</div>
+                            <div style={{ fontSize: 11, color: '#787776', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.4 }}>
+                              {notifCount === 1 ? 'notification' : 'notifications'} waiting
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <div style={{ fontSize: 13, fontWeight: 700, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.3 }}>All caught up!</div>
+                            <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>No new notifications</div>
+                          </>
+                        )}
+                      </div>
+                    ),
+                  },
+                  // 2 — Monthly summary
+                  {
+                    key: 'monthly',
+                    content: (
+                      <div onClick={() => navigate(createPageUrl('PlanYourMonth'))} style={{ width: 200, flexShrink: 0, background: '#fff', borderRadius: 16, padding: '16px 16px 14px', boxShadow: '0 2px 12px rgba(0,0,0,0.07)', border: '1px solid rgba(0,0,0,0.06)', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: 7 }}>
+                        <div style={{ width: 36, height: 36, borderRadius: 10, background: 'rgba(3,172,234,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+                          </svg>
+                        </div>
+                        {monthlyExpectedReceive > 0 && (
+                          <div style={{ fontSize: 11, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.4 }}>
+                            <span style={{ fontWeight: 700 }}>Received</span> <span style={{ color: '#03ACEA', fontWeight: 600 }}>{formatMoney(monthlyReceived)}</span>{' '}
+                            <span style={{ color: '#9B9A98' }}>of {formatMoney(monthlyExpectedReceive)}</span>
+                          </div>
+                        )}
+                        {monthlyExpectedPay > 0 && (
+                          <div style={{ fontSize: 11, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.4 }}>
+                            <span style={{ fontWeight: 700 }}>Paid</span> <span style={{ color: '#03ACEA', fontWeight: 600 }}>{formatMoney(monthlyPaidOut)}</span>{' '}
+                            <span style={{ color: '#9B9A98' }}>of {formatMoney(monthlyExpectedPay)}</span>
+                          </div>
+                        )}
+                        {monthlyExpectedReceive === 0 && monthlyExpectedPay === 0 && (
+                          <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>No activity this month</div>
+                        )}
+                        <div style={{ fontSize: 11, fontWeight: 600, color: '#03ACEA', fontFamily: "'DM Sans', sans-serif", marginTop: 2 }}>Plan your month →</div>
+                      </div>
+                    ),
+                  },
+                  // 3 — Create Loan
+                  {
+                    key: 'create',
+                    content: (
+                      <div onClick={() => navigate(createPageUrl('CreateOffer'))} style={{ width: 160, flexShrink: 0, background: '#fff', borderRadius: 16, padding: '16px 16px 14px', boxShadow: '0 2px 12px rgba(0,0,0,0.07)', border: '1px solid rgba(0,0,0,0.06)', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                        <div style={{ width: 36, height: 36, borderRadius: 10, background: 'rgba(3,172,234,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/>
+                          </svg>
+                        </div>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>Create Loan</div>
+                        <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.4 }}>Set up a new lending agreement</div>
+                      </div>
+                    ),
+                  },
+                  // 4 — Record Payment
+                  {
+                    key: 'record',
+                    content: (
+                      <div onClick={() => navigate(createPageUrl('RecordPayment'))} style={{ width: 160, flexShrink: 0, background: '#fff', borderRadius: 16, padding: '16px 16px 14px', boxShadow: '0 2px 12px rgba(0,0,0,0.07)', border: '1px solid rgba(0,0,0,0.06)', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                        <div style={{ width: 36, height: 36, borderRadius: 10, background: 'rgba(3,172,234,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#03ACEA" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/>
+                          </svg>
+                        </div>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>Record Payment</div>
+                        <div style={{ fontSize: 11, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.4 }}>Log a payment made or received</div>
+                      </div>
+                    ),
+                  },
+                ];
+                return (
+                  <div style={{ overflowX: 'auto', marginLeft: -4, paddingLeft: 4, paddingBottom: 4, scrollbarWidth: 'none' }}>
+                    <div style={{ display: 'flex', gap: 10, width: 'max-content' }}>
+                      {qCards.map(c => <React.Fragment key={c.key}>{c.content}</React.Fragment>)}
+                    </div>
+                  </div>
+                );
+              })()}
 
             </div>{/* end right col */}
 
