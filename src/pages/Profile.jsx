@@ -635,6 +635,7 @@ export default function Profile() {
       setUser(prev => ({ ...prev, profile_picture_url: file_url }));
       await User.updateMyUserData({ profile_picture_url: file_url });
       await syncPublicProfile({ ...user, profile_picture_url: file_url });
+      window.dispatchEvent(new Event('profileUpdated'));
     } catch (err) { console.error(err); }
     setIsSaving(false);
   };
@@ -647,6 +648,7 @@ export default function Profile() {
       setUser(prev => ({ ...prev, profile_picture_url: memojiUrl }));
       await User.updateMyUserData({ profile_picture_url: memojiUrl });
       await syncPublicProfile({ ...user, profile_picture_url: memojiUrl });
+      window.dispatchEvent(new Event('profileUpdated'));
     } catch (err) { console.error(err); }
     setIsSaving(false);
   };
@@ -659,6 +661,7 @@ export default function Profile() {
       setUser(prev => ({ ...prev, profile_picture_url: '' }));
       await User.updateMyUserData({ profile_picture_url: '' });
       await syncPublicProfile({ ...user, profile_picture_url: '' });
+      window.dispatchEvent(new Event('profileUpdated'));
     } catch (err) { console.error(err); }
     setIsSaving(false);
   };
