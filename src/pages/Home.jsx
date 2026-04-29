@@ -1420,8 +1420,8 @@ export default function Home() {
 
               {/* Shared card shell */}
               {(() => {
-                const cardStyle = { width: 234, minHeight: 108, flexShrink: 0, scrollSnapAlign: 'start', background: '#fff', borderRadius: 12, padding: '18px 18px', boxShadow: '0 1px 4px rgba(0,0,0,0.05)', border: '1px solid rgba(0,0,0,0.09)', cursor: 'pointer', display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 16 };
-                const iconStyle = (bg) => ({ width: 46, height: 72, borderRadius: 10, background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 });
+                const cardStyle = { width: 260, minHeight: 130, flexShrink: 0, scrollSnapAlign: 'start', background: '#fff', borderRadius: 12, padding: '22px 20px', boxShadow: '0 1px 4px rgba(0,0,0,0.05)', border: '1px solid rgba(0,0,0,0.09)', cursor: 'pointer', display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 18 };
+                const iconStyle = (bg) => ({ width: 48, height: 90, borderRadius: 10, background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 });
                 const labelStyle = { fontSize: 12, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", fontWeight: 400, marginBottom: 2 };
                 const valueStyle = { fontSize: 20, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.03em', lineHeight: 1 };
                 const subStyle = { fontSize: 13, color: '#787776', fontFamily: "'DM Sans', sans-serif", marginTop: 3, lineHeight: 1.4 };
