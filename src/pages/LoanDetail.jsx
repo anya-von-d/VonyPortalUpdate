@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Loan, Payment, User, LoanAgreement, PublicProfile } from "@/entities/all";
-import { FileText, ChevronLeft, X } from "lucide-react";
+import { FileText, BarChart2, ChevronLeft, X } from "lucide-react";
 import { format, addDays, addMonths, addWeeks } from "date-fns";
 import { useAuth } from "@/lib/AuthContext";
 import { formatMoney } from "@/components/utils/formatMoney";
@@ -440,7 +440,7 @@ export default function LoanDetail() {
               On {signedDateFmt} both parties signed a lending agreement where{" "}
               {lenderName} agreed to lend {borrowerName}{" "}
               <span style={{ color: "#1A1918", fontWeight: 500 }}>{formatMoney(loan.amount || 0)}</span>
-              {loan.purpose ? <> for {loan.purpose}</> : ""}.
+              {(agreement?.purpose || loan.purpose) ? <> for {agreement?.purpose || loan.purpose}</> : ""}.
             </p>
           </div>
 
@@ -617,6 +617,8 @@ export default function LoanDetail() {
               </div>
 
               <div style={docBoxBody}>
+              {/* Centered document title */}
+              <p style={{ textAlign: "center", fontSize: 18, fontWeight: 700, color: "#1A1918", fontFamily: "'DM Sans', sans-serif", letterSpacing: "-0.02em", margin: "0 0 28px" }}>Promissory Note</p>
               {/* Principal */}
               <div style={{ marginBottom: 20 }}>
                 <p style={{ ...rowMeta, marginBottom: 2 }}>Principal amount</p>
@@ -687,10 +689,15 @@ export default function LoanDetail() {
           {amortSchedule.length > 0 && (
             <div style={docBox}>
               <div style={docBoxHeader}>
-                <span style={{ fontSize: 13, fontWeight: 600, color: "#1A1918", fontFamily: "'DM Sans', sans-serif", letterSpacing: "-0.01em" }}>Amortization table</span>
+                <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
+                  <BarChart2 size={13} style={{ color: "#9B9A98" }} />
+                  <span style={{ fontSize: 13, fontWeight: 600, color: "#1A1918", fontFamily: "'DM Sans', sans-serif", letterSpacing: "-0.01em" }}>Amortization table</span>
+                </div>
               </div>
 
               <div style={docBoxBody}>
+              {/* Centered document title */}
+              <p style={{ textAlign: "center", fontSize: 18, fontWeight: 700, color: "#1A1918", fontFamily: "'DM Sans', sans-serif", letterSpacing: "-0.02em", margin: "0 0 28px" }}>Amortization Schedule</p>
               {/* Summary rows — same label/value style */}
               <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: 28 }}>
                 {[
