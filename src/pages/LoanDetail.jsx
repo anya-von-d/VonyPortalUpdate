@@ -646,19 +646,17 @@ export default function LoanDetail() {
 
               {/* Signatures */}
               <p style={{ ...sectionTitle, marginBottom: 14 }}>Signatures</p>
-              <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+              <div style={{ display: "flex", gap: 40, flexWrap: "wrap" }}>
                 {[
                   { role: "Lender",   name: agreement.lender_name   || lenderName,   signed: agreement.lender_signed_date },
                   { role: "Borrower", name: agreement.borrower_name || borrowerName, signed: agreement.borrower_signed_date },
                 ].map((sig, idx) => (
                   <div key={idx}>
-                    {/* Generated cursive signature */}
+                    {/* Cursive signature with underline, no box */}
                     <div style={{
-                      background: "#F9F8F6",
-                      borderRadius: 10,
-                      padding: "12px 16px 10px",
-                      marginBottom: 10,
                       borderBottom: "1.5px solid #1A1918",
+                      paddingBottom: 6,
+                      marginBottom: 10,
                       display: "inline-block",
                       minWidth: 180,
                     }}>
@@ -724,11 +722,11 @@ export default function LoanDetail() {
                         <tr key={row.number} style={{ borderBottom: "1px solid rgba(0,0,0,0.05)", opacity: isPaid ? 1 : 0.7 }}>
                           <td style={{ padding: "10px 10px", color: "#9B9A98", fontSize: 13 }}>{row.number}</td>
                           <td style={{ padding: "10px 10px", color: "#1A1918", whiteSpace: "nowrap", fontSize: 13 }}>{format(row.date, "MMM d, yyyy")}</td>
-                          <td style={{ padding: "10px 10px", textAlign: "right", color: "#787776", fontSize: 13 }}>{formatMoney(row.startingBalance)}</td>
-                          <td style={{ padding: "10px 10px", textAlign: "right", color: isPaid ? "#1A1918" : "#787776", fontWeight: isPaid ? 500 : 400, fontSize: 13 }}>{formatMoney(row.principal)}</td>
-                          <td style={{ padding: "10px 10px", textAlign: "right", color: "#787776", fontSize: 13 }}>{formatMoney(row.interest)}</td>
-                          <td style={{ padding: "10px 10px", textAlign: "right", color: "#787776", fontSize: 13 }}>{formatMoney(row.principalToDate)}</td>
-                          <td style={{ padding: "10px 10px", textAlign: "right", color: "#787776", fontSize: 13 }}>{formatMoney(row.interestToDate)}</td>
+                          <td style={{ padding: "10px 10px", textAlign: "right", color: "#1A1918", fontSize: 13 }}>{formatMoney(row.startingBalance)}</td>
+                          <td style={{ padding: "10px 10px", textAlign: "right", color: "#1A1918", fontWeight: 500, fontSize: 13 }}>{formatMoney(row.principal)}</td>
+                          <td style={{ padding: "10px 10px", textAlign: "right", color: "#1A1918", fontSize: 13 }}>{formatMoney(row.interest)}</td>
+                          <td style={{ padding: "10px 10px", textAlign: "right", color: "#1A1918", fontSize: 13 }}>{formatMoney(row.principalToDate)}</td>
+                          <td style={{ padding: "10px 10px", textAlign: "right", color: "#1A1918", fontSize: 13 }}>{formatMoney(row.interestToDate)}</td>
                           <td style={{ padding: "10px 10px", textAlign: "right", color: "#1A1918", fontWeight: 500, fontSize: 13 }}>{formatMoney(row.endingBalance)}</td>
                         </tr>
                       );
