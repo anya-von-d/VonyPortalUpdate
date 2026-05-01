@@ -5,7 +5,7 @@ import { useNavigate, Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import {
   DollarSign, CheckCircle, CreditCard, Banknote, Smartphone, ChevronDown,
-  AlertCircle, ArrowRight, ArrowLeft, X, Clock, ArrowUpDown
+  AlertCircle, ArrowRight, ArrowLeft, Clock, ArrowUpDown
 } from "lucide-react";
 import { format, addMonths } from "date-fns";
 import { toLocalDate } from "@/components/utils/dateUtils";

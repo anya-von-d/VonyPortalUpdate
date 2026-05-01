@@ -1,9 +1,8 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Friendship, PublicProfile } from '@/entities/all';
 import { useAuth } from '@/lib/AuthContext';
-import { createPageUrl } from '@/utils';
-import { Star, Search, X, Send, ChevronDown, ArrowLeft } from 'lucide-react';
+import { Star, Search, X, Send, ArrowLeft } from 'lucide-react';
 import UserAvatar from '@/components/ui/UserAvatar';
 import confetti from 'canvas-confetti';
 import MoreMenu from '@/components/MoreMenu';

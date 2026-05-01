@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import { User, PublicProfile, Friendship, Loan, Payment } from "@/entities/all";
+import { User, PublicProfile, Loan, Payment } from "@/entities/all";
 import { UploadFile } from "@/integrations/Core";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";

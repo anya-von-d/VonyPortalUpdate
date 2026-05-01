@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Loan, Payment, User, PublicProfile } from "@/entities/all";
 import { Activity, ArrowUp, ArrowDown, Send, Check, X, Ban, ChevronDown, ChevronRight, Search, Download, SlidersHorizontal } from "lucide-react";
-import { format, subDays, subMonths, subYears } from "date-fns";
+import { subDays, subMonths, subYears } from "date-fns";
 import { todayInTZ, currentDateStringTZ, formatTZ } from "@/components/utils/timezone";
 import { useAuth } from "@/lib/AuthContext";
 import BorrowerSignatureModal from "@/components/loans/BorrowerSignatureModal";

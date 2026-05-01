@@ -10,10 +10,10 @@ import { format, startOfMonth, endOfMonth, addMonths, addDays, isAfter, differen
 import { formatMoney } from "@/components/utils/formatMoney";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toLocalDate, daysUntil as daysUntilDate } from "@/components/utils/dateUtils";
-import { todayInTZ, currentDateStringTZ, formatTZ } from "@/components/utils/timezone";
+import { todayInTZ, formatTZ } from "@/components/utils/timezone";
 import { countNotifications } from "@/components/utils/notificationCount";
 
-import { Plus, CreditCard, ArrowUpRight, ArrowDownLeft, Calendar, Users, User, BarChart2 } from "lucide-react";
+import { Plus, CreditCard, ArrowUpRight, ArrowDownLeft } from "lucide-react";
 import DesktopSidebar from '../components/DesktopSidebar';
 import MeshMobileNav from "@/components/MeshMobileNav";
 import UserAvatar from "@/components/ui/UserAvatar";

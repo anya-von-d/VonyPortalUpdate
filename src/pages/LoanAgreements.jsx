@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { LoanAgreement, User, PublicProfile, Loan, Payment } from "@/entities/all";
-import { FileText, CheckCircle, Download, ChevronDown, ChevronRight, ChevronLeft, X, Calendar, DollarSign, Percent, Clock, Search, Receipt, SlidersHorizontal } from "lucide-react";
+import { FileText, CheckCircle, Download, ChevronDown, ChevronRight, X, Calendar, DollarSign, Percent, Clock, Search, Receipt, SlidersHorizontal } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format, addMonths, addWeeks, addDays } from "date-fns";
 import { jsPDF } from "jspdf";

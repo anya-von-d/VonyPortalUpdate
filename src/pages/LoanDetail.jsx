@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Loan, Payment, User, LoanAgreement, PublicProfile } from "@/entities/all";
-import { FileText, BarChart2, ChevronLeft, X, Download } from "lucide-react";
+import { FileText, BarChart2, ChevronLeft, Download } from "lucide-react";
 import UserAvatar from "@/components/ui/UserAvatar";
 import { format, addDays, addMonths, addWeeks } from "date-fns";
 import { useAuth } from "@/lib/AuthContext";
