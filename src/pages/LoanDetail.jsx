@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Loan, Payment, User, LoanAgreement, PublicProfile } from "@/entities/all";
-import { FileText, BarChart2, ChevronLeft, X } from "lucide-react";
+import { FileText, BarChart2, ChevronLeft, X, Download } from "lucide-react";
+import UserAvatar from "@/components/ui/UserAvatar";
 import { format, addDays, addMonths, addWeeks } from "date-fns";
 import { useAuth } from "@/lib/AuthContext";
 import { formatMoney } from "@/components/utils/formatMoney";
@@ -433,9 +434,22 @@ export default function LoanDetail() {
 
           {/* ── Agreement header ── */}
           <div style={{ marginBottom: 40 }}>
-            <h1 style={{ fontSize: 24, fontWeight: 700, color: "#1A1918", margin: "0 0 12px", fontFamily: "'DM Sans', sans-serif", letterSpacing: "-0.03em", lineHeight: 1.25 }}>
-              Lending Agreement between {lenderName} and {borrowerName}
-            </h1>
+            <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 12 }}>
+              <h1 style={{ fontSize: 24, fontWeight: 700, color: "#1A1918", margin: 0, fontFamily: "'DM Sans', sans-serif", letterSpacing: "-0.03em", lineHeight: 1.25, flex: 1 }}>
+                Lending Agreement between {lenderName} and {borrowerName}
+              </h1>
+              {/* Overlapping avatars */}
+              <div style={{ display: "flex", alignItems: "center", flexShrink: 0 }}>
+                <UserAvatar name={lenderName} src={lenderProfile?.avatar_url || lenderProfile?.profile_picture_url} size={36} />
+                <div style={{ marginLeft: -10 }}>
+                  <UserAvatar name={borrowerName} src={borrowerProfile?.avatar_url || borrowerProfile?.profile_picture_url} size={36} />
+                </div>
+              </div>
+              {/* Download icon */}
+              <button style={{ background: "none", border: "none", cursor: "pointer", padding: 6, color: "#9B9A98", flexShrink: 0, display: "flex", alignItems: "center" }}>
+                <Download size={18} />
+              </button>
+            </div>
             <p style={{ fontSize: 15, color: "#5C5B5A", margin: 0, lineHeight: 1.7, fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>
               On {signedDateFmt} both parties signed a lending agreement where{" "}
               {lenderName} agreed to lend {borrowerName}{" "}
