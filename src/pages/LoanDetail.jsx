@@ -380,6 +380,26 @@ export default function LoanDetail() {
   // Shared styles
   const sectionWrap = { marginBottom: 40 };
 
+  const docBox = {
+    background: '#fff',
+    border: '1px solid rgba(0,0,0,0.09)',
+    borderRadius: 14,
+    boxShadow: '0 1px 6px rgba(0,0,0,0.05)',
+    marginBottom: 40,
+    overflow: 'hidden',
+  };
+
+  const docBoxHeader = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: '13px 22px',
+    borderBottom: '1px solid rgba(0,0,0,0.07)',
+    background: '#FAFAF9',
+  };
+
+  const docBoxBody = { padding: '28px 28px 32px' };
+
   const sectionTitle = {
     fontSize: 13,
     fontWeight: 400,
@@ -587,15 +607,16 @@ export default function LoanDetail() {
 
           {/* ── Promissory Note ── */}
           {agreement && (
-            <div style={sectionWrap}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
-                <p style={{ ...sectionTitle, marginBottom: 0 }}>Promissory Note</p>
-                <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
-                  <FileText size={13} style={{ color: "#C7C6C4" }} />
-                  <span style={{ fontSize: 13, color: "#9B9A98", fontFamily: "'DM Sans', sans-serif" }}>Legal document</span>
+            <div style={docBox}>
+              <div style={docBoxHeader}>
+                <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
+                  <FileText size={13} style={{ color: "#9B9A98" }} />
+                  <span style={{ fontSize: 13, fontWeight: 600, color: "#1A1918", fontFamily: "'DM Sans', sans-serif", letterSpacing: "-0.01em" }}>Promissory Note</span>
                 </div>
+                <span style={{ fontSize: 12, color: "#9B9A98", fontFamily: "'DM Sans', sans-serif" }}>Legal document</span>
               </div>
 
+              <div style={docBoxBody}>
               {/* Principal */}
               <div style={{ marginBottom: 20 }}>
                 <p style={{ ...rowMeta, marginBottom: 2 }}>Principal amount</p>
@@ -660,14 +681,18 @@ export default function LoanDetail() {
                   </div>
                 ))}
               </div>
+              </div>{/* end docBoxBody */}
             </div>
           )}
 
           {/* ── Amortization Table ── */}
           {amortSchedule.length > 0 && (
-            <div style={sectionWrap}>
-              <p style={sectionTitle}>Amortization table</p>
+            <div style={docBox}>
+              <div style={docBoxHeader}>
+                <span style={{ fontSize: 13, fontWeight: 600, color: "#1A1918", fontFamily: "'DM Sans', sans-serif", letterSpacing: "-0.01em" }}>Amortization table</span>
+              </div>
 
+              <div style={docBoxBody}>
               {/* Summary rows — same label/value style */}
               <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: 28 }}>
                 {[
@@ -711,6 +736,7 @@ export default function LoanDetail() {
                   </tbody>
                 </table>
               </div>
+              </div>{/* end docBoxBody */}
             </div>
           )}
 
