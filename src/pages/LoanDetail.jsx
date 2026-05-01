@@ -619,6 +619,19 @@ export default function LoanDetail() {
               <div style={docBoxBody}>
               {/* Centered document title */}
               <p style={{ textAlign: "center", fontSize: 18, fontWeight: 700, color: "#1A1918", fontFamily: "'DM Sans', sans-serif", letterSpacing: "-0.02em", margin: "0 0 28px" }}>Promissory Note</p>
+
+              {/* Parties */}
+              <div style={{ display: "flex", gap: 40, marginBottom: 20 }}>
+                <div>
+                  <p style={{ ...rowMeta, marginBottom: 2 }}>Lender</p>
+                  <p style={{ fontSize: 22, fontWeight: 600, color: "#1A1918", margin: 0, letterSpacing: "-0.02em", fontFamily: "'DM Sans', sans-serif" }}>{lenderName}</p>
+                </div>
+                <div>
+                  <p style={{ ...rowMeta, marginBottom: 2 }}>Borrower</p>
+                  <p style={{ fontSize: 22, fontWeight: 600, color: "#1A1918", margin: 0, letterSpacing: "-0.02em", fontFamily: "'DM Sans', sans-serif" }}>{borrowerName}</p>
+                </div>
+              </div>
+
               {/* Principal */}
               <div style={{ marginBottom: 20 }}>
                 <p style={{ ...rowMeta, marginBottom: 2 }}>Principal amount</p>
@@ -627,7 +640,7 @@ export default function LoanDetail() {
 
               {/* Agreement paragraph */}
               <p style={{ fontSize: 15, lineHeight: 1.75, color: "#1A1918", margin: "0 0 24px", fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>
-                The lender agrees to lend <strong>{borrowerName}</strong> <strong>{formatMoney(agreement.amount)}</strong> before <strong>{format(pnSendFundsDate, 'MMM d, yyyy')}</strong> at an interest rate of <strong>{agreement.interest_rate || 0}%</strong>. The loan will be repaid over <strong>{pnRepaymentPeriod} {pnRepaymentUnit}</strong> in <strong>{pnFrequency}</strong> payments of <strong>{formatMoney(agreement.payment_amount)}</strong>. Payments will be due {pnFrequency === 'weekly' ? <>on <strong>{pnDayOfWeekLabel}</strong></> : <>on the <strong>{pnDayOfMonth}{pnDaySuffix}</strong></>} at <strong>{pnFormattedTime} {pnTimezone}</strong>, with the first of the <strong>{pnNumPayments}</strong> payments due on <strong>{format(pnFirstPaymentDate, 'MMM d, yyyy')}</strong> and the last payment due on <strong>{pnLastPaymentDate ? format(pnLastPaymentDate, 'MMM d, yyyy') : '—'}</strong>.{agreement.purpose ? <> This loan is for <strong>{agreement.purpose}</strong>.</> : ''}
+                <strong>{lenderName}</strong> agrees to lend <strong>{borrowerName}</strong> <strong>{formatMoney(agreement.amount)}</strong> before <strong>{format(pnSendFundsDate, 'MMM d, yyyy')}</strong> at an interest rate of <strong>{agreement.interest_rate || 0}%</strong>. The loan will be repaid over <strong>{pnRepaymentPeriod} {pnRepaymentUnit}</strong> in <strong>{pnFrequency}</strong> payments of <strong>{formatMoney(agreement.payment_amount)}</strong>. Payments will be due {pnFrequency === 'weekly' ? <>on <strong>{pnDayOfWeekLabel}</strong></> : <>on the <strong>{pnDayOfMonth}{pnDaySuffix}</strong></>} at <strong>{pnFormattedTime} {pnTimezone}</strong>, with the first of the <strong>{pnNumPayments}</strong> payments due on <strong>{format(pnFirstPaymentDate, 'MMM d, yyyy')}</strong> and the last payment due on <strong>{pnLastPaymentDate ? format(pnLastPaymentDate, 'MMM d, yyyy') : '—'}</strong>.{agreement.purpose ? <> This loan is for <strong>{agreement.purpose}</strong>.</> : ''}
               </p>
 
               {/* Terms — same label/value style as Loan Overview */}
