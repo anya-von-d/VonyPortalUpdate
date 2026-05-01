@@ -22,7 +22,6 @@ import { format, addDays, addMonths, addWeeks } from "date-fns";
 import { formatMoney } from "@/components/utils/formatMoney";
 import { toLocalDate, getLocalToday, daysUntil as daysUntilDate } from "@/components/utils/dateUtils";
 import { formatTZ } from "@/components/utils/timezone";
-import { useAuth } from "@/lib/AuthContext";
 import MeshMobileNav from "@/components/MeshMobileNav";
 import UserAvatar from "@/components/ui/UserAvatar";
 
@@ -31,19 +30,7 @@ import LoanDetailsModal from "@/components/loans/LoanDetailsModal";
 import BorrowerSignatureModal from "@/components/loans/BorrowerSignatureModal";
 import DesktopSidebar from '../components/DesktopSidebar';
 
-const STAR_CIRCLES = [
-  {cx:82,cy:45,o:0.7},{cx:195,cy:112,o:0.5},{cx:310,cy:28,o:0.8},{cx:420,cy:198,o:0.4},
-  {cx:530,cy:67,o:0.65},{cx:640,cy:245,o:0.55},{cx:755,cy:88,o:0.75},{cx:860,cy:156,o:0.45},
-  {cx:970,cy:34,o:0.7},{cx:1085,cy:201,o:0.6},{cx:1190,cy:78,o:0.5},{cx:1300,cy:267,o:0.7},
-  {cx:1410,cy:45,o:0.55},{cx:1520,cy:134,o:0.65},{cx:48,cy:189,o:0.4},{cx:158,cy:278,o:0.6},
-  {cx:268,cy:156,o:0.5},{cx:378,cy:89,o:0.7},{cx:488,cy:234,o:0.45},{cx:598,cy:145,o:0.6},
-  {cx:708,cy:312,o:0.35},{cx:818,cy:56,o:0.75},{cx:928,cy:223,o:0.5},{cx:1038,cy:98,o:0.65},
-  {cx:1148,cy:289,o:0.4},{cx:1258,cy:167,o:0.7},{cx:1368,cy:234,o:0.55},{cx:1478,cy:78,o:0.6},
-  {cx:1560,cy:256,o:0.45},{cx:125,cy:312,o:0.5},{cx:345,cy:267,o:0.6},{cx:565,cy:34,o:0.75},
-];
-
 export default function Borrowing() {
-  const { logout } = useAuth();
   const [loans, setLoans] = useState([]);
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -74,7 +61,7 @@ export default function Borrowing() {
     try {
       currentUser = await User.me();
       setUser(currentUser);
-    } catch (userError) {
+    } catch {
       console.log("User not authenticated");
       setIsLoading(false);
       return;
@@ -93,10 +80,6 @@ export default function Borrowing() {
       );
 
       setLoans(userLoans);
-      // Store all user loans (both lending and borrowing) for record payment dropdowns
-      const allMyLoans = (allLoans || []).filter(loan =>
-        loan.borrower_id === currentUser.id || loan.lender_id === currentUser.id
-      );
       setPublicProfiles(allProfiles || []);
       setLoanAgreements(allAgreements || []);
       setAllPayments(allPmts || []);
@@ -108,11 +91,6 @@ export default function Borrowing() {
 
   const handleMakePayment = () => {
     window.location.href = createPageUrl("RecordPayment");
-  };
-
-  const handleViewDetails = (loan) => {
-    setSelectedLoanDetails({ loan, type: 'borrowed' });
-    setShowDetailsModal(true);
   };
 
   const handleCancelLoan = (loan) => {
@@ -144,10 +122,6 @@ export default function Borrowing() {
     }
   };
 
-  const getAgreementForLoan = (loanId) => {
-    return loanAgreements.find(a => a.loan_id === loanId);
-  };
-
   const openDocPopup = (type, agreement) => {
     setActiveDocPopup(type);
     setDocPopupAgreement(agreement);
@@ -158,7 +132,7 @@ export default function Borrowing() {
     setDocPopupAgreement(null);
   };
 
-  const handleEditLoan = (loan) => {
+  const handleEditLoan = () => {
     // Request loan edit - placeholder for now
     alert('Loan edit request functionality coming soon');
   };
@@ -186,20 +160,6 @@ export default function Borrowing() {
     }
   };
 
-  const handleDeclineOffer = async (loanId) => {
-    try {
-      await Loan.update(loanId, { status: 'declined' });
-      loadData();
-    } catch (error) {
-      console.error("Error declining loan offer:", error);
-    }
-  };
-
-  const openSignModal = (offer) => {
-    setSelectedOffer(offer);
-    setShowSignModal(true);
-  };
-
   // Filter loans by status
   const activeLoans = loans.filter(loan => loan.status === 'active');
   const manageableLoans = loans.filter(loan => loan.status === 'active' || loan.status === 'cancelled');
@@ -212,24 +172,6 @@ export default function Borrowing() {
     }
   }, [manageableLoans, manageLoanInitialized]);
 
-  const pendingOffers = loans.filter(loan => loan.status === 'pending');
-  const completedLoans = loans.filter(loan => loan.status === 'completed' || loan.status === 'cancelled');
-
-  const totalBorrowed = activeLoans.reduce((sum, loan) => sum + (loan.amount || 0), 0);
-  const totalOwed = activeLoans.reduce((sum, loan) => sum + (loan.total_amount || loan.amount || 0), 0);
-
-  // Calculate total paid across all loans
-  const calculateTotalPaid = () => {
-    let totalPaid = 0;
-    activeLoans.forEach(loan => {
-      const paidAmount = loan.amount_paid || 0;
-      totalPaid += paidAmount;
-    });
-    return totalPaid;
-  };
-
-  const totalPaid = calculateTotalPaid();
-  const remainingBalance = totalOwed - totalPaid;
 
   // Find next payment due
   const nextPaymentLoan = activeLoans
@@ -254,9 +196,6 @@ export default function Borrowing() {
   const nextPaymentLenderUsername = nextPaymentLoan
     ? publicProfiles.find(p => p.user_id === nextPaymentLoan.lender_id)?.full_name || 'User'
     : null;
-
-  // Overall repayment progress
-  const overallProgress = totalOwed > 0 ? (totalPaid / totalOwed) * 100 : 0;
 
   // Get user by ID
   const getUserById = (userId) => {
@@ -495,18 +434,7 @@ export default function Borrowing() {
       });
     }
 
-    // Calculate remaining balance and recalculated payment
-    const totalOwed = Math.round((remainingPrincipal + (remainingPrincipal > 0 ? remainingPrincipal * r * (totalPeriods - fullPaymentCount) : 0)) * 100) / 100;
-
-    // Simpler total owed: remaining principal + interest that will accrue on it
-    const remainingPeriodsCount = Math.max(1, totalPeriods - periodResults.filter(p => p.isPast && p.hasConfirmedPayments).length);
-    const futureInterest = Math.round(remainingPrincipal * r * remainingPeriodsCount * 100) / 100;
-    const dynamicTotalOwed = Math.round((remainingPrincipal + futureInterest) * 100) / 100;
-
-    // Current total owed = unpaid principal + interest accrued so far
-    const currentTotalOwed = Math.round((remainingPrincipal + totalInterestAccrued - (totalPaid - (principal - remainingPrincipal))) * 100) / 100;
-
-    // Simplest: total owed right now = principal + all interest accrued to date - all payments made
+    // Total owed right now = principal + all interest accrued to date - all payments made
     const totalOwedNow = Math.max(0, Math.round((principal + totalInterestAccrued - totalPaid) * 100) / 100);
 
     // Recalculated monthly payment based on remaining balance
@@ -782,8 +710,6 @@ export default function Borrowing() {
     );
   };
 
-  const tabs = [];
-
   const PageCard = ({ title, headerRight, children, style }) => (
     <div style={{ marginBottom: 24, ...style }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: 5, marginBottom: 2 }}>
@@ -1057,7 +983,7 @@ export default function Borrowing() {
                       .sort((a, b) => a.days - b.days)
                       .slice(0, 5);
                     if (rows.length === 0) return <div style={{ padding: '10px 0', fontSize: 12, color: '#9B9A98', textAlign: 'center' }}>You're all clear! Nothing coming up yet</div>;
-                    return rows.map((loan, idx) => {
+                    return rows.map((loan) => {
                       const isOverdue = loan.days < 0;
                       const daysLabel = isOverdue ? `${Math.abs(loan.days)}d late` : loan.days === 0 ? 'today' : `${loan.days}d`;
                       return (

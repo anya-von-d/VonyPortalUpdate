@@ -1,7 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/lib/AuthContext";
-import { Loan, Payment, PublicProfile } from "@/entities/all";
 import MeshMobileNav from "@/components/MeshMobileNav";
 import DesktopSidebar from '../components/DesktopSidebar';
 
@@ -57,56 +56,13 @@ const LOANS = {
 };
 
 export default function LoanHelp() {
-  const { user: authUser, userProfile, logout } = useAuth();
+  const { user: authUser, userProfile } = useAuth();
   const user = userProfile ? { ...userProfile, id: authUser?.id } : null;
   const [category, setCategory] = useState('student');
   const [compared, setCompared] = useState({});
 
-  const [allLoans, setAllLoans] = useState([]);
-  const [allPayments, setAllPayments] = useState([]);
-  const [publicProfiles, setPublicProfiles] = useState([]);
-
-  useEffect(() => {
-    if (!user?.id) return;
-    Promise.all([
-      Loan.list('-created_at').catch(() => []),
-      Payment.list('-created_at').catch(() => []),
-      PublicProfile.list().catch(() => []),
-    ]).then(([loans, payments, profiles]) => {
-      setAllLoans((loans || []).filter(l => l.lender_id === user.id || l.borrower_id === user.id));
-      setAllPayments(payments || []);
-      setPublicProfiles(profiles || []);
-    });
-  }, [user?.id]);
-
-  const pendingToConfirm = allPayments.filter(p => {
-    const loan = allLoans.find(l => l.id === p.loan_id);
-    return loan && loan.lender_id === user?.id && p.status === 'pending_confirmation';
-  });
-
-  const recentActivity = allPayments
-    .filter(p => p.status === 'confirmed' || p.status === 'completed')
-    .slice(0, 5)
-    .map(p => {
-      const loan = allLoans.find(l => l.id === p.loan_id);
-      if (!loan) return null;
-      const isLender = loan.lender_id === user?.id;
-      const otherId = isLender ? loan.borrower_id : loan.lender_id;
-      const otherProfile = publicProfiles.find(pr => pr.user_id === otherId);
-      const name = otherProfile?.full_name?.split(' ')[0] || 'User';
-      return { id: p.id, isLender, name, amount: p.amount || 0 };
-    })
-    .filter(Boolean);
-
   const toggleCompare = (key) => setCompared(prev => ({ ...prev, [key]: !prev[key] }));
   const loans = LOANS[category] || [];
-
-  const RightSection = ({ title, children }) => (
-    <div style={{ marginBottom: 40 }}>
-      <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif", paddingBottom: 5, marginBottom: 2 }}>{title}</div>
-      {children}
-    </div>
-  );
 
   return (
     <div className="mesh-layout" style={{ minHeight: '100vh', display: 'grid', gridTemplateColumns: '200px 1fr', gap: 0, fontFamily: "'DM Sans', sans-serif" }}>

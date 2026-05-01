@@ -219,7 +219,7 @@ export default function BorrowerSignatureModal({
               What you're agreeing to
             </p>
             <div className="space-y-2">
-              {BORROWER_CHECKLIST.map((item, index) => (
+              {BORROWER_CHECKLIST.map((item) => (
                 <label
                   key={item.id}
                   className="flex items-start gap-3 p-2 rounded-xl hover:bg-[#82F0B9]/5 cursor-pointer transition-colors group"

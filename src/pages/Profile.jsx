@@ -678,7 +678,7 @@ export default function Profile() {
   };
 
   const handleLogout = async () => {
-    try { await User.logout(); } catch (_) {}
+    try { await User.logout(); } catch {}
     if (logout) logout();
     navigate(createPageUrl("Home"));
   };

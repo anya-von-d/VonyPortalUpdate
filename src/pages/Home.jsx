@@ -20,99 +20,6 @@ import UserAvatar from "@/components/ui/UserAvatar";
 import BorrowerSignatureModal from "@/components/loans/BorrowerSignatureModal";
 import { createPortal } from 'react-dom';
 
-// Loan Carousel component for bottom section
-function LoanCarousel({ notifications, onRecordPayment }) {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const totalSlides = notifications.length;
-
-  useEffect(() => {
-    if (totalSlides <= 1) return;
-    const timer = setInterval(() => {
-      setCurrentSlide(prev => (prev + 1) % totalSlides);
-    }, 8000);
-    return () => clearInterval(timer);
-  }, [totalSlides]);
-
-  const goTo = (index) => {
-    if (index < 0) index = totalSlides - 1;
-    if (index >= totalSlides) index = 0;
-    setCurrentSlide(index);
-  };
-
-  if (totalSlides === 0) return null;
-
-  return (
-    <div className="glass-carousel-frame" style={{ marginTop: 36 }}>
-      <div className="galaxy-slide" style={{ position: 'relative', overflow: 'hidden', borderRadius: 20 }}>
-        <div style={{ display: 'flex', transition: 'transform 0.45s cubic-bezier(0.4, 0, 0.2, 1)', transform: `translateX(-${currentSlide * 100}%)` }}>
-          {notifications.map((notif, i) => (
-            <div key={i} style={{ minWidth: '100%', padding: '40px 60px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 32 }}>
-              <div>
-                <h3 style={{ fontSize: 18, fontWeight: 600, color: 'white', marginBottom: 6, letterSpacing: '-0.02em' }}>
-                  {notif.title}
-                </h3>
-                <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', lineHeight: 1.5 }}>
-                  {notif.description}
-                </p>
-              </div>
-              {notif.action && (
-                <button
-                  onClick={notif.action.onClick}
-                  style={{
-                    padding: '11px 24px', borderRadius: 20, background: 'white', color: '#1A1918',
-                    fontSize: 13, fontWeight: 600, border: 'none', cursor: 'pointer',
-                    fontFamily: "'DM Sans', sans-serif", boxShadow: '0 4px 0 rgba(0,0,0,0.1)',
-                    flexShrink: 0, whiteSpace: 'nowrap', transition: 'background 0.15s, transform 0.1s, box-shadow 0.1s'
-                  }}
-                >
-                  {notif.action.label}
-                </button>
-              )}
-            </div>
-          ))}
-        </div>
-        {/* Arrows */}
-        {totalSlides > 1 && (
-          <>
-            <button onClick={() => goTo(currentSlide - 1)} style={{
-              position: 'absolute', top: '50%', left: 12, transform: 'translateY(-50%)',
-              width: 32, height: 32, borderRadius: '50%', border: 'none', background: 'white',
-              boxShadow: '0 1px 6px rgba(0,0,0,0.08), 0 2px 12px rgba(0,0,0,0.04)',
-              cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-              zIndex: 2, opacity: 0.7
-            }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7792F4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-            </button>
-            <button onClick={() => goTo(currentSlide + 1)} style={{
-              position: 'absolute', top: '50%', right: 12, transform: 'translateY(-50%)',
-              width: 32, height: 32, borderRadius: '50%', border: 'none', background: 'white',
-              boxShadow: '0 1px 6px rgba(0,0,0,0.08), 0 2px 12px rgba(0,0,0,0.04)',
-              cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-              zIndex: 2, opacity: 0.7
-            }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7792F4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-            </button>
-          </>
-        )}
-        {/* Dots */}
-        {totalSlides > 1 && (
-          <div style={{ position: 'absolute', bottom: 16, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 8, zIndex: 2 }}>
-            {notifications.map((_, i) => (
-              <button key={i} onClick={() => setCurrentSlide(i)} style={{
-                width: i === currentSlide ? 22 : 7, height: 7, borderRadius: i === currentSlide ? 10 : '50%',
-                background: i === currentSlide ? 'white' : 'rgba(255,255,255,0.4)',
-                border: 'none', padding: 0, cursor: 'pointer',
-                boxShadow: i === currentSlide ? '0 0 8px rgba(255,255,255,0.4)' : 'none',
-                transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
-              }} />
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
 // Helper function to sync public profile
 const syncPublicProfile = async (userData) => {
   if (!userData || !userData.id || !userData.username || !userData.full_name) return;
@@ -139,7 +46,7 @@ const syncPublicProfile = async (userData) => {
 };
 
 export default function Home() {
-  const { user: authUser, userProfile, isLoadingAuth, navigateToLogin, logout } = useAuth();
+  const { user: authUser, userProfile, isLoadingAuth, navigateToLogin } = useAuth();
   const [loans, setLoans] = useState([]);
   const [payments, setPayments] = useState([]);
   const [publicProfiles, setPublicProfiles] = useState([]);
@@ -150,57 +57,13 @@ export default function Home() {
   const overdueCountRef = useRef(0);
   const loansChartRef = useRef(null);
   const activeLoansRef = useRef(null);
-  const [activeAnimKey, setActiveAnimKey] = useState(0);
-  const [progressTab, setProgressTab] = useState('lending'); // 'lending' | 'borrowing'
+  const [, setActiveAnimKey] = useState(0);
   const [confirmPaymentTarget, setConfirmPaymentTarget] = useState(null); // { payment, loan, profile }
   const [confirmWorking, setConfirmWorking] = useState(false);
-  const [viewLoanTarget, setViewLoanTarget] = useState(null);    // { loan, borrowerProfile }
-  const [viewPaymentTarget, setViewPaymentTarget] = useState(null); // { payment, loan, lenderProfile }
   const [reviewOfferTarget, setReviewOfferTarget] = useState(null); // { loan, lenderProf }
   const [pendingDetailTarget, setPendingDetailTarget] = useState(null); // { type, loan?, payment?, profile?, loanForPayment? }
   const navigate = useNavigate();
-  // Tasks-for-the-Week: checked IDs keyed by ISO date of week start (Monday).
-  const weekStartKey = (() => {
-    const d = todayInTZ();
-    const day = d.getDay(); // 0=Sun..6=Sat
-    const diff = day === 0 ? -6 : 1 - day; // shift to Monday
-    d.setDate(d.getDate() + diff);
-    d.setHours(0, 0, 0, 0);
-    return d.toISOString().slice(0, 10);
-  })();
-  const [checkedTasks, setCheckedTasks] = useState(() => {
-    try {
-      const raw = localStorage.getItem(`vony.tasks.${weekStartKey}`);
-      return raw ? new Set(JSON.parse(raw)) : new Set();
-    } catch { return new Set(); }
-  });
-  const toggleTask = (id) => {
-    setCheckedTasks(prev => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id); else next.add(id);
-      try { localStorage.setItem(`vony.tasks.${weekStartKey}`, JSON.stringify([...next])); } catch {}
-      return next;
-    });
-  };
-  const [customTasks, setCustomTasks] = useState(() => {
-    try {
-      const raw = localStorage.getItem(`vony.custom-tasks.${weekStartKey}`);
-      return raw ? JSON.parse(raw) : [];
-    } catch { return []; }
-  });
-  const addCustomTask = (label) => {
-    if (!label.trim()) return;
-    const task = { id: `custom-${Date.now()}`, label: label.trim() };
-    setCustomTasks(prev => {
-      const next = [...prev, task];
-      try { localStorage.setItem(`vony.custom-tasks.${weekStartKey}`, JSON.stringify(next)); } catch {}
-      return next;
-    });
-  };
-  const [addingTask, setAddingTask] = useState(false);
-  const [newTaskText, setNewTaskText] = useState('');
   const [lbTab, setLbTab] = useState('lending'); // 'lending' | 'borrowing'
-  const [selectedBubblePerson, setSelectedBubblePerson] = useState(null);
   const [rankingFilterLending, setRankingFilterLending] = useState('status');
   const [rankingFilterBorrowing, setRankingFilterBorrowing] = useState('status');
   const [friendPopup, setFriendPopup] = useState(null); // { friendId, profile, x, y }
@@ -524,24 +387,15 @@ export default function Home() {
 
   const myLoans = safeLoans.filter(loan => loan && (loan.lender_id === user.id || loan.borrower_id === user.id));
   const pendingOffers = safeLoans.filter(loan => loan && loan.borrower_id === user.id && loan.status === 'pending');
-  // Loans YOU sent as lender, still awaiting borrower signature
-  const pendingLoanOffersSent = safeLoans.filter(loan => loan && loan.lender_id === user.id && loan.status === 'pending');
-  // Payments YOU recorded that the other person hasn't confirmed yet
-  const pendingPaymentsSentByMe = safePayments.filter(p => p && p.recorded_by === user.id && p.status === 'pending_confirmation');
-
   const lentLoans = myLoans.filter(l => l && l.lender_id === user.id && l.status === 'active');
   const borrowedLoans = myLoans.filter(l => l && l.borrower_id === user.id && l.status === 'active');
   const activeLoanCount = myLoans.filter(l => l && l.status === 'active').length;
 
   const totalLentAmount = lentLoans.reduce((sum, loan) => sum + (loan.total_amount || loan.amount || 0), 0);
   const totalRepaid = lentLoans.reduce((sum, loan) => sum + (loan.amount_paid || 0), 0);
-  const percentRepaid = totalLentAmount > 0 ? Math.round((totalRepaid / totalLentAmount) * 100) : 0;
-  const lentRemaining = totalLentAmount - totalRepaid;
 
   const totalBorrowedAmount = borrowedLoans.reduce((sum, loan) => sum + (loan.total_amount || loan.amount || 0), 0);
   const totalPaidBack = borrowedLoans.reduce((sum, loan) => sum + (loan.amount_paid || 0), 0);
-  const percentPaid = totalBorrowedAmount > 0 ? Math.round((totalPaidBack / totalBorrowedAmount) * 100) : 0;
-  const borrowedRemaining = totalBorrowedAmount - totalPaidBack;
 
   // Next payment (borrower)
   const nextBorrowerPayment = myLoans
@@ -561,24 +415,8 @@ export default function Home() {
     .sort((a, b) => a.date - b.date)[0];
 
   // Friends & loans booleans
-  const acceptedFriendships = friendships.filter(f => f && f.status === 'accepted');
-  const hasFriends = acceptedFriendships.length > 0;
   const hasLoans = activeLoanCount > 0;
-  const hasLendingLoans = lentLoans.length > 0;
-  const hasBorrowingLoans = borrowedLoans.length > 0;
 
-  // Inbox / notification count
-  const myLoanIds = myLoans.map(l => l.id);
-  const paymentsToConfirm = safePayments.filter(p =>
-    p && p.status === 'pending_confirmation' && myLoanIds.includes(p.loan_id) && p.recorded_by !== user.id
-  );
-  const termChanges = safeLoans.filter(l =>
-    l && myLoanIds.includes(l.id) && l.status === 'pending_borrower_approval' && l.borrower_id === user.id
-  );
-  const extensionRequests = safeLoans.filter(l =>
-    l && myLoanIds.includes(l.id) && l.extension_requested && l.extension_requested_by !== user.id
-  );
-  const friendRequestsInbox = friendships.filter(f => f && f.friend_id === user.id && f.status === 'pending');
   // Shared count — matches the bell bubble & NotificationsPopup
   const notifCount = countNotifications({
     userId: user.id,
@@ -588,7 +426,6 @@ export default function Home() {
   });
 
   const firstName = user.full_name?.split(' ')[0] || 'User';
-  const dayOfWeek = format(todayInTZ(), 'EEEE');
 
   // Overdue payments (for hero alert) — exclude loans that have a pending_confirmation payment
   const today = todayInTZ();
@@ -602,36 +439,6 @@ export default function Home() {
     if (toLocalDate(l.next_payment_date) >= today) return false;
     return !safePayments.some(p => p && p.loan_id === l.id && p.status === 'pending_confirmation');
   });
-
-  // Upcoming/overdue payment events
-  const activeLoansForPayments = myLoans.filter(l => l && l.status === 'active' && l.next_payment_date);
-  const allPaymentEvents = activeLoansForPayments
-    .map(loan => {
-      const isLender = loan.lender_id === user.id;
-      const otherUserId = isLender ? loan.borrower_id : loan.lender_id;
-      const otherProfile = safeAllProfiles.find(p => p.user_id === otherUserId);
-      const days = daysUntilDate(loan.next_payment_date);
-      const loanPayments = safePayments.filter(p => p && p.loan_id === loan.id);
-      const nextPayDate = toLocalDate(loan.next_payment_date);
-      let periodStart = new Date(nextPayDate);
-      const freq = loan.payment_frequency || 'monthly';
-      if (freq === 'weekly') periodStart.setDate(periodStart.getDate() - 7);
-      else if (freq === 'bi-weekly') periodStart.setDate(periodStart.getDate() - 14);
-      else periodStart.setMonth(periodStart.getMonth() - 1);
-      // Count completed AND pending_confirmation — pending means the period is covered
-      const paidThisPeriod = loanPayments
-        .filter(p => { const pDate = new Date(p.payment_date || p.created_at); return pDate >= periodStart && pDate <= today && (p.status === 'completed' || p.status === 'pending_confirmation'); })
-        .reduce((sum, p) => sum + (p.amount || 0), 0);
-      const originalAmount = loan.payment_amount || 0;
-      const remainingAmount = Math.max(0, originalAmount - paidThisPeriod);
-      return { loan, date: nextPayDate, days, originalAmount, remainingAmount, username: otherProfile?.username || 'user', firstName: otherProfile?.full_name?.split(' ')[0] || otherProfile?.username || 'user', isLender, loanId: loan.id, purpose: loan.purpose || '', profilePic: otherProfile?.profile_picture_url || null, initial: (otherProfile?.full_name || 'U').charAt(0).toUpperCase() };
-    })
-    .filter(e => e.remainingAmount > 0)
-    .sort((a, b) => a.date - b.date);
-
-  const overdueEvents = allPaymentEvents.filter(e => e.days < 0);
-  const upcomingEvents = allPaymentEvents.filter(e => e.days >= 0).slice(0, 5);
-  const combinedPaymentEvents = [...overdueEvents, ...upcomingEvents];
 
   // Monthly stats
   const currentMonth = startOfMonth(today);
@@ -660,295 +467,6 @@ export default function Home() {
   const monthlyExpectedReceive = lentLoans.reduce((sum, l) => sum + (l.payment_amount || 0), 0);
   const monthlyExpectedPay = borrowedLoans.reduce((sum, l) => sum + (l.payment_amount || 0), 0);
 
-  // Monthly scheduled-payment counts (outgoing = borrower side)
-  const outCompletedCount = safePayments.filter(p => {
-    if (!p || p.status !== 'completed') return false;
-    const loan = myLoans.find(l => l.id === p.loan_id);
-    if (!loan || loan.borrower_id !== user.id) return false;
-    const pDate = new Date(p.payment_date || p.created_at);
-    return pDate >= currentMonth && pDate <= currentMonthEnd;
-  }).length;
-  const outPendingCount = borrowedLoans.filter(l =>
-    l && l.next_payment_date &&
-    toLocalDate(l.next_payment_date) >= currentMonth &&
-    toLocalDate(l.next_payment_date) <= currentMonthEnd
-  ).length;
-  const outScheduledTotal = outCompletedCount + outPendingCount;
-  const leftToPay = Math.max(0, monthlyExpectedPay - monthlyPaidOut);
-
-  // Incoming = lender side
-  const inCompletedCount = safePayments.filter(p => {
-    if (!p || p.status !== 'completed') return false;
-    const loan = myLoans.find(l => l.id === p.loan_id);
-    if (!loan || loan.lender_id !== user.id) return false;
-    const pDate = new Date(p.payment_date || p.created_at);
-    return pDate >= currentMonth && pDate <= currentMonthEnd;
-  }).length;
-  const inPendingCount = lentLoans.filter(l =>
-    l && l.next_payment_date &&
-    toLocalDate(l.next_payment_date) >= currentMonth &&
-    toLocalDate(l.next_payment_date) <= currentMonthEnd
-  ).length;
-  const inScheduledTotal = inCompletedCount + inPendingCount;
-  const leftToReceive = Math.max(0, monthlyExpectedReceive - monthlyReceived);
-
-  // Helper message for "How {month} is going" card — prioritized status line.
-  // Overdue cases win; otherwise we pick one of several positive variants
-  // based on whichever condition is true.
-  const howMonthMessage = (() => {
-    if (myLoans.length === 0) {
-      return { text: "No loans yet, create one when you're ready", emoji: '' };
-    }
-    const overdueOwedCount = overdueYouOwe.length;
-    if (overdueOwedCount > 1) {
-      return { text: `${overdueOwedCount} payments need your attention`, emoji: '' };
-    }
-    if (overdueOwedCount === 1) {
-      return { text: "One quick payment and you're back on track", emoji: '' };
-    }
-
-    const EMOJIS = ['💫', '🏆', '🎉', '⚡', '🚀', '🎯', '🥇'];
-    // Stable per-day pick so the emoji doesn't reshuffle on every render
-    const dayKey = today.getDate() + today.getMonth() * 31;
-    const pickEmoji = () => EMOJIS[dayKey % EMOJIS.length];
-
-    // Outgoing ahead of schedule: paid out exceeds what was expected this month
-    if (monthlyExpectedPay > 0 && monthlyPaidOut > monthlyExpectedPay) {
-      return { text: 'Your outgoing payments are ahead of schedule', emoji: pickEmoji() };
-    }
-
-    // Paid back more than newly borrowed this month
-    const borrowedThisMonth = myLoans
-      .filter(l => l && l.borrower_id === user.id && l.created_at && new Date(l.created_at) >= currentMonth && new Date(l.created_at) <= currentMonthEnd)
-      .reduce((sum, l) => sum + (l.amount || 0), 0);
-    if (borrowedThisMonth > 0 && monthlyPaidOut > borrowedThisMonth) {
-      return { text: "You've paid back more than you've borrowed this month", emoji: pickEmoji() };
-    }
-
-    // Only 1 or 2 payments left this month
-    const paymentsLeftThisMonth = myLoans.filter(l =>
-      l && l.borrower_id === user.id && l.status === 'active' && l.next_payment_date &&
-      toLocalDate(l.next_payment_date) >= today && toLocalDate(l.next_payment_date) <= currentMonthEnd
-    ).length;
-    if (paymentsLeftThisMonth === 1 || paymentsLeftThisMonth === 2) {
-      return {
-        text: `Only ${paymentsLeftThisMonth} payment${paymentsLeftThisMonth === 1 ? '' : 's'} left to make this month`,
-        emoji: pickEmoji(),
-      };
-    }
-
-    // Any completed payments this month with no overdue → all on time
-    const hasPaymentsThisMonth = safePayments.some(p => {
-      if (!p || p.status !== 'completed') return false;
-      const loan = myLoans.find(l => l.id === p.loan_id);
-      if (!loan || loan.borrower_id !== user.id) return false;
-      const pDate = new Date(p.payment_date || p.created_at);
-      return pDate >= currentMonth && pDate <= currentMonthEnd;
-    });
-    if (hasPaymentsThisMonth) {
-      return { text: 'All your payments this month have been on time', emoji: pickEmoji() };
-    }
-
-    // Default positive fallback — alternates based on day for subtle variety
-    const DEFAULTS = [
-      "You're on track with your payments this month",
-      'Nice work, everything is on track',
-    ];
-    return { text: DEFAULTS[dayKey % DEFAULTS.length], emoji: pickEmoji() };
-  })();
-
-  // Overdue count for tags
-  const overdueFromBorrowers = myLoans.filter(l =>
-    l && l.lender_id === user.id && l.status === 'active' && l.next_payment_date && toLocalDate(l.next_payment_date) < today
-  ).length;
-  const lentOnTrack = lentLoans.length - overdueFromBorrowers;
-  const borrowingOverdue = overdueYouOwe.length;
-  const borrowingOnTrack = borrowedLoans.length - borrowingOverdue;
-
-  // Bar chart data
-  const chartData = (() => {
-    const allRelevantLoans = myLoans.filter(l => l && (l.status === 'active' || l.status === 'completed'));
-    if (allRelevantLoans.length === 0) return null;
-    const loanDates = allRelevantLoans.map(l => new Date(l.created_at)).filter(d => !isNaN(d.getTime()));
-    if (loanDates.length === 0) return null;
-    const earliestDate = loanDates.reduce((min, d) => d < min ? d : min, loanDates[0]);
-    const chartStartMonth = startOfMonth(earliestDate);
-    const now = todayInTZ();
-    const curMonth = startOfMonth(now);
-    const isCurrentMonthFn = (m) => m.getFullYear() === curMonth.getFullYear() && m.getMonth() === curMonth.getMonth();
-    const months = [];
-    for (let i = 0; i < 6; i++) months.push(addMonths(chartStartMonth, i));
-
-    const data = months.map(monthDate => {
-      const monthEndDate = endOfMonth(monthDate);
-      const isCurrent = isCurrentMonthFn(monthDate);
-      const isFuture = isAfter(monthDate, curMonth);
-      const snapshotDate = isCurrent ? now : (isFuture ? now : monthEndDate);
-      let owedToYou = 0, youOwe = 0;
-      allRelevantLoans.forEach(loan => {
-        const loanCreated = new Date(loan.created_at);
-        if (isAfter(loanCreated, snapshotDate)) return;
-        const totalAmount = loan.total_amount || loan.amount || 0;
-        const isLender = loan.lender_id === user.id;
-        const loanPayments = safePayments.filter(p =>
-          p && p.loan_id === loan.id && (p.status === 'completed' || p.status === 'pending_confirmation') &&
-          !isAfter(new Date(p.payment_date || p.created_at), snapshotDate)
-        );
-        const totalPaid = loanPayments.reduce((sum, p) => sum + (p.amount || 0), 0);
-        const effectivePaid = isCurrent ? (loan.amount_paid || 0) : totalPaid;
-        const remaining = Math.max(0, totalAmount - effectivePaid);
-        if (isFuture) {
-          const currentRemaining = Math.max(0, totalAmount - (loan.amount_paid || 0));
-          const monthsDiff = (monthDate.getFullYear() - curMonth.getFullYear()) * 12 + (monthDate.getMonth() - curMonth.getMonth());
-          const freq = loan.payment_frequency || 'monthly';
-          const paymentsPerMonth = freq === 'weekly' ? 4 : freq === 'bi-weekly' ? 2 : 1;
-          const expectedPaid = monthsDiff * (loan.payment_amount || 0) * paymentsPerMonth;
-          const predicted = Math.max(0, currentRemaining - expectedPaid);
-          if (isLender) owedToYou += predicted; else youOwe += predicted;
-          return;
-        }
-        if (isLender) owedToYou += remaining; else youOwe += remaining;
-      });
-      return { month: monthDate, owedToYou, youOwe, label: format(monthDate, 'MMM'), isCurrent, isFuture };
-    });
-
-    const rawMax = Math.max(...data.map(d => d.owedToYou), ...data.map(d => d.youOwe), 1);
-    // Round the y-axis max up to the nearest 100 so the ticks (max + half) are clean numbers
-    const maxVal = Math.max(100, Math.ceil(rawMax / 100) * 100);
-    return { data, maxVal };
-  })();
-
-  // Recent activity
-  const recentActivity = (() => {
-    const items = [];
-
-    // Loan events
-    myLoans.forEach(loan => {
-      if (!loan || !loan.created_at) return;
-      const isLender = loan.lender_id === user.id;
-      const otherUserId = isLender ? loan.borrower_id : loan.lender_id;
-      const otherProfile = safeAllProfiles.find(pr => pr.user_id === otherUserId);
-      const name = otherProfile?.full_name?.split(' ')[0] || otherProfile?.username || 'user';
-      const amount = `$${(loan.amount || 0).toLocaleString()}`;
-      let description = '';
-      let icon = 'loan';
-      let color = '#7EC0EA';
-
-      if (loan.status === 'pending' || !loan.status) {
-        description = isLender ? `Sent ${amount} loan offer to ${name}` : `Received ${amount} loan offer from ${name}`;
-        icon = isLender ? 'send' : 'receive';
-        color = isLender ? '#4F46E5' : '#03ACEA';
-      } else if (loan.status === 'active') {
-        description = isLender ? `${name} accepted your ${amount} loan` : `You accepted ${amount} loan from ${name}`;
-        icon = 'check'; color = '#06B6D4';
-      } else if (loan.status === 'declined') {
-        description = isLender ? `${name} declined your ${amount} loan` : `You declined ${amount} loan from ${name}`;
-        icon = 'x'; color = '#DC2626';
-      } else if (loan.status === 'cancelled') {
-        description = isLender ? `You cancelled ${amount} loan offer to ${name}` : `${name} cancelled their ${amount} loan offer`;
-        icon = 'x'; color = '#DC2626';
-      } else if (loan.status === 'completed') {
-        description = isLender ? `${name} fully repaid your ${amount} loan` : `You fully repaid ${amount} loan to ${name}`;
-        icon = 'check'; color = '#06B6D4';
-      } else {
-        description = isLender ? `${amount} loan to ${name}` : `${amount} loan from ${name}`;
-      }
-
-      items.push({
-        type: 'loan', date: new Date(loan.created_at), description,
-        detail: formatTZ(loan.created_at, 'MMM d'),
-        icon, color, amount: null
-      });
-    });
-
-    // Payment events
-    safePayments.filter(p => p && myLoans.some(l => l.id === p.loan_id)).forEach(p => {
-      const loan = myLoans.find(l => l.id === p.loan_id);
-      if (!loan) return;
-      const isBorrower = loan.borrower_id === user.id;
-      const otherUserId = isBorrower ? loan.lender_id : loan.borrower_id;
-      const otherProfile = safeAllProfiles.find(pr => pr.user_id === otherUserId);
-      const amount = `$${(p.amount || 0).toLocaleString()}`;
-      const name = otherProfile?.full_name?.split(' ')[0] || otherProfile?.username || 'user';
-      items.push({
-        type: 'payment', date: toLocalDate(p.payment_date) || new Date(p.created_at),
-        description: isBorrower ? `You made a ${amount} payment to ${name}` : `Received ${amount} payment from ${name}`,
-        detail: p.payment_date ? format(toLocalDate(p.payment_date), 'MMM d') : formatTZ(p.created_at, 'MMM d'),
-        icon: isBorrower ? 'send' : 'receive',
-        color: isBorrower ? '#4F46E5' : '#03ACEA',
-        amount: isBorrower ? `-${amount}` : `+${amount}`
-      });
-    });
-
-    return items.sort((a, b) => b.date - a.date).slice(0, 5);
-  })();
-
-  // Carousel notifications
-  const carouselNotifications = (() => {
-    const notifs = [];
-    const nextWeek = addDays(today, 7);
-
-    // Upcoming payments from borrowers
-    myLoans.filter(l => l && l.lender_id === user.id && l.status === 'active' && l.next_payment_date).forEach(loan => {
-      const days = daysUntilDate(loan.next_payment_date);
-      const borrowerProfile = safeAllProfiles.find(p => p.user_id === loan.borrower_id);
-      const bName = borrowerProfile?.full_name?.split(' ')[0] || borrowerProfile?.username || 'user';
-      if (days >= 0 && days <= 7) {
-        notifs.push({
-          title: `${bName}'s next payment is coming up`,
-          description: `We've sent both of you a reminder. Make sure to record the payment when it's made.`
-        });
-      }
-    });
-
-    // Overdue payments you owe
-    overdueYouOwe.forEach(loan => {
-      const lenderProfile = safeAllProfiles.find(p => p.user_id === loan.lender_id);
-      const lName = lenderProfile?.full_name?.split(' ')[0] || lenderProfile?.username || 'user';
-      const days = Math.abs(daysUntilDate(loan.next_payment_date));
-      notifs.push({
-        title: `You have a payment to ${lName} that is overdue`,
-        description: `If you've already paid, make sure to record the payment so it's up to date.`,
-        action: { label: 'Record Payment', onClick: () => { window.location.href = createPageUrl("RecordPayment"); } }
-      });
-    });
-
-    // Overdue from borrowers
-    myLoans.filter(l => l && l.lender_id === user.id && l.status === 'active' && l.next_payment_date && toLocalDate(l.next_payment_date) < today).forEach(loan => {
-      const borrowerProfile = safeAllProfiles.find(p => p.user_id === loan.borrower_id);
-      const bName = borrowerProfile?.full_name?.split(' ')[0] || borrowerProfile?.username || 'user';
-      const days = Math.abs(daysUntilDate(loan.next_payment_date));
-      notifs.push({
-        title: `${bName}'s payment is overdue`,
-        description: `If they've already paid, make sure to record it so your dashboard stays up to date.`,
-        action: { label: 'Record Payment', onClick: () => { window.location.href = createPageUrl("RecordPayment"); } }
-      });
-    });
-
-    // Fallback slides
-    if (hasBorrowingLoans) {
-      notifs.push({
-        title: 'Stay on top of your loans',
-        description: 'Check in on your payment progress and keep track of upcoming due dates.',
-        action: { label: 'Track Progress', onClick: () => window.location.href = createPageUrl("YourLoans") }
-      });
-    }
-    if (hasLendingLoans) {
-      notifs.push({
-        title: 'Review your loan agreements',
-        description: 'View and download your loan documents anytime to stay informed.',
-        action: { label: 'My Documents', onClick: () => window.location.href = createPageUrl("LoanAgreements") }
-      });
-    }
-
-    return notifs.length > 0 ? notifs.slice(0, 4) : [{
-      title: 'Welcome to Vony',
-      description: 'Create a loan or add friends to get started with lending between friends.'
-    }];
-  })();
-
-  // User avatar initial
-  const avatarInitial = (user.full_name || 'U').charAt(0).toUpperCase();
 
   // All overdue reminders for hero alert carousel
   const overdueReminders = overdueYouOwe.map(loan => {
@@ -959,103 +477,6 @@ export default function Home() {
 
   const alertTotal = overdueReminders.length;
   overdueCountRef.current = alertTotal;
-
-  const SectionHeader = ({ title, linkTo, linkLabel, titleColor }) => (
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 5, marginBottom: 2 }}>
-      <span style={{ fontSize: 12, fontWeight: 600, color: titleColor || '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>{title}</span>
-      {linkTo && <Link to={linkTo} style={{ fontSize: 11, fontWeight: 500, color: '#03ACEA', textDecoration: 'none' }}>{linkLabel}</Link>}
-    </div>
-  );
-
-  const renderFriendsCard = (cardClass) => {
-    const friendUserIds = acceptedFriendships.map(f =>
-      f.user_id === user.id ? f.friend_id : f.user_id
-    );
-    const totalFriends = friendUserIds.length;
-    const hasMore = totalFriends > 10;
-    const visibleIds = hasMore ? friendUserIds.slice(0, 9) : friendUserIds.slice(0, 10);
-
-    const getRing = (fId) => {
-      const iOwe = myLoans.some(l => l.status === 'active' && l.borrower_id === user.id && l.lender_id === fId);
-      const theyOwe = myLoans.some(l => l.status === 'active' && l.lender_id === user.id && l.borrower_id === fId);
-      if (iOwe && theyOwe) return 'both';
-      if (iOwe) return 'owe';
-      if (theyOwe) return 'owed';
-      return 'none';
-    };
-
-    return (
-      <div className={cardClass}>
-        {/* Header */}
-        <div style={{ fontSize: 12, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif", marginBottom: 12 }}>Your Friends</div>
-
-        {totalFriends === 0 ? (
-          <div style={{ fontSize: 12, color: '#9B9A98', textAlign: 'center', padding: '8px 0' }}>No friends yet 🌱</div>
-        ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '10px 6px', justifyItems: 'center' }}>
-            {visibleIds.map(fId => {
-              const profile = safeAllProfiles.find(p => p.user_id === fId);
-              const ring = getRing(fId);
-              const isSelected = friendPopup?.friendId === fId;
-              const ringBg = ring === 'both'
-                ? 'conic-gradient(from 0deg, #03ACEA 0deg 180deg, #1D5B94 180deg 360deg)'
-                : ring === 'owe' ? '#1D5B94'
-                : ring === 'owed' ? '#03ACEA'
-                : '#D1D5DB';
-              return (
-                <button
-                  key={fId}
-                  type="button"
-                  onClick={(e) => {
-                    const rect = e.currentTarget.getBoundingClientRect();
-                    setFriendPopup(isSelected ? null : { friendId: fId, profile, x: rect.left + rect.width / 2, y: rect.bottom + 6 });
-                  }}
-                  style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}
-                >
-                  <div style={{ width: 44, height: 44, borderRadius: '50%', background: ringBg, padding: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', boxSizing: 'border-box' }}>
-                    <UserAvatar
-                      name={profile?.full_name || profile?.username || '?'}
-                      src={profile?.profile_picture_url || null}
-                      size={40}
-                    />
-                  </div>
-                  <span style={{ fontSize: 9, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", maxWidth: 44, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {profile?.username || '?'}
-                  </span>
-                </button>
-              );
-            })}
-            {hasMore && (
-              <button
-                type="button"
-                onClick={() => navigate(createPageUrl('Friends'))}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}
-              >
-                <div style={{ width: 40, height: 40, borderRadius: '50%', background: '#F4F3F1', border: '2px solid #D1D5DB', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <span style={{ fontSize: 16, color: '#9B9A98', lineHeight: 1, letterSpacing: 2 }}>···</span>
-                </div>
-                <span style={{ fontSize: 9, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif" }}>more</span>
-              </button>
-            )}
-          </div>
-        )}
-
-        {/* Plus button — bottom right */}
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 10 }}>
-          <button
-            type="button"
-            onClick={() => navigate(createPageUrl('Friends'))}
-            style={{ width: 26, height: 26, borderRadius: '50%', background: '#F4F3F1', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-            aria-label="Add friend"
-          >
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#787776" strokeWidth="2.8" strokeLinecap="round">
-              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-            </svg>
-          </button>
-        </div>
-      </div>
-    );
-  };
 
   return (
     <>
@@ -1337,19 +758,6 @@ export default function Home() {
             const lendingPct = totalLentAmount > 0 ? Math.min(100, (totalRepaid / totalLentAmount) * 100) : 0;
             const borrowingPct = totalBorrowedAmount > 0 ? Math.min(100, (totalPaidBack / totalBorrowedAmount) * 100) : 0;
 
-            const cashIconSvg = (
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="2" y="6" width="20" height="12" rx="2"/>
-                <circle cx="12" cy="12" r="3"/>
-                <path d="M6 12h.01M18 12h.01"/>
-              </svg>
-            );
-            const chevronSvg = (
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#C4C3C1" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="9 18 15 12 9 6"/>
-              </svg>
-            );
-
             return (
               <div style={{ display: 'flex', background: '#ffffff', borderRadius: 14, boxShadow: '0 2px 12px rgba(0,0,0,0.08)', border: '1px solid rgba(0,0,0,0.06)', overflow: 'hidden', marginBottom: 28 }}>
 
@@ -1522,7 +930,7 @@ export default function Home() {
                 return 0;
               });
 
-              const renderLoanRow = (loan, isLending, idx, filter) => {
+              const renderLoanRow = (loan, isLending) => {
                 const accentCol = isLending ? '#03ACEA' : '#1D5B94';
                 const otherId = isLending ? loan.borrower_id : loan.lender_id;
                 const otherProfile = safeAllProfiles.find(p => p.user_id === otherId);
@@ -2196,202 +1604,3 @@ export default function Home() {
   );
 }
 
-/* ─────────────────────────────────────────────────────────────
-   Feature Carousel — shown under "Month at a glance" on Home
-   ───────────────────────────────────────────────────────────── */
-const FEATURE_SLIDES = [
-  {
-    color: '#7C3AED', bg: 'rgba(124,58,237,0.09)',
-    title: 'Set payment reminders',
-    desc: 'Never miss a due date. Get notified automatically when payments are coming up.',
-    cta: 'View schedule →', page: 'Upcoming',
-    icon: (
-      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-        <line x1="12" y1="2" x2="12" y2="4"/>
-      </svg>
-    ),
-  },
-  {
-    color: '#03ACEA', bg: 'rgba(3,172,234,0.09)',
-    title: 'Create loan agreements',
-    desc: 'Generate signed promissory notes and repayment schedules in seconds.',
-    cta: 'Create a loan →', page: 'CreateOffer',
-    icon: (
-      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-        <polyline points="14 2 14 8 20 8"/>
-        <line x1="12" y1="18" x2="12" y2="12"/>
-        <line x1="9" y1="15" x2="15" y2="15"/>
-      </svg>
-    ),
-  },
-  {
-    color: '#10B981', bg: 'rgba(16,185,129,0.09)',
-    title: 'Lend to people you trust',
-    desc: 'Add friends and start lending between people you know — safely and transparently.',
-    cta: 'Add friends →', page: 'Friends',
-    icon: (
-      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-        <circle cx="9" cy="7" r="4"/>
-        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-      </svg>
-    ),
-  },
-  {
-    color: '#F59E0B', bg: 'rgba(245,158,11,0.09)',
-    title: 'Track every transaction',
-    desc: 'Your full payment history and loan activity, always at your fingertips.',
-    cta: 'View records →', page: 'RecentActivity',
-    icon: (
-      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-      </svg>
-    ),
-  },
-  {
-    color: '#EF4444', bg: 'rgba(239,68,68,0.09)',
-    title: 'Plan your month ahead',
-    desc: 'See upcoming cash flow and manage payments before they sneak up on you.',
-    cta: 'Plan ahead →', page: 'PlanYourMonth',
-    icon: (
-      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="3" y="4" width="18" height="18" rx="2"/>
-        <line x1="16" y1="2" x2="16" y2="6"/>
-        <line x1="8" y1="2" x2="8" y2="6"/>
-        <line x1="3" y1="10" x2="21" y2="10"/>
-      </svg>
-    ),
-  },
-];
-
-function FeatureCarousel({ navigate }) {
-  const [idx, setIdx] = useState(0);
-  const [dismissed, setDismissed] = useState(() =>
-    typeof window !== 'undefined' && localStorage.getItem('vony-feature-carousel-dismissed') === '1'
-  );
-  const [animKey, setAnimKey] = useState(0);
-
-  useEffect(() => {
-    if (dismissed) return;
-    const t = setInterval(() => {
-      setIdx(i => (i + 1) % FEATURE_SLIDES.length);
-      setAnimKey(k => k + 1);
-    }, 5000);
-    return () => clearInterval(t);
-  }, [dismissed]);
-
-  if (dismissed) return null;
-
-  const slide = FEATURE_SLIDES[idx];
-
-  const goTo = (i) => {
-    setIdx(i);
-    setAnimKey(k => k + 1);
-  };
-
-  return (
-    <div style={{
-      marginTop: 20,
-      background: '#fff',
-      borderRadius: 16,
-      border: '1px solid rgba(0,0,0,0.06)',
-      boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
-      padding: '16px 16px 14px',
-      overflow: 'hidden',
-      position: 'relative',
-    }}>
-      {/* Dismiss */}
-      <button
-        onClick={() => {
-          localStorage.setItem('vony-feature-carousel-dismissed', '1');
-          setDismissed(true);
-        }}
-        style={{
-          position: 'absolute', top: 10, right: 10,
-          background: 'none', border: 'none', cursor: 'pointer',
-          width: 22, height: 22, borderRadius: '50%',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          color: 'rgba(0,0,0,0.35)',
-          fontSize: 14, lineHeight: 1,
-        }}
-        aria-label="Dismiss"
-      >
-        ×
-      </button>
-
-      {/* Slide content */}
-      <div
-        key={animKey}
-        style={{
-          display: 'flex', alignItems: 'center', gap: 14,
-          animation: 'featureSlideIn 0.35s cubic-bezier(0.22,1,0.36,1) both',
-        }}
-      >
-        {/* Big icon */}
-        <div style={{
-          width: 58, height: 58, borderRadius: 16, flexShrink: 0,
-          background: slide.bg,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          color: slide.color,
-        }}>
-          {slide.icon}
-        </div>
-
-        {/* Text */}
-        <div style={{ flex: 1, minWidth: 0, paddingRight: 18 }}>
-          <div style={{
-            fontSize: 13, fontWeight: 700, color: '#1A1918',
-            fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.01em',
-            marginBottom: 3,
-          }}>
-            {slide.title}
-          </div>
-          <div style={{
-            fontSize: 12, color: '#787776', lineHeight: 1.45,
-            fontFamily: "'DM Sans', sans-serif", marginBottom: 8,
-          }}>
-            {slide.desc}
-          </div>
-          <button
-            onClick={() => navigate(createPageUrl(slide.page))}
-            style={{
-              background: 'none', border: 'none', cursor: 'pointer', padding: 0,
-              fontSize: 12, fontWeight: 600, color: slide.color,
-              fontFamily: "'DM Sans', sans-serif", letterSpacing: '-0.005em',
-            }}
-          >
-            {slide.cta}
-          </button>
-        </div>
-      </div>
-
-      {/* Dot indicators */}
-      <div style={{ display: 'flex', justifyContent: 'center', gap: 5, marginTop: 14 }}>
-        {FEATURE_SLIDES.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => goTo(i)}
-            style={{
-              width: i === idx ? 18 : 6, height: 6,
-              borderRadius: 3, border: 'none', cursor: 'pointer', padding: 0,
-              background: i === idx ? slide.color : 'rgba(0,0,0,0.12)',
-              transition: 'all 0.25s ease',
-            }}
-            aria-label={`Slide ${i + 1}`}
-          />
-        ))}
-      </div>
-
-      <style>{`
-        @keyframes featureSlideIn {
-          from { opacity: 0; transform: translateY(10px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
-    </div>
-  );
-}

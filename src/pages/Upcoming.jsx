@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Loan, Payment, PublicProfile } from "@/entities/all";
 import { useAuth } from "@/lib/AuthContext";
-import { useDemoMode } from "@/lib/DemoModeContext";
 import RecordPaymentModal from "@/components/loans/RecordPaymentModal";
 import {
   format, addDays, addWeeks, addMonths,
@@ -36,7 +35,6 @@ export default function Upcoming() {
   const isDragging = useRef(false);
   const calPanelRef = useRef(null);
 
-  const { isDemoMode } = useDemoMode();
   const user = userProfile ? { ...userProfile, id: authUser?.id, email: authUser?.email } : null;
 
   const safeEntityCall = async (entityCall, fallback = []) => {

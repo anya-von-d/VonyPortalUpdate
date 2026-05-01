@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format, addDays, addMonths, addWeeks, startOfMonth, endOfMonth } from "date-fns";
-import { useAuth } from "@/lib/AuthContext";
 import { formatMoney } from "@/components/utils/formatMoney";
 import { toLocalDate, getLocalToday, daysUntil as daysUntilDate } from "@/components/utils/dateUtils";
 import { todayInTZ, formatTZ } from "@/components/utils/timezone";
@@ -22,7 +21,6 @@ import UserAvatar from "@/components/ui/UserAvatar";
 import DesktopSidebar from '../components/DesktopSidebar';
 
 export default function YourLoans({ defaultTab, embeddedMode }) {
-  const { logout } = useAuth();
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -32,7 +30,7 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
   const [allLoans, setAllLoans] = useState([]);
   const [allPayments, setAllPayments] = useState([]);
   const [publicProfiles, setPublicProfiles] = useState([]);
-  const [loanAgreements, setLoanAgreements] = useState([]);
+  const [, setLoanAgreements] = useState([]);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [selectedLoanDetails, setSelectedLoanDetails] = useState(null);
   const [showCancelDialog, setShowCancelDialog] = useState(false);
@@ -42,9 +40,8 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
   const [rankingFilterBorrowing, setRankingFilterBorrowing] = useState('status');
   const [activeDocPopup, setActiveDocPopup] = useState(null);
   const [docPopupAgreement, setDocPopupAgreement] = useState(null);
-  const [reminderSlide, setReminderSlide] = useState(0);
+  const [, setReminderSlide] = useState(0);
   const [carouselSlide, setCarouselSlide] = useState(0);
-  const [infoTooltip, setInfoTooltip] = useState(null);
   const [selectedScrollLoan, setSelectedScrollLoan] = useState(null);
 
   useEffect(() => { loadData(); }, []);
@@ -105,56 +102,19 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
     return () => clearInterval(timer);
   }, [allOverdueForEffect.length]);
 
-  // All manageable loans (both lending and borrowing)
-  const allManageableLoans = allLoans.filter(l => l.status === 'active' || l.status === 'cancelled');
-
   // --- Lending summary stats ---
-  const totalLent = activeLendingLoans.reduce((s, l) => s + (l.amount || 0), 0);
   const totalExpectedLending = activeLendingLoans.reduce((s, l) => s + (l.total_amount || l.amount || 0), 0);
   const totalReceivedLending = activeLendingLoans.reduce((s, l) => s + (l.amount_paid || 0), 0);
 
-  const nextPaymentLoanLending = activeLendingLoans
-    .filter(l => l.next_payment_date)
-    .map(l => ({ ...l, date: toLocalDate(l.next_payment_date) }))
-    .sort((a, b) => a.date - b.date)[0];
-  const nextPaymentDaysLending = nextPaymentLoanLending ? daysUntilDate(nextPaymentLoanLending.next_payment_date) : null;
-  const nextPaymentAmountLending = (() => {
-    if (!nextPaymentLoanLending) return 0;
-    const agreement = loanAgreements.find(a => a.loan_id === nextPaymentLoanLending.id);
-    const analysis = analyzeLoanPayments(nextPaymentLoanLending, allPayments, agreement);
-    if (analysis && analysis.nextPaymentAmount > 0) return analysis.nextPaymentAmount;
-    return nextPaymentLoanLending.payment_amount || 0;
-  })();
-  const nextPaymentBorrowerUsername = nextPaymentLoanLending
-    ? publicProfiles.find(p => p.user_id === nextPaymentLoanLending.borrower_id)?.full_name || 'User' : null;
-
   // --- Borrowing summary stats ---
-  const totalBorrowed = activeBorrowingLoans.reduce((s, l) => s + (l.amount || 0), 0);
   const totalOwedBorrowing = activeBorrowingLoans.reduce((s, l) => s + (l.total_amount || l.amount || 0), 0);
   const totalPaidBorrowing = activeBorrowingLoans.reduce((s, l) => s + (l.amount_paid || 0), 0);
 
-  const nextPaymentLoanBorrowing = activeBorrowingLoans
-    .filter(l => l.next_payment_date)
-    .map(l => ({ ...l, date: toLocalDate(l.next_payment_date) }))
-    .sort((a, b) => a.date - b.date)[0];
-  const nextPaymentDaysBorrowing = nextPaymentLoanBorrowing ? daysUntilDate(nextPaymentLoanBorrowing.next_payment_date) : null;
-  const nextPaymentAmountBorrowing = (() => {
-    if (!nextPaymentLoanBorrowing) return 0;
-    const agreement = loanAgreements.find(a => a.loan_id === nextPaymentLoanBorrowing.id);
-    const analysis = analyzeLoanPayments(nextPaymentLoanBorrowing, allPayments, agreement);
-    if (analysis && analysis.nextPaymentAmount > 0) return analysis.nextPaymentAmount;
-    return nextPaymentLoanBorrowing.payment_amount || 0;
-  })();
-  const nextPaymentLenderUsername = nextPaymentLoanBorrowing
-    ? publicProfiles.find(p => p.user_id === nextPaymentLoanBorrowing.lender_id)?.full_name || 'User' : null;
-
   // --- Shared helpers ---
-  const handleMakePayment = () => { window.location.href = createPageUrl("RecordPayment"); };
   const getUserById = (userId) => {
     const profile = publicProfiles.find(p => p.user_id === userId);
     return profile || { username: 'user', full_name: 'Unknown User' };
   };
-  const getAgreementForLoan = (loanId) => loanAgreements.find(a => a.loan_id === loanId);
 
   const handleCancelLoan = (loan) => { setLoanToCancel(loan); setShowCancelDialog(true); };
   const confirmCancelLoan = async () => {
@@ -178,7 +138,6 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
     }
   };
 
-  const openDocPopup = (type, agreement) => { setActiveDocPopup(type); setDocPopupAgreement(agreement); };
   const closeDocPopup = () => { setActiveDocPopup(null); setDocPopupAgreement(null); };
 
   // --- Financial analysis functions ---
@@ -226,113 +185,6 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
       schedule.push({ number: i, date: new Date(currentDate), startingBalance, principal, interest, principalToDate, interestToDate, endingBalance: balance });
     }
     return schedule;
-  }
-
-  function analyzeLoanPayments(loan, payments, agreement) {
-    if (!loan) return null;
-    const principal = loan.amount || 0;
-    const annualRate = loan.interest_rate || 0;
-    const totalPeriods = loan.repayment_period || 1;
-    const frequency = loan.payment_frequency || 'monthly';
-    const originalPaymentAmount = loan.payment_amount || 0;
-    let periodsPerYear = 12;
-    if (frequency === 'weekly') periodsPerYear = 52;
-    else if (frequency === 'biweekly') periodsPerYear = 26;
-    else if (frequency === 'daily') periodsPerYear = 365;
-    const r = annualRate > 0 ? (annualRate / 100) / periodsPerYear : 0;
-    const confirmedPayments = payments.filter(p => p.loan_id === loan.id && (p.status === 'confirmed' || p.status === 'completed')).sort((a, b) => new Date(a.payment_date) - new Date(b.payment_date));
-    const allLoanPayments = payments.filter(p => p.loan_id === loan.id && (p.status === 'confirmed' || p.status === 'completed' || p.status === 'pending_confirmation')).sort((a, b) => new Date(a.payment_date) - new Date(b.payment_date));
-    let scheduleDates = [];
-    if (agreement) { const sched = generateAmortizationSchedule(agreement); scheduleDates = sched.map(s => s.date); }
-    else { let dt = new Date(loan.created_at); for (let i = 0; i < totalPeriods; i++) { if (frequency === 'weekly') dt = addWeeks(new Date(dt), 1); else if (frequency === 'biweekly') dt = addWeeks(new Date(dt), 2); else if (frequency === 'daily') dt = addDays(new Date(dt), 1); else dt = addMonths(new Date(dt), 1); scheduleDates.push(new Date(dt)); } }
-    const loanStart = new Date(loan.created_at);
-    const effectivePeriods = Math.min(totalPeriods, scheduleDates.length);
-
-    // ── periodAllPayments: date-window based (for pending_confirmation display) ──
-    const periodAllPayments = Array.from({ length: effectivePeriods }, () => []);
-    for (let i = 0; i < effectivePeriods; i++) {
-      const periodStart = i === 0 ? loanStart : scheduleDates[i - 1];
-      const periodEnd = scheduleDates[i];
-      periodAllPayments[i] = allLoanPayments.filter(p => {
-        const pDate = new Date(p.payment_date);
-        return pDate > periodStart && pDate <= periodEnd;
-      });
-    }
-    if (scheduleDates.length > 0 && effectivePeriods > 0) {
-      const lastDate = scheduleDates[scheduleDates.length - 1];
-      const lateAll = allLoanPayments.filter(p => new Date(p.payment_date) > lastDate);
-      if (lateAll.length > 0) periodAllPayments[effectivePeriods - 1] = [...periodAllPayments[effectivePeriods - 1], ...lateAll];
-    }
-
-    // ── periodConfirmedPayments: SEQUENTIAL allocation (oldest period first) ──
-    // A payment always goes to the earliest unfilled period regardless of its
-    // date. This correctly handles late payments: if period 2 is unpaid and a
-    // payment arrives after period 3's due date, it fills period 2 first with
-    // any remainder spilling into period 3.
-    const periodConfirmedPayments = Array.from({ length: effectivePeriods }, () => []);
-    const confirmedPool = confirmedPayments.map(p => ({ ...p, _rem: p.amount || 0 }));
-    let poolIdx = 0;
-    for (let i = 0; i < effectivePeriods; i++) {
-      let bucketFilled = 0;
-      while (poolIdx < confirmedPool.length && bucketFilled < originalPaymentAmount) {
-        const p = confirmedPool[poolIdx];
-        const take = Math.min(p._rem, originalPaymentAmount - bucketFilled);
-        if (take > 0) {
-          periodConfirmedPayments[i].push({ ...p, amount: take });
-          p._rem -= take;
-          bucketFilled += take;
-        }
-        if (p._rem <= 0) poolIdx++;
-        else break; // partial used — this payment carries into the next period
-      }
-    }
-    let remainingPrincipal = principal;
-    let totalInterestAccrued = 0;
-    let totalPaid = 0;
-    let fullPaymentCount = 0;
-    const periodResults = [];
-    for (let i = 0; i < effectivePeriods; i++) {
-      const periodInterest = Math.round(remainingPrincipal * r * 100) / 100;
-      totalInterestAccrued += periodInterest;
-      const scheduledAmount = originalPaymentAmount;
-      // Sequential allocation already placed the right payments in each period's bucket
-      const confirmedInPeriod = periodConfirmedPayments[i].reduce((sum, p) => sum + (p.amount || 0), 0);
-      // pendingInPeriod: only the pending_confirmation payments in this period's DATE window
-      const pendingInPeriod = periodAllPayments[i]
-        .filter(p => p.status === 'pending_confirmation')
-        .reduce((sum, p) => sum + (p.amount || 0), 0);
-      totalPaid += confirmedInPeriod;
-      const allocatedConfirmed = Math.min(confirmedInPeriod, scheduledAmount);
-      const isFullPayment = confirmedInPeriod >= scheduledAmount && scheduledAmount > 0;
-      if (isFullPayment) fullPaymentCount++;
-      let paymentToInterest = Math.min(allocatedConfirmed, periodInterest);
-      let paymentToPrincipal = Math.max(0, allocatedConfirmed - paymentToInterest);
-      remainingPrincipal = Math.max(0, Math.round((remainingPrincipal - paymentToPrincipal) * 100) / 100);
-      const isPast = toLocalDate(scheduleDates[i]) <= getLocalToday();
-      periodResults.push({
-        period: i + 1, date: scheduleDates[i], scheduledAmount: Math.round(scheduledAmount * 100) / 100,
-        confirmedPaid: Math.round(allocatedConfirmed * 100) / 100,
-        pendingPaid: Math.round(pendingInPeriod * 100) / 100,
-        actualPaid: Math.round(allocatedConfirmed * 100) / 100,
-        isFullPayment, isPast,
-        hasConfirmedPayments: allocatedConfirmed > 0,
-        hasPendingPayments: pendingInPeriod > 0,
-        hasAnyPayments: allocatedConfirmed > 0 || pendingInPeriod > 0,
-        deficit: 0, interestThisPeriod: periodInterest, remainingPrincipal,
-        confirmedPayments: periodConfirmedPayments[i], allPayments: periodAllPayments[i]
-      });
-    }
-    const totalOwedNow = Math.max(0, Math.round((principal + totalInterestAccrued - totalPaid) * 100) / 100);
-    const unpaidPeriods = totalPeriods - fullPaymentCount;
-    const recalcPayment = unpaidPeriods > 0 && totalOwedNow > 0 ? Math.round((totalOwedNow / unpaidPeriods) * 100) / 100 : 0;
-    const currentPeriodIdx = periodResults.findIndex(p => !p.isFullPayment);
-    const nextPaymentAmt = recalcPayment > 0 ? recalcPayment : originalPaymentAmount;
-    return {
-      principal, totalOwedNow, totalPaid, totalInterestAccrued, remainingPrincipal, fullPaymentCount, totalPeriods,
-      recalcPayment, nextPaymentAmount: nextPaymentAmt, originalPaymentAmount, periodResults,
-      deficit: periodResults.length > 0 ? periodResults[periodResults.length - 1].deficit : 0,
-      paidPercentage: (principal + totalInterestAccrued) > 0 ? Math.min(100, (totalPaid / (principal + totalInterestAccrued)) * 100) : 0
-    };
   }
 
   // --- Document Popups ---
@@ -422,9 +274,6 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
     const lenderInfo = getUserById(agreement.lender_id);
     const borrowerInfo = getUserById(agreement.borrower_id);
     const loan = manageLoanSelected;
-    const getStatusColor = (status) => {
-      switch(status) { case 'active': return 'bg-green-100 text-green-800 border-green-200'; case 'completed': return 'bg-blue-100 text-blue-800 border-blue-200'; case 'cancelled': return 'bg-red-100 text-red-800 border-red-200'; default: return 'bg-gray-100 text-gray-800 border-gray-200'; }
-    };
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
         <div style={{ background: 'transparent', borderRadius: 12, border: '1px solid rgba(0,0,0,0.05)', padding: 14 }}>
@@ -489,419 +338,11 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
     );
   };
 
-  // --- Shared loan detail body (used inline below the scroll card row) ---
-  const renderLoanDetailBody = (selectedLoan) => {
-    const isLending = selectedLoan.lender_id === user?.id;
-    const agreement = loanAgreements.find(a => a.loan_id === selectedLoan.id);
-    const plannedPaymentAmount = selectedLoan.payment_amount || 0;
-    const loanAnalysis = analyzeLoanPayments(selectedLoan, allPayments, agreement);
-    const recalculatedPayment = loanAnalysis ? loanAnalysis.recalcPayment : 0;
-
-    let chartData = [];
-    if (loanAnalysis) {
-      loanAnalysis.periodResults.forEach((pr, i) => {
-        const scheduledAmt = pr.scheduledAmount || (recalculatedPayment > 0 ? recalculatedPayment : plannedPaymentAmount);
-        if (pr.hasAnyPayments) {
-          chartData.push({ label: `P${i + 1}`, amount: pr.actualPaid, scheduledAmount: scheduledAmt, confirmedAmount: pr.confirmedPaid, pendingAmount: pr.pendingPaid, isPaid: true, isProjected: false, isFullPayment: pr.isFullPayment, isInProgress: !pr.isPast && pr.hasAnyPayments, hasPendingOnly: !pr.hasConfirmedPayments && pr.hasPendingPayments });
-        } else if (pr.isPast) {
-          chartData.push({ label: `P${i + 1}`, amount: 0, scheduledAmount: scheduledAmt, isPaid: false, isProjected: false, isMissed: true });
-        } else {
-          chartData.push({ label: `P${i + 1}`, amount: scheduledAmt, scheduledAmount: scheduledAmt, isPaid: false, isProjected: true });
-        }
-      });
-    }
-    const chartHeight = 110;
-    const maxChartVal = Math.max(plannedPaymentAmount, ...chartData.map(d => d.amount), 1);
-
-    const otherPartyId = isLending ? selectedLoan.borrower_id : selectedLoan.lender_id;
-    const otherPartyProfile = publicProfiles.find(p => p.user_id === otherPartyId);
-    const otherPartyUsername = otherPartyProfile?.full_name || 'User';
-
-    const getLoanDescription = (loan) => {
-      const isLend = loan.lender_id === user?.id;
-      const other = publicProfiles.find(p => p.user_id === (isLend ? loan.borrower_id : loan.lender_id));
-      const name = other?.full_name || 'User';
-      const amt = `$${(loan.amount || 0).toLocaleString()}`;
-      const reason = loan.purpose ? ` for ${loan.purpose}` : '';
-      return isLend ? `Lent ${amt} to ${name}${reason}` : `Borrowed ${amt} from ${name}${reason}`;
-    };
-
-    return (
-      <>
-        {/* Loan detail header */}
-        {(() => {
-          const totalPaidAmt = loanAnalysis ? loanAnalysis.totalPaid : (selectedLoan.amount_paid || 0);
-          const totalWithInterest = loanAnalysis ? (loanAnalysis.principal + loanAnalysis.totalInterestAccrued) : (selectedLoan.total_amount || selectedLoan.amount || 0);
-          const paidPct = Math.round(totalWithInterest > 0 ? Math.min(100, (totalPaidAmt / totalWithInterest) * 100) : 0);
-          const remaining = Math.max(0, totalWithInterest - totalPaidAmt);
-          const ringColor = isLending ? '#03ACEA' : '#1D5B94';
-          const cardBase = { background: '#FEFEFE', borderRadius: 3, border: 'none', boxShadow: '0 8px 14px rgba(0,0,0,0.14), 0 1px 2px rgba(0,0,0,0.12)', padding: '14px 12px' };
-          const C = 2 * Math.PI * 45; const ringOffset = C - (paidPct / 100) * C;
-          const interestRate = selectedLoan.interest_rate || 0;
-          const repaymentPeriod = selectedLoan.repayment_period || 0;
-          const repaymentUnit = selectedLoan.repayment_unit || 'months';
-          const paymentFrequency = selectedLoan.payment_frequency || 'monthly';
-          return (
-            <>
-              <style>{`
-                @media (max-width: 768px) {
-                  .loan-detail-grid { display: flex !important; flex-direction: column !important; gap: 12px !important; }
-                  .loan-repayment-col { order: -1 !important; }
-                  .loan-terms-inner { grid-template-columns: repeat(2, 1fr) !important; }
-                  .loan-doc-btns { flex-wrap: wrap !important; }
-                  .loan-doc-summary-wrap { width: 100% !important; display: flex !important; justify-content: center !important; }
-                }
-              `}</style>
-
-              {/* [2fr: Loan Terms + Docs] [1fr: You're Owed + Repayment Progress] */}
-              <div className="loan-detail-grid" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 14, marginBottom: 20, alignItems: 'stretch' }}>
-
-                {/* Left (2fr): Loan Terms full-width, then doc buttons below */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-
-                  {/* Loan Terms — crisp white notecard */}
-                  <div style={{ background: '#FFFFFF', borderRadius: 2, border: '1px solid rgba(0,0,0,0.08)', boxShadow: '0 2px 10px rgba(0,0,0,0.08)', padding: '14px 12px' }}>
-                    <div style={{ fontSize: 11, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif", marginBottom: 10 }}>Loan Terms</div>
-                    <div className="loan-terms-inner" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
-                      {[
-                        { label: 'Loan Amount', value: formatMoney(selectedLoan.amount || 0) },
-                        { label: 'Interest Rate', value: `${interestRate}%` },
-                        { label: 'Term', value: `${repaymentPeriod} ${repaymentUnit}` },
-                        { label: 'Frequency', value: paymentFrequency.charAt(0).toUpperCase() + paymentFrequency.slice(1) },
-                      ].map((item, idx) => (
-                        <div key={idx} style={{ textAlign: 'center' }}>
-                          <div style={{ fontSize: 10, color: '#787776', fontWeight: 500, marginBottom: 2, fontFamily: "'DM Sans', sans-serif" }}>{item.label}</div>
-                          <div style={{ fontSize: 13, fontWeight: 700, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>{item.value}</div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Blue doc buttons — horizontal row, centered, fit to text */}
-                  <div className="loan-doc-btns" style={{ display: 'flex', flexDirection: 'row', gap: 6, justifyContent: 'center' }}>
-                    <div style={{ position: 'relative' }}>
-                      <div style={{ background: '#FEFEFE', borderRadius: 0, boxShadow: '5px 4px 18px rgba(0,0,0,0.09), -1px 0 0 rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.06)', display: 'inline-flex', alignItems: 'center', gap: 6, padding: '7px 10px' }}>
-                        <button onClick={() => { const ag = loanAgreements.find(a => a.loan_id === selectedLoan.id); if (ag) openDocPopup('promissory', ag); }} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
-                          <p style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', margin: 0, whiteSpace: 'nowrap' }}>Promissory Note</p>
-                        </button>
-                        <button onClick={(e) => { e.stopPropagation(); setInfoTooltip(infoTooltip === 'promissory' ? null : 'promissory'); }} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', flexShrink: 0 }}>
-                          <span style={{ width: 16, height: 16, borderRadius: '50%', background: '#03ACEA', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}><span style={{ fontSize: 9, fontWeight: 800, color: 'white', lineHeight: 1 }}>i</span></span>
-                        </button>
-                      </div>
-                      {infoTooltip === 'promissory' && (
-                        <div style={{ position: 'absolute', top: 'calc(100% + 6px)', left: '50%', transform: 'translateX(-50%)', background: 'white', borderRadius: 9, padding: '8px 11px', boxShadow: '0 4px 16px rgba(0,0,0,0.13)', width: 200, zIndex: 200, border: '1px solid rgba(0,0,0,0.06)' }}>
-                          <p style={{ fontSize: 11, color: '#1A1918', margin: 0, lineHeight: 1.55 }}>A signed legal document where the borrower promises to repay a specific amount under agreed terms.</p>
-                        </div>
-                      )}
-                    </div>
-                    <div style={{ position: 'relative' }}>
-                      <div style={{ background: '#FEFEFE', borderRadius: 0, boxShadow: '5px 4px 18px rgba(0,0,0,0.09), -1px 0 0 rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.06)', display: 'inline-flex', alignItems: 'center', gap: 6, padding: '7px 10px' }}>
-                        <button onClick={() => { const ag = loanAgreements.find(a => a.loan_id === selectedLoan.id); if (ag) openDocPopup('amortization', ag); }} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
-                          <p style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', margin: 0, whiteSpace: 'nowrap' }}>Amortization Schedule</p>
-                        </button>
-                        <button onClick={(e) => { e.stopPropagation(); setInfoTooltip(infoTooltip === 'amortization' ? null : 'amortization'); }} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', flexShrink: 0 }}>
-                          <span style={{ width: 16, height: 16, borderRadius: '50%', background: '#03ACEA', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}><span style={{ fontSize: 9, fontWeight: 800, color: 'white', lineHeight: 1 }}>i</span></span>
-                        </button>
-                      </div>
-                      {infoTooltip === 'amortization' && (
-                        <div style={{ position: 'absolute', top: 'calc(100% + 6px)', left: '50%', transform: 'translateX(-50%)', background: 'white', borderRadius: 9, padding: '8px 11px', boxShadow: '0 4px 16px rgba(0,0,0,0.13)', width: 200, zIndex: 200, border: '1px solid rgba(0,0,0,0.06)' }}>
-                          <p style={{ fontSize: 11, color: '#1A1918', margin: 0, lineHeight: 1.55 }}>A table showing each scheduled payment broken down into principal and interest over the life of the loan.</p>
-                        </div>
-                      )}
-                    </div>
-                    <div className="loan-doc-summary-wrap">
-                      <div style={{ background: '#FEFEFE', borderRadius: 0, boxShadow: '5px 4px 18px rgba(0,0,0,0.09), -1px 0 0 rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.06)', display: 'inline-flex', alignItems: 'center', padding: '7px 10px' }}>
-                        <button onClick={() => { const ag = loanAgreements.find(a => a.loan_id === selectedLoan.id); if (ag) openDocPopup('summary', ag); }} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
-                          <p style={{ fontSize: 12, fontWeight: 600, color: '#1A1918', margin: 0, whiteSpace: 'nowrap' }}>Loan Summary</p>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Right (1fr): Repayment Progress and You're Owed side-by-side */}
-                <div className="loan-repayment-col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, alignItems: 'stretch' }}>
-
-                  {/* Repayment Progress — warm ivory with folded corner */}
-                  <div style={{ background: '#FEFEFE', borderRadius: 3, border: 'none', boxShadow: '2px 5px 14px rgba(0,0,0,0.10), 0 1px 3px rgba(0,0,0,0.07)', padding: '14px 12px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
-                    <div style={{ position: 'relative', width: 80, height: 80, marginBottom: 8 }}>
-                      <svg width="80" height="80" viewBox="0 0 128 128" style={{ transform: 'rotate(-90deg)' }}>
-                        <circle cx="64" cy="64" r="45" fill="none" stroke={`${ringColor}26`} strokeWidth="10" />
-                        <circle cx="64" cy="64" r="45" fill="none" stroke={ringColor} strokeWidth="10" strokeLinecap="round" strokeDasharray={C} strokeDashoffset={ringOffset} />
-                      </svg>
-                      <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                        <span style={{ fontSize: 14, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.03em', fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>{paidPct}%</span>
-                        <span style={{ fontSize: 8, fontWeight: 500, color: '#787776', fontFamily: "'DM Sans', sans-serif", lineHeight: 1, marginTop: 2 }}>repaid</span>
-                      </div>
-                    </div>
-                    <div style={{ fontSize: 10, color: '#9B9A98', fontFamily: "'DM Sans', sans-serif", textAlign: 'center', lineHeight: 1.4 }}>
-                      {formatMoney(totalPaidAmt)} of {formatMoney(totalWithInterest)} {isLending ? 'repaid to you' : 'paid back'}
-                    </div>
-                    {/* Corner fold */}
-                    <div style={{ position: 'absolute', bottom: 0, right: 0, width: 18, height: 18, background: '#DDD9CF', clipPath: 'polygon(100% 0, 100% 100%, 0 100%)', zIndex: 2 }} />
-                  </div>
-
-                  {/* You're Owed — amber-tinted stacked paper */}
-                  <div style={{
-                    background: '#FEFEFE', borderRadius: 2,
-                    boxShadow: '10px 12px 26px rgba(0,0,0,0.13), -2px -1px 6px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06)',
-                    transform: 'rotate(0.3deg)',
-                    padding: '12px 10px 10px', fontFamily: "'DM Sans', sans-serif",
-                    display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'visible',
-                  }}>
-                    <div style={{ fontSize: 10, fontWeight: 700, color: '#1A1918', letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: 5 }}>
-                      {isLending ? "You're owed" : "You owe"}
-                    </div>
-                    <div style={{ borderTop: '1.5px dashed rgba(0,0,0,0.15)', marginBottom: 8 }} />
-                    <div style={{ fontSize: 20, fontWeight: 700, letterSpacing: '-0.04em', lineHeight: 1, color: ringColor, marginBottom: 'auto', paddingBottom: 10 }}>
-                      {formatMoney(remaining)}
-                    </div>
-                    <div style={{ borderTop: '1.5px dashed rgba(0,0,0,0.10)', marginBottom: 6 }} />
-                    <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                      <span style={{ fontSize: 10, color: '#9B9A98' }}>{isLending ? `${otherPartyUsername.split(' ')[0]}'s loan` : 'this loan'}</span>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            </>
-          );
-        })()}
-
-        {/* 3-col: [Payment History + Activity] | [Payments] | [Loan Progress] */}
-        <div className="loan-details-masonry" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 20, alignItems: 'start' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-        <PageCard title="Payment History" shadow="lifted" wrapperStyle={{ marginBottom: 0 }}>
-          <div>
-          {chartData.length === 0 ? (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: chartHeight }}><p style={{ fontSize: 12, color: '#C7C6C4' }}>No payment schedule</p></div>
-          ) : (
-            <div style={{ position: 'relative' }}>
-              <div style={{ display: 'flex', alignItems: 'flex-end', gap: 2, height: chartHeight }}>
-                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', paddingRight: 6, flexShrink: 0, height: '100%' }}>
-                  <p style={{ fontSize: 10, color: '#787776', margin: 0 }}>${maxChartVal.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
-                  <p style={{ fontSize: 10, color: '#787776', margin: 0 }}>${Math.round(maxChartVal / 2).toLocaleString()}</p>
-                  <p style={{ fontSize: 10, color: '#787776', margin: 0 }}>$0</p>
-                </div>
-                <div style={{ flex: 1, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', position: 'relative', height: '100%' }}>
-                  {chartData.map((d, i) => {
-                    const effectiveHeight = chartHeight - 14;
-                    const barHeight = maxChartVal > 0 ? (d.amount / maxChartVal) * effectiveHeight : 0;
-                    const scheduledBarHeight = maxChartVal > 0 && d.scheduledAmount ? (d.scheduledAmount / maxChartVal) * effectiveHeight : barHeight;
-                    const isFullPmt = d.isPaid && d.isFullPayment;
-                    const isPartialPmt = d.isPaid && !d.isFullPayment && !d.hasPendingOnly;
-                    const isPendingOnly = d.hasPendingOnly;
-                    const isInProgress = d.isInProgress;
-                    return (
-                      <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>
-                        <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-                          {isInProgress && !isFullPmt ? (
-                            <div style={{ position: 'relative', height: Math.max(scheduledBarHeight, 4), width: 14 }}>
-                              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '100%', borderRadius: '4px 4px 0 0', background: 'rgba(3,172,234,0.08)', border: '1px dashed rgba(3,172,234,0.2)' }} />
-                              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: Math.max(barHeight, 4), borderRadius: '4px 4px 0 0', background: '#03ACEA' }} />
-                            </div>
-                          ) : (
-                            <div style={{
-                              borderRadius: '4px 4px 0 0', transition: 'all 0.3s',
-                              height: Math.max(barHeight, d.amount > 0 ? 4 : 2), width: 14,
-                              background: d.isProjected ? 'rgba(84,166,207,0.28)' : d.isMissed ? 'rgba(232,114,110,0.3)' : d.amount === 0 ? '#E5E4E2' : isPendingOnly ? 'rgba(0,0,0,0.1)' : isFullPmt ? '#03ACEA' : isPartialPmt ? 'rgba(245,158,11,0.6)' : 'rgba(3,172,234,0.25)',
-                              border: d.isProjected ? '1px dashed rgba(84,166,207,0.5)' : d.isMissed ? '1px dashed rgba(232,114,110,0.5)' : isPendingOnly ? '1px dashed rgba(0,0,0,0.15)' : 'none',
-                            }} title={`${d.label}: $${d.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}${d.isProjected ? ' (expected)' : d.isMissed ? ' (missed)' : isPendingOnly ? ' (pending)' : isPartialPmt ? ' (partial)' : ''}`} />
-                          )}
-                        </div>
-                        <p style={{ fontSize: 11, marginTop: 5, lineHeight: 1, color: isInProgress ? '#03ACEA' : d.isProjected ? '#54A6CF' : d.isMissed ? '#E8726E' : isPendingOnly ? '#9B9A98' : '#4B4A48' }}>{d.label}</p>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginTop: 8, paddingTop: 8, borderTop: '1px solid rgba(0,0,0,0.06)', flexWrap: 'wrap' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: '#03ACEA' }} /><span style={{ fontSize: 11, color: '#4B4A48' }}>Completed</span></div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: 'rgba(0,0,0,0.1)', border: '1px dashed rgba(0,0,0,0.15)' }} /><span style={{ fontSize: 11, color: '#4B4A48' }}>Pending</span></div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: 'rgba(84,166,207,0.28)', border: '1px dashed rgba(84,166,207,0.5)' }} /><span style={{ fontSize: 11, color: '#4B4A48' }}>Expected</span></div>
-              </div>
-            </div>
-          )}
-          </div>
-        </PageCard>
-
-        <PageCard title="Activity" style={{ background: '#FEFEFE', borderRadius: 2, border: 'none', boxShadow: '5px 4px 18px rgba(0,0,0,0.09), -1px 0 0 rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.06)' }}>
-          <div>
-          {(() => {
-            const ag = loanAgreements.find(a => a.loan_id === selectedLoan.id);
-            const loanPmts = allPayments.filter(p => p.loan_id === selectedLoan.id);
-            const lenderProfile = publicProfiles.find(p => p.user_id === selectedLoan.lender_id);
-            const borrowerProfile = publicProfiles.find(p => p.user_id === selectedLoan.borrower_id);
-            const lenderName = lenderProfile?.full_name || 'lender';
-            const borrowerName = borrowerProfile?.full_name || 'borrower';
-            const activities = [];
-            if (selectedLoan.created_at) activities.push({ timestamp: new Date(selectedLoan.created_at), type: 'created', description: `Loan created between ${borrowerName} and ${lenderName}` });
-            if (ag?.borrower_signed_date) activities.push({ timestamp: new Date(ag.borrower_signed_date), type: 'signature', description: `${borrowerName} signed the loan agreement` });
-            if (ag?.lender_signed_date) activities.push({ timestamp: new Date(ag.lender_signed_date), type: 'signature', description: `${lenderName} signed the loan agreement` });
-            loanPmts.forEach(payment => {
-              const isConfirmed = payment.status === 'completed' || payment.status === 'confirmed';
-              const isRecordedByUser = payment.recorded_by === user?.id;
-              const pmtAmount = `$${(payment.amount || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-              let desc;
-              if (isLending) {
-                if (isRecordedByUser) desc = `You ${isConfirmed ? 'confirmed' : 'recorded'} a ${pmtAmount} payment from ${borrowerName}`;
-                else desc = `${borrowerName} ${isConfirmed ? 'made' : 'recorded'} a ${pmtAmount} payment`;
-              } else {
-                if (isRecordedByUser) desc = `You ${isConfirmed ? 'made' : 'recorded'} a ${pmtAmount} payment to ${lenderName}`;
-                else desc = `${lenderName} recorded a ${pmtAmount} payment from ${borrowerName}`;
-              }
-              activities.push({ timestamp: new Date(payment.payment_date || payment.created_at), type: 'payment', description: desc, isAwaitingConfirmation: !isConfirmed });
-            });
-            if (ag?.cancelled_date) activities.push({ timestamp: new Date(ag.cancelled_date), type: 'cancellation', description: 'Loan was cancelled' });
-            if (selectedLoan.status === 'completed') activities.push({ timestamp: new Date(), type: 'completion', description: 'Loan repaid in full' });
-            activities.sort((a, b) => a.timestamp - b.timestamp);
-            const activityIconConfig = {
-              created:      { bg: 'rgba(3,172,234,0.12)',   stroke: '#03ACEA',  path: 'M12 4v16m8-8H4',                                                                                                                                         sz: 14, sw: 2 },
-              signature:    { bg: 'rgba(124,58,237,0.12)',  stroke: '#7C3AED',  path: 'M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z',                                                     sz: 14, sw: 2 },
-              payment:      { bg: 'rgba(22,163,74,0.12)',   stroke: '#16A34A',  path: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1',          sz: 17, sw: 2.5 },
-              cancellation: { bg: 'rgba(232,114,110,0.12)', stroke: '#E8726E',  path: 'M6 18L18 6M6 6l12 12',                                                                                                                                    sz: 14, sw: 2 },
-              completion:   { bg: 'rgba(22,163,74,0.12)',   stroke: '#16A34A',  path: 'M5 13l4 4L19 7',                                                                                                                                          sz: 14, sw: 2 },
-            };
-            const getIcon = (type) => {
-              const cfg = activityIconConfig[type] || activityIconConfig.created;
-              return <svg width={cfg.sz} height={cfg.sz} fill="none" viewBox="0 0 24 24" stroke={cfg.stroke} strokeWidth={cfg.sw}><path strokeLinecap="round" strokeLinejoin="round" d={cfg.path} /></svg>;
-            };
-            const getDotStyle = (type) => {
-              const cfg = activityIconConfig[type] || activityIconConfig.created;
-              return { width: 24, height: 24, borderRadius: 6, background: cfg.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, position: 'relative', zIndex: 10, marginTop: 2, boxShadow: '0 0 0 3px white' };
-            };
-            if (activities.length === 0) return <p style={{ fontSize: 11, color: '#C7C6C4', textAlign: 'center' }}>No activity recorded yet ✨</p>;
-            return (
-              <div className="space-y-0 max-h-[200px] overflow-y-auto" style={{ scrollbarWidth: 'thin' }}>
-                {activities.map((activity, idx) => (
-                  <div key={idx} className="flex items-start gap-2.5 relative">
-                    {idx < activities.length - 1 && <div className="absolute left-[12px] top-[23px] w-[1px]" style={{ height: 'calc(100% - 6px)', background: 'rgba(84,166,207,0.2)' }} />}
-                    <div style={getDotStyle(activity.type)}>{getIcon(activity.type)}</div>
-                    <div className="flex-1 min-w-0 pb-3">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <p style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', lineHeight: 1.4 }}>{activity.description}</p>
-                        {activity.isAwaitingConfirmation && <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[8px] font-semibold bg-[#F59E0B]/20 text-[#F59E0B] border border-[#F59E0B]/30 whitespace-nowrap">Awaiting Confirmation</span>}
-                      </div>
-                      <p style={{ fontSize: 11, color: '#5C5B5A', marginTop: 2 }}>{format(activity.timestamp, 'MMM d, yyyy · h:mm a')}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            );
-          })()}
-          </div>
-        </PageCard>
-
-        </div>{/* end left column */}
-
-        <div>
-        <PageCard title="Payments" shadow="tiltR" style={{ background: '#FEFEFE', borderRadius: 3, border: 'none', boxShadow: '10px 8px 22px rgba(0,0,0,0.12), 2px 2px 6px rgba(0,0,0,0.07)', transform: 'rotate(0.4deg)' }}>
-          <div>
-          {(() => {
-            const paymentAmt = selectedLoan.payment_amount || 0;
-            const paymentRows = loanAnalysis ? loanAnalysis.periodResults.map((pr) => {
-              let status;
-              if (pr.hasConfirmedPayments && pr.isFullPayment) status = 'completed';
-              else if (pr.hasAnyPayments && !pr.isPast) status = 'partial';
-              else if (pr.hasConfirmedPayments && !pr.isFullPayment) status = 'partial';
-              else if (pr.hasPendingPayments && !pr.hasConfirmedPayments) status = 'pending';
-              else if (pr.isPast && !pr.hasAnyPayments) status = 'missed';
-              else status = 'upcoming';
-              const expectedAmount = loanAnalysis.originalPaymentAmount || paymentAmt;
-              const paidAmount = pr.actualPaid || 0;
-              const paidPercentage = status === 'completed' ? 100 : (status === 'partial' && expectedAmount > 0) ? Math.min(99, (paidAmount / expectedAmount) * 100) : 0;
-              return { number: pr.period, date: pr.date, amount: expectedAmount, paidAmount, paidPercentage, status };
-            }) : [];
-            const statusConfig = {
-              completed:   { label: 'Completed',   bg: 'rgba(22,163,74,0.18)',  text: '#16A34A', ringColor: '#16A34A', fillColor: '#16A34A' },
-              partial:     { label: 'Partial',     bg: 'rgba(3,172,234,0.18)', text: '#0288CE', ringColor: '#0288CE', fillColor: '#0288CE' },
-              pending:     { label: 'Pending',     bg: 'rgba(0,0,0,0.05)',     text: '#9B9A98', ringColor: 'rgba(0,0,0,0.15)', fillColor: 'rgba(0,0,0,0.1)' },
-              missed:      { label: 'Missed',         bg: 'rgba(232,114,110,0.1)', text: '#E8726E', ringColor: '#E8726E', fillColor: '#E8726E' },
-              upcoming:    { label: 'Upcoming',       bg: 'rgba(0,0,0,0.03)',      text: '#787776', ringColor: 'rgba(0,0,0,0.12)', fillColor: 'rgba(0,0,0,0.06)' },
-            };
-            const PieCircle = ({ percentage, number, size = 32 }) => {
-              const pcx = size / 2; const pcy = size / 2; const r = (size / 2) - 3;
-              const circ = 2 * Math.PI * r; const dash = (percentage / 100) * circ; const sw = 4;
-              return (
-                <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ flexShrink: 0 }}>
-                  <circle cx={pcx} cy={pcy} r={r} fill="none" stroke="#E5E4E2" strokeWidth={sw} />
-                  {percentage > 0 && (<circle cx={pcx} cy={pcy} r={r} fill="none" stroke="#03ACEA" strokeWidth={sw} strokeDasharray={`${dash} ${circ - dash}`} strokeLinecap="round" transform={`rotate(-90 ${pcx} ${pcy})`} />)}
-                  <text x={pcx} y={pcy} textAnchor="middle" dominantBaseline="central" fill="#1A1918" fontSize="11" fontWeight="bold" fontFamily="'DM Sans', sans-serif">{number}</text>
-                </svg>
-              );
-            };
-            return (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 6, ...(paymentRows.length > 8 ? { maxHeight: 460, overflowY: 'auto', scrollbarWidth: 'thin' } : {}) }}>
-                {paymentRows.map((row) => {
-                  return (
-                    <div key={row.number} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: 8, borderRadius: 10, background: 'transparent' }}>
-                      <PieCircle percentage={row.paidPercentage} number={row.number} />
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <p style={{ fontSize: 13, fontWeight: 500, color: '#4B4A48', margin: 0 }}>Payment {row.number}: ${row.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-                        {row.status === 'partial' && row.paidAmount > 0 && (
-                          <p style={{ fontSize: 12, margin: '1px 0 0' }}>
-                            <span style={{ fontWeight: 700, color: '#15803D' }}>Paid: ${row.paidAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                            <span style={{ color: '#9B9A98', margin: '0 6px' }}>·</span>
-                            <span style={{ fontWeight: 600, color: '#03ACEA' }}>Remaining: ${Math.max(0, row.amount - row.paidAmount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                          </p>
-                        )}
-                        {row.status !== 'partial' && row.paidAmount > 0 && <p style={{ fontSize: 12, fontWeight: 700, color: '#15803D', margin: '1px 0 0' }}>Paid: ${row.paidAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>}
-                        <p style={{ fontSize: 11, color: '#4B4A48', margin: '1px 0 0' }}>Due: {format(row.date, 'MMM d, yyyy')}</p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            );
-          })()}
-          </div>
-        </PageCard>
-        </div>{/* end payments column */}
-
-        <div style={{ position: 'relative', marginBottom: 24 }}>
-          <div style={{ position: 'absolute', bottom: -5, right: -4, left: 5, top: 5, background: 'rgba(0,0,0,0.07)', borderRadius: 3, transform: 'rotate(1.5deg)' }} />
-        <PageCard title="Loan Progress" wrapperStyle={{ marginBottom: 0 }} style={{ background: '#FEFEFE', borderRadius: 2, border: 'none', boxShadow: '5px 4px 18px rgba(0,0,0,0.09), -1px 0 0 rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.06)', position: 'relative', zIndex: 1 }}>
-          <div>
-          {(() => {
-            const repaymentPeriod = selectedLoan.repayment_period || 0;
-            const paymentFrequency = selectedLoan.payment_frequency || 'monthly';
-            const totalOwedDisplay = loanAnalysis ? loanAnalysis.totalOwedNow : (selectedLoan.total_amount || selectedLoan.amount || 0);
-            const amountPaidDisplay = loanAnalysis ? loanAnalysis.totalPaid : (selectedLoan.amount_paid || 0);
-            const fullPayments = loanAnalysis ? loanAnalysis.fullPaymentCount : 0;
-            const paymentAmountDisplay = loanAnalysis ? loanAnalysis.nextPaymentAmount : (recalculatedPayment > 0 ? recalculatedPayment : (selectedLoan.payment_amount || 0));
-            const freqLabel = paymentFrequency.charAt(0).toUpperCase() + paymentFrequency.slice(1);
-            const lpItems = [
-              { label: isLending ? 'Total Owed to You' : 'Total Owed', value: `$${totalOwedDisplay.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, sub: 'with interest' },
-              { label: isLending ? 'Amount Received' : 'Amount Paid', value: `$${amountPaidDisplay.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, sub: null },
-              { label: 'Payments Made', value: `${fullPayments}/${repaymentPeriod}`, sub: 'full payments' },
-              { label: `${freqLabel} Payments`, value: `$${paymentAmountDisplay.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, sub: isLending ? `from ${otherPartyUsername}` : `to ${otherPartyUsername}` },
-            ];
-            return (
-              <div className="loan-progress-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', rowGap: 22, columnGap: 16 }}>
-                {lpItems.map((item, idx) => (<div key={idx} style={{ textAlign: 'center' }}><p style={{ fontSize: 10, color: '#787776', fontWeight: 500, marginBottom: 2 }}>{item.label}</p><p style={{ fontSize: 13, fontWeight: 700, color: '#1A1918', margin: 0 }}>{item.value}</p>{item.sub && <p style={{ fontSize: 9, color: '#787776', marginTop: 2 }}>{item.sub}</p>}</div>))}
-              </div>
-            );
-          })()}
-          </div>
-        </PageCard>
-        </div>{/* end loan progress column */}
-
-        </div>{/* end 3-col masonry */}
-
-        {/* Cancelled notice */}
-        {selectedLoan.status === 'cancelled' && (
-          <div className="bg-red-50 rounded-xl px-4 py-3 shadow-sm border border-red-200"><p className="text-sm text-red-600 font-medium">This loan has been cancelled.</p></div>
-        )}
-      </>
-    );
-  };
-
   // --- Reusable Summary Tab Renderer ---
   const renderSummaryTab = (type) => {
     const isLending = type === 'lending';
     const activeLoans = isLending ? activeLendingLoans : activeBorrowingLoans;
     const accent = isLending ? '#03ACEA' : '#1D5B94';
-    const accentBg = isLending ? '#EBF4FA' : 'rgba(29,91,148,0.08)';
     const otherKey = isLending ? 'borrower_id' : 'lender_id';
 
     // Build card data for carousel
@@ -911,30 +352,10 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
       const remaining = Math.max(0, (loan.total_amount || loan.amount || 0) - (loan.amount_paid || 0));
       return { loan, profile, name, remaining };
     });
-    const selectedIdx = loanCards.findIndex(c => c.loan.id === selectedScrollLoan?.id);
-
-    // Overview ring component
-    const OvRing = ({ percent, color, label }) => {
-      const C = 2 * Math.PI * 45; const offset = C - (percent / 100) * C;
-      return (
-        <div style={{ position: 'relative', width: 60, height: 60, flexShrink: 0 }}>
-          <svg width="60" height="60" viewBox="0 0 128 128" style={{ transform: 'rotate(-90deg)' }}>
-            <circle cx="64" cy="64" r="45" fill="none" stroke={`${color}26`} strokeWidth="10" />
-            <circle cx="64" cy="64" r="45" fill="none" stroke={color} strokeWidth="10" strokeLinecap="round" strokeDasharray={C} strokeDashoffset={offset} />
-          </svg>
-          <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
-            <span style={{ fontSize: 10, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>{percent}%</span>
-            <span style={{ fontSize: 7, fontWeight: 500, color: '#787776', fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>{label}</span>
-          </div>
-        </div>
-      );
-    };
 
     const rankingFilter = isLending ? rankingFilterLending : rankingFilterBorrowing;
     const setRankingFilter = isLending ? setRankingFilterLending : setRankingFilterBorrowing;
 
-    const percentPaid   = totalOwedBorrowing   > 0 ? Math.round((totalPaidBorrowing   / totalOwedBorrowing)   * 100) : 0;
-    const percentRepaid = totalExpectedLending > 0 ? Math.round((totalReceivedLending / totalExpectedLending) * 100) : 0;
     const borrowOwed = Math.max(0, totalOwedBorrowing - totalPaidBorrowing);
     const lentOwed   = Math.max(0, totalExpectedLending - totalReceivedLending);
 
@@ -1250,46 +671,6 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
   };
 
 
-  const LENDER_GREEN = '#03ACEA';
-
-  // Single-paper shadow variants — no layered aura. Each card is one sheet.
-  const paperVariants = {
-    soft:   { boxShadow: '0 2px 6px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.04)', transform: 'none' },
-    lifted: { boxShadow: '10px 12px 26px rgba(0,0,0,0.13), -2px -1px 6px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06)', transform: 'rotate(0.25deg)' },
-    strong: { boxShadow: '0 14px 34px rgba(0,0,0,0.18), 0 3px 8px rgba(0,0,0,0.10)', transform: 'none' },
-    tiltL:  { boxShadow: '-10px 8px 22px rgba(0,0,0,0.12), -2px 2px 6px rgba(0,0,0,0.07)', transform: 'rotate(-0.4deg)' },
-    tiltR:  { boxShadow: '10px 8px 22px rgba(0,0,0,0.12), 2px 2px 6px rgba(0,0,0,0.07)', transform: 'rotate(0.4deg)' },
-    floaty: { boxShadow: '0 20px 40px rgba(0,0,0,0.12), 0 3px 8px rgba(0,0,0,0.05)', transform: 'translateY(-1px)' },
-    peeled: { boxShadow: '14px 10px 24px rgba(0,0,0,0.14), -6px -4px 14px rgba(0,0,0,0.06)', transform: 'rotate(-0.3deg)' },
-    crisp:  { boxShadow: '0 8px 14px rgba(0,0,0,0.14), 0 1px 2px rgba(0,0,0,0.12)', transform: 'none' },
-  };
-
-  const PageCard = ({ title, headerRight, children, style, highlight, tone, wrapperStyle, shadow }) => {
-    const v = paperVariants[shadow] || paperVariants.soft;
-    return (
-    <div style={{ position: 'relative', marginBottom: 24, ...wrapperStyle }}>
-    <div style={{
-      position: 'relative', zIndex: 1,
-      background: '#FEFEFE',
-      borderRadius: 3,
-      border: 'none',
-      boxShadow: v.boxShadow,
-      transform: v.transform,
-      padding: '14px 18px',
-      ...style
-    }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 5, marginBottom: 2 }}>
-        <span style={{ fontSize: 12, fontWeight: 600, color: highlight ? '#03ACEA' : '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>{title}</span>
-        {headerRight && <div style={{ flexShrink: 0 }}>{headerRight}</div>}
-      </div>
-      <div style={{ overflow: 'visible', ...(highlight ? { display: 'flex', flexDirection: 'column' } : {}) }}>
-        {children}
-      </div>
-    </div>
-    </div>
-    );
-  };
-
   if (isLoading) {
     return (
       <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -1317,11 +698,6 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
     .reduce((s, p) => s + (p.amount || 0), 0);
   const monthlyExpectedReceive = activeLendingLoans.reduce((s, l) => s + (l.payment_amount || 0), 0);
   const monthlyExpectedPay = activeBorrowingLoans.reduce((s, l) => s + (l.payment_amount || 0), 0);
-  const pendingToConfirm = allPayments.filter(p => {
-    const loan = allLoans.find(l => l.id === p.loan_id);
-    return loan && loan.lender_id === user?.id && p.status === 'pending_confirmation';
-  });
-
   if (embeddedMode) {
     return (
       <>

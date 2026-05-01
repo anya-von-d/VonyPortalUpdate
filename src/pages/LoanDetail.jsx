@@ -193,7 +193,6 @@ export default function LoanDetail() {
   const [borrowerProfile, setBorrowerProfile] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeDoc, setActiveDoc] = useState(null); // 'promissory' | 'amortization'
 
   useEffect(() => {
     if (!loanId) return;
@@ -251,23 +250,15 @@ export default function LoanDetail() {
   const isLending = loan.lender_id === authUser?.id;
   const lenderName = lenderProfile?.full_name || "Lender";
   const borrowerName = borrowerProfile?.full_name || "Borrower";
-  const otherName = isLending ? borrowerName : lenderName;
-  const myName = isLending ? lenderName : borrowerName;
-  const accent = isLending ? "#03ACEA" : "#1D5B94";
 
   // Analysis
   const loanAnalysis = analyzeLoanPayments(loan, payments, agreement);
   const totalPaidAmt = loanAnalysis ? loanAnalysis.totalPaid : (loan.amount_paid || 0);
-  const totalWithInterest = loanAnalysis ? (loanAnalysis.principal + loanAnalysis.totalInterestAccrued) : (loan.total_amount || loan.amount || 0);
-  const remaining = Math.max(0, totalWithInterest - totalPaidAmt);
-  const paidPct = Math.round(totalWithInterest > 0 ? Math.min(100, (totalPaidAmt / totalWithInterest) * 100) : 0);
   const fullPaymentCount = loanAnalysis ? loanAnalysis.fullPaymentCount : 0;
-  const totalPeriods = loan.repayment_period || 0;
   const paymentFrequency = loan.payment_frequency || "monthly";
   const freqLabel = paymentFrequency.charAt(0).toUpperCase() + paymentFrequency.slice(1);
   const plannedPaymentAmount = loan.payment_amount || 0;
   const recalcPayment = loanAnalysis ? loanAnalysis.recalcPayment : 0;
-  const displayPaymentAmt = recalcPayment > 0 ? recalcPayment : plannedPaymentAmount;
   const totalOwedDisplay = loanAnalysis ? loanAnalysis.totalOwedNow : (loan.total_amount || loan.amount || 0);
 
   // Chart data
@@ -309,13 +300,6 @@ export default function LoanDetail() {
   if (loan.status === "completed") activities.push({ timestamp: new Date(), type: "completion", description: "Loan repaid in full" });
   activities.sort((a, b) => a.timestamp - b.timestamp);
 
-  const activityIconConfig = {
-    created:      { bg: "rgba(3,172,234,0.12)",   stroke: "#03ACEA",  path: "M12 4v16m8-8H4", sz: 14, sw: 2 },
-    signature:    { bg: "rgba(124,58,237,0.12)",  stroke: "#7C3AED",  path: "M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z", sz: 14, sw: 2 },
-    payment:      { bg: "rgba(22,163,74,0.12)",   stroke: "#16A34A",  path: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1", sz: 17, sw: 2.5 },
-    cancellation: { bg: "rgba(232,114,110,0.12)", stroke: "#E8726E",  path: "M6 18L18 6M6 6l12 12", sz: 14, sw: 2 },
-    completion:   { bg: "rgba(22,163,74,0.12)",   stroke: "#16A34A",  path: "M5 13l4 4L19 7", sz: 14, sw: 2 },
-  };
 
   // Payment rows
   const paymentRows = loanAnalysis ? loanAnalysis.periodResults.map(pr => {
@@ -375,8 +359,6 @@ export default function LoanDetail() {
   const pnFormattedTime = `${pnHour12}:${pnMinStr || '00'} ${pnAmpm}`;
   const pnTimezone = agreement?.loan_timezone || 'EST';
 
-  const C = 2 * Math.PI * 45;
-  const ringOffset = C - (paidPct / 100) * C;
 
   // Shared styles
   const sectionWrap = { marginBottom: 40 };

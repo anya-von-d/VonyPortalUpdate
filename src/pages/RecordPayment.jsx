@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Payment, Loan, User, PublicProfile } from "@/entities/all";
 import { useAuth } from "@/lib/AuthContext";
-import { useNavigate, Link, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import {
   DollarSign, CheckCircle, CreditCard, Banknote, Smartphone, ChevronDown,
@@ -24,12 +24,6 @@ const PAYMENT_METHODS = [
   { id: 'paypal', label: 'PayPal', icon: CreditCard, color: '#2563eb' },
   { id: 'cash', label: 'Cash', icon: Banknote, color: '#10b981' },
   { id: 'other', label: 'Other', icon: DollarSign, color: '#787776' },
-];
-
-const ROLE_OPTIONS = [
-  { id: 'all', label: 'All Roles' },
-  { id: 'lender', label: 'You are the Lender' },
-  { id: 'borrower', label: 'You are the Borrower' },
 ];
 
 const generateTransactionId = () => {
@@ -131,7 +125,6 @@ function PersonPill({ person, dim }) {
 export default function RecordPayment() {
   const { user: authUser, userProfile } = useAuth();
   const user = userProfile ? { ...userProfile, id: authUser?.id } : null;
-  const navigate = useNavigate();
   const location = useLocation();
 
   // Data
@@ -155,9 +148,6 @@ export default function RecordPayment() {
   const [transactionId, setTransactionId] = useState('');
   const [error, setError] = useState('');
 
-  // Filters
-  const [roleFilter, setRoleFilter] = useState('all');
-  const [friendFilter, setFriendFilter] = useState('all');
 
   // Approval
   const [processingId, setProcessingId] = useState(null);
@@ -236,14 +226,6 @@ export default function RecordPayment() {
   const getRemainingBalance = (loan) => (loan.total_amount || loan.amount || 0) - (loan.amount_paid || 0);
   const isUserLender = (loan) => loan.lender_id === user?.id;
 
-  const friendOptions = (() => {
-    const ids = [...new Set(loans.map(l => l.lender_id === user?.id ? l.borrower_id : l.lender_id))];
-    return [{ id: 'all', label: 'All Friends' }, ...ids.map(id => {
-      const p = getUserById(id);
-      return { id, label: p.full_name || p.username };
-    }).sort((a, b) => a.label.localeCompare(b.label))];
-  })();
-
   const getLoanDueDays = (loan) => {
     if (!loan.next_payment_date) return null;
     const today = todayInTZ();
@@ -251,15 +233,7 @@ export default function RecordPayment() {
     return Math.ceil((due - today) / 86400000);
   };
 
-  const filteredLoans = loans.filter(loan => {
-    if (roleFilter === 'lender' && loan.lender_id !== user?.id) return false;
-    if (roleFilter === 'borrower' && loan.borrower_id !== user?.id) return false;
-    if (friendFilter !== 'all') {
-      const otherId = loan.lender_id === user?.id ? loan.borrower_id : loan.lender_id;
-      if (otherId !== friendFilter) return false;
-    }
-    return true;
-  }).sort((a, b) => {
+  const filteredLoans = [...loans].sort((a, b) => {
     const da = getLoanDueDays(a);
     const db = getLoanDueDays(b);
     if (da === null && db === null) return 0;
@@ -386,11 +360,6 @@ export default function RecordPayment() {
   const paymentsYouRecorded = pendingPayments.filter(p => p.recorded_by === user?.id);
   const getPaymentLoan = (payment) => allLoans.find(l => l.id === payment.loan_id);
 
-  const nameOrYou = (userId) => {
-    if (userId === user?.id) return 'you';
-    const p = getUserById(userId);
-    return p.full_name || p.username;
-  };
   const nameOrYouCapitalized = (userId) => {
     if (userId === user?.id) return 'You';
     const p = getUserById(userId);

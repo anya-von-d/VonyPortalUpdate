@@ -21,7 +21,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { useAuth } from "@/lib/AuthContext";
 import {
   DollarSign, Calendar, Percent, FileText, User as UserIcon,
   AlertCircle, ClipboardList, Clock, Pencil, X, Save, History, PlusCircle, BarChart3,
@@ -36,18 +35,6 @@ import { todayInTZ, currentDateStringTZ, formatTZ } from "@/components/utils/tim
 import MeshMobileNav from "@/components/MeshMobileNav";
 import UserAvatar from "@/components/ui/UserAvatar";
 import DesktopSidebar from '../components/DesktopSidebar';
-
-const STAR_CIRCLES = [
-  {cx:82,cy:45,o:0.7},{cx:195,cy:112,o:0.5},{cx:310,cy:28,o:0.8},{cx:420,cy:198,o:0.4},
-  {cx:530,cy:67,o:0.65},{cx:640,cy:245,o:0.55},{cx:755,cy:88,o:0.75},{cx:860,cy:156,o:0.45},
-  {cx:970,cy:34,o:0.7},{cx:1085,cy:201,o:0.6},{cx:1190,cy:78,o:0.5},{cx:1300,cy:267,o:0.7},
-  {cx:1410,cy:45,o:0.55},{cx:1520,cy:134,o:0.65},{cx:48,cy:189,o:0.4},{cx:158,cy:278,o:0.6},
-  {cx:268,cy:156,o:0.5},{cx:378,cy:89,o:0.7},{cx:488,cy:234,o:0.45},{cx:598,cy:145,o:0.6},
-  {cx:708,cy:312,o:0.35},{cx:818,cy:56,o:0.75},{cx:928,cy:223,o:0.5},{cx:1038,cy:98,o:0.65},
-  {cx:1148,cy:289,o:0.4},{cx:1258,cy:167,o:0.7},{cx:1368,cy:234,o:0.55},{cx:1478,cy:78,o:0.6},
-  {cx:1560,cy:256,o:0.45},{cx:125,cy:312,o:0.5},{cx:345,cy:267,o:0.6},{cx:565,cy:34,o:0.75},
-  {cx:685,cy:178,o:0.4},{cx:905,cy:289,o:0.55},{cx:1125,cy:45,o:0.7},{cx:1345,cy:145,o:0.5},
-];
 
 /* ── InlineLoanSelect ──────────────────────────────────────────
    Inline dropdown styled to match the filter dropdowns on the
@@ -149,7 +136,6 @@ function InlineLoanSelect({ value, onChange, options, minWidth }) {
 }
 
 export default function Lending({ initialTab }) {
-  const { logout } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -181,13 +167,10 @@ export default function Lending({ initialTab }) {
   const [activeDocPopup, setActiveDocPopup] = useState(null); // 'promissory', 'amortization', 'summary'
   const [docPopupAgreement, setDocPopupAgreement] = useState(null);
   const [activeInfoTooltip, setActiveInfoTooltip] = useState(null); // 'promissory' or 'amortization'
-  const [friendships, setFriendships] = useState([]);
+  const [, setFriendships] = useState([]);
   const [friends, setFriends] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState(new Date());
   const [showMonthDropdown, setShowMonthDropdown] = useState(false);
-  const [quickPayAmount, setQuickPayAmount] = useState('');
-  const [quickPayFromPerson, setQuickPayFromPerson] = useState('');
-  const [quickPayToPerson, setQuickPayToPerson] = useState('');
   const [allUserLoans, setAllUserLoans] = useState([]);
   const [currentUserProfile, setCurrentUserProfile] = useState(null);
   const [showLoanSentModal, setShowLoanSentModal] = useState(false);
@@ -374,7 +357,6 @@ export default function Lending({ initialTab }) {
   };
 
   // Determine user role based on lender/borrower selection
-  const isUserLender = !!(formData.lender_username && currentUserProfile && formData.lender_username === currentUserProfile.username);
   const isUserBorrower = !!(formData.borrower_username && currentUserProfile && formData.borrower_username === currentUserProfile.username);
 
   // Build users list with self at top, starred friends next, then other friends
@@ -553,7 +535,7 @@ export default function Lending({ initialTab }) {
     setIsSubmitting(true);
     try {
       // Strip fields that aren't columns in loans table
-      const { repayment_unit, borrowerName, lenderName, ...loanPayload } = pendingLoanData;
+      const { repayment_unit: _ru, borrowerName: _bn, lenderName: _ln, ...loanPayload } = pendingLoanData;
       const createdLoan = await Loan.create(loanPayload);
 
       const agreementPayload = {
@@ -580,11 +562,11 @@ export default function Lending({ initialTab }) {
         if (directError) {
           try {
             await supabase.functions.invoke('create-loan-agreement', { body: agreementPayload });
-          } catch (_) {
+          } catch {
             console.warn('Agreement record could not be saved:', directError.message);
           }
         }
-      } catch (_) {
+      } catch {
         // Agreement is supplementary — loan proceeds regardless
       }
 
@@ -612,11 +594,6 @@ export default function Lending({ initialTab }) {
   const handleMakePayment = (loan) => {
     setSelectedLoan(loan);
     setShowPaymentModal(true);
-  };
-
-  const handleViewDetails = (loan) => {
-    setSelectedLoanDetails({ loan, type: 'lent' });
-    setShowDetailsModal(true);
   };
 
   const handlePaymentComplete = async () => {
@@ -778,12 +755,6 @@ export default function Lending({ initialTab }) {
   const lentLoans = loans.filter(loan => loan.lender_id === currentUser?.id);
   const activeLoans = lentLoans.filter(loan => loan.status === 'active');
   const manageableLoans = lentLoans.filter(loan => loan.status === 'active' || loan.status === 'cancelled');
-  const pendingOffers = lentLoans.filter(loan => loan.status === 'pending');
-  const completedLoans = lentLoans.filter(loan => loan.status === 'completed' || loan.status === 'cancelled');
-
-  const totalLent = activeLoans.reduce((sum, loan) => sum + (loan.amount || 0), 0);
-  const totalExpectedBack = activeLoans.reduce((sum, loan) => sum + (loan.total_amount || loan.amount || 0), 0);
-
   // Find next expected payment (as lender receiving payment)
   const nextPaymentLoan = activeLoans
     .filter(loan => loan.next_payment_date)
@@ -801,132 +772,6 @@ export default function Lending({ initialTab }) {
   const getUserById = (userId) => {
     const profile = publicProfiles.find(p => p.user_id === userId);
     return profile || { username: 'user', full_name: 'Unknown User' };
-  };
-
-  // Record Payment box renderer (shared across all sections)
-  const renderRecordPaymentBox = (extraClassName = '') => {
-    if (activeLoans.length === 0) return null;
-    const allActiveLoans = allUserLoans.filter(l => l.status === 'active');
-    // "From" options: people who owe you money (borrowers in your lending loans)
-    const lendingLoans = allActiveLoans.filter(l => l.lender_id === currentUser?.id);
-    const fromBorrowerIds = [...new Set(lendingLoans.map(l => l.borrower_id))];
-    const fromOptions = fromBorrowerIds.map(bId => {
-      const profile = getUserById(bId);
-      return { userId: bId, username: profile?.username || 'user', fullName: profile?.full_name || 'Unknown' };
-    });
-    // "To" options: people you owe money to (lenders in your borrowing loans)
-    const borrowingLoans = allActiveLoans.filter(l => l.borrower_id === currentUser?.id);
-    const toLenderIds = [...new Set(borrowingLoans.map(l => l.lender_id))];
-    const toOptions = toLenderIds.map(lId => {
-      const profile = getUserById(lId);
-      return { userId: lId, username: profile?.username || 'user', fullName: profile?.full_name || 'Unknown' };
-    });
-    // Add self to both lists (at top)
-    const selfProfile = getUserById(currentUser?.id);
-    const selfOption = { userId: currentUser?.id, username: selfProfile?.username || 'you', fullName: selfProfile?.full_name || 'You' };
-    const fromListWithSelf = [selfOption, ...fromOptions.filter(o => o.userId !== currentUser?.id)];
-    const toListWithSelf = [selfOption, ...toOptions.filter(o => o.userId !== currentUser?.id)];
-    // Filter out selected person from the other dropdown
-    const filteredFromOptions = quickPayToPerson ? fromListWithSelf.filter(o => o.userId !== quickPayToPerson) : fromListWithSelf;
-    const filteredToOptions = quickPayFromPerson ? toListWithSelf.filter(o => o.userId !== quickPayFromPerson) : toListWithSelf;
-
-    const handleRecordSubmit = () => {
-      let matchingLoans = [];
-      if (quickPayFromPerson && quickPayToPerson) {
-        matchingLoans = allActiveLoans.filter(l =>
-          (l.borrower_id === quickPayFromPerson && l.lender_id === quickPayToPerson) ||
-          (l.borrower_id === quickPayToPerson && l.lender_id === quickPayFromPerson)
-        );
-      } else if (quickPayFromPerson) {
-        matchingLoans = allActiveLoans.filter(l =>
-          l.borrower_id === quickPayFromPerson || l.lender_id === quickPayFromPerson
-        );
-      } else if (quickPayToPerson) {
-        matchingLoans = allActiveLoans.filter(l =>
-          l.borrower_id === quickPayToPerson || l.lender_id === quickPayToPerson
-        );
-      }
-      if (matchingLoans.length === 1) {
-        setSelectedLoan({ ...matchingLoans[0], _prefillAmount: quickPayAmount });
-        setShowPaymentModal(true);
-      } else if (matchingLoans.length > 1) {
-        setSelectedLoan({ ...matchingLoans[0], _prefillAmount: quickPayAmount, _candidateLoans: matchingLoans });
-        setShowPaymentModal(true);
-      }
-    };
-    const canSubmit = quickPayAmount && (quickPayFromPerson || quickPayToPerson);
-
-    return (
-      <div className={`bg-[#2563EB]/10 rounded-2xl p-5 border-0 ${extraClassName}`}>
-        <p className="text-[11px] text-slate-600 uppercase tracking-[0.12em] font-medium mb-4" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
-          Record Payment
-        </p>
-        <div className="flex flex-wrap items-center gap-2 text-sm text-slate-700">
-          <span>Record payment of</span>
-          <span className="font-medium">$</span>
-          <Input
-            type="number"
-            step="0.01"
-            min="0.01"
-            placeholder=""
-            value={quickPayAmount}
-            onChange={(e) => setQuickPayAmount(e.target.value)}
-            className="w-24 h-8 px-3 bg-white/80 inline-flex border-0 shadow-none"
-            style={{ MozAppearance: 'textfield' }}
-          />
-          <span>from</span>
-          <Select
-            value={quickPayFromPerson}
-            onValueChange={(val) => {
-              setQuickPayFromPerson(val);
-              if (val === quickPayToPerson) setQuickPayToPerson('');
-            }}
-          >
-            <SelectTrigger className="w-auto h-8 px-3 bg-white/80 inline-flex border-0 shadow-none rounded-md">
-              <SelectValue placeholder="select person" />
-            </SelectTrigger>
-            <SelectContent>
-              {filteredFromOptions.map((person) => (
-                <SelectItem key={person.userId} value={person.userId}>
-                  {person.full_name || person.username}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <span>to</span>
-          <Select
-            value={quickPayToPerson}
-            onValueChange={(val) => {
-              setQuickPayToPerson(val);
-              if (val === quickPayFromPerson) setQuickPayFromPerson('');
-            }}
-          >
-            <SelectTrigger className="w-auto h-8 px-3 bg-white/80 inline-flex border-0 shadow-none rounded-md">
-              <SelectValue placeholder="select person" />
-            </SelectTrigger>
-            <SelectContent>
-              {filteredToOptions.map((person) => (
-                <SelectItem key={person.userId} value={person.userId}>
-                  {person.full_name || person.username}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Button
-            type="button"
-            onClick={handleRecordSubmit}
-            disabled={!canSubmit}
-            className={`h-8 px-4 rounded-lg text-sm font-medium border-0 transition-all ${
-              !canSubmit
-                ? 'bg-[#03ACEA]/50 text-white/70 cursor-not-allowed'
-                : 'bg-[#03ACEA] text-white hover:bg-[#5a7ae0]'
-            }`}
-          >
-            Submit
-          </Button>
-        </div>
-      </div>
-    );
   };
 
   // Generate amortization schedule
@@ -1175,7 +1020,7 @@ export default function Lending({ initialTab }) {
     yPos += 7;
 
     doc.setFont(undefined, 'normal');
-    schedule.forEach((row, index) => {
+    schedule.forEach((row) => {
       if (yPos > 190) {
         doc.addPage('landscape');
         yPos = 20;
@@ -1902,7 +1747,7 @@ export default function Lending({ initialTab }) {
                       .sort((a, b) => a.days - b.days)
                       .slice(0, 5);
                     if (rows.length === 0) return <div style={{ padding: '10px 0', fontSize: 12, color: '#9B9A98', textAlign: 'center' }}>You're all clear! Nothing coming up yet 🎉</div>;
-                    return rows.map((loan, idx) => {
+                    return rows.map((loan) => {
                       const isOverdue = loan.days < 0;
                       const daysLabel = isOverdue ? `${Math.abs(loan.days)}d late` : loan.days === 0 ? 'today' : `${loan.days}d`;
                       return (

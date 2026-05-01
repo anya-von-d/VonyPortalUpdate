@@ -19,7 +19,7 @@ const isNativeApp = () => {
 
 export default function Layout({ children }) {
   const location = useLocation();
-  const { userProfile, isLoadingAuth, refreshProfile } = useAuth();
+  const { userProfile, refreshProfile } = useAuth();
 
   // Configure status bar and keyboard for native app
   useEffect(() => {
@@ -92,11 +92,6 @@ export default function Layout({ children }) {
       document.documentElement.style.setProperty(key, value);
     });
   }, [theme, location.pathname]);
-
-  const isHomePage = location.pathname === '/' || location.pathname === '/home';
-  const isDashboardStyle = isHomePage || location.pathname === '/Upcoming' || location.pathname === '/upcoming' || location.pathname === '/Borrowing' || location.pathname === '/borrowing' || location.pathname === '/RecentActivity' || location.pathname === '/recentactivity' || location.pathname === '/Lending' || location.pathname === '/lending' || location.pathname === '/CreateOffer' || location.pathname === '/createoffer' || location.pathname === '/LoanAgreements' || location.pathname === '/loanagreements' || location.pathname === '/RecordPayment' || location.pathname === '/recordpayment' || location.pathname === '/YourLoans' || location.pathname === '/yourloans' || location.pathname === '/Profile' || location.pathname === '/profile' || location.pathname === '/ComingSoon' || location.pathname === '/comingsoon' || location.pathname === '/LoanHelp' || location.pathname === '/loanhelp';
-
-  const todayLabel = new Date().toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
 
   return (
     <div className="min-h-screen flex flex-col w-full safe-area-inset-top safe-area-inset-bottom" style={{ background: 'transparent' }}>

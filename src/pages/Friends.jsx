@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { Friendship, PublicProfile } from '@/entities/all';
 import { useAuth } from '@/lib/AuthContext';
 import { Star, Search, X, Send, ArrowLeft } from 'lucide-react';
@@ -11,7 +11,6 @@ import MeshMobileNav from '@/components/MeshMobileNav';
 import DesktopSidebar from '@/components/DesktopSidebar';
 
 export default function Friends() {
-  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { user: authUser, userProfile } = useAuth();
   const user = userProfile ? { ...userProfile, id: authUser?.id } : null;
@@ -68,7 +67,7 @@ export default function Friends() {
       (f.user_id === targetUserId && f.friend_id === user.id)
     );
     try {
-      for (const row of existing) { try { await Friendship.delete(row.id); } catch (_) {} }
+      for (const row of existing) { try { await Friendship.delete(row.id); } catch {} }
       await Friendship.create({ user_id: user.id, friend_id: targetUserId, status: 'blocked', is_starred: false });
       await loadFriendsData();
     } catch (e) { console.error(e); }
@@ -100,21 +99,21 @@ export default function Friends() {
   const handleToggleStar = async (friendship) => {
     if (processingId) return;
     setProcessingId(friendship.id);
-    try { await Friendship.update(friendship.id, { is_starred: !friendship.is_starred }); await loadFriendsData(); } catch (e) {}
+    try { await Friendship.update(friendship.id, { is_starred: !friendship.is_starred }); await loadFriendsData(); } catch {}
     setProcessingId(null);
   };
 
   const handleSendRequest = async (friendUserId) => {
     if (!user?.id || processingId) return;
     setProcessingId(friendUserId);
-    try { await Friendship.create({ user_id: user.id, friend_id: friendUserId, status: 'pending', is_starred: false }); await loadFriendsData(); } catch (e) {}
+    try { await Friendship.create({ user_id: user.id, friend_id: friendUserId, status: 'pending', is_starred: false }); await loadFriendsData(); } catch {}
     setProcessingId(null);
   };
 
   const handleCancelRequest = async (friendshipId) => {
     if (processingId) return;
     setProcessingId(friendshipId);
-    try { await Friendship.delete(friendshipId); await loadFriendsData(); } catch (e) {}
+    try { await Friendship.delete(friendshipId); await loadFriendsData(); } catch {}
     setProcessingId(null);
   };
 
@@ -126,7 +125,7 @@ export default function Friends() {
       await loadFriendsData();
       setSearchQuery('');
       confetti({ particleCount: 80, spread: 70, origin: { y: 0.5 }, colors: ['#03ACEA', '#7C3AED', '#ffffff'], zIndex: 9999 });
-    } catch (e) {}
+    } catch {}
     setProcessingId(null);
   };
 
@@ -296,7 +295,7 @@ const SECTION_LABEL = {
 };
 
 /* ── Friends list ── */
-function FriendsList({ sortedFriends, receivedRequests, profiles, user, processingId, requestsOpen, setRequestsOpen, getFriendProfile, handleToggleStar, handleAccept, handleCancelRequest, setBlockTarget }) {
+function FriendsList({ sortedFriends, receivedRequests, profiles, processingId, getFriendProfile, handleToggleStar, handleAccept, handleCancelRequest, setBlockTarget }) {
   return (
     <div>
       {/* Friend Requests — section label + plain rows */}
@@ -433,7 +432,7 @@ function InviteBox() {
 }
 
 /* ── Add friends section (shared between desktop right panel and mobile overlay) ── */
-function AddSection({ searchQuery, setSearchQuery, searchResults, profiles, processingId, getSentRequestTo, handleSendRequest, handleCancelRequest, setBlockTarget, user }) {
+function AddSection({ searchQuery, setSearchQuery, searchResults, processingId, getSentRequestTo, handleSendRequest, handleCancelRequest, setBlockTarget }) {
   const TICKER_LINE_H = '1.5em';
   const tickerWords = ['name', 'phone number', 'username', 'email', 'name']; // last = duplicate for seamless loop
 

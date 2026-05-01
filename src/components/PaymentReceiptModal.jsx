@@ -76,8 +76,7 @@ export default function PaymentReceiptModal({ data, onClose }) {
   const {
     amount, date, method, notes, status, id,
     fromName, toName, purpose, loanTotal,
-    isSender, otherPartyAvatar, otherPartyInitial,
-    accentColor,
+    isSender,
   } = data;
 
   // Close on Escape

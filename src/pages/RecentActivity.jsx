@@ -3,7 +3,6 @@ import { Loan, Payment, User, PublicProfile } from "@/entities/all";
 import { Activity, ArrowUp, ArrowDown, Send, Check, X, Ban, ChevronDown, ChevronRight, Search, Download, SlidersHorizontal } from "lucide-react";
 import { subDays, subMonths, subYears } from "date-fns";
 import { todayInTZ, currentDateStringTZ, formatTZ } from "@/components/utils/timezone";
-import { useAuth } from "@/lib/AuthContext";
 import BorrowerSignatureModal from "@/components/loans/BorrowerSignatureModal";
 import MeshMobileNav from "@/components/MeshMobileNav";
 import DesktopSidebar from '../components/DesktopSidebar';
@@ -37,188 +36,6 @@ const SORT_OPTIONS = [
   { id: 'date_asc', label: 'Date (Oldest)' },
 ];
 
-/* ── Multi-select dropdown ─────────────────────────────────── */
-function MultiSelectDropdown({ label, options, selected, onChange }) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef(null);
-
-  useEffect(() => {
-    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, []);
-
-  const toggle = (id) => {
-    if (selected.includes(id)) onChange(selected.filter(s => s !== id));
-    else onChange([...selected, id]);
-  };
-
-  const displayLabel = selected.length === 0
-    ? label
-    : selected.length === 1
-      ? options.find(o => o.id === selected[0])?.label || label
-      : `${selected.length} selected`;
-
-  return (
-    <div ref={ref} style={{ position: 'relative' }}>
-      <button
-        onClick={() => setOpen(!open)}
-        style={{
-          display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 10,
-          border: '1px solid rgba(0,0,0,0.06)', background: selected.length > 0 ? 'rgba(3,172,234,0.08)' : 'white',
-          fontSize: 13, fontWeight: 500, color: '#1A1918', cursor: 'pointer',
-          fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap', transition: 'background 0.15s',
-        }}
-      >
-        {displayLabel}
-        <ChevronDown size={14} style={{ opacity: 0.5, transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
-      </button>
-      {open && (
-        <div style={{
-          position: 'absolute', top: 'calc(100% + 6px)', left: 0, minWidth: 220,
-          background: 'white', borderRadius: 12, border: '1px solid rgba(0,0,0,0.06)',
-          boxShadow: '0 8px 32px rgba(0,0,0,0.08)', zIndex: 50, padding: 6, maxHeight: 280, overflowY: 'auto',
-        }}>
-          {options.map(opt => (
-            <label
-              key={opt.id}
-              onClick={() => toggle(opt.id)}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px', borderRadius: 8,
-                cursor: 'pointer', fontSize: 13, color: '#1A1918', transition: 'background 0.1s',
-              }}
-              onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.03)'}
-              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-            >
-              <div style={{
-                width: 18, height: 18, borderRadius: 5, border: selected.includes(opt.id) ? 'none' : '1.5px solid rgba(0,0,0,0.2)',
-                background: selected.includes(opt.id) ? '#03ACEA' : 'white', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                transition: 'all 0.15s', flexShrink: 0,
-              }}>
-                {selected.includes(opt.id) && (
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
-                )}
-              </div>
-              {opt.label}
-            </label>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-/* ── Single-select dropdown ────────────────────────────────── */
-function SingleSelectDropdown({ options, selected, onChange }) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef(null);
-
-  useEffect(() => {
-    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, []);
-
-  const current = options.find(o => o.id === selected) || options[0];
-
-  return (
-    <div ref={ref} style={{ position: 'relative' }}>
-      <button
-        onClick={() => setOpen(!open)}
-        style={{
-          display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 10,
-          border: '1px solid rgba(0,0,0,0.06)', background: selected !== 'all' ? 'rgba(3,172,234,0.08)' : 'white',
-          fontSize: 13, fontWeight: 500, color: '#1A1918', cursor: 'pointer',
-          fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap', transition: 'background 0.15s',
-        }}
-      >
-        {current.label}
-        <ChevronDown size={14} style={{ opacity: 0.5, transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
-      </button>
-      {open && (
-        <div style={{
-          position: 'absolute', top: 'calc(100% + 6px)', left: 0, minWidth: 200,
-          background: 'white', borderRadius: 12, border: '1px solid rgba(0,0,0,0.06)',
-          boxShadow: '0 8px 32px rgba(0,0,0,0.08)', zIndex: 50, padding: 6,
-        }}>
-          {options.map(opt => (
-            <button
-              key={opt.id}
-              onClick={() => { onChange(opt.id); setOpen(false); }}
-              style={{
-                display: 'block', width: '100%', textAlign: 'left', padding: '8px 10px', borderRadius: 8,
-                border: 'none', cursor: 'pointer', fontSize: 13, color: '#1A1918',
-                background: selected === opt.id ? 'rgba(3,172,234,0.08)' : 'transparent',
-                fontWeight: selected === opt.id ? 600 : 400, fontFamily: "'DM Sans', sans-serif",
-                transition: 'background 0.1s',
-              }}
-              onMouseEnter={e => { if (selected !== opt.id) e.currentTarget.style.background = 'rgba(0,0,0,0.03)'; }}
-              onMouseLeave={e => { if (selected !== opt.id) e.currentTarget.style.background = 'transparent'; }}
-            >
-              {opt.label}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-/* ── Sort dropdown ─────────────────────────────────────────── */
-function SortDropdown({ sortBy, onChange }) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef(null);
-
-  useEffect(() => {
-    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, []);
-
-  const current = SORT_OPTIONS.find(o => o.id === sortBy) || SORT_OPTIONS[0];
-
-  return (
-    <div ref={ref} style={{ position: 'relative' }}>
-      <button
-        onClick={() => setOpen(!open)}
-        style={{
-          display: 'flex', alignItems: 'center', gap: 6, padding: '9px 16px', borderRadius: 22,
-          border: '1px solid rgba(0,0,0,0.06)', background: 'white',
-          fontSize: 13, fontWeight: 500, color: '#1A1918', cursor: 'pointer',
-          fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap',
-        }}
-      >
-        {current.label}
-        <ChevronDown size={14} style={{ opacity: 0.5, transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
-      </button>
-      {open && (
-        <div style={{
-          position: 'absolute', top: 'calc(100% + 6px)', right: 0, minWidth: 190,
-          background: 'white', borderRadius: 12, border: '1px solid rgba(0,0,0,0.06)',
-          boxShadow: '0 8px 32px rgba(0,0,0,0.08)', zIndex: 50, padding: 6,
-        }}>
-          {SORT_OPTIONS.map(opt => (
-            <button
-              key={opt.id}
-              onClick={() => { onChange(opt.id); setOpen(false); }}
-              style={{
-                display: 'block', width: '100%', textAlign: 'left', padding: '8px 10px', borderRadius: 8,
-                border: 'none', cursor: 'pointer', fontSize: 13, color: '#1A1918',
-                background: sortBy === opt.id ? 'rgba(3,172,234,0.08)' : 'transparent',
-                fontWeight: sortBy === opt.id ? 600 : 400, fontFamily: "'DM Sans', sans-serif",
-                transition: 'background 0.1s',
-              }}
-              onMouseEnter={e => { if (sortBy !== opt.id) e.currentTarget.style.background = 'rgba(0,0,0,0.03)'; }}
-              onMouseLeave={e => { if (sortBy !== opt.id) e.currentTarget.style.background = 'transparent'; }}
-            >
-              {opt.label}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
 
 /* ── Export CSV dropdown ────────────────────────────────────── */
 function ExportDropdown({ filteredCount, totalCount, hasAnyFilter, onExport }) {
@@ -350,19 +167,15 @@ export default function RecentActivity({ embeddedMode }) {
   const [sortBy, setSortBy] = useState('date_desc');
 
   // Mobile filter panel state
-  const [mobileSortOpen, setMobileSortOpen] = useState(false);
-  const [mobileDateOpen, setMobileDateOpen] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
 
   // Loan offer view modal
   const [viewingLoanOffer, setViewingLoanOffer] = useState(null);
   const [showSignModal, setShowSignModal] = useState(false);
-  const [raPage, setRaPage] = useState(0);
 
   // Payment receipt modal
   const [receiptData, setReceiptData] = useState(null);
 
-  const { logout } = useAuth();
 
   useEffect(() => { loadData(); }, []);
 
@@ -654,82 +467,6 @@ export default function RecentActivity({ embeddedMode }) {
     URL.revokeObjectURL(url);
   };
 
-  /* ── Pending confirmations for right panel ───────────────── */
-  const pendingToConfirm = safePayments.filter(p => {
-    const loan = safeLoans.find(l => l.id === p.loan_id);
-    return loan && loan.lender_id === user?.id && p.status === 'pending_confirmation';
-  });
-
-  /* ── RightSection component ──────────────────────────────── */
-  const RightSection = ({ title, children }) => (
-    <div style={{ marginBottom: 40 }}>
-      <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif", paddingBottom: 5, marginBottom: 2 }}>{title}</div>
-      {children}
-    </div>
-  );
-
-
-  /* ── Status badge renderer ───────────────────────────────── */
-  const renderStatusBadge = (activity, status) => {
-    // Pending payment confirmation
-    if (activity.type === 'payment' && status === 'pending_confirmation') {
-      return (
-        <div style={{
-          display: 'inline-flex', alignItems: 'center',
-          padding: '3px 10px', borderRadius: 8,
-          background: 'rgba(139,92,246,0.15)', color: '#8B5CF6',
-          border: '1px solid rgba(139,92,246,0.3)',
-          fontSize: 11, fontWeight: 600, whiteSpace: 'nowrap',
-          fontFamily: "'DM Sans', sans-serif",
-        }}>
-          Pending payment confirmation
-        </div>
-      );
-    }
-
-    // Pending loan offer received (user is borrower)
-    if (activity.type === 'loan' && status === 'pending' && activity.lender_id !== user.id) {
-      return (
-        <button
-          onClick={() => setViewingLoanOffer(activity)}
-          style={{
-            display: 'inline-flex', alignItems: 'center',
-            padding: '4px 14px', borderRadius: 8,
-            background: 'white', border: '1px solid rgba(0,0,0,0.12)',
-            color: '#1A1918', cursor: 'pointer',
-            fontSize: 12, fontWeight: 600, whiteSpace: 'nowrap',
-            fontFamily: "'DM Sans', sans-serif",
-          }}
-        >
-          View
-        </button>
-      );
-    }
-
-    // Pending loan offer sent (user is lender)
-    if (activity.type === 'loan' && status === 'pending' && activity.lender_id === user.id) {
-      return (
-        <div style={{
-          display: 'inline-flex', alignItems: 'center',
-          padding: '3px 10px', borderRadius: 8,
-          background: 'rgba(84,166,207,0.15)', color: '#54A6CF',
-          border: '1px solid rgba(84,166,207,0.3)',
-          fontSize: 11, fontWeight: 600, whiteSpace: 'nowrap',
-          fontFamily: "'DM Sans', sans-serif",
-        }}>
-          Awaiting Borrower's Signature
-        </div>
-      );
-    }
-
-    return null;
-  };
-
-  const RA_PAGE_SIZE = 20;
-  const raTotalPages = Math.max(1, Math.ceil(filtered.length / RA_PAGE_SIZE));
-  const raSafePage = Math.min(raPage, raTotalPages - 1);
-  const raPageItems = filtered.slice(raSafePage * RA_PAGE_SIZE, (raSafePage + 1) * RA_PAGE_SIZE);
-
   /* ══════════════════════════════════════════════════════════
      RENDER
      ══════════════════════════════════════════════════════════ */
@@ -764,7 +501,7 @@ export default function RecentActivity({ embeddedMode }) {
             <>
               <div style={{ display: 'flex', flexDirection: 'column' }}>
                 {filtered.map((activity, index) => {
-                  const { title, description, icon: Icon, status, friendName, amount, category } = getActivityInfo(activity);
+                  const { title, icon: Icon, status } = getActivityInfo(activity);
                   const { bg: iconBg, color: iconColor } = getIconStyle(Icon);
                   const dateDisplay = activity.date ? formatTZ(activity.date, 'MMM d, yyyy') : '';
 
@@ -986,7 +723,7 @@ export default function RecentActivity({ embeddedMode }) {
               <>
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                   {filtered.map((activity, index) => {
-                    const { title, description, icon: Icon, status, friendName, amount, category } = getActivityInfo(activity);
+                    const { title, icon: Icon, status } = getActivityInfo(activity);
                     const { bg: iconBg, color: iconColor } = getIconStyle(Icon);
                     const dateDisplay = activity.date ? formatTZ(activity.date, 'MMM d, yyyy') : '';
 

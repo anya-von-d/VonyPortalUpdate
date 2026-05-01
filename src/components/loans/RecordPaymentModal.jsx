@@ -63,7 +63,7 @@ export default function RecordPaymentModal({ loan: initialLoan, candidateLoans =
         const me = await User.me();
         setResolvedUserId(me?.id);
         setCurrentUserIdState(me?.id);
-      } catch (e) {
+      } catch {
         // Fall back to prop
       }
     };
@@ -174,7 +174,6 @@ export default function RecordPaymentModal({ loan: initialLoan, candidateLoans =
     setIsProcessing(false);
   };
 
-  const otherPersonName = recipientInfo?.full_name || 'Unknown';
   const otherPersonUsername = recipientInfo?.username || 'user';
   const loanDirection = isLender ? 'from' : 'to';
   const loanPurpose = loan.purpose || 'Personal loan';

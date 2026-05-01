@@ -1,10 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { LoanAgreement, User, PublicProfile, Loan, Payment } from "@/entities/all";
-import { FileText, CheckCircle, Download, ChevronDown, ChevronRight, X, Calendar, DollarSign, Percent, Clock, Search, Receipt, SlidersHorizontal } from "lucide-react";
+import { FileText, CheckCircle, Download, ChevronRight, X, Calendar, DollarSign, Percent, Clock, Search, Receipt, SlidersHorizontal } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format, addMonths, addWeeks, addDays } from "date-fns";
 import { jsPDF } from "jspdf";
-import { useAuth } from "@/lib/AuthContext";
 import { formatMoney } from "@/components/utils/formatMoney";
 import { toLocalDate } from "@/components/utils/dateUtils";
 import { formatTZ } from "@/components/utils/timezone";
@@ -16,14 +15,6 @@ const ROLE_OPTIONS = [
   { id: 'all', label: 'All Categories' },
   { id: 'lender', label: 'You are the Lender' },
   { id: 'borrower', label: 'You are the Borrower' },
-];
-
-const AMOUNT_MODES = [
-  { id: 'all', label: 'All amounts' },
-  { id: 'exactly', label: 'Exactly' },
-  { id: 'between', label: 'Between' },
-  { id: 'greater', label: 'Greater than' },
-  { id: 'less', label: 'Less than' },
 ];
 
 const STATUS_OPTIONS = [
@@ -49,172 +40,13 @@ const SORT_OPTIONS = [
   { id: 'date_asc', label: 'Date (Oldest)' },
 ];
 
-const SHADOW = '0px 50px 40px rgba(0,0,0,0.02), 0px 50px 40px rgba(0,0,0,0.04), 0px 20px 40px rgba(0,0,0,0.08), 0px 3px 10px rgba(0,0,0,0.12)';
-
-/* ── Single-select dropdown ────────────────────────────────── */
-function SingleSelectDropdown({ options, selected, onChange }) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef(null);
-
-  useEffect(() => {
-    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, []);
-
-  const current = options.find(o => o.id === selected) || options[0];
-
-  return (
-    <div ref={ref} style={{ position: 'relative' }}>
-      <button
-        onClick={() => setOpen(!open)}
-        style={{
-          display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 10,
-          border: '1px solid rgba(0,0,0,0.06)', background: selected !== 'all' ? 'rgba(3,172,234,0.08)' : 'white',
-          fontSize: 13, fontWeight: 500, color: '#1A1918', cursor: 'pointer',
-          fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap', transition: 'background 0.15s',
-        }}
-      >
-        {current.label}
-        <ChevronDown size={14} style={{ opacity: 0.5, transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
-      </button>
-      {open && (
-        <div style={{
-          position: 'absolute', top: 'calc(100% + 6px)', left: 0, minWidth: 220,
-          background: 'white', borderRadius: 12, border: '1px solid rgba(0,0,0,0.06)',
-          boxShadow: '0 8px 32px rgba(0,0,0,0.08)', zIndex: 50, padding: 6,
-        }}>
-          {options.map(opt => (
-            <button
-              key={opt.id}
-              onClick={() => { onChange(opt.id); setOpen(false); }}
-              style={{
-                display: 'block', width: '100%', textAlign: 'left', padding: '8px 10px', borderRadius: 8,
-                border: 'none', cursor: 'pointer', fontSize: 13, color: '#1A1918',
-                background: selected === opt.id ? 'rgba(3,172,234,0.08)' : 'transparent',
-                fontWeight: selected === opt.id ? 600 : 400, fontFamily: "'DM Sans', sans-serif",
-                transition: 'background 0.1s',
-              }}
-              onMouseEnter={e => { if (selected !== opt.id) e.currentTarget.style.background = 'rgba(0,0,0,0.03)'; }}
-              onMouseLeave={e => { if (selected !== opt.id) e.currentTarget.style.background = 'transparent'; }}
-            >
-              {opt.label}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-/* ── Amount filter dropdown ─────────────────────────────────── */
-function AmountFilterDropdown({ amountMode, setAmountMode, amountVal1, setAmountVal1, amountVal2, setAmountVal2 }) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef(null);
-
-  useEffect(() => {
-    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, []);
-
-  const isFiltered = amountMode !== 'all';
-  const displayLabel = amountMode === 'all' ? 'All Amounts'
-    : amountMode === 'exactly' ? (amountVal1 ? `Exactly $${amountVal1}` : 'Exactly')
-    : amountMode === 'between' ? (amountVal1 && amountVal2 ? `$${amountVal1} – $${amountVal2}` : 'Between')
-    : amountMode === 'greater' ? (amountVal1 ? `> $${amountVal1}` : 'Greater than')
-    : amountMode === 'less' ? (amountVal1 ? `< $${amountVal1}` : 'Less than')
-    : 'All Amounts';
-
-  const modeDescriptions = {
-    all: '',
-    exactly: 'Search for an exact loan amount.',
-    between: 'Search for loans between two amounts.',
-    greater: 'Search for loans above a certain amount.',
-    less: 'Search for loans below a certain amount.',
-  };
-
-  const inputStyle = {
-    width: 80, padding: '8px 10px', borderRadius: 8, border: '1px solid rgba(0,0,0,0.1)',
-    fontSize: 14, fontFamily: "'DM Sans', sans-serif", outline: 'none',
-  };
-
-  return (
-    <div ref={ref} style={{ position: 'relative' }}>
-      <button onClick={() => setOpen(!open)} style={{
-        display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 10,
-        border: '1px solid rgba(0,0,0,0.06)', background: isFiltered ? 'rgba(3,172,234,0.08)' : 'white',
-        fontSize: 13, fontWeight: 500, color: '#1A1918', cursor: 'pointer',
-        fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap', transition: 'background 0.15s',
-      }}>
-        {displayLabel}
-        <ChevronDown size={14} style={{ opacity: 0.5, transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
-      </button>
-      {open && (
-        <div style={{
-          position: 'absolute', top: 'calc(100% + 6px)', left: 0, minWidth: 360,
-          background: 'white', borderRadius: 12, border: '1px solid rgba(0,0,0,0.06)',
-          boxShadow: '0 8px 32px rgba(0,0,0,0.08)', zIndex: 50, display: 'flex', overflow: 'hidden',
-        }}>
-          {/* Left: mode list */}
-          <div style={{ borderRight: '1px solid rgba(0,0,0,0.06)', padding: '8px 0', minWidth: 140 }}>
-            {AMOUNT_MODES.map(mode => (
-              <button key={mode.id} onClick={() => { setAmountMode(mode.id); if (mode.id === 'all') { setAmountVal1(''); setAmountVal2(''); } }} style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                width: '100%', textAlign: 'left', padding: '10px 16px', border: 'none', cursor: 'pointer',
-                fontSize: 13, color: '#1A1918', fontFamily: "'DM Sans', sans-serif",
-                background: amountMode === mode.id ? 'rgba(0,0,0,0.03)' : 'transparent',
-                fontWeight: amountMode === mode.id ? 600 : 400, transition: 'background 0.1s',
-              }}
-                onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.03)'}
-                onMouseLeave={e => { if (amountMode !== mode.id) e.currentTarget.style.background = 'transparent'; }}
-              >
-                {mode.label}
-                {amountMode === mode.id && (
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1A1918" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
-                )}
-              </button>
-            ))}
-          </div>
-          {/* Right: inputs */}
-          <div style={{ flex: 1, padding: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
-            {amountMode === 'all' ? (
-              <p style={{ fontSize: 13, color: '#787776', margin: 0 }}>Showing loans of any amount.</p>
-            ) : (
-              <>
-                <p style={{ fontSize: 13, color: '#787776', margin: 0 }}>{modeDescriptions[amountMode]}</p>
-                {amountMode === 'between' ? (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <span style={{ fontSize: 12, color: '#787776', fontWeight: 500 }}>$</span>
-                    <input type="number" placeholder="0" value={amountVal1} onChange={e => setAmountVal1(e.target.value)} style={inputStyle}
-                      onFocus={e => e.target.style.borderColor = '#82F0B9'} onBlur={e => e.target.style.borderColor = 'rgba(0,0,0,0.1)'} />
-                    <span style={{ fontSize: 13, color: '#787776' }}>›</span>
-                    <span style={{ fontSize: 12, color: '#787776', fontWeight: 500 }}>$</span>
-                    <input type="number" placeholder="0" value={amountVal2} onChange={e => setAmountVal2(e.target.value)} style={inputStyle}
-                      onFocus={e => e.target.style.borderColor = '#82F0B9'} onBlur={e => e.target.style.borderColor = 'rgba(0,0,0,0.1)'} />
-                  </div>
-                ) : (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                    <span style={{ fontSize: 12, color: '#787776', fontWeight: 500 }}>$</span>
-                    <input type="number" placeholder="0" value={amountVal1} onChange={e => setAmountVal1(e.target.value)} style={{ ...inputStyle, width: 100 }}
-                      onFocus={e => e.target.style.borderColor = '#82F0B9'} onBlur={e => e.target.style.borderColor = 'rgba(0,0,0,0.1)'} />
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
 
 export default function LoanAgreements() {
   const [agreements, setAgreements] = useState([]);
   const [user, setUser] = useState(null);
   const [publicProfiles, setPublicProfiles] = useState([]);
   const [loans, setLoans] = useState([]);
-  const [payments, setPayments] = useState([]);
+  const [, setPayments] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedAgreement, setSelectedAgreement] = useState(null);
   const [roleFilter, setRoleFilter] = useState('all');
@@ -232,8 +64,6 @@ export default function LoanAgreements() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterOpen, setFilterOpen] = useState(false);
   const filterRef = useRef(null);
-
-  const { logout } = useAuth();
 
   useEffect(() => {
     const handler = (e) => { if (filterRef.current && !filterRef.current.contains(e.target)) setFilterOpen(false); };
@@ -291,15 +121,6 @@ export default function LoanAgreements() {
 
   const getLoanById = (loanId) => {
     return loans.find(l => l.id === loanId);
-  };
-
-  const getStatusBadgeStyle = (status) => {
-    switch(status) {
-      case 'active':    return { background: 'rgba(22,163,74,0.12)',   color: '#16A34A', border: '1px solid rgba(22,163,74,0.25)' };
-      case 'completed': return { background: 'rgba(120,119,118,0.10)', color: '#5C5B5A', border: '1px solid rgba(120,119,118,0.22)' };
-      case 'cancelled': return { background: 'rgba(232,114,110,0.12)', color: '#D94F4B', border: '1px solid rgba(232,114,110,0.28)' };
-      default:          return { background: 'rgba(120,119,118,0.08)', color: '#787776', border: '1px solid rgba(120,119,118,0.15)' };
-    }
   };
 
   // Generate amortization schedule
@@ -580,7 +401,7 @@ export default function LoanAgreements() {
     yPos += 7;
 
     doc.setFont(undefined, 'normal');
-    schedule.forEach((row, index) => {
+    schedule.forEach((row) => {
       if (yPos > 190) {
         doc.addPage('landscape');
         yPos = 20;
@@ -902,9 +723,7 @@ export default function LoanAgreements() {
   const LoanSummaryPopup = ({ agreement }) => {
     const lenderInfo = getUserById(agreement.lender_id);
     const borrowerInfo = getUserById(agreement.borrower_id);
-    const loanStatus = getLoanStatus(agreement.loan_id);
     const loan = getLoanById(agreement.loan_id);
-    const badgeStyle = getStatusBadgeStyle(loanStatus);
 
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
@@ -1034,37 +853,9 @@ export default function LoanAgreements() {
     );
   };
 
-  /* ── Pending confirmations for right panel ───────────────── */
-  const pendingToConfirm = payments.filter(p => {
-    const loan = loans.find(l => l.id === p.loan_id);
-    return loan && loan.lender_id === user?.id && p.status === 'pending_confirmation';
-  });
-
-  /* ── RightSection component ──────────────────────────────── */
-  const RightSection = ({ title, children }) => (
-    <div style={{ marginBottom: 40 }}>
-      <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif", paddingBottom: 5, marginBottom: 2 }}>{title}</div>
-      {children}
-    </div>
-  );
-
   /* ══════════════════════════════════════════════════════════
      RENDER
      ══════════════════════════════════════════════════════════ */
-
-
-  const PageCard = ({ title, headerRight, children, style }) => (
-    <div style={{ position: 'relative', marginBottom: 24 }}>
-      <div className="home-aura-glow" style={{ position: 'absolute', inset: -3, background: '#CFDCE7', borderRadius: 12, filter: 'blur(4px)', opacity: 0.5, zIndex: 0, pointerEvents: 'none' }} />
-      <div style={{ position: 'relative', zIndex: 1, background: '#ffffff', borderRadius: 10, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.13)', padding: '14px 18px', ...style }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: 5, marginBottom: 2 }}>
-          <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.01em', fontFamily: "'DM Sans', sans-serif" }}>{title}</div>
-          {headerRight && <div style={{ flexShrink: 0 }}>{headerRight}</div>}
-        </div>
-        <div style={{ overflow: 'visible' }}>{children}</div>
-      </div>
-    </div>
-  );
 
   return (
     <>

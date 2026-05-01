@@ -720,7 +720,6 @@ export default function SettingsModal({ isOpen, onClose, initialTab = 'general' 
 
   // Mobile: no icons, flush left, minimum width to fit "Invite a Friend" at 13px
   const sidebarWidth = isMobile ? 132 : 180;
-  const sidebarPadH = isMobile ? 0 : 10;
   const sidebarPadV = isMobile ? 14 : 18;
 
   const navItemStyle = (id) => ({

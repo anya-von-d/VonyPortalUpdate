@@ -272,7 +272,7 @@ export default function Notifications() {
   // UI state
   const [showSignatureModal, setShowSignatureModal] = useState(false);
   const [selectedOffer, setSelectedOffer]           = useState(null);
-  const [processingId, setProcessingId]             = useState(null);
+  const [, setProcessingId]                         = useState(null);
   const [selectedPendingRow, setSelectedPendingRow] = useState(null);
   const [working, setWorking]                       = useState(false);
 
@@ -639,7 +639,7 @@ export default function Notifications() {
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              {tabItems.map((item, idx) => (
+              {tabItems.map((item) => (
                 <div
                   key={item.id}
                   onClick={() => handleItemTap(item)}
