@@ -563,23 +563,10 @@ export default function Notifications() {
       <MeshMobileNav user={user} />
       <div className="mesh-layout" style={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: 0, minHeight: '100vh' }}>
         <DesktopSidebar />
-        <div style={{ padding: '80px 20px 120px' }}>
+        <div className="mesh-center" style={{ background: 'transparent', padding: '24px 32px 120px' }}>
 
           {/* Header */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
-            <button
-              onClick={() => navigate(-1)}
-              style={{
-                background: 'none', border: 'none', cursor: 'pointer', padding: 0,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                width: 36, height: 36, borderRadius: 18, color: 'rgba(0,0,0,0.55)',
-              }}
-              aria-label="Go back"
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-              </svg>
-            </button>
             <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700, color: '#1A1918', letterSpacing: '-0.02em', lineHeight: 1 }}>Inbox</h1>
           </div>
 

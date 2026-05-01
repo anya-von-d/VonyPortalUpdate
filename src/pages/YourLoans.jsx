@@ -8,7 +8,7 @@ import {
   AlertDialogDescription, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import {
-  Clock, Calendar, DollarSign, FileText, X, ChevronRight
+  Clock, Calendar, DollarSign, FileText, X, ChevronRight, ArrowUpRight, ArrowDownLeft
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format, addDays, addMonths, addWeeks, startOfMonth, endOfMonth } from "date-fns";
@@ -637,17 +637,16 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
                   else if (rankingFilter === 'most_repaid' || rankingFilter === 'least_repaid') { badgeLabel = `${pct}% repaid`; }
                   else if (rankingFilter === 'most_recent') { badgeLabel = loan.created_at ? formatTZ(loan.created_at, 'MMM d') : '—'; }
                   return (
-                    <div key={loan.id} onClick={() => navigate(createPageUrl('LoanDetail') + '?id=' + loan.id)} style={{ padding: '10px 0', display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
-                      {(() => {
-                        const lendGrad = ['#7FD9FF','#3DC4F5','#03ACEA','#0291C0','#027AA3'];
-                        const borrGrad = ['#B8B7B5','#9B9A98','#787776','#5C5B5A','#464543'];
-                        const circleColor = (isLending ? lendGrad : borrGrad)[idx] || accentCol;
-                        return (
-                          <div style={{ width: 22, height: 22, borderRadius: '50%', background: circleColor, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                            <span style={{ fontSize: 10, fontWeight: 700, color: '#ffffff', lineHeight: 1, fontFamily: "'DM Sans', sans-serif" }}>{idx + 1}</span>
-                          </div>
-                        );
-                      })()}
+                    <div key={loan.id} onClick={() => navigate(createPageUrl('LoanDetail') + '?id=' + loan.id)} style={{ padding: '10px 0', display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer' }}>
+                      {/* Avatar of other party + action badge */}
+                      <div style={{ position: 'relative', flexShrink: 0, width: 38, height: 38 }}>
+                        <UserAvatar name={op?.full_name || op?.username || 'User'} src={op?.profile_picture_url || op?.avatar_url} size={38} />
+                        <div style={{ position: 'absolute', right: -2, bottom: -2, width: 18, height: 18, borderRadius: '50%', background: isLending ? '#1A5FBF' : '#3AADD4', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #FCFCFC', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }}>
+                          {isLending
+                            ? <ArrowUpRight size={10} color="#fff" strokeWidth={2.6} />
+                            : <ArrowDownLeft size={10} color="#fff" strokeWidth={2.6} />}
+                        </div>
+                      </div>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
                           <span style={{ fontSize: 12, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name}</span>

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Loan, Payment, User, PublicProfile } from "@/entities/all";
 import { Activity, ArrowUp, ArrowDown, Send, Check, X, Ban, ChevronDown, ChevronRight, Search, Download, SlidersHorizontal } from "lucide-react";
+import UserAvatar from "@/components/ui/UserAvatar";
 import { subDays, subMonths, subYears } from "date-fns";
 import { todayInTZ, currentDateStringTZ, formatTZ } from "@/components/utils/timezone";
 import BorrowerSignatureModal from "@/components/loans/BorrowerSignatureModal";
@@ -527,9 +528,20 @@ export default function RecentActivity({ embeddedMode }) {
                       onMouseEnter={e => { if (isPayment) e.currentTarget.style.background = 'rgba(0,0,0,0.03)'; }}
                       onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
                     >
-                      <div style={{ width: 38, height: 38, borderRadius: '50%', background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                        <Icon size={17} strokeWidth={2.3} style={{ color: iconColor }} />
-                      </div>
+                      {(() => {
+                        const isPaymentSent = activity._category === 'payment_sent';
+                        const partyProfile = isPaymentSent ? user : (activity._otherPartyId ? getUserById(activity._otherPartyId) : null);
+                        const partyName = partyProfile?.full_name || partyProfile?.username || 'User';
+                        const partySrc = partyProfile?.profile_picture_url || partyProfile?.avatar_url;
+                        return (
+                          <div style={{ position: 'relative', flexShrink: 0, width: 38, height: 38 }}>
+                            <UserAvatar name={partyName} src={partySrc} size={38} />
+                            <div style={{ position: 'absolute', right: -2, bottom: -2, width: 18, height: 18, borderRadius: '50%', background: iconColor, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #FCFCFC', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }}>
+                              <Icon size={10} strokeWidth={2.6} color="#fff" />
+                            </div>
+                          </div>
+                        );
+                      })()}
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                           {title}

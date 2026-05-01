@@ -206,7 +206,7 @@ export default function DesktopTopNav() {
         background: 'none',
         pointerEvents: 'none',
       }}>
-        {/* V bubble logo */}
+        {/* Brand logo */}
         <Link to="/" style={{
           pointerEvents: 'auto', marginRight: 8, flexShrink: 0,
           display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
@@ -215,11 +215,10 @@ export default function DesktopTopNav() {
           backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)',
           border: '1px solid rgba(255,255,255,0.72)',
           boxShadow: '0 2px 12px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.04)',
-          fontFamily: "'Cormorant Garamond', Georgia, serif",
-          fontStyle: 'italic', fontWeight: 600, fontSize: '1.25rem',
-          color: '#1A1918', textDecoration: 'none', lineHeight: 1,
-          letterSpacing: '-0.02em',
-        }}>V</Link>
+          textDecoration: 'none',
+        }}>
+          <img src="/logos/blackLogo.png" alt="Vony" style={{ width: 22, height: 22, objectFit: 'contain' }} />
+        </Link>
 
         {/* Left pill — Home (plain), Calendar (plain), Lending & Borrowing (popup) */}
         <Pill>
