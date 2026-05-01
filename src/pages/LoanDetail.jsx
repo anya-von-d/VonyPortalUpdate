@@ -620,22 +620,18 @@ export default function LoanDetail() {
               {/* Centered document title */}
               <p style={{ textAlign: "center", fontSize: 18, fontWeight: 700, color: "#1A1918", fontFamily: "'DM Sans', sans-serif", letterSpacing: "-0.02em", margin: "0 0 28px" }}>Promissory Note</p>
 
-              {/* Parties */}
-              <div style={{ display: "flex", gap: 40, marginBottom: 20 }}>
-                <div>
-                  <p style={{ ...rowMeta, marginBottom: 2 }}>Lender</p>
-                  <p style={{ fontSize: 22, fontWeight: 600, color: "#1A1918", margin: 0, letterSpacing: "-0.02em", fontFamily: "'DM Sans', sans-serif" }}>{lenderName}</p>
-                </div>
-                <div>
-                  <p style={{ ...rowMeta, marginBottom: 2 }}>Borrower</p>
-                  <p style={{ fontSize: 22, fontWeight: 600, color: "#1A1918", margin: 0, letterSpacing: "-0.02em", fontFamily: "'DM Sans', sans-serif" }}>{borrowerName}</p>
-                </div>
-              </div>
-
-              {/* Principal */}
-              <div style={{ marginBottom: 20 }}>
-                <p style={{ ...rowMeta, marginBottom: 2 }}>Principal amount</p>
-                <p style={{ fontSize: 22, fontWeight: 600, color: "#1A1918", margin: 0, letterSpacing: "-0.02em", fontFamily: "'DM Sans', sans-serif" }}>{formatMoney(agreement.amount)}</p>
+              {/* Parties + Principal — single row */}
+              <div style={{ display: "flex", gap: 40, marginBottom: 24, flexWrap: "wrap" }}>
+                {[
+                  { label: "Lender", value: lenderName },
+                  { label: "Borrower", value: borrowerName },
+                  { label: "Principal amount", value: formatMoney(agreement.amount) },
+                ].map(({ label, value }) => (
+                  <div key={label}>
+                    <p style={{ ...rowMeta, marginBottom: 2 }}>{label}</p>
+                    <p style={{ fontSize: 15, fontWeight: 700, color: "#1A1918", margin: 0, fontFamily: "'DM Sans', sans-serif" }}>{value}</p>
+                  </div>
+                ))}
               </div>
 
               {/* Agreement paragraph */}
