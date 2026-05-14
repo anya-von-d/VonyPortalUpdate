@@ -7,8 +7,6 @@ import {
   FileText, Activity, Plus, CreditCard,
 } from 'lucide-react';
 
-const SIDEBAR_W = 220;
-
 const navItems = [
   { label: 'Home',            icon: Home,          to: '/' },
   { label: 'Upcoming',        icon: Calendar,      to: createPageUrl('Upcoming') },
@@ -65,28 +63,37 @@ function SidebarItem({ item, active }) {
 export default function DesktopSidebar() {
   const location = useLocation();
 
+  /*
+   * IMPORTANT: this component must return a single DOM element so it
+   * occupies exactly ONE grid cell in the mesh-layout (the mesh-left column).
+   * If we return a Fragment, React flattens the children into multiple
+   * grid items, breaking the 2-column layout.
+   *
+   * The wrapper <div> is the mesh-left grid cell.
+   * Inside it:
+   *   - <DesktopTopNav /> renders a position:fixed bar — visually floats
+   *     at the top-right of the viewport, no effect on layout.
+   *   - The sticky sidebar panel fills the 220px column.
+   */
   return (
-    <>
-      {/* Floating search + profile + notifications bar */}
+    <div>
+      {/* Floating search + profile + notifications — position:fixed, no layout impact */}
       <DesktopTopNav />
 
-      {/* Sticky left sidebar — desktop only */}
+      {/* Sticky sidebar panel */}
       <div
         className="desktop-sidebar-panel"
         style={{
           position: 'sticky',
           top: 0,
           height: '100vh',
-          width: SIDEBAR_W,
           background: '#FCFCFC',
           borderRight: '1px solid rgba(0,0,0,0.07)',
           display: 'flex',
           flexDirection: 'column',
           padding: '20px 10px 32px',
-          zIndex: 200,
           overflowY: 'auto',
           overflowX: 'hidden',
-          flexShrink: 0,
         }}
       >
         {/* Logo + wordmark */}
@@ -124,6 +131,6 @@ export default function DesktopSidebar() {
           ))}
         </nav>
       </div>
-    </>
+    </div>
   );
 }

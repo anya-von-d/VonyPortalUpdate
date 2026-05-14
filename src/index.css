@@ -175,9 +175,11 @@ input[type="date"] {
   }
   /* Sidebar column — restore the sidebar */
   .mesh-layout { grid-template-columns: 220px 1fr !important; }
-  .mesh-left { display: block !important; }
-  /* Sticky sidebar: mesh-left must not clip the sticky child */
-  .mesh-left { overflow: visible !important; }
+  .mesh-left { display: block !important; overflow: visible !important; }
+  /* Collapse any vestigial third column (e.g. Borrowing page) */
+  .mesh-right { display: none !important; }
+  /* Prevent grid items from overflowing their cell */
+  .mesh-center { min-width: 0; }
 }
 
 /* Loan details responsive */

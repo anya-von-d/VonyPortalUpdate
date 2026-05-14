@@ -18,7 +18,7 @@ export default function LendingBorrowing() {
       <div className="mesh-layout" style={{ display: 'grid', gridTemplateColumns: '176px 1fr', gap: 0 }}>
         <DesktopSidebar />
 
-        <div className="mesh-center" style={{ padding: '24px 56px 80px', width: '100%' }}>
+        <div className="mesh-center" style={{ padding: '24px 48px 80px', minWidth: 0 }}>
 
           {/* Desktop title */}
           <div className="desktop-page-title" style={{ marginBottom: 20 }}>
