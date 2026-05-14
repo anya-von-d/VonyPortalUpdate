@@ -130,9 +130,12 @@ input[type="date"] {
   position: relative;
 }
 
-/* Hide desktop nav on mobile */
-@media (max-width: 768px) {
+/* Hide desktop nav + sidebar on mobile */
+@media (max-width: 900px) {
   .desktop-top-nav {
+    display: none !important;
+  }
+  .desktop-sidebar-panel {
     display: none !important;
   }
 }
@@ -170,21 +173,10 @@ input[type="date"] {
   .desktop-hide {
     display: none !important;
   }
-  /* Sidebar: slightly darker than main background */
-  .mesh-left {
-    background: rgba(0,0,0,0.028) !important;
-  }
-  /* Home variant: sidebar shares the page background (texture shows through),
-     no divider line, and a #7EC0EA wash at the top that fades out before the
-     main-content cards begin. */
-  .home-mesh .mesh-left {
-    background: transparent !important;
-    border-right: none !important;
-  }
-  /* Home: summary row (NPI/NPD) — React sets maxWidth and centers. */
-  /* Sidebar replaced by fixed top nav — collapse sidebar column */
-  .mesh-layout { grid-template-columns: 1fr !important; }
-  .mesh-left { display: none !important; }
+  /* Sidebar column — restore the sidebar */
+  .mesh-layout { grid-template-columns: 220px 1fr !important; }
+  .mesh-left { display: block !important; width: 220px; min-width: 220px; }
+  /* Hide mobile-only sidebar panel on desktop (the real sidebar is the fixed one) */
 }
 
 /* Loan details responsive */
@@ -755,29 +747,12 @@ input[type="date"] {
   min-width: 0;
 }
 
-/* ── Desktop side padding: all pages except Upcoming ── */
-@media (min-width: 901px) {
-  .mesh-center:not(.upcoming-center) {
-    padding-left: 200px !important;
-    padding-right: 200px !important;
-  }
-}
-
 /* ── Home quick-action carousel ── */
 .home-qac-scroll {
   -webkit-overflow-scrolling: touch;
   min-width: 0;
 }
 .home-qac-scroll::-webkit-scrollbar { display: none; }
-@media (min-width: 901px) {
-  /* Full-bleed carousel: counteract the 200px desktop side padding */
-  .home-qac-scroll {
-    margin-left: -200px !important;
-    margin-right: -200px !important;
-    padding-left: 200px !important;
-    padding-right: 200px !important;
-  }
-}
 @media (max-width: 768px) {
   /* Override inline desktop margins with mobile values */
   .home-qac-scroll {
