@@ -175,8 +175,9 @@ input[type="date"] {
   }
   /* Sidebar column — restore the sidebar */
   .mesh-layout { grid-template-columns: 220px 1fr !important; }
-  .mesh-left { display: block !important; width: 220px; min-width: 220px; }
-  /* Hide mobile-only sidebar panel on desktop (the real sidebar is the fixed one) */
+  .mesh-left { display: block !important; }
+  /* Sticky sidebar: mesh-left must not clip the sticky child */
+  .mesh-left { overflow: visible !important; }
 }
 
 /* Loan details responsive */

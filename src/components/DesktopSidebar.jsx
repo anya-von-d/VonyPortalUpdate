@@ -70,14 +70,13 @@ export default function DesktopSidebar() {
       {/* Floating search + profile + notifications bar */}
       <DesktopTopNav />
 
-      {/* Fixed left sidebar — desktop only */}
+      {/* Sticky left sidebar — desktop only */}
       <div
         className="desktop-sidebar-panel"
         style={{
-          position: 'fixed',
+          position: 'sticky',
           top: 0,
-          left: 0,
-          bottom: 0,
+          height: '100vh',
           width: SIDEBAR_W,
           background: '#FCFCFC',
           borderRight: '1px solid rgba(0,0,0,0.07)',
@@ -87,6 +86,7 @@ export default function DesktopSidebar() {
           zIndex: 200,
           overflowY: 'auto',
           overflowX: 'hidden',
+          flexShrink: 0,
         }}
       >
         {/* Logo + wordmark */}
