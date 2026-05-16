@@ -936,13 +936,13 @@ export default function LoanAgreements() {
           {/* Desktop page title */}
           <div className="desktop-page-title" style={{ marginBottom: 20 }}>
             <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 22, fontWeight: 700, letterSpacing: '-0.03em', lineHeight: 1.2, color: '#1A1918' }}>
-              Lending & Borrowing Records
+              Records
             </div>
           </div>
 
           {/* Mobile-only page title */}
           <div className="mobile-page-title">
-            <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', marginBottom: 12 }}>Lending & Borrowing Records</div>
+            <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', marginBottom: 12 }}>Records</div>
           </div>
 
           {/* Search + Filter + Column toggle + Status */}
