@@ -859,14 +859,14 @@ export default function Home() {
                       </div>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 4 }}>
-                          <span style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name}</span>
+                          <span style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name} borrowed {formatMoney(total)}</span>
                           <span style={{ fontSize: 12, fontWeight: 600, color: isBehind ? '#E8726E' : '#03ACEA', flexShrink: 0, marginLeft: 8 }}>{pctLabel}</span>
                         </div>
                         <div style={{ height: 4, borderRadius: 2, background: 'rgba(0,0,0,0.07)', overflow: 'hidden', marginBottom: 4 }}>
                           <div style={{ height: '100%', width: `${Math.round(pct * 100)}%`, borderRadius: 2, background: isBehind ? '#E8726E' : '#03ACEA', transition: 'width 0.3s' }} />
                         </div>
                         <div style={{ fontSize: 11, color: isBehind ? '#E8726E' : '#9B9A98' }}>
-                          {formatMoney(paid)} of {formatMoney(total)} repaid
+                          {formatMoney(paid)} repaid
                         </div>
                       </div>
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C4C3C1" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><polyline points="9 18 15 12 9 6"/></svg>
