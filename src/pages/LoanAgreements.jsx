@@ -1181,7 +1181,6 @@ export default function LoanAgreements() {
                                       <UserAvatar name={otherParty.full_name} src={otherParty.profile_picture_url} size={32} />
                                       <div>
                                         <div style={{ fontSize: 13, fontWeight: 500, color: '#1A1918' }}>{otherParty.full_name}</div>
-                                        <div style={{ fontSize: 11, color: '#9B9A98' }}>{formatMoney(agreement.total_amount)}</div>
                                       </div>
                                     </div>
                                   </TableCell>
