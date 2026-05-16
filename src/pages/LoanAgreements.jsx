@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { LoanAgreement, User, PublicProfile, Loan, Payment } from "@/entities/all";
 import { FileText, CheckCircle, Download, ChevronRight, X, Calendar, DollarSign, Percent, Clock, Search, Receipt, SlidersHorizontal } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
