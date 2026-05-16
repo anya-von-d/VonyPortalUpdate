@@ -1227,7 +1227,7 @@ export default function LoanAgreements() {
                   </div>
 
                   {/* ── Mobile cards ── */}
-                  <div className="mobile-only" style={{ display: 'flex', flexDirection: 'column' }}>
+                  <div className="mobile-only" style={{ flexDirection: 'column' }}>
                     {pagedAgreements.map((agreement) => {
                       const isLender = agreement.lender_id === user?.id;
                       const otherPartyId = isLender ? agreement.borrower_id : agreement.lender_id;
