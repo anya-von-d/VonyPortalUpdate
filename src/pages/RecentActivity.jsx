@@ -702,7 +702,12 @@ export default function RecentActivity({ embeddedMode }) {
         {/* Col 2: center content */}
         <div className="mesh-center" style={{ background: 'transparent', padding: '24px 32px 80px' }}>
 
-          {/* Mobile-only page title (desktop shows it in top bar) */}
+          {/* Desktop page title */}
+          <div className="desktop-page-title" style={{ marginBottom: 20 }}>
+            <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 22, fontWeight: 700, letterSpacing: '-0.03em', lineHeight: 1.2, color: '#1A1918' }}>Recent Activity</div>
+          </div>
+
+          {/* Mobile-only page title */}
           <div className="mobile-page-title">
             <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 14, fontWeight: 600, color: '#1A1918', letterSpacing: '-0.02em', marginBottom: 12 }}>Recent Activity</div>
           </div>
