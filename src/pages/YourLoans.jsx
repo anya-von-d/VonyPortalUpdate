@@ -19,6 +19,7 @@ import LoanDetailsModal from "@/components/loans/LoanDetailsModal";
 import MeshMobileNav from "@/components/MeshMobileNav";
 import UserAvatar from "@/components/ui/UserAvatar";
 import DesktopSidebar from '../components/DesktopSidebar';
+import { NumberedPagination } from "@/components/ui/numbered-pagination";
 
 export default function YourLoans({ defaultTab, embeddedMode }) {
   const navigate = useNavigate();
@@ -38,6 +39,8 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
   const [manageLoanSelected, setManageLoanSelected] = useState(null);
   const [rankingFilterLending, setRankingFilterLending] = useState('status');
   const [rankingFilterBorrowing, setRankingFilterBorrowing] = useState('status');
+  const [lendingPage, setLendingPage] = useState(1);
+  const [borrowingPage, setBorrowingPage] = useState(1);
   const [activeDocPopup, setActiveDocPopup] = useState(null);
   const [docPopupAgreement, setDocPopupAgreement] = useState(null);
   const [, setReminderSlide] = useState(0);
@@ -82,6 +85,8 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
 
   useEffect(() => {
     setSelectedScrollLoan(null);
+    setLendingPage(1);
+    setBorrowingPage(1);
   }, [activeTab]);
 
   // Keep manageLoanSelected in sync with selectedScrollLoan for doc popups
@@ -354,7 +359,12 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
     });
 
     const rankingFilter = isLending ? rankingFilterLending : rankingFilterBorrowing;
-    const setRankingFilter = isLending ? setRankingFilterLending : setRankingFilterBorrowing;
+    const setRankingFilter = isLending
+      ? (v) => { setRankingFilterLending(v); setLendingPage(1); }
+      : (v) => { setRankingFilterBorrowing(v); setBorrowingPage(1); };
+    const currentPage = isLending ? lendingPage : borrowingPage;
+    const setCurrentPage = isLending ? setLendingPage : setBorrowingPage;
+    const ROWS_PER_PAGE = 5;
 
     const borrowOwed = Math.max(0, totalOwedBorrowing - totalPaidBorrowing);
     const lentOwed   = Math.max(0, totalExpectedLending - totalReceivedLending);
@@ -597,6 +607,8 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
             if (rankingFilter === 'most_recent') return new Date(b.created_at) - new Date(a.created_at);
             return 0;
           });
+          const totalPages = Math.max(1, Math.ceil(sortedLoans.length / ROWS_PER_PAGE));
+          const pagedLoans = sortedLoans.slice((currentPage - 1) * ROWS_PER_PAGE, currentPage * ROWS_PER_PAGE);
           return (
             <div style={{ marginBottom: 24 }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
@@ -619,7 +631,7 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
                 </Select>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column' }}>
-                {sortedLoans.slice(0, 5).map((loan, idx) => {
+                {pagedLoans.map((loan, idx) => {
                   const otherUserId = isLending ? loan.borrower_id : loan.lender_id;
                   const op = publicProfiles.find(p => p.user_id === otherUserId);
                   const name = op?.full_name?.split(' ')[0] || op?.username || 'User';
@@ -661,6 +673,15 @@ export default function YourLoans({ defaultTab, embeddedMode }) {
                   );
                 })}
               </div>
+              {totalPages > 1 && (
+                <div style={{ marginTop: 16 }}>
+                  <NumberedPagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                  />
+                </div>
+              )}
             </div>
           );
         })()}
