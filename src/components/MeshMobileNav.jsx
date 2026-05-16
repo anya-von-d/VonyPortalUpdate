@@ -28,7 +28,7 @@ const RADIAL_ITEMS = [
   },
   {
     label: 'Records',
-    to: 'LoanAgreements',
+    to: 'LendingBorrowing',
     icon: <IcoRecords />,
     x: 0, yAbove: 60,
   },

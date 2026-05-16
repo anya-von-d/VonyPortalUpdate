@@ -15,7 +15,7 @@ const navItems = [
   { label: 'Lending',         icon: ArrowUpRight,  to: createPageUrl('Lending') },
   { label: 'Borrowing',       icon: ArrowDownLeft, to: createPageUrl('Borrowing') },
   { label: 'Friends',         icon: Users,         to: createPageUrl('Friends') },
-  { label: 'Records',         icon: FileText,      to: createPageUrl('YourLoans') },
+  { label: 'Records',         icon: FileText,      to: createPageUrl('LendingBorrowing') },
   { label: 'Recent Activity', icon: Activity,      to: createPageUrl('RecentActivity') },
 ];
 
