@@ -67,7 +67,7 @@ export default function LoanAgreements() {
   const [filterOpen, setFilterOpen] = useState(false);
   const [columnMenuOpen, setColumnMenuOpen] = useState(false);
   const [statusMenuOpen, setStatusMenuOpen] = useState(false);
-  const [visibleColumns, setVisibleColumns] = useState(new Set(['friend', 'role', 'reason', 'status', 'dateSigned']));
+  const [visibleColumns, setVisibleColumns] = useState(new Set(['friend', 'role', 'reason', 'status', 'dateSigned', 'amount']));
   const [currentPage, setCurrentPage] = useState(1);
   const filterRef = useRef(null);
   const columnRef = useRef(null);
@@ -1013,10 +1013,11 @@ export default function LoanAgreements() {
                   <div style={{ position: 'absolute', top: 'calc(100% + 8px)', right: 0, background: 'white', borderRadius: 14, boxShadow: '0 8px 32px rgba(0,0,0,0.12)', border: '1px solid rgba(0,0,0,0.06)', padding: '12px 4px', minWidth: 160, zIndex: 100 }}>
                     {[
                       { key: 'friend', label: 'Friend' },
-                      { key: 'role', label: 'Role' },
+                      { key: 'role', label: 'Your Role' },
                       { key: 'reason', label: 'Reason' },
                       { key: 'status', label: 'Status' },
                       { key: 'dateSigned', label: 'Date Signed' },
+                      { key: 'amount', label: 'Amount' },
                     ].map(({ key, label }) => {
                       const on = visibleColumns.has(key);
                       return (
@@ -1151,10 +1152,11 @@ export default function LoanAgreements() {
                       <TableHeader>
                         <TableRow style={{ background: '#FAFAF9' }}>
                           {visibleColumns.has('friend')     && <TableHead style={{ fontSize: 11, fontWeight: 700, color: '#787776', letterSpacing: '0.05em', textTransform: 'uppercase', padding: '10px 16px' }}>Friend</TableHead>}
-                          {visibleColumns.has('role')       && <TableHead style={{ fontSize: 11, fontWeight: 700, color: '#787776', letterSpacing: '0.05em', textTransform: 'uppercase', padding: '10px 16px' }}>Role</TableHead>}
+                          {visibleColumns.has('role')       && <TableHead style={{ fontSize: 11, fontWeight: 700, color: '#787776', letterSpacing: '0.05em', textTransform: 'uppercase', padding: '10px 16px' }}>Your Role</TableHead>}
                           {visibleColumns.has('reason')     && <TableHead style={{ fontSize: 11, fontWeight: 700, color: '#787776', letterSpacing: '0.05em', textTransform: 'uppercase', padding: '10px 16px' }}>Reason</TableHead>}
                           {visibleColumns.has('status')     && <TableHead style={{ fontSize: 11, fontWeight: 700, color: '#787776', letterSpacing: '0.05em', textTransform: 'uppercase', padding: '10px 16px' }}>Status</TableHead>}
                           {visibleColumns.has('dateSigned') && <TableHead style={{ fontSize: 11, fontWeight: 700, color: '#787776', letterSpacing: '0.05em', textTransform: 'uppercase', padding: '10px 16px' }}>Date Signed</TableHead>}
+                          {visibleColumns.has('amount')     && <TableHead style={{ fontSize: 11, fontWeight: 700, color: '#787776', letterSpacing: '0.05em', textTransform: 'uppercase', padding: '10px 16px' }}>Amount</TableHead>}
                           <TableHead style={{ width: 40 }} />
                         </TableRow>
                       </TableHeader>
@@ -1206,6 +1208,11 @@ export default function LoanAgreements() {
                                 {visibleColumns.has('dateSigned') && (
                                   <TableCell style={{ padding: '12px 16px', fontSize: 13, color: '#787776' }}>
                                     {agreement.lender_signed_date ? formatTZ(agreement.lender_signed_date, 'MMM d, yyyy') : '—'}
+                                  </TableCell>
+                                )}
+                                {visibleColumns.has('amount') && (
+                                  <TableCell style={{ padding: '12px 16px', fontSize: 13, fontWeight: 600, color: '#1A1918' }}>
+                                    {formatMoney(agreement.total_amount)}
                                   </TableCell>
                                 )}
                                 <TableCell style={{ padding: '12px 16px', textAlign: 'right' }}>
