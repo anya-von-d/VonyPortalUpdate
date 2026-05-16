@@ -474,10 +474,18 @@ export default function LoanAgreements() {
   const clearFilters = () => { setRoleFilter('all'); setStatusFilter('all'); setDateFilter('all'); setFriendFilter('all'); setAmountMode('all'); setAmountVal1(''); setAmountVal2(''); setSearchQuery(''); };
 
   /* ── Loading state ──────────────────────────────────────────── */
-  if (isLoading || !user) {
+  if (isLoading) {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ width: 32, height: 32, border: '2px solid #82F0B9', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'DM Sans', sans-serif" }}>
+        <p style={{ fontSize: 13, color: '#787776' }}>Please sign in to view your records.</p>
       </div>
     );
   }
