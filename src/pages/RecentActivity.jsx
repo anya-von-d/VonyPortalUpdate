@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Loan, Payment, User, PublicProfile } from "@/entities/all";
 import { Activity, ArrowUp, ArrowDown, Send, Check, X, Ban, ChevronDown, ChevronRight, Search, Download, SlidersHorizontal } from "lucide-react";
 import UserAvatar from "@/components/ui/UserAvatar";
@@ -8,6 +8,8 @@ import BorrowerSignatureModal from "@/components/loans/BorrowerSignatureModal";
 import MeshMobileNav from "@/components/MeshMobileNav";
 import DesktopSidebar from '../components/DesktopSidebar';
 import PaymentReceiptModal from "@/components/PaymentReceiptModal";
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
+import { NumberedPagination } from "@/components/ui/numbered-pagination";
 
 
 const CATEGORY_OPTIONS = [
@@ -177,8 +179,22 @@ export default function RecentActivity({ embeddedMode }) {
   // Payment receipt modal
   const [receiptData, setReceiptData] = useState(null);
 
+  // Desktop categories dropdown + pagination
+  const [categoryMenuOpen, setCategoryMenuOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const categoryRef = useRef(null);
 
   useEffect(() => { loadData(); }, []);
+
+  useEffect(() => { setCurrentPage(1); }, [searchQuery, dateFilter, categoryFilter, friendFilter, sortBy]);
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (categoryRef.current && !categoryRef.current.contains(e.target)) setCategoryMenuOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
 
   const safeEntityCall = async (entityCall, fallback = []) => {
     try {
@@ -724,89 +740,233 @@ export default function RecentActivity({ embeddedMode }) {
               <button onClick={() => setFilterOpen(true)} style={{ width: 36, height: 36, borderRadius: '50%', background: hasAnyFilter ? 'rgba(26,25,24,0.10)' : 'rgba(0,0,0,0.07)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <SlidersHorizontal size={15} style={{ color: hasAnyFilter ? '#1A1918' : '#5C5B5A' }} />
               </button>
+              {/* Categories dropdown — desktop only */}
+              <div className="desktop-only" ref={categoryRef} style={{ position: 'relative' }}>
+                <button
+                  onClick={() => setCategoryMenuOpen(!categoryMenuOpen)}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: 6, padding: '0 14px', height: 36,
+                    borderRadius: 18, border: '1px solid rgba(0,0,0,0.08)',
+                    background: categoryFilter.length > 0 ? 'rgba(26,25,24,0.08)' : 'white',
+                    cursor: 'pointer', fontSize: 13, fontWeight: 500,
+                    color: categoryFilter.length > 0 ? '#1A1918' : '#5C5B5A',
+                    fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap',
+                  }}
+                >
+                  Categories{categoryFilter.length > 0 ? ` (${categoryFilter.length})` : ''}
+                  <ChevronDown size={13} />
+                </button>
+                {categoryMenuOpen && (
+                  <div style={{
+                    position: 'absolute', top: 'calc(100% + 6px)', right: 0, width: 260,
+                    background: 'white', borderRadius: 12, border: '1px solid rgba(0,0,0,0.08)',
+                    boxShadow: '0 8px 24px rgba(0,0,0,0.10)', zIndex: 50, padding: '8px 0',
+                  }}>
+                    {CATEGORY_OPTIONS.map(opt => {
+                      const active = categoryFilter.includes(opt.id);
+                      return (
+                        <div
+                          key={opt.id}
+                          onClick={() => {
+                            const next = active ? categoryFilter.filter(x => x !== opt.id) : [...categoryFilter, opt.id];
+                            setCategoryFilter(next);
+                          }}
+                          style={{
+                            display: 'flex', alignItems: 'center', gap: 10,
+                            padding: '8px 16px', cursor: 'pointer',
+                            background: active ? 'rgba(26,25,24,0.04)' : 'transparent',
+                            fontFamily: "'DM Sans', sans-serif",
+                          }}
+                          onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.04)'}
+                          onMouseLeave={e => e.currentTarget.style.background = active ? 'rgba(26,25,24,0.04)' : 'transparent'}
+                        >
+                          <div style={{
+                            width: 16, height: 16, borderRadius: 4, border: '1.5px solid',
+                            borderColor: active ? '#1A1918' : '#C7C6C4',
+                            background: active ? '#1A1918' : 'white',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                          }}>
+                            {active && <Check size={10} color="white" strokeWidth={3} />}
+                          </div>
+                          <span style={{ fontSize: 13, color: '#1A1918', lineHeight: 1.3 }}>{opt.label}</span>
+                        </div>
+                      );
+                    })}
+                    {categoryFilter.length > 0 && (
+                      <>
+                        <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', margin: '6px 0' }} />
+                        <div
+                          onClick={() => setCategoryFilter([])}
+                          style={{ padding: '8px 16px', cursor: 'pointer', fontSize: 13, color: '#787776', fontFamily: "'DM Sans', sans-serif" }}
+                          onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.04)'}
+                          onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                        >
+                          Clear categories
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
           {/* ── Activity List ──────────────────────────────────── */}
-          <div>
-          <div>
-            <div>
-            {filtered.length === 0 ? (
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 0' }}>
-                <p style={{ fontSize: 13, color: '#787776', margin: 0, textAlign: 'center' }}>Nothing to show here yet ✨</p>
-                {hasAnyFilter && <p style={{ fontSize: 12, color: '#C7C6C4', margin: '4px 0 0' }}>Try adjusting your filters</p>}
-              </div>
-            ) : (
+          {(() => {
+            const ROWS_PER_PAGE = 10;
+            const totalPages = Math.max(1, Math.ceil(filtered.length / ROWS_PER_PAGE));
+            const safePage = Math.min(currentPage, totalPages);
+            const pagedFiltered = filtered.slice((safePage - 1) * ROWS_PER_PAGE, safePage * ROWS_PER_PAGE);
+
+            const getStatusBadge = (status, isPendingConfirmation, isPendingSignature) => {
+              if (isPendingSignature) return { label: 'Pending signature', bg: 'rgba(84,166,207,0.12)', color: '#1D5B94', border: 'rgba(84,166,207,0.3)' };
+              if (isPendingConfirmation) return { label: 'Pending confirmation', bg: 'rgba(139,92,246,0.12)', color: '#7C3AED', border: 'rgba(139,92,246,0.3)' };
+              if (status === 'active') return { label: 'Active', bg: 'rgba(22,163,74,0.10)', color: '#16A34A', border: 'rgba(22,163,74,0.25)' };
+              if (status === 'completed') return { label: 'Completed', bg: 'rgba(29,91,148,0.10)', color: '#1D5B94', border: 'rgba(29,91,148,0.25)' };
+              if (status === 'declined') return { label: 'Declined', bg: 'rgba(217,79,75,0.10)', color: '#D94F4B', border: 'rgba(217,79,75,0.25)' };
+              if (status === 'cancelled') return { label: 'Cancelled', bg: 'rgba(217,79,75,0.10)', color: '#D94F4B', border: 'rgba(217,79,75,0.25)' };
+              if (status === 'defaulted') return { label: 'Defaulted', bg: 'rgba(217,79,75,0.10)', color: '#D94F4B', border: 'rgba(217,79,75,0.25)' };
+              if (status === 'pending') return { label: 'Pending', bg: 'rgba(202,138,4,0.10)', color: '#B45309', border: 'rgba(202,138,4,0.25)' };
+              return null;
+            };
+
+            if (filtered.length === 0) {
+              return (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 0' }}>
+                  <p style={{ fontSize: 13, color: '#787776', margin: 0, textAlign: 'center' }}>Nothing to show here yet ✨</p>
+                  {hasAnyFilter && <p style={{ fontSize: 12, color: '#C7C6C4', margin: '4px 0 0' }}>Try adjusting your filters</p>}
+                </div>
+              );
+            }
+
+            return (
               <>
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  {filtered.map((activity, index) => {
-                    const { title, icon: Icon, status } = getActivityInfo(activity);
-                    const { bg: iconBg, color: iconColor } = getIconStyle(Icon);
-                    const dateDisplay = activity.date ? formatTZ(activity.date, 'MMM d, yyyy') : '';
-
-                    const isPendingConfirmation = activity.type === 'payment' && status === 'pending_confirmation';
-                    const isPendingSignature = activity.type === 'loan' && status === 'pending' && activity.lender_id !== user.id;
-                    const showArrow = isPendingConfirmation || isPendingSignature;
-
-                    const handleArrowClick = () => {
-                      if (isPendingSignature) {
-                        setViewingLoanOffer(activity);
-                      } else if (isPendingConfirmation) {
-                        const associatedLoan = safeLoans.find(l => l && l.id === activity.loan_id);
-                        if (associatedLoan) setViewingLoanOffer(associatedLoan);
-                      }
-                    };
-
-                    const isPayment2 = activity.type === 'payment';
-                    return (
-                      <div
-                        key={`${activity.type}-${activity.id}-${index}`}
-                        onClick={() => isPayment2 && openReceipt(activity)}
-                        style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 0', cursor: isPayment2 ? 'pointer' : 'default', borderRadius: 8, transition: 'background 0.12s' }}
-                        onMouseEnter={e => { if (isPayment2) e.currentTarget.style.background = 'rgba(0,0,0,0.03)'; }}
-                        onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
-                      >
-                        <div style={{ width: 38, height: 38, borderRadius: '50%', background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                          <Icon size={17} strokeWidth={2.3} style={{ color: iconColor }} />
-                        </div>
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                            {title}
-                          </div>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 2, flexWrap: 'wrap' }}>
-                            <span style={{ fontSize: 11, color: '#787776' }}>{dateDisplay}</span>
-                            {isPendingConfirmation && (
-                              <span style={{ fontSize: 10, fontWeight: 600, color: '#8B5CF6', background: 'rgba(139,92,246,0.12)', border: '1px solid rgba(139,92,246,0.22)', borderRadius: 5, padding: '1px 6px', whiteSpace: 'nowrap' }}>
-                                Pending payment confirmation
-                              </span>
-                            )}
-                            {isPendingSignature && (
-                              <span style={{ fontSize: 10, fontWeight: 600, color: '#54A6CF', background: 'rgba(84,166,207,0.12)', border: '1px solid rgba(84,166,207,0.22)', borderRadius: 5, padding: '1px 6px', whiteSpace: 'nowrap' }}>
-                                Pending your signature
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                        {isPayment2 && !showArrow && (
-                          <ChevronRight size={14} style={{ color: '#C4C3C1', flexShrink: 0 }} />
-                        )}
-                        {showArrow && (
-                          <button
-                            onClick={e => { e.stopPropagation(); handleArrowClick(); }}
-                            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, flexShrink: 0, display: 'flex', alignItems: 'center' }}
+                {/* Desktop table */}
+                <div className="desktop-only" style={{ borderRadius: 12, border: '1px solid rgba(0,0,0,0.07)', overflow: 'hidden', background: 'white' }}>
+                  <Table>
+                    <TableHeader>
+                      <TableRow style={{ background: '#FAFAF9' }}>
+                        <TableHead style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, fontWeight: 600, color: '#787776', padding: '10px 16px' }}>Activity</TableHead>
+                        <TableHead style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, fontWeight: 600, color: '#787776', padding: '10px 16px' }}>Status</TableHead>
+                        <TableHead style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, fontWeight: 600, color: '#787776', padding: '10px 16px' }}>Date</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {pagedFiltered.map((activity, index) => {
+                        const { title, icon: Icon, status } = getActivityInfo(activity);
+                        const { color: iconColor } = getIconStyle(Icon);
+                        const dateDisplay = activity.date ? formatTZ(activity.date, 'MMM d, yyyy') : '';
+                        const isPendingConfirmation = activity.type === 'payment' && status === 'pending_confirmation';
+                        const isPendingSignature = activity.type === 'loan' && status === 'pending' && activity.lender_id !== user.id;
+                        const badge = getStatusBadge(status, isPendingConfirmation, isPendingSignature);
+                        const isPayment = activity.type === 'payment';
+                        const otherPartyProfile = activity._otherPartyId ? getUserById(activity._otherPartyId) : null;
+                        const partyName = otherPartyProfile?.full_name || otherPartyProfile?.username || 'User';
+                        const partySrc = otherPartyProfile?.profile_picture_url || otherPartyProfile?.avatar_url;
+                        const handleArrowClick = () => {
+                          if (isPendingSignature) setViewingLoanOffer(activity);
+                          else if (isPendingConfirmation) {
+                            const associatedLoan = safeLoans.find(l => l && l.id === activity.loan_id);
+                            if (associatedLoan) setViewingLoanOffer(associatedLoan);
+                          }
+                        };
+                        return (
+                          <TableRow
+                            key={`${activity.type}-${activity.id}-${index}`}
+                            onClick={() => { if (isPayment) openReceipt(activity); else if (isPendingSignature || isPendingConfirmation) handleArrowClick(); }}
+                            style={{ cursor: (isPayment || isPendingSignature || isPendingConfirmation) ? 'pointer' : 'default', transition: 'background 0.1s' }}
+                            onMouseEnter={e => { if (isPayment || isPendingSignature || isPendingConfirmation) e.currentTarget.style.background = 'rgba(0,0,0,0.02)'; }}
+                            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                           >
-                            <ChevronRight size={16} style={{ color: '#9B9A98' }} />
-                          </button>
-                        )}
-                      </div>
-                    );
-                  })}
+                            <TableCell style={{ padding: '12px 16px' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                                <div style={{ position: 'relative', flexShrink: 0, width: 36, height: 36 }}>
+                                  <UserAvatar name={partyName} src={partySrc} size={36} />
+                                  <div style={{ position: 'absolute', right: -2, bottom: -2, width: 16, height: 16, borderRadius: '50%', background: iconColor, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid white' }}>
+                                    <Icon size={9} strokeWidth={2.8} color="#fff" />
+                                  </div>
+                                </div>
+                                <span style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', fontFamily: "'DM Sans', sans-serif" }}>{title}</span>
+                              </div>
+                            </TableCell>
+                            <TableCell style={{ padding: '12px 16px' }}>
+                              {badge ? (
+                                <span style={{ fontSize: 11, fontWeight: 600, color: badge.color, background: badge.bg, border: `1px solid ${badge.border}`, borderRadius: 6, padding: '3px 8px', whiteSpace: 'nowrap', fontFamily: "'DM Sans', sans-serif" }}>
+                                  {badge.label}
+                                </span>
+                              ) : (
+                                <span style={{ fontSize: 12, color: '#C4C3C1' }}>—</span>
+                              )}
+                            </TableCell>
+                            <TableCell style={{ padding: '12px 16px', fontSize: 13, color: '#787776', fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap' }}>
+                              {dateDisplay}
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                </div>
+
+                {/* Mobile cards */}
+                <div className="mobile-only">
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    {pagedFiltered.map((activity, index) => {
+                      const { title, icon: Icon, status } = getActivityInfo(activity);
+                      const { bg: iconBg, color: iconColor } = getIconStyle(Icon);
+                      const dateDisplay = activity.date ? formatTZ(activity.date, 'MMM d, yyyy') : '';
+                      const isPendingConfirmation = activity.type === 'payment' && status === 'pending_confirmation';
+                      const isPendingSignature = activity.type === 'loan' && status === 'pending' && activity.lender_id !== user.id;
+                      const showArrow = isPendingConfirmation || isPendingSignature;
+                      const handleArrowClick = () => {
+                        if (isPendingSignature) setViewingLoanOffer(activity);
+                        else if (isPendingConfirmation) {
+                          const associatedLoan = safeLoans.find(l => l && l.id === activity.loan_id);
+                          if (associatedLoan) setViewingLoanOffer(associatedLoan);
+                        }
+                      };
+                      const isPayment2 = activity.type === 'payment';
+                      return (
+                        <div
+                          key={`${activity.type}-${activity.id}-${index}`}
+                          onClick={() => isPayment2 && openReceipt(activity)}
+                          style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 0', cursor: isPayment2 ? 'pointer' : 'default', borderRadius: 8, transition: 'background 0.12s' }}
+                          onMouseEnter={e => { if (isPayment2) e.currentTarget.style.background = 'rgba(0,0,0,0.03)'; }}
+                          onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
+                        >
+                          <div style={{ width: 38, height: 38, borderRadius: '50%', background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                            <Icon size={17} strokeWidth={2.3} style={{ color: iconColor }} />
+                          </div>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ fontSize: 13, fontWeight: 500, color: '#1A1918', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{title}</div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 2, flexWrap: 'wrap' }}>
+                              <span style={{ fontSize: 11, color: '#787776' }}>{dateDisplay}</span>
+                              {isPendingConfirmation && (
+                                <span style={{ fontSize: 10, fontWeight: 600, color: '#8B5CF6', background: 'rgba(139,92,246,0.12)', border: '1px solid rgba(139,92,246,0.22)', borderRadius: 5, padding: '1px 6px', whiteSpace: 'nowrap' }}>Pending payment confirmation</span>
+                              )}
+                              {isPendingSignature && (
+                                <span style={{ fontSize: 10, fontWeight: 600, color: '#54A6CF', background: 'rgba(84,166,207,0.12)', border: '1px solid rgba(84,166,207,0.22)', borderRadius: 5, padding: '1px 6px', whiteSpace: 'nowrap' }}>Pending your signature</span>
+                              )}
+                            </div>
+                          </div>
+                          {isPayment2 && !showArrow && <ChevronRight size={14} style={{ color: '#C4C3C1', flexShrink: 0 }} />}
+                          {showArrow && (
+                            <button onClick={e => { e.stopPropagation(); handleArrowClick(); }} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, flexShrink: 0, display: 'flex', alignItems: 'center' }}>
+                              <ChevronRight size={16} style={{ color: '#9B9A98' }} />
+                            </button>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div style={{ marginTop: 16 }}>
+                  <NumberedPagination currentPage={safePage} totalPages={totalPages} onPageChange={setCurrentPage} />
                 </div>
               </>
-            )}
-            </div>
-          </div>
-          </div>
+            );
+          })()}
 
         </div>
 
