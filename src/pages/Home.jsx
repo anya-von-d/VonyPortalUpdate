@@ -17,6 +17,7 @@ import { Plus, CreditCard, ArrowUpRight, ArrowDownLeft } from "lucide-react";
 import DesktopSidebar from '../components/DesktopSidebar';
 import MeshMobileNav from "@/components/MeshMobileNav";
 import UserAvatar from "@/components/ui/UserAvatar";
+import { FeatureCard } from "@/components/ui/feature-card";
 import BorrowerSignatureModal from "@/components/loans/BorrowerSignatureModal";
 import { createPortal } from 'react-dom';
 
@@ -811,6 +812,50 @@ export default function Home() {
           })()}
 
 
+
+          {/* ── Lending feature card ── */}
+          {lentLoans.length > 0 && (
+            <FeatureCard title="Lending" className="mb-6" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+              <div style={{ display: 'flex', flexDirection: 'column', marginTop: -8 }}>
+                {lentLoans.map(loan => {
+                  const borrowerProfile = safeAllProfiles.find(p => p.user_id === loan.borrower_id);
+                  const name = borrowerProfile?.full_name?.split(' ')[0] || borrowerProfile?.username || 'User';
+                  const total = loan.total_amount || loan.amount || 0;
+                  const paid = loan.amount_paid || 0;
+                  const pct = total > 0 ? Math.min(1, paid / total) : 0;
+                  const nextDue = loan.next_payment_date ? toLocalDate(loan.next_payment_date) : null;
+                  const isBehind = nextDue && nextDue < todayInTZ();
+                  return (
+                    <div key={loan.id} onClick={() => navigate(createPageUrl('LoanDetail') + '?id=' + loan.id)}
+                      style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '10px 0', cursor: 'pointer', borderBottom: '1px solid rgba(0,0,0,0.05)' }}
+                    >
+                      <div style={{ position: 'relative', flexShrink: 0 }}>
+                        <UserAvatar name={borrowerProfile?.full_name || name} src={borrowerProfile?.profile_picture_url} size={38} />
+                        <div style={{ position: 'absolute', bottom: -2, right: -2, width: 16, height: 16, borderRadius: '50%', background: '#03ACEA', border: '1.5px solid white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>
+                          </svg>
+                        </div>
+                      </div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 2 }}>
+                          <span style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name}</span>
+                          <span style={{ fontSize: 12, fontWeight: 500, color: isBehind ? '#E8726E' : '#03ACEA', flexShrink: 0, marginLeft: 8 }}>{formatMoney(total)}</span>
+                        </div>
+                        <div style={{ fontSize: 11, color: isBehind ? '#E8726E' : '#9B9A98', marginBottom: 4 }}>
+                          {formatMoney(paid)} repaid of {formatMoney(total)}
+                        </div>
+                        <div style={{ height: 4, borderRadius: 2, background: 'rgba(0,0,0,0.07)', overflow: 'hidden' }}>
+                          <div style={{ height: '100%', width: `${Math.round(pct * 100)}%`, borderRadius: 2, background: isBehind ? '#E8726E' : '#03ACEA', transition: 'width 0.3s' }} />
+                        </div>
+                      </div>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C4C3C1" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><polyline points="9 18 15 12 9 6"/></svg>
+                    </div>
+                  );
+                })}
+              </div>
+            </FeatureCard>
+          )}
 
           {/* Two-column: left = loans, right = upcoming + summary + friends */}
           <div className="home-main-two-col" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
