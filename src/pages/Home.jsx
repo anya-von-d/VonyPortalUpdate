@@ -18,6 +18,7 @@ import DesktopSidebar from '../components/DesktopSidebar';
 import MeshMobileNav from "@/components/MeshMobileNav";
 import UserAvatar from "@/components/ui/UserAvatar";
 import { FeatureCard } from "@/components/ui/feature-card";
+import { ActivityDropdown } from "@/components/ui/activity-dropdown";
 import BorrowerSignatureModal from "@/components/loans/BorrowerSignatureModal";
 import { createPortal } from 'react-dom';
 
@@ -813,9 +814,15 @@ export default function Home() {
 
 
 
+          {/* ── Activity + Lending side by side ── */}
+          <div style={{ display: 'flex', gap: 24, alignItems: 'flex-start', marginBottom: 24, flexWrap: 'wrap' }}>
+            <div style={{ flex: '1 1 280px', minWidth: 0 }}>
+              <ActivityDropdown />
+            </div>
+            {lentLoans.length > 0 && (
+              <div style={{ flex: '1 1 280px', minWidth: 0 }}>
           {/* ── Lending feature card ── */}
-          {lentLoans.length > 0 && (
-            <FeatureCard title="Lending" className="mb-6" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+            <FeatureCard title="Lending" style={{ fontFamily: "'DM Sans', sans-serif" }}>
               <div style={{ display: 'flex', flexDirection: 'column', marginTop: -8 }}>
                 {lentLoans.map(loan => {
                   const borrowerProfile = safeAllProfiles.find(p => p.user_id === loan.borrower_id);
@@ -855,7 +862,9 @@ export default function Home() {
                 })}
               </div>
             </FeatureCard>
-          )}
+              </div>
+            )}
+          </div>{/* end activity + lending row */}
 
           {/* Two-column: left = loans, right = upcoming + summary + friends */}
           <div className="home-main-two-col" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
