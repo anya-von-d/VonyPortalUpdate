@@ -822,7 +822,19 @@ export default function Home() {
             {lentLoans.length > 0 && (
               <div style={{ flex: '1 1 280px', minWidth: 0 }}>
           {/* ── Lending feature card ── */}
-            <FeatureCard title="Lending" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+            <FeatureCard
+              title={
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+                  <span style={{ width: 22, height: 22, borderRadius: '50%', background: '#03ACEA', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>
+                    </svg>
+                  </span>
+                  Lending
+                </span>
+              }
+              style={{ fontFamily: "'DM Sans', sans-serif" }}
+            >
               <div style={{ display: 'flex', flexDirection: 'column', marginTop: -8 }}>
                 {lentLoans.map(loan => {
                   const borrowerProfile = safeAllProfiles.find(p => p.user_id === loan.borrower_id);
@@ -830,6 +842,7 @@ export default function Home() {
                   const total = loan.total_amount || loan.amount || 0;
                   const paid = loan.amount_paid || 0;
                   const pct = total > 0 ? Math.min(1, paid / total) : 0;
+                  const pctLabel = `${Math.round(pct * 100)}%`;
                   const nextDue = loan.next_payment_date ? toLocalDate(loan.next_payment_date) : null;
                   const isBehind = nextDue && nextDue < todayInTZ();
                   return (
@@ -845,15 +858,15 @@ export default function Home() {
                         </div>
                       </div>
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 2 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 4 }}>
                           <span style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name}</span>
-                          <span style={{ fontSize: 12, fontWeight: 500, color: isBehind ? '#E8726E' : '#03ACEA', flexShrink: 0, marginLeft: 8 }}>{formatMoney(total)}</span>
+                          <span style={{ fontSize: 12, fontWeight: 600, color: isBehind ? '#E8726E' : '#03ACEA', flexShrink: 0, marginLeft: 8 }}>{pctLabel}</span>
                         </div>
-                        <div style={{ fontSize: 11, color: isBehind ? '#E8726E' : '#9B9A98', marginBottom: 4 }}>
-                          {formatMoney(paid)} repaid of {formatMoney(total)}
-                        </div>
-                        <div style={{ height: 4, borderRadius: 2, background: 'rgba(0,0,0,0.07)', overflow: 'hidden' }}>
+                        <div style={{ height: 4, borderRadius: 2, background: 'rgba(0,0,0,0.07)', overflow: 'hidden', marginBottom: 4 }}>
                           <div style={{ height: '100%', width: `${Math.round(pct * 100)}%`, borderRadius: 2, background: isBehind ? '#E8726E' : '#03ACEA', transition: 'width 0.3s' }} />
+                        </div>
+                        <div style={{ fontSize: 11, color: isBehind ? '#E8726E' : '#9B9A98' }}>
+                          {formatMoney(paid)} of {formatMoney(total)} repaid
                         </div>
                       </div>
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C4C3C1" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><polyline points="9 18 15 12 9 6"/></svg>
