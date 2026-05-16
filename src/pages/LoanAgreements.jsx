@@ -1103,15 +1103,13 @@ export default function LoanAgreements() {
                     })}
                   </div>
           )}
-            {totalPages > 1 && (
-              <div style={{ marginTop: 16 }}>
-                <NumberedPagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={setCurrentPage}
-                />
-              </div>
-            )}
+            <div style={{ marginTop: 16 }}>
+              <NumberedPagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
+            </div>
           </div>
             );
           })()}
