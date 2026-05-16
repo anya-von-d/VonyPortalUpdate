@@ -10,6 +10,7 @@ import { formatTZ } from "@/components/utils/timezone";
 import MeshMobileNav from "@/components/MeshMobileNav";
 import UserAvatar from "@/components/ui/UserAvatar";
 import DesktopSidebar from '../components/DesktopSidebar';
+import { NumberedPagination } from "@/components/ui/numbered-pagination";
 
 const ROLE_OPTIONS = [
   { id: 'all', label: 'All Categories' },
@@ -63,6 +64,7 @@ export default function LoanAgreements() {
   const [expandedId, setExpandedId] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterOpen, setFilterOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   const filterRef = useRef(null);
 
   useEffect(() => {
@@ -74,6 +76,10 @@ export default function LoanAgreements() {
   useEffect(() => {
     loadData();
   }, []);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [roleFilter, statusFilter, dateFilter, friendFilter, amountMode, amountVal1, amountVal2, searchQuery, sortBy]);
 
   const loadData = async () => {
     setIsLoading(true);
@@ -977,6 +983,11 @@ export default function LoanAgreements() {
           </div>
 
           {/* ── Agreements List ──────────────────────────────────────── */}
+          {(() => {
+            const ROWS_PER_PAGE = 10;
+            const totalPages = Math.max(1, Math.ceil(filteredAgreements.length / ROWS_PER_PAGE));
+            const pagedAgreements = filteredAgreements.slice((currentPage - 1) * ROWS_PER_PAGE, currentPage * ROWS_PER_PAGE);
+            return (
           <div style={{ marginBottom: 24 }}>
             {filteredAgreements.length === 0 ? (
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 0' }}>
@@ -989,7 +1000,7 @@ export default function LoanAgreements() {
               </div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column' }}>
-                {filteredAgreements.map((agreement) => {
+                {pagedAgreements.map((agreement) => {
                   const isLender = agreement.lender_id === user?.id;
                   const otherPartyId = isLender ? agreement.borrower_id : agreement.lender_id;
                   const otherParty = getUserById(otherPartyId);
@@ -1092,7 +1103,18 @@ export default function LoanAgreements() {
                     })}
                   </div>
           )}
+            {totalPages > 1 && (
+              <div style={{ marginTop: 16 }}>
+                <NumberedPagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={setCurrentPage}
+                />
+              </div>
+            )}
           </div>
+            );
+          })()}
 
         </div>
 
