@@ -877,6 +877,64 @@ export default function Home() {
             </FeatureCard>
               </div>
             )}
+            {borrowedLoans.length > 0 && (
+              <div style={{ flex: '1 1 280px', minWidth: 0 }}>
+                {/* ── Borrowing feature card ── */}
+                <FeatureCard
+                  title={
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+                      <span style={{ width: 22, height: 22, borderRadius: '50%', background: '#1D5B94', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
+                          <line x1="17" y1="7" x2="7" y2="17"/><polyline points="17 17 7 17 7 7"/>
+                        </svg>
+                      </span>
+                      Borrowing
+                    </span>
+                  }
+                  style={{ fontFamily: "'DM Sans', sans-serif" }}
+                >
+                  <div style={{ display: 'flex', flexDirection: 'column', marginTop: -8 }}>
+                    {borrowedLoans.map(loan => {
+                      const lenderProfile = safeAllProfiles.find(p => p.user_id === loan.lender_id);
+                      const name = lenderProfile?.full_name?.split(' ')[0] || lenderProfile?.username || 'User';
+                      const total = loan.total_amount || loan.amount || 0;
+                      const paid = loan.amount_paid || 0;
+                      const pct = total > 0 ? Math.min(1, paid / total) : 0;
+                      const pctLabel = `${Math.round(pct * 100)}%`;
+                      const nextDue = loan.next_payment_date ? toLocalDate(loan.next_payment_date) : null;
+                      const isBehind = nextDue && nextDue < todayInTZ();
+                      return (
+                        <div key={loan.id} onClick={() => navigate(createPageUrl('LoanDetail') + '?id=' + loan.id)}
+                          style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '10px 0', cursor: 'pointer', borderBottom: '1px solid rgba(0,0,0,0.05)' }}
+                        >
+                          <div style={{ position: 'relative', flexShrink: 0 }}>
+                            <UserAvatar name={lenderProfile?.full_name || name} src={lenderProfile?.profile_picture_url} size={38} />
+                            <div style={{ position: 'absolute', bottom: -2, right: -2, width: 16, height: 16, borderRadius: '50%', background: '#1D5B94', border: '1.5px solid white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                              <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
+                                <line x1="17" y1="7" x2="7" y2="17"/><polyline points="17 17 7 17 7 7"/>
+                              </svg>
+                            </div>
+                          </div>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 4 }}>
+                              <span style={{ fontSize: 13, fontWeight: 600, color: '#1A1918', fontFamily: "'DM Sans', sans-serif", overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name} lent you {formatMoney(total)}</span>
+                              <span style={{ fontSize: 12, fontWeight: 600, color: isBehind ? '#E8726E' : '#1D5B94', flexShrink: 0, marginLeft: 8 }}>{pctLabel}</span>
+                            </div>
+                            <div style={{ height: 4, borderRadius: 2, background: 'rgba(0,0,0,0.07)', overflow: 'hidden', marginBottom: 4 }}>
+                              <div style={{ height: '100%', width: `${Math.round(pct * 100)}%`, borderRadius: 2, background: isBehind ? '#E8726E' : '#1D5B94', transition: 'width 0.3s' }} />
+                            </div>
+                            <div style={{ fontSize: 11, color: isBehind ? '#E8726E' : '#9B9A98' }}>
+                              {formatMoney(paid)} repaid
+                            </div>
+                          </div>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C4C3C1" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><polyline points="9 18 15 12 9 6"/></svg>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </FeatureCard>
+              </div>
+            )}
           </div>{/* end activity + lending row */}
 
           {/* Two-column: left = loans, right = upcoming + summary + friends */}
